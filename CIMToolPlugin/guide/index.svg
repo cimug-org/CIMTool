@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="580"
+   height="750"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.43"
+   sodipodi:docbase="/home/projects/CIMTool-trunk/guide"
+   sodipodi:docname="index.svg"
+   version="1.0">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient2320">
+      <stop
+         style="stop-color:#bfb5a4;stop-opacity:1;"
+         offset="0"
+         id="stop2322" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop2324" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2221">
+      <stop
+         style="stop-color:#7299f8;stop-opacity:1;"
+         offset="0"
+         id="stop2223" />
+      <stop
+         style="stop-color:#7299f8;stop-opacity:0;"
+         offset="1"
+         id="stop2225" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2221"
+       id="linearGradient2227"
+       x1="0"
+       y1="375.86218"
+       x2="582"
+       y2="375.86218"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2320"
+       id="linearGradient4105"
+       gradientUnits="userSpaceOnUse"
+       x1="252.28438"
+       y1="81.352295"
+       x2="251.99577"
+       y2="60.902378"
+       gradientTransform="translate(78,0)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2320"
+       id="linearGradient6734"
+       gradientUnits="userSpaceOnUse"
+       x1="252.28438"
+       y1="81.352295"
+       x2="251.99577"
+       y2="60.902378" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2320"
+       id="linearGradient6762"
+       gradientUnits="userSpaceOnUse"
+       x1="252.28438"
+       y1="81.352295"
+       x2="251.99577"
+       y2="60.902378" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2320"
+       id="linearGradient1932"
+       gradientUnits="userSpaceOnUse"
+       x1="252.28438"
+       y1="81.352295"
+       x2="251.99577"
+       y2="60.902378" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2320"
+       id="linearGradient1937"
+       gradientUnits="userSpaceOnUse"
+       x1="252.28438"
+       y1="81.352295"
+       x2="251.99577"
+       y2="60.902378"
+       gradientTransform="translate(218,0)" />
+    <marker
+       inkscape:stockid="Arrow2L"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2L"
+       style="overflow:visible">
+      <path
+         sodipodi:nodetypes="cccc"
+         id="path1828"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.97309,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="matrix(1.1,0,0,1.1,-5.5,0)" />
+    </marker>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="20.561602"
+       x2="46.020683"
+       y1="20.561615"
+       x1="3.8351779"
+       gradientTransform="scale(1.548168,0.645925)"
+       id="linearGradient1706"
+       xlink:href="#linearGradient1701"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient1701"
+       inkscape:collect="always">
+      <stop
+         id="stop1702"
+         offset="0"
+         style="stop-color:#ebd48a;stop-opacity:1;" />
+      <stop
+         id="stop1703"
+         offset="1"
+         style="stop-color:#ebd48a;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       y2="20.561602"
+       x2="46.020683"
+       y1="20.561615"
+       x1="3.8351779"
+       gradientTransform="scale(1.548168,0.645925)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3157"
+       xlink:href="#linearGradient1701"
+       inkscape:collect="always" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="291"
+     inkscape:cy="454.13782"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="926"
+     inkscape:window-height="767"
+     inkscape:window-x="141"
+     inkscape:window-y="0"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       orientation="horizontal"
+       position="660"
+       id="guide7753" />
+    <sodipodi:guide
+       orientation="vertical"
+       position="15"
+       id="guide7930" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="727"
+       id="guide1527" />
+    <sodipodi:guide
+       orientation="horizontal"
+       position="697"
+       id="guide1529" />
+    <sodipodi:guide
+       orientation="vertical"
+       position="565"
+       id="guide1531" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="bg.png"
+     inkscape:label="bg"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="opacity:1;color:#000000;fill:#dfe1e2;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible"
+       id="rect1586"
+       width="502"
+       height="62"
+       x="39"
+       y="13.362183"
+       ry="13"
+       rx="13" />
+    <rect
+       style="opacity:1;color:#000000;fill:url(#linearGradient2227);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible"
+       id="rect1571"
+       width="582"
+       height="751"
+       x="1.4210855e-14"
+       y="0.36218262" />
+    <path
+       id="path1366"
+       style="opacity:0.1098485;fill:#d6dbe4;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-opacity:1"
+       d="M 82.11352,131.32097 C 81.96754,101.82299 82.57087,71.87073 82.60679,42.37328 C 88.56917,33.13967 102.14444,36.67358 109.50855,42.21468 C 112.03308,44.95404 122.05546,51.75839 118.40125,43.13712 C 111.24899,22.81008 90.13727,7.46697 68.30429,9.00066 C 60.91368,8.35111 54.97708,9.19219 49.13189,13.3477 C 39.68768,14.36904 31.43532,5.93291 21.82402,9.17093 C 12.428169,13.66703 19.57484,27.03046 17.7578,35.34146 C 14.17412,47.90652 31.77453,46.05601 39.10004,42.37373 C 47.4341,33.92652 58.8269,46.07966 55.40615,55.56817 C 54.45668,66.78014 55.48804,118.61372 55.21954,131.57384 C 55.21954,131.57384 82.30441,131.21333 82.11352,131.32097 z M 27.20109,35.05426 C 27.9268,29.72807 25.71,22.62897 27.29622,18.15687 C 29.96342,18.51079 34.80953,16.68578 33.47247,21.04394 C 33.47247,25.73485 33.47247,30.42575 33.47247,35.11666 C 31.38423,35.10851 29.27813,35.32873 27.20109,35.05426 z M 59.06032,34.57523 C 54.45955,32.24489 49.3838,30.6636 44.19269,30.63633 C 43.02557,33.17787 38.46944,31.95505 38.73071,29.17095 C 38.14521,26.70784 39.47558,23.82081 41.90837,22.93815 C 45.31603,23.42007 49.18509,23.92436 52.13774,21.72587 C 56.99979,19.34205 62.35213,17.51327 67.83996,17.93395 C 75.56111,17.74306 83.51789,18.99264 90.31492,22.82837 C 92.81629,22.03965 95.18049,25.65473 93.35825,27.58891 C 90.51547,29.37579 86.82424,27.44406 84.01901,29.34073 C 79.53732,31.4047 75.52076,35.07443 70.33968,35.13175 C 66.56988,35.16698 62.8325,34.43991 59.06032,34.57523 z " />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="content">
+    <flowRoot
+       transform="translate(-133,-79.27099)"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+       id="flowRoot1839"
+       xml:space="preserve"><flowRegion
+         id="flowRegion1841"><rect
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+           y="239"
+           x="206"
+           height="32"
+           width="116"
+           id="rect1843" /></flowRegion><flowPara
+         id="flowPara1845">How to:</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1553"
+       style="font-size:32;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr;text-anchor:middle;font-family:Arial"
+       transform="translate(-70.07813,1.076076)"><flowRegion
+         id="flowRegion1555"><rect
+           id="rect1557"
+           width="461"
+           height="54"
+           x="131"
+           y="20.362183"
+           style="font-size:32;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr;text-anchor:middle;font-family:Arial" /></flowRegion><flowPara
+         id="flowPara2050">CIMTool Guide</flowPara></flowRoot>    <flowRoot
+       transform="translate(-20,149.187)"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+       id="flowRoot1823"
+       xml:space="preserve"><flowRegion
+         id="flowRegion1825"><rect
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+           y="239"
+           x="206"
+           height="31"
+           width="313"
+           id="rect1827" /></flowRegion><flowPara
+         id="flowPara1829">Generate XML Schema for Messages</flowPara></flowRoot>    <a
+       id="a1532"
+       xlink:href="generate1.svg"
+       transform="translate(0,-21.54199)">
+      <image
+         y="394.78418"
+         x="82"
+         xlink:href="element.gif"
+         width="60"
+         height="60"
+         id="image1483" />
+    </a>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1831"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+       transform="translate(-20,72.59223)"><flowRegion
+         id="flowRegion1833"><rect
+           id="rect1835"
+           width="311"
+           height="29"
+           x="206"
+           y="239"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial" /></flowRegion><flowPara
+         id="flowPara1837">Define messages based on the CIM</flowPara></flowRoot>    <a
+       id="a1529"
+       xlink:href="message1.svg"
+       transform="translate(0,-10.13672)">
+      <image
+         y="312"
+         x="88"
+         xlink:href="message.gif"
+         width="48"
+         height="48"
+         id="image1526" />
+    </a>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1815"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+       transform="translate(-20,-1.786614)"><flowRegion
+         id="flowRegion1817"><rect
+           id="rect1819"
+           width="155"
+           height="31"
+           x="206"
+           y="239"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial" /></flowRegion><flowPara
+         id="flowPara1821">Browse the CIM</flowPara></flowRoot>    <a
+       id="a1512"
+       xlink:href="browse1.svg"
+       transform="translate(0,3.484375)">
+      <image
+         y="215"
+         x="77"
+         xlink:href="functional.gif"
+         width="70"
+         height="60"
+         id="image1509" />
+    </a>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1358"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial"
+       transform="translate(-20,228.5659)"><flowRegion
+         id="flowRegion1360"><rect
+           id="rect1362"
+           width="313"
+           height="31"
+           x="206"
+           y="239"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial" /></flowRegion><flowPara
+         id="flowPara1470">Define a more complex message</flowPara></flowRoot>    <a
+       id="a3484"
+       xlink:href="complex1.svg">
+      <image
+         y="450.62109"
+         x="77"
+         xlink:href="nested.gif"
+         sodipodi:absref="/home/projects/CIMTool-trunk/guide/nested.gif"
+         width="70"
+         height="60"
+         id="image1512" />
+    </a>
+    <a
+       id="a3487"
+       xlink:href="refine1.svg">
+      <image
+         y="528"
+         x="77"
+         xlink:href="refine.gif"
+         sodipodi:absref="/home/projects/CIMTool-trunk/guide/refine.gif"
+         width="70"
+         height="60"
+         id="image1555" />
+    </a>
+    <flowRoot
+       transform="translate(-20,305.9448)"
+       style="font-size:18;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial"
+       id="flowRoot3402"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3404"><rect
+           style="font-size:18;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr;text-anchor:start;font-family:Arial"
+           y="239"
+           x="206"
+           height="31"
+           width="313"
+           id="rect3406" /></flowRegion><flowPara
+         id="flowPara3454">Refine message elements</flowPara></flowRoot>    <a
+       id="a3478"
+       xlink:href="/">
+      <flowRoot
+         id="flowRoot3470"
+         xml:space="preserve"><flowRegion
+           id="flowRegion3472"><rect
+             y="92"
+             x="412"
+             height="14"
+             width="125"
+             id="rect3474" /></flowRegion><flowPara
+           id="flowPara3476">Back to cimtool.org</flowPara></flowRoot>    </a>
+  </g>
+</svg>

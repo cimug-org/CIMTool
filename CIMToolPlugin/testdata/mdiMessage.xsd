@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="mdimsg" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:mdimsg="mdimsg" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:complexType name="MessageHeader">
+		<xs:annotation>
+			<xs:documentation>Message header containing descriptive information about the message.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:annotation>
+				<xs:documentation>General information regarding the message payload.  These fields are used to provide application context.  The fields are not intended to be a complete list of properties used by middleware for message management.</xs:documentation>
+			</xs:annotation>
+			<xs:element name="Verb" default="created" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>This enumerated list of verbs that can be used to form message types in compliance with the IEC 61968 standard.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="cancel"/>
+						<xs:enumeration value="canceled"/>
+						<xs:enumeration value="change"/>
+						<xs:enumeration value="changed"/>
+						<xs:enumeration value="create"/>
+						<xs:enumeration value="created"/>
+						<xs:enumeration value="close"/>
+						<xs:enumeration value="closed"/>
+						<xs:enumeration value="delete"/>
+						<xs:enumeration value="deleted"/>
+						<xs:enumeration value="get"/>
+						<xs:enumeration value="show"/>
+						<xs:enumeration value="reply"/>
+						<xs:enumeration value="subscribe"/>
+						<xs:enumeration value="unsubscribe"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Noun" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Noun of the Control Area identifies the main subject of the message type, typically a real world object defined in the CIM.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Revision" type="xs:string" default="001" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Revision level of the message type.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimeDate" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Application level relevant time and date for when this  instance of the message type was produced.  This is not intended to be used by middleware for message management.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Source" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Source person or system that publishes the message</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SourcePathName" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Full path name of the source person or system that publishes the message</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SimpleAssociation">
+		<xs:annotation>
+			<xs:documentation>A one-to-many (1..n) association used to link two classes.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="indexA" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>An identifier that points to the refererenced class on the  1 side of a SimpleAssociation or either side of a ComplexAssociation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SimpleRoleAssociation">
+		<xs:annotation>
+			<xs:documentation>A one-to-many (1..n) association that also includes a role class to define the role that one class plays with another.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="mdimsg:SimpleAssociation">
+				<xs:sequence>
+					<xs:element name="indexRole" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>An identifier that points to the refererenced role class.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ComplexAssociation">
+		<xs:annotation>
+			<xs:documentation>A many-to-many (n..n) association used to link two classes.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="mdimsg:SimpleAssociation">
+				<xs:sequence>
+					<xs:element name="indexB" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>An identifier that points to the refererenced class on the other side (from indexA) of a ComplexAssociation.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ComplexRoleAssociation">
+		<xs:annotation>
+			<xs:documentation>A many-to-many (n..n) association that also includes a role class to define the role that one class plays with another.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="mdimsg:ComplexAssociation">
+				<xs:sequence>
+					<xs:element name="indexRole" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>An identifier that points to the refererenced role class.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

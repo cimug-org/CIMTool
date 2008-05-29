@@ -1,0 +1,31 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix msg: <http://langdale.com.au/2005/Message#> .
+@prefix cim: <http://iec.ch/TC57/2001/CIM-schema-cim10#> .
+@prefix bid: <http://iec.ch/TC57/2001/CIM-schema-cim10#Bid.> .
+@prefix : <http://langdale.com.au/example#> .
+
+:BidMessage 
+	a rdfs:Class ; 
+	rdfs:subClassOf msg:Message ; 
+	rdfs:subClassOf [
+		a owl:Restriction;
+		owl:onProperty msg:about ;
+		owl:someValuesFrom [
+			a rdfs:Class ;
+			rdfs:subClassOf cim:Bid;
+			rdfs:label "Bid";
+			rdfs:subClassOf [ 
+				a owl:Restriction;
+				owl:onProperty bid:GeneratingUnit;
+				owl:allValuesFrom [
+					a rdfs:Class ;
+					rdfs:subClassOf cim:HydroGeneratingUnit;
+					rdfs:label "Generator";
+				]
+			]
+		] 
+	] 
+.
+
