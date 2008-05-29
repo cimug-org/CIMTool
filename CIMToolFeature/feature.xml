@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="au.com.langdale.cimtoole.feature"
+      label="CIMTool"
+      version="1.1.7"
+      provider-name="Langdale Consultants">
+
+   <description url="http://cimtool.org">
+      CIMTool is an open source tool for supporting Common Information Model (CIM) standards used in the electric power industry.
+   </description>
+
+   <copyright>
+      CIMTool is copyright 2005,2006,2007,2008 
+Langdale Consultants Pty Ltd
+Suite 14 7 Narabang Way
+Belrose NSW
+AUSTRALIA
+   </copyright>
+
+   <license>
+      This software is Copyright 2005,2006,2007,2008 Langdale Consultants
+except where otherwise stated. Langdale Consultants can be contacted at:
+
+http://www.langdale.com.au/contacts
+
+Redistributions must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+
+This software is provided for evaluation purposes only. Creation
+of derived works is prohibited. Sale of the software is prohibited. 
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS&apos;&apos; AND ANY EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   </license>
+
+   <url>
+      <update label="CIMTool Update Site" url="http://files.cimtool.org"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.junit"/>
+   </requires>
+
+   <plugin
+         id="au.com.langdale.cimtoole"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

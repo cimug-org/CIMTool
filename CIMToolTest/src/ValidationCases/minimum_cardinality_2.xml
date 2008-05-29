@@ -1,0 +1,10 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cim="http://iec.ch/TC57/2007/CIM-schema-cim12#" > 
+  <rdf:Description rdf:about="#sm1">
+    <cim:SynchronousMachine.type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineType.generator"/>
+    <cim:SynchronousMachine.operatingMode rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineOperatingMode.generator"/>
+    <cim:IdentifiedObject.name>acls1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine"/>
+  </rdf:Description>
+</rdf:RDF>

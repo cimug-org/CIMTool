@@ -1,0 +1,95 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cim="http://iec.ch/TC57/2007/CIM-schema-cim12#" > 
+  <rdf:Description rdf:about="#acls1_t2">
+    <cim:Terminal.ConductingEquipment rdf:resource="#acls1"/>
+    <cim:Terminal.ConnectivityNode rdf:resource="#cn2"/>
+    <cim:IdentifiedObject.name>acls1_t2</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#l1_t">
+    <cim:Terminal.ConductingEquipment rdf:resource="#l1"/>
+    <cim:Terminal.ConnectivityNode rdf:resource="#cn2"/>
+    <cim:IdentifiedObject.name>l1_t</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#acls1_t1">
+    <cim:Terminal.ConductingEquipment rdf:resource="#acls1"/>
+    <cim:Terminal.ConnectivityNode rdf:resource="#cn1"/>
+    <cim:IdentifiedObject.name>acls1_t1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#lg1">
+    <cim:LoadGroup.SubLoadArea rdf:resource="#sla"/>
+    <cim:IdentifiedObject.name>lg1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoadGroup"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#cn2">
+    <cim:ConnectivityNode.MemberOf_EquipmentContainer rdf:resource="#s1"/>
+    <cim:IdentifiedObject.name>cn2</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNode"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#acls1">
+    <cim:Equipment.MemberOf_EquipmentContainer rdf:resource="#s1"/>
+    <cim:Conductor.r>.01</cim:Conductor.r>
+    <cim:Conductor.x>5.0</cim:Conductor.x>
+    <cim:Conductor.bch>.0001</cim:Conductor.bch>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#bv1"/>
+    <cim:IdentifiedObject.name>acls1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ACLineSegment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#l1">
+    <cim:Equipment.MemberOf_EquipmentContainer rdf:resource="#s1"/>
+    <cim:ConformLoad.LoadGroup rdf:resource="#lg1"/>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#bv1"/>
+    <cim:IdentifiedObject.name>l1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Load"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#sgr">
+    <cim:SubGeographicalRegion.Region rdf:resource="#gr"/>
+    <cim:IdentifiedObject.name>sgr</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubGeographicalRegion"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#sm1">
+    <cim:Equipment.MemberOf_EquipmentContainer rdf:resource="#s1"/>
+    <cim:SynchronousMachine.type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineType.generator"/>
+    <cim:SynchronousMachine.operatingMode rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineOperatingMode.generator"/>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#bv1"/>
+    <cim:IdentifiedObject.name>acls1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#sm1_t">
+    <cim:Terminal.ConductingEquipment rdf:resource="#sm1"/>
+    <cim:Terminal.ConnectivityNode rdf:resource="#cn1"/>
+    <cim:IdentifiedObject.name>sm1_t</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#s1">
+    <cim:Substation.Region rdf:resource="#sgr"/>
+    <cim:IdentifiedObject.name>s1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Substation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#gr">
+    <cim:IdentifiedObject.name>gr</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeographicalRegion"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#sla">
+    <cim:SubLoadArea.LoadArea rdf:resource="#la"/>
+    <cim:IdentifiedObject.name>ala</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubLoadArea"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#la">
+    <cim:IdentifiedObject.name>la</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadArea"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#bv1">
+    <cim:BaseVoltage.nominalVoltage>22</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.name>bv1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BaseVoltage"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#cn1">
+    <cim:ConnectivityNode.MemberOf_EquipmentContainer rdf:resource="#s1"/>
+    <cim:IdentifiedObject.name>cn1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNode"/>
+  </rdf:Description>
+</rdf:RDF>

@@ -1,0 +1,18 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cim="http://iec.ch/TC57/2007/CIM-schema-cim12#" > 
+  <rdf:Description rdf:about="#acls1">
+    <cim:Conductor.r>.01</cim:Conductor.r>
+    <cim:Conductor.x>5.0</cim:Conductor.x>
+    <cim:Conductor.bch>.0001</cim:Conductor.bch>
+    <cim:SynchronousMachine.operatingMode rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineOperatingMode.generator"/>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#bv1"/>
+    <cim:IdentifiedObject.name>acls1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ACLineSegment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#bv1">
+    <cim:BaseVoltage.nominalVoltage>22</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.name>bv1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BaseVoltage"/>
+  </rdf:Description>
+</rdf:RDF>

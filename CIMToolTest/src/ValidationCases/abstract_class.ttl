@@ -1,0 +1,7 @@
+@prefix cim:  <http://iec.ch/TC57/2007/CIM-schema-cim12#> .
+
+<#acls1>
+	a cim:IdentifiedObject ; # error
+	cim:IdentifiedObject.name "acls1" ;
+	.
+

@@ -1,0 +1,9 @@
+@prefix cim:  <http://iec.ch/TC57/2007/CIM-schema-cim12#> .
+
+<#bv1>
+	a cim:BaseVoltage;
+	cim:IdentifiedObject.name "bv1" ;
+	cim:IdentifiedObject.name "bogus" ; # error
+	cim:BaseVoltage.nominalVoltage "22" 
+	.
+

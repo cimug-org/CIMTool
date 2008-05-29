@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cim="http://iec.ch/TC57/2007/CIM-schema-cim12#" xmlns:dm="http://iec.ch/2002/schema/CIM_difference_model#">
+	<dm:DifferenceModel rdf:about="">
+		
+		<dm:reverseDifferences rdf:parseType="Statements">
+			<rdf:Description rdf:about="#l1">
+				<cim:Equipment.MemberOf_EquipmentContainer rdf:resource="#s1"/>
+				<cim:ConformLoad.LoadGroup rdf:resource="#lg1"/>
+				<cim:ConductingEquipment.BaseVoltage rdf:resource="#bv1"/>
+				<cim:IdentifiedObject.name>l1</cim:IdentifiedObject.name>
+				<rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Load"/>
+			</rdf:Description>
+		</dm:reverseDifferences>
+		
+		<dm:forwardDifferences rdf:parseType="Statements">
+	
+		</dm:forwardDifferences>
+		
+	</dm:DifferenceModel>
+</rdf:RDF>

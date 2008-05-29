@@ -1,0 +1,8 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cim="http://iec.ch/TC57/2007/CIM-schema-cim12#" > 
+  <rdf:Description rdf:about="#acls1">
+    <cim:IdentifiedObject.name>acls1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject"/>
+  </rdf:Description>
+</rdf:RDF>

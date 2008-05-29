@@ -1,0 +1,12 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cim="http://iec.ch/TC57/2007/CIM-schema-cim12#" > 
+  <rdf:Description rdf:about="#acls1">
+    <cim:Conductor.r>.01</cim:Conductor.r>
+    <cim:Conductor.x>5.0</cim:Conductor.x>
+    <cim:Conductor.bch>.0001</cim:Conductor.bch>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#bogus"/>
+    <cim:IdentifiedObject.name>acls1</cim:IdentifiedObject.name>
+    <rdf:type rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ACLineSegment"/>
+  </rdf:Description>
+</rdf:RDF>
