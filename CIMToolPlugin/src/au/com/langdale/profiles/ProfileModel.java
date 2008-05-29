@@ -1,3 +1,7 @@
+/*
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
+ * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ */
 package au.com.langdale.profiles;
 
 import java.net.URI;
@@ -6,9 +10,6 @@ import java.util.Iterator;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.Models;
-import au.com.langdale.jena.TreeModelBase;
-import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
-import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.validation.LOG;
 import au.com.langdale.xmi.UML;

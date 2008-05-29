@@ -1,0 +1,13 @@
+== Previous Releases ==
+
+Superceded releases:
+
+ * [http://files.cimtool.org/CIMTool-Plugin-2008-01-31.zip  CIMTool-Plugin-2008-01-31.zip]
+    md5 checksum 38ec5d4bd8af4e32dca866e3c50bf7af
+ * [http://files.cimtool.org/CIMTool-2007-12-18.zip CIMTool-2007-12-18.zip] 
+   md5 checksum 14037b5dc9facd2dc1041e4895888edb
+ * [http://files.cimtool.org/CIMTool-2007-11-29a.zip CIMTool-2007-11-29a.zip] 
+   md5 checksum 0ee46cae1da5db2a78d24ea16437cff3
+
+The classic, standalone version of CIMTool is [wiki:OldVersion here].
+ 

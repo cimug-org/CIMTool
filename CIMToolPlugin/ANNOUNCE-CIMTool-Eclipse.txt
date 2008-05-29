@@ -1,0 +1,18 @@
+=== A Complete Setup ===
+
+If you don't have eclipse or java, 
+or you just want a simple installation procedure, then download: 
+http://files.cimtool.org/CIMTool-Eclipse-VERSION.zip 
+with md5 checksum 
+[http://cimtool.org/static/CIMTool-Eclipse-VERSION.md5 CIMTool-Eclipse-CHECKSUM]
+
+'''Note:''' This package is for Microsoft Windows only.  
+It contains eclipse 3.3 and java 6, so please consult their licenses 
+which are contained in the package.
+
+'''To install:''' simply unzip the package in a location of you choice, for example `C:\`. 
+This will create a folder called `eclipse` which contains `eclipse.exe`.  
+Double click `eclipse.exe` to launch.   
+
+You can pick up the instructions in ''Getting Started'' below at step 3.
+

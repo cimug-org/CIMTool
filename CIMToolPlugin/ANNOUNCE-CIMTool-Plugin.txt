@@ -1,0 +1,15 @@
+= Latest CIMTool Plugin Release =
+
+The latest release of the CIMTool Eclipse PLugin is Bare-VERSION. 
+There are two ways to get it:
+
+[[PageOutline]]
+
+=== Just the Plugin ===
+
+If you have eclipse 3.3 and java 5 or 6 then download:
+http://files.cimtool.org/CIMTool-Plugin-VERSION.zip 
+with md5 checksum [http://cimtool.org/static/CIMTool-Plugin-VERSION.md5 CIMTool-Plugin-CHECKSUM]
+
+See ''Getting Started'' below for installation instructions.
+

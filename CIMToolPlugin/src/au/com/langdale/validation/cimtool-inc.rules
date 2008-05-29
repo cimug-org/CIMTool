@@ -1,0 +1,77 @@
+@prefix scaf: <http://langdale.com.au/2007/rule-scafold#>.
+@prefix uml: <http://langdale.com.au/2005/UML#>.
+@prefix split: <http://langdale.com.au/2007/SplitModel#> .
+@prefix dm: <http://iec.ch/2002/schema/CIM_difference_model#> .
+
+# --- incidental axioms ---
+
+[-> [(rdf:type rdf:type rdf:Property) <-]]
+
+[-> [(split:hasHash rdf:type rdf:Property) <-]]
+
+[-> [(split:hasModulus rdf:type rdf:Property) <-]]
+
+[-> [(split:document rdf:type owl:Thing) <-]]
+
+# --- validation rules for basic structure ---
+
+[ -> [ problem( "Top level definition not a" dm:DifferenceModel "subject is" ?x ) 
+		<- (?x ?P *) notAny(?x rdf:type dm:DifferenceModel)]]
+
+[ -> [ problem( "Multiple instances of" dm:DifferenceModel "expect a singleton difference model." ) 
+		<- countMoreThan(1 ?x rdf:type dm:DifferenceModel)]]
+
+[ -> [ problem( "No instance of" dm:DifferenceModel "expect a singleton difference model." ) 
+		<- countLessThan(1 ?x rdf:type dm:DifferenceModel)]]
+
+# --- validation rules comparing difference and base models 
+
+[ -> [ 
+	(?model dm:forwardDifferences ?forwardDifferences) -> 
+			
+		[ ?forwardDifferences ^ (?x ?P ?y) split:base_model ^ any(?x ?P ?y) ->
+			problem("Duplicate property" ?P "with subject" ?x "and object" ?y "already exists in base model")]
+]]
+
+[ -> [ 
+	(?model dm:reverseDifferences ?reverseDifferences) -> 
+			
+		[ ?reverseDifferences ^ (?x ?P ?y) split:base_model ^ notAny(?x ?P ?y) ->
+			problem("Missing property" ?P "with subject" ?x "and object" ?y "does not exist in base model")]
+]]
+
+
+[ -> [ 
+	(?model dm:preconditions ?preconditions) -> 
+		
+		[ ?preconditions ^ (?x ?P ?y) split:base_model ^ notAny(?x ?P ?y) ->
+			problem("Failed precondition" ?P "with subject" ?x "and object" ?y)]
+]]
+	
+# --- axioms for vocabulary checks copied from schema and its entailments ---	
+
+[ (?P rdf:type owl:DatatypeProperty) ->
+	(?P rdf:type rdf:Property)]
+
+[ (?P rdf:type owl:ObjectProperty) ->
+	(?P rdf:type rdf:Property)]
+
+[ (?C rdf:type owl:Class) ->
+	[(?C rdf:type owl:Class) <-]]
+
+[ (?P rdf:type rdf:Property) ->
+	[(?P rdf:type rdf:Property) <-]]
+
+# --- vocabulary checks for forward differences ---
+
+[ -> [ 
+	(?model dm:forwardDifferences ?forwardDifferences) -> 
+
+
+		[ problem( "Undefined property" ?P "for" ?x ) 
+			<- ?forwardDifferences ^ (?x ?P *) notAxiom(?P rdf:type rdf:Property)]
+
+		[ problem( "Undefined class" ?C "for" ?x ) 
+			<- ?forwardDifferences ^ (?x rdf:type ?C) notAxiom(?C rdf:type owl:Class)]
+
+]]
