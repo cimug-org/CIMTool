@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: au.com.langdale.cimtool.CIMTool
-Class-Path:  antlr.jar commons-logging.jar concurrent.jar icu4j.jar jakarta-oro-2.0.5.jar jena.jar log4j-1.2.7.jar xercesImpl.jar xml-apis.jar j2h.jar jdom.jar ui.jar swixml.jar
