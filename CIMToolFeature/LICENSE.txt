@@ -1,0 +1,25 @@
+This software is Copyright 2005,2006,2007,2008 Langdale Consultants 
+except where otherwise stated. 
+
+Langdale Consultants can be contacted at: http://www.langdale.com.au
+
+You can redistribute this software and/or modify it under 
+the terms of the GNU Lesser General Public License version 2.1
+as published by the Free Software Foundation.
+
+This software is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+This software includes parts of the Jena package 
+redistributed under the Jena and the Apache licenses.
+See http://jena.sf.net
+
+This software includes parts of the POI package 
+redistributed under the Apache license. 
+See http://poi.apache.org/
+
+Copies of the GNU Lesser General Public License,
+the Jena license and the Apache license are included
+in the CIMTool distribution.

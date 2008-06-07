@@ -4,7 +4,6 @@
  */
 package au.com.langdale.cimtoole.editors.profile;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -253,12 +252,20 @@ public class PopulateBinding  {
 				if(path.length > 1) {
 					Node node = path[path.length-1];
 					if( node instanceof PropertyNode || node instanceof IndividualNode) 
-						path = Arrays.copyOf(path, path.length-1);
+						path = copyOf(path, path.length-1);
 				}
 				getViewer().setSelection(new TreeSelection(new TreePath(path)), true);
 				return ! getViewer().getSelection().isEmpty();
 			}
 			return false;
+		}
+		
+		private Node[] copyOf(Node[] nodes, int length) {
+			Node[] result = new Node[length];
+			for (int ix = 0; ix < length; ix++) 
+				result[ix] = nodes[ix];
+			
+			return result;
 		}
 
 		public void selectTarget(Resource target) {
