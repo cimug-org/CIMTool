@@ -1,5 +1,9 @@
 = CIMTool Change Log =
 
+== Release 1.2.2 ==
+
+ * Fix a jena ConversionException when remapping profile to new CIM namespace.
+
 == Release 1.2.1 ==
 
  * Released under LGPL.

@@ -18,6 +18,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -37,12 +38,17 @@ public class Remapper implements Runnable {
 	public void run() {
 		int classes = 0;
 		
-		ResIterator it = profileModel.listSubjectsWithProperty(RDFS.subClassOf);
-		while( it.hasNext()) {
-			Resource subject = it.nextResource();
-			subject.addProperty(RDF.type, OWL.Class);
-			handleClass((OntClass) subject.as( OntClass.class));
-			classes += 1;
+		try {
+			ResIterator it = profileModel.listSubjectsWithProperty(RDFS.subClassOf);
+			while( it.hasNext()) {
+				Resource subject = it.nextResource();
+				subject.addProperty(RDF.type, OWL.Class);
+				handleClass((OntClass) subject.as( OntClass.class));
+				classes += 1;
+			}
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		log("Remapped " + classes + " classes.");
@@ -155,7 +161,7 @@ public class Remapper implements Runnable {
 		}
 
 		if( base != null ) {
-			Property prop = (Property) base.as(Property.class);
+			Property prop = ResourceFactory.createProperty(base.getURI());
 			restrict.setOnProperty(prop);
 			if( restrict.isAllValuesFromRestriction())
 				defined.add(prop);
