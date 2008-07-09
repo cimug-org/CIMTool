@@ -72,15 +72,15 @@ public class ProjectModelView extends ViewPart implements ISelectionListener, Ca
 					OntProperty prop = subject.asProperty();
 					OntProperty inverse = prop.getInverseOf();
 					if(inverse != null)
-						selectTarget(inverse);
+						previewTarget(inverse);
 					else {
 						OntResource range = prop.getRange();
 						if( range != null )
-							selectTarget(range);
+							previewTarget(range);
 					}
 				}
 				else {
-					selectTarget(subject);
+					previewTarget(subject);
 				}
 			}
 		}
@@ -116,7 +116,7 @@ public class ProjectModelView extends ViewPart implements ISelectionListener, Ca
 
 				OntResource base = node.getBase();
 				if( base != null ) {
-					selectTarget(base);
+					previewTarget(base);
 				}
 			}
 			else if( struct.getFirstElement() instanceof IResource) {

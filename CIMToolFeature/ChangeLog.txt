@@ -8,6 +8,8 @@
  
  * Correct title in import schema wizard.
  
+ * Fix regression: ProjectModelView not responding to selection or double click
+ 
 == Release 1.2.1 ==
 
  * Released under LGPL.
