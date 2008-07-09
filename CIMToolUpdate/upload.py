@@ -6,9 +6,6 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from re import escape, search
 from shutil import copyfile
 
-BUCKET="files.cimtool.org"
-ARCHIVE="CIMToolUpdate.zip"
-
 def read(filename):
 	f = file(filename)
 	try:
@@ -22,6 +19,13 @@ def write(filename, contents):
 		f.write(contents)
 	finally:
 		f.close()
+
+def findlast(folder, suffix=".jar"):
+	for f in sorted(listdir(folder), reverse=True):
+		if f.endswith(suffix):
+			p = join(folder, f)
+			if isfile(p):
+				return p
 
 def credentials():
 	access = read("aws/access-key").strip()
@@ -46,29 +50,6 @@ def mirror(bucket, pathname):
 	handle.set_contents_from_filename(pathname)
 	handle.set_acl('public-read')
 
-def findlast(folder, suffix=".jar"):
-	for f in sorted(listdir(folder), reverse=True):
-		if f.endswith(suffix):
-			p = join(folder, f)
-			if isfile(p):
-				return p
-				
-def lastversion():
-	path = findlast("features")
-	return version(path)
-	
-def version(path):
-	return search("_([0-9]+[.][0-9]+[.][0-9]+)[.]jar$", path).group(1)
-
-def do_lastversion():
-	print lastversion()
-
-class Manifest(object):
-	def __iter__(self):
-		yield findlast("features")
-		yield findlast("plugins")
-		yield "site.xml"
-
 def zipit(name, manifest):
 	print "zipping:", name
 	archive = ZipFile(name, "w", ZIP_DEFLATED)
@@ -83,64 +64,15 @@ def zipmerge(dst, src, prefix):
 			info.filename = join(prefix, info.filename)
 			# print "merging", info.filename, len(content), "bytes"
 			dst.writestr(info, content)
-
-def upload_files(bucket, manifest=Manifest()):
-	for m in manifest:
-		mirror(bucket, m)
-
-def build_update_dist(archive_name=ARCHIVE, manifest=Manifest()):
-	zipit(archive_name, manifest) 
-	return archive_name
-
-def build_eclipse_dist(kit="eclipse-win32-kit.zip", dist="CIMTool-Eclipse-VERSION.zip", manifest=Manifest()):
-	feature, plugin = list(manifest)[:2]
-	dist = dist.replace("VERSION", version(feature))
-	copyfile(kit, dist)
-	archive = ZipFile(dist, "a", ZIP_DEFLATED)
-	for jarfile in feature, plugin:
-		component, ext = splitext(jarfile)
-		jarchive = ZipFile(jarfile, 'r')
-		zipmerge( archive, jarchive, join("eclipse", component))
-		jarchive.close()
-	archive.close()
-	return dist
-
-def do_build_eclipse():
-	print build_eclipse_dist()
-	
-def do_all(bucket_name=BUCKET):
-	update_dist=build_update_dist()
-	eclipse_dist = build_eclipse_dist()
-	
-	bucket = get_bucket(bucket_name)
-	upload_files(bucket)
-	mirror(bucket, update_dist)
-	mirror(bucket, eclipse_dist)
-	update_wiki()
-	list_keys(bucket)
-
-def do_build():
-	update_dist=build_update_dist()
-	eclipse_dist = build_eclipse_dist()
-	print "built:", update_dist, eclipse_dist
-	
-
-def do_mirror(file_name, bucket_name=BUCKET):
-	print 'mirror', file_name, bucket_name
-	bucket = get_bucket(bucket_name)
-	mirror(bucket, file_name)
-
-def do_list(bucket_name=BUCKET):
-	bucket = get_bucket(bucket_name)
-	list_keys(bucket)
 	
 def edit(text, **subs):
 	for k in subs:
 		text = text.replace(k, str(subs[k]))
 	return text
-	
-def do_edit():
-	print edit(read("DownLoad.txt"), VERSION=lastversion())
+
+def upload_files(bucket, manifest):
+	for m in manifest:
+		mirror(bucket, m)
 	
 from urllib2 import build_opener, HTTPPasswordMgrWithDefaultRealm, HTTPBasicAuthHandler, HTTPDigestAuthHandler, HTTPCookieProcessor
 from urllib import urlencode
@@ -171,7 +103,7 @@ PATTERN = escape(VERSION).replace("VERSION", "([0-9]+)")
 def extract_version(form):
 	match = search( PATTERN, form)
 	return match.group(1)
-	
+
 def wikipass():
 	return read("wikipass.conf").split()
 
@@ -191,7 +123,7 @@ def create_session(uri, domain, username, password ):
 def post(session, uri, postdata=None):
 	try:
 		if postdata != None:
-			print "POST", uri, postdata
+			print "POST", uri
 			postdata = urlencode(postdata)
 		else:
 			print "GET", uri
@@ -212,16 +144,90 @@ def update_wiki_page(session, username, root, **subs):
 	previous = replace_wiki_page(session, username, name, content)
 	write( root + ".bak", previous)
 
+BUCKET="files.cimtool.org"
+ARCHIVE="CIMToolUpdate.zip"
+ECLIPSE="CIMTool-Eclipse-VERSION.zip"
+KIT="eclipse-win32-kit.zip"
+
+class Manifest(object):
+	def __iter__(self):
+		yield findlast("features")
+		yield findlast("plugins")
+		yield "site.xml"
+				
+def lastversion():
+	path = findlast("features")
+	return version(path)
+	
+def version(path):
+	return search("_([0-9]+[.][0-9]+[.][0-9]+)[.]jar$", path).group(1)
+
+def build_update_dist(archive_name, manifest):
+	zipit(archive_name, manifest) 
+	return archive_name
+
+def build_eclipse_dist(dist, manifest, kit=KIT):
+	feature, plugin = list(manifest)[:2]
+	copyfile(kit, dist)
+	archive = ZipFile(dist, "a", ZIP_DEFLATED)
+	for jarfile in feature, plugin:
+		component, ext = splitext(jarfile)
+		jarchive = ZipFile(jarfile, 'r')
+		zipmerge( archive, jarchive, join("eclipse", component))
+		jarchive.close()
+	archive.close()
+	return dist
+
 def update_wiki():
 	username, password = wikipass()
 	session = create_session(PREFIX, DOMAIN, username, password)
 	update_wiki_page( session, username, "Download", VERSION=lastversion())
 	update_wiki_page( session, username, "../CIMToolFeature/ChangeLog" )
 	update_wiki_page( session, username, "../CIMToolFeature/GettingStarted" )
+	
+def do_update_page(name="../CIMToolFeature/ChangeLog"):
+	username, password = wikipass()
+	session = create_session(PREFIX, DOMAIN, username, password)
+	update_wiki_page( session, username, name )
+	
+def do_all(bucket_name=BUCKET):
+	do_build()
+	do_upload(bucket_name)
+	do_update_wiki()
+
+def do_build():
+	eclipse_dist = ECLIPSE.replace("VERSION", lastversion())
+	manifest = Manifest()
+	build_update_dist(ARCHIVE, manifest)
+	build_eclipse_dist(eclipse_dist, manifest)
+	print "built:", ARCHIVE, eclipse_dist
+	
+def do_upload(bucket_name=BUCKET):	
+	bucket = get_bucket(bucket_name)
+	eclipse_dist = ECLIPSE.replace("VERSION", lastversion())
+	manifest = Manifest()
+	upload_files(bucket, manifest)
+	mirror(bucket, ARCHIVE)
+	mirror(bucket, eclipse_dist)
+	list_keys(bucket)
 
 def do_update_wiki():
 	update_wiki()
 
+def do_mirror(file_name, bucket_name=BUCKET):
+	print 'mirror', file_name, bucket_name
+	bucket = get_bucket(bucket_name)
+	mirror(bucket, file_name)
+
+def do_list(bucket_name=BUCKET):
+	bucket = get_bucket(bucket_name)
+	list_keys(bucket)
+
+def do_lastversion():
+	print lastversion()
+	
+def do_edit():
+	print edit(read("DownLoad.txt"), VERSION=lastversion())
 
 if __name__ == "__main__":
 	from sys import argv

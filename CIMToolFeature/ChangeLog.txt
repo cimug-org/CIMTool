@@ -1,5 +1,9 @@
 = CIMTool Change Log =
 
+== Release 1.2.3 ==
+ 
+ * Fix regression: ProjectModelView not responding to selection or double click
+
 == Release 1.2.2 ==
 
  * Fix a jena ConversionException when remapping profile to new CIM namespace.
@@ -7,8 +11,6 @@
  * Add missing wizard for new incremental validation rules.
  
  * Correct title in import schema wizard.
- 
- * Fix regression: ProjectModelView not responding to selection or double click
  
 == Release 1.2.1 ==
 
