@@ -83,11 +83,13 @@ read access is enabled.
 == Getting Started ==
 
 Once CIMTool is installed you probably want to create a CIMTool project.   
-See [wiki:GettingStarted Getting Started] or [wiki:CIMToolTasks Common CIMTool Tasks].
+See [http://cimtool.org/cimtool/wiki/GettingStarted Getting Started] or
+[http://cimtool.org/cimtool/wiki/CIMToolTasks Common CIMTool Tasks].
 
 == Licence ==
 
-CIMTool is provided under the terms of the [wiki:LGPL Lesser GNU Public License Version 2.1].
+CIMTool is provided under the terms of the 
+[http://cimtool.org/cimtool/wiki/LGPL Lesser GNU Public License Version 2.1].
 
 == Problems? ==
 
