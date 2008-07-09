@@ -16,7 +16,7 @@ public class ImportSchema extends FurnishedWizard implements IExportWizard {
 	private SchemaWizardPage main = new SchemaWizardPage();
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Export Schema"); 
+		setWindowTitle("Import Schema"); 
 		setNeedsProgressMonitor(true);
 		main.setTitle(getWindowTitle());
 		main.setDescription("Export the merged schema as an OWL document.");

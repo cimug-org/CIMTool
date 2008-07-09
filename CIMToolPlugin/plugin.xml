@@ -249,6 +249,13 @@
             id="au.com.langdale.cimtoole.wizards.NewXSDRules"
             name="CIMTool XML Schema Rules">
       </wizard>
+      <wizard
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.NewIncRuleset"
+            icon="icons/rules.png"
+            id="au.com.langdale.cimtoole.wizards.NewIncRuleset"
+            name="CIMTool Incremental Validation Rules">
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
