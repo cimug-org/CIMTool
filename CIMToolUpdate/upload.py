@@ -81,14 +81,16 @@ def zipmerge(dst, src, prefix):
 		if info.file_size:
 			content = src.read(info.filename)
 			info.filename = join(prefix, info.filename)
-			print "merging", info.filename, len(content), "bytes"
+			# print "merging", info.filename, len(content), "bytes"
 			dst.writestr(info, content)
 
-def upload_files(bucket, archive_name=ARCHIVE, manifest=Manifest()):
-	zipit(archive_name, manifest) 
-	mirror(bucket, archive_name)
+def upload_files(bucket, manifest=Manifest()):
 	for m in manifest:
 		mirror(bucket, m)
+
+def build_update_dist(archive_name=ARCHIVE, manifest=Manifest()):
+	zipit(archive_name, manifest) 
+	return archive_name
 
 def build_eclipse_dist(kit="eclipse-win32-kit.zip", dist="CIMTool-Eclipse-VERSION.zip", manifest=Manifest()):
 	feature, plugin = list(manifest)[:2]
@@ -107,11 +109,21 @@ def do_build_eclipse():
 	print build_eclipse_dist()
 	
 def do_all(bucket_name=BUCKET):
+	update_dist=build_update_dist()
+	eclipse_dist = build_eclipse_dist()
+	
 	bucket = get_bucket(bucket_name)
 	upload_files(bucket)
-	mirror(bucket, build_eclipse_dist())
+	mirror(bucket, update_dist)
+	mirror(bucket, eclipse_dist)
 	update_wiki()
 	list_keys(bucket)
+
+def do_build():
+	update_dist=build_update_dist()
+	eclipse_dist = build_eclipse_dist()
+	print "built:", update_dist, eclipse_dist
+	
 
 def do_mirror(file_name, bucket_name=BUCKET):
 	print 'mirror', file_name, bucket_name
