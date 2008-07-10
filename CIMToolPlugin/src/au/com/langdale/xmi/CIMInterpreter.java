@@ -165,7 +165,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			clss.removeAll(RDF.type);
 			clss.addProperty(RDF.type, RDFS.Datatype);
 
-			if( truetype != null ) 
+			if( truetype != null && ! clss.equals(truetype)) 
 				clss.addProperty( OWL.sameAs, truetype );
 			if( units != null )
 				clss.addProperty( UML.hasUnits, units);
