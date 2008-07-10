@@ -180,16 +180,10 @@ public class Refactory extends ProfileUtility {
 		ExtendedIterator it = new OntSubject(profile.getSubject()).listSubClasses(false);
 		while( it.hasNext()) {
 			OntResource sub = (OntResource) it.next();
-			if(! sub.equals(OWL.Nothing)) {
+			if(! sub.equals(OWL.Nothing) && ! sub.isAnon()) {
 				it.close();
 				return false;
 			}
-		}
-		
-		ExtendedIterator iu = model.listSubjectsWithProperty(RDF.first, profile.getSubject());
-		if( iu.hasNext()) {
-			iu.close();
-			return false;
 		}
 		
 		return true;
