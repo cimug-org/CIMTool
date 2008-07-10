@@ -421,6 +421,7 @@ public class XMIParser extends XMIModel {
 			    OntClass range;
 			    ObjectProperty property;
 			    int lower =-1, upper=-1;
+				boolean composite, aggregate;
 	
 			    AssociationEndMode( XMLElement element, boolean sideA ) {
 			    	property = createObjectProperty(element);
@@ -434,6 +435,16 @@ public class XMIParser extends XMIModel {
 			    	range = findClass( element, "type");
 			    	if( range == null )
 			    		range = findClass( element, "participant");
+			    	
+			    	String agg = element.getAttributes().getValue("aggregation");
+			    	if( agg != null) {
+			    		composite = agg.equals("composite");
+			    		aggregate = agg.equals("aggregate");
+			    		if( composite )
+			    			property.addProperty(UML.hasStereotype, UML.ofComposite);
+			    		if( aggregate )
+			    			property.addProperty(UML.hasStereotype, UML.ofAggregate);
+			    	}
 			    }
 			    
 				public XMLMode visit(XMLElement element) {
@@ -471,6 +482,11 @@ public class XMIParser extends XMIModel {
 						property.convertToFunctionalProperty();
 					if( other.upper == 1)
 						property.convertToInverseFunctionalProperty();
+		    		if( other.composite )
+		    			property.addProperty(UML.hasStereotype, UML.compositeOf);
+		    		if( other.aggregate )
+		    			property.addProperty(UML.hasStereotype, UML.aggregateOf);
+
 				}
 				
 				/**

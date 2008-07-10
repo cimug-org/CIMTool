@@ -43,6 +43,12 @@ public class UML {
 	public final static Resource concrete = ResourceFactory.createResource(NS + "concrete");
 	public final static Resource preserve = ResourceFactory.createResource(NS + "preserve");
 	
+	// stereotype the two forms of aggregation, each in two directions
+	public final static Resource ofComposite = ResourceFactory.createResource(NS + "ofComposite");
+	public final static Resource ofAggregate = ResourceFactory.createResource(NS + "ofAggregate");
+	public final static Resource compositeOf = ResourceFactory.createResource(NS + "compositeOf");
+	public final static Resource aggregateOf = ResourceFactory.createResource(NS + "aggregateOf");
+	
 	// the stereotype of a model element
 	public final static Property hasStereotype = ResourceFactory.createProperty(NS + "hasStereotype");
 	
@@ -86,6 +92,10 @@ public class UML {
 		model.createIndividual(byreference.getURI(), Stereotype).addLabel("By Reference", null);
 		model.createIndividual(concrete.getURI(), Stereotype).addLabel("Concrete", null);
 		model.createIndividual(preserve.getURI(), Stereotype).addLabel("Preserve", null);
+		model.createIndividual(ofComposite.getURI(), Stereotype).addLabel("Of Composite", null);
+		model.createIndividual(ofAggregate.getURI(), Stereotype).addLabel("Of Aggregate", null);
+		model.createIndividual(compositeOf.getURI(), Stereotype).addLabel("Composite Of", null);
+		model.createIndividual(aggregateOf.getURI(), Stereotype).addLabel("Aggregate Of", null);
 		
 		model.createAnnotationProperty(baseuri.getURI());
 		model.createAnnotationProperty(roleALabel.getURI());
