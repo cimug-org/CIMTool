@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:cc="http://web.resource.org/cc/"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -11,25 +11,18 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="48pt"
    height="48pt"
-   id="svg1725"
+   id="svg1202"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.45"
    sodipodi:docbase="/home/projects/CIMTool-workspace/CIMToolPlugin/graphics"
-   sodipodi:docname="property.svg"
-   inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/property.gif"
+   sodipodi:docname="inverse.svg"
+   inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/inverse.gif"
    inkscape:export-xdpi="72.000000"
    inkscape:export-ydpi="72.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    sodipodi:modified="true">
   <defs
      id="defs3">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 30 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="60 : 30 : 1"
-       inkscape:persp3d-origin="30 : 20 : 1"
-       id="perspective15" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient1701">
@@ -52,20 +45,6 @@
        y1="20.561615"
        x2="46.020683"
        y2="20.561602" />
-    <marker
-       style="overflow:visible;"
-       id="Arrow2L"
-       refX="0.0"
-       refY="0.0"
-       orient="auto"
-       inkscape:stockid="Arrow2L">
-      <path
-         transform="scale(1.1) translate(-5,0)"
-         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
-         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
-         id="path1828"
-         sodipodi:nodetypes="cccc" />
-    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -75,28 +54,19 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8"
-     inkscape:cx="24"
-     inkscape:cy="31.3125"
+     inkscape:cx="31.811821"
+     inkscape:cy="28.875"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
-     inkscape:window-width="926"
-     inkscape:window-height="654"
-     inkscape:window-x="30"
-     inkscape:window-y="118">
-    <inkscape:grid
-       id="GridFromPre046Settings"
-       type="xygrid"
-       originx="0px"
-       originy="0.0000000pt"
-       spacingx="1.0000000pt"
-       spacingy="1.0000000pt"
-       color="#0000ff"
-       empcolor="#0000ff"
-       opacity="0.2"
-       empopacity="0.4"
-       empspacing="5" />
-  </sodipodi:namedview>
+     gridspacingy="1.0000000pt"
+     gridspacingx="1.0000000pt"
+     gridoriginy="0.0000000pt"
+     gridoriginx="0.0000000pt"
+     inkscape:window-width="749"
+     inkscape:window-height="667"
+     inkscape:window-x="620"
+     inkscape:window-y="83" />
   <metadata
      id="metadata4">
     <rdf:RDF>
@@ -112,10 +82,23 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
-    <path
-       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:2.0656426;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block"
-       d="M 6.973748,29.81784 L 51.951489,30.182158"
-       id="path3117"
-       sodipodi:nodetypes="cc" />
+    <g
+       id="g2166"
+       transform="matrix(1.6264438,0,0,1.6264438,-30.045532,-18.793314)">
+      <path
+         sodipodi:nodetypes="cc"
+         id="path3132"
+         d="M 34.478871,29.921875 L 53.22887,30.078125"
+         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block" />
+      <path
+         id="path3133"
+         d="M 30.10387,36.370142 L 20.317647,29.999999 L 30.10387,23.629858 L 39.890094,30 L 30.10387,36.370142 z "
+         style="color:#000000;fill:#e21c53;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:1.3534528;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block" />
+      <path
+         sodipodi:nodetypes="ccc"
+         id="path2494"
+         d="M 43.784445,23.629858 L 53.570669,29.999999 L 43.784445,36.370142"
+         style="color:#000000;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block" />
+    </g>
   </g>
 </svg>

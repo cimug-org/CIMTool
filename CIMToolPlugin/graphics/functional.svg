@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,26 +13,23 @@
    height="48pt"
    id="svg1725"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
+   inkscape:version="0.46"
    sodipodi:docbase="/home/projects/CIMTool-workspace/CIMToolPlugin/graphics"
    sodipodi:docname="functional.svg"
-   inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/functional.gif"
+   inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/property.gif"
    inkscape:export-xdpi="72.000000"
    inkscape:export-ydpi="72.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    sodipodi:modified="true">
   <defs
      id="defs3">
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient1701"
-       id="linearGradient3157"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="scale(1.548168,0.645925)"
-       x1="3.8351779"
-       y1="20.561615"
-       x2="46.020683"
-       y2="20.561602" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 30 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="60 : 30 : 1"
+       inkscape:persp3d-origin="30 : 20 : 1"
+       id="perspective15" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient1701">
@@ -48,13 +45,13 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient1701"
-       id="linearGradient1706"
+       id="linearGradient3157"
+       gradientUnits="userSpaceOnUse"
        gradientTransform="scale(1.548168,0.645925)"
        x1="3.8351779"
        y1="20.561615"
        x2="46.020683"
-       y2="20.561602"
-       gradientUnits="userSpaceOnUse" />
+       y2="20.561602" />
     <marker
        style="overflow:visible;"
        id="Arrow2L"
@@ -77,20 +74,32 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8"
-     inkscape:cx="24.342241"
-     inkscape:cy="28.367112"
+     inkscape:zoom="7.7666667"
+     inkscape:cx="30"
+     inkscape:cy="30"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
-     gridspacingy="1.0000000pt"
-     gridspacingx="1.0000000pt"
-     gridoriginy="0.0000000pt"
-     gridoriginx="0.0000000pt"
-     inkscape:window-width="749"
-     inkscape:window-height="682"
-     inkscape:window-x="56"
-     inkscape:window-y="70" />
+     inkscape:window-width="926"
+     inkscape:window-height="654"
+     inkscape:window-x="30"
+     inkscape:window-y="118">
+    <inkscape:grid
+       id="GridFromPre046Settings"
+       type="xygrid"
+       originx="0px"
+       originy="0.0000000pt"
+       spacingx="1.0000000pt"
+       spacingy="1.0000000pt"
+       color="#0000ff"
+       empcolor="#0000ff"
+       opacity="0.2"
+       empopacity="0.4"
+       empspacing="5"
+       units="pt"
+       visible="true"
+       enabled="true" />
+  </sodipodi:namedview>
   <metadata
      id="metadata4">
     <rdf:RDF>
@@ -106,23 +115,15 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
-    <g
-       id="g2172"
-       transform="matrix(1.1450463,-1.1450463,1.1450463,1.1450463,-11.82594,22.373032)">
-      <path
-         sodipodi:nodetypes="cc"
-         id="path3132"
-         d="M 13.245466,19.795819 L 26.393232,33.164556"
-         style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block" />
-      <path
-         id="path3133"
-         d="M 5.5922604,21.26184 L 3.1767264,9.8375644 L 14.601001,12.253099 L 17.016536,23.677375 L 5.5922604,21.26184 z "
-         style="color:#000000;fill:#ecd793;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:1.3534528;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block" />
-      <path
-         sodipodi:nodetypes="ccc"
-         id="path2494"
-         d="M 24.274629,21.926726 L 26.690164,33.351001 L 15.265888,30.935467"
-         style="color:#000000;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:1.3534528;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block" />
-    </g>
+    <path
+       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:2.0656426;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block"
+       d="M 6.973748,29.81784 L 51.951489,30.182158"
+       id="path3117"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="color:#000000;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e21c53;stroke-width:2.23659992;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:block"
+       d="M 36.768898,19.473251 L 52.940773,29.999997 L 36.768898,40.526749"
+       id="path2494"
+       sodipodi:nodetypes="ccc" />
   </g>
 </svg>

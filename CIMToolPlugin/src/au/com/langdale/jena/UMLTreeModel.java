@@ -294,12 +294,14 @@ public class UMLTreeModel extends JenaTreeModelBase {
 					OntProperty pt = (OntProperty) it.next();
 					if( pt.isDatatypeProperty())
 						add( new DatatypeNode(pt));
-					else if( pt.isFunctionalProperty()) {
-						if( pt.getRange().hasProperty(UML.hasStereotype, UML.enumeration))
-							add( new EnumPropertyNode(pt));
-						else
-							add( new FunctionalNode(pt));
-					}
+					else if( pt.getRange() != null && pt.getRange().hasProperty(UML.hasStereotype, UML.enumeration))
+						add( new EnumPropertyNode(pt));
+					else if(pt.hasProperty(UML.hasStereotype, UML.aggregateOf)) 
+						add( new AggregateNode(pt));
+					else if(pt.hasProperty(UML.hasStereotype, UML.compositeOf)) 
+						add( new CompositeNode(pt));
+					else if( pt.isFunctionalProperty()) 
+						add( new FunctionalNode(pt));
 					else if( pt.isInverseFunctionalProperty())
 						add( new InverseNode(pt));
 					else 
@@ -562,6 +564,26 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		@Override
 		public boolean getErrorIndicator() {
 			return subject.hasProperty(LOG.hasProblems);
+		}
+	}
+	
+	/**
+	 * A aggregate object property.
+	 * 
+	 */
+	public class AggregateNode extends PropertyNode {
+		public AggregateNode(OntProperty prop) {
+			super(prop);
+		}
+	}
+	
+	/**
+	 * A composite object property.
+	 * 
+	 */
+	public class CompositeNode extends PropertyNode {
+		public CompositeNode(OntProperty prop) {
+			super(prop);
 		}
 	}
 	
