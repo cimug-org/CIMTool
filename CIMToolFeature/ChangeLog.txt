@@ -1,5 +1,15 @@
 = CIMTool Change Log =
 
+== Release 1.2.4 ==
+
+ * change schema tree icons to reflect UML aggregation and composition
+
+ * the 'make leaf classes concrete' option in the profile editor now does exactly that and ignores other
+
+ * capture aggregation annotations from Unisys XMI input
+
+ * support for non-standard primitive to XSD part II mappings
+
 == Release 1.2.3 ==
  
  * Fix regression: ProjectModelView not responding to selection or double click
