@@ -10,12 +10,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
 import au.com.langdale.cimtoole.editors.profile.Detail;
+import au.com.langdale.cimtoole.editors.profile.Hierarchy;
 import au.com.langdale.cimtoole.editors.profile.Populate;
 import au.com.langdale.cimtoole.editors.profile.Stereotype;
 import au.com.langdale.cimtoole.editors.profile.Summary;
@@ -42,6 +45,7 @@ public class ProfileEditor extends ModelEditor {
 	@Override
 	protected void createPages() {
 		addPage(new Populate("Add/Remove", this));
+		addPage(new Hierarchy("Hierarchy", this));
 		addPage(new Detail("Element Detail", this));
 		//addPage(new Refine("Refine Type", this));
 		addPage( new Stereotype("Stereotypes", this));
@@ -88,7 +92,7 @@ public class ProfileEditor extends ModelEditor {
 	@Override
 	protected void hookOutline(ModelOutliner outline) {
 		super.hookOutline(outline);
-		outline.getTreeViewer().addDoubleClickListener(drill);
+		listenToDoubleClicks(outline.getTreeViewer());
 	}
 
 	public void modelCached(IResource key) {
@@ -144,12 +148,16 @@ public class ProfileEditor extends ModelEditor {
 
 	private IDoubleClickListener drill = new IDoubleClickListener() {
 		public void doubleClick(DoubleClickEvent event) {
-			ITreeSelection selection = (ITreeSelection) event.getSelection();
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			Node node = (Node) selection.getFirstElement();
 			OntResource subject = node.getSubject();
 			drillTo(subject);
 		}
 	};
+	
+	public void listenToDoubleClicks(StructuredViewer source) {
+		source.addDoubleClickListener(drill);
+	}
 
 	public boolean isLoaded() {
 		return profileModel != null && backgroundModel != null;

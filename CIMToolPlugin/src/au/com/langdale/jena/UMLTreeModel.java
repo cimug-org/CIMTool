@@ -322,8 +322,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			addDirectProperties(subject, results);
 			
 			if( inherited ) {
-				//FIXME: the jena listSuperClasses method is unsafe - will throw
-				ExtendedIterator it = subject.listSuperClasses(false);
+				ExtendedIterator it = new OntSubject(subject).listSuperClasses(false);
 				while( it.hasNext()) {
 					addDirectProperties((Resource)it.next(), results);
 				}

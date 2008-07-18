@@ -22,7 +22,6 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Add or remove a profile class from the profile class hierarchy with side effects.
@@ -32,28 +31,34 @@ public class Refactory extends ProfileUtility {
 	private ProfileMap map;
 	private String namespace;
 	private OntModel profileModel;
+	private OntModel backgroundModel;
 	
 	public Refactory(OntModel profileModel, OntModel backgroundModel, String namespace) {
 		this.profileModel = profileModel;
+		this.backgroundModel = backgroundModel;
 		this.model = Models.merge(profileModel, backgroundModel);
 		this.namespace = namespace;
 	}
 	
-	public void add(ProfileClass profile) {
-		add(profile, true);
+	public OntModel getModel() {
+		return model;
 	}
 	
+	public void refresh() {
+		map = null;
+		this.model = Models.merge(profileModel, backgroundModel);
+	}
 	
-	public void add(ProfileClass profile, boolean link) {
-		OntClass base = profile.getBaseClass();
-		OntClass clss = profile.getSubject();
+	public void add(OntClass clss, OntClass base, boolean link) {
 
 		if( map != null) 
 			map.add(base, clss);
 		
-		if(! link)
-			return;
-		
+		if(link)
+			linkToHierarchy(base, clss);
+	}
+
+	private void linkToHierarchy(OntClass base, OntClass clss) {
 		if( map == null )
 			buildMap();
 		
@@ -114,15 +119,12 @@ public class Refactory extends ProfileUtility {
 		//addProps(profile, props);
 	}
 	
-	public void remove(ProfileClass profile) {
-		if( map == null)
-			buildMap();
-
-		OntClass clss = profile.getSubject();
-		map.removeProfile(clss);
+	public void remove(OntClass clss) {
+		if( map != null)
+			map.removeProfile(clss);
 		
 		// super profiles to be inherited by sub profiles
-		Set supers = asSet(clss.listSuperClasses(true));
+		Set supers = asSet(new ProfileClass(clss).getSuperClasses());
 		
 		// TODO: properties to be duplicated in sub profiles
 		//PropertyAccumulator props = new PropertyAccumulator();
@@ -143,7 +145,7 @@ public class Refactory extends ProfileUtility {
 			// link its superclasses
 			Iterator jt = supers.iterator();
 			while (jt.hasNext()) 
-				sub.addSuperClass((OntClass) jt.next());
+				sub.addSuperClass((OntResource) jt.next());
 		}
 	}
 	
@@ -235,8 +237,8 @@ public class Refactory extends ProfileUtility {
 		//removeProps(profile, props);
 		//removeSupers(profile);
 		
-		ProfileClass parent = findOrCreateNamedProfile(profile.getBaseClass());
-		profile.getSubject().addSuperClass(parent.getSubject());
+		OntClass parent = findOrCreateNamedProfile(profile.getBaseClass());
+		profile.getSubject().addSuperClass(parent);
 //		allocateProperties(parent, props);
 //		allocateProperties(props);
 	}
@@ -245,24 +247,39 @@ public class Refactory extends ProfileUtility {
 		removeSupers(profile);
 	}
 
-	public ProfileClass findOrCreateNamedProfile(OntClass base) {
-		OntClass parent = findNamedProfile(base);
-		if( parent == null ) {
-			parent = model.createClass(namespace + base.getLocalName());
-			parent.addSuperClass(base);
-			ProfileClass profile = new ProfileClass(parent);
-			add(profile);
-			return profile;
+	public OntClass findOrCreateNamedProfile(OntClass base) {
+		OntClass clss = findNamedProfile(base);
+		if( clss == null ) {
+			clss = model.createClass(namespace + base.getLocalName());
+			clss.addSuperClass(base);
+			add(clss, base, true);
 		}
-		return new ProfileClass(parent);
+		return clss;
+	}
+	
+	public OntClass findBaseClass(OntClass clss) {
+		if( map == null)
+			buildMap();
+		return map.getBase(clss);
 	}
 
 	public OntClass findNamedProfile(OntClass base) {
 		if( map == null)
 			buildMap();
 
-		OntClass parent = map.chooseBestProfile(base);
-		return parent;
+		return map.chooseBestProfile(base);
+	}
+	
+	public Collection findRelatedProfiles(OntClass base, boolean subclass, boolean unique) {
+		if( map == null)
+			buildMap();
+		return map.findRelatedProfiles(base, subclass, unique);
+	}
+	
+	public Collection findProfiles(OntClass base) {
+		if( map == null)
+			buildMap();
+		return map.findProfiles(base);
 	}
 
 //  FIXME: unused profile property operations follow.. 	
@@ -281,7 +298,7 @@ public class Refactory extends ProfileUtility {
 		Collection all = props.getAll();
 		while( ! all.isEmpty()) {
 			PropertySpec spec = (PropertySpec) all.iterator().next();
-			ProfileClass profile = findOrCreateNamedProfile(spec.base_domain);
+			ProfileClass profile = new ProfileClass(findOrCreateNamedProfile(spec.base_domain));
 			allocateProperties(profile, props);
 		}
 	}

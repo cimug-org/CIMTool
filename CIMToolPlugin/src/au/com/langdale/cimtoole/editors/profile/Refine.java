@@ -129,7 +129,7 @@ public class Refine extends FurnishedEditor {
 					enode.getProfile().addUnionMember(sub);
 				}
 				else if( sub == null) {
-					enode.getProfile().addUnionMember(master.getRefactory().findOrCreateNamedProfile(subject.asClass()).getSubject());
+					enode.getProfile().addUnionMember(master.getRefactory().findOrCreateNamedProfile(subject.asClass()));
 				}
 			}
 		}

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import au.com.langdale.jena.Models;
+import au.com.langdale.jena.OntSubject;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
@@ -125,9 +126,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 				OntClass clss = (OntClass)it.next();
 				OntClass profile = hierarchy.createClass(getURI(clss));
 				
-				Iterator jt = clss.listSuperClasses(false);// FIXME: this may throw
+				Iterator jt = new OntSubject(clss).listSuperClasses(false);
 				while(jt.hasNext()) {
-					OntClass superClass = (OntClass) jt.next();
+					OntResource superClass = (OntResource) jt.next();
 					if( bases.contains(superClass))
 						profile.addSuperClass(hierarchy.createClass(getURI(superClass)));
 				}
@@ -272,9 +273,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		while(it.hasNext()) {
 			OntClass profile = hierarchy.createOntResource((String)it.next()).asClass();
 		
-			Iterator jt = profile.listSuperClasses(true);// FIXME: this may throw
+			Iterator jt = new OntSubject(profile).listSuperClasses(true);
 			while(jt.hasNext()) {
-				OntClass superClass = (OntClass) jt.next();
+				OntResource superClass = (OntResource) jt.next();
 				emitSuperClass(profile.getURI(), superClass.getURI());
 			}
 		}

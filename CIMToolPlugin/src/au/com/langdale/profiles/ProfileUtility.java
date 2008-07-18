@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import au.com.langdale.jena.OntSubject;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 
 import com.hp.hpl.jena.ontology.OntClass;
@@ -122,20 +123,23 @@ public class ProfileUtility {
 		public Set findRelatedProfiles(OntClass base, boolean subclass, boolean unique) {
 			HashSet result = new HashSet();
 			
-			// consider relatives of the seed base
-			Iterator it = subclass? base.listSubClasses(): base.listSuperClasses();
+			// consider relatives of the base
+			OntSubject subject = new OntSubject(base);
+			Iterator it = subclass? subject.listSubClasses(false): subject.listSuperClasses(false);
 			while (it.hasNext()) {
-				OntClass related = (OntClass) it.next();
-				if( !related.equals(base)) {
-					Collection cands = findProfiles(related);
+				OntResource related = (OntResource) it.next();
+				if( related.isClass() && !related.equals(base)) {
+					
+					// consider the profiles of each relative 
+					Collection cands = findProfiles(related.asClass());
 					
 					if( ! cands.isEmpty()) {
 						if(unique) {
-							// consider 'best' profile for this base
+							// add 'best' profile for this base
 							addBestClass(result, chooseBestProfile(cands), subclass);
 						}
 						else {
-							// consider all candidate profiles
+							// add all candidate profiles
 							Iterator jt = cands.iterator();
 							while (jt.hasNext()) 
 								addBestClass(result, (OntClass) jt.next(), subclass);

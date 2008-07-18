@@ -106,13 +106,13 @@ public class Populate extends FurnishedEditor {
 		OntResource subject = node.getSubject();
 		OntResource child = target.create(subject);
 		if(child != null && child.isClass() && ! child.isAnon()) {
-			master.getRefactory().add(new ProfileClass(child.asClass()), link);
+			master.getRefactory().add(child.asClass(), subject.asClass(), link);
 		}
 	}
 
 	public void profileRemove(Node target, Node node) {
 		if( node instanceof TypeNode ) 
-			master.getRefactory().remove(new ProfileClass(node.getSubject().asClass()));
+			master.getRefactory().remove(node.getSubject().asClass());
 		node.destroy();
 		InfGraph ig = (InfGraph) target.getSubject().getModel().getGraph();
 		ig.rebind();
@@ -174,7 +174,7 @@ public class Populate extends FurnishedEditor {
 				rightBinding.bind("right", "duplicates", this, master);
 				
 				left.addSelectionChangedListener(new Target("right"));
-				left.addDoubleClickListener(drill);
+				master.listenToDoubleClicks(left);
 
 				TreeViewer right = getTreeViewer("right");
 				right.addSelectionChangedListener(new Target("left"));
@@ -235,15 +235,6 @@ public class Populate extends FurnishedEditor {
 					profileRemove(master.getNode(), node);
 				}
 			};
-
-			private IDoubleClickListener drill = new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent event) {
-					ITreeSelection selection = (ITreeSelection) event.getSelection();
-					Node node = (Node) selection.getFirstElement();
-					OntResource subject = node.getSubject();
-					master.drillTo(subject);
-				}
-			};
 			
 			private SelectionListener named = new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
@@ -254,8 +245,8 @@ public class Populate extends FurnishedEditor {
 						if( node.getSubject().isAnon() ) {
 							OntClass baseClass = node.getProfile().getBaseClass();
 							node.destroy();
-							ProfileClass member = master.getRefactory().findOrCreateNamedProfile(baseClass);
-							profile.addUnionMember(member.getSubject());
+							OntClass member = master.getRefactory().findOrCreateNamedProfile(baseClass);
+							profile.addUnionMember(member);
 //							enode.structureChanged();
 						}
 						else {
