@@ -1,5 +1,13 @@
 = CIMTool Change Log =
 
+== Release 1.2.5 ==
+
+ * new feature: add a class hierarchy page to the profile editor
+ 
+ * new feature: allow more than one named profile per information model class
+ 
+ * correction to search feature: failed to display matches in some cases
+
 == Release 1.2.4 ==
 
  * change schema tree icons to reflect UML aggregation and composition
