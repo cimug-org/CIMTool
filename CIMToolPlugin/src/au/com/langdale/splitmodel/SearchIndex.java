@@ -140,11 +140,21 @@ public class SearchIndex {
 					
 				}
 			};
-		}
+		}		
 
 		@Override
 		public int size() {
-			return limit;
+			Iterator inner = matches.iterator();
+			int count = 0;
+			while( count < limit ) {
+				if( ! inner.hasNext())
+					break;
+				String cand = (String) inner.next();
+				if( ! cand.startsWith(prefix))
+					break;
+				count++;
+			}
+			return count;
 		}
 	}
 }
