@@ -212,6 +212,18 @@ public abstract class ContentBuilder extends Plumbing {
 		
 	};
 	
+	private SelectionListener refreshSelectionListener = new SelectionListener() {
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+			doRefresh();
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			doRefresh();
+		}
+		
+	};
+	
 	private ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			fireWidgetEvent();
@@ -294,8 +306,6 @@ public abstract class ContentBuilder extends Plumbing {
 			}
 				
 			register(widget);
-			if( style != SWT.PUSH)
-				widget.addSelectionListener(selectionListener);
 			if( listener != null)
 				widget.addSelectionListener(listener);
 			return widget;
@@ -838,15 +848,19 @@ public abstract class ContentBuilder extends Plumbing {
 	}
 	
 	public Template CheckBox(String text) {
-		return new ButtonTemplate(SWT.CHECK, text, text, null, null);
+		return new ButtonTemplate(SWT.CHECK, text, text, null, selectionListener);
 	}
 	
 	public Template CheckBox(String name, String text) {
-		return new ButtonTemplate(SWT.CHECK, name, text, null, null);
+		return new ButtonTemplate(SWT.CHECK, name, text, null, selectionListener);
+	}
+	
+	public Template ViewCheckBox(String name, String text) {
+		return new ButtonTemplate(SWT.CHECK, name, text, null, refreshSelectionListener);
 	}
 	
 	public Template RadioButton(String name, String text) {
-		return new ButtonTemplate(SWT.RADIO, name, text, null, null);
+		return new ButtonTemplate(SWT.RADIO, name, text, null, selectionListener);
 	}
 	
 	public Template PushButton(String name, String text, SelectionListener listener) {

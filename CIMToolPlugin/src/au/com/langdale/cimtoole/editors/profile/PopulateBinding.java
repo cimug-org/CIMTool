@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.swt.widgets.Button;
 
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -193,10 +194,12 @@ public class PopulateBinding  {
 		
 		ProfileEditor master;
 		protected Set bases;
+		protected Button control;
 
-		public void bind(String name, Plumbing plumbing, ProfileEditor master ) {
+		public void bind(String name, String duplicates, Plumbing plumbing, ProfileEditor master) {
 			this.master = master;
-			super.bind(name, plumbing);
+			this.control = (Button) plumbing.getControl(duplicates);
+			super.bind(name, plumbing, duplicates);
 		}
 
 		public void refresh() {
@@ -204,42 +207,41 @@ public class PopulateBinding  {
 			Node node = master.getNode();
 			Resource offer;
 			Filter filter;
-			boolean expand;
 
 			if (node instanceof NaturalNode) {
 				offer = ((NaturalNode)node).getBaseClass();
 				filter = new NaturalFilter();
-				expand = true;
 			}
 			else if( node instanceof ElementNode) {
 				offer = ((ElementNode)node).getBaseProperty().getRange();
 				filter = new ElementFilter();
-				expand = true;
 			}
 			else if( node instanceof CatalogNode || node instanceof EnvelopeNode) {
 				offer = UML.global_package;
 				filter = new RootFilter();
-				expand = false;
 			}
 			else {
 				offer = null;
 				filter = null;
-				expand = false;
 			}
 			
 			bases = new HashSet();
-			Iterator it = node.iterator();
-			while (it.hasNext()) {
-				ModelNode child = (ModelNode) it.next();
-				bases.add(child.getBase());
-			}
 			
+			boolean duplicates = (node instanceof CatalogNode) && control.getSelection();
+			if(! duplicates) {
+				Iterator it = node.iterator();
+				while (it.hasNext()) {
+					ModelNode child = (ModelNode) it.next();
+					bases.add(child.getBase());
+				}
+			}
+
+			TreePath[] elements = getViewer().getExpandedTreePaths();
 			getTree().setRootResource((OntResource)null);
 			getTree().setOntModel(master.getProjectModel());
 			setFilter(filter);
 			getTree().setRootResource(offer);
-//			if( expand )
-//				getViewer().expandAll();
+			getViewer().setExpandedTreePaths(elements);
 		}
 		
 		public OntModel getOntModel() {

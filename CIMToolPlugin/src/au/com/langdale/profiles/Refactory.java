@@ -40,12 +40,22 @@ public class Refactory extends ProfileUtility {
 	}
 	
 	public void add(ProfileClass profile) {
-		if( map == null)
-			buildMap();
-		
+		add(profile, true);
+	}
+	
+	
+	public void add(ProfileClass profile, boolean link) {
 		OntClass base = profile.getBaseClass();
 		OntClass clss = profile.getSubject();
-		map.add(base, clss);
+
+		if( map != null) 
+			map.add(base, clss);
+		
+		if(! link)
+			return;
+		
+		if( map == null )
+			buildMap();
 		
 		Set supers = map.findRelatedProfiles(base, false, true);
 		Set subs = map.findRelatedProfiles(base, true, false);

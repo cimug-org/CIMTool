@@ -62,10 +62,14 @@ public abstract class  JenaTreeBinding implements Binding {
 	 * @param plumbing: the event plumbing to which the TreeViewer is connected. 
 	 */
 	public void bind(String name, Plumbing plumbing) {
+		bind(name, plumbing, null);
+	}
+	
+	protected void bind(String name, Plumbing plumbing, Object after) {
 		viewer = (TreeViewer) plumbing.getViewer(name);
 		viewer.setContentProvider(provider);
 		viewer.setInput(tree);
-		plumbing.addBinding(this);
+		plumbing.addBinding(this, after);
 	}
 
 	protected JenaTreeModelBase getTree() {

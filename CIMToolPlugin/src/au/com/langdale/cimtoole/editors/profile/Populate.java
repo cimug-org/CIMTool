@@ -58,23 +58,23 @@ public class Populate extends FurnishedEditor {
 	
 	LeftBinding leftBinding = new LeftBinding();
 	RightBinding rightBinding = new RightBinding();
-
+	
 	public Populate(String name, ProfileEditor master) {
 		super(name);
 		this.master = master;
 	}
 
-	public void profileAdd(Node target, Node node) {
+	public void profileAdd(Node target, Node node, boolean link) {
 		if( target instanceof ElementNode ) {
-			profileAddSingle(target, node);
+			profileAddSingle(target, node, link);
 		}
 		else {
 			Collection args = new ArrayList();
 			buildArguments(args, node);
 			if(args.size() < 50 || confirm(node.toString(), args.size())) {
 				for (Iterator it = args.iterator(); it.hasNext();) 
-					profileAddSingle(target, (Node) it.next());
-
+					profileAddSingle(target, (Node) it.next(), link);
+				target.structureChanged(); 
 			}
 		}
 	}
@@ -102,11 +102,12 @@ public class Populate extends FurnishedEditor {
 			name + " will add " + many + " elements to the profile. Continue?");
 	}
 
-	private void profileAddSingle(Node target, Node node) {
+	private void profileAddSingle(Node target, Node node, boolean link) {
 		OntResource subject = node.getSubject();
 		OntResource child = target.create(subject);
-		if(child != null && child.isClass() && ! child.isAnon())
-			master.getRefactory().add(new ProfileClass(child.asClass()));
+		if(child != null && child.isClass() && ! child.isAnon()) {
+			master.getRefactory().add(new ProfileClass(child.asClass()), link);
+		}
 	}
 
 	public void profileRemove(Node target, Node node) {
@@ -149,7 +150,8 @@ public class Populate extends FurnishedEditor {
 										Label("info", "Select profile members:"))),
 									Grid(Group(
 										Label("top", "Select classes or packages to profile."),
-										Right(PushButton("search", "Search by name", "search", search))))
+										ViewCheckBox("duplicates", "Allow multiple profiles per class"),
+										Right( PushButton("search", "Search by name", "search", search))))
 								)
 							),
 							Group( 
@@ -169,7 +171,7 @@ public class Populate extends FurnishedEditor {
 				//JenaTreeProvider.displayJenaTree(left, master.getSubmodel().getElementTreeModel());
 				
 				leftBinding.bind("left", this, master);
-				rightBinding.bind("right", this, master);
+				rightBinding.bind("right", "duplicates", this, master);
 				
 				left.addSelectionChangedListener(new Target("right"));
 				left.addDoubleClickListener(drill);
@@ -222,7 +224,7 @@ public class Populate extends FurnishedEditor {
 			private SelectionListener toLeft = new Gather("right") {
 				@Override
 				protected void handle(Node node) {
-					profileAdd(master.getNode(), node);
+					profileAdd(master.getNode(), node, ! getButton("duplicates").getSelection());
 				}
 			};
 			
@@ -305,7 +307,7 @@ public class Populate extends FurnishedEditor {
 				boolean anon = master.getNode().getSubject().isAnon() ^ invert;
 				return anon? "Local": "Global";
 			}
-
+			
 			@Override
 			public void refresh() {
 				Node node = master.getNode();

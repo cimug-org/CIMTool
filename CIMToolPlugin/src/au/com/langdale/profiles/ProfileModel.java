@@ -90,7 +90,6 @@ public class ProfileModel extends JenaTreeModelBase {
 		public OntResource create(String uri) {
 			OntClass child = getOntModel().createClass(uri);
 			child.addSuperClass(message);
-			structureChanged();
 			return child;
 		}
 
@@ -101,9 +100,18 @@ public class ProfileModel extends JenaTreeModelBase {
 		public OntResource create(OntResource base) {
 			if( ! base.isClass())
 				return null;
-			OntClass child = getOntModel().createClass(getNamespace() + base.getLocalName());
+			
+			String uri = getNamespace() + base.getLocalName();
+			OntResource probe = getOntModel().createOntResource(uri);
+			
+			int ix = 1;
+			while( probe.isClass()) {
+				probe = getOntModel().createOntResource(uri + ix);
+				ix++;
+			}
+			
+			OntClass child = getOntModel().createClass(probe.getURI());
 			child.addSuperClass(base);
-			structureChanged();
 			return child;
 		}
 
@@ -436,7 +444,6 @@ public class ProfileModel extends JenaTreeModelBase {
 			public OntResource create(OntResource base) {
 				if( base.isClass() && ! isDatatype()) {
 					OntResource child = profile.createUnionMember(base, true);
-					structureChanged();
 					return child;
 				} else 
 					return null;
@@ -444,7 +451,6 @@ public class ProfileModel extends JenaTreeModelBase {
 			
 			protected void destroy(SubTypeNode child) {
 				profile.removeUnionMember(child.getSubject());
-				structureChanged();
 			}
 
 			@Override
@@ -518,12 +524,10 @@ public class ProfileModel extends JenaTreeModelBase {
 			if( base.isProperty()) {
 				OntProperty prop = base.asProperty();
 				OntResource child = profile.createAllValuesFrom(prop, true);
-				structureChanged();  
 				return child;
 			}
 			else if( base.hasRDFType(profile.getBaseClass())) {
 				profile.addIndividual(base);
-				structureChanged();
 				return base;
 			}
 			else {
@@ -533,7 +537,6 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		protected void destroy(ElementNode child) {
 			profile.remove(child.getBase().asProperty());
-			structureChanged();
 		}
 		
 		@Override
@@ -577,12 +580,10 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		protected void destroy(EnumValueNode child) {
 			profile.removeIndividual(child.getSubject());
-			structureChanged();
 		}
 		
 		protected void destroy(SuperTypeNode child) {
 			profile.removeSuperClass(child.getSubject());
-			structureChanged();
 		}
 	}
 	
@@ -652,7 +653,6 @@ public class ProfileModel extends JenaTreeModelBase {
 			if( ! type.isClass())
 				return null;
 			OntClass child = profile.createSomeValuesFrom(MESSAGE.about, type);
-			structureChanged();
 			return child;
 		}
 		/**
@@ -660,7 +660,6 @@ public class ProfileModel extends JenaTreeModelBase {
 		 */
 		protected void destroy(MessageNode child) {
 			profile.remove(MESSAGE.about, child.getProfile().getSubject());
-			structureChanged();
 		}
 
 		@Override

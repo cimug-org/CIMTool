@@ -107,6 +107,18 @@ public class ProfileUtility {
 			return chooseBestProfile(findProfiles(base));
 		}
 
+		/**
+		 * Construct a set of profile classes related to an information class.
+		 * 
+		 * The result is a set of profile classes.  If subclass is true, these will be
+		 * profiles of subclasses of the base class, otherwise profiles of superclasses. 
+		 * 
+		 * Only the direct sub or super classes will be included.  
+		 * 
+		 * If unique is true there will be only be one profile class in the result for each
+		 * information class.
+		 *  
+		 */
 		public Set findRelatedProfiles(OntClass base, boolean subclass, boolean unique) {
 			HashSet result = new HashSet();
 			
