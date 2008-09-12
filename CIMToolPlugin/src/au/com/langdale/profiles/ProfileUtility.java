@@ -9,11 +9,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import au.com.langdale.jena.OntSubject;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.util.MultiMap;
 
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -27,29 +29,9 @@ public class ProfileUtility {
 	/**
 	 * A multi-map from base classes to profile classes.
 	 */
-	public static class BaseMap {
-		private Map trace = new HashMap(); 		// base class to set of original profile classes
-		
+	public static class BaseMap extends MultiMap {
 		public void add(OntClass base, OntClass clss) {
-			// record the back trace
-			Set traces = (Set) trace.get(base);
-			if( traces == null ) {
-				traces = new HashSet();
-				trace.put(base, traces);
-			}
-			traces.add(clss);
-		}
-
-		public Collection findProfiles(OntClass base) {
-			Set traces = (Set) trace.get(base);
-			if( traces == null ) 
-				return Collections.EMPTY_SET;
-
-			return traces;
-		}
-		
-		public void remove(OntClass base, OntClass clss) {
-			findProfiles(base).remove(clss);
+			putRaw(base, clss);
 		}
 	}
 	
@@ -105,7 +87,7 @@ public class ProfileUtility {
 		 * @return the preferred profile
 		 */
 		public OntClass chooseBestProfile(OntClass base) {
-			return chooseBestProfile(findProfiles(base));
+			return chooseBestProfile(find(base));
 		}
 
 		/**
@@ -131,7 +113,7 @@ public class ProfileUtility {
 				if( related.isClass() && !related.equals(base)) {
 					
 					// consider the profiles of each relative 
-					Collection cands = findProfiles(related.asClass());
+					Collection cands = find(related.asClass());
 					
 					if( ! cands.isEmpty()) {
 						if(unique) {
@@ -150,7 +132,59 @@ public class ProfileUtility {
 			return result;
 		}
 	}
-
+	/**
+	 * A specification of a property profile. 
+	 */
+	public static class PropertyGroup {
+		private final OntProperty prop;
+		private PropertySpec summary;
+		private Collection restrictions = new LinkedList();
+		public PropertyGroup(PropertySpec spec) {
+			summary = spec;
+			prop = spec.prop;
+			restrictions.add(spec);
+		}
+		public OntProperty getProperty() {
+			return prop;
+		}
+		public PropertySpec getSummary() {
+			return summary;
+		}
+		public Collection getRestrictions() {
+			return restrictions;
+		}
+		
+		public void add(PropertySpec other) {
+			mergeSummary(other);
+			addRestriction(other);
+		}
+		
+		private void mergeSummary(PropertySpec other) {
+			if( summary.base_domain.equals(other.base_domain)) {
+				summary = new PropertySpec(summary, other);
+			}
+			else {
+				PropertySpec dominant = summary.selectDominant(other);
+				if( dominant != null) 
+					summary = dominant;
+				else 
+					summary = new PropertySpec(prop, null, null);
+			}
+		}
+		
+		private void addRestriction(PropertySpec other) {
+			for (Iterator jt = restrictions.iterator(); jt.hasNext();) {
+				PropertySpec extant = (PropertySpec) jt.next();
+				if( other.base_domain.equals(extant.base_domain) ) {
+					other = new PropertySpec(extant, other);
+					jt.remove();
+					break;
+				}
+			}
+			restrictions.add(other);
+		}
+	}	
+	
 	/**
 	 * A specification of a property profile. 
 	 */
@@ -186,25 +220,41 @@ public class ProfileUtility {
 			base_domain = selectType(prop.getDomain(), domain);
 			base_range = selectType(prop.getRange(), range);
 			label = prop.getLabel(null);
-			comment = prop.getComment(null);
+			comment = "";
 		}
 
-		public PropertySpec(PropertySpec lhs, PropertySpec rhs) {
-			prop = lhs.prop;
-			functional = lhs.functional & rhs.functional;
-			required = lhs.required & rhs.required;
+		/**
+		 * Merge two property specifications
+		 */
+		private PropertySpec(PropertySpec lhs, PropertySpec rhs) {
+			prop = lhs.prop; // == rhs.prop
+			base_domain = lhs.base_domain; // == rhs.base_domain
+			
+			// take the greater restriction
+			functional = lhs.functional || rhs.functional;
 			reference = lhs.reference || rhs.reference;
-
-			// merge domain and range
-			base_domain = mergeTypes(prop.getDomain(), lhs.base_domain, rhs.base_domain);
-			base_range = mergeTypes(prop.getRange(), lhs.base_range, rhs.base_range);
-
+			required = lhs.required || rhs.required;
+			base_range = mergeRange(prop.getRange(), lhs.base_range, rhs.base_range);
+			
+			// take the profile label if both sides agree
 			if( lhs.label.equals(rhs.label))
 				label = lhs.label;
 			else
 				label = prop.getLabel(null);
+			
+			comment = "";
+		}
 
-			comment = appendComment(lhs.comment, rhs.comment);
+		private PropertySpec selectDominant(PropertySpec other) {
+			// choose the narrowest class
+			if( base_domain != null && other.base_domain != null) {
+				if( base_domain.hasSuperClass(other.base_domain))
+					return other;
+				else if( other.base_domain.hasSuperClass(base_domain))
+					return this;
+			}
+			
+			return null;
 		}
 
 		public void create(ProfileClass profile) {
@@ -233,14 +283,15 @@ public class ProfileUtility {
 	 * a superset of all the properties profiles. 
 	 * 
 	 */
-	public static class PropertyAccumulator {
-		private Map props = new HashMap(); // property to property info
+	public static class PropertyAccumulator extends MultiMap {
+		private Map props = new HashMap(); // property to property collection
 	
 		public void add(PropertySpec spec) {
-			PropertySpec extant = (PropertySpec)props.get(spec.prop);
+			PropertyGroup extant = (PropertyGroup)props.get(spec.prop);
 			if( extant != null )
-				spec = new PropertySpec(spec, extant);
-			props.put(spec.prop, spec);
+				extant.add(spec);
+			else
+				props.put(spec.prop, new PropertyGroup(spec));
 		}
 		
 		public void add(OntProperty prop, OntClass domain, OntClass range ) {
@@ -265,7 +316,7 @@ public class ProfileUtility {
 			return props.containsKey(prop);
 		}
 		
-		public Collection getAll() {
+		public Collection getGroups() {
 			return props.values();
 		}
 	}
@@ -303,7 +354,7 @@ public class ProfileUtility {
 		}
 	}
 
-	public static OntClass selectType(OntResource prop_type, OntClass profile_type) {
+	private static OntClass selectType(OntResource prop_type, OntClass profile_type) {
 		if( prop_type != null && prop_type.hasRDFType(OWL.Class)) {
 			if (profile_type != null && (
 					profile_type.hasSuperClass(prop_type) 
@@ -316,16 +367,16 @@ public class ProfileUtility {
 			return profile_type;
 	}
 
-	public static OntClass mergeTypes(OntResource type, OntClass lhs, OntClass rhs) {
+	private static OntClass mergeRange(OntResource type, OntClass lhs, OntClass rhs) {
 
-		// choose the broadest class
+		// choose the narrowest class
 		if( lhs != null && rhs != null) {
 			if( lhs.equals(rhs))
 				return lhs;
 			if( lhs.hasSuperClass(rhs))
-				return rhs;
-			else if( rhs.hasSuperClass(lhs))
 				return lhs;
+			else if( rhs.hasSuperClass(lhs))
+				return rhs;
 		}
 
 		// choose the base class or null for a datatype

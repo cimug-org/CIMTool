@@ -33,15 +33,17 @@ public class Translator implements Runnable {
 	private OntModel model;
 	private OntModel result;
 	private String defaultNamespace;
+	private boolean uniqueNamespaces;
 	
 	/**
 	 * Construct from input model and the namespace for renamed resources.
 	 * 
 	 * @param input the model to be translated.
 	 */
-	public Translator(OntModel model, String namespace ) {
+	public Translator(OntModel model, String namespace, boolean usePackageNames ) {
 		this.model = model;
 		defaultNamespace = namespace;
+		uniqueNamespaces = usePackageNames;
 	}
 	
 	/**
@@ -109,9 +111,6 @@ public class Translator implements Runnable {
 			if (!r.getNameSpace().equals(XMI.NS))
 				return r;
 			
-//			if( ! r.hasProperty(RDF.type))
-//				return null;
-
 			Statement ls = r.getProperty(RDFS.label);
 			if (ls == null)
 				return r;
@@ -126,8 +125,10 @@ public class Translator implements Runnable {
 	
 	/**
 	 * This pass translates annotations and stereotypes 
-	 * to resources in the UML namespace.  These are
-	 * then available in later passes.
+	 * to resources in the UML namespace and packages
+	 * to resources in the defaultNamespace.  
+	 * 
+	 * These are then available in later passes.
 	 */
 	Runnable pass1 = new Pass() {
 		/**
@@ -156,18 +157,49 @@ public class Translator implements Runnable {
 			
 			else if( r.hasProperty(RDF.type, UML.Package)) 
 				// all packages are in the default namespace
-				return result.createResource(defaultNamespace + "Package_" + l);  
+				if( uniqueNamespaces)
+					return result.createResource(stripHash(defaultNamespace) + pathName(r) + "#Package_" + l);
+				else
+					return result.createResource(defaultNamespace + "Package_" + l);
 				
 			else
 				return r;
 		}
 	};
+	
+	private static String stripHash(String uri) {
+		if( uri.endsWith("#")) 
+			return uri.substring(0, uri.length()-1);
+		else
+			return uri;
+	}
+	
+	private static String pathName(Resource r) {
+		Statement ps = r.getProperty(RDFS.isDefinedBy);
+		String prefix;
+		if( ps != null ) {
+			prefix = pathName(ps.getResource());
+		}
+		else {
+			prefix = "";
+		}
+		Statement ls = r.getProperty(RDFS.label);
+		if (ls == null)
+			return prefix;
+
+		String l = escapeNCName(ls.getString());
+		if( l.length()==0 )
+			return prefix;
+		
+		return prefix + "/" + l;
+		
+	}
 
 	
 	/**
-	 * This pass translates annotations and stereotypes 
-	 * to resources in the UML namespace.  These are
-	 * then available in later passes.
+	 * This pass translates anything found with a label and an XMI namespace,
+	 * which would exclude resources translated in earlier passes.
+	 * Special naming rules apply to classes, properties and enumeration members.
 	 */
 	Runnable pass2 = new Pass() {
 		/**
@@ -311,9 +343,13 @@ public class Translator implements Runnable {
 
 		Statement p = r.getProperty(RDFS.isDefinedBy);
 		if( p != null ) {
-			b = p.getResource().getProperty(UML.baseuri);
+			Resource q = p.getResource();
+			b = q.getProperty(UML.baseuri);
 			if( b != null )
 				return b.getString();
+			if( uniqueNamespaces )
+				return q.getNameSpace();
+			
 		}
 
 		return defaultNamespace;

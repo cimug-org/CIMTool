@@ -30,6 +30,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(Info.PROFILE_ENVELOPE.getLocalName(), "Profile");
 		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);
 		store.setDefault(Info.PROBLEM_PER_SUBJECT.getLocalName(), true);
+		store.setDefault(Info.USE_PACKAGE_NAMES.getLocalName(), false);
 	}
 
 }

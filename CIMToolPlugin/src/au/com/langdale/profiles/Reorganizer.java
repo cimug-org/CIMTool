@@ -17,6 +17,7 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Transform a profile model to conform with CIM/XML RDFS schema rules.  
@@ -134,6 +135,34 @@ public class Reorganizer extends SchemaGenerator {
 		OntResource subject = getResultResource(uri);
 		if( subject != null)
 			subject.addProperty(UML.hasStereotype, ResourceFactory.createResource(stereo));
+	}
+
+	@Override
+	protected void emitBaseStereotype(String uri, String iuri) {
+		// ignore base stereotypes
+	}
+
+	@Override
+	protected void emitOntProperty(String uri) {
+		model.add(model.createResource(uri), RDF.type, MESSAGE.Flag);
+	}
+	
+	@Override
+	protected void emitOntProperty(String uri, String value) {
+		// ignored
+	}
+	
+	@Override
+	protected void emitRestriction(String uri, String domain, String range) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void emitRestriction(String uri, String domain, boolean required,
+			boolean functional) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private OntResource getResultResource(String uri) {

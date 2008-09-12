@@ -35,33 +35,17 @@ public class OWLGenerator extends RDFSBasedGenerator {
 		emit(uri, OWL.DatatypeProperty);
 		emit(uri, RDFS.range, xsdtype);
 	}
-	
-	private void emitRestriction(Resource prop, String domain, Property kind) {
-		Resource restrict = result.createResource(OWL.Restriction);
-		RDFNode node = result.createTypedLiteral(1);
-		restrict.addProperty(kind, node);
-		restrict.addProperty(OWL.onProperty, prop);
-		result.createResource(domain).addProperty(RDFS.subClassOf, restrict);
-	}
 
 	@Override
 	protected void emitObjectProperty(String uri, String base, String domain, String range, boolean required, boolean functional) {
-		Resource prop = emit(uri, OWL.ObjectProperty);
-		if( useRestrictions) {
-			if( functional && required ) 
-				emitRestriction(prop, domain, OWL.cardinality);
-			else if( functional )
-				emitRestriction(prop, domain, OWL.maxCardinality);
-			else if( required )
-				emitRestriction(prop, domain, OWL.minCardinality);
-		}
-		else {
+		emit(uri, OWL.ObjectProperty);
+		if( ! useRestrictions ) {
+			emit(uri, RDFS.domain, domain);
+			emit(uri, RDFS.range, range);
 			if( functional )
 				emit(uri, OWL.FunctionalProperty);
 		}
 		
-		emit(uri, RDFS.domain, domain);
-		emit(uri, RDFS.range, range);
 	}
 
 	@Override
@@ -71,18 +55,13 @@ public class OWLGenerator extends RDFSBasedGenerator {
 
 	@Override
 	protected void emitDatatypeProperty(String uri, String base, String domain, String type, String xsdtype, boolean required) {
-		Resource prop = emit(uri, OWL.DatatypeProperty);
-		emit(uri, RDFS.domain, domain);
-		emit(uri, RDFS.range, xsdtype);
+		emit(uri, OWL.DatatypeProperty);
 		emit(uri, RDFS.subPropertyOf, type);
-		if( useRestrictions ) { 
-			if( required)
-				emitRestriction(prop, domain, OWL.cardinality);
-			else
-				emitRestriction(prop, domain, OWL.maxCardinality);
-		}
-		else
+		if( ! useRestrictions) {
+			emit(uri, RDFS.domain, domain);
+			emit(uri, RDFS.range, xsdtype);
 			emit(uri, OWL.FunctionalProperty);
+		}
 	}
 	
 	@Override
@@ -104,5 +83,43 @@ public class OWLGenerator extends RDFSBasedGenerator {
 	@Override
 	protected void emitStereotype(String uri, String stereo) {
 		emit(uri, UML.hasStereotype, stereo);
+	}
+
+	@Override
+	protected void emitBaseStereotype(String uri, String stereo) {
+		emitStereotype(uri, stereo);
+	}
+
+	@Override
+	protected void emitRestriction(String uri, String domain, String range) {
+		if( useRestrictions) {
+		Resource prop = result.createResource(uri);
+		Resource restrict = result.createResource(OWL.Restriction);
+		restrict.addProperty(OWL.allValuesFrom, result.createResource(range));
+		restrict.addProperty(OWL.onProperty, prop);
+		result.createResource(domain).addProperty(RDFS.subClassOf, restrict);
+		}
+	}
+
+	@Override
+	protected void emitRestriction(String uri, String domain, boolean required,	boolean functional) {
+		if( useRestrictions ) {
+		Resource prop = result.createResource(uri);
+		if( functional && required ) 
+			emitRestriction(prop, domain, OWL.cardinality);
+		else if( functional )
+			emitRestriction(prop, domain, OWL.maxCardinality);
+		else if( required )
+			emitRestriction(prop, domain, OWL.minCardinality);
+		}
+
+	}
+	
+	private void emitRestriction(Resource prop, String domain, Property kind) {
+		Resource restrict = result.createResource(OWL.Restriction);
+		RDFNode node = result.createTypedLiteral(1);
+		restrict.addProperty(kind, node);
+		restrict.addProperty(OWL.onProperty, prop);
+		result.createResource(domain).addProperty(RDFS.subClassOf, restrict);
 	}
 }

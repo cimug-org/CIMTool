@@ -1,5 +1,37 @@
 = CIMTool Change Log =
 
+== Release 1.3.3 ==
+
+ * new feature: "Add package name to default schema namespaces" preference causes 
+   unique RDF namespaces to be generated from the UML package hierarchy.
+   
+ * new feature: CIM/XML profiles can now have more than one restriction, in different
+   contexts, on the same property. This was previously only supported for XSD profiles.
+   
+   The simple-owl format now preserves all property restrictions and the validation 
+   rules have been reworked to enforce them. 
+   
+   The standard CIM/XML RDFS format cannot support this and CIMTool rolls up the 
+   restrictions into a single, consistent property definition. 
+   
+ * correction: when rolling up restrictions to base classes for RDFS, they are 
+   always relaxed. this prevents restrictions from incorrectly affecting sibling
+   classes.  
+   
+ * correction: use the concrete stereotype in validation instead of 
+   treating the leaf classes as concrete.  The "Stereotype leaf classes
+   as concrete" operation can be used to obtain the previous behaviour. 
+ 
+ * enhancement: stereotypes assigned in the profile editor are copied into the
+   generated RDFS and simple-OWL.
+    
+ * enhancement: build target flags and stereotypes defined in a profile are 
+   preserved in the "Reorganize per RDFS Rules" operation.
+ 
+ * enhancement: the property sheet view for diagnostic nodes has been improved.
+ 
+ * enhancement: tested with eclipse 3.4 (Ganymede) 
+  
 == Release 1.3.2 ==
 
  * correction: allow unnamed schema properties to be profiled

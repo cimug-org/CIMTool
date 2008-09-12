@@ -12,8 +12,6 @@ import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.plumbing.Template;
 import au.com.langdale.ui.util.IconCache;
 
-import com.hp.hpl.jena.ontology.OntResource;
-
 public class Detail extends FurnishedEditor {
 	private ProfileEditor master;
 

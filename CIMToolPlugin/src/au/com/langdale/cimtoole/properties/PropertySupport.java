@@ -11,7 +11,6 @@ import com.hp.hpl.jena.ontology.OntResource;
 
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
-import au.com.langdale.profiles.ProfileModel.ProfileNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.ui.util.IconCache;
 
@@ -126,8 +125,8 @@ public class PropertySupport implements IAdapterFactory {
 		
 		@Override
 		public Object getValueFrom(Node node) {
-			if( node instanceof ProfileNode)
-				return getValueFrom((ProfileNode)node );
+			if( node instanceof ModelNode && ! node.getBase().equals(node.getSubject())) 
+				return getValueFrom((ModelNode)node);
 			else
 				return "";
 		}
@@ -137,7 +136,7 @@ public class PropertySupport implements IAdapterFactory {
 			return "Profile";
 		}
 		
-		public abstract Object getValueFrom(ProfileNode node);
+		public abstract Object getValueFrom(ModelNode node);
 		
 	}
 	
@@ -172,13 +171,13 @@ public class PropertySupport implements IAdapterFactory {
 		},
 		new ProfileDescriptor("Based on", "Name in information model") {
 			@Override
-			public Object getValueFrom(ProfileNode node) {
+			public Object getValueFrom(ModelNode node) {
 				return node.getBase().getLocalName();
 			}
 		},
 		new ProfileDescriptor("Base namespace", "Namespace in information model") {
 			@Override
-			public Object getValueFrom(ProfileNode node) {
+			public Object getValueFrom(ModelNode node) {
 				return node.getBase().getNameSpace();
 			}
 		},

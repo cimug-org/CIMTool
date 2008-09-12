@@ -279,34 +279,7 @@ public class Refactory extends ProfileUtility {
 	public Collection findProfiles(OntClass base) {
 		if( map == null)
 			buildMap();
-		return map.findProfiles(base);
-	}
-
-//  FIXME: unused profile property operations follow.. 	
-	
-	private void allocateProperties(ProfileClass profile, PropertyAccumulator props) {
-		Collection all = props.getAll();
-		Iterator it = all.iterator();
-		while (it.hasNext()) {
-			PropertySpec spec = (PropertySpec) it.next();
-			allocateProp(profile, spec);
-			it.remove();
-		}
-	}
-	
-	private void allocateProperties(PropertyAccumulator props) {
-		Collection all = props.getAll();
-		while( ! all.isEmpty()) {
-			PropertySpec spec = (PropertySpec) all.iterator().next();
-			ProfileClass profile = new ProfileClass(findOrCreateNamedProfile(spec.base_domain));
-			allocateProperties(profile, props);
-		}
-	}
-
-	private void allocateProp(ProfileClass profile, PropertySpec spec) {
-		if( profile.hasProperty(spec.prop))
-			return;
-		spec.create(profile);
+		return map.find(base);
 	}
 
 	private void removeSupers(ProfileClass profile) {
@@ -316,57 +289,5 @@ public class Refactory extends ProfileUtility {
 			//profile.removeSuperClass(parent);
 			profile.getSubject().removeSuperClass(parent);
 		}
-	}
-	
-	private void addProps(ProfileClass profile, PropertyAccumulator props) {
-		Iterator it = props.getAll().iterator();
-		while (it.hasNext()) {
-			PropertySpec spec = (PropertySpec) it.next();
-			spec.create(profile);
-		}
-	}
-
-	private void removeProps(ProfileClass profile, OntClass base, PropertyAccumulator props) {
-		Iterator targets = filterProfileForBase(profile, base).iterator();
-		while (targets.hasNext()) {
-			OntProperty prop = (OntProperty) targets.next();
-			PropertyInfo info = profile.getPropertyInfo(prop);
-			props.add(info);
-			profile.remove(prop);
-		}
-	}
-
-	private void removeProps(ProfileClass profile, PropertyAccumulator props) {
-		Iterator targets = profile.getProperties();
-		while (targets.hasNext()) {
-			OntProperty prop = (OntProperty) targets.next();
-			PropertyInfo info = profile.getPropertyInfo(prop);
-			props.add(info);
-			profile.remove(prop);
-		}
-	}
-
-	private void collectProps(ProfileClass profile, PropertyAccumulator props) {
-		Iterator targets = profile.getProperties();
-		while (targets.hasNext()) {
-			OntProperty prop = (OntProperty) targets.next();
-			PropertyInfo info = profile.getPropertyInfo(prop);
-			props.add(info);
-		}
-	}
-
-	private static Collection filterProfileForBase(ProfileClass profile, OntClass base) {
-		HashSet targets = new HashSet();
-		Iterator it = profile.getProperties();
-		while (it.hasNext()) {
-			OntProperty prop = (OntProperty) it.next();
-			OntResource domain = prop.getDomain();
-			if(domain.isClass()) {
-				OntClass clss = domain.asClass();
-				if( clss.equals(base) || clss.hasSubClass(base))
-					targets.add(prop);
-			}
-		}
-		return targets;
 	}
 }

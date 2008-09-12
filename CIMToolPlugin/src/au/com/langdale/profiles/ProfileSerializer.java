@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import au.com.langdale.jena.JenaTreeModelBase;
-import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
@@ -46,7 +45,6 @@ import au.com.langdale.sax.AbstractReader;
 import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -434,10 +432,6 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitChildren(node);
 		elem.close();
-	}
-
-	private void emitPackage(TypeNode node, Element elem) throws SAXException {
-			elem.set("package", node.getPackageName());
 	}
 
 	private void emit(MessageNode node) throws SAXException {

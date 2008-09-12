@@ -10,8 +10,14 @@
 [ (?C rdf:type owl:Class) ->
 	(?C rdfs:subClassOf ?C)]
 	
-[ (?D rdfs:subClassOf ?C) notSame(?D ?C) notSame(?D owl:Nothing) -> 
+[ (?C rdf:type owl:Class) notAny(?C uml:hasStereotype uml:concrete) -> 
 	(?C rdf:type scaf:BaseClass)]
+	
+ [ (?R rdf:type owl:Restriction) 
+   (?R owl:allValuesFrom ?D) 
+   (?R owl:onProperty ?P) 
+   (?C rdfs:subClassOf ?R) ->
+			(?C scaf:mayHaveProperty ?P)]	
 
 [ (?P rdf:type owl:DatatypeProperty) ->
 	(?P rdf:type rdf:Property)]
@@ -35,6 +41,9 @@
 
 [ (?C rdf:type scaf:BaseClass) -> 
 	[ (?C rdf:type scaf:BaseClass) <-]]
+
+[ (?C scaf:mayHaveProperty ?P) -> 
+	[ (?C scaf:mayHaveProperty ?P) <-]]
 		
 [ (?C uml:hasStereotype uml:enumeration) (?i rdf:type ?C) ->
 	[(?i rdf:type ?C) <-]]
@@ -75,17 +84,39 @@
 	[ problem( "Functional property" ?P "must have a single value. Subject" ?x "has more than one.") 
 		<- (?x ?P *) countMoreThan(1 ?x ?P *)]]
 
-[ (?P rdf:type owl:ObjectProperty) (?P rdfs:range ?C) ->  
+[ (?P rdfs:range ?C) (?P rdf:type owl:ObjectProperty) ->  
  	[ problem( "Range of object property" ?P "is" ?C "Object" ?y "is a" ?Y) 
  		<- (* ?P ?y) (?y rdf:type ?Y) notAxiom(?Y rdfs:subClassOf ?C) ]]
+
+[ (?P rdfs:range ?C) (?P rdf:type owl:DatatypeProperty) ->  
+ 	[ problem( "Range of datatype property" ?P "is" ?C "Subject" ?x "has" ?y) 
+ 		<- (?x ?P ?y) notDatatype(?y ?C) ]]
  
 [ (?P rdfs:domain ?C) -> 
  	[ problem( "Domain of property" ?P "is" ?C "Subject" ?x "is a" ?X) 
  		<- (?x ?P *) (?x rdf:type ?X) notAxiom(?X rdfs:subClassOf ?C) ]]
 
-[ (?P rdf:type owl:DatatypeProperty) (?P rdfs:range ?C) ->  
- 	[ problem( "Range of datatype property" ?P "is" ?C "Subject" ?x "has" ?y) 
- 		<- (?x ?P ?y) notDatatype(?y ?C) ]]
+[ (?R rdf:type owl:Restriction) 
+		(?R owl:allValuesFrom ?C) 
+		(?R owl:onProperty ?P) 
+		(?P rdf:type owl:ObjectProperty) 
+		(?A rdfs:subClassOf ?R) 
+		->
+	[ problem( "Range of object property" ?P "of" ?x "a" ?A "requires a" ?C "but have" ?y "which is a" ?Y) 
+ 		<- (?x rdf:type ?A) (?x ?P ?y) (?y rdf:type ?Y) notAxiom(?Y rdfs:subClassOf ?C) ]]
+
+[ (?R rdf:type owl:Restriction) 
+		(?R owl:allValuesFrom ?C) 
+		(?R owl:onProperty ?P) 
+		(?P rdf:type owl:DatatypeProperty) 
+		(?A rdfs:subClassOf ?R) 
+		->
+	[ problem( "Range of datatype property" ?P "of" ?x "a" ?A "requires a" ?C "but have" ?y) 
+ 		<- (?x rdf:type ?A) (?x ?P ?y) notDatatype(?y ?C)]]
+
+ [ (?P rdf:type rdf:Property) -> 
+ 	[ problem( "Domain of property" ?P "does not include" ?x "which is a" ?X) 
+ 		<- (?x ?P *) (?x rdf:type ?X) notAxiom(?X scaf:mayHaveProperty ?P) ]]
 
 [ (?R rdf:type owl:Restriction) (?C rdfs:subClassOf ?R) 
 		(?R owl:onProperty ?P)  (?R owl:minCardinality ?n) ->

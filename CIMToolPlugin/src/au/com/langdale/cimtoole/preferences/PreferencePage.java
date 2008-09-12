@@ -40,6 +40,9 @@ public class PreferencePage extends FurnishedPropertyPage {
 								new PreferenceOption(Info.PRESERVE_NAMESPACES, 
 								"Preserve schema namespaces in profiles")),
 						Group( 
+								new PreferenceOption(Info.USE_PACKAGE_NAMES, 
+								"Add package names to default schema namespace")),
+						Group( 
 								new PreferenceOption(Info.PROBLEM_PER_SUBJECT, 
 								"Limit validation output by subject and message type"))
 				);

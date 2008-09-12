@@ -14,8 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
-import javax.xml.parsers.FactoryConfigurationError;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -204,7 +202,7 @@ public class Task extends Info {
 			}
 			else
 				annote = null;
-			return CIMInterpreter.parse(contents, base, annote);
+			return CIMInterpreter.parse(contents, base, annote, getPreferenceOption(USE_PACKAGE_NAMES));
 		} catch (Exception e) {
 			throw error("Can't parse model file " + file.getName(), e);
 		}

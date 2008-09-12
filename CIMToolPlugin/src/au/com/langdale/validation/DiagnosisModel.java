@@ -157,6 +157,11 @@ public class DiagnosisModel extends JenaTreeModelBase {
 		public boolean getAllowsChildren() {
 			return false;
 		}
+		
+		@Override
+		public String getName() {
+			return problem.getComment(null);
+		}
 
 		@Override
 		public String toString() {

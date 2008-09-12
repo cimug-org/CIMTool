@@ -169,6 +169,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		this.catalog = new Catalog();
 		this.withInverses = inverses;
 	}
+	
 	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
 		this( profileModel, backgroundModel, namespace, false);
 	}
@@ -199,13 +200,16 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 		
 		// emit properties
-		Iterator lt = props.getAll().iterator();
+		Iterator lt = props.getGroups().iterator();
 		while( lt.hasNext()) {
-			generateProperty((PropertySpec)lt.next());
+			generateProperty((PropertyGroup)lt.next());
 		}
 		
 		// emit superclass relationships
 		generateLattice(catalog.buildLattice());
+		
+		// emit any ontology (header) properties
+		generateOntologyFlags();
 	}
 
 	// construct a URI for a base model class, datatype, property or individual 
@@ -259,29 +263,37 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	}
 	
 	private void addInverseProperties() {
-		Iterator it = new ArrayList(props.getAll()).iterator();
+		Iterator it = new ArrayList(props.getGroups()).iterator();
 		while( it.hasNext()) {
-			PropertySpec spec = (PropertySpec) it.next();
-			OntProperty inverse = spec.prop.getInverse();
+			PropertyGroup group = (PropertyGroup) it.next();
+			PropertySpec info = group.getSummary();
+			OntProperty inverse = info.prop.getInverse();
 			if( inverse != null && ! props.containsKey(inverse)) {
-				props.add(inverse, spec.base_domain, spec.base_range);
+				props.add(inverse, info.base_domain, info.base_range);
 			}
 		}		
 	}
 
 	private void scanDomainsAndRanges() {
-		Iterator it = props.getAll().iterator();
+		Iterator it = props.getGroups().iterator();
 		while( it.hasNext()) {
-			PropertySpec spec = (PropertySpec) it.next();
-			catalog.add(spec.base_domain);
-			if( spec.base_range != null) {
-				catalog.add(spec.base_range);
+			PropertyGroup group = (PropertyGroup) it.next();
+			scanSpec(group.getSummary());
+			for (Iterator jt = group.getRestrictions().iterator(); jt.hasNext();) {
+				scanSpec((PropertySpec) jt.next());
 			}
-			else  {
-				OntResource range = spec.prop.getRange();
-				if( range != null)
-					datatypes.add(range);
-			}
+		}
+	}
+
+	private void scanSpec(PropertySpec spec) {
+		catalog.add(spec.base_domain);
+		if( spec.base_range != null) {
+			catalog.add(spec.base_range);
+		}
+		else  {
+			OntResource range = spec.prop.getRange();
+			if( range != null)
+				datatypes.add(range);
 		}
 	}
 
@@ -306,7 +318,11 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		emitLabel(uri, ResourceFactory.createResource(uri).getLocalName());
 		emitComment(uri, extractComment(base), extractProfileComment(base));
 		generateIndividuals(uri, base);
-		generateStereotypes(uri, base);
+		generateBaseStereotypes(uri, base);
+		for (Iterator it = catalog.find(base).iterator(); it.hasNext();) {
+			OntClass clss = (OntClass) it.next();
+			generateStereotypes(uri, clss);
+		}
 		generatePackage(uri, base);
 	}
 
@@ -319,8 +335,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	private void generateProperty(PropertySpec info) {
-		OntProperty prop = info.prop;
+	private void generateProperty(PropertyGroup group) {
+		PropertySpec info = group.getSummary();
+		OntProperty prop = group.getProperty();
 		String uri = constructURI(prop); 
 		String domain = catalog.getURI(info.base_domain);
 		if(prop.isDatatypeProperty()) {
@@ -339,10 +356,45 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		if( info.label != null)
 			emitLabel(uri, info.label);
 		
+		generateRestrictions(group);
+		
 		emitComment(uri, extractComment(prop), info.comment);
-		generateStereotypes(uri, prop);
+		generateBaseStereotypes(uri, prop);
 		if(info.reference)
 			emitStereotype(uri, UML.byreference.getURI());
+	}
+	
+	private void generateRestrictions(PropertyGroup group) {
+		String uri = constructURI(group.getProperty());
+		
+		for (Iterator it = group.getRestrictions().iterator(); it.hasNext();) {
+			PropertySpec rest = (PropertySpec) it.next();
+			String domain = catalog.getURI(rest.base_domain);
+			if(rest.prop.isDatatypeProperty()) {
+				TypeInfo range = new TypeInfo( rest.prop.getRange(), this);
+				emitRestriction(uri, domain, range.xsdtype);
+			}
+			else {
+				emitRestriction(uri, domain, catalog.getURI(rest.base_range));
+			}
+			if( rest.required || rest.functional ) {
+				emitRestriction(uri, domain, rest.required, rest.functional);
+			}
+		}
+	}
+	
+	private void generateBaseStereotypes(String uri, OntResource base) {
+		StmtIterator it = base.listProperties(UML.hasStereotype);
+		while (it.hasNext()) {
+			emitBaseStereotype(uri, it.nextStatement().getResource().getURI());
+		}
+	}
+	
+	private void generateOntologyFlags() {
+		for (Iterator it = profileModel.listIndividuals(MESSAGE.Flag); it.hasNext();) {
+			OntResource	flag = (OntResource) it.next();
+			emitOntProperty(flag.getURI());
+		}
 	}
 	
 	private void generateStereotypes(String uri, OntResource base) {
@@ -371,7 +423,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	private String extractProfileComment(OntClass base) {
 		String comment = null;
 
-		Iterator it = catalog.findProfiles(base).iterator();
+		Iterator it = catalog.find(base).iterator();
 		while(it.hasNext()) 
 			comment = appendComment(comment, (OntClass) it.next());
 
@@ -393,10 +445,15 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	protected abstract void emitClass(String uri, String base) ;
 	protected abstract void emitInstance(String uri, String base, String type);
 	protected abstract void emitDatatype(String uri, String xsdtype) ;
-	protected abstract void emitObjectProperty(String uri, String base, String domain, String range, boolean required, boolean functional) ;
-	protected abstract void emitInverse(String uri, String iuri) ;
-	protected abstract void emitStereotype(String uri, String iuri) ;
 	protected abstract void emitDatatypeProperty(String uri, String base, String domain, String type, String xsdtype, boolean required) ;
+	protected abstract void emitObjectProperty(String uri, String base, String domain, String range, boolean required, boolean functional) ;
+	protected abstract void emitRestriction(String uri, String domain, String range);
+	protected abstract void emitRestriction(String uri, String domain, boolean required, boolean functional) ;
+	protected abstract void emitInverse(String uri, String iuri) ;
+	protected abstract void emitStereotype(String uri, String stereo) ;
+	protected abstract void emitBaseStereotype(String uri, String stereo) ;
+	protected abstract void emitOntProperty(String uri);
+	protected abstract void emitOntProperty(String uri, String value);
 	protected abstract void emitDefinedBy(String uri, String container);
 	protected abstract void emitPackage(String uri) ;
 	

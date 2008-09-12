@@ -87,4 +87,19 @@ public class RDFSGenerator extends RDFSBasedGenerator {
 		emit(uri, CIMS.stereotype, stereo);
 	}
 
+	@Override
+	protected void emitBaseStereotype(String uri, String stereo) {
+		emitStereotype(uri, stereo);
+	}
+
+	@Override
+	protected void emitRestriction(String uri, String domain, String range) {
+		// ignored
+	}
+
+	@Override
+	protected void emitRestriction(String uri, String domain, boolean required,	boolean functional) {
+		// ignored
+	}
+
 }

@@ -59,4 +59,14 @@ public abstract class RDFSBasedGenerator extends SchemaGenerator {
 	protected void emitInstance(String uri, String base, String type) {
 		emit(uri, result.createResource(type));
 	}
+
+	@Override
+	protected void emitOntProperty(String uri) {
+		// ignored;
+	}
+	
+	@Override
+	protected void emitOntProperty(String uri, String value) {
+		// ignored
+	}
 }

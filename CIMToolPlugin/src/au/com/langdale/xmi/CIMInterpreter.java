@@ -36,35 +36,24 @@ public class CIMInterpreter extends UMLInterpreter {
 	/**
 	 * Utility to parse an XMI file, apply CIM conventions, and return a Jena OWL model.
 	 */
-	public static OntModel parse(String filename, String baseURI) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
-		XMIParser parser = new XMIParser();
-		parser.parse(filename);
-		OntModel raw = parser.getModel();
-		CIMInterpreter interpreter = new CIMInterpreter();
-		return interpreter.postProcess(raw, baseURI);
-	}
-	
-	/**
-	 * Utility to parse an XMI file, apply CIM conventions, and return a Jena OWL model.
-	 */
-	public static OntModel parse(InputStream stream, String baseURI, Model annote) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
+	public static OntModel parse(InputStream stream, String baseURI, Model annote, boolean usePackageNames) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
 		XMIParser parser = new XMIParser();
 		parser.parse(stream);
 		OntModel raw = parser.getModel();
 		if( annote != null)
 			raw.add(annote, true);
 		CIMInterpreter interpreter = new CIMInterpreter();
-		return interpreter.postProcess(raw, baseURI);
+		return interpreter.postProcess(raw, baseURI, usePackageNames);
 	}
 
-	private OntModel postProcess(OntModel raw, String baseURI) {
+	private OntModel postProcess(OntModel raw, String baseURI, boolean usePackageNames) {
 		setModel(raw);
 
 		UML.loadOntology(getModel());
 		pruneIncomplete();
 		labelRoles();
 
-		Translator translator = new Translator(getModel(), baseURI);
+		Translator translator = new Translator(getModel(), baseURI, usePackageNames);
 		translator.run();
 		setModel(translator.getResult());
 
@@ -111,6 +100,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			OntResource assoc = (OntResource) node.as(OntResource.class);
 			RDFNode label = assoc.getPropertyValue(hasLabel);
 			if( label != null ) {
+				System.out.println("Relabeling using PowerCC tags:" + label.toString());
 				prop.setLabel(label.toString(), "en");
 				return true;
 			}

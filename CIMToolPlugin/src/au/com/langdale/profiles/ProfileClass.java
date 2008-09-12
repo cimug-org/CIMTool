@@ -527,23 +527,40 @@ public class ProfileClass {
 		return domain== null || baseClass.hasSuperClass(domain);
 	}
 	
+	/**
+	 * Broaden this class by making it a union of its 
+	 * present definition and a new profile of the given
+	 * base class.   
+	 * 
+	 * @return the new profile class
+	 */
 	public OntResource createUnionMember(OntResource base, boolean named) {
+		OntClass member;
+		
 		if(named) {
 			OntResource symbol = model.createOntResource(namespace + base.getLocalName());
 			if( symbol.isClass()) {
-				OntClass member = symbol.asClass();
-				if( member.hasSuperClass(base)) 
-					return addUnionMember(member);
+				member = symbol.asClass();
+				if( member.hasSuperClass(base)) { 
+					addUnionMember(member);
+					return member;
+				}
 			}
 		}
 
-		OntClass member = model.createClass();
+		member = model.createClass();
 		member.addSuperClass(base);
 		member.setLabel(base.getLocalName(), null);
-		return addUnionMember(member);
+		addUnionMember(member);
+		return member;
 	}
 
-	public OntResource addUnionMember(OntResource child) {
+	/**
+	 * Broaden this class by making it a union of its 
+	 * present definition and the given profile class.   
+	 * 
+	 */
+	public void addUnionMember(OntResource child) {
 //		clss.addSubClass(child);
 		
 		RDFNode value = clss.getPropertyValue(OWL.unionOf);
@@ -558,10 +575,21 @@ public class ProfileClass {
 				
 		union = union.cons(child);
 		clss.setPropertyValue(OWL.unionOf, union);
-
-		return child;
 	}
 
+	/**
+	 * 
+	 * Create an explicit union definition for this class.
+	 * 
+	 * If the class has profile superclasses these become the union members.
+	 * (This is intended for the case of a single superclass that is to be 
+	 * broadened.)
+	 * 
+	 *  If the class has property restrictions, they are moved to a fresh
+	 *  anonymous class and that becomes the single union member. 
+	 * 
+	 * @return an RDFList representing the members of the union.
+	 */
 	private RDFList buildUnion() {
 		RDFList union = model.createList();
 		if(! classes.isEmpty()) {
@@ -598,6 +626,10 @@ public class ProfileClass {
 		}
 	}
 	
+	/** 
+	 * Narrow this class by removing one of the union members
+	 * of which it is composed.
+	 */
 	public void removeUnionMember(OntResource child) {
 //		clss.removeSubClass(child);
 		
@@ -615,6 +647,25 @@ public class ProfileClass {
 		}
 	}
 	
+	/**
+	 * 
+	 * If this class is a union, return its members as ProfileClasses
+	 * otherwise return an empty list.
+	 * 
+	 * The only classes that are may be unions are the anonymous ranges of
+	 * restricted properties and these are always regarded as unions.
+	 * 
+	 * If the class has an explicit unionOf axiom, its declared members are
+	 * returned.
+	 * 
+	 * If the class if a property range and has property restrictions
+	 * in turn, then  it is itself regarded as the single member of the union.
+	 * 
+	 * Otherwise an empty List is returned.
+	 * 
+	 * 
+	 * @return A List of ProfileClass
+	 */
 	public List getUnionMembers() {
 		List members = new ArrayList();
 		
