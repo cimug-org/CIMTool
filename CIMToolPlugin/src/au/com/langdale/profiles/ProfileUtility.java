@@ -157,7 +157,7 @@ public class ProfileUtility {
 	public static class PropertySpec {
 		public final OntProperty prop;
 		public final boolean required, functional, reference;
-		public final OntClass base_range, base_domain;
+		public final OntClass base_range, base_domain; // FIXME: base_range should be OntResource
 		public final String label, comment;
 
 		public PropertySpec(PropertyInfo info, ProfileClass range_profile) {
@@ -177,6 +177,16 @@ public class ProfileUtility {
 				label = prop.getLabel(null);
 
 			comment = extractComment(info.getRange());
+		}
+		
+		public PropertySpec(OntProperty prop, OntClass domain, OntClass range) {
+			this.prop = prop;
+			required = reference = false;
+			functional = prop.isFunctionalProperty() || prop.isDatatypeProperty();
+			base_domain = selectType(prop.getDomain(), domain);
+			base_range = selectType(prop.getRange(), range);
+			label = prop.getLabel(null);
+			comment = prop.getComment(null);
 		}
 
 		public PropertySpec(PropertySpec lhs, PropertySpec rhs) {
@@ -231,6 +241,10 @@ public class ProfileUtility {
 			if( extant != null )
 				spec = new PropertySpec(spec, extant);
 			props.put(spec.prop, spec);
+		}
+		
+		public void add(OntProperty prop, OntClass domain, OntClass range ) {
+			add(new PropertySpec(prop, domain, range));
 		}
 		
 		public ProfileClass add(PropertyInfo info) {

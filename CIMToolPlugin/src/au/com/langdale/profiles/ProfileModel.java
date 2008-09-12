@@ -187,10 +187,6 @@ public class ProfileModel extends JenaTreeModelBase {
 			return profile.getSubject();
 		}
 
-		public String getName() {
-			return label(profile.getSubject());
-		}
-
 		@Override
 		public boolean getErrorIndicator() {
 			return profile.getSubject().hasProperty(LOG.hasProblems);
@@ -314,8 +310,8 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 		
 			public String getCardString() {
-				int max = info.getMaxCardinality();
-				int min = info.getMinCardinality();
+				int max = getMaxCardinality();
+				int min = getMinCardinality();
 				return cardString(min) + ".." + cardString(max);
 			}
 		

@@ -189,9 +189,28 @@ public class TreeModelBase {
 		 */
 		abstract public boolean getErrorIndicator();
 
+		/**
+		 * The simple identifier for this node.
+		 * @return
+		 */
+		public String getName() {
+			return label(getSubject());
+		}
+		
+		/**
+		 * Access an information model resource associated with this node.
+		 * For most nodes this is the same as getSubject().  For nodes in
+		 * a profile model, this is the resource being profiled rather
+		 * than the profile itself.
+		 * 
+		 */
+		public OntResource getBase() {
+			return getSubject();
+		}
+
 		@Override
 		public String toString() {
-			return label(getSubject());
+			return getName();
 		}
 		
 		/**

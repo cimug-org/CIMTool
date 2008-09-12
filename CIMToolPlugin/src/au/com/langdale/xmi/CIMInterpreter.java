@@ -40,41 +40,63 @@ public class CIMInterpreter extends UMLInterpreter {
 		XMIParser parser = new XMIParser();
 		parser.parse(filename);
 		OntModel raw = parser.getModel();
-		
-		return postProcess(raw, baseURI);
+		CIMInterpreter interpreter = new CIMInterpreter();
+		return interpreter.postProcess(raw, baseURI);
 	}
 	
+	/**
+	 * Utility to parse an XMI file, apply CIM conventions, and return a Jena OWL model.
+	 */
 	public static OntModel parse(InputStream stream, String baseURI, Model annote) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
 		XMIParser parser = new XMIParser();
 		parser.parse(stream);
 		OntModel raw = parser.getModel();
 		if( annote != null)
 			raw.add(annote, true);
-		return postProcess(raw, baseURI);
+		CIMInterpreter interpreter = new CIMInterpreter();
+		return interpreter.postProcess(raw, baseURI);
 	}
 
-	private static OntModel postProcess(OntModel raw, String baseURI) {
-		CIMInterpreter interpreter = new CIMInterpreter();
-		interpreter.setModel(raw);
+	private OntModel postProcess(OntModel raw, String baseURI) {
+		setModel(raw);
 
-		UML.loadOntology(interpreter.getModel());
-		interpreter.pruneIncomplete();
-		interpreter.labelRoles();
+		UML.loadOntology(getModel());
+		pruneIncomplete();
+		labelRoles();
 
-		Translator translator = new Translator(interpreter.getModel(), baseURI);
+		Translator translator = new Translator(getModel(), baseURI);
 		translator.run();
-		interpreter.setModel(translator.getResult());
+		setModel(translator.getResult());
 
-		interpreter.removeUntyped();
-		interpreter.applyStereotypes();
-		interpreter.classifyAttributes();
-		return interpreter.getModel();
+		propagateComments();
+		removeUntyped();
+		applyStereotypes();
+		classifyAttributes();
+		return getModel();
 	}
 	
+	private void propagateComments() {
+		ExtendedIterator it = model.listObjectProperties();
+		while( it.hasNext()) {
+			ObjectProperty prop = (ObjectProperty) it.next();
+			if(prop.getComment(null) == null) {
+				RDFNode node = prop.getPropertyValue(UML.roleAOf);
+				if( node == null) 
+					node = prop.getPropertyValue(UML.roleBOf);
+				if( node != null) {
+					OntResource assoc = (OntResource) node.as(OntResource.class);
+					String comment = assoc.getComment(null);
+					if(comment != null)
+						prop.addComment(comment, null);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Find labels for association roles.
 	 */
-	public void labelRoles() {
+	private void labelRoles() {
 		ExtendedIterator it = model.listObjectProperties();
 		while( it.hasNext()) {
 			ObjectProperty prop = (ObjectProperty) it.next();
@@ -103,7 +125,7 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * the stereotype. Recognise stereotypes 'primitive' and 'enumeration'.
 	 *
 	 */
-	public void applyStereotypes() {
+	private void applyStereotypes() {
 		ResIterator jt = model.listSubjectsWithProperty(UML.hasStereotype, UML.enumeration);
 		while( jt.hasNext()) {
 			applyEnumerationStereotype(jt.nextResource());
@@ -129,7 +151,7 @@ public class CIMInterpreter extends UMLInterpreter {
 	/**
 	 * Covert primitive or union stereotyped class as a datatype.
 	 */
-	protected void applyPrimitiveStereotype(Resource clss, boolean interpret_value) {
+	private void applyPrimitiveStereotype(Resource clss, boolean interpret_value) {
 
 		Resource truetype = null;
 		String units = null;
@@ -182,7 +204,7 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * members of the enumeration. Note that OWL EnumeratedClass
 	 * is not used here because that would create a closed enumeration. 
 	 */
-	protected void applyEnumerationStereotype(Resource clss) {
+	private void applyEnumerationStereotype(Resource clss) {
 		clss.removeAll(RDF.type);
 		clss.addProperty(RDF.type, OWL.Class);
 		

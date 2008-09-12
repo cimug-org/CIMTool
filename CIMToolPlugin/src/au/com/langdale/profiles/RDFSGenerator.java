@@ -18,8 +18,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class RDFSGenerator extends RDFSBasedGenerator {
 
-	public RDFSGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
-		super(profileModel, backgroundModel, namespace);
+	public RDFSGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean withInverses) {
+		super(profileModel, backgroundModel, namespace, withInverses);
 		result.setNsPrefix("cims", CIMS.NS);
 	}
 
@@ -80,6 +80,11 @@ public class RDFSGenerator extends RDFSBasedGenerator {
 	@Override
 	protected void emitPackage(String uri) {
 		emit(uri, CIMS.ClassCategory);
+	}
+
+	@Override
+	protected void emitStereotype(String uri, String stereo) {
+		emit(uri, CIMS.stereotype, stereo);
 	}
 
 }

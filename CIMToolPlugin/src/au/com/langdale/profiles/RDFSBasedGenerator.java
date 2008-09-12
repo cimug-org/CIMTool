@@ -4,7 +4,6 @@
  */
 package au.com.langdale.profiles;
 
-import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -18,8 +17,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  */
 public abstract class RDFSBasedGenerator extends SchemaGenerator {
 
-	public RDFSBasedGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
-		super(profileModel, backgroundModel, namespace);
+	public RDFSBasedGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean withInverses) {
+		super(profileModel, backgroundModel, namespace, withInverses);
 		if(namespace != null)
 			result.setNsPrefix("cim", namespace);
 	}
@@ -59,10 +58,5 @@ public abstract class RDFSBasedGenerator extends SchemaGenerator {
 	@Override
 	protected void emitInstance(String uri, String base, String type) {
 		emit(uri, result.createResource(type));
-	}
-
-	@Override
-	protected void emitStereotype(String uri, String stereo) {
-		emit(uri, UML.hasStereotype, stereo);
 	}
 }

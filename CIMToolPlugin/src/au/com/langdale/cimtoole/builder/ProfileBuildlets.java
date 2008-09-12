@@ -218,10 +218,12 @@ public class ProfileBuildlets extends Info {
 	 */
 	public static abstract class RDFSBasedBuildlet extends ProfileBuildlet {
 		private String lang;
+		protected boolean withInverses;
 		
-		protected RDFSBasedBuildlet(String lang, String fileType) {
+		protected RDFSBasedBuildlet(String lang, String fileType, boolean withInverses) {
 			super(fileType);
 			this.lang = lang;
+			this.withInverses = withInverses;
 		}
 
 		@Override
@@ -246,26 +248,26 @@ public class ProfileBuildlets extends Info {
 	 * Buildlet for the simple OWL representation of the profile.
 	 */
 	public static class SimpleOWLBuildlet extends RDFSBasedBuildlet {
-		public SimpleOWLBuildlet(String lang, String fileType) {
-			super(lang, fileType);
+		public SimpleOWLBuildlet(String lang, String fileType, boolean withInverses) {
+			super(lang, fileType, withInverses);
 		}
 
 		@Override
 		protected RDFSBasedGenerator getGenerator(IFile file) throws CoreException {
-			return new OWLGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file));
+			return new OWLGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), withInverses);
 		}
 	}
 	/**
 	 * Buildlet for a profile in the original IEC RDFS language. 
 	 */
 	public static class LegacyRDFSBuildlet extends RDFSBasedBuildlet {
-		public LegacyRDFSBuildlet(String lang, String fileType) {
-			super(lang, fileType);
+		public LegacyRDFSBuildlet(String lang, String fileType, boolean withInverses) {
+			super(lang, fileType, withInverses);
 		}
 
 		@Override
 		protected RDFSBasedGenerator getGenerator(IFile file) throws CoreException {
-			return new RDFSGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file));
+			return new RDFSGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), withInverses);
 		}
 	}
 	
@@ -285,10 +287,10 @@ public class ProfileBuildlets extends Info {
 				new XSDBuildlet(),
 				new TransformBuildlet(null, "xml"),
 				new TransformBuildlet("html", "html"),
-				new SimpleOWLBuildlet("RDF/XML", "simple-owl"),
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs"),
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "nested-simple-owl"),
-				new LegacyRDFSBuildlet("RDF/XML-ABBREV", "nested-legacy-rdfs"),
+				new SimpleOWLBuildlet("RDF/XML", "simple-owl", false),
+				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
+				new SimpleOWLBuildlet("RDF/XML", "simple-owl-augmented", true),
+				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
 				
 			};
 	}

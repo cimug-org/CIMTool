@@ -15,8 +15,10 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 		layout.addView("au.com.langdale.cimtoole.views.ProjectModelView", IPageLayout.LEFT, .25f, layout.getEditorArea());
 		layout.addView("org.eclipse.ui.views.ResourceNavigator", IPageLayout.TOP, .5f, "au.com.langdale.cimtoole.views.ProjectModelView");
 		layout.addView("org.eclipse.ui.views.ContentOutline", IPageLayout.RIGHT, .66f, layout.getEditorArea());
+		layout.addView("org.eclipse.ui.views.PropertySheet", IPageLayout.BOTTOM, .66f, layout.getEditorArea());
 
 		layout.addShowViewShortcut("org.eclipse.ui.views.ProblemView");
+		layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
 		layout.addShowViewShortcut("org.eclipse.ui.views.ContentOutline");
 		layout.addShowViewShortcut("au.com.langdale.cimtoole.views.ProjectModelView");
 		layout.addShowViewShortcut("org.eclipse.ui.views.ResourceNavigator");

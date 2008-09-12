@@ -31,10 +31,11 @@ public class Detail extends FurnishedEditor {
 				return Form(
 					Grid(
 						Group(Label("Name:"), Field("name")),
-						Group(Label("URI:"), DisplayField("uri")),
-						Group(Label("Based on:"), DisplayField("base")),
+						Group(Label("Profile Description")),
 						Group(TextArea("notes")),
+						Group(Label("Schema Description")),
 						Group(DisplayArea("base-notes")),
+						Group(Label("extra-label", "Description of Type")),
 						Group(DisplayArea("extra-notes"))
 					)
 				);
@@ -57,40 +58,36 @@ public class Detail extends FurnishedEditor {
 					enode = (ElementNode) master.getNode();
 				
 				if( mnode != null && mnode.getBase() != null) {
-					setTextValue("base", mnode.getBase().getURI());
 					setTextValue("base-notes", mnode.getBase().getComment(null));
 				}
 				else {
-					setTextValue("base", "");
 					setTextValue("base-notes", "");
 				}
 
 				if( pnode != null) {
 					setTextValue("name", pnode.getName()).setEnabled(true);
 					setTextValue("notes", pnode.getSubject().getComment(null)).setEnabled(true);
-					
-					OntResource subject = pnode.getSubject();
-					if( subject.isURIResource())
-						setTextValue("uri", subject.getURI());
-					else
-						setTextValue("uri", "");
 				}
 				else {
 					setTextValue("name", "").setEnabled(false);
-					setTextValue("uri", "");
 					setTextValue("notes", "").setEnabled(false);
 				}
 
 				if(enode != null) {
 					String pnotes = enode.getBaseProperty().getComment(null);
 					String cnotes = enode.getBaseClass().getComment(null);
-					if(pnotes != null && cnotes != null && ! pnotes.equals(cnotes))
+					if(pnotes != null && cnotes != null && ! pnotes.equals(cnotes)) {
 						setTextValue("extra-notes", cnotes).setVisible(true);
-					else
+						getLabel("extra-label").setVisible(true);
+					}
+					else {
 						getText("extra-notes").setVisible(false);
+						getLabel("extra-label").setVisible(false);
+					}
 				}
 				else {
 					getText("extra-notes").setVisible(false);
+					getLabel("extra-label").setVisible(false);
 				}
 			}
 			

@@ -428,10 +428,31 @@
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
-            class="au.com.langdale.cimtoole.ProfileStructureCreator"
+            class="au.com.langdale.cimtoole.compare.ProfileStructureCreator"
             extensions="owl"
             id="au.com.langdale.cimtoole.ProfileStructureCreator">
       </structureCreator>
+   </extension>
+   <extension
+         point="org.eclipse.compare.structureMergeViewers">
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="au.com.langdale.cimtoole.compare.ProfileMergeViewerCreator"
+            extensions="owl"
+            id="au.com.langdale.cimtoole.ProfileMergeViewer">
+      </viewer>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="au.com.langdale.jena.TreeModelBase$Node"
+            class="au.com.langdale.cimtoole.properties.PropertySupport">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
    </extension>
 
 </plugin>

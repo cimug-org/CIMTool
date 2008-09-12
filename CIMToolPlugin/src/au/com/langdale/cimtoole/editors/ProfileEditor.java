@@ -46,7 +46,7 @@ public class ProfileEditor extends ModelEditor {
 	protected void createPages() {
 		addPage(new Populate("Add/Remove", this));
 		addPage(new Hierarchy("Hierarchy", this));
-		addPage(new Detail("Element Detail", this));
+		addPage(new Detail("Detail", this));
 		//addPage(new Refine("Refine Type", this));
 		addPage( new Stereotype("Stereotypes", this));
 		addPage(new Summary("Summary", this));
@@ -120,8 +120,6 @@ public class ProfileEditor extends ModelEditor {
 		tree.setOntModel(profileModel);
 		tree.setBackgroundModel(backgroundModel);
 		tree.setNamespace(getFileNamespace());
-		//submodel.setOntModel(backgroundModel);
-		//refineModel.setOntModel(backgroundModel);
 		refactory = new Refactory(profileModel, backgroundModel, tree.getNamespace());
 		doRefresh();
 	}

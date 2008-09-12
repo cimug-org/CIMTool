@@ -4,6 +4,7 @@
  */
 package au.com.langdale.profiles;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	private EnumAccumulator enums = new EnumAccumulator();
 	
 	private List work = new LinkedList(); // unprocessed profiles
+	private boolean withInverses;
 	
 	public class Catalog extends BaseMap {
 		protected Map classes = new HashMap(); 	// base class to profile uri 
@@ -160,17 +162,22 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
+	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean inverses) {
 		this.profileModel = profileModel;
 		this.model = Models.merge(profileModel, backgroundModel);
 		this.namespace = namespace;
 		this.catalog = new Catalog();
+		this.withInverses = inverses;
 	}
-	
+	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
+		this( profileModel, backgroundModel, namespace, false);
+	}
 	
 	public void run() {
 		
 		scanProfiles();
+		if(withInverses)
+			addInverseProperties();
 		scanDomainsAndRanges();
 		
 		// emit classes first
@@ -249,6 +256,17 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 		
 		return some;
+	}
+	
+	private void addInverseProperties() {
+		Iterator it = new ArrayList(props.getAll()).iterator();
+		while( it.hasNext()) {
+			PropertySpec spec = (PropertySpec) it.next();
+			OntProperty inverse = spec.prop.getInverse();
+			if( inverse != null && ! props.containsKey(inverse)) {
+				props.add(inverse, spec.base_domain, spec.base_range);
+			}
+		}		
 	}
 
 	private void scanDomainsAndRanges() {

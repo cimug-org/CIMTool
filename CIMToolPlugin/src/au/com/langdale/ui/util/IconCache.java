@@ -63,8 +63,11 @@ public class IconCache {
 	 * @return
 	 */
 	public static Image get(Class clss) {
-		String name = clss.getName();
-		return get( name.replaceFirst("^.+[.$]", "").replaceFirst("Node$", "").toLowerCase());
+		return get( getName(clss));
+	}
+
+	public static String getName(Class clss) {
+		return clss.getName().replaceFirst("^.+[.$]", "").replaceFirst("Node$", "").toLowerCase();
 	}
 	
 	

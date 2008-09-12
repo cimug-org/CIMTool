@@ -17,6 +17,7 @@ public class CIMS {
 	public final static Property dataType = ResourceFactory.createProperty(NS + "dataType");
 	public final static Property multiplicity = ResourceFactory.createProperty(NS + "multiplicity");
 	public final static Property belongsToCategory = ResourceFactory.createProperty(NS + "belongsToCategory");
+	public final static Property stereotype = ResourceFactory.createProperty(NS + "stereotype");;
 	public final static Resource M0_1 = ResourceFactory.createResource(NS + "M:0..1");
 	public final static Resource M1 = ResourceFactory.createResource(NS + "M:1");
 	public final static Resource M0_n = ResourceFactory.createResource(NS + "M:0..n");

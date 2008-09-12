@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import javax.xml.parsers.FactoryConfigurationError;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -175,44 +177,64 @@ public class Task extends Info {
 	public static OntModel parse(IFile file) throws CoreException {
 		
 		InputStream contents = new BufferedInputStream( file.getContents());
-		OntModel model;
 		
 		String ext = file.getFileExtension().toLowerCase();
 		if( ext.equals("xmi")) {
-			String base = getProperty(SCHEMA_NAMESPACE, file);
-			if( base == null ) {
-				if( file.getName().toLowerCase().startsWith("cim"))
-					base = CIM.NS;
-				else
-					base = file.getLocationURI().toString() + "#";
-			}
-			try {
-				IFile auxfile = getRelated(file, "annotation");
-				Model annote;
-				if(auxfile.exists()) {
-					annote = ModelFactory.createDefaultModel();
-					annote.read(auxfile.getContents(), base, "TURTLE");
-				}
-				else
-					annote = null;
-				model = CIMInterpreter.parse(contents, base, annote);
-			} catch (Exception e) {
-				throw error("Can't parse model file " + file.getName(), e);
-			}
+			return parseXMI(file, contents);
 		}
 		else {
-			String base = getProperty(PROFILE_NAMESPACE, file);
-			if( base == null ) {
-				base = file.getLocationURI().toString() + "#";
-			}
-			model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
-			String syntax = "RDF/XML";
-			if(ext.equals("n3"))
-				syntax = "N3";
-			if(ext.equals("diagnostic"))
-				syntax = "TURTLE";
-			model.read(contents, base, syntax);
+			return parse(file, contents);
 		}
+	}
+
+	public static OntModel parseXMI(IFile file, InputStream contents) throws CoreException {
+		String base = getProperty(SCHEMA_NAMESPACE, file);
+		if( base == null ) {
+			if( file.getName().toLowerCase().startsWith("cim"))
+				base = CIM.NS;
+			else
+				base = file.getLocationURI().toString() + "#";
+		}
+		try {
+			IFile auxfile = getRelated(file, "annotation");
+			Model annote;
+			if(auxfile.exists()) {
+				annote = ModelFactory.createDefaultModel();
+				annote.read(auxfile.getContents(), base, "TURTLE");
+			}
+			else
+				annote = null;
+			return CIMInterpreter.parse(contents, base, annote);
+		} catch (Exception e) {
+			throw error("Can't parse model file " + file.getName(), e);
+		}
+	}
+
+	public static OntModel parse(IFile file, InputStream contents) throws CoreException {
+		OntModel model;
+		String extn = file.getFileExtension().toLowerCase();
+		String base = getProperty(PROFILE_NAMESPACE, file);
+		if( base == null ) 
+			base = file.getLocationURI().toString() + "#";
+		try {
+			model = parse(contents, extn, base);
+		}
+		catch( Exception ex) {
+			throw error("Can't parse model file " + file.getName(), ex);
+		}
+		return model;
+	}
+
+	public static OntModel parse(InputStream contents, String ext, String base) {
+		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
+		String syntax;
+		if(ext.equals("n3"))
+			syntax = "N3";
+		else if(ext.equals("diagnostic"))
+			syntax = "TURTLE";
+		else
+			syntax = "RDF/XML";
+		model.read(contents, base, syntax);
 		return model;
 	}
 

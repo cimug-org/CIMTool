@@ -20,8 +20,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 public class OWLGenerator extends RDFSBasedGenerator {
 	private boolean useRestrictions = true;
 
-	public OWLGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
-		super(profileModel, backgroundModel, namespace);
+	public OWLGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean withInverses) {
+		super(profileModel, backgroundModel, namespace, withInverses);
 		result.setNsPrefix("uml", UML.NS);
 	}
 
@@ -99,5 +99,10 @@ public class OWLGenerator extends RDFSBasedGenerator {
 	protected void emitInstance(String uri, String base, String type) {
 		super.emitInstance(uri, base, type);
 		// emit(type, UML.hasStereotype, UML.enumeration.getURI());
+	}
+
+	@Override
+	protected void emitStereotype(String uri, String stereo) {
+		emit(uri, UML.hasStereotype, stereo);
 	}
 }

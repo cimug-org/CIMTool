@@ -1,5 +1,28 @@
 = CIMTool Change Log =
 
+== Release 1.3.1 ==
+
+ * new feature: Property sheet view shows details of the selected 
+   profile or schema definition. This view has been added to the
+   CIMTool perspective.  From the menu choose Window > Reset Perspective 
+   to update your perspective. The property sheet replaces some of the
+   fields on the profile editor detail page.
+   
+ * new feature: Profile comparisons using the eclipse compare functionality.
+   To compare two profiles, select them in the Navigator, right click and
+   choose Compare With > Each Other.  To compare a profile with a recent
+   version select it, right click and choose Compare With > Local History.
+   
+ * enhancement: preserve association documentation from EA UML 1.4 
+   (Rose compatible) XMI export files. It is now possible to use 
+   EA models with CIMTool using those XMI export settings.
+   
+ * new feature: simple-owl-augmented and legacy-rdfs-augmented targets
+   can be built from a profile.  The new targets provide both a 
+   forward and inverse property for each property defined in the profile.  
+   They replace the old nested-simple-owl and nested-legacy-rdfs build targets.  
+   Build new build targets can be selected on the profile editor summary page.   
+ 
 == Release 1.2.5 ==
 
  * new feature: add a class hierarchy page to the profile editor

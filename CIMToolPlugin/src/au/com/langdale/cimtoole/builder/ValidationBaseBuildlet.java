@@ -69,7 +69,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 		IResource base = Info.getBaseModelFor(instance);
 
 		if( ! schema.exists()) {
-			SimpleOWLBuildlet subordinate = new SimpleOWLBuildlet("RDF/XML", "simple-owl");
+			SimpleOWLBuildlet subordinate = new SimpleOWLBuildlet("RDF/XML", "simple-owl", false);
 			subordinate.build(schema, monitor);
 			if( ! schema.exists())
 				return;

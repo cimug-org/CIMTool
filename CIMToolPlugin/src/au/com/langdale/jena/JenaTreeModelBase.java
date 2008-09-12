@@ -41,17 +41,6 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 			return JenaTreeModelBase.this;
 		}
 		
-		/**
-		 * Access an information model resource associated with this node.
-		 * For most nodes this is the same as getSubject().  For nodes in
-		 * a profile model, this is the resource being profiled rather
-		 * than the profile itself.
-		 * 
-		 */
-		public OntResource getBase() {
-			return getSubject();
-		}
-		
 	}
 
 	/**
