@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.Pattern;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -30,6 +32,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
@@ -43,6 +46,7 @@ import au.com.langdale.sax.AbstractReader;
 import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -263,7 +267,8 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("minOccurs", "1");
 		elem.set("maxOccurs", "1");
 		emitNote(node);
-		emitChildren(node);
+		if(node.getSubject().isAnon())
+			emitChildren(node);
 		elem.close();
 	}
 	
@@ -365,28 +370,25 @@ public class ProfileSerializer extends AbstractReader {
 //	}
 
 	private void emit(String comment) throws SAXException {
+		emit("Comment", comment);
+	}
+	
+	private static Pattern delimiter = Pattern.compile(" *([\r\n] *)+");
+
+	private void emit(String ename, String comment) throws SAXException {
 		if( comment == null)
 			return;
-		
-		Element elem = new Element("Comment");
-		elem.append(comment);
-		elem.close();
-		
+		String[] pars = delimiter.split(comment.trim());
+		for (int ix = 0; ix < pars.length; ix++) {
+			Element elem = new Element(ename);
+			elem.append(pars[ix]);
+			elem.close();
+		}
 	}
 
 	private void emitNote(Node node) throws SAXException {
-		OntResource subject = node.getSubject();
-		emitNote(subject.getComment(null));
-		emitStereotypes(subject);
-	}
-
-	private void emitNote(String comment) throws SAXException {
-		if( comment == null)
-			return;
-		
-		Element elem = new Element("Note");
-		elem.append(comment);
-		elem.close();
+		emit("Note", node.getSubject().getComment(null));
+		emitStereotypes(node.getSubject());
 	}
 	
 	private void emitStereotypes(OntResource subject) throws SAXException {
@@ -426,12 +428,16 @@ public class ProfileSerializer extends AbstractReader {
 			elem = new Element("ComplexType");
 		elem.set("name", node.getName());
 		elem.set("baseClass", node.getBaseClass().getURI());
-
+		elem.set("package", node.getPackageName());
 		emit(node.getBaseClass().getComment(null));
 		emitNote(node);
 
 		emitChildren(node);
 		elem.close();
+	}
+
+	private void emitPackage(TypeNode node, Element elem) throws SAXException {
+			elem.set("package", node.getPackageName());
 	}
 
 	private void emit(MessageNode node) throws SAXException {

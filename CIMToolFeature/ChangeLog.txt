@@ -1,5 +1,18 @@
 = CIMTool Change Log =
 
+== Release 1.3.2 ==
+
+ * correction: allow unnamed schema properties to be profiled
+ 
+ * new feature: sawsdl semantic annotations in generated XML Schema 
+   see: http://www.w3.org/TR/sawsdl/
+   
+ * enhancement: generated HTML profile documentation reworked with 
+   better ordering and formating of information. 
+
+ * enhancement: package names added to properties sheet
+   and generated profile documentation. 
+
 == Release 1.3.1 ==
 
  * new feature: Property sheet view shows details of the selected 

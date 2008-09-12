@@ -2,7 +2,8 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:a="http://langdale.com.au/2005/Message#">
+	xmlns:a="http://langdale.com.au/2005/Message#"
+	xmlns:sawsdl="http://www.w3.org/ns/sawsdl">
 
 	<xsl:output indent="yes" />
 	<xsl:param name="version"></xsl:param>
@@ -47,7 +48,7 @@
 	<xsl:template match="a:Message">
 		<!--  generates an envelope element -->
 		<xs:element name="{@name}">
-			<xsl:apply-templates mode="annotate" />
+			<xsl:call-template name="annotate" />
 			<xs:complexType>
 				<xs:sequence>
 					<xsl:apply-templates />
@@ -65,9 +66,9 @@
 	<xsl:template match="a:Complex">
 		<!--  generates a nested element with anonymous complex type declared inline -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}"
-			maxOccurs="{@maxOccurs}">
-			<xsl:apply-templates mode="annotate" />
-			<xs:complexType>
+			maxOccurs="{@maxOccurs}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
+			<xs:complexType sawsdl:modelReference="{@baseClass}">
 				<xsl:call-template  name="type_body" />
 			</xs:complexType>
 		</xs:element>
@@ -76,8 +77,8 @@
 	<xsl:template match="a:Choice[a:Stereotype='http://langdale.com.au/2005/UML#preserve']">
 		<!--  generates a nested element with choice of sub-elements -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}"
-			maxOccurs="{@maxOccurs}">
-			<xsl:apply-templates mode="annotate" />
+			maxOccurs="{@maxOccurs}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
 			<xs:complexType>
 				<xs:choice>
 					<xsl:apply-templates/>
@@ -88,8 +89,8 @@
 
 	<xsl:template match="a:Choice">
 		<!--  generates a nested element with choice of sub-elements -->
-		<xs:choice minOccurs="{@minOccurs}"	maxOccurs="{@maxOccurs}">
-			<xsl:apply-templates mode="annotate" />
+		<xs:choice minOccurs="{@minOccurs}"	maxOccurs="{@maxOccurs}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
 			<xsl:apply-templates/>
 		</xs:choice>
 	</xsl:template>
@@ -97,17 +98,17 @@
 	<xsl:template match="a:Instance|a:Domain|a:Enumerated">
 		<!--  generates a nested instance of a type declared elsewhere -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}"
-			maxOccurs="{@maxOccurs}" type="m:{@type}">
-			<xsl:apply-templates mode="annotate" />
+			maxOccurs="{@maxOccurs}" type="m:{@type}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
 		</xs:element>
 	</xsl:template>
 	
 	<xsl:template match="a:SimpleEnumerated">
 		<!-- declares a nested element with anonymous enumerated type -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}"
-			maxOccurs="{@maxOccurs}">
-			<xsl:apply-templates mode="annotate" />
-		    <xs:simpleType>
+			maxOccurs="{@maxOccurs}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
+		    <xs:simpleType sawsdl:modelReference="{@baseClass}">
 			    <xs:restriction base="xs:string">
 				    <xsl:apply-templates />
 			    </xs:restriction>
@@ -118,17 +119,17 @@
 	<xsl:template match="a:Simple">
 		<!--  generates a nested element for an xsd part 2 simple type -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}"
-			maxOccurs="{@maxOccurs}" type="xs:{@xstype}">
-			<xsl:apply-templates mode="annotate" />
+			maxOccurs="{@maxOccurs}" type="xs:{@xstype}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
 		</xs:element>
 	</xsl:template>
 
 	<xsl:template match="a:Reference">
 		<!-- generates a reference to an object in the model -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}"
-			maxOccurs="{@maxOccurs}">
-			<xsl:apply-templates mode="annotate" />
-			<xs:complexType>
+			maxOccurs="{@maxOccurs}"  sawsdl:modelReference="{@baseProperty}">
+			<xsl:call-template name="annotate" />
+			<xs:complexType sawsdl:modelReference="{@baseClass}">
 				<xs:attribute name="ref" type="xs:string" />
 			</xs:complexType>
 		</xs:element>
@@ -155,24 +156,24 @@
 	</xsl:template>
 
 	<xsl:template match="a:ComplexType|a:Root" mode="declare">
-		<xs:complexType name="{@name}">
-			<xsl:apply-templates mode="annotate" />
+		<xs:complexType name="{@name}" sawsdl:modelReference="{@baseClass}">
+			<xsl:call-template name="annotate" />
 			<xsl:call-template  name="type_body" />
 		</xs:complexType>
 	</xsl:template>
 
 	<xsl:template match="a:SimpleType" mode="declare">
 		<!--  declares a a CIM domain type in terms of an xsd part 2 simple type -->
-		<xs:simpleType name="{@name}">
-			<xsl:apply-templates mode="annotate" />
+		<xs:simpleType name="{@name}" sawsdl:modelReference="{@dataType}">
+			<xsl:call-template name="annotate" />
 			<xs:restriction base="xs:{@xstype}" />
 		</xs:simpleType>
 	</xsl:template>
 
 	<xsl:template match="a:EnumeratedType" mode="declare">
 		<!-- declares an enumerated type -->
-		<xs:simpleType name="{@name}">
-			<xsl:apply-templates mode="annotate" />
+		<xs:simpleType name="{@name}" sawsdl:modelReference="{@baseClass}">
+			<xsl:call-template name="annotate" />
 			<xs:restriction base="xs:string">
 				<xsl:apply-templates />
 			</xs:restriction>
@@ -182,18 +183,23 @@
 	<xsl:template match="a:EnumeratedValue">
 		<!-- declares one value within an enumerated type -->
 		<xs:enumeration value="{@name}">
-			<xsl:apply-templates mode="annotate" />
+			<xsl:call-template name="annotate" />
 		</xs:enumeration>
 	</xsl:template>
 
 
-	<xsl:template match="a:Comment" mode="annotate">
+	<xsl:template name="annotate">
 		<!--  generate and annotation -->
 		<xs:annotation>
-			<xs:documentation>
-				<xsl:value-of select="." />
-			</xs:documentation>
+			<xsl:apply-templates mode="annotate"/>
 		</xs:annotation>
+	</xsl:template>
+
+	<xsl:template match="a:Comment|a:Note" mode="annotate">
+		<!--  generate human readable annotation -->
+		<xs:documentation>
+			<xsl:value-of select="." />
+		</xs:documentation>
 	</xsl:template>
 
 	<xsl:template match="text()">

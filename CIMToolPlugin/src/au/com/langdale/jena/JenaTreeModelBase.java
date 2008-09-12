@@ -31,16 +31,41 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 	private Resource rootResource;
 	private String source;
 	
+	/**
+	 * A Node where the subject represents a definition in an ontology.
+	 * (Sometimes called a 'model' probably incorrectly.)
+	 */
 	public abstract class ModelNode extends Node {
 		
 		/**
-		 * Access the tree model containing this node. (From there, the
-		 * ontology model can be obtained.)
+		 * Access the tree model containing this node. 
+		 * (From there, the ontology can be obtained.)
 		 */
 		public JenaTreeModelBase getModel() {
 			return JenaTreeModelBase.this;
 		}
 		
+		/**
+		 * Provide a name for the package or document that contains this
+		 * definition.
+		 */
+		public String getPackageName() {
+			return extractPackageName(getBase());
+		}
+
+	}
+	
+	private String extractPackageName(OntResource subject) {
+		Resource defin = subject.getIsDefinedBy();
+		if( defin != null ){
+			return label((OntResource)defin.as(OntResource.class));
+		}
+		else if( source != null ){
+			return ResourceFactory.createResource(source).getLocalName();
+		}
+		else {
+			return "";
+		}
 	}
 
 	/**

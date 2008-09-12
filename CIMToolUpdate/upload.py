@@ -183,7 +183,7 @@ def update_wiki():
 	session = create_session(PREFIX, DOMAIN, username, password)
 	update_wiki_page( session, username, "Download", VERSION=lastversion())
 	update_wiki_page( session, username, "../CIMToolFeature/ChangeLog" )
-	update_wiki_page( session, username, "../CIMToolFeature/GettingStarted" )
+	# update_wiki_page( session, username, "../CIMToolFeature/GettingStarted" )
 	
 def do_update_page(name="../CIMToolFeature/ChangeLog"):
 	username, password = wikipass()

@@ -221,7 +221,10 @@ public class ProfileClass {
 	public OntClass createSomeValuesFrom(Property prop, OntResource type) {
 		OntClass child = model.createClass();
 		child.addSuperClass(type);
-		child.setLabel(type.getLabel(null), null);
+		String label = type.getLabel(null);
+		if( label == null)
+			label = type.getLocalName();
+		child.setLabel(label, null);
 		SomeValuesFromRestriction res = model.createSomeValuesFromRestriction(null, prop, child);
 		clss.addSuperClass(res);
 		props.put(prop, res);
@@ -234,7 +237,10 @@ public class ProfileClass {
 			child = model.createIndividual(RDFS.Datatype); // its not really an individual
 		else
 			child = model.createClass();
-		child.setLabel(prop.getLabel(null), null);
+		String label = prop.getLabel(null);
+		if( label == null)
+			label = prop.getLocalName();
+		child.setLabel(label, null);
 		
 		Restriction res = model.createAllValuesFromRestriction(null, prop, child);
 		clss.addSuperClass(res);

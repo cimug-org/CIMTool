@@ -10,6 +10,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import com.hp.hpl.jena.ontology.OntResource;
 
 import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.profiles.ProfileModel.ProfileNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.ui.util.IconCache;
@@ -77,6 +78,23 @@ public class PropertySupport implements IAdapterFactory {
 		}
 	}
 	
+	public static abstract class ModelDescriptor extends Descriptor {
+
+		public ModelDescriptor(String name, String description) {
+			super(name, description);
+		}
+		
+		@Override
+		public Object getValueFrom(Node node) {
+			if( node instanceof ModelNode) 
+				return getValueFrom((ModelNode)node);
+			else
+				return "";
+		}
+		
+		public abstract Object getValueFrom(ModelNode node);
+	}
+	
 	public static abstract class PropertyDescriptor extends Descriptor {
 
 		public PropertyDescriptor(String name, String description) {
@@ -100,9 +118,9 @@ public class PropertySupport implements IAdapterFactory {
 		
 	}
 	
-	public static abstract class ExtraDescriptor extends Descriptor {
+	public static abstract class ProfileDescriptor extends Descriptor {
 
-		public ExtraDescriptor(String name, String description) {
+		public ProfileDescriptor(String name, String description) {
 			super(name, description);
 		}
 		
@@ -130,6 +148,12 @@ public class PropertySupport implements IAdapterFactory {
 				return node.getName();
 			}
 		},
+		new ModelDescriptor("Package", "Package or document containing definition") {
+			@Override
+			public Object getValueFrom(ModelNode node) {
+				return node.getPackageName();
+			}
+		},
 		new Descriptor("Type", "Type of definition") {
 			@Override
 			public Object getValueFrom(Node node) {
@@ -146,13 +170,13 @@ public class PropertySupport implements IAdapterFactory {
 					return "anonymous";
 			}
 		},
-		new ExtraDescriptor("Based on", "Name in information model") {
+		new ProfileDescriptor("Based on", "Name in information model") {
 			@Override
 			public Object getValueFrom(ProfileNode node) {
 				return node.getBase().getLocalName();
 			}
 		},
-		new ExtraDescriptor("Base namespace", "Namespace in information model") {
+		new ProfileDescriptor("Base namespace", "Namespace in information model") {
 			@Override
 			public Object getValueFrom(ProfileNode node) {
 				return node.getBase().getNameSpace();
