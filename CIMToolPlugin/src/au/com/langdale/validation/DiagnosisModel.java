@@ -6,13 +6,11 @@ package au.com.langdale.validation;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 
-import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
@@ -22,8 +20,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
  */
 public class DiagnosisModel extends JenaTreeModelBase {
 
-	public static Resource DIAGNOSIS_ROOT = ResourceFactory.createResource("http://langdale.com.au/2007/Diagnosis#root");
-	public static Resource DIAGNOSIS_GENERAL = ResourceFactory.createResource("http://langdale.com.au/2007/Diagnosis#general");
+	public static FrontsNode DIAGNOSIS_ROOT = ResourceFactory.createResource("http://langdale.com.au/2007/Diagnosis#root");
+	public static FrontsNode DIAGNOSIS_GENERAL = ResourceFactory.createResource("http://langdale.com.au/2007/Diagnosis#general");
 	/**
 	 * The root of the diagnosis tree.
 	 */
@@ -43,7 +41,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 		protected void populate() {
 			ResIterator jt = getOntModel().listSubjectsWithProperty(LOG.hasProblems);
 			while(jt.hasNext()) {
-				Resource subject = jt.nextResource();
+				OntResource subject = jt.nextResource();
 				add( new KeyNode(asOntResource(subject)));
 			}
 			add( new GeneralNode());
@@ -69,11 +67,10 @@ public class DiagnosisModel extends JenaTreeModelBase {
 		protected void populate() {
 			ResIterator it = getOntModel().listSubjectsWithProperty(RDF.type, LOG.Problem);
 			while (it.hasNext()) {
-				Resource problem = it.nextResource();
+				OntResource problem = it.nextResource();
 				ResIterator jt = getOntModel().listSubjectsWithProperty(LOG.hasProblems, problem);
 				if( ! jt.hasNext())
 					add( new DetailNode(getSubject(), asOntResource(problem)));
-				jt.close();
 			}
 		}
 
@@ -112,12 +109,10 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		protected void populate() {
-			StmtIterator it = subject.listProperties(LOG.hasProblems);
+			ResIterator it = subject.listProperties(LOG.hasProblems);
 			while (it.hasNext()) {
-				RDFNode node = it.nextStatement().getObject();
-				if( node.isResource()) {
-					add( new DetailNode(subject, asOntResource(node)));
-				}
+				OntResource node = it.nextResource();
+				add( new DetailNode(subject, asOntResource(node)));
 			}
 		}
 	}
@@ -160,21 +155,21 @@ public class DiagnosisModel extends JenaTreeModelBase {
 		
 		@Override
 		public String getName() {
-			return problem.getComment(null);
+			return problem.getComment();
 		}
 
 		@Override
 		public String toString() {
-			return problem.getComment(null);
+			return problem.getComment();
 		}
 
 		public String getDescription() {
-			return problem.getProperty(LOG.problemDetail).getString();
+			return problem.getString(LOG.problemDetail);
 		}
 	}
 	
 	@Override
-	protected Node classify(OntResource root) throws ConversionException {
+	protected Node classify(OntResource root) {
 		if( root.equals(DIAGNOSIS_ROOT))
 			return new RootNode();
 		else

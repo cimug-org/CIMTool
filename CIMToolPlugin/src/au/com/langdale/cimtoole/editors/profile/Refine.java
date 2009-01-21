@@ -24,8 +24,7 @@ import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.plumbing.Template;
 import au.com.langdale.ui.util.IconCache;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntResource;
 
 public class Refine extends FurnishedEditor {
 	private ProfileEditor master;
@@ -102,7 +101,7 @@ public class Refine extends FurnishedEditor {
 			if( ! subject.isClass())
 				return false;
 			
-			OntClass member = master.getRefactory().findNamedProfile(subject.asClass());
+			OntResource member = master.getRefactory().findNamedProfile(subject);
 			if( member == null)
 				return false;
 			return members.contains(member);
@@ -124,12 +123,12 @@ public class Refine extends FurnishedEditor {
 		protected void hasBeenChecked(Node node) {
 			OntResource subject = node.getSubject();
 			if( subject.isClass()) {
-				OntClass sub = master.getRefactory().findNamedProfile(subject.asClass());
+				OntResource sub = master.getRefactory().findNamedProfile(subject);
 				if( sub != null && ! members.remove(sub)) {
 					enode.getProfile().addUnionMember(sub);
 				}
 				else if( sub == null) {
-					enode.getProfile().addUnionMember(master.getRefactory().findOrCreateNamedProfile(subject.asClass()));
+					enode.getProfile().addUnionMember(master.getRefactory().findOrCreateNamedProfile(subject));
 				}
 			}
 		}

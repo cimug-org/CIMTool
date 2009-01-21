@@ -30,7 +30,7 @@ public class SampleHandler extends AbstractHandler {
 	 * the command has been executed, so extract extract the needed information
 	 * from the application context.
 	 */
-	@Override
+
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IViewDescriptor[] views = PlatformUI.getWorkbench().getViewRegistry().getViews();
 		for( int ix = 0; ix < views.length; ix++)

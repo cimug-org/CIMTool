@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" >
+<html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <title>Model Validation HOWTO</title>
+        <link href="graphic.css" type="text/css" rel="stylesheet" />
+        <link href="favicon.ico" type="image/x-icon" rel="icon" />
+        <link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />  
+            
+      </head>
+      <body>
+        
+        <div id="banner">
+          <img src="logo-composite.png" id="logo" />
+          <img src="illust-composite.png" id="illust" />
+          <h1>Model Validation HOWTO</h1>
+        </div>
+        <div id="main">
+          <div id="content">
+          
+    
+<p>
+These instructions explain how to validate a CIM/XML file using CIMTool.
+</p>
+<p>
+<div class="wiki-toc">
+<ol><li><a href="#ModelValidationHOWTO" class="contents">Model Validation HOWTO</a>
+	<ol><li><a href="#GettheData" class="contents">Get the Data</a></li><li><a href="#GetCIMTool" class="contents">Get CIMTool</a></li><li><a href="#SetupaProfile" class="contents">Setup a Profile</a></li><li><a href="#ValidateaCIM/XMLFile" class="contents">Validate a CIM/XML File</a></li><li><a href="#ValidateanIncrementalCIM/XMLFile" class="contents">Validate an Incremental CIM/XML File</a>
+		<ol><li><a href="#Notes" class="contents">Notes</a></li></ol>
+		</li><li><a href="#CleaningUp" class="contents">Cleaning Up</a></li></ol>
+	</li></ol>
+</div>
+</p>
+<h2 id="GettheData">Get the Data</h2>
+<p>
+We will use the data from the 2007 CIM Interop Meeting, IOP10.  
+For convenience, you can obtain the key files here:
+<a href="http://files.cimtool.org/IOP10Kit.zip" class="external">http://files.cimtool.org/IOP10Kit.zip</a>
+</p>
+<p>
+If you already have the IOP10 files then just download the CIMTool CPSM profile:
+<a href="http://files.cimtool.org/CPSM2007-CIMTool-Profile.owl" class="external">http://files.cimtool.org/CPSM2007-CIMTool-Profile.owl</a>
+</p>
+<h2 id="GetCIMTool">Get CIMTool</h2>
+<p>
+Download CIMTool from  <a href="http://wiki.cimtool.org/Download.html" class="internal">Download</a>  
+</p>
+<p>
+Install according according to the instructions on the download page.
+There is all-in-one download for those who don't want to mess with java and eclipse.
+If you have those, or you are not on the Windows platform, download the plugin only.
+</p>
+<h2 id="SetupaProfile">Setup a Profile</h2>
+<p>
+1. Open the CIMTool perspective.  If this is the first time you have run
+eclipse then you will be promted for a workspace location.  (The default is reasonable.)
+You also need dismiss the unhelpful welcome screen.  Now select the CIMTool perspective
+from the menu: Window|Open Perspective| CIMTool.
+</p>
+<p>
+2. Create a new CIMTool project. Select File|New|CIMTool Project.  
+In the wizard,
+</p>
+<ul><li>Give the project some meaningful name, such as IOP10
+</li><li>Supply the CIM XMI file (look for cim11v09combined.xmi) when
+prompted. 
+</li><li><strong>Be Sure to set the CIM namespace correctly</strong>, enter 
+http://iec.ch/TC57/2007/CIM-schema-cim12# where prompted.
+</li></ul><p>
+3. Add a profile definition to your project by selecting File|Import|Profile.
+Supply the CPSM2007-CIMTool-Profile.owl you downloaded above.
+</p>
+<p>
+4. You project is ready.   Browse around.
+</p>
+<p>
+You can browse around by double clicking the profile 
+(under the Profiles folder in the Project Explorer). Then clicking on items
+in the Outline view.  Select the &quot;Element Detail&quot; tab in the middle pane to
+see descriptions.  
+</p>
+<p>
+Notice that the Project Model view tracks your selections. 
+This shows the the CIM definition that corresponds to the selected profile definition.
+</p>
+<h2 id="ValidateaCIM/XMLFile">Validate a CIM/XML File</h2>
+<p>
+Now for the meat of this HOWTO.
+</p>
+<p>
+1. Switch to the Validation perspective by selecting Window|Open
+Perspective|Validation.
+</p>
+<p>
+2. Add a power system model (CIM/XML) file to the project by clicking
+the Import Model button <img alt="plus.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/plus.png" /> on the Validation Projects view.  
+</p>
+<p>
+3. The wizard will prompt for the CIM/XML file, the project, and the profile to use.  
+After you complete the wizard, the file will be imported and validated.  
+You can monitor progress in the Progress View.
+</p>
+<p>
+4. Browse results.  Click on the .diagnostic file in the Validation
+Projects view.  Now use the outline view to browse validation results. 
+As you do, the Project Model View displays the CIM definition concerned.
+</p>
+<p>
+Repeat these steps validate more models.  
+</p>
+<h2 id="ValidateanIncrementalCIM/XMLFile">Validate an Incremental CIM/XML File</h2>
+<p>
+1. Add an incremental CIM/XML file by clicking the Import Incremental Model button 
+<img alt="plusinc.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/plusinc.png" /> on the Validation Projects view.  
+</p>
+<p>
+2. The wizard will prompt for the Incremental CIM/XML file, the project, and the base model.
+The base model can be any previously imported, full model. After you complete the wizard, 
+the incremental model will be imported and validated against the base model and its profile.  
+</p>
+<h3 id="Notes">Notes</h3>
+<ul><li>You will see some diagnostics concerned <code>NonConformingLoad</code> and related classes.
+This might reflect an error in the profile definition rather than the power system
+models.  The issue is: should loads be declared with this class or one of its more
+specific sub-classes?
+</li></ul><ul><li>Diagnostics are grouped by the class or property concerned.  By default only 
+a few diagnostics are shown in each group.  
+The idea is that models tend to have systematic errors. If we show every occurrence 
+of a given error, it is repetitive and tends to hide other types of error.
+</li></ul><ul><li>It is sometimes good to see all occurrences of a diagnostic, especially for diagnosing
+electrical topology problems.  To do this, select Window|Preferences|CIMTool and
+uncheck the <i>Limit Validation Output</i> preference. Next, click the plus (+) button
+and re-import the CIM/XML file.
+</li></ul><h2 id="CleaningUp">Cleaning Up</h2>
+<p>
+Note that the import buttons <img alt="plus.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/plus.png" /> and <img alt="plusinc.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/plusinc.png" /> 
+cause the contents of the CIM/XML file to be copied into your project. 
+(That is, within the eclipse workspace.)
+The cleanup button <img alt="minus.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/minus.png" /> is for deleting power system models and associated
+diagnostic results from the project.
+</p>
+
+   
+          </div>
+          <div id="menu"><ul>
+    
+    </ul></div>
+        </div>  
+        <div id="footer"></div>
+      </body>
+    </html>

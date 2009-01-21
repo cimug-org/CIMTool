@@ -30,12 +30,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
 
 import com.hp.hpl.jena.graph.compose.MultiUnion;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 /**
  * A cache of ontology models. 
  */
@@ -302,8 +300,8 @@ public class Cache extends Info {
 				OntModel input = (OntModel) it.next();
 				union.addGraph(input.getGraph());
 			}
-			Model basic = ModelFactory.createModelForGraph(union);
-			return ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, basic);
+			
+			return ModelFactory.createMem(union);
 		}
 
 		public void modelCached(IResource raw) {

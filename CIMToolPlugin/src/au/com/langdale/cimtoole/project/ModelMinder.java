@@ -16,7 +16,7 @@ import org.eclipse.ui.PlatformUI;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache.CacheListener;
 
-import com.hp.hpl.jena.ontology.OntModel;
+import au.com.langdale.kena.OntModel;
 /**
  * An adjunct to the model cache to manage cache notifications 
  * for a user interface component.

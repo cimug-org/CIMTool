@@ -13,10 +13,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
 /**
  * An index of all local names found in one or more models.
@@ -38,7 +37,7 @@ public class SearchIndex {
 	 * Index resources 
 	 * @param model: the model containing the resources 
 	 */
-	public void scan(Model model) {
+	public void scan(OntModel model) {
 		ResIterator it = model.listSubjects();
 		while(it.hasNext()) {
 			scan(it.nextResource());
@@ -51,16 +50,17 @@ public class SearchIndex {
 	 * @param model: the model containing the resources
 	 * @return a set of <code>Resource</code>
 	 */
-	public Set locate(String name, Model model) {
+	public Set locate(String name, OntModel model) {
 		Set result = Collections.EMPTY_SET;
 		for (Iterator it = spaces.iterator(); it.hasNext();) {
 			String space = (String) it.next();
-			Resource res = ResourceFactory.createResource(space + name);
-			if( model.containsResource(res)) {
+			OntResource res = model.createResource(space + name);
+			if(res.hasRDFType()) {
 				if( result.size() == 0)
 					result = Collections.singleton(res);
-				else if( result.size() == 1) {
-					result = new HashSet(result);
+				else { 
+					if( result.size() == 1) 
+						result = new HashSet(result);
 					result.add(res);
 				}
 			}
@@ -68,7 +68,7 @@ public class SearchIndex {
 		return result;
 	}
 
-	private void scan(Resource res) {
+	private void scan(OntResource res) {
 		if( res.isURIResource() ) {
 			words.add(reverse(res.getLocalName()));
 			spaces.add(res.getNameSpace());

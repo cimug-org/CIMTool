@@ -11,11 +11,11 @@ import org.eclipse.core.resources.IResource;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.validation.Validator;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * Buildlet generates diagnostics directly from a CIM/XML instance. 
@@ -28,7 +28,7 @@ public class ValidationBuildlet extends ValidationBaseBuildlet {
 	}
 
 	@Override
-	protected ValidatorProtocol getValidator(Model schema, String namespace, InputStream ruleText) throws ParserException, IOException {
+	protected ValidatorProtocol getValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
 		if( ruleText == null)
 			ruleText = ValidatorUtil.openStandardRules("cimtool-simple");
 		return new Validator(schema, namespace, ruleText);

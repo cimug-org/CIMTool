@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -26,25 +27,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import au.com.langdale.cim.CIM;
-import au.com.langdale.cim.CIMS;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
+import au.com.langdale.jena.TreeModelBase;
+import au.com.langdale.jena.UMLTreeModel;
+import au.com.langdale.kena.IO;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.MESSAGE;
+import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFWriter;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
 /**
  * Utility tasks for CIMTool plugin.  Tasks are instances of <code>IWorkspaceRunnable</code>
  * and in some cases, plain methods.
@@ -71,7 +68,7 @@ public class Task extends Info {
 	public static IWorkspaceRunnable createProfile(final IFile file, final String namespace, final String envname) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+				OntModel model = ModelFactory.createMem();
 				model.createClass(MESSAGE.Message.getURI());
 				monitor.worked(1);
 				write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
@@ -173,19 +170,49 @@ public class Task extends Info {
 	}
 	
 	public static OntModel parse(IFile file) throws CoreException {
-		
-		InputStream contents = new BufferedInputStream( file.getContents());
-		
+		return parse(file, new BufferedInputStream( file.getContents()));
+	}
+
+	private static OntModel parse(IFile file, InputStream contents)	throws CoreException {
 		String ext = file.getFileExtension().toLowerCase();
 		if( ext.equals("xmi")) {
 			return parseXMI(file, contents);
 		}
 		else {
-			return parse(file, contents);
+			return parseOWL(file, contents);
 		}
 	}
 
-	public static OntModel parseXMI(IFile file, InputStream contents) throws CoreException {
+	public static TreeModelBase createTreeModel(IFile file, InputStream contents)	throws CoreException {
+		String ext = file.getFileExtension().toLowerCase();
+		if( ext.equals("xmi")) {
+			return createUMLTreeModel(file, contents);
+		}
+		else {
+			return createProfileTreeModel(file, contents);
+		}
+	}
+
+	private static TreeModelBase createProfileTreeModel(IFile file,	InputStream contents) throws CoreException {
+		ProfileModel tree = new ProfileModel();
+		OntModel model = parseOWL(file, contents);
+		OntModel backgroundModel = CIMToolPlugin.getCache().getMergedOntologyWait(Info.getSchemaFolder(file.getProject()));
+		tree.setOntModel(model);
+		tree.setBackgroundModel(backgroundModel);
+		tree.setRootResource(MESSAGE.Message);
+		return tree;
+	}
+
+	private static TreeModelBase createUMLTreeModel(IFile file,
+			InputStream contents) throws CoreException {
+		UMLTreeModel tree = new UMLTreeModel();
+		OntModel model = parseXMI(file, contents);
+		tree.setOntModel(model);
+		tree.setRootResource(UML.global_package);
+		return tree;
+	}
+
+	private static OntModel parseXMI(IFile file, InputStream contents) throws CoreException {
 		String base = getProperty(SCHEMA_NAMESPACE, file);
 		if( base == null ) {
 			if( file.getName().toLowerCase().startsWith("cim"))
@@ -195,10 +222,10 @@ public class Task extends Info {
 		}
 		try {
 			IFile auxfile = getRelated(file, "annotation");
-			Model annote;
+			OntModel annote;
 			if(auxfile.exists()) {
-				annote = ModelFactory.createDefaultModel();
-				annote.read(auxfile.getContents(), base, "TURTLE");
+				annote = ModelFactory.createMem();
+				IO.read(annote, auxfile.getContents(), base, "TURTLE");
 			}
 			else
 				annote = null;
@@ -208,7 +235,7 @@ public class Task extends Info {
 		}
 	}
 
-	public static OntModel parse(IFile file, InputStream contents) throws CoreException {
+	private static OntModel parseOWL(IFile file, InputStream contents) throws CoreException {
 		OntModel model;
 		String extn = file.getFileExtension().toLowerCase();
 		String base = getProperty(PROFILE_NAMESPACE, file);
@@ -224,7 +251,7 @@ public class Task extends Info {
 	}
 
 	public static OntModel parse(InputStream contents, String ext, String base) {
-		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
+		OntModel model = ModelFactory.createMem();
 		String syntax;
 		if(ext.equals("n3"))
 			syntax = "N3";
@@ -232,42 +259,30 @@ public class Task extends Info {
 			syntax = "TURTLE";
 		else
 			syntax = "RDF/XML";
-		model.read(contents, base, syntax);
+		IO.read(model, contents, base, syntax);
 		return model;
 	}
 
-	private static final Resource[] PRETTY_TYPES = new Resource[] {
-		OWL.Class,
-		OWL.FunctionalProperty,
-		OWL.ObjectProperty,
-		OWL.DatatypeProperty,
-		RDF.Property,
-		RDFS.Class,
-		RDFS.Datatype,
-		UML.Package,
-		CIMS.ClassCategory
-	};
-	
-	public static void write(Model model, String namespace, boolean xmlbase, IFile file, String format, IProgressMonitor monitor) throws CoreException {
+	public static void write(OntModel model, String namespace, boolean xmlbase, IFile file, String format, IProgressMonitor monitor) throws CoreException {
 		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
 		write(model, namespace, xmlbase, format, stream);
 	}
 
-	public static void write(Model model, String namespace, boolean xmlbase, String format, OutputStream stream)
+	public static void write(OntModel model, String namespace, boolean xmlbase, String format, OutputStream stream)
 			throws CoreException {
 		try {
-			RDFWriter writer = model.getWriter(format);
+			HashMap style = new HashMap();
 			if(format != null && format.equals("RDF/XML-ABBREV"))
-				writer.setProperty("prettyTypes", PRETTY_TYPES);
+				style.put("prettyTypes", PrettyTypes.PRETTY_TYPES);
 			if( namespace != null) {
 				if(namespace.endsWith("#"))
 					namespace = namespace.substring(0, namespace.length()-1);
 				if(xmlbase)
-					writer.setProperty("xmlbase", namespace);
-				writer.setProperty("relativeURIs", "same-document");
+					style.put("xmlbase", namespace);
+				style.put("relativeURIs", "same-document");
 			}
-			writer.setProperty("showXmlDeclaration", "true");
-			writer.write(model, stream, namespace);
+			style.put("showXmlDeclaration", "true");
+			IO.write(model, stream, namespace, format, style);
 			stream.close();
 		} catch (IOException e) {
 			throw error("can't write model to stream", e);
@@ -291,7 +306,7 @@ public class Task extends Info {
 		};
 	}
 	
-	public static IWorkspaceRunnable saveProfile(final IFile file, final Model model, final String namespace) {
+	public static IWorkspaceRunnable saveProfile(final IFile file, final OntModel model, final String namespace) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);

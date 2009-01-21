@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntResource;
 
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;

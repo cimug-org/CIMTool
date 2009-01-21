@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import com.hp.hpl.jena.ontology.OntModel;
+import au.com.langdale.kena.OntModel;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.profiles.Refactory;

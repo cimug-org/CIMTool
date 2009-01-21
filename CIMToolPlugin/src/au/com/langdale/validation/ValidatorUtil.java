@@ -13,6 +13,9 @@ import au.com.langdale.inference.RuleParser;
 import au.com.langdale.inference.SimpleInfGraph;
 import au.com.langdale.inference.SimpleReasoner;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 import au.com.langdale.util.Formater;
 import au.com.langdale.util.Logger;
 import au.com.langdale.util.Profiler.TimeSpan;
@@ -22,9 +25,6 @@ import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.rulesys.BuiltinRegistry;
 import com.hp.hpl.jena.util.PrintUtil;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -51,14 +51,14 @@ public abstract class ValidatorUtil  {
 		 * @return a diagnostic model
 		 * @throws IOException
 		 */
-		public abstract Model run(String source, String base, String namespace, Logger errors) throws IOException;
+		public abstract OntModel run(String source, String base, String namespace, Logger errors) throws IOException;
 	}
 	
 	public static InputStream openStandardRules(String name) {
 		return ValidatorUtil.class.getResourceAsStream(name + ".rules");
 	}
 
-	public static List expandRules(Model schema, String namespace, InputStream ruleText, BuiltinRegistry registry) throws ParserException, IOException  {
+	public static List expandRules(OntModel schema, String namespace, InputStream ruleText, BuiltinRegistry registry) throws ParserException, IOException  {
 		TimeSpan span = new TimeSpan("Parse Rules");
 		RuleParser parser = new RuleParser(ruleText, registry);
 		parser.registerPrefix("topol", guessTopolNameSpace(schema));
@@ -70,19 +70,18 @@ public abstract class ValidatorUtil  {
 		SimpleInfGraph deductions = (SimpleInfGraph) stage1.bind(graph);
 		List brules = deductions.getBRules();
 
-		//debug(graph, rules, brules);
+		debug(graph, rules, brules);
 		span.stop();
 		return brules;
 	}
 	
-	private static String guessTopolNameSpace(Model schema) {
+	private static String guessTopolNameSpace(OntModel schema) {
 		String ns = "http://langdale.com.au/2008/default_electrical_topology#";
 		ResIterator it = schema.listSubjectsWithProperty(RDF.type, OWL.ObjectProperty);
 		while( it.hasNext()) {
-			Resource prop = it.nextResource();
+			OntResource prop = it.nextResource();
 			if(prop.getLocalName().equals("Terminal.ConnectivityNode")) {
 				ns = prop.getNameSpace();
-				it.close();
 				break;
 			}
 		}
@@ -90,13 +89,13 @@ public abstract class ValidatorUtil  {
 	}
 
 	private static void debug(Graph graph, List rules, List brules) {
-		System.out.println("---funny triples---");
-		ExtendedIterator it = graph.find(Node.ANY, RDFS.subClassOf.asNode(), Node.ANY);
-		while (it.hasNext()) {
-			Triple t = (Triple) it.next();
-			if( t.getObject().isBlank())
-				System.out.println(t);
-		}
+//		System.out.println("---funny triples---");
+//		ExtendedIterator it = graph.find(Node.ANY, RDFS.subClassOf.asNode(), Node.ANY);
+//		while (it.hasNext()) {
+//			Triple t = (Triple) it.next();
+//			if( t.getObject().isBlank())
+//				System.out.println(t);
+//		}
 
 		System.out.println("---initial rules---");
 		PrintUtil.printOut(rules.iterator());

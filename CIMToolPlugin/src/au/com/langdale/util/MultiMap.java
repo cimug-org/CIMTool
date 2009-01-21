@@ -1,6 +1,5 @@
 package au.com.langdale.util;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +18,7 @@ public class MultiMap {
 		traces.add(value);
 	}
 
-	public Collection find(Object key) {
+	public Set find(Object key) {
 		Set traces = (Set) trace.get(key);
 		if( traces == null ) 
 			return Collections.EMPTY_SET;
@@ -29,5 +28,9 @@ public class MultiMap {
 	
 	public void remove(Object key, Object value) {
 		find(key).remove(value);
+	}
+	
+	public Set keySet() {
+		return trace.keySet();
 	}
 }

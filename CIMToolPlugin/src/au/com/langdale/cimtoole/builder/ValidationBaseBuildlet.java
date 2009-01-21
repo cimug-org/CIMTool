@@ -28,9 +28,9 @@ import au.com.langdale.util.Profiler;
 import au.com.langdale.util.Profiler.TimeSpan;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+
 import com.hp.hpl.jena.shared.JenaException;
 /**
  * Buildlet to generate diagnostics for a CIM/XML instance. 
@@ -44,7 +44,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 	private IFile previousProfile = null;
 
 	protected abstract boolean isInstanceResource(IResource resource);
-	protected abstract ValidatorProtocol getValidator(Model schema, String namespace, InputStream ruleText) throws ParserException, IOException;
+	protected abstract ValidatorProtocol getValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException;
 	
 	@Override
 	protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
@@ -168,7 +168,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 			String basepath = base != null? base.getLocation().toOSString(): null;
 
 			ValidatorProtocol validator = selectValidator(schema, rules, monitor);
-			Model model = validator.run(instpath, basepath, namespace, logger);
+			OntModel model = validator.run(instpath, basepath, namespace, logger);
 			
 			Task.write(model, null, false, diagnostic, "TURTLE", monitor);
 			diagnostic.setDerived(true);
@@ -206,7 +206,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 			throws CoreException {
 		if( result.exists())
 			result.delete(false, monitor);
-		Task.write(ModelFactory.createDefaultModel(), null, false, diagnostic, "TURTLE",	monitor);
+		Task.write(ModelFactory.createMem(), null, false, diagnostic, "TURTLE",	monitor);
 		diagnostic.setDerived(true);
 		CIMBuilder.removeMarkers(diagnostic);
 	}

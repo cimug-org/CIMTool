@@ -28,7 +28,7 @@ import au.com.langdale.profiles.SpreadsheetParser.ColNum;
 import au.com.langdale.profiles.SpreadsheetParser.IndexNum;
 import au.com.langdale.util.Logger;
 
-import com.hp.hpl.jena.ontology.OntModel;
+import au.com.langdale.kena.OntModel;
 
 /**
  * Adapt the SpreadsheetParser to the eclipse environment and the parameters of an ERCOT 

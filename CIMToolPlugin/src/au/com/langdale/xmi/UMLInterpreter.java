@@ -5,18 +5,13 @@
 package au.com.langdale.xmi;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -62,7 +57,7 @@ public class UMLInterpreter {
 			List packages = new ArrayList();
 			ResIterator nt = model.listSubjectsWithProperty(RDF.type, UML.Package);
 			while(nt.hasNext()) {
-				Individual pack = (Individual) nt.nextResource().as(Individual.class);
+				OntResource pack = nt.nextResource();
 				if( ! model.listSubjectsWithProperty(RDFS.isDefinedBy, pack).hasNext()) {
 					packages.add(pack);
 				}	
@@ -75,7 +70,7 @@ public class UMLInterpreter {
 			// remove each package in this batch
 			Iterator ot = packages.iterator();
 			while( ot.hasNext()) {
-				Individual pack = (Individual) ot.next();
+				OntResource pack = (OntResource) ot.next();
 				pack.remove();
 			}
 		}
@@ -87,35 +82,9 @@ public class UMLInterpreter {
 	 */
 	public void removeUntyped() {
 		// find every typed node in the model
-		Iterator jt = model.listSubjectsWithProperty(RDF.type);
-		Set typed = new HashSet();
-		while(jt.hasNext())
-			typed.add(jt.next());
-		
-		// find everything else and call it untyped
-		Set untyped = new HashSet();
-		Iterator mt = model.listObjects();
-		while(mt.hasNext()) {
-			RDFNode obj = (RDFNode) mt.next();
-			if(obj instanceof Resource) {
-				if( !typed.contains(obj))
-					untyped.add(obj);
-			}
-		}
-	
-		Iterator kt = model.listSubjects();
-		while(kt.hasNext()) {
-			Resource subj = (Resource) kt.next();
-			if( ! typed.contains(subj))
-				untyped.add(subj);
-				
-		}
-		
-		// remove untyped nodes
-		Iterator lt = untyped.iterator();
+		ResIterator lt = model.listSubjectsWithNoProperty(RDF.type);
 		while(lt.hasNext()) {
-			Resource subj = (Resource) lt.next();
-			OntResource res = (OntResource) subj.as(OntResource.class);
+			OntResource res = lt.nextResource();
 			
 			// only the resources originating from UML definitions are affected
 			if(res.getNameSpace().equals(XMI.NS)) 
@@ -131,10 +100,9 @@ public class UMLInterpreter {
 	public void classifyAttributes() {
 		ResIterator it = model.listSubjectsWithProperty(UML.hasStereotype, UML.attribute);
 		while(it.hasNext()) {
-			Resource attrib = it.nextResource();
-			Statement s = attrib.getProperty(RDFS.range);
-			if( s != null ) {
-				Resource type = s.getResource();
+			OntResource attrib = it.nextResource();
+			OntResource type = attrib.getResource(RDFS.range);
+			if( type != null ) {
 				//attrib.removeAll(RDF.type);
 				if( (type.hasProperty(RDF.type, RDFS.Datatype) 
 						|| type.getNameSpace().equals(XSD.getURI())) 

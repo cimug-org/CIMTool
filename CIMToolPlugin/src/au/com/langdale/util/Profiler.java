@@ -4,13 +4,16 @@
  */
 package au.com.langdale.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 /**
  * Intrusive profiler.   
  */
 public class Profiler {
+	private static final double MS = 1.0e-6;
 	private static final int CALIBRATION_SAMPLE = 1000;
 	
 	/**
@@ -48,7 +51,7 @@ public class Profiler {
 		 * @return: the measurment in ms.
 		 */
 		public double getDuration() {
-			return (t2 - t1)* 1.0e-6;
+			return (t2 - t1)* MS;
 		}
 		
 		@Override
@@ -77,21 +80,57 @@ public class Profiler {
 			current.stop();
 		current = null;
 	}
+	
+	public static MultiMap summarize() {
+		if( current != null) 
+			current.stop();
+
+		MultiMap map = new MultiMap();
+		for (Iterator it = spans.iterator(); it.hasNext();) {
+			TimeSpan span = (TimeSpan) it.next();
+			if(span.t2 != span.t1)
+				map.putRaw(span.name, span);
+		}
+
+		spans = new LinkedList(); // reset
+		return map;
+	}
+	
 	/**
 	 * Print all completed measurements and delete all measurements.
 	 */
 	public static void print() {
-		if( current != null) 
-			current.stop();
+		MultiMap summary = summarize();
 		
-		System.out.println("===================");
-		System.out.println("Task: Duration (ms)");
-		for (Iterator it = spans.iterator(); it.hasNext();) {
-			TimeSpan span = (TimeSpan) it.next();
-			if(span.t2 != span.t1)
-				System.out.println(span);
+		System.out.println("=====================================================");
+		System.out.println("Task: Total (ms), Count, Ave (ms), Min (ms), Max (ms)");
+		
+		Object[] keys = summary.keySet().toArray();
+		Arrays.sort(keys);
+		
+		for (int ix = 0; ix < keys.length; ix++) {
+			
+			long total = 0, min = Long.MAX_VALUE, max = Long.MIN_VALUE;
+			int count = 0;
+			
+			Set parts = summary.find(keys[ix]);
+			for (Iterator it = parts.iterator(); it.hasNext();) {
+				TimeSpan span = (TimeSpan) it.next();
+				long dur = span.t2 -span.t1;
+				min = dur < min? dur: min;
+				max = dur > max? dur: max;
+				total += dur;
+				count += 1;
+			}
+			
+			System.out.println( 
+					keys[ix] + ": " 
+					+ total*MS + ", " 
+					+ count + ", " 
+					+ total*MS/count + ", "  
+					+ min*MS + ", " 
+					+ max*MS);
 		}
-		spans = new LinkedList(); // reset
 	}
 
 	

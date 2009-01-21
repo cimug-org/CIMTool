@@ -31,9 +31,8 @@ import au.com.langdale.ui.binding.JenaTreeProvider;
 import au.com.langdale.ui.binding.OntModelProvider;
 import au.com.langdale.ui.builder.FurnishedMultiEditor;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 
 public abstract class ModelEditor extends FurnishedMultiEditor  implements ISelectionChangedListener, CacheListener, OntModelProvider {
 
@@ -163,10 +162,9 @@ public abstract class ModelEditor extends FurnishedMultiEditor  implements ISele
 		if( node != null) {
 			OntResource subject = node.getSubject();
 			if( subject != null) {
-				Resource defnode = subject.getIsDefinedBy();
+				OntResource defnode = subject.getIsDefinedBy();
 				if( defnode != null) {
-					OntResource container = (OntResource) defnode.as(OntResource.class);
-					return node.toString() + " (" + ProfileModel.label(container) + ")";
+					return node.toString() + " (" + ProfileModel.label(defnode) + ")";
 				}
 			}
 			return node.toString();

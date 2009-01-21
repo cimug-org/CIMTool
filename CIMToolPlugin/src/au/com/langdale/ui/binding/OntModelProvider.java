@@ -4,8 +4,8 @@
  */
 package au.com.langdale.ui.binding;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 /**
  * A reference to a an ontology model and a resource in that model.
  */

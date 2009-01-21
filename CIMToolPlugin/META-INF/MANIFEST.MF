@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true
-Bundle-Version: 1.3.3
+Bundle-Version: 1.4.1
 Bundle-ClassPath: cimtoole.jar,
  lib/antlr-2.7.5.jar,
  lib/commons-logging-1.1.jar,
@@ -32,6 +32,7 @@ Export-Package: au.com.langdale.cim,
  au.com.langdale.cimtoole,
  au.com.langdale.cimtoole.actions,
  au.com.langdale.cimtoole.builder,
+ au.com.langdale.cimtoole.compare,
  au.com.langdale.cimtoole.editors,
  au.com.langdale.cimtoole.editors.profile,
  au.com.langdale.cimtoole.handlers,
@@ -43,6 +44,8 @@ Export-Package: au.com.langdale.cim,
  au.com.langdale.cimtoole.wizards,
  au.com.langdale.inference,
  au.com.langdale.jena,
+ au.com.langdale.kena,
+ au.com.langdale.kena.filters,
  au.com.langdale.profiles,
  au.com.langdale.sax,
  au.com.langdale.splitmodel,
@@ -51,6 +54,7 @@ Export-Package: au.com.langdale.cim,
  au.com.langdale.ui.builder,
  au.com.langdale.ui.icons,
  au.com.langdale.ui.plumbing,
+ au.com.langdale.ui.util,
  au.com.langdale.util,
  au.com.langdale.validation,
  au.com.langdale.xmi,

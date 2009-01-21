@@ -11,25 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import au.com.langdale.jena.OntSubject;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.AllValuesFromRestriction;
-import com.hp.hpl.jena.ontology.CardinalityRestriction;
-import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.EnumeratedClass;
-import com.hp.hpl.jena.ontology.MaxCardinalityRestriction;
-import com.hp.hpl.jena.ontology.MinCardinalityRestriction;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Restriction;
-import com.hp.hpl.jena.ontology.SomeValuesFromRestriction;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFList;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Property;
+import au.com.langdale.kena.ResIterator;
+
+import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.util.OneToManyMap;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -40,15 +29,15 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  */
 public class ProfileClass {
 	private OneToManyMap props;
-	private OntClass baseClass;
+	private OntResource baseClass;
 	private Set classes;
-	private OntClass clss;
+	private OntResource clss;
 	private String namespace;
 	private OntModel model;
 	private boolean enumerated;
-	private OntClass defaultBase;
+	private OntResource defaultBase;
 	
-	public ProfileClass(OntClass clss, String namespace, OntModel model, OntClass base) {
+	public ProfileClass(OntResource clss, String namespace, OntModel model, OntResource base) {
 		this.clss = clss;
 		this.namespace = namespace;
 		this.model = model;
@@ -56,11 +45,11 @@ public class ProfileClass {
 		analyse();
 	}
 	
-	public ProfileClass(OntClass clss, String namespace, OntModel model) {
-		this(clss, namespace, model, null);
+	public ProfileClass(OntResource clss, String namespace, OntModel model) {
+		this(clss, namespace, model, model.createClass( OWL.Thing.getURI()));
 	}
 	
-	public ProfileClass(OntClass clss) {
+	public ProfileClass(OntResource clss) {
 		this(clss, clss.getNameSpace(), clss.getOntModel());
 	}
 	
@@ -73,27 +62,22 @@ public class ProfileClass {
 		classes = new HashSet();
 		baseClass = defaultBase;
 
-		Iterator it = new OntSubject(clss).listSuperClasses(true);
+		ResIterator it = clss.listSuperClasses(true);
 		while( it.hasNext()) {
-			OntResource node = (OntResource) it.next();
-			if( node.canAs(OntClass.class) && ! node.equals(MESSAGE.Reference)) {
-				OntClass parent = (OntClass) node.as(OntClass.class);
-				if(parent.isRestriction()) {
-					Restriction res = parent.asRestriction();
-					try {
-						props.put(res.getOnProperty(), res);
-					}
-					catch (ConversionException e) {
-						// ignore an undefined property
-					}
+			OntResource node = it.nextResource();
+			if( node.isClass() && ! node.equals(MESSAGE.Reference)) {
+				if(node.isRestriction()) {
+					OntResource prop = node.getOnProperty();
+					if( prop != null)
+						props.put(prop, node);
 				}
-				else if( ! parent.isAnon()) {
+				else if( ! node.isAnon()) {
 					//  its a named, general base class
-					if( parent.getNameSpace().equals(namespace)) {
-						classes.add(parent); // locally defined class
+					if( node.getNameSpace().equals(namespace)) {
+						classes.add(node); // locally defined class
 					}
 					else {
-						baseClass = parent; // externally defined class (expect only one)
+						baseClass = node; // externally defined class (expect only one)
 					}
 				}
 			}
@@ -108,16 +92,15 @@ public class ProfileClass {
 	/**
 	 * remove a SomeValueFrom restriction.
 	 */
-	public void remove(Property prop, OntClass childClass) {
+	public void remove(Property prop, OntResource childClass) {
 		Iterator it = props.getAll(prop);
 		
 		while(it.hasNext()) {
-		    Restriction res = (Restriction) it.next();
+		    OntResource res = (OntResource) it.next();
 		    if( res.isSomeValuesFromRestriction()) {
-		    	SomeValuesFromRestriction some = res.asSomeValuesFromRestriction();
-		    	Resource type =  some.getSomeValuesFrom();
+		    	Resource type =  res.getSomeValuesFrom();
 		    	if( type != null && type.equals(childClass)) 
-		    		some.remove();
+		    		res.remove();
 		    }
 		}
 	}
@@ -132,27 +115,27 @@ public class ProfileClass {
 			clss.removeSuperClass(baseClass);
 		}
 		clss.addSuperClass(type);
-		baseClass = type.asClass();
+		baseClass = type;
 		analyseBaseClass();
 	}
 
 	/**
 	 * Remove all restrictions on the given property.
 	 */
-	public void remove(Property prop) {
+	public void remove(OntResource prop) {
 		Iterator jt = props.getAll(prop);
 		while( jt.hasNext()) {
-			Restriction res = (Restriction) jt.next();
+			OntResource res = (OntResource) jt.next();
 			res.remove();
 		}
 		props.remove(prop);
 	}
 
-	private boolean removeCardinality(OntProperty prop) {
+	private boolean removeCardinality(OntResource prop) {
 		boolean removed = false;
 		Iterator it = props.getAll(prop);
 		while( it.hasNext()) {
-			Restriction res = (Restriction) it.next();
+			OntResource res = (OntResource) it.next();
 			if( res.isCardinalityRestriction()) {
 				res.remove();
 				it.remove();
@@ -162,19 +145,19 @@ public class ProfileClass {
 		return removed;
 	}
 
-	private void setMaxCardinality(OntProperty prop, int card) {
+	private void setMaxCardinality(OntResource prop, int card) {
 		removeMaxCardinality(prop);
 		if( card < Integer.MAX_VALUE) {
-			Restriction res = model.createMaxCardinalityRestriction(null, prop, card);
+			OntResource res = model.createMaxCardinalityRestriction(null, prop, card);
 			clss.addSuperClass(res);
 			props.put(prop, res);
 		}
 	}
 
-	private void removeMaxCardinality(OntProperty prop) {
+	private void removeMaxCardinality(OntResource prop) {
 		Iterator it = props.getAll(prop);
 		while( it.hasNext()) {
-			Restriction res = (Restriction) it.next();
+			OntResource res = (OntResource) it.next();
 			if( res.isMaxCardinalityRestriction()) {
 				res.remove();
 				it.remove();
@@ -182,19 +165,19 @@ public class ProfileClass {
 		}
 	}
 
-	private void setMinCardinality(OntProperty prop, int card) {
+	private void setMinCardinality(OntResource prop, int card) {
 		removeMinCardinality(prop);
 		if( card > 0 ) {
-			Restriction res = model.createMinCardinalityRestriction(null, prop, card);
+			OntResource res = model.createMinCardinalityRestriction(null, prop, card);
 			clss.addSuperClass(res);
 			props.put(prop, res);
 		}
 	}
 
-	private void removeMinCardinality(OntProperty prop) {
+	private void removeMinCardinality(OntResource prop) {
 		Iterator it = props.getAll(prop);
 		while( it.hasNext()) {
-			Restriction res = (Restriction) it.next();
+			OntResource res = (OntResource) it.next();
 			if( res.isMinCardinalityRestriction()) {
 				res.remove();
 				it.remove();
@@ -218,20 +201,20 @@ public class ProfileClass {
 		return clss.hasProperty(UML.hasStereotype, stereo);
 	}
 
-	public OntClass createSomeValuesFrom(Property prop, OntResource type) {
-		OntClass child = model.createClass();
+	public OntResource createSomeValuesFrom(OntResource prop, OntResource type) {
+		OntResource child = model.createClass();
 		child.addSuperClass(type);
 		String label = type.getLabel(null);
 		if( label == null)
 			label = type.getLocalName();
-		child.setLabel(label, null);
-		SomeValuesFromRestriction res = model.createSomeValuesFromRestriction(null, prop, child);
+		child.addLabel(label, null);
+		OntResource res = model.createSomeValuesFromRestriction(null, prop, child);
 		clss.addSuperClass(res);
 		props.put(prop, res);
 		return child;
 	}
 
-	public OntResource createAllValuesFrom(OntProperty prop, boolean required) {
+	public OntResource createAllValuesFrom(OntResource prop, boolean required) {
 		OntResource child; 
 		if( prop.isDatatypeProperty())
 			child = model.createIndividual(RDFS.Datatype); // its not really an individual
@@ -240,14 +223,14 @@ public class ProfileClass {
 		String label = prop.getLabel(null);
 		if( label == null)
 			label = prop.getLocalName();
-		child.setLabel(label, null);
+		child.addLabel(label, null);
 		
-		Restriction res = model.createAllValuesFromRestriction(null, prop, child);
+		OntResource res = model.createAllValuesFromRestriction(null, prop, child);
 		clss.addSuperClass(res);
 		props.put(prop, res);
 		
 		if(required && canBeRequired(prop)) {
-			Restriction req = model.createMinCardinalityRestriction(null, prop, 1);
+			OntResource req = model.createMinCardinalityRestriction(null, prop, 1);
 			clss.addSuperClass(req);
 			props.put(prop, req);
 		}
@@ -255,7 +238,7 @@ public class ProfileClass {
 	}
 
 	public OntResource createSuperClass(OntResource base) {
-		OntClass child = model.createClass(namespace + base.getLocalName());
+		OntResource child = model.createClass(namespace + base.getLocalName());
 		child.addSuperClass(base);
 		return addSuperClass(child);
 	}
@@ -268,8 +251,7 @@ public class ProfileClass {
 	
 	public Iterator getIndividuals() {
 		if( clss.isEnumeratedClass()) {
-			EnumeratedClass enated = clss.asEnumeratedClass();
-			return enated.listOneOf();
+			return clss.getOneOf().listResourceElements();
 		}
 		if( enumerated && classes.size() == 0) {
 			return baseClass.listInstances();
@@ -282,8 +264,7 @@ public class ProfileClass {
 			clss.addProperty(OWL.oneOf, model.createList(baseClass.listInstances()));
 		}
 		else if( ! state && clss.isEnumeratedClass()){
-			EnumeratedClass enated = clss.asEnumeratedClass();
-			RDFList extent = enated.getOneOf();
+			OntResource extent = clss.getOneOf();
 			clss.removeAll(OWL.oneOf);
 			if( ! extent.equals(RDF.nil))
 				extent.removeList();
@@ -302,18 +283,16 @@ public class ProfileClass {
 			clss.addProperty(OWL.oneOf, model.createList().cons(indiv));
 		}
 		else {
-			EnumeratedClass enated = clss.asEnumeratedClass();
-			RDFList extent = enated.getOneOf();
+			OntResource extent = clss.getOneOf();
 			if(! extent.contains(indiv))
-				enated.setOneOf(extent.cons(indiv));
+				clss.setOneOf(extent.cons(indiv));
 		}
 	}
 	
 	public void removeIndividual(OntResource indiv) {
 		setRestrictedEnum( true );
-		EnumeratedClass enated = clss.asEnumeratedClass();
-		RDFList extent = enated.getOneOf();
-		enated.setOneOf(extent.remove(indiv));
+		OntResource extent = clss.getOneOf();
+		clss.setOneOf(extent.remove(indiv));
 	}
 	
 	public boolean isUnion() {
@@ -339,17 +318,17 @@ public class ProfileClass {
 			return classes.iterator();
 	}
 
-	public PropertyInfo getPropertyInfo(OntProperty prop) {
+	public PropertyInfo getPropertyInfo(OntResource prop) {
 
 		PropertyInfo info = new PropertyInfo(clss, prop);
 		Iterator jt = props.getAll(prop);
 		while(jt.hasNext()) {
-			info.scanRestrict((Restriction)jt.next());
+			info.scanRestrict((OntResource)jt.next());
 		}
 		return info;
 	}
 	
-	public OntClass getSubject() {
+	public OntResource getSubject() {
 		return clss;
 	}
 
@@ -357,7 +336,7 @@ public class ProfileClass {
 		return namespace;
 	}
 
-	public OntClass getBaseClass() {
+	public OntResource getBaseClass() {
 		return baseClass;
 	}
 
@@ -366,32 +345,32 @@ public class ProfileClass {
 	}
 	
 	public boolean isReference() {
-		return hasStereotype(UML.byreference) || clss.hasSuperClass(MESSAGE.Reference, true);
+		return hasStereotype(UML.byreference) || clss.hasSuperClass(MESSAGE.Reference, false);
 	}
 
 	public class PropertyInfo {
-		private OntProperty prop;
-		private OntClass range;
-		private OntClass domain;
+		private OntResource prop;
+		private OntResource range;
+		private OntResource domain;
 		private int min = 0;
 		private int max = Integer.MAX_VALUE;
 
-		private PropertyInfo(OntClass domain, OntProperty prop) {
+		private PropertyInfo(OntResource domain, OntResource prop) {
 			this.prop = prop;
 			this.domain = domain;
 			if(prop.isFunctionalProperty() || prop.isDatatypeProperty())
 				max = 1;
 		}
 
-		public OntClass getDomain() {
+		public OntResource getDomain() {
 			return domain;
 		}
 
-		public OntProperty getProperty() {
+		public OntResource getProperty() {
 			return prop;
 		}
 
-		public OntClass getRange() {
+		public OntResource getRange() {
 			return range;
 		}
 
@@ -400,8 +379,8 @@ public class ProfileClass {
 				return null;
 			
 			OntResource type = prop.getRange();
-			if( type != null && type.canAs(OntClass.class)) 
-				return new ProfileClass(range, namespace, model, type.asClass());
+			if( type != null && type.isClass()) 
+				return new ProfileClass(range, namespace, model, type);
 			else
 				return new ProfileClass(range, namespace, model);
 		}
@@ -452,35 +431,34 @@ public class ProfileClass {
 		/**
 		 * Scan a restriction computing net cardinality for this property.
 		 */
-		private void scanRestrict(Restriction res) {
+		private void scanRestrict(OntResource res) {
 			if(res.isAllValuesFromRestriction())
-				scanRestrict(res.asAllValuesFromRestriction());
+				scanAllValuesFromRestriction(res);
 			else if(res.isCardinalityRestriction())
-				scanRestrict(res.asCardinalityRestriction());
+				scanCardinalityRestriction(res);
 			else if(res.isMinCardinalityRestriction())
-				scanRestrict(res.asMinCardinalityRestriction());
+				scanMinCardinalityRestriction(res);
 			else if(res.isMaxCardinalityRestriction())
-				scanRestrict(res.asMaxCardinalityRestriction());
-		}
-		private void scanRestrict(AllValuesFromRestriction res) {
-			Resource type = res.getAllValuesFrom();
-			if( type.canAs(OntClass.class))
-				range = (OntClass) type.as(OntClass.class);
+				scanMaxCardinalityRestriction(res);
 		}
 		
-		private void scanRestrict(CardinalityRestriction res) {
+		private void scanAllValuesFromRestriction( OntResource res ) {
+			range = res.getAllValuesFrom();
+		}
+		
+		private void scanCardinalityRestriction(OntResource res) {
 			if(res.getCardinality() > min)
 				min = res.getCardinality();
 			if(res.getCardinality() < max)
 				max = res.getCardinality();
 		}
 		
-		private void scanRestrict(MinCardinalityRestriction res) {
+		private void scanMinCardinalityRestriction(OntResource res) {
 			if( res.getMinCardinality() > min)
 				min = res.getMinCardinality();
 		}
 		
-		private void scanRestrict(MaxCardinalityRestriction res) {
+		private void scanMaxCardinalityRestriction(OntResource res) {
 			if(res.getMaxCardinality() < max)
 				max = res.getMaxCardinality();
 		}
@@ -499,7 +477,7 @@ public class ProfileClass {
 			}
 
 			public Object next() {
-				return new ProfileClass((OntClass)classes.get(ix++));
+				return new ProfileClass((OntResource)classes.get(ix++));
 			}
 
 			public void remove() {
@@ -512,17 +490,17 @@ public class ProfileClass {
 	 */
 	public static List getNamedProfiles(OntModel profileModel, OntModel fullModel) {
 		List classes = new ArrayList();
-		Iterator jt = profileModel.listNamedClasses();
+		ResIterator jt = profileModel.listNamedClasses();
 		while( jt.hasNext()) {
-			OntClass symbol = (OntClass) jt.next();
+			Resource symbol = jt.nextResource();
 			if(! symbol.getNameSpace().equals(MESSAGE.NS)) {
-				classes.add(fullModel.getOntClass(symbol.getURI()));
+				classes.add(fullModel.createResource(symbol.asNode()));
 			}
 		}
 		return classes;
 	}
 
-	public boolean canBeRequired(OntProperty prop) {
+	public boolean canBeRequired(OntResource prop) {
 		OntResource domain = prop.getDomain();
 		return domain== null || baseClass.hasSuperClass(domain);
 	}
@@ -535,12 +513,11 @@ public class ProfileClass {
 	 * @return the new profile class
 	 */
 	public OntResource createUnionMember(OntResource base, boolean named) {
-		OntClass member;
+		OntResource member;
 		
 		if(named) {
-			OntResource symbol = model.createOntResource(namespace + base.getLocalName());
-			if( symbol.isClass()) {
-				member = symbol.asClass();
+			member = model.createResource(namespace + base.getLocalName());
+			if( member.isClass()) {
 				if( member.hasSuperClass(base)) { 
 					addUnionMember(member);
 					return member;
@@ -550,7 +527,7 @@ public class ProfileClass {
 
 		member = model.createClass();
 		member.addSuperClass(base);
-		member.setLabel(base.getLocalName(), null);
+		member.addLabel(base.getLocalName(), null);
 		addUnionMember(member);
 		return member;
 	}
@@ -561,20 +538,17 @@ public class ProfileClass {
 	 * 
 	 */
 	public void addUnionMember(OntResource child) {
-//		clss.addSubClass(child);
+		OntResource union = clss.getResource(OWL.unionOf);
 		
-		RDFNode value = clss.getPropertyValue(OWL.unionOf);
-		RDFList union;
-		
-		if( value != null && value.canAs(RDFList.class)) 
-			union = (RDFList) value.as(RDFList.class);
+		if( union != null && union.isList()) 
+			{}
 		else if( isPropertyRange()) 
 			union = buildUnion();
 		else
 			union = model.createList();
 				
 		union = union.cons(child);
-		clss.setPropertyValue(OWL.unionOf, union);
+		clss.setProperty(OWL.unionOf, union);
 	}
 
 	/**
@@ -590,8 +564,8 @@ public class ProfileClass {
 	 * 
 	 * @return an RDFList representing the members of the union.
 	 */
-	private RDFList buildUnion() {
-		RDFList union = model.createList();
+	private OntResource buildUnion() {
+		OntResource union = model.createList();
 		if(! classes.isEmpty()) {
 			for (Iterator it = classes.iterator(); it.hasNext();) {
 				OntResource sup = (OntResource) it.next();
@@ -601,14 +575,14 @@ public class ProfileClass {
 			classes = new HashSet();
 		}
 		if( ! props.isEmpty()) {
-			OntClass member = model.createClass();
+			OntResource member = model.createClass();
 			member.addSuperClass(baseClass);
 			member.addLabel(baseClass.getLocalName(), null);
 			
 			for (Iterator it = props.keySet().iterator(); it.hasNext();) {
-				OntProperty prop = (OntProperty) it.next();
+				OntResource prop = (OntResource) it.next();
 				for (Iterator iv = props.getAll(prop); iv.hasNext();) {
-					Restriction res = (Restriction) iv.next();
+					OntResource res = (OntResource) iv.next();
 					clss.removeSuperClass(res);
 					member.addSuperClass(res);
 				}
@@ -621,7 +595,7 @@ public class ProfileClass {
 	
 	private void removeAllProps() {
 		for (Iterator it = props.keySet().iterator(); it.hasNext();) {
-			OntProperty prop = (OntProperty) it.next();
+			OntResource prop = (OntResource) it.next();
 			remove(prop);
 		}
 	}
@@ -631,13 +605,11 @@ public class ProfileClass {
 	 * of which it is composed.
 	 */
 	public void removeUnionMember(OntResource child) {
-//		clss.removeSubClass(child);
 		
-		RDFNode value = clss.getPropertyValue(OWL.unionOf);
-		if( value != null && value.canAs(RDFList.class)) {
-			RDFList union = (RDFList) value.as(RDFList.class);
+		OntResource union = clss.getResource(OWL.unionOf);
+		if( union != null && union.isList()) {
 			union = union.remove(child);
-			clss.setPropertyValue(OWL.unionOf, union);
+			clss.setProperty(OWL.unionOf, union);
 		}
 		else if(isPropertyRange()) {
 			if( child.equals(clss)) 
@@ -669,19 +641,18 @@ public class ProfileClass {
 	public List getUnionMembers() {
 		List members = new ArrayList();
 		
-		RDFNode value = clss.getPropertyValue(OWL.unionOf);
-		if( value != null && value.canAs(RDFList.class)) {
-			RDFList union = (RDFList) value.as(RDFList.class);
-			for (Iterator it = union.iterator(); it.hasNext();) {
-				RDFNode item = (RDFNode) it.next();
-				if( item.canAs(OntClass.class)) {
-					members.add(new ProfileClass((OntClass)item.as(OntClass.class)));
+		OntResource union = clss.getResource(OWL.unionOf);
+		if( union != null && union.isList()) {
+			for (ResIterator it = union.listResourceElements(); it.hasNext();) {
+				OntResource item = it.nextResource();
+				if( item.isClass()) {
+					members.add(new ProfileClass(item));
 				}
 			}
 		}
 		else if(isPropertyRange()) {
 			for (Iterator it = classes.iterator(); it.hasNext();) 
-				members.add(new ProfileClass((OntClass) it.next()));
+				members.add(new ProfileClass((OntResource) it.next()));
 			if( ! props.isEmpty())
 				members.add(new ProfileClass(clss, namespace, model, baseClass));
 		}

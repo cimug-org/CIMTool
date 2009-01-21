@@ -4,10 +4,10 @@
  */
 package au.com.langdale.profiles;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.Property;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 
 /**
  * The Abstract Message Definition vocabulary.. 

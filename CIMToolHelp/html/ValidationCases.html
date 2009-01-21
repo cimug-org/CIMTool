@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" >
+<html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <title>Validation Test Cases</title>
+        <link href="graphic.css" type="text/css" rel="stylesheet" />
+        <link href="favicon.ico" type="image/x-icon" rel="icon" />
+        <link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />  
+            
+      </head>
+      <body>
+        
+        <div id="banner">
+          <img src="logo-composite.png" id="logo" />
+          <img src="illust-composite.png" id="illust" />
+          <h1>Validation Test Cases</h1>
+        </div>
+        <div id="main">
+          <div id="content">
+          
+    
+<p>
+Test cases used for checking CIMTool's CIM/XML validation functionality can be found here:
+<a href="http://files.cimtool.org/Validation-Cases-2008-02-15.zip" class="external">http://files.cimtool.org/Validation-Cases-2008-02-15.zip</a>
+</p>
+<p>
+The archive contains:
+</p>
+<ul><li>a series of full and incremental CIM/XML files (*.xml)
+</li><li>two profiles (*.owl) with and without topology associations
+</li><li>the compatible version of the CIM (*.xmi)
+</li></ul><p>
+Refer to TEST_RECORD.txt for a listing that details each each
+test, the input files and the expected validation result.  Note that
+each test is crafted to produce no errors or a single validation error
+in isolation.  As a whole, the tests aim to cover all validation rules.
+</p>
+<h2 id="HOWTO">HOWTO</h2>
+<p>
+The validation test cases are run automatically (via JUnit) during 
+CIMTool development.  However, it is instructive to run these cases 
+manually.
+</p>
+<p>
+See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/GettingStarted.html" class="internal">GettingStarted</a> and 
+<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/HowToValidateCPSM.html" class="internal">HowToValidateCPSM</a> for general
+instructions on driving CIMTool.  
+</p>
+<p>
+To manually run the testcases:
+</p>
+<h3 id="Setup">Setup</h3>
+<p>
+1. Run eclipse and select the CIMTool perpective from the top right toolbar.
+</p>
+<p>
+2. Create a new CIMTool project. Select File|New|CIMTool Project. 
+Select the supplied CIM xmi file as the base schema.  <strong>Be sure to specify 
+the CIM namespace</strong>.  For these test cases it is http://iec.ch/TC57/2007/CIM-schema-cim12#
+</p>
+<p>
+3. Import each of the two profiles (*.owl) into the project. Select 
+File|Import|Import Profile
+</p>
+<h3 id="CIM/XMLValidation">CIM/XML Validation</h3>
+<p>
+4. Switch to the validation perspective.
+</p>
+<p>
+5. Import a model.  Select File|Import|Import Model or click the (+) button.  
+Be sure to specify the correct profile.  
+Consult TEST_RECORD.txt for this information.  
+For example, the model base_case.xml goes with cpsm2007_no_topol.owl.
+</p>
+<p>
+6. Click on the resulting diagnosic file in the Project View and browse the 
+diagnostic reports in the Outline view.  For base_case.xml, there should be
+no dignostics.  Other cases may generate a single diagnostic.  Consult 
+TEST_RECORD.txt for the expected validation result.
+</p>
+<p>
+7. You may repeat step 5 and import as many models as desired.
+</p>
+<h3 id="IncrementalCIM/XMLValidation">Incremental CIM/XML Validation</h3>
+<p>
+8. Consult TEST_RECORD.txt to find the names of incremental models, for 
+example add_case.xml.   Before the incremental model can be imported, its
+corresponding base model must be present in the project.   For add_case.xml
+the base model is topology_case.xml.  Go back to step 5, if necessary, to
+import the base model.
+</p>
+<p>
+9. To import an incremental model select File|Import|Import Incremental Model 
+or click the Incremental Import button. 
+</p>
+<p>
+10. Click on the resulting diagnosic file in the Project View and browse the 
+diagnostic reports in the Outline view. 
+</p>
+
+   
+          </div>
+          <div id="menu"><ul>
+    
+    </ul></div>
+        </div>  
+        <div id="footer"></div>
+      </body>
+    </html>

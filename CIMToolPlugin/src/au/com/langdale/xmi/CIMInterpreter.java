@@ -12,15 +12,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -36,45 +33,54 @@ public class CIMInterpreter extends UMLInterpreter {
 	/**
 	 * Utility to parse an XMI file, apply CIM conventions, and return a Jena OWL model.
 	 */
-	public static OntModel parse(InputStream stream, String baseURI, Model annote, boolean usePackageNames) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
+	public static OntModel parse(InputStream stream, String baseURI, OntModel annote, boolean usePackageNames) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
 		XMIParser parser = new XMIParser();
 		parser.parse(stream);
 		OntModel raw = parser.getModel();
 		if( annote != null)
-			raw.add(annote, true);
+			raw.add(annote);
 		CIMInterpreter interpreter = new CIMInterpreter();
 		return interpreter.postProcess(raw, baseURI, usePackageNames);
 	}
 
 	private OntModel postProcess(OntModel raw, String baseURI, boolean usePackageNames) {
 		setModel(raw);
-
+		
+		System.out.println("Raw XMI model size: " + getModel().size());
+		
 		UML.loadOntology(getModel());
 		pruneIncomplete();
 		labelRoles();
+		
+		System.out.println("Stage 1 XMI model size: " + getModel().size());
 
 		Translator translator = new Translator(getModel(), baseURI, usePackageNames);
 		translator.run();
-		setModel(translator.getResult());
+		setModel(translator.getModel());
+		
+		System.out.println("Stage 3 XMI model size: " + getModel().size());
 
 		propagateComments();
 		removeUntyped();
 		applyStereotypes();
 		classifyAttributes();
+		
+		
+		System.out.println("Stage 4 XMI model size: " + getModel().size());
+		
 		return getModel();
 	}
 	
 	private void propagateComments() {
-		ExtendedIterator it = model.listObjectProperties();
+		ResIterator it = model.listObjectProperties();
 		while( it.hasNext()) {
-			ObjectProperty prop = (ObjectProperty) it.next();
-			if(prop.getComment(null) == null) {
-				RDFNode node = prop.getPropertyValue(UML.roleAOf);
+			OntResource prop = it.nextResource();
+			if(prop.getComment() == null) {
+				OntResource node = prop.getResource(UML.roleAOf);
 				if( node == null) 
-					node = prop.getPropertyValue(UML.roleBOf);
+					node = prop.getResource(UML.roleBOf);
 				if( node != null) {
-					OntResource assoc = (OntResource) node.as(OntResource.class);
-					String comment = assoc.getComment(null);
+					String comment = node.getComment();
 					if(comment != null)
 						prop.addComment(comment, null);
 				}
@@ -86,22 +92,22 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * Find labels for association roles.
 	 */
 	private void labelRoles() {
-		ExtendedIterator it = model.listObjectProperties();
+		ResIterator it = model.listObjectProperties();
 		while( it.hasNext()) {
-			ObjectProperty prop = (ObjectProperty) it.next();
+			OntResource prop = it.nextResource();
 			if(! reLabel(prop, UML.roleAOf, UML.roleALabel))
 				reLabel(prop, UML.roleBOf, UML.roleBLabel);
 		}
 	}
 
-	private boolean reLabel(ObjectProperty prop, Property roleOf, Property hasLabel) {
-		RDFNode node = prop.getPropertyValue(roleOf);
+	private boolean reLabel(OntResource prop, FrontsNode roleOf, FrontsNode hasLabel) {
+		OntResource node = prop.getResource(roleOf);
 		if( node != null) {
-			OntResource assoc = (OntResource) node.as(OntResource.class);
-			RDFNode label = assoc.getPropertyValue(hasLabel);
+			OntResource assoc = node;
+			Node label = assoc.getNode(hasLabel);
 			if( label != null ) {
 				System.out.println("Relabeling using PowerCC tags:" + label.toString());
-				prop.setLabel(label.toString(), "en");
+				prop.addLabel(label.getLiteralLexicalForm(), "en");
 				return true;
 			}
 		}
@@ -116,23 +122,23 @@ public class CIMInterpreter extends UMLInterpreter {
 	 *
 	 */
 	private void applyStereotypes() {
-		ResIterator jt = model.listSubjectsWithProperty(UML.hasStereotype, UML.enumeration);
+		ResIterator jt = model.listSubjectsBuffered(UML.hasStereotype, UML.enumeration);
 		while( jt.hasNext()) {
 			applyEnumerationStereotype(jt.nextResource());
 		}
-		ResIterator ht = model.listSubjectsWithProperty(UML.hasStereotype, UML.datatype);
+		ResIterator ht = model.listSubjectsBuffered(UML.hasStereotype, UML.datatype);
 		while( ht.hasNext()) {
 			applyPrimitiveStereotype(ht.nextResource(), true);
 		}
-		ResIterator it = model.listSubjectsWithProperty(UML.hasStereotype, UML.primitive);
+		ResIterator it = model.listSubjectsBuffered(UML.hasStereotype, UML.primitive);
 		while( it.hasNext()) {
 			applyPrimitiveStereotype(it.nextResource(), true); // in future, change to false
 		}
-		ResIterator gt = model.listSubjectsWithProperty(UML.hasStereotype, UML.base);
+		ResIterator gt = model.listSubjectsBuffered(UML.hasStereotype, UML.base);
 		while( gt.hasNext()) {
 			applyPrimitiveStereotype(gt.nextResource(), true); // in future, change to false
 		}
-		ResIterator kt = model.listSubjectsWithProperty(UML.hasStereotype, UML.union);
+		ResIterator kt = model.listSubjectsBuffered(UML.hasStereotype, UML.union);
 		while( kt.hasNext()) {
 			applyPrimitiveStereotype(kt.nextResource(), false);
 		}
@@ -141,27 +147,28 @@ public class CIMInterpreter extends UMLInterpreter {
 	/**
 	 * Covert primitive or union stereotyped class as a datatype.
 	 */
-	private void applyPrimitiveStereotype(Resource clss, boolean interpret_value) {
+	private void applyPrimitiveStereotype(OntResource clss, boolean interpret_value) {
 
-		Resource truetype = null;
+		OntResource truetype = null;
 		String units = null;
 		String multiplier = null;
 		
 		// strip the classes properties, record the value and units information
-		ResIterator it = model.listSubjectsWithProperty(RDFS.domain, clss);
+		ResIterator it = model.listSubjectsBuffered(RDFS.domain, clss);
 		while(it.hasNext()) {
-			Resource m = it.nextResource();
+			OntResource m = it.nextResource();
 			
 			if( interpret_value ) {
-					String name = m.getRequiredProperty(RDFS.label).getString();
-
+				String name = m.getLabel();
+				if(name != null) {
 					// this is a CIM-style annotation to indicate the primitive datatype 
-					if( name.equals("value") && m.hasProperty(RDFS.range))
-						truetype = m.getRequiredProperty(RDFS.range).getResource();
-					if( name.equals("unit") && m.hasProperty(UML.hasInitialValue))
-						units = m.getRequiredProperty(UML.hasInitialValue).getString();
-					if( name.equals("multiplier") && m.hasProperty(UML.hasInitialValue))
-						multiplier = m.getRequiredProperty(UML.hasInitialValue).getString();
+					if( name.equals("value"))
+						truetype = m.getResource(RDFS.range);
+					if( name.equals("unit"))
+						units = m.getString(UML.hasInitialValue);
+					if( name.equals("multiplier"))
+						multiplier = m.getString(UML.hasInitialValue);
+				}
 			}
 			// remove spurious property attached to datatype
 			m.removeProperties();
@@ -194,16 +201,16 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * members of the enumeration. Note that OWL EnumeratedClass
 	 * is not used here because that would create a closed enumeration. 
 	 */
-	private void applyEnumerationStereotype(Resource clss) {
+	private void applyEnumerationStereotype(OntResource clss) {
 		clss.removeAll(RDF.type);
 		clss.addProperty(RDF.type, OWL.Class);
 		
 		// some UML models have inconsistent stereotypes
 		model.remove(clss, UML.hasStereotype, UML.datatype);
 		model.remove(clss, UML.hasStereotype, UML.primitive);
-		ResIterator it = model.listSubjectsWithProperty(RDFS.domain, clss);
+		ResIterator it = model.listSubjectsBuffered(RDFS.domain, clss);
 		while(it.hasNext()) {
-			Resource m = it.nextResource();
+			OntResource m = it.nextResource();
 			if( m.hasProperty(UML.hasStereotype, UML.attribute)) {
 				m.removeAll(RDF.type);
 				m.removeAll(RDFS.range);

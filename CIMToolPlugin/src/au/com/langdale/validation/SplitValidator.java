@@ -13,6 +13,8 @@ import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.ProxyRegistry;
 import au.com.langdale.inference.StandardFunctorActions;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.splitmodel.SplitBase;
 import au.com.langdale.splitmodel.SplitReader;
 import au.com.langdale.util.Logger;
@@ -21,8 +23,6 @@ import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.mem.GraphMem;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.rulesys.BuiltinRegistry;
 
 /**
@@ -43,7 +43,7 @@ public class SplitValidator extends ValidatorUtil implements ValidatorProtocol {
 	 * @throws ParserException
 	 * @throws IOException
 	 */
-	public SplitValidator(Model schema, String namespace, InputStream ruleText) throws ParserException, IOException {
+	public SplitValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
 		functors = StandardFunctorActions.create();
 		BuiltinRegistry registry = new ProxyRegistry(functors.keySet());
 		ValidationBuiltins.registerAll(registry);
@@ -67,7 +67,7 @@ public class SplitValidator extends ValidatorUtil implements ValidatorProtocol {
 		return StandardFunctorActions.getOption(params, option);
 	}
 
-	public Model run(String source, String base, String namespace, Logger errors) throws IOException {
+	public OntModel run(String source, String base, String namespace, Logger errors) throws IOException {
 		GraphMem axioms = new GraphMem();
 		axioms.getBulkUpdateHandler().add(params);
 		
@@ -80,6 +80,6 @@ public class SplitValidator extends ValidatorUtil implements ValidatorProtocol {
 		
 		Graph result = extractor.getResult();
 		logProblems(errors, result);
-		return ModelFactory.createModelForGraph(result);
+		return ModelFactory.createMem(result);
 	}
 }

@@ -1,12 +1,12 @@
 package au.com.langdale.cimtoole.test;
 
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.splitmodel.SplitReader;
 import au.com.langdale.splitmodel.SplitReader.SplitResult;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -150,11 +150,11 @@ public class TestUtility extends TestCase {
 		return deferred;
 	}
 	
-	protected static Deferred find(Model model, TriplePattern pattern) {
+	protected static Deferred find(OntModel model, TriplePattern pattern) {
 		return find(model.getGraph(), pattern);
 	}
 	
-	protected static Deferred find(Model model, TriplePattern pattern1, TriplePattern pattern2) {
+	protected static Deferred find(OntModel model, TriplePattern pattern1, TriplePattern pattern2) {
 		return find(model.getGraph(), pattern1, pattern2);
 	}
 
@@ -164,7 +164,7 @@ public class TestUtility extends TestCase {
 		return deferred;
 	}
 	
-	protected static void find(Model model, TriplePattern pattern, SplitResult deferred) {
+	protected static void find(OntModel model, TriplePattern pattern, SplitResult deferred) {
 		find(model.getGraph(), pattern, deferred);
 	}
 

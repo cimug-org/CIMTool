@@ -4,20 +4,12 @@
  */
 package au.com.langdale.jena;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 
-import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.graph.FrontsNode;
+import au.com.langdale.kena.ResourceFactory;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * Adapt a Jena Model as a TreeModel.  
@@ -28,7 +20,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  */
 abstract public class JenaTreeModelBase extends TreeModelBase {
 	private OntModel ontModel;
-	private Resource rootResource;
+	private FrontsNode rootResource;
 	private String source;
 	
 	/**
@@ -56,12 +48,12 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 	}
 	
 	private String extractPackageName(OntResource subject) {
-		Resource defin = subject.getIsDefinedBy();
+		OntResource defin = subject.getResource(RDFS.isDefinedBy);
 		if( defin != null ){
-			return label((OntResource)defin.as(OntResource.class));
+			return label(defin);
 		}
 		else if( source != null ){
-			return ResourceFactory.createResource(source).getLocalName();
+			return com.hp.hpl.jena.graph.Node.createURI(source).getLocalName();
 		}
 		else {
 			return "";
@@ -91,34 +83,12 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 		ontModel = model;
 		init();
 	}
-	
-	/**
-	 * Set the ontology and update the tree.
-	 */
-	public void setOntModel(Model model) {
-		if( model == null ) {
-			setOntModel((OntModel)null);
-		}
-		else
-			setOntModel(ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_TRANS_INF, model));
-	}
-	/**
-	 * Display an ontology from a file.
-	 * @param filename the file containing an OWL ontology in RDF/XML syntax.
-	 * @throws FileNotFoundException
-	 */
-	public void setOntModel( String filename ) throws FileNotFoundException {
-		setRoot(new Empty("loading " + filename + " ..."));
-		Model input = ModelFactory.createDefaultModel();
-		input.read(new BufferedInputStream( new FileInputStream(filename)), new File(filename).toURI().toString());
-		setOntModel(input);
-	}
 
 	/**
 	 * The URI of the ontology resource at the root of the tree. 
 	 * @return a URI as a String
 	 */
-	public Resource getRootResource() {
+	public FrontsNode getRootResource() {
 		return rootResource;
 	}
 	
@@ -135,7 +105,7 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 	 * Set the root resource and update the tree.
 	 * @param root the root resource URI as a Resource.
 	 */
-	public void setRootResource(Resource root) {
+	public void setRootResource(FrontsNode root) {
 		rootResource = root;
 		init();
 	}
@@ -151,9 +121,9 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 			setRoot(new Empty("Pending ..."));
 	}
 
-	protected OntResource asOntResource(RDFNode subject) {
+	protected OntResource asOntResource(FrontsNode subject) {
 		if( subject != null && ontModel != null)
-			return (OntResource)(subject.inModel(ontModel).as(OntResource.class));
+			return ontModel.createResource(subject.asNode());
 		else
 			return null;
 	}
@@ -163,7 +133,7 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 	 * 
 	 * If the resource is not suitable this may return null or throw ConversionException.
 	 */
-	abstract protected Node classify(OntResource root) throws ConversionException;
+	abstract protected Node classify(OntResource root);
 
 	/**
 	 * The source file containing this message definition as a pathname.

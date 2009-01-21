@@ -9,14 +9,14 @@ import org.eclipse.core.runtime.CoreException;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.SplitModelImporter;
+import au.com.langdale.kena.OntModel;
 
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class ValidationTest extends ProjectTest {
 	private static final String SEP = "\t";
 	public final String LOG_NS = "http://langdale.com.au/2007/log#";
-	protected Model diagnostics;
+	protected OntModel diagnostics;
 
 	private static PrintWriter record;
 	

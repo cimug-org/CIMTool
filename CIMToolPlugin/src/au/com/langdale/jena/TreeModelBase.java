@@ -11,9 +11,8 @@ import java.util.List;
 
 import au.com.langdale.ui.NodeTraits;
 
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntResource;
+import com.hp.hpl.jena.graph.FrontsNode;
 
 public class TreeModelBase {
 	/**
@@ -223,6 +222,16 @@ public class TreeModelBase {
 		public boolean getAllowsChildren() {
 			return true;
 		}
+
+		/**
+		 * Indicates that the tree should be pruned below this node 
+		 * to avoid infinite recursion while ensuring all nodes are represented.
+		 * 
+		 * @return
+		 */
+		public boolean isPruned() {
+			return false;
+		}
 	}
 
 	/**
@@ -277,7 +286,7 @@ public class TreeModelBase {
 		if( subject == null)
 			return "Unknown";
 			
-		String result = subject.getLabel(null);
+		String result = subject.getLabel();
 		if( result != null)
 			return result;
 			
@@ -301,7 +310,7 @@ public class TreeModelBase {
 	/**
 	 * Utility to format a user label text specifically for a property. 
 	 */
-	public static String prop_label(OntProperty subject) {
+	public static String prop_label(OntResource subject) {
 		String pname = label(subject);
 		String tname = label(subject.getRange());
 		if( pname.equals(tname) || pname.equals(tname + "s"))
@@ -322,7 +331,7 @@ public class TreeModelBase {
 	 * Construct a list of resources representing a path starting 
 	 * from the root resource of this tree to the given target.
 	 */
-	protected List findResourcePathTo(Resource target) {
+	protected List findResourcePathTo(FrontsNode target) {
 		return null;
 	}
 	
@@ -333,7 +342,7 @@ public class TreeModelBase {
 	 * This is an "informed" search that takes advantage of 
 	 * the defined structure of the tree.
 	 */
-	public Node[] findPathTo(Resource target, boolean includeRoot) {
+	public Node[] findPathTo(FrontsNode target, boolean includeRoot) {
 		List rpath = findResourcePathTo(target);
 		if( rpath == null )
 			return null;

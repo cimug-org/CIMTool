@@ -5,11 +5,12 @@
 package au.com.langdale.profiles;
 
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
+
+import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
@@ -23,19 +24,20 @@ public abstract class RDFSBasedGenerator extends SchemaGenerator {
 			result.setNsPrefix("cim", namespace);
 	}
 	
-	protected Model result = ModelFactory.createDefaultModel();
+	protected OntModel result = ModelFactory.createMem();
 
-	public Model getResult() {
+	public OntModel getResult() {
 		return result;
 	}
 
-	protected void emit(String subject, Property prop, String object) {
+	protected void emit(String subject, FrontsNode prop, String object) {
 		if( subject != null && object != null)
 			result.createResource(subject).addProperty(prop, result.createResource(object));
 	}
 	
-	protected Resource emit(String uri, Resource type) {
-		return result.createResource(uri, type);
+	protected Resource emit(String uri, FrontsNode type) {
+		OntResource node = result.createIndividual(uri, type);
+		return node;
 	}
 
 	@Override

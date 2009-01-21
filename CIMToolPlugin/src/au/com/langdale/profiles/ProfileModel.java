@@ -9,22 +9,14 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import au.com.langdale.jena.JenaTreeModelBase;
-import au.com.langdale.jena.Models;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.validation.LOG;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Restriction;
-import com.hp.hpl.jena.ontology.SomeValuesFromRestriction;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
 
 public class ProfileModel extends JenaTreeModelBase {
 	
@@ -52,7 +44,7 @@ public class ProfileModel extends JenaTreeModelBase {
 	
 	private void initModels() {
 		if( profileModel != null && backgroundModel != null)
-			super.setOntModel(Models.merge(profileModel, backgroundModel));
+			super.setOntModel(Composition.merge(profileModel, backgroundModel));
 	}
 
 	public abstract class SortedNode extends ModelNode {
@@ -88,7 +80,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * Create a new envelope class with the given URI. 
 		 */
 		public OntResource create(String uri) {
-			OntClass child = getOntModel().createClass(uri);
+			OntResource child = getOntModel().createClass(uri);
 			child.addSuperClass(message);
 			return child;
 		}
@@ -102,15 +94,15 @@ public class ProfileModel extends JenaTreeModelBase {
 				return null;
 			
 			String uri = getNamespace() + base.getLocalName();
-			OntResource probe = getOntModel().createOntResource(uri);
+			OntResource probe = getOntModel().createResource(uri);
 			
 			int ix = 1;
 			while( probe.isClass()) {
-				probe = getOntModel().createOntResource(uri + ix);
+				probe = getOntModel().createResource(uri + ix);
 				ix++;
 			}
 			
-			OntClass child = getOntModel().createClass(probe.getURI());
+			OntResource child = getOntModel().createClass(probe.getURI());
 			child.addSuperClass(base);
 			return child;
 		}
@@ -166,15 +158,15 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 			
 			// work around a Jena bug - exception thrown if by r.remove() if (r, p, rdf:nil)
-			StmtIterator ii = profile.getSubject().listProperties();
-			while (ii.hasNext()) {
-				Statement s = ii.nextStatement();
-				if( s.getObject().equals(RDF.nil)) {
-					ii.close();
-					s.remove();
-					ii  = profile.getSubject().listProperties();
-				}
-			}
+//			StmtIterator ii = profile.getSubject().listProperties();
+//			while (ii.hasNext()) {
+//				Statement s = ii.nextStatement();
+//				if( s.getObject().equals(RDF.nil)) {
+//					ii.close();
+//					s.remove();
+//					ii  = profile.getSubject().listProperties();
+//				}
+//			}
 			
 			profile.getSubject().remove();
 		}
@@ -212,7 +204,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		/**
 		 * The CIM class on which this message element is based.
 		 */
-		public OntClass getBaseClass() {
+		public OntResource getBaseClass() {
 			return profile.getBaseClass();
 		}
 		
@@ -255,6 +247,11 @@ public class ProfileModel extends JenaTreeModelBase {
 				public SubTypeNode(ProfileClass profile) {
 					super(profile);
 				}
+				
+				@Override
+				public boolean isPruned() {
+					return true;
+				}
 			
 				@Override
 				public void destroy() {
@@ -262,7 +259,7 @@ public class ProfileModel extends JenaTreeModelBase {
 				}
 			}
 
-			private OntProperty prop;
+			private OntResource prop;
 			private PropertyInfo info;
 		
 			/**
@@ -315,7 +312,7 @@ public class ProfileModel extends JenaTreeModelBase {
 				return cardString(min) + ".." + cardString(max);
 			}
 		
-			public OntProperty getBaseProperty() {
+			public OntResource getBaseProperty() {
 				return prop;
 			}
 			
@@ -464,6 +461,11 @@ public class ProfileModel extends JenaTreeModelBase {
 			public SuperTypeNode(ProfileClass profile) {
 				super(profile);
 			}
+			
+			@Override
+			public boolean isPruned() {
+				return true;
+			}
 		
 			@Override
 			public void destroy() {
@@ -518,8 +520,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		@Override
 		public OntResource create(OntResource base) {
 			if( base.isProperty()) {
-				OntProperty prop = base.asProperty();
-				OntResource child = profile.createAllValuesFrom(prop, true);
+				OntResource child = profile.createAllValuesFrom(base, true);
 				return child;
 			}
 			else if( base.hasRDFType(profile.getBaseClass())) {
@@ -532,7 +533,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 
 		protected void destroy(ElementNode child) {
-			profile.remove(child.getBase().asProperty());
+			profile.remove(child.getBase());
 		}
 		
 		@Override
@@ -556,7 +557,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			Iterator it = profile.getProperties();
 			
 			while( it.hasNext()) {
-				PropertyInfo info = profile.getPropertyInfo((OntProperty)it.next());
+				PropertyInfo info = profile.getPropertyInfo((OntResource)it.next());
 				
 				// only add the child if a restriction identified its range class.
 				if(info.getRange() != null)
@@ -568,7 +569,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			Iterator it = profile.getSuperClasses();
 			
 			while( it.hasNext()) {
-				OntClass clss = (OntClass) it.next();
+				OntResource clss = (OntResource) it.next();
 				SuperTypeNode node = new SuperTypeNode(new ProfileClass(clss));
 				add(node);
 			}
@@ -632,12 +633,11 @@ public class ProfileModel extends JenaTreeModelBase {
 			Iterator it = profile.getRestrictions(MESSAGE.about);
 			
 			while(it.hasNext()) {
-			    Restriction res = (Restriction) it.next();
+			    OntResource res = (OntResource) it.next();
 			    if( res.isSomeValuesFromRestriction()) {
-			    	SomeValuesFromRestriction some = res.asSomeValuesFromRestriction();
-			    	Resource type =  some.getSomeValuesFrom();
-			    	if(type != null && type.canAs(OntClass.class)) {
-			    		Node node = new MessageNode(new ProfileClass((OntClass)type.as(OntClass.class)));
+			    	OntResource type =  res.getSomeValuesFrom();
+			    	if(type != null && type.isClass()) {
+			    		Node node = new MessageNode(new ProfileClass(type));
 			    		add(node);
 			    	}
 			    }
@@ -648,7 +648,8 @@ public class ProfileModel extends JenaTreeModelBase {
 		public OntResource create(OntResource type) {
 			if( ! type.isClass())
 				return null;
-			OntClass child = profile.createSomeValuesFrom(MESSAGE.about, type);
+			OntResource prop = profileModel.createOntProperty(MESSAGE.about.getURI());
+			OntResource child = profile.createSomeValuesFrom(prop, type);
 			return child;
 		}
 		/**
@@ -692,15 +693,14 @@ public class ProfileModel extends JenaTreeModelBase {
 	 * The root should be a subclass of the generic Message class.
 	 */
 	@Override
-	protected Node classify(OntResource root) throws ConversionException {
+	protected Node classify(OntResource root) {
 		if( root.equals(MESSAGE.Message)) 
 			return new CatalogNode(root);
 		
-		OntClass clss = root.asClass();
-		if( clss.hasSuperClass(MESSAGE.Message))
-			return new EnvelopeNode(new ProfileClass(clss));
+		if( root.hasSuperClass(MESSAGE.Message))
+			return new EnvelopeNode(new ProfileClass(root));
 		
-		return new TypeNode(new ProfileClass(clss));
+		return new TypeNode(new ProfileClass(root));
 	}
 	
 	public static String cardString(int card) {

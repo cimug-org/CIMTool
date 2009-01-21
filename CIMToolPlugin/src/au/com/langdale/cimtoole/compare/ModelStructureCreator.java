@@ -4,6 +4,7 @@
  */
 package au.com.langdale.cimtoole.compare;
 
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,20 +17,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
-import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.properties.PropertySupport;
+import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
-import au.com.langdale.profiles.MESSAGE;
-import au.com.langdale.profiles.ProfileModel;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
 import au.com.langdale.ui.util.IconCache;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
-public class ProfileStructureCreator implements IStructureCreator {
+public class ModelStructureCreator implements IStructureCreator {
 
 	public String getContents(Object node, boolean ignoreWhitespace) {
 		if( node instanceof Proxy)
@@ -70,23 +64,19 @@ public class ProfileStructureCreator implements IStructureCreator {
 		}
 
 		public Object[] getChildren() {
-			ProfileModel tree = new ProfileModel();
-			OntModel model, backgroundModel;
 			try {
 				IResourceProvider resourceProvider = ((IResourceProvider)node);
-				IEncodedStreamContentAccessor streamAccessor = ((IEncodedStreamContentAccessor)node);
 				IFile file = ((IFile)resourceProvider.getResource());
-				model = Task.parse(file, streamAccessor.getContents());
-				backgroundModel = CIMToolPlugin.getCache().getMergedOntologyWait(Info.getSchemaFolder(file.getProject()));
+				
+				IEncodedStreamContentAccessor streamAccessor = ((IEncodedStreamContentAccessor)node);
+				InputStream contents = streamAccessor.getContents();
+				
+				TreeModelBase tree = Task.createTreeModel(file, contents);
+				return wrapChildren(tree.getRoot());
+				
 			} catch (CoreException e) {
 				throw new RuntimeException(e);
 			}
-			
-			tree.setOntModel(model);
-			tree.setBackgroundModel(backgroundModel);
-			tree.setRootResource(MESSAGE.Message);
-
-			return wrapChildren(tree.getRoot());
 		}
 
 		public Image getImage() {
@@ -153,7 +143,7 @@ public class ProfileStructureCreator implements IStructureCreator {
 	}
 	
 	private static Object[] wrapChildren(Node node) {
-		if( node instanceof ElementNode || node instanceof SuperTypeNode)
+		if( node.isPruned())
 			return new Object[0];
 		
 		List children = node.getChildren();

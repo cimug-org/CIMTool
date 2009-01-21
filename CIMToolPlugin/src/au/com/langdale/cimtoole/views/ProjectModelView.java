@@ -24,10 +24,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.ModelMinder;
@@ -69,12 +68,11 @@ public class ProjectModelView extends ViewPart implements ISelectionListener, Ca
 			OntResource subject = node.getSubject();
 			if( subject != null ) {
 				if( subject.isProperty()) {
-					OntProperty prop = subject.asProperty();
-					OntProperty inverse = prop.getInverseOf();
+					OntResource inverse = subject.getInverseOf();
 					if(inverse != null)
 						previewTarget(inverse);
 					else {
-						OntResource range = prop.getRange();
+						OntResource range = subject.getRange();
 						if( range != null )
 							previewTarget(range);
 					}

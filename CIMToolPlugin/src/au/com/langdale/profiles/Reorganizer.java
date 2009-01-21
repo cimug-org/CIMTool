@@ -7,16 +7,13 @@ package au.com.langdale.profiles;
 import java.util.HashMap;
 import java.util.Map;
 
-import au.com.langdale.jena.Models;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
@@ -33,8 +30,8 @@ public class Reorganizer extends SchemaGenerator {
 	
 	public Reorganizer(OntModel profile, OntModel background, String namespace, boolean useRefs) {
 		super(profile, background, namespace);
-		model = Models.overlay(background);
-		result = Models.getUpdatableModel(model);
+		model = Composition.overlay(background);
+		result = Composition.getUpdatableModel(model);
 		this.useRefs = useRefs;
 	}
 	
@@ -45,7 +42,7 @@ public class Reorganizer extends SchemaGenerator {
 	@Override
 	protected void emitClass(String uri, String base) {
 		ProfileClass profile = new ProfileClass(model.createClass(uri));
-		profile.setBaseClass(model.getOntResource(base));
+		profile.setBaseClass(model.createResource(base));
 		classes.put(uri, profile);
 	}
 
@@ -67,7 +64,7 @@ public class Reorganizer extends SchemaGenerator {
 	@Override
 	protected void emitDatatypeProperty(String uri, String base, String domain,
 			String type, String xsdtype, boolean required) {
-		DatatypeProperty prop = model.getDatatypeProperty(base);
+		OntResource prop = model.createResource(base);
 		ProfileClass profile = (ProfileClass) classes.get(domain);
 		
 		OntResource proxy = profile.createAllValuesFrom(prop, required);
@@ -82,7 +79,7 @@ public class Reorganizer extends SchemaGenerator {
 	@Override
 	protected void emitInstance(String uri, String base, String type) {
 		ProfileClass profile = (ProfileClass) classes.get(type);
-		OntResource value = model.createOntResource(base);
+		OntResource value = model.createResource(base);
 		profile.addIndividual(value);
 		proxies.put(uri, value);
 	}
@@ -102,11 +99,11 @@ public class Reorganizer extends SchemaGenerator {
 	@Override
 	protected void emitObjectProperty(String uri, String base, String domain,
 			String range, boolean required, boolean functional) {
-		ObjectProperty prop = model.getObjectProperty(base);
+		OntResource prop = model.createResource(base);
 		ProfileClass profile = (ProfileClass) classes.get(domain);
 		
-		OntClass proxy = profile.createAllValuesFrom(prop, required).asClass();
-		proxy.addSuperClass(model.getOntResource(range));
+		OntResource proxy = profile.createAllValuesFrom(prop, required);
+		proxy.addSuperClass(model.createResource(range));
 		proxies.put(uri, proxy);
 		
 		PropertyInfo info = profile.getPropertyInfo(prop);
@@ -168,7 +165,7 @@ public class Reorganizer extends SchemaGenerator {
 	private OntResource getResultResource(String uri) {
 		OntResource subject = (OntResource) proxies.get(uri);
 		if( subject == null )
-			subject = result.getOntResource(uri);
+			subject = result.createResource(uri);
 		return subject;
 	}
 }

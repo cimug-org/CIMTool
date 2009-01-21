@@ -15,7 +15,7 @@ import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.validation.DiagnosisModel;
 import au.com.langdale.validation.DiagnosisModel.DetailNode;
 
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntResource;
 
 public class DiagnosisEditor extends ModelEditor {
 

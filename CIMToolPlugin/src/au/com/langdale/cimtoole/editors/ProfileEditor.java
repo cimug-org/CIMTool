@@ -24,14 +24,14 @@ import au.com.langdale.cimtoole.editors.profile.Summary;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.jena.JenaTreeModelBase;
-import au.com.langdale.jena.Models;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.ui.binding.JenaTreeProvider;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 
 public class ProfileEditor extends ModelEditor {
 	private ProfileModel tree;
@@ -106,7 +106,7 @@ public class ProfileEditor extends ModelEditor {
 	private void fetchModels() {
 		backgroundModel = models.getProjectOntology(Info.getSchemaFolder(getFile().getProject()));
 		OntModel raw = models.getOntology(getFile());
-		profileModel = raw != null? Models.copy(raw) : null;
+		profileModel = raw != null? Composition.copy(raw) : null;
 		resetModels();
 	}
 	

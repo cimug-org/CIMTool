@@ -45,10 +45,9 @@ import au.com.langdale.ui.plumbing.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.reasoner.InfGraph;
 
 public class Populate extends FurnishedEditor {
@@ -104,15 +103,15 @@ public class Populate extends FurnishedEditor {
 		OntResource subject = node.getSubject();
 		OntResource child = target.create(subject);
 		if(child != null && child.isClass() && ! child.isAnon()) {
-			master.getRefactory().add(child.asClass(), subject.asClass(), link);
+			master.getRefactory().add(child, subject, link);
 		}
 	}
 
 	public void profileRemove(Node target, Node node) {
 		if( node instanceof TypeNode ) 
-			master.getRefactory().remove(node.getSubject().asClass());
+			master.getRefactory().remove(node.getSubject());
 		node.destroy();
-		InfGraph ig = (InfGraph) target.getSubject().getModel().getGraph();
+		InfGraph ig = (InfGraph) target.getSubject().getOntModel().getGraph();
 		ig.rebind();
 		target.structureChanged();
 	}
@@ -241,9 +240,9 @@ public class Populate extends FurnishedEditor {
 						ElementNode enode = (ElementNode) node.getParent();
 						ProfileClass profile = enode.getProfile();
 						if( node.getSubject().isAnon() ) {
-							OntClass baseClass = node.getProfile().getBaseClass();
+							OntResource baseClass = node.getProfile().getBaseClass();
 							node.destroy();
-							OntClass member = master.getRefactory().findOrCreateNamedProfile(baseClass);
+							OntResource member = master.getRefactory().findOrCreateNamedProfile(baseClass);
 							profile.addUnionMember(member);
 //							enode.structureChanged();
 						}

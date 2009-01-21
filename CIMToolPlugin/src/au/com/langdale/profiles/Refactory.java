@@ -11,16 +11,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import au.com.langdale.jena.Models;
-import au.com.langdale.jena.OntSubject;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
 import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
@@ -36,7 +34,7 @@ public class Refactory extends ProfileUtility {
 	public Refactory(OntModel profileModel, OntModel backgroundModel, String namespace) {
 		this.profileModel = profileModel;
 		this.backgroundModel = backgroundModel;
-		this.model = Models.merge(profileModel, backgroundModel);
+		this.model = Composition.merge(profileModel, backgroundModel);
 		this.namespace = namespace;
 	}
 	
@@ -46,10 +44,10 @@ public class Refactory extends ProfileUtility {
 	
 	public void refresh() {
 		map = null;
-		this.model = Models.merge(profileModel, backgroundModel);
+		this.model = Composition.merge(profileModel, backgroundModel);
 	}
 	
-	public void add(OntClass clss, OntClass base, boolean link) {
+	public void add(OntResource clss, OntResource base, boolean link) {
 
 		if( map != null) 
 			map.add(base, clss);
@@ -58,7 +56,7 @@ public class Refactory extends ProfileUtility {
 			linkToHierarchy(base, clss);
 	}
 
-	private void linkToHierarchy(OntClass base, OntClass clss) {
+	private void linkToHierarchy(OntResource base, OntResource clss) {
 		if( map == null )
 			buildMap();
 		
@@ -70,7 +68,7 @@ public class Refactory extends ProfileUtility {
 		// consider each super profile
 		Iterator jt = supers.iterator();
 		while (jt.hasNext()) {
-			OntClass parent = (OntClass) jt.next();
+			OntResource parent = (OntResource) jt.next();
 			
 			// inherit it
 			clss.addSuperClass(parent);
@@ -78,7 +76,7 @@ public class Refactory extends ProfileUtility {
 			// unlink its sub profiles and mark them
 			Iterator it = subs.iterator();
 			while (it.hasNext()) {
-				OntClass sub = (OntClass) it.next();
+				OntResource sub = (OntResource) it.next();
 				if( sub.hasSuperClass(parent)) {
 					sub.removeSuperClass(parent);
 					affected.add(sub);
@@ -89,7 +87,7 @@ public class Refactory extends ProfileUtility {
 		// consider each sub profile
 		Iterator it = subs.iterator();
 		while (it.hasNext()) {
-			OntClass sub = (OntClass) it.next();
+			OntResource sub = (OntResource) it.next();
 			ProfileClass subprof = new ProfileClass(sub);
 
 			// mark it if has no supers
@@ -109,7 +107,7 @@ public class Refactory extends ProfileUtility {
 		// relink sub profiles
 		Iterator ht = affected.iterator();
 		while (ht.hasNext()) {
-			OntClass sub = (OntClass) ht.next();
+			OntResource sub = (OntResource) ht.next();
 			ProfileClass subprof = (ProfileClass) profiles.get(sub);
 			subprof.addSuperClass(clss);
 			
@@ -119,7 +117,7 @@ public class Refactory extends ProfileUtility {
 		//addProps(profile, props);
 	}
 	
-	public void remove(OntClass clss) {
+	public void remove(OntResource clss) {
 		if( map != null)
 			map.removeProfile(clss);
 		
@@ -134,7 +132,7 @@ public class Refactory extends ProfileUtility {
 		Set subs = asSet(clss.listSubClasses(true));
 		Iterator it = subs.iterator();
 		while (it.hasNext()) {
-			OntClass sub = (OntClass) it.next();
+			OntResource sub = (OntResource) it.next();
 
 			// unlink superclass
 			sub.removeSuperClass(clss);
@@ -169,7 +167,7 @@ public class Refactory extends ProfileUtility {
 	private void setByReference(ProfileClass profile) {
 		Iterator it = profile.getProperties();
 		while (it.hasNext()) {
-			OntProperty prop = (OntProperty) it.next();
+			OntResource	prop = (OntResource) it.next();
 			if( prop.isObjectProperty()) {
 				PropertyInfo info = profile.getPropertyInfo(prop);
 				info.createProfileClass().setReference(true);
@@ -189,11 +187,10 @@ public class Refactory extends ProfileUtility {
 		if( profile.isEnumerated())
 			return false;
 		
-		ExtendedIterator it = new OntSubject(profile.getSubject()).listSubClasses(false);
+		ResIterator it = profile.getSubject().listSubClasses(false);
 		while( it.hasNext()) {
-			OntResource sub = (OntResource) it.next();
+			OntResource sub = it.nextResource();
 			if(! sub.equals(OWL.Nothing) && ! sub.isAnon()) {
-				it.close();
 				return false;
 			}
 		}
@@ -224,7 +221,7 @@ public class Refactory extends ProfileUtility {
 		return profile.getSuperClasses().hasNext();
 //		Iterator it = profile.getSuperClasses();
 //		while (it.hasNext()) {
-//			OntClass parent = (OntClass) it.next();
+//			OntResource parent = (OntResource) it.next();
 //			if( parent.hasSuperClass(profile.getBaseClass())) 
 //				return true;
 //		}
@@ -237,7 +234,7 @@ public class Refactory extends ProfileUtility {
 		//removeProps(profile, props);
 		//removeSupers(profile);
 		
-		OntClass parent = findOrCreateNamedProfile(profile.getBaseClass());
+		OntResource parent = findOrCreateNamedProfile(profile.getBaseClass());
 		profile.getSubject().addSuperClass(parent);
 //		allocateProperties(parent, props);
 //		allocateProperties(props);
@@ -247,8 +244,8 @@ public class Refactory extends ProfileUtility {
 		removeSupers(profile);
 	}
 
-	public OntClass findOrCreateNamedProfile(OntClass base) {
-		OntClass clss = findNamedProfile(base);
+	public OntResource findOrCreateNamedProfile(OntResource base) {
+		OntResource clss = findNamedProfile(base);
 		if( clss == null ) {
 			clss = model.createClass(namespace + base.getLocalName());
 			clss.addSuperClass(base);
@@ -257,26 +254,26 @@ public class Refactory extends ProfileUtility {
 		return clss;
 	}
 	
-	public OntClass findBaseClass(OntClass clss) {
+	public OntResource findBaseClass(OntResource clss) {
 		if( map == null)
 			buildMap();
 		return map.getBase(clss);
 	}
 
-	public OntClass findNamedProfile(OntClass base) {
+	public OntResource findNamedProfile(OntResource base) {
 		if( map == null)
 			buildMap();
 
 		return map.chooseBestProfile(base);
 	}
 	
-	public Collection findRelatedProfiles(OntClass base, boolean subclass, boolean unique) {
+	public Collection findRelatedProfiles(OntResource base, boolean subclass, boolean unique) {
 		if( map == null)
 			buildMap();
 		return map.findRelatedProfiles(base, subclass, unique);
 	}
 	
-	public Collection findProfiles(OntClass base) {
+	public Collection findProfiles(OntResource base) {
 		if( map == null)
 			buildMap();
 		return map.find(base);
@@ -285,7 +282,7 @@ public class Refactory extends ProfileUtility {
 	private void removeSupers(ProfileClass profile) {
 		Iterator it = profile.getSuperClasses();
 		while (it.hasNext()) {
-			OntClass parent = (OntClass) it.next();
+			OntResource parent = (OntResource) it.next();
 			//profile.removeSuperClass(parent);
 			profile.getSubject().removeSuperClass(parent);
 		}

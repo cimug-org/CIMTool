@@ -12,15 +12,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import au.com.langdale.cimtoole.compare.ProfileStructureCreator.Proxy;
+import au.com.langdale.cimtoole.compare.ModelStructureCreator.Proxy;
 
-public class ProfileMergeViewer extends ContentMergeViewer {
+public class ModelDiffViewer extends ContentMergeViewer {
 
 	private static final String BUNDLE_NAME = "au.com.langdale.cimtoole.DisplayText";
 	private Text leftText;
 	private Text rightText;
 
-	public ProfileMergeViewer(Composite parent, CompareConfiguration cc) {
+	public ModelDiffViewer(Composite parent, CompareConfiguration cc) {
 		super(SWT.NULL, ResourceBundle.getBundle(BUNDLE_NAME), cc);
 		buildControl(parent);
 	}

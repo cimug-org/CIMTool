@@ -4,7 +4,6 @@
  */
 package au.com.langdale.cimtoole.editors;
 
-
 import org.eclipse.core.resources.IResource;
 
 import au.com.langdale.jena.JenaTreeModelBase;
@@ -14,9 +13,7 @@ import au.com.langdale.ui.plumbing.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import au.com.langdale.kena.OntResource;
 
 public class InfoModelEditor extends ModelEditor {
 	private JenaTreeModelBase tree;
@@ -70,18 +67,18 @@ public class InfoModelEditor extends ModelEditor {
 					getForm().setText(getComment());
 					
 					OntResource subject = getSubject();
-					OntProperty prop;
+					OntResource prop;
 					if( subject != null) {
 						setTextValue("comment", subject.getComment(null));
 						setTextValue("name", subject.getLabel(null));
 						setTextValue("uri", subject.getURI());
 						if( subject.isProperty())
-							prop = subject.asProperty();
+							prop = subject;
 						else
 							prop = null;
-						RDFNode id = subject.getPropertyValue(UML.id);
+						String id = subject.getString(UML.id);
 						if(id != null)
-							setTextValue("id", id.toString());
+							setTextValue("id", id);
 						else
 							setTextValue("id", "");
 					}

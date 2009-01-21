@@ -10,15 +10,14 @@ import org.apache.xerces.util.XMLChar;
 
 import au.com.langdale.cim.CIM;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -49,7 +48,7 @@ public class Translator implements Runnable {
 	/**
 	 * @return Returns the result model.
 	 */
-	public OntModel getResult() {
+	public OntModel getModel() {
 		return result;
 	}
 	
@@ -62,24 +61,27 @@ public class Translator implements Runnable {
 	public void run() {
 
 		pass1.run();
+		
+		System.out.println("Stage 2 XMI model size: " + getModel().size());
+		
 		propagateAnnotation(UML.baseuri);
 		pass2.run();
 	}
 	
 	private abstract class Pass implements Runnable {
-		protected abstract Resource renameResource(Resource r, String l);
+		protected abstract FrontsNode renameResource(OntResource r, String l);
 
 		/**
 		 * Pass over every statement and apply renameResource() to each resource.
 		 */
 		public void run() {
-			result = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
-			StmtIterator it = model.listStatements();
+			result = ModelFactory.createMem();
+			Iterator it = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
 			while( it.hasNext()) {
-				Statement s = it.nextStatement();
+				Triple s = (Triple) it.next();
 				add(
-					renameResource(s.getSubject()), 
-					renameResource(s.getPredicate()),
+					renameResource(model.createResource(s.getSubject())), 
+					renameResource(model.createResource(s.getPredicate())),
 					renameObject(s.getObject()));
 			}
 			model = result;
@@ -91,11 +93,14 @@ public class Translator implements Runnable {
 		 * If the node is a resource then it is substituted as
 		 * required.  If the node is a literal it is preserved.
 		 */
-		protected RDFNode renameObject(RDFNode n) {
-			if( n instanceof Resource)
-				return renameResource((Resource) n);
-			else
+		protected Node renameObject(Node n) {
+			if( n.isLiteral()) {
 				return n;
+			}
+			else {
+				FrontsNode r = renameResource(model.createResource(n));
+				return r == null? null: r.asNode();
+			}
 		}
 		/**
 		 * Substitute a a single resource.
@@ -104,18 +109,18 @@ public class Translator implements Runnable {
 		 * @return the resource that should appear in result 
 		 * or null if the resource should not appear in the result.
 		 */
-		protected Resource renameResource(Resource r) {
+		protected FrontsNode renameResource(OntResource r) {
 			if (r.isAnon())
 				return r;
 			
 			if (!r.getNameSpace().equals(XMI.NS))
 				return r;
 			
-			Statement ls = r.getProperty(RDFS.label);
+			String ls = r.getString(RDFS.label);
 			if (ls == null)
 				return r;
 
-			String l = escapeNCName(ls.getString());
+			String l = escapeNCName(ls);
 			if( l.length()==0 )
 				return null;
 			
@@ -139,7 +144,7 @@ public class Translator implements Runnable {
 		 * or null if the resource should not appear in the result.
 		 */
 		@Override
-		protected Resource renameResource(Resource r, String l) {
+		protected FrontsNode renameResource(OntResource r, String l) {
 			if (r.hasProperty(RDF.type, UML.Stereotype))
 				return result.createResource(UML.NS + l.toLowerCase());
 
@@ -174,20 +179,20 @@ public class Translator implements Runnable {
 			return uri;
 	}
 	
-	private static String pathName(Resource r) {
-		Statement ps = r.getProperty(RDFS.isDefinedBy);
+	private static String pathName(OntResource r) {
+		OntResource ps = r.getResource(RDFS.isDefinedBy);
 		String prefix;
 		if( ps != null ) {
-			prefix = pathName(ps.getResource());
+			prefix = pathName(ps);
 		}
 		else {
 			prefix = "";
 		}
-		Statement ls = r.getProperty(RDFS.label);
+		String ls = r.getString(RDFS.label);
 		if (ls == null)
 			return prefix;
 
-		String l = escapeNCName(ls.getString());
+		String l = escapeNCName(ls);
 		if( l.length()==0 )
 			return prefix;
 		
@@ -210,14 +215,14 @@ public class Translator implements Runnable {
 		 * or null if the resource should not appear in the result.
 		 */
 		@Override
-		protected Resource renameResource(Resource r, String l) {
+		protected FrontsNode renameResource(OntResource r, String l) {
 			String namespace = findBaseURI(r);
 
 			if (r.hasProperty(RDF.type, OWL.Class)) {
 				if ((r.hasProperty(UML.hasStereotype, UML.datatype) ||
 						r.hasProperty(UML.hasStereotype, UML.primitive)) &&
 						    ! r.hasProperty(UML.hasStereotype, UML.enumeration)) {
-					Resource x = selectXSDType(l);
+					FrontsNode x = selectXSDType(l);
 					if (x != null)
 						return x;
 				}
@@ -227,23 +232,23 @@ public class Translator implements Runnable {
 			if (r.hasProperty(RDF.type, OWL.ObjectProperty)
 					|| r.hasProperty(RDF.type, OWL.DatatypeProperty)
 					|| r.hasProperty(RDF.type, RDF.Property)) {
-				Statement ds = r.getProperty(RDFS.domain);
+				OntResource ds = r.getResource(RDFS.domain);
 				if (ds != null) {
-					Statement ls = ds.getResource().getProperty(RDFS.label);
+					String ls = ds.getString(RDFS.label);
 					if (ls != null) {
-						String c = escapeNCName(ls.getString());
+						String c = escapeNCName(ls);
 						return result.createResource(namespace + c + "." + l);
 					}
 				}
 				return result.createResource(namespace + "_." + l);
 			}
 			
-			for (Iterator it = r.listProperties(RDF.type); it.hasNext();) {
-				Statement ts = (Statement) it.next();
-				if( ts.getResource().hasProperty(UML.hasStereotype, UML.enumeration)) {
-					Statement ls = ts.getResource().getProperty(RDFS.label);
+			for (ResIterator it = r.listProperties(RDF.type); it.hasNext();) {
+				OntResource ts = it.nextResource();
+				if( ts.hasProperty(UML.hasStereotype, UML.enumeration)) {
+					String ls = ts.getString(RDFS.label);
 					if (ls != null) {
-						String c = escapeNCName(ls.getString()); 
+						String c = escapeNCName(ls); 
 						return result.createResource(namespace + c + "." + l);
 					}
 				}
@@ -261,9 +266,9 @@ public class Translator implements Runnable {
 	 * with possible substitutions. If any are null (no substitution) 
 	 * the original statement is negated.
 	 */
-	protected void add(Resource s, Resource p, RDFNode o) {
+	protected void add(FrontsNode s, FrontsNode p, Node o) {
 		if(s != null && p != null && o != null ) {
-			result.add(s, (Property)p.as(Property.class), o);
+			result.add(s, p, o);
 		}
 	}
 	/**
@@ -272,7 +277,7 @@ public class Translator implements Runnable {
 	 * @param l A simple name for the datatype received from the UML. 
 	 * @return A resource representing one of the XSD datatypes recommended for OWL.
 	 */
-	protected Resource selectXSDType(String l) {
+	protected FrontsNode selectXSDType(String l) {
 		// TODO: add more XSD datatypes here
 		if( l.equalsIgnoreCase("integer"))
 			return XSD.integer;
@@ -336,17 +341,17 @@ public class Translator implements Runnable {
 	 * @param r an untranslated  resource
 	 * @return a URI
 	 */
-	protected String findBaseURI(Resource r) {
-		Statement b = r.getProperty(UML.baseuri);
+	protected String findBaseURI(OntResource r) {
+		String b = r.getString(UML.baseuri);
 		if( b != null )
-			return b.getString();
+			return b;
 
-		Statement p = r.getProperty(RDFS.isDefinedBy);
+		OntResource p = r.getResource(RDFS.isDefinedBy);
 		if( p != null ) {
-			Resource q = p.getResource();
-			b = q.getProperty(UML.baseuri);
+			OntResource q = p;
+			b = q.getString(UML.baseuri);
 			if( b != null )
-				return b.getString();
+				return b;
 			if( uniqueNamespaces )
 				return q.getNameSpace();
 			
@@ -359,7 +364,7 @@ public class Translator implements Runnable {
 	 * Propagate a given annotation property to descendents.
 	 *
 	 */
-	private void propagateAnnotation(Property a) {
+	private void propagateAnnotation(FrontsNode a) {
 		ResIterator it = model.listSubjectsWithProperty(RDF.type, UML.Package);
 		while( it.hasNext()) 
 			propagateAnnotation(it.nextResource(), a);
@@ -369,16 +374,16 @@ public class Translator implements Runnable {
 	 * Propagate a given annotation property from p's parent package to p.
 	 *
 	 */
-	private Statement propagateAnnotation(Resource p, Property a) {
-		Statement v = p.getProperty(a);
+	private OntResource propagateAnnotation(OntResource p, FrontsNode a) {
+		OntResource v = p.getResource(a);
 		if( v != null )
 			return v;
 	
-		Statement s = p.getProperty(RDFS.isDefinedBy);
+		OntResource s = p.getResource(RDFS.isDefinedBy);
 		if( s != null ) {
-			v = propagateAnnotation(s.getResource(), a); 
+			v = propagateAnnotation(s, a); 
 			if( v != null) {
-				p.addProperty(a, v.getObject());
+				p.addProperty(a, v);
 				return v;
 			}
 		}

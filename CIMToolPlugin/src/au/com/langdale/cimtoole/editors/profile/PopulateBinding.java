@@ -12,10 +12,9 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Button;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
@@ -101,7 +100,7 @@ public class PopulateBinding  {
 				parent = node.getParent().getSubject();
 				getTree().setRootResource(parent);
 			}
-			else if(subject != null && (subject.canAs(OntClass.class) || subject.equals(MESSAGE.Message))) {
+			else if(subject != null && (subject.isClass() || subject.equals(MESSAGE.Message))) {
 				parent = null;
 				getTree().setRootResource(subject);
 			}

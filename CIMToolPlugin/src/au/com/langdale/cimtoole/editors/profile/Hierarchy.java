@@ -10,7 +10,7 @@ import java.util.Set;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import com.hp.hpl.jena.ontology.OntClass;
+import au.com.langdale.kena.OntResource;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.TreeModelBase.Node;
@@ -80,7 +80,7 @@ public class Hierarchy extends FurnishedEditor {
 		@Override
 		protected void fetchChecks() {
 			for (Iterator it = Refactory.asSet(nnode.getProfile().getSuperClasses()).iterator(); it.hasNext();) {
-				OntClass clss = (OntClass) it.next();
+				OntResource clss = (OntResource) it.next();
 				nnode.getProfile().removeSuperClass(clss);
 			}
 			super.fetchChecks();

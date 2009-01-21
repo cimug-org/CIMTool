@@ -19,12 +19,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntResource;
+
+import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.sax.XMLElement;
@@ -113,9 +110,9 @@ public class XMIParser extends XMIModel {
 	 * Interpret a UML tag instance as an owl annotation. 
 	 */
 	private class TaggedValueMode extends BaseMode {
-	    Resource subject;
+	    OntResource subject;
 	    String tagValue;
-	    Property property;
+	    FrontsNode property;
 	    
 	    /**
 	     * Construct for an unknown subject (expect a modelElement reference)
@@ -127,7 +124,7 @@ public class XMIParser extends XMIModel {
 	    /**
 	     * Construct for a known subject.
 	     */
-	    TaggedValueMode(XMLElement element, Resource resource) {
+	    TaggedValueMode(XMLElement element, OntResource resource) {
 	        subject = resource;
 	        tagValue = element.getAttributes().getValue("value");
 	        
@@ -151,7 +148,7 @@ public class XMIParser extends XMIModel {
 
 	        
 	        // we overide the default subject here and in visit()
-	    	Resource ref = createUnknown(element.getAttributes().getValue("modelElement"));
+	    	OntResource ref = createUnknown(element.getAttributes().getValue("modelElement"));
 	    	if( ref != null)
 	    		subject = ref;
 	    }
@@ -225,7 +222,7 @@ public class XMIParser extends XMIModel {
 				// parse list of subjects
 				String[] xuids = list.split(" +");
 				for(int ix = 0; ix < xuids.length; ix++) {
-					Resource given = createUnknown(xuids[ix]);
+					OntResource given = createUnknown(xuids[ix]);
 					if( given != null)
 						given.addProperty(UML.hasStereotype, stereo);
 				}
@@ -235,7 +232,7 @@ public class XMIParser extends XMIModel {
         public XMLMode visit(XMLElement element) {
         	if( element.matches("ModelElement")) {
         		subject = null; // forget the given subject
-        		Resource given = createUnknown(element.getAttributes().getValue("xmi.idref")); 
+        		OntResource given = createUnknown(element.getAttributes().getValue("xmi.idref")); 
     			if(stereo != null && given != null) {
     				given.addProperty(UML.hasStereotype, stereo);
     			}
@@ -265,7 +262,7 @@ public class XMIParser extends XMIModel {
 	     */
 	    PackageMode() {
 	    	packResource = model.createIndividual(UML.global_package.getURI(), UML.Package);
-	    	packResource.setLabel("Global", null);
+	    	packResource.addLabel("Global", null);
 	    }
 	    
 	    /**
@@ -332,8 +329,8 @@ public class XMIParser extends XMIModel {
 		 * Interpret an XMI generalisation as an OWL subClass.
 		 */
 		private class GeneralizationMode extends BaseMode {
-		    OntClass ontChild;
-		    OntClass ontParent;
+		    OntResource ontChild;
+		    OntResource ontParent;
 		    
 		    GeneralizationMode(XMLElement element) {
 		    	ontChild = findClass(element, "child");
@@ -418,8 +415,8 @@ public class XMIParser extends XMIModel {
 			 * Interpret a UML AssociationEnd as an OWL ObjectProperty.
 			 */
 			private class AssociationEndMode extends BaseMode {
-			    OntClass range;
-			    ObjectProperty property;
+			    OntResource range;
+			    OntResource property;
 			    int lower =-1, upper=-1;
 				boolean composite, aggregate;
 	
@@ -526,7 +523,7 @@ public class XMIParser extends XMIModel {
 		 * Interpret a UML enumeration as an OWL Class plus individuals.
 		 */
 		private class EnumerationMode extends BaseMode {
-		    OntClass classResource;
+		    OntResource classResource;
 			public EnumerationMode(XMLElement element) {
 				classResource = createClass(element);
 				classResource.addProperty(UML.hasStereotype, UML.enumeration);
@@ -558,7 +555,7 @@ public class XMIParser extends XMIModel {
 		 * Interpret a UML class as an OWL class.
 		 */
 		private class ClassMode extends BaseMode {
-		    OntClass classResource;
+		    OntResource classResource;
 			
 			ClassMode (XMLElement element) {
 				classResource = createClass(element);
@@ -590,20 +587,20 @@ public class XMIParser extends XMIModel {
 			 * for later assignment in stereotype processing.
 			 */
 			private class AttributeMode extends BaseMode {
-			    OntProperty attrResource;
+			    OntResource attrResource;
 					
 				AttributeMode(XMLElement element) {
 					attrResource =createAttributeProperty(element);
 					attrResource.addDomain(classResource);
 					packageDefines(attrResource);
-					Resource type = findResource(element, "type");
+					OntResource type = findResource(element, "type");
 					if( type != null)
 						attrResource.addRange(type);
 				}
 						
 				public XMLMode visit(XMLElement element) {
 				    if ( element.matches("Class") || element.matches("Classifier") || element.matches("DataType")) {
-						Resource type = findResource(element);
+						OntResource type = findResource(element);
 						if( type != null)
 							attrResource.addRange(type);
 						if ( element.matches("DataType"))

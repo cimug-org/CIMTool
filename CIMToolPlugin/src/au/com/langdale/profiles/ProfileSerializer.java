@@ -44,8 +44,9 @@ import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode
 import au.com.langdale.sax.AbstractReader;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
@@ -390,9 +391,9 @@ public class ProfileSerializer extends AbstractReader {
 	}
 	
 	private void emitStereotypes(OntResource subject) throws SAXException {
-		StmtIterator it = subject.listProperties(UML.hasStereotype);
+		ResIterator it = subject.listProperties(UML.hasStereotype);
 		while (it.hasNext()) {
-			emitStereotype((OntResource)it.nextStatement().getResource().as(OntResource.class));
+			emitStereotype(it.nextResource());
 		}
 	}
 

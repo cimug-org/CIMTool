@@ -10,9 +10,12 @@ import java.io.InputStream;
 
 import au.com.langdale.inference.SimpleReasoner;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.OntModel;
+
 import au.com.langdale.util.Logger;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 
+import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -28,11 +31,11 @@ public class Validator extends ValidatorUtil implements ValidatorProtocol {
 
 	private Reasoner reasoner;
 	
-	public Validator(Model schema, String namespace, InputStream ruleText) throws ParserException, IOException {
+	public Validator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
 		reasoner = new SimpleReasoner(expandRules(schema, namespace, ruleText, BuiltinRegistry.theRegistry));
 	}
 	
-	public Model run(String source, String base, String namespace, Logger errors) throws IOException {
+	public OntModel run(String source, String base, String namespace, Logger errors) throws IOException {
 		String lang = "RDF/XML";
 		if( source.endsWith(".ttl"))
 			lang = "TURTLE";
@@ -44,8 +47,9 @@ public class Validator extends ValidatorUtil implements ValidatorProtocol {
 		InfModel infmodel = ModelFactory.createInfModel(reasoner, data);
 		infmodel.prepare();
 		Model result = infmodel.getDeductionsModel();
-		logProblems(errors, result.getGraph());
-		return result;
+		Graph graph = result.getGraph();
+		logProblems(errors, graph);
+		return au.com.langdale.kena.ModelFactory.createMem(graph);
 	}
 	
 	static {

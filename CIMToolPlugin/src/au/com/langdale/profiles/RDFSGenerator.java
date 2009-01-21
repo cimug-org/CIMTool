@@ -6,8 +6,8 @@ package au.com.langdale.profiles;
 
 import au.com.langdale.cim.CIMS;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -56,7 +56,7 @@ public class RDFSGenerator extends RDFSBasedGenerator {
 			else
 				card = CIMS.M0_n;
 		}
-		prop.addProperty(CIMS.multiplicity, card);
+		result.add(prop, CIMS.multiplicity, card);
 	}
 
 	@Override

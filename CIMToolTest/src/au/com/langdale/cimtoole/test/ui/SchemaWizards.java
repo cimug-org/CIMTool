@@ -2,12 +2,11 @@ package au.com.langdale.cimtoole.test.ui;
 
 import org.eclipse.core.runtime.CoreException;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.test.WorkbenchTest;
 import au.com.langdale.cimtoole.wizards.ImportSchema;
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.ui.builder.ContentBuilder;
 
 public class SchemaWizards extends WorkbenchTest {

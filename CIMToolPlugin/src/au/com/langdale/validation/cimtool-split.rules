@@ -48,6 +48,9 @@
 [ (?C uml:hasStereotype uml:enumeration) (?i rdf:type ?C) ->
 	[(?i rdf:type ?C) <-]]
 
+[ (?C uml:hasStereotype uml:concrete) -> 
+	[(?C uml:hasStereotype uml:concrete) <-]]
+	
 # --- axioms for validation pass hard coded ---
 
 [-> [(rdf:type rdf:type rdf:Property) <-]]

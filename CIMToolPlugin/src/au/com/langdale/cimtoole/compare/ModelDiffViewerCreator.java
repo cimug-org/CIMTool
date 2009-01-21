@@ -9,10 +9,10 @@ import org.eclipse.compare.IViewerCreator;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
-public class ProfileMergeViewerCreator  implements IViewerCreator {
+public class ModelDiffViewerCreator  implements IViewerCreator {
 
 	public Viewer createViewer(Composite parent, CompareConfiguration config) {
-		return new ProfileMergeViewer(parent, config);
+		return new ModelDiffViewer(parent, config);
 	}
 
 }

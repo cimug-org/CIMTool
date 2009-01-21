@@ -34,9 +34,9 @@ import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.binding.OntModelProvider;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 /**
  * A series of <code>Buildlet</code>s for building profile artifacts.
@@ -231,6 +231,7 @@ public class ProfileBuildlets extends Info {
 			IFile file = getRelated(result, "owl");
 			RDFSBasedGenerator generator = getGenerator(file);
 			generator.run();
+			System.out.println("Generated ontology size: " + generator.getResult().size());
 			Task.write(generator.getResult(), getNamespace(file), true, result, lang, monitor);
 			result.setDerived(true);
 		}

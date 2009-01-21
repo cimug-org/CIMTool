@@ -20,7 +20,7 @@ import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.TreeModelBase.NodeListener;
 import au.com.langdale.ui.util.IconCache;
 
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntResource;
 /**
  * A JFace content provider that links a TreeModel to a Viewer.
  * This provider in combination with a TreeModel translates a graph

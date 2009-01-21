@@ -13,13 +13,15 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import au.com.langdale.jena.Models;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.util.Logger;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
+
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 /**
@@ -35,6 +37,11 @@ import com.hp.hpl.jena.vocabulary.RDF;
  * <li>Retrieve the result.
  */
 public class SpreadsheetParser {
+	
+	private static Resource CLASS = ResourceFactory.createResource(OWL.Class);
+	private static Resource OBJECT_PROPERTY = ResourceFactory.createResource(OWL.ObjectProperty);
+	private static Resource PROPERTY = ResourceFactory.createResource(RDF.Property);
+
 	/**
 	 * Represents a Row or Sheet number.
 	 */
@@ -119,7 +126,7 @@ public class SpreadsheetParser {
 				return;
 			
 			ProfileClass profile = context.getProfileFor(getLocalName(row, classCol));
-			context.addProperty(profile, getLocalName(row, propCol), RDF.Property);
+			context.addProperty(profile, getLocalName(row, propCol), PROPERTY);
 		}
 	}
 	/**
@@ -132,7 +139,7 @@ public class SpreadsheetParser {
 				return;
 			
 			ProfileClass profile = context.getProfileFor(getLocalName(row, classCol));
-			OntProperty prop = context.addProperty(profile, getLocalName(row, propCol), OWL.ObjectProperty);
+			OntResource prop = context.addProperty(profile, getLocalName(row, propCol), OBJECT_PROPERTY);
 			context.setCardinality(profile, prop, getString(row, cardCol));
 		}
 	}
@@ -168,8 +175,8 @@ public class SpreadsheetParser {
 		this.book = book;
 		this.background = background;
 		mapper = new NSMapper(background);
-		model = Models.overlay(background);
-		result = Models.getUpdatableModel(model);
+		model = Composition.overlay(background);
+		result = Composition.getUpdatableModel(model);
 		this.logger = logger;
 	}
 
@@ -214,27 +221,27 @@ public class SpreadsheetParser {
 
 		ProfileClass profile = (ProfileClass) profiles.get(uri);
 		if( profile == null) {
-			Resource base = mapper.map(name, OWL.Class); // construct a base class URI
+			Resource base = mapper.map(name, CLASS); // construct a base class URI
 			if( base == null )
 				throw new ParseProblem("undefined class: " + name);
-			profile = new ProfileClass(model.createClass(uri), namespace, model, model.getOntClass(base.getURI()));
+			profile = new ProfileClass(model.createClass(uri), namespace, model, model.createResource(base.asNode()));
 			profiles.put(uri, profile);
 		}
 		return profile;
 	}
 
-	private OntProperty addProperty(ProfileClass profile, String name, Resource type) throws ParseProblem {
+	private OntResource addProperty(ProfileClass profile, String name, Resource type) throws ParseProblem {
 		String qualified = profile.getBaseClass().getLocalName() + "." + name;
 		Resource base = mapper.map(qualified, type); // construct a base property URI
 		if( base == null )
-			throw new ParseProblem("undefined "+ type.getLocalName() + " : " + qualified);
+			throw new ParseProblem("undefined "+ type.asNode().getLocalName() + " : " + qualified);
 
-		OntProperty prop = model.getOntProperty(base.getURI());
+		OntResource prop = model.createResource(base.getURI());
 		profile.createAllValuesFrom(prop, false);
 		return prop;
 	}
 
-	private void setCardinality(ProfileClass profile, OntProperty prop,	String card) {
+	private void setCardinality(ProfileClass profile, OntResource prop,	String card) {
 		PropertyInfo info = profile.getPropertyInfo(prop);
 		if( card.startsWith("1"))
 			info.setMinCardinality(1);

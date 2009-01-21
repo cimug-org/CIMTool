@@ -14,15 +14,12 @@ import java.util.Set;
 import au.com.langdale.validation.LOG;
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.graph.FrontsNode;
+
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -41,15 +38,14 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			return new GlobalNode();
 		if( child.hasProperty(RDF.type, UML.Package))
 			return new PackageNode(child);
-		else if( child.canAs(OntClass.class)) {
-			OntClass cl = (OntClass) child.as(OntClass.class);
-			if( cl.hasProperty(UML.hasStereotype, UML.enumeration))
-				return new EnumClassNode(cl);
+		else if( child.isClass()) {
+			if( child.hasProperty(UML.hasStereotype, UML.enumeration))
+				return new EnumClassNode(child);
 			else
-				return new ClassNode( cl );
+				return new ClassNode( child );
 		}
-		else if( child.canAs(DatatypeProperty.class)) {
-			return new DatatypeNode(child.asProperty()); // used for the SubClassModel
+		else if( child.isDatatypeProperty()) {
+			return new DatatypeNode(child); // used for the SubClassModel
 		}
 		return null;
 	}
@@ -59,7 +55,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * from the root resource of this tree to the given target.
 	 */
 	@Override
-	protected List findResourcePathTo(Resource symbol) {
+	protected List findResourcePathTo(FrontsNode symbol) {
 		OntResource target = asOntResource(symbol);
 		if( getRoot() == null || target == null) 
 			return null;
@@ -71,17 +67,16 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		path.add(target);
 
 		while( ! target.equals(start)) {
-			if( target.canAs(OntProperty.class)) {
-				OntProperty prop = (OntProperty) target.as(OntProperty.class);
-				target = prop.getDomain();
+			if( target.isProperty()) {
+				target = target.getDomain();
 				if( target == null )
 					return null;
 			}
 			else {
-				ExtendedIterator it = target.listRDFTypes(false);
+				ResIterator it = target.listRDFTypes(false);
 				OntResource enumerated = null;
 				while( it.hasNext()) {
-					OntResource cls = (OntResource) ((Resource)it.next()).as(OntResource.class);
+					OntResource cls = it.nextResource();
 					if( cls.hasProperty(UML.hasStereotype, UML.enumeration)) {
 						enumerated = cls;
 						break;
@@ -92,11 +87,11 @@ public class UMLTreeModel extends JenaTreeModelBase {
 					target = enumerated;
 				}
 				else {
-					Resource pack = target.getIsDefinedBy();
+					OntResource pack = target.getIsDefinedBy();
 					if( pack == null)
-						target = getOntModel().getOntResource(UML.global_package);
+						target = getOntModel().createResource(UML.global_package.asNode());
 					else
-						target = (OntResource) pack.as(OntResource.class);
+						target = pack;
 				}
 			}
 			if( path.contains(target))
@@ -120,7 +115,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 
 		@Override
 		public OntResource getSubject() {
-			return getOntModel().createOntResource(UML.global_package.getURI());
+			return getOntModel().createResource(UML.global_package.asNode());
 		}
 
 		@Override
@@ -144,7 +139,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		private void addTopClasses(Set packages) {
 			Iterator it = getOntModel().listNamedClasses();
 			while( it.hasNext()) {
-				OntClass clss = (OntClass)it.next();
+				OntResource clss = (OntResource)it.next();
 				if( ! isDefinedBy(clss, packages)) {
 					if( clss.hasProperty(UML.hasStereotype, UML.enumeration))
 						add(new EnumClassNode(clss));
@@ -157,7 +152,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		private void addTopDatatypes(Set packages) {
 			ResIterator it = getOntModel().listSubjectsWithProperty(RDF.type, RDFS.Datatype);
 			while( it.hasNext()) {
-				OntResource dt = (OntResource) it.nextResource().as(OntResource.class);
+				OntResource dt = it.nextResource();
 				if( ! isDefinedBy(dt, packages)) {
 					add(new DatatypeClassNode(dt));
 				}
@@ -185,30 +180,25 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	public class PackageNode extends ModelNode {
 		OntResource subject;
 		
-		public PackageNode(RDFNode pack) {
-			subject = (OntResource) pack.as(OntResource.class);
-		}
-		
 		public PackageNode(OntResource pack) {
 			subject = pack;
 		}
 		
 		@Override
 		protected void populate() {
-			Model m = subject.getModel();
+			OntModel m = subject.getOntModel();
 			ResIterator it = m.listSubjectsWithProperty(RDFS.isDefinedBy, subject) ;
 			while( it.hasNext()) {
-				Resource child = it.nextResource();
-				if( child.hasProperty(RDF.type, UML.Package))
+				OntResource child = it.nextResource();
+				if( child.hasRDFType(UML.Package))
 					add(new PackageNode(child));
-				else if( child.hasProperty(RDF.type, RDFS.Datatype))
-					add(new DatatypeClassNode((OntResource)child.as(OntResource.class)));
-				else if( child.canAs(OntClass.class)) {
-					OntClass cl = (OntClass) child.as(OntClass.class);
-					if( cl.hasProperty(UML.hasStereotype, UML.enumeration))
-						add(new EnumClassNode(cl));
+				else if( child.hasRDFType( RDFS.Datatype))
+					add(new DatatypeClassNode(child));
+				else if( child.isClass()){
+					if( child.hasProperty(UML.hasStereotype, UML.enumeration))
+						add(new EnumClassNode(child));
 					else
-						add(new ClassNode( cl ));
+						add(new ClassNode( child ));
 				}
 			}
 		}
@@ -240,9 +230,9 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 *
 	 */
 	public class ClassBaseNode extends ModelNode {
-		OntClass subject;
+		OntResource subject;
 		
-		public ClassBaseNode(OntClass clss) {
+		public ClassBaseNode(OntResource clss) {
 			subject = clss;
 		}
 		
@@ -260,7 +250,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			if( parent != null) {
 				exclude = parent.getSubject();
 				if( exclude.isObjectProperty()) {
-					OntProperty property = exclude.asProperty();
+					OntResource property = exclude;
 					exclude = property.getInverse();
 					if( exclude == null )
 						exclude = property.getInverseOf();
@@ -268,30 +258,30 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			}
 			
 			if( supers) {
-				ExtendedIterator it = new OntSubject(subject).listSuperClasses(true);
+				ResIterator it = subject.listSuperClasses(true);
 				while( it.hasNext()) {
-					OntResource clss = (OntResource) it.next();
-					if( ( exclude == null || ! clss.equals(exclude)) && clss.isURIResource() && clss.canAs(OntClass.class)) {
-						add( new SuperClassNode((OntClass) clss.as(OntClass.class)));
+					OntResource clss = it.nextResource();
+					if( ( exclude == null || ! clss.equals(exclude)) && clss.isURIResource() && clss.isClass()) {
+						add( new SuperClassNode( clss ));
 					}
 				}
 			}
 			
 			if(subs) {
-				ExtendedIterator it = new OntSubject(subject).listSubClasses(true);
+				ResIterator it = subject.listSubClasses(true);
 				while( it.hasNext()) {
-					OntResource clss = (OntResource) it.next();
+					OntResource clss = it.nextResource();
 					if( ! clss.hasProperty(UML.hasStereotype, UML.enumeration) &&
 							( exclude == null || ! clss.equals(exclude)) &&
-							clss.canAs(OntClass.class))
-						add( new SubClassNode((OntClass) clss.as(OntClass.class)));
+							clss.isClass())
+						add( new SubClassNode(clss));
 				}
 			}
 			
 			{
 				Iterator it = listProperties(inherited);
 				while( it.hasNext()) {
-					OntProperty pt = (OntProperty) it.next();
+					OntResource pt = (OntResource) it.next();
 					if( pt.isDatatypeProperty())
 						add( new DatatypeNode(pt));
 					else if( pt.getRange() != null && pt.getRange().hasProperty(UML.hasStereotype, UML.enumeration))
@@ -310,9 +300,9 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			}
 			
 			{
-				ExtendedIterator it = subject.listInstances();
+				ResIterator it = subject.listInstances();
 				while( it.hasNext())
-					add( new IndividualNode((OntResource)it.next()));
+					add( new IndividualNode(it.nextResource()));
 			}
 		}
 		
@@ -322,9 +312,9 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			addDirectProperties(subject, results);
 			
 			if( inherited ) {
-				ExtendedIterator it = new OntSubject(subject).listSuperClasses(false);
+				ResIterator it =subject.listSuperClasses(false);
 				while( it.hasNext()) {
-					addDirectProperties((Resource)it.next(), results);
+					addDirectProperties(it.nextResource(), results);
 				}
 			}
 			return results.iterator();
@@ -333,9 +323,9 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		private void addDirectProperties(Resource subject, Set results) {
 			ResIterator it = getOntModel().listSubjectsWithProperty(RDFS.domain, subject);
 			while( it.hasNext()) {
-				Resource pr = it.nextResource();
-				if( pr.canAs(OntProperty.class)) 
-					results.add(pr.as(OntProperty.class));
+				OntResource pr = it.nextResource();
+				if( pr.isProperty())
+					results.add(pr);
 			}
 		}
 
@@ -362,7 +352,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	public class ClassNode extends ClassBaseNode {
 
-		public ClassNode(OntClass clss) {
+		public ClassNode(OntResource clss) {
 			super(clss);
 		}
 		
@@ -373,13 +363,18 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class SubClassNode extends ClassBaseNode {
-		public SubClassNode(OntClass clss) {
+		public SubClassNode(OntResource clss) {
 			super(clss);
 		}
 		
 		@Override
 		protected void populate() {
 			populate(false, true, true);
+		}
+		
+		@Override
+		public boolean isPruned() {
+			return true;
 		}
 		
 		@Override
@@ -397,7 +392,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class SuperClassNode extends ClassBaseNode {
-		public SuperClassNode(OntClass clss) {
+		public SuperClassNode(OntResource clss) {
 			super(clss);
 		}
 		
@@ -406,6 +401,11 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			populate(false, true, false);
 		}
 		
+		@Override
+		public boolean isPruned() {
+			return true;
+		}
+
 		@Override
 		public String toString() {
 			return "SuperClass: " + label(subject);
@@ -422,7 +422,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class EnumClassNode extends ClassBaseNode {
-		public EnumClassNode(OntClass clss) {
+		public EnumClassNode(OntResource clss) {
 			super(clss);
 		}
 		
@@ -456,7 +456,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		@Override
 		public String toString() {
 			OntResource base = subject.getSameAs();
-			RDFNode units = subject.getPropertyValue(UML.hasUnits);
+			String units = subject.getString(UML.hasUnits);
 			
 			return "Datatype: " + label(subject) 
 				+ (base != null? " = " + label(base): "")
@@ -484,8 +484,8 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class DatatypeNode extends ModelNode {
-		OntProperty subject;
-		public DatatypeNode( OntProperty prop) {
+		OntResource subject;
+		public DatatypeNode( OntResource prop) {
 			subject = prop;
 		}
 
@@ -502,8 +502,8 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		@Override
 		public String toString() {
 			OntResource range = subject.getRange();
-			RDFNode units = range != null? range.getPropertyValue(UML.hasUnits): null;
-			RDFNode value = subject.getPropertyValue(UML.hasInitialValue);
+			String units = range != null? range.getString(UML.hasUnits): null;
+			String value = subject.getString(UML.hasInitialValue);
 			String rname = label(range);
 			
 			return label(subject) 
@@ -533,16 +533,16 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class PropertyNode extends ModelNode {
-		OntProperty subject;
-		public PropertyNode( OntProperty prop) {
+		OntResource subject;
+		public PropertyNode( OntResource prop) {
 			subject = prop;
 		}
 		
 		@Override
 		protected void populate() {
 			OntResource range = subject.getRange(); 
-			if( range != null && range.canAs(OntClass.class))
-				adopt(new ClassNode(range.asClass()));
+			if( range != null && range.isClass())
+				adopt(new ClassNode(range));
 		}
 		
 		@Override
@@ -564,6 +564,11 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		public boolean getErrorIndicator() {
 			return subject.hasProperty(LOG.hasProblems);
 		}
+		
+		@Override
+		public boolean isPruned() {
+			return true;
+		}
 	}
 	
 	/**
@@ -571,7 +576,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class AggregateNode extends PropertyNode {
-		public AggregateNode(OntProperty prop) {
+		public AggregateNode(OntResource prop) {
 			super(prop);
 		}
 	}
@@ -581,7 +586,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class CompositeNode extends PropertyNode {
-		public CompositeNode(OntProperty prop) {
+		public CompositeNode(OntResource prop) {
 			super(prop);
 		}
 	}
@@ -591,7 +596,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class FunctionalNode extends PropertyNode {
-		public FunctionalNode(OntProperty prop) {
+		public FunctionalNode(OntResource prop) {
 			super(prop);
 		}
 	}
@@ -601,7 +606,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 * 
 	 */
 	public class InverseNode extends PropertyNode {
-		public InverseNode(OntProperty prop) {
+		public InverseNode(OntResource prop) {
 			super(prop);
 		}
 	}
@@ -612,13 +617,13 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	 *
 	 */
 	public class EnumPropertyNode extends PropertyNode {
-		public EnumPropertyNode(OntProperty prop) {
+		public EnumPropertyNode(OntResource prop) {
 			super(prop);
 		}
 		
 		@Override
 		protected void populate() {
-			OntClass range = subject.getRange().asClass();
+			OntResource range = subject.getRange();
 			adopt(new EnumClassNode(range));
 		}
 		

@@ -4,9 +4,9 @@
  */
 package au.com.langdale.cim;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import au.com.langdale.kena.Property;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 
 /**
  * This class represents a vocabulary defined by the IEC 61970 standard that extends RDFS.  

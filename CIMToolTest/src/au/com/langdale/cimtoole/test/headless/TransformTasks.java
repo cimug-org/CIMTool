@@ -10,7 +10,7 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.ProjectTest;
 
-import com.hp.hpl.jena.ontology.OntModel;
+import au.com.langdale.kena.OntModel;
 
 public class TransformTasks extends ProjectTest {
 

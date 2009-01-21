@@ -32,9 +32,10 @@ import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.plumbing.Template;
 import au.com.langdale.validation.Validation;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+
+import au.com.langdale.kena.Resource;
 
 public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 	
@@ -126,7 +127,7 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 		model = area.getOntModel();
 	}
 
-	private static final OntModel EMPTY_MODEL = ModelFactory.createOntologyModel();
+	private static final OntModel EMPTY_MODEL = ModelFactory.createMem();
 	
 	private static final Searchable EMPTY_AREA = new Searchable() {
 		public void selectTarget(Resource target) {}

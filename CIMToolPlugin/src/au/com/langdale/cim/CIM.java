@@ -4,8 +4,8 @@
  */
 package au.com.langdale.cim;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 
 
 /**

@@ -7,33 +7,34 @@ package au.com.langdale.profiles;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
+
+import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.RDF;
 /**
  * Utility to map resources in one model to another based on their type and local name.
  */
 public class NSMapper {
-	private Model model;
+	private OntModel model;
 	private HashSet spaces;
 
 	/**
 	 * 
 	 * @param model: the model containing the target resources.
 	 */
-	public NSMapper(Model model) {
+	public NSMapper(OntModel model) {
 		this.model = model;
 		init();
 	}
 	
 	private void init() {
 		spaces = new HashSet();
-		StmtIterator it = model.listStatements(null, RDF.type, (RDFNode)null);
+		ResIterator it = model.listSubjectsWithProperty(RDF.type);
 		while( it.hasNext()) {
-			Resource subject = it.nextStatement().getSubject();
+			Resource subject = it.nextResource();
 			if( subject.isURIResource())
 				spaces.add(subject.getNameSpace());
 		}
@@ -47,7 +48,7 @@ public class NSMapper {
 	 * @param type: the type of the target resource 
 	 * @return the target resource or <code>null</code> if there is none
 	 */
-	public Resource map(Resource original, Resource type) {
+	public Resource map(Resource original, FrontsNode type) {
 		if( model.contains(original, RDF.type, type))
 			return original;
 		
@@ -60,9 +61,9 @@ public class NSMapper {
 	 * Find a target resource with the given local name and type.
 	 * @param name: the local name of the target
 	 * @param type: the type of the target
-	 * @return thetarget resource or <code>null</code> is there is none
+	 * @return the target resource or <code>null</code> is there is none
 	 */
-	public Resource map(String name, Resource type) {
+	public Resource map(String name, FrontsNode type) {
 		for (Iterator it = spaces.iterator(); it.hasNext();) {
 			String ns = (String) it.next();
 			Resource cand = ResourceFactory.createResource(ns + name);

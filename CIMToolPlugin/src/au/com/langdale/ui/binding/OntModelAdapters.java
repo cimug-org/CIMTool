@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.graph.FrontsNode;
+import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 /**
  * A set of BooleanModel's that reflect the contents of an ontology model.
@@ -37,10 +36,10 @@ public class OntModelAdapters  {
 	}
 
 	private static class ClassInstance extends AdapterBase {
-		private Resource ident, clss;
+		private FrontsNode ident, clss;
 		
 
-		public ClassInstance(Resource ident, Resource clss, String comment, OntModelProvider context) {
+		public ClassInstance(FrontsNode ident, FrontsNode clss, String comment, OntModelProvider context) {
 			super(comment, context);
 			this.ident = ident;
 			this.clss = clss;
@@ -63,10 +62,10 @@ public class OntModelAdapters  {
 	
 	private static class Annotation extends AdapterBase {
 
-		private Resource ident;
-		private Property prop;
+		private FrontsNode ident;
+		private FrontsNode prop;
 
-		public Annotation(Resource ident, Property prop, String comment, OntModelProvider context) {
+		public Annotation(FrontsNode ident, FrontsNode prop, String comment, OntModelProvider context) {
 			super(comment, context);
 			this.ident = ident;
 			this.prop = prop;
@@ -87,7 +86,7 @@ public class OntModelAdapters  {
 		}
 	}
 
-	public static BooleanModel[] findClassInstances(OntClass clss, OntModelProvider context) {
+	public static BooleanModel[] findClassInstances(OntResource clss, OntModelProvider context) {
 		ArrayList flags = new ArrayList();
 		for( Iterator it = clss.listInstances(); it.hasNext();) {
 			OntResource ident = (OntResource)it.next();
@@ -98,29 +97,25 @@ public class OntModelAdapters  {
 		}
 		return toArray(flags);
 	}
+	
+	public static BooleanModel[] findAnnotations(FrontsNode seed, FrontsNode annot, OntModelProvider context) {
+		OntModel model = context.getModel();
+		if( model == null )
+			return BooleanModel.EMPTY_FLAGS;
+		
+		OntResource clss = model.createResource(seed.asNode());
+		if(! clss.isClass())
+			return BooleanModel.EMPTY_FLAGS;
 
-	public static BooleanModel[] findAnnotations(OntClass clss, Property annot, OntModelProvider context) {
 		ArrayList flags = new ArrayList();
-		for( Iterator it = clss.listInstances(); it.hasNext();) {
-			OntResource ident = (OntResource)it.next();
+		for( ResIterator it = clss.listInstances(); it.hasNext();) {
+			OntResource ident = it.nextResource();
 			String comment = label(ident);
 			if(comment != null) {
 				flags.add( new Annotation(symbol(ident), annot, comment, context));
 			}
 		}
 		return toArray(flags);
-	}
-	
-	public static BooleanModel[] findAnnotations(Resource clss, Property annot, OntModelProvider context) {
-		OntModel model = context.getModel();
-		if( model == null )
-			return BooleanModel.EMPTY_FLAGS;
-		
-		OntClass oclss = model.getOntClass(clss.getURI());
-		if( oclss == null)
-			return BooleanModel.EMPTY_FLAGS;
-		
-		return findAnnotations(oclss, annot, context);
 	}
 	
 	private static BooleanModel[] toArray(Collection coll) {
@@ -133,14 +128,14 @@ public class OntModelAdapters  {
 		return result;
 	}
 
-	private static Resource symbol(OntResource ident) {
+	private static FrontsNode symbol(OntResource ident) {
 		return ResourceFactory.createResource(ident.getURI());
 	}
 
 	private static String label(OntResource ident) {
-		String comment = ident.getComment(null);
+		String comment = ident.getComment();
 		if( comment == null)
-			comment = ident.getLabel(null);
+			comment = ident.getLabel();
 		if( comment == null && ident.isURIResource())
 			comment = ident.getLocalName();
 		return comment;

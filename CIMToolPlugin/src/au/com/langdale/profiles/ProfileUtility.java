@@ -13,13 +13,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import au.com.langdale.jena.OntSubject;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.util.MultiMap;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntResource;
 import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
@@ -30,7 +27,7 @@ public class ProfileUtility {
 	 * A multi-map from base classes to profile classes.
 	 */
 	public static class BaseMap extends MultiMap {
-		public void add(OntClass base, OntClass clss) {
+		public void add(OntResource base, OntResource clss) {
 			putRaw(base, clss);
 		}
 	}
@@ -42,21 +39,21 @@ public class ProfileUtility {
 		private Map profiles = new HashMap();   // profile to base class
 		
 		@Override
-		public void add(OntClass base, OntClass clss) {
+		public void add(OntResource base, OntResource clss) {
 			// record the back trace
 			super.add(base, clss);
 			// record the profile to base mapping
 			profiles.put(clss, base);
 		}
 		
-		public void removeProfile(OntClass clss) {
-			OntClass base = getBase(clss);
+		public void removeProfile(OntResource clss) {
+			OntResource base = getBase(clss);
 			profiles.remove(clss);
 			super.remove(base, clss);
 		}
 
-		public OntClass getBase(OntClass clss) {
-			return (OntClass) profiles.get(clss);
+		public OntResource getBase(OntResource clss) {
+			return (OntResource) profiles.get(clss);
 		}
 
 		/**
@@ -67,11 +64,11 @@ public class ProfileUtility {
 		 * @return the preferred profile if any, 
 		 * otherwise a random profile or <code>null</code> if there are none
 		 */
-		public OntClass chooseBestProfile(Collection profiles) {
+		public OntResource chooseBestProfile(Collection profiles) {
 			Iterator it = profiles.iterator();
-			OntClass any = null;
+			OntResource any = null;
 			while (it.hasNext()) {
-				OntClass cand = (OntClass) it.next();
+				OntResource cand = (OntResource) it.next();
 				if(cand.getLocalName().equals(getBase(cand).getLocalName())) 
 					return cand;
 				any = cand;
@@ -86,7 +83,7 @@ public class ProfileUtility {
 		 * @param base: the base class
 		 * @return the preferred profile
 		 */
-		public OntClass chooseBestProfile(OntClass base) {
+		public OntResource chooseBestProfile(OntResource base) {
 			return chooseBestProfile(find(base));
 		}
 
@@ -102,18 +99,18 @@ public class ProfileUtility {
 		 * information class.
 		 *  
 		 */
-		public Set findRelatedProfiles(OntClass base, boolean subclass, boolean unique) {
+		public Set findRelatedProfiles(OntResource base, boolean subclass, boolean unique) {
 			HashSet result = new HashSet();
 			
 			// consider relatives of the base
-			OntSubject subject = new OntSubject(base);
+			OntResource subject = base;
 			Iterator it = subclass? subject.listSubClasses(false): subject.listSuperClasses(false);
 			while (it.hasNext()) {
 				OntResource related = (OntResource) it.next();
 				if( related.isClass() && !related.equals(base)) {
 					
 					// consider the profiles of each relative 
-					Collection cands = find(related.asClass());
+					Collection cands = find(related);
 					
 					if( ! cands.isEmpty()) {
 						if(unique) {
@@ -124,7 +121,7 @@ public class ProfileUtility {
 							// add all candidate profiles
 							Iterator jt = cands.iterator();
 							while (jt.hasNext()) 
-								addBestClass(result, (OntClass) jt.next(), subclass);
+								addBestClass(result, (OntResource) jt.next(), subclass);
 						}
 					}
 				}
@@ -136,7 +133,7 @@ public class ProfileUtility {
 	 * A specification of a property profile. 
 	 */
 	public static class PropertyGroup {
-		private final OntProperty prop;
+		private final OntResource prop;
 		private PropertySpec summary;
 		private Collection restrictions = new LinkedList();
 		public PropertyGroup(PropertySpec spec) {
@@ -144,7 +141,7 @@ public class ProfileUtility {
 			prop = spec.prop;
 			restrictions.add(spec);
 		}
-		public OntProperty getProperty() {
+		public OntResource getProperty() {
 			return prop;
 		}
 		public PropertySpec getSummary() {
@@ -189,9 +186,9 @@ public class ProfileUtility {
 	 * A specification of a property profile. 
 	 */
 	public static class PropertySpec {
-		public final OntProperty prop;
+		public final OntResource prop;
 		public final boolean required, functional, reference;
-		public final OntClass base_range, base_domain; // FIXME: base_range should be OntResource
+		public final OntResource base_range, base_domain; // FIXME: base_range should be OntResource
 		public final String label, comment;
 
 		public PropertySpec(PropertyInfo info, ProfileClass range_profile) {
@@ -213,7 +210,7 @@ public class ProfileUtility {
 			comment = extractComment(info.getRange());
 		}
 		
-		public PropertySpec(OntProperty prop, OntClass domain, OntClass range) {
+		public PropertySpec(OntResource prop, OntResource domain, OntResource range) {
 			this.prop = prop;
 			required = reference = false;
 			functional = prop.isFunctionalProperty() || prop.isDatatypeProperty();
@@ -294,7 +291,7 @@ public class ProfileUtility {
 				props.put(spec.prop, new PropertyGroup(spec));
 		}
 		
-		public void add(OntProperty prop, OntClass domain, OntClass range ) {
+		public void add(OntResource prop, OntResource domain, OntResource range ) {
 			add(new PropertySpec(prop, domain, range));
 		}
 		
@@ -324,19 +321,19 @@ public class ProfileUtility {
 	public static class EnumAccumulator {
 		private Map enums = new HashMap();
 		
-		public void add(OntClass base, Iterator insts) {
+		public void add(OntResource base, Iterator insts) {
 			Set extent = creatExtent(base);
 			while (insts.hasNext()) {
 				extent.add((OntResource) insts.next());
 			}
 		}
 		
-		public void add(OntClass base, OntResource inst) {
+		public void add(OntResource base, OntResource inst) {
 			Set extent = creatExtent(base);
 			extent.add(inst);
 		}
 
-		private Set creatExtent(OntClass base) {
+		private Set creatExtent(OntResource base) {
 			Set extent = (Set) enums.get(base);
 			if( extent == null) {
 				extent = new HashSet();
@@ -345,7 +342,7 @@ public class ProfileUtility {
 			return extent;
 		}
 		
-		public Collection get(OntClass base) {
+		public Collection get(OntResource base) {
 			Set extent = (Set) enums.get(base);
 			if( extent == null)
 				return Collections.EMPTY_SET;
@@ -354,20 +351,20 @@ public class ProfileUtility {
 		}
 	}
 
-	private static OntClass selectType(OntResource prop_type, OntClass profile_type) {
+	private static OntResource selectType(OntResource prop_type, OntResource profile_type) {
 		if( prop_type != null && prop_type.hasRDFType(OWL.Class)) {
 			if (profile_type != null && (
 					profile_type.hasSuperClass(prop_type) 
 					|| profile_type.hasSubClass(prop_type)))
 				return profile_type;
 			else
-				return prop_type.asClass();
+				return prop_type;
 		}
 		else
 			return profile_type;
 	}
 
-	private static OntClass mergeRange(OntResource type, OntClass lhs, OntClass rhs) {
+	private static OntResource mergeRange(OntResource type, OntResource lhs, OntResource rhs) {
 
 		// choose the narrowest class
 		if( lhs != null && rhs != null) {
@@ -381,7 +378,7 @@ public class ProfileUtility {
 
 		// choose the base class or null for a datatype
 		if( type != null && type.hasRDFType(OWL.Class))
-			return type.asClass();
+			return type;
 		else
 			return null;
 	}
@@ -390,13 +387,13 @@ public class ProfileUtility {
 	 * Add class to set of classes if it is not less (not greater) than any member.
 	 * Remove any members less (greater) than the class.
 	 */
-	public static void addBestClass(Set result, OntClass clss, boolean greater) {
+	public static void addBestClass(Set result, OntResource clss, boolean greater) {
 		if(! result.contains(clss)) {
 		
 			// compare candidate with each extant result
 			Iterator kt = result.iterator();
 			while (kt.hasNext()) {
-				OntClass extant = (OntClass) kt.next();
+				OntResource extant = (OntResource) kt.next();
 				
 				
 				if( greater ) {

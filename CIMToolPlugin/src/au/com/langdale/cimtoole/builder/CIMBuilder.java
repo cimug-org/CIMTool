@@ -180,9 +180,9 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				while( outputs.hasNext()) {
 					IFile output = (IFile) outputs.next();
 					if(work.remove(output) != null)
-						; //System.out.println("CIMBuilder: push down in build order: " + output.getName()); // push output down in the build order
+						System.out.println("CIMBuilder: push down in build order: " + output.getName()); // push output down in the build order
 					else
-						; //System.out.println("CIMBuilder: adding to build: " + output.getName());
+						System.out.println("CIMBuilder: adding to build: " + output.getName());
 					work.put(output, buildlet);
 					collect(output); // not efficient since we might encounter an output many times
 				}
@@ -194,7 +194,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			while(outputs.hasNext()) {
 				IFile output = (IFile) outputs.next();
 				Buildlet buildlet = (Buildlet) work.get(output);
-				//System.out.println("CIMBuilder: building: " + output.getName());
+				System.out.println("CIMBuilder: building: " + output.getName());
 				buildlet.run(output, cleanup, monitor);
 			}
 		}

@@ -428,9 +428,9 @@
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator
-            class="au.com.langdale.cimtoole.compare.ProfileStructureCreator"
-            extensions="owl"
-            id="au.com.langdale.cimtoole.ProfileStructureCreator">
+            class="au.com.langdale.cimtoole.compare.ModelStructureCreator"
+            extensions="owl,xmi"
+            id="au.com.langdale.cimtoole.ModelStructureCreator">
       </structureCreator>
    </extension>
    <extension
@@ -439,9 +439,9 @@
    <extension
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
-            class="au.com.langdale.cimtoole.compare.ProfileMergeViewerCreator"
-            extensions="owl"
-            id="au.com.langdale.cimtoole.ProfileMergeViewer">
+            class="au.com.langdale.cimtoole.compare.ModelDiffViewerCreator"
+            extensions="owl,xmi"
+            id="au.com.langdale.cimtoole.ModelDiffViewer">
       </viewer>
    </extension>
    <extension

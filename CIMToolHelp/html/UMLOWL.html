@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" >
+<html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <title>Notes about the intersection of UML, XMI and OWL</title>
+        <link href="graphic.css" type="text/css" rel="stylesheet" />
+        <link href="favicon.ico" type="image/x-icon" rel="icon" />
+        <link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />  
+            
+      </head>
+      <body>
+        
+        <div id="banner">
+          <img src="logo-composite.png" id="logo" />
+          <img src="illust-composite.png" id="illust" />
+          <h1>Notes about the intersection of UML, XMI and OWL</h1>
+        </div>
+        <div id="main">
+          <div id="content">
+          
+    
+<p>
+As you know, <a href="http://en.wikipedia.org/wiki/Unified_Modeling_Language" class="external">UML</a> is the Unified Modelling Language, <a href="http://en.wikipedia.org/wiki/XMI" class="external">XMI</a> is XML Metadata Interchange language and <a href="http://en.wikipedia.org/wiki/Web_Ontology_Language" class="external">OWL</a> is Web Ontology Language.  
+</p>
+<p>
+CIMTool translates XMI to OWL by first extracting UML information, then creating analogous OWL definitions.  This works because we are only concerned with the class diagrams in UML and then only with their structure, not their visual layout. 
+</p>
+<p>
+The analogy between UML and OWL is close, especially in the fundamental concepts of classes and associations (properties in OWL).  
+</p>
+<p>
+UML is normally read as describing a program or software. But in the CIM community the class diagrams are used as a kind of enhanced entity-relationship notation.  In other words, we are defining a data model not a program.  And this is something that translates very well to OWL. 
+</p>
+<p>
+In programming, a class is a sort of template for a family of objects.  In data modelling, and in OWL, a class generally treated as a mathematical set.  The set is called the class extension, its members instances.  The class also has an intention, or purpose.
+</p>
+<h2 id="HowCIMToolReadsXMI">How CIMTool Reads XMI</h2>
+<p>
+With great difficulty!   The reason is best summed up in this 
+<a href="http://www.uml-forum.com/FAQ.htm#Why_cant_I_easily_interchange_UML_models" class="external">quote from the UML Forum FAQ</a>:
+</p>
+<blockquote><p>
+While the XML (XML Metadata Interchange) standard purports to facilitate the interchange of UML models, it has been largely ineffective in practice.There are at least two technical reasons for this. First and foremost, XMI attempts to solve a technical problem far more difficult than exchanging UML models; it attempts to provide a mechanism for facilitating the exchange of any language defined by the OMG's Metamodel Object Facility. Secondly, the UML 2.x Diagram Interchange specification lacks sufficient detail to facilitate reliable interchange of UML 2.x notations between modeling tools. Since UML is a visual modeling language, this shortcoming is a showstopper for many modelers who don't want to redraw their diagrams....
+</p></blockquote>
+<p>
+The CIMTool strategy is to <i>glean</i> UML from the XMI. An XML parser recognises constructs of interest while ignoring surrounding syntax.  The parser has been expanded over time to recognise more and more constructs that appear in different XMI dialects.  
+</p>
+<p>
+When a construct is recognised, corresponding statements are inserted into an OWL/RDF model.   The XMI id's (rather than the human readable, modelling names) are used to link up scraps of UML gleaned from different parts of the XMI document.
+</p>
+<p>
+A translation phase then renames each XMI id for the modelling name and assigns a namespace.  In other words, the URI reference is constructed for each class and property.
+</p>
+<p>
+Finally, stereotypes are analysed and the OWL rendering of the definitions is adjusted as necessary.  Some of these stereotypes have conventional meanings in the CIM community. For example, an <i>enumeration</i> stereotype causes the attributes of a UML class to be re-interpreted as enumeration values.
+</p>
+<h2 id="UMLtoOWLTranslation">UML to OWL Translation</h2>
+<p>
+In summary, UML concepts are translated to OWL as follows:
+</p>
+<ul><li>A UML class translates as an OWL Class. 
+</li><li>A UML association translates as two ObjectProperty's in OWL, each the inverse of another.  In other words, an association end or <i>role</i> translates as a single an ObjectProperty.
+</li><li>A UML enumeration translates to either an OWL Class plus individuals or and OWL Class enumerated by a oneOf definition.  The former creates an open set that can be extended. The latter a closed set.
+</li><li>A UML Stereotype translates an instance of OWL class uml:Stereotype. Stereotypes are assigned to classes and properties with an OWL AnnotationProperty, uml:hasStereotype.  The uml: namespace here is not part of any standard.  It has the URI: http://langdale.com.au/2005/UML#
+</li><li>A UML Tag translates to a similarly named OWL AnnotationProperty in the uml: namespace.
+</li></ul><h2 id="CIMToolIconography">CIMTool Iconography</h2>
+<p>
+CIMTool presents the OWL model with UML-like icons.   (These symbols changed in version 1.2.4 to better represent UML composition
+and aggregation.)
+</p>
+<table class="wiki"><tr><td colspan="1" rowspan="1">Icon</td><td colspan="1" rowspan="1">UML</td><td colspan="1" rowspan="1">OWL</td><td colspan="1" rowspan="1">Note
+</td></tr><tr><td colspan="1" rowspan="1"><img alt="class.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/class.png" /></td><td colspan="1" rowspan="1">Class</td><td colspan="1" rowspan="1">Class</td><td colspan="1" rowspan="1">In UML a class is definition for a family of objects. In OWL it is a set of resources.
+</td></tr><tr><td colspan="1" rowspan="1"><img alt="subclass.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/subclass.png" /></td><td colspan="1" rowspan="1">Specializes</td><td colspan="1" rowspan="1">subClassOf</td><td colspan="1" rowspan="1">Read: <i>rhs</i> is a subclass of <i>lhs</i>
+</td></tr><tr><td colspan="1" rowspan="1"><img alt="superclass.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/superclass.png" /></td><td colspan="1" rowspan="1">Generalizes</td><td colspan="1" rowspan="1">inverse subClassOf</td><td colspan="1" rowspan="1">Read: <i>rhs</i> is a superclass of <i>lhs</i>
+</td></tr>
+
+<tr><td colspan="1" rowspan="1"><img alt="property.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/property.png" /></td><td colspan="1" rowspan="1">Association</td><td colspan="1" rowspan="1">ObjectProperty</td><td colspan="1" rowspan="1">An unrestricted property.
+</td></tr>
+
+<tr><td colspan="1" rowspan="1"><img alt="functional.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/functional.png" /></td><td colspan="1" rowspan="1">Unidirectional Association</td><td colspan="1" rowspan="1">FunctionalProperty</td><td colspan="1" rowspan="1">A single-valued property.
+</td></tr>
+
+<tr><td colspan="1" rowspan="1"><img alt="inverse.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/inverse.png" /></td><td colspan="1" rowspan="1">Unidirectional Association (reversed)</td><td colspan="1" rowspan="1">InverseFunctionalProperty</td><td colspan="1" rowspan="1">A property whose inverse is single-valued
+</td></tr>
+
+<tr><td colspan="1" rowspan="1"><img alt="aggregate.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/aggregate.png" /></td><td colspan="1" rowspan="1">Aggregation</td><td colspan="1" rowspan="1">ObjectProperty with annotation</td><td colspan="1" rowspan="1">A custom annotation property uml:hasStereotype with value uml:aggregateOf is attached to the property definition. 
+</td></tr>
+
+<tr><td colspan="1" rowspan="1"><img alt="composite.png" src="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/composite.png" /></td><td colspan="1" rowspan="1">Composition</td><td colspan="1" rowspan="1">ObjectProperty with annotation</td><td colspan="1" rowspan="1">As above, but the annotation value is uml:compositeOf.
+</td></tr>
+
+
+
+</table>
+<p>Note that the association symbols towards the bottom of the table take precedence when more than one applies.</p>
+<p>
+Sometimes the analogy between UML and OWL is strained. A unidirectional association in UML is not necessarily single-valued, but we have used the unidirectional symbol for OWL functional properties.  The symbol somehow seems appropriate.  </p>
+<p>There is nothing in OWL corresponding to the UML concepts of aggregation and composition. These concepts are somewhat qualitatively defined in UML references. See, for example, <a href="http://en.wikipedia.org/wiki/Class_diagram#Association" class="external">the Wikipedia entry describing aggregation and composition</a>. We choose to represent these qualities in OWL with the custom annotations described above.
+</p>
+
+   
+          </div>
+          <div id="menu"><ul>
+    
+    </ul></div>
+        </div>  
+        <div id="footer"></div>
+      </body>
+    </html>

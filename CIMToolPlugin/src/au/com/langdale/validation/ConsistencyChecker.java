@@ -5,12 +5,15 @@
 package au.com.langdale.validation;
 
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import java.util.Iterator;
+
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntResource;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -22,7 +25,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class ConsistencyChecker {
 	
-	private Model log, target, reference;
+	private OntModel log, target, reference;
 	private String namespace;
 
 	/**
@@ -32,8 +35,8 @@ public class ConsistencyChecker {
 	 * @param ref the reference model
 	 * @param namespace the namespace defined by the reference model
 	 */
-	public ConsistencyChecker(Model target, Model reference, String namespace) {
-		this.log = ModelFactory.createDefaultModel();
+	public ConsistencyChecker(OntModel target, OntModel reference, String namespace) {
+		this.log = ModelFactory.createMem();
 		this.target = target;
 		this.reference = reference;
 		this.namespace = namespace;
@@ -48,7 +51,7 @@ public class ConsistencyChecker {
 	 * 
 	 * @return the log model
 	 */
-	public Model getLog() {
+	public OntModel getLog() {
 		return log;
 	}
 	/**
@@ -62,16 +65,18 @@ public class ConsistencyChecker {
 	public boolean check() {
 		boolean errors = false;
 		
-		StmtIterator it = target.listStatements();
+		Iterator it = target.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
 		while( it.hasNext()) {
 			
-			Statement s = it.nextStatement();
-			if( s.getObject() instanceof Resource ) {
-				Resource o = (Resource) s.getObject();
-				if( ! s.getSubject().isAnon() &&  s.getSubject().getNameSpace().equals(namespace))
-					errors |= checkSubject(s.getSubject(), s.getPredicate(), o);
+			Triple t = (Triple) it.next();
+			if( ! t.getObject().isLiteral() ) {
+				OntResource s = target.createResource(t.getSubject());
+				OntResource p = target.createResource(t.getPredicate());
+				OntResource o = target.createResource(t.getObject());
+				if( ! s.isAnon() &&  s.getNameSpace().equals(namespace))
+					errors |= checkSubject(s, p, o);
 				if( ! o.isAnon() && o.getNameSpace().equals(namespace))
-					errors |= checkObject( s.getSubject(), s.getPredicate(), o);
+					errors |= checkObject( s, p, o);
 			}
 		}
 		
@@ -81,14 +86,14 @@ public class ConsistencyChecker {
 	/**
 	 * Check that the subject is defined in the reference
 	 */
-	private boolean checkSubject(Resource subj, Property pred, Resource obj) {
+	private boolean checkSubject(OntResource subj, OntResource pred, OntResource obj) {
 		return check(subj, obj, null);
 	}
 
 	/**
 	 * Check the object is appropriately defined in the reference.
 	 */
-	private boolean checkObject(Resource subj, Property pred, Resource obj) {
+	private boolean checkObject(OntResource subj, OntResource pred, OntResource obj) {
 		if( pred.equals(RDFS.subClassOf) ||
 				pred.equals(RDFS.domain) ||
 				pred.equals(RDF.type))
@@ -105,12 +110,12 @@ public class ConsistencyChecker {
 	 * Check that the refNode is defined as type in the reference model and
 	 * annotate targetNode otherwise.
 	 */
-	private boolean check(Resource refNode, Resource targetNode, Resource type) {
+	private boolean check(OntResource refNode, OntResource targetNode, FrontsNode type) {
 		if( reference.contains(refNode, RDF.type, type))
 			return false;
 		if( ! log.contains(refNode, LOG.hasProblems))
 			note( refNode, refNode.getLocalName() + " is not defined in " + namespace);
-		if( target.contains( targetNode, RDF.type, (Resource)null))
+		if( targetNode.hasRDFType())
 			note(targetNode, 
 					targetNode.getLocalName() + " linked with " + refNode.getLocalName() +
 					" which is not defined in " + namespace);
@@ -120,20 +125,18 @@ public class ConsistencyChecker {
 	/**
 	 * Create an annotation in the log model.
 	 */
-	private void note(Resource subj, String mesg) {
-		Resource prob = log.createResource(LOG.Problem);
+	private void note(OntResource subj, String mesg) {
+		OntResource prob = log.createIndividual(LOG.Problem);
 		prob.addProperty(RDFS.comment, mesg);
 		log.add(subj, LOG.hasProblems, prob);
 		
 		// attach problem to ancestors that will appear in the treeview
-		if( subj.hasProperty(RDFS.domain)) {
-			subj = subj.getProperty(RDFS.domain).getResource();
-			log.add( subj, LOG.hasProblems, prob);
-		}
+		OntResource domain = subj.getResource(RDFS.domain);
+		if( domain != null ) 
+			log.add( domain, LOG.hasProblems, prob);
 		
-		while( subj.hasProperty(RDFS.isDefinedBy)) {
-			subj = subj.getProperty(RDFS.isDefinedBy).getResource();
-			log.add( subj, LOG.hasProblems, prob);
-		}
+		OntResource defined = subj.getResource(RDFS.isDefinedBy);
+		while( defined != null)
+			log.add( defined, LOG.hasProblems, prob);
 	}
 }

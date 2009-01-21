@@ -8,17 +8,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Restriction;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -27,11 +23,12 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * used to map references in profile to entities in the base model.
  */
 public class Remapper implements Runnable {
-	private OntModel profileModel;
+	private OntModel profileModel, baseModel;
 	private NSMapper mapper;
 
 	public Remapper(OntModel profileModel, OntModel baseModel) {
 		this.profileModel = profileModel;
+		this.baseModel = baseModel;
 		mapper = new NSMapper(baseModel);
 	}
 
@@ -41,9 +38,9 @@ public class Remapper implements Runnable {
 		try {
 			ResIterator it = profileModel.listSubjectsWithProperty(RDFS.subClassOf);
 			while( it.hasNext()) {
-				Resource subject = it.nextResource();
+				OntResource subject = it.nextResource();
 				subject.addProperty(RDF.type, OWL.Class);
-				handleClass((OntClass) subject.as( OntClass.class));
+				handleClass(subject);
 				classes += 1;
 			}
 		} catch (RuntimeException e) {
@@ -54,7 +51,7 @@ public class Remapper implements Runnable {
 		log("Remapped " + classes + " classes.");
 	}
 
-	private void handleClass(OntClass clss) {
+	private void handleClass(OntResource clss) {
 		int local_parents = 0;
 		int anon_parents = 0;
 		int foreign_parents = 0;
@@ -65,30 +62,29 @@ public class Remapper implements Runnable {
 		Set defined = new HashSet();
 		Set bases = new HashSet();
 		
-		NodeIterator it = clss.listPropertyValues(RDFS.subClassOf);
+		ResIterator it = clss.listProperties(RDFS.subClassOf);
 		while( it.hasNext()) {
-			RDFNode node = it.nextNode();
+			OntResource node = it.nextResource();
 			if( node.isURIResource()) {
-				OntResource parent = (OntResource) node.as(OntResource.class);
-				if( clss.isURIResource() && parent.getNameSpace().equals(clss.getNameSpace())) {
+				if( clss.isURIResource() && node.getNameSpace().equals(clss.getNameSpace())) {
 					local_parents += 1;
 				}
-				else if( parent.getNameSpace().equals(MESSAGE.NS)) {
+				else if( node.getNameSpace().equals(MESSAGE.NS)) {
 					// it is an envelope definition
-					if(parent.equals(MESSAGE.Message))
+					if(node.equals(MESSAGE.Message))
 						envelope = true;
 				}
 				else  {
 					// inferred that the parent is a base and clss is its profile
-					bases.add(parent);
+					bases.add(node);
 					foreign_parents += 1;
 				}
 			}
 			else if( node.isAnon() ) {
 				anon_parents += 1;
-				if(node.canAs(Restriction.class)) {
+				if(node.isClass()) {
 					restricts += 1;
-					rebaseRestriction(clss, props, defined, (Restriction)node.as(Restriction.class));
+					rebaseRestriction(clss, props, defined, node);
 				}
 			}
 			else {
@@ -110,7 +106,7 @@ public class Remapper implements Runnable {
 		defineRanges(clss, props);
 	}
 
-	private void rebaseClass(OntClass clss, Set bases) {
+	private void rebaseClass(OntResource clss, Set bases) {
 		Resource base = null;
 		for (Iterator it = bases.iterator(); it.hasNext();) {
 			OntResource cand = (OntResource) it.next();
@@ -139,19 +135,18 @@ public class Remapper implements Runnable {
 		log("rebased profile class", clss);
 	}
 
-	private void rebaseRestriction(OntClass clss, Set props, Set defined, Restriction restrict) {
+	private void rebaseRestriction(OntResource clss, Set props, Set defined, OntResource restrict) {
 		Resource base = null;
 
-		NodeIterator it = restrict.listPropertyValues(OWL.onProperty);
+		ResIterator it = restrict.listProperties(OWL.onProperty);
 		while( it.hasNext()) {
-			RDFNode node = it.nextNode();
+			OntResource node = it.nextResource();
 			if( node.isURIResource()) {
-				Resource cand = (Resource) node.as(Resource.class);
-				Resource mapped = mapper.map(cand, OWL.ObjectProperty);
+				Resource mapped = mapper.map(node, OWL.ObjectProperty);
 				if( mapped == null )
-					mapped  = mapper.map(cand, OWL.DatatypeProperty);
-				if( cand.equals(mapped))
-					base = cand;
+					mapped  = mapper.map(node, OWL.DatatypeProperty);
+				if( node.equals(mapped))
+					base = node;
 				else if(base == null )
 					base = mapped;
 			}
@@ -161,7 +156,7 @@ public class Remapper implements Runnable {
 		}
 
 		if( base != null ) {
-			Property prop = ResourceFactory.createProperty(base.getURI());
+			OntResource prop = base.inModel(baseModel);
 			restrict.setOnProperty(prop);
 			if( restrict.isAllValuesFromRestriction())
 				defined.add(prop);
@@ -173,28 +168,32 @@ public class Remapper implements Runnable {
 		}
 	}
 
-	private void defineRanges(OntClass clss, Set props) {
+	private void defineRanges(OntResource clss, Set props) {
 		Iterator it = props.iterator();
 		while( it.hasNext()) {
-			Property prop = (Property) it.next();
+			OntResource prop = (OntResource) it.next();
 			OntResource child;
-			if( prop.hasProperty(RDF.type, OWL.ObjectProperty)) 
+			if( prop.hasRDFType(OWL.ObjectProperty)) 
 				child = profileModel.createClass();
 			else 
 				child = profileModel.createIndividual(RDFS.Datatype);
 
-			String label = ((OntResource) prop.as(OntResource.class)).getLabel(null);
+			String label = prop.getLabel(null);
 			if( label == null)
 				label = prop.getLocalName();
 			
 			child.setLabel(label, null);
-			Restriction restrict = profileModel.createAllValuesFromRestriction(null, prop, child);
+			OntResource restrict = profileModel.createAllValuesFromRestriction(null, prop, child);
 			clss.addSuperClass(restrict);
 		}
 	}
 	
-	private void log(String string, RDFNode node) {
+	private void log(String string, Node node) {
 		log(string + ": " + node);
+	}
+	
+	private void log(String string, FrontsNode symbol) {
+		log(string, symbol.asNode());
 	}
 	
 	private void log(String item) {

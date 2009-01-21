@@ -8,16 +8,10 @@ import org.xml.sax.Attributes;
 
 import au.com.langdale.sax.XMLElement;
 
-import com.hp.hpl.jena.ontology.AnnotationProperty;
-import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.graph.FrontsNode;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntResource;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
@@ -28,7 +22,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 public class XMIModel {
 
 	/** the ontology under construction */
-	protected OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null);
+	protected OntModel model = ModelFactory.createMem();
 	
 	/** a debug flag that causes xmi:id's to be preserved as annotations */
 	public boolean keepID = true;
@@ -46,7 +40,7 @@ public class XMIModel {
 	 * @param element in XMI referring to a class.
 	 * @return resource representing the class or null.
 	 */
-	protected OntClass findClass(XMLElement element) {
+	protected OntResource findClass(XMLElement element) {
 		return findClass(element, "xmi.idref");
 	}
 
@@ -56,10 +50,10 @@ public class XMIModel {
 	 * @param element in XMI referring to a class.
 	 * @return resource representing the class or null.
 	 */
-	protected OntClass findClass(XMLElement element, String refattr) {
+	protected OntResource findClass(XMLElement element, String refattr) {
 		String xuid = element.getAttributes().getValue(refattr);
 		if( xuid != null && xuid.length() != 0) {
-			OntClass subject = model.createClass(XMI.NS + xuid);
+			OntResource subject = model.createClass(XMI.NS + xuid);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
@@ -75,7 +69,7 @@ public class XMIModel {
 	 * @param name the name of attribute containing the reference
 	 * @return resource in the model or null.
 	 */
-	protected Resource findResource(XMLElement element, String name) {
+	protected OntResource findResource(XMLElement element, String name) {
 		return createUnknown(element.getAttributes().getValue(name));
 	}
 
@@ -84,7 +78,7 @@ public class XMIModel {
 	 * @param element the element containing the reference
 	 * @return resource in the model or null.
 	 */
-	protected Resource findResource(XMLElement element) {
+	protected OntResource findResource(XMLElement element) {
 		return findResource(element, "xmi.idref");
 	}
 
@@ -93,12 +87,12 @@ public class XMIModel {
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the class or null.
 	 */
-	protected OntClass createClass(XMLElement element) {
+	protected OntResource createClass(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
-			OntClass subject = model.createClass(XMI.NS + xuid);
+			OntResource subject = model.createClass(XMI.NS + xuid);
 			subject.addLabel(name, "en");
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
@@ -117,7 +111,7 @@ public class XMIModel {
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
-			OntResource subject = model.createOntResource(OntResource.class, RDFS.Datatype, XMI.NS + xuid);
+			OntResource subject = model.createIndividual(XMI.NS + xuid, RDFS.Datatype);
 			subject.addLabel(name, "en");
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
@@ -133,12 +127,12 @@ public class XMIModel {
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the property or null.
 	 */
-	protected ObjectProperty createObjectProperty(XMLElement element) {
+	protected OntResource createObjectProperty(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		if( xuid != null ) { 
-			ObjectProperty subject = model.createObjectProperty(XMI.NS + xuid);
+			OntResource subject = model.createObjectProperty(XMI.NS + xuid);
 			if(name != null)
 				subject.addLabel(name, "en");
 			if(keepID)
@@ -156,12 +150,12 @@ public class XMIModel {
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the property or null.
 	 */
-	protected ObjectProperty createObjectProperty(XMLElement element, String xuid, boolean sideA) {
+	protected OntResource createObjectProperty(XMLElement element, String xuid, boolean sideA) {
 		Attributes atts = element.getAttributes();
 		String name = atts.getValue("name");
 		if( xuid != null ) { 
 			String synth = xuid + "-" + (sideA? "A": "B");
-			ObjectProperty subject = model.createObjectProperty(XMI.NS + synth);
+			OntResource subject = model.createObjectProperty(XMI.NS + synth);
 			if( name != null)
 				subject.addLabel(name, "en");	
 			if(keepID)
@@ -178,7 +172,7 @@ public class XMIModel {
 	 * @param element in XMI declaring the property.
 	 * @return resource representing the property or null.
 	 */
-	protected AnnotationProperty createAnnotationProperty(XMLElement element) {
+	protected OntResource createAnnotationProperty(XMLElement element) {
 		Attributes atts = element.getAttributes();
 
 		// handle a reference
@@ -190,7 +184,7 @@ public class XMIModel {
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
-			AnnotationProperty subject = model.createAnnotationProperty(XMI.NS + xuid);
+			OntResource subject = model.createAnnotationProperty(XMI.NS + xuid);
 			subject.addLabel(name, "en");
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
@@ -215,7 +209,7 @@ public class XMIModel {
 	 * Reference a stereotype by id string.
 	 */
 	protected OntResource createStereoType(String xuid) {
-       	Individual subject = model.createIndividual(XMI.NS + xuid, UML.Stereotype);
+       	OntResource subject = model.createIndividual(XMI.NS + xuid, UML.Stereotype);
 		if(keepID)
 			subject.addProperty(UML.id, xuid);
     	return subject; 
@@ -228,12 +222,12 @@ public class XMIModel {
 	 * @param element in XMI declaring property.
 	 * @return resource representing the property or null.
 	 */
-	protected OntProperty createAttributeProperty(XMLElement element) {
+	protected OntResource createAttributeProperty(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
-			OntProperty subject = model.createOntProperty(XMI.NS + xuid);
+			OntResource subject = model.createOntProperty(XMI.NS + xuid);
 			subject.addProperty(UML.hasStereotype, UML.attribute);
 			subject.addLabel(name, "en");
 			if(keepID)
@@ -249,7 +243,7 @@ public class XMIModel {
 	 * @param type the class of the resource
 	 * @return resource in the model or null.
 	 */
-	protected OntResource createIndividual(XMLElement element, Resource type) {
+	protected OntResource createIndividual(XMLElement element, FrontsNode type) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
@@ -266,13 +260,13 @@ public class XMIModel {
 	/**
 	 * Utility to create a labeled resource of (as yet) unknown species.
 	 */
-	protected Resource createUnknown(XMLElement element) {
+	protected OntResource createUnknown(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
-			Resource subject = model.createResource(XMI.NS + xuid);
-			subject.addProperty(RDFS.label, model.createLiteral(name));
+			OntResource subject = model.createResource(XMI.NS + xuid);
+			subject.addLabel(name, null);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 				return subject; 
@@ -283,9 +277,9 @@ public class XMIModel {
 	/**
 	 * Utility to create a resource of (as yet) unknown species.
 	 */
-	protected Resource createUnknown(String xuid) {
+	protected OntResource createUnknown(String xuid) {
 		if( xuid != null && xuid.length() > 0) {
-			Resource subject = model.createResource(XMI.NS + xuid);
+			OntResource subject = model.createResource(XMI.NS + xuid);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject; 
@@ -301,7 +295,7 @@ public class XMIModel {
 	 */
 	protected OntResource createAssocation(String xuid) {
 		if( xuid != null && xuid.length() > 0) {
-			OntResource subject = model.createOntResource(XMI.NS + xuid);
+			OntResource subject = model.createResource(XMI.NS + xuid);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject; 

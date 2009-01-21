@@ -7,10 +7,8 @@ package au.com.langdale.profiles;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.xmi.UML;
@@ -30,8 +28,8 @@ public class HierarchyModel extends JenaTreeModelBase {
 	}
 
 	@Override
-	protected Node classify(OntResource root) throws ConversionException {
-		return new SubjectNode( new ProfileClass(root.asClass()));
+	protected Node classify(OntResource root) {
+		return new SubjectNode( new ProfileClass(root));
 	}
 	
 	private abstract class HierarchyNode extends ModelNode {
@@ -71,7 +69,7 @@ public class HierarchyModel extends JenaTreeModelBase {
 		protected void populate() {
 			Collection related = refactory.findRelatedProfiles(profile.getBaseClass(), false, false);
 			for (Iterator it = related.iterator(); it.hasNext();) {
-				OntClass clss = (OntClass) it.next();
+				OntResource clss = (OntResource) it.next();
 				add( new NestedNode( new ProfileClass(clss)));
 			}
 		}
@@ -87,7 +85,7 @@ public class HierarchyModel extends JenaTreeModelBase {
 		protected void populate() {
 			Iterator it = profile.getSuperClasses();
 			while (it.hasNext()) {
-				OntClass clss = (OntClass) it.next();
+				OntResource clss = (OntResource) it.next();
 				add( new NestedNode( new ProfileClass(clss)));
 			}
 		}

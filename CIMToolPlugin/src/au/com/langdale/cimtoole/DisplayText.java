@@ -12,7 +12,7 @@ public class DisplayText extends ListResourceBundle {
 	protected Object[][] getContents() {
 
 		return new Object[][]  {
-				{ "title" , "Profile Detail" },
+				{ "title" , "Detail" },
 				{ "action.CopyLeftToRight.label", "" },
 				{ "action.CopyRightToLeft.label", "" }
 		};

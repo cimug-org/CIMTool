@@ -6,10 +6,11 @@ package au.com.langdale.profiles;
 
 import au.com.langdale.xmi.UML;
 
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
+
+import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -92,34 +93,32 @@ public class OWLGenerator extends RDFSBasedGenerator {
 
 	@Override
 	protected void emitRestriction(String uri, String domain, String range) {
-		if( useRestrictions) {
-		Resource prop = result.createResource(uri);
-		Resource restrict = result.createResource(OWL.Restriction);
-		restrict.addProperty(OWL.allValuesFrom, result.createResource(range));
-		restrict.addProperty(OWL.onProperty, prop);
-		result.createResource(domain).addProperty(RDFS.subClassOf, restrict);
+		if( useRestrictions ) {
+			Resource prop = result.createResource(uri);
+			Resource type = result.createResource(range);
+			OntResource restrict = result.createAllValuesFromRestriction(null, prop, type);
+			result.createResource(domain).addSuperClass(restrict);
 		}
 	}
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,	boolean functional) {
 		if( useRestrictions ) {
-		Resource prop = result.createResource(uri);
-		if( functional && required ) 
-			emitRestriction(prop, domain, OWL.cardinality);
-		else if( functional )
-			emitRestriction(prop, domain, OWL.maxCardinality);
-		else if( required )
-			emitRestriction(prop, domain, OWL.minCardinality);
+			Resource prop = result.createResource(uri);
+			if( functional && required ) 
+				emitRestriction(prop, domain, OWL.cardinality);
+			else if( functional )
+				emitRestriction(prop, domain, OWL.maxCardinality);
+			else if( required )
+				emitRestriction(prop, domain, OWL.minCardinality);
 		}
 
 	}
 	
-	private void emitRestriction(Resource prop, String domain, Property kind) {
-		Resource restrict = result.createResource(OWL.Restriction);
-		RDFNode node = result.createTypedLiteral(1);
-		restrict.addProperty(kind, node);
+	private void emitRestriction(FrontsNode prop, String domain, FrontsNode kind) {
+		OntResource restrict = result.createIndividual(null, OWL.Restriction);
+		restrict.addProperty(kind, 1);
 		restrict.addProperty(OWL.onProperty, prop);
-		result.createResource(domain).addProperty(RDFS.subClassOf, restrict);
+		result.createResource(domain).addSuperClass(restrict);
 	}
 }
