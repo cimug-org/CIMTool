@@ -36,9 +36,9 @@ public class Remapper implements Runnable {
 		int classes = 0;
 		
 		try {
-			ResIterator it = profileModel.listSubjectsWithProperty(RDFS.subClassOf);
+			Iterator it = profileModel.listSubjectsWithProperty(RDFS.subClassOf).toSet().iterator();
 			while( it.hasNext()) {
-				OntResource subject = it.nextResource();
+				OntResource subject = (OntResource) it.next();
 				subject.addProperty(RDF.type, OWL.Class);
 				handleClass(subject);
 				classes += 1;

@@ -66,15 +66,23 @@ def build_update_dist(archive_name, manifest):
 	zipit(archive_name, manifest) 
 
 def build_eclipse_dist(dist, manifest, kit=KIT):
-	feature, plugin = list(manifest)[:2]
+	feature, plugin, docs, site = list(manifest)
 	copyfile(kit, dist)
 	archive = ZipFile(dist, "a", ZIP_DEFLATED)
-	for jarfile in feature, plugin:
-		component, ext = splitext(jarfile)
-		jarchive = ZipFile(jarfile, 'r')
-		zipmerge( archive, jarchive, join("eclipse", component))
-		jarchive.close()
+	eclipsemerge(archive, feature)
+	eclipseadd(archive, plugin)
+	eclipseadd(archive, docs)
 	archive.close()
+	
+def eclipsemerge(archive, jarfilename):
+	component, ext = splitext(jarfilename)
+	jarchive = ZipFile(jarfilename, 'r')
+	zipmerge( archive, jarchive, join("eclipse", component))
+	jarchive.close()
+	
+def eclipseadd(archive, jarfilename):
+	archive.write( jarfilename, join( "eclipse", jarfilename))
+
 
 def do_full(bucket_name=BUCKET):
 	build_update_dist(ARCHIVE, manifest())
@@ -86,6 +94,12 @@ def do_full(bucket_name=BUCKET):
 	upload_files(bucket, manifest())
 	mirror(bucket, ARCHIVE)
 	mirror(bucket, eclipse_dist)
+	
+def do_build():
+	build_update_dist(ARCHIVE, manifest())
+	eclipse_dist = ECLIPSE.replace("VERSION", lastversion())
+	build_eclipse_dist(eclipse_dist, manifest())
+	print "built:", ARCHIVE, eclipse_dist
 
 def do_interim(bucket_name=BUCKET):
 	build_update_dist(ARCHIVE, manifest())

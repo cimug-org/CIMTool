@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CIMTool
+Bundle-SymbolicName: au.com.langdale.cimtool.ide;singleton:=true
+Bundle-Version: 1.5.1
+Bundle-Vendor: Langdale Consultants
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

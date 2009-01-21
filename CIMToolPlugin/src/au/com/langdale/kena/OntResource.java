@@ -327,7 +327,7 @@ public class OntResource extends Resource  {
 	}
 	
 	public void setOnProperty(FrontsNode prop) {
-		setProperty(prop, prop);
+		setProperty(OWL.onProperty, prop);
 	}
 	
 	public void addRDFType(FrontsNode type) {

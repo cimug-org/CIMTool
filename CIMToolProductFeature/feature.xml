@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="au.com.langdale.cimtoole.feature"
+      id="au.com.langdale.cimtool.ide.feature"
       label="CIMTool"
       version="1.5.1"
-      provider-name="Langdale Consultants">
+      provider-name="Langdale Consultants"
+      plugin="au.com.langdale.cimtool.ide" 
+      image="eclipse_update_120.jpg">
 
    <description url="http://cimtool.org">
       CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.
@@ -51,29 +53,52 @@ D OF THE POSSIBILITY OF SUCH DAMAGE.
 
    <url>
       <update label="CIMTool Update Site" url="http://files.cimtool.org"/>
+      <discovery label="CIMTool Update Site" url="http://files.cimtool.org"/>
+      <discovery label="Eclipse Ganymede Site" url="http://download.eclipse.org/releases/ganymede"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.junit"/>
-   </requires>
-
-   <plugin
-         id="au.com.langdale.cimtoole"
-         download-size="0"
-         install-size="0"
+   <includes
+         id="au.com.langdale.cimtoole.feature"
          version="0.0.0"
-         unpack="false"/>
+         search-location="self"/>
+
+   <includes
+         id="org.eclipse.platform"
+         version="0.0.0"
+         search-location="self"/>
+
+   <includes
+         id="org.eclipse.xsd.edit"
+         version="0.0.0"
+         optional="true"
+         search-location="self"/>
+
+   <includes
+         id="org.eclipse.emf.common"
+         version="0.0.0"
+         optional="true"
+         search-location="self"/>
+
+   <includes
+         id="org.eclipse.emf.ecore"
+         version="0.0.0"
+         optional="true"
+         search-location="self"/>
+
+   <includes
+         id="org.eclipse.emf.ecore.edit"
+         version="0.0.0"
+         optional="true"
+         search-location="self"/>
+
+   <includes
+         id="org.eclipse.emf.edit"
+         version="0.0.0"
+         optional="true"
+         search-location="self"/>
 
    <plugin
-         id="au.com.langdale.cimtoole.help"
+         id="au.com.langdale.cimtool.ide"
          download-size="0"
          install-size="0"
          version="0.0.0"
