@@ -190,7 +190,7 @@ public class Refactory extends ProfileUtility {
 		ResIterator it = profile.getSubject().listSubClasses(false);
 		while( it.hasNext()) {
 			OntResource sub = it.nextResource();
-			if(! sub.equals(OWL.Nothing) && ! sub.isAnon()) {
+			if(! sub.equals(OWL.Nothing) && ! sub.isAnon() && ! sub.equals(profile.getSubject())) {
 				return false;
 			}
 		}

@@ -330,7 +330,8 @@ public class ProfileSerializer extends AbstractReader {
 				SubTypeNode child = (SubTypeNode) node.getChildren().get(0);
 				elem = select(child);
 				emit(node, elem);
-				emitChildren(child);
+				if(child.getSubject().isAnon())
+					emitChildren(child);
 			}
 			else {
 				elem = new Element("Choice");

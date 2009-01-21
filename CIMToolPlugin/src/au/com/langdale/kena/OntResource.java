@@ -331,7 +331,7 @@ public class OntResource extends Resource  {
 	}
 	
 	public void addRDFType(FrontsNode type) {
-		model.add(this, RDF.type, OWL.FunctionalProperty);
+		model.add(this, RDF.type, type);
 	}
 	
 	public void convertToFunctionalProperty() {

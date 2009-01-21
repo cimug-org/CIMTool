@@ -33,6 +33,11 @@ public class ConsistencyChecks extends Task {
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
+			if( ! file.exists()) {
+				clean(result, monitor);
+				return;
+			}
+			
 			CIMBuilder.removeMarkers(file);
 
 			ConsistencyChecker checker = new ConsistencyChecker(getProfileModel(file), getBackgroundModel(file), getProperty(PROFILE_NAMESPACE, file));

@@ -216,9 +216,12 @@ public class Info {
 	}
 
 	public static String getProperty(QualifiedName symbol, IResource resource) throws CoreException {
-		String value = resource.getPersistentProperty(symbol);
-		if(value != null && value.trim().length() > 0)
-			return value;
+		String value;
+		if( resource.exists()) {
+			value = resource.getPersistentProperty(symbol);
+			if(value != null && value.trim().length() > 0)
+				return value;
+		}
 		value = getPreference(symbol);
 		resource.setPersistentProperty(symbol, value);
 		return value;

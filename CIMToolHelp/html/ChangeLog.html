@@ -19,7 +19,18 @@
 preparation for the a new guided profile update feature. While they pass the CIMTool 
 test suite and unstructured testing, there could nevertheless be regressions. </p><p>The 1.4.* releases can be only obtained from an eclipse update site at:
 <a href="http://files.cimtool.org/development" class="external">http://files.cimtool.org/development</a> </p><p>Stable releases are preferred and these are available in a number of forms 
-detailed here: <a href="http://wiki.cimtool.org/Download.html" class="internal">http://wiki.cimtool.org/Download.html</a></p><h2>Development Release 1.4.3 </h2><ul><li><p>enhancement: comparisons of profiles to profiles or schema to schema are now much faster and 
+detailed here: <a href="http://wiki.cimtool.org/Download.html" class="internal">http://wiki.cimtool.org/Download.html</a></p><h2>Development Release 1.4.4 </h2><ul><li><p>new feature: CIMTool can now generate a database schema from a CIM profile. 
+This is done by selecting the &quot;SQL&quot; option in the profile editor. An SQL92
+DDL artifact is generated. This has been tested for compatibility with 
+Oracle 10g.</p><p>The generated code includes tables and fields for classes and properties
+and comments are copied through for clarity. Constraint definitions 
+are generated for mandatory/optional cardinality, enumeration membership, 
+association type and class inheritance.</p><p>Class inheritance has been implemented using the PK-PK join approach.</p></li><li><p>correction: the comparison functions were not configured correctly in the
+previous release and would yield no results.</p></li><li><p>correction: a regression causing the cardinality of some associations 
+extracted from xmi to be incorrect.</p></li><li><p>correction: a regression in the &quot;make leaf classes concrete&quot; function caused
+all classes to be marked as not concrete.</p></li><li><p>correction: an infinite loop when generating artifacts from some profiles
+containing a circular association.</p></li><li><p>correction: the eclipse platform sometimes reported errors when a profile
+was deleted.</p></li></ul><h2>Development Release 1.4.3 </h2><ul><li><p>enhancement: comparisons of profiles to profiles or schema to schema are now much faster and 
 require much less memory.  These operations now use CIMTool's cache for the inputs. </p></li><li><p>enhancement: Repair and remap profile function now corrects the namespace of 
 enumeration values</p></li><li><p>enhancement: enumerations can now be added directly to the profile 
 (previsously they were added only as a side effect of property definition)</p></li><li><p>correction: a regression prevented restriction of the range of a property to a subclass.</p></li><li><p>correction: enumeration restrictions were not carried into the generated OWL and RDFS
