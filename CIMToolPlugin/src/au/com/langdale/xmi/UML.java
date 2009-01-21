@@ -37,6 +37,8 @@ public class UML {
 	public final static Resource datatype = ResourceFactory.createResource(NS + "datatype");
 	public final static Resource enumeration = ResourceFactory.createResource(NS + "enumeration");
 	public final static Resource union = ResourceFactory.createResource(NS + "union");
+	public final static Resource extendedBy = ResourceFactory.createResource(NS + "extendedby");
+	public final static Resource extension = ResourceFactory.createResource(NS + "extension");
 	public final static Resource xmlelement = ResourceFactory.createResource(NS + "xmlelement");
 	public final static Resource xmlattribute = ResourceFactory.createResource(NS + "xmlattribute");
 	public final static Resource byreference = ResourceFactory.createResource(NS + "byreference");
@@ -61,10 +63,15 @@ public class UML {
 	
 	// tags we recognise that aid conversion to RDFS/OWL
 	public final static Property baseuri = ResourceFactory.createProperty(NS + "baseuri");
+	public final static Property baseprefix = ResourceFactory.createProperty(NS + "baseprefix");
 	public final static Property roleALabel = ResourceFactory.createProperty(NS + "roleALabel");
 	public final static Property roleBLabel = ResourceFactory.createProperty(NS + "roleBLabel");
 	public final static Property roleAOf = ResourceFactory.createProperty(NS + "roleAOf");
 	public final static Property roleBOf = ResourceFactory.createProperty(NS + "roleBOf");
+	
+	// declare a prefix to namespace mapping. can be used in annotation files to 
+	// associate namespaces with elements via their baseprefix tags.
+	public final static Property uriHasPrefix = ResourceFactory.createProperty(NS + "uriHasPrefix");
 	
 	// the XMI id of a model element can be preserved in the graph for debugging
 	public final static Property id = ResourceFactory.createProperty(NS + "id");
@@ -83,6 +90,8 @@ public class UML {
 		// well known stereotypes
 		model.createIndividual(enumeration.getURI(), Stereotype).addLabel("Enumeration", null);
 		model.createIndividual(union.getURI(), Stereotype).addLabel("Union", null);
+		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("Extended By", null);
+		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension Class", null);
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
 		model.createIndividual(datatype.getURI(), Stereotype).addLabel("Datatype", null);
@@ -98,6 +107,8 @@ public class UML {
 		model.createIndividual(aggregateOf.getURI(), Stereotype).addLabel("Aggregate Of", null);
 		
 		model.createAnnotationProperty(baseuri.getURI());
+		model.createAnnotationProperty(baseprefix.getURI());
+		model.createAnnotationProperty(uriHasPrefix.getURI());
 		model.createAnnotationProperty(roleALabel.getURI());
 		model.createAnnotationProperty(roleBLabel.getURI());
 		model.createAnnotationProperty(roleAOf.getURI());

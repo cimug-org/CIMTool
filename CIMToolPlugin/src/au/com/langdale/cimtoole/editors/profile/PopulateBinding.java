@@ -12,6 +12,8 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Button;
 
+import com.hp.hpl.jena.vocabulary.OWL;
+
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Resource;
@@ -29,6 +31,7 @@ import au.com.langdale.jena.UMLTreeModel.PackageNode;
 import au.com.langdale.jena.UMLTreeModel.PropertyNode;
 import au.com.langdale.jena.UMLTreeModel.SubClassNode;
 import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
+import au.com.langdale.jena.UMLTreeModel.ExtensionNode;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
@@ -141,7 +144,7 @@ public class PopulateBinding  {
 			@Override
 			public boolean typeCheck(Node value) {
 				return value instanceof ClassNode 
-					|| value instanceof EnumClassNode
+	    			|| value instanceof EnumClassNode
 					|| value instanceof SubClassNode;
 			}
 
@@ -163,6 +166,7 @@ public class PopulateBinding  {
 				
 				return value instanceof PropertyNode 
 					|| value instanceof DatatypeNode
+    				|| value instanceof ExtensionNode
 					|| value instanceof SuperClassNode
 					|| value instanceof SubClassNode
 					|| value instanceof IndividualNode;
@@ -209,6 +213,8 @@ public class PopulateBinding  {
 
 			if (node instanceof NaturalNode) {
 				offer = ((NaturalNode)node).getBaseClass();
+				if( OWL.Thing.equals(offer))
+					offer = null;
 				filter = new NaturalFilter();
 			}
 			else if( node instanceof ElementNode) {

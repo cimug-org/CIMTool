@@ -101,24 +101,24 @@ public class XMIModel {
 		return null;
 	}
 
-	/**
-	 * Utility to create and label an OWL datatype for an XMI declaration.
-	 * @param element in XMI declaring a datatype.
-	 * @return resource representing the datatype or null.
-	 */
-	protected OntResource createDatatype(XMLElement element) {
-		Attributes atts = element.getAttributes();
-		String xuid = atts.getValue("xmi.id");
-		String name = atts.getValue("name");
-		if( xuid != null && name != null ) { 
-			OntResource subject = model.createIndividual(XMI.NS + xuid, RDFS.Datatype);
-			subject.addLabel(name, "en");
-			if(keepID)
-				subject.addProperty(UML.id, xuid);
-			return subject;
-		}
-		return null;
-	}
+//	/**
+//	 * Utility to create and label an OWL datatype for an XMI declaration.
+//	 * @param element in XMI declaring a datatype.
+//	 * @return resource representing the datatype or null.
+//	 */
+//	protected OntResource createDatatype(XMLElement element) {
+//		Attributes atts = element.getAttributes();
+//		String xuid = atts.getValue("xmi.id");
+//		String name = atts.getValue("name");
+//		if( xuid != null && name != null ) { 
+//			OntResource subject = model.createIndividual(XMI.NS + xuid, RDFS.Datatype);
+//			subject.addLabel(name, "en");
+//			if(keepID)
+//				subject.addProperty(UML.id, xuid);
+//			return subject;
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Utility to create and label an OWL object property for an XMI 

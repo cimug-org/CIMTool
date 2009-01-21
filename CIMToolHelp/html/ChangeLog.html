@@ -10,12 +10,31 @@
       <body>
         
         <div id="banner">
-          <img src="logo-composite.png" id="logo" />
           <img src="illust-composite.png" id="illust" />
+          <img src="logo-composite.png" id="logo" />
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.4.1 </h2><ul><li><p>caveat: this release contains internal changes in preparation for the a new
+          <div id="content"><h2>Development Release 1.4.2 </h2><ul><li><p>caveat: this is a development release.  While it passes the CIMTool test suite
+and unstructured testing, there could nevertheless be regressions. </p></li><li><p>new feature: profile consistency checking and problem display. CIMTool will
+check each profile against the project schema during the build phase.  
+Inconsistencies are recorded in a diagnostic file which can be viewed with
+CIMTool's diagnostic editor (also used for instance validation).</p><p>When consistency errors exist error markers appear on the profile resource
+(in the Project Explorer view) and the affected profile elements in the
+profile outline view.   A entry is also added to the eclipse problems
+view. </p><p>This is a first release of this feature and only the most common 
+inconsistencies are detected. Some further improvements in the 
+checking algorithm and the user interface may be expected.</p><p>Note: to check profiles a project build must be triggered.  A trigger is
+generated if the schema (CIM and extensions) or a profile is updated.  </p></li><li><p>new feature: support for the &lt;&lt;extendedBy&gt; and &lt;&lt;extension&gt;&gt; stereotypes 
+defined by EDF Research. These stereotypes are used to define CIM extensions.   
+CIMTool displays extensions marked with these stereotypes using distinctive 
+icons and. In profile editing, extension class members can be added directly 
+to the profile of the extended CIM class.</p></li><li><p>enhancement: support for the Siemens PowerCC namespace tags.  These tags
+associate a namespace prefix such as 'ext' with each individual class,
+association or attribute.   To use this information you must declare
+each prefix in the annotation file with a statement like this:  </p><p>&lt;http://www.ercot.com/CIM11R0/2008/2.0/extension#&gt; uml:uriHasPrefix &quot;etx&quot; .</p></li><li><p>enhancements to support some older versions of CIM and EDF models: </p><ul><li><p>do not accept top level datatype definitions in an XMI file as written.
+Flexibly assign a type to these identifiers based on related definitions
+found elsewhere in the model.</p></li><li><p>accept 'units' as well as 'unit' for the units attribute of a datatype</p></li></ul></li><li><p>correction: the baseuri tag was not recognised in some XMI files.</p></li><li><p>corrections: various regressions introduced in the 1.4.1 development release.</p></li></ul><h2>Development Release 1.4.1 </h2><ul><li><p>caveat: this release contains internal changes in preparation for the a new
 guided profile update feature.  While the release passes the CIMTool test suite
 and unstructured testing, these changes could nevertheless cause regressions. </p></li><li><p>new feature: Schema comparison using the eclipse compare functionality.
 Each project has at least one schema file (generally a .xmi file) in the Schema folder.

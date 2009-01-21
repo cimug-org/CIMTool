@@ -21,6 +21,8 @@ public class Composition {
 	 * 
 	 * Updates will be directed to the first model.
 	 * 
+	 * Any existing inferences or inferencer will be excluded from the result.
+	 * 
 	 * This differs from the Jena methods in that the graph hierarchy of the new
 	 * model will not grow in depth on repeated application. The underlying graphs 
 	 * of the arguments are extracted and inferences are dropped.
@@ -32,6 +34,26 @@ public class Composition {
 		add(union, backgroundModel.getGraph());
 		
 		return ModelFactory.createTransInf(union);
+	}
+	
+	/**
+	 * Create the union of two models with no inferencer.  
+	 * 
+	 * Updates will be directed to the first model.
+	 * 
+	 * Any existing inferences or inferencer will be excluded from the result.
+	 * 
+	 * This differs from the Jena methods in that the graph hierarchy of the new
+	 * model will not grow in depth on repeated application. The underlying graphs 
+	 * of the arguments are extracted and inferences are dropped.
+	 *   
+	 */
+	public static OntModel simpleMerge(OntModel updatableModel, OntModel backgroundModel) {
+		MultiUnion union = new MultiUnion();
+		add(union, updatableModel.getGraph());
+		add(union, backgroundModel.getGraph());
+		
+		return ModelFactory.createMem(union);
 	}
 	
 	/**

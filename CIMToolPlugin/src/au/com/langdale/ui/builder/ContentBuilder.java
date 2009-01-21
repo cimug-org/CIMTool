@@ -298,7 +298,7 @@ public abstract class ContentBuilder extends Plumbing {
 			Button widget;
 			if(image != null) {
 				widget = toolkit.createButton(parent, null, style);
-				widget.setImage(IconCache.get(image));
+				widget.setImage(IconCache.get(image, false));
 				widget.setToolTipText(text);
 			}
 			else {
@@ -333,7 +333,7 @@ public abstract class ContentBuilder extends Plumbing {
 
 		public Control realise(Composite parent) {
 			Label widget = toolkit.createLabel(parent, null, style);
-			widget.setImage(IconCache.get(text));
+			widget.setImage(IconCache.get(text, false));
 			register(widget);
 			return widget;
 		}
@@ -619,7 +619,7 @@ public abstract class ContentBuilder extends Plumbing {
 			if(title != null)
 				form.setText(title);
 			if(image != null)
-				form.setImage(IconCache.get(image));
+				form.setImage(IconCache.get(image, false));
 			Composite body = form.getBody();
 			body.setLayout(new FillLayout());
 			part.realise(body);

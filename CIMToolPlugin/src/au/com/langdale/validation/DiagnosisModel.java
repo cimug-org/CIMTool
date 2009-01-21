@@ -29,7 +29,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -44,7 +44,10 @@ public class DiagnosisModel extends JenaTreeModelBase {
 				OntResource subject = jt.nextResource();
 				add( new KeyNode(asOntResource(subject)));
 			}
-			add( new GeneralNode());
+			
+			GeneralNode general = new GeneralNode();
+			if( general.iterator().hasNext())
+				add( general );
 		}
 
 	}
@@ -55,7 +58,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -99,7 +102,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -130,7 +133,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return false;
+			return true;
 		}
 
 		@Override

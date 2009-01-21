@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import au.com.langdale.cimtoole.builder.SchemaBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.ui.builder.FurnishedWizard;
@@ -33,23 +34,22 @@ public class ExportSchema extends FurnishedWizard implements IExportWizard {
         addPage(main);        
     }
 	
-	class InternalSchemaTask implements IWorkspaceRunnable {
+	class InternalSchemaTask extends SchemaBuildlet implements IWorkspaceRunnable {
 		IProject project = main.getProject();
-
+		String ns = main.getNamespace();
+		
 		public void run(IProgressMonitor monitor) throws CoreException {
 			project.setPersistentProperty(Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
-			project.setPersistentProperty(Info.PROFILE_NAMESPACE, main.getNamespace());
-			Info.getSchemaFolder(project).touch(null);
+			project.setPersistentProperty(Info.PROFILE_NAMESPACE, ns);
+			build(project.getFile(SchemaExportPage.SCHEMA), monitor);
 		}
 	}
 	
 	@Override
 	public boolean performFinish() {
-		IWorkspaceRunnable task;
 		if( main.isInternal()) 
-			task = new InternalSchemaTask();
+			return run(new InternalSchemaTask(), main.getProject());
 		else
-			task = Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace());
-		return run(task, null);
+			return run(Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace()), null);
 	}
 }

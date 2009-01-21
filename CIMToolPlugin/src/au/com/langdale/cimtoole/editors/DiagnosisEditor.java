@@ -72,7 +72,7 @@ public class DiagnosisEditor extends ModelEditor {
 					if( node  instanceof ModelNode) {
 						OntResource subject = ((ModelNode)node).getBase();
 						setTextValue("name", DiagnosisModel.label(subject));
-						setTextValue("uri", subject.getURI());
+						setTextValue("uri", subject.isAnon()? "": subject.getURI());
 						
 						if( node instanceof DetailNode) {
 							setTextValue("comment", ((DetailNode)node).getDescription());

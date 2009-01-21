@@ -10,6 +10,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import au.com.langdale.cimtoole.project.Cache;
+import au.com.langdale.ui.util.IconCache;
 
 
 
@@ -42,6 +43,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		IconCache.setSource(context.getBundle(), "/icons/");
 		plugin = this;
 		cache = new Cache();
 	}

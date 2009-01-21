@@ -13,7 +13,7 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addView("au.com.langdale.cimtoole.views.ProjectModelView", IPageLayout.LEFT, .25f, layout.getEditorArea());
-		layout.addView("org.eclipse.ui.views.ResourceNavigator", IPageLayout.TOP, .5f, "au.com.langdale.cimtoole.views.ProjectModelView");
+		layout.addView("org.eclipse.ui.navigator.ProjectExplorer", IPageLayout.TOP, .5f, "au.com.langdale.cimtoole.views.ProjectModelView");
 		layout.addView("org.eclipse.ui.views.ContentOutline", IPageLayout.RIGHT, .66f, layout.getEditorArea());
 		layout.addView("org.eclipse.ui.views.PropertySheet", IPageLayout.BOTTOM, .66f, layout.getEditorArea());
 
@@ -21,7 +21,7 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 		layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
 		layout.addShowViewShortcut("org.eclipse.ui.views.ContentOutline");
 		layout.addShowViewShortcut("au.com.langdale.cimtoole.views.ProjectModelView");
-		layout.addShowViewShortcut("org.eclipse.ui.views.ResourceNavigator");
+		layout.addShowViewShortcut("org.eclipse.ui.navigator.ProjectExplorer");
 		
 		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewProject");
 		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewProfile");

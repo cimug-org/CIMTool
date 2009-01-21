@@ -49,7 +49,6 @@ public class ProfileBuildlets extends Info {
 	 * and a flag in the profile that enables it.
 	 */
 	public abstract static class ProfileBuildlet extends Buildlet {
-		public static String NS = "http://langdale.com.au/2007/Buildlet#";
 		private String ext;
 		
 		protected ProfileBuildlet(String fileType) {

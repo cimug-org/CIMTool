@@ -15,6 +15,10 @@ public class ResourceFactory {
 	public static Resource createResource(FrontsNode symbol) {
 		return new Resource(symbol.asNode());
 	}
+
+	public static Resource createResource(Node symbol) {
+		return new Resource(symbol);
+	}
 	
 	public static Property createProperty(String uri) {
 		return new Property(Node.createURI(uri));
@@ -22,5 +26,9 @@ public class ResourceFactory {
 	
 	public static Property createProperty(FrontsNode symbol) {
 		return new Property(symbol.asNode());
+	}
+	
+	public static Property createProperty(Node symbol) {
+		return new Property(symbol);
 	}
 }

@@ -47,7 +47,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		else if( child.isDatatypeProperty()) {
 			return new DatatypeNode(child); // used for the SubClassModel
 		}
-		return null;
+		return new Empty("");
 	}
 	
 	/**
@@ -197,6 +197,8 @@ public class UMLTreeModel extends JenaTreeModelBase {
 				else if( child.isClass()){
 					if( child.hasProperty(UML.hasStereotype, UML.enumeration))
 						add(new EnumClassNode(child));
+					else if( child.hasProperty(UML.hasStereotype, UML.extension))
+						add(new ExtensionClassNode(child));
 					else
 						add(new ClassNode( child ));
 				}
@@ -258,17 +260,20 @@ public class UMLTreeModel extends JenaTreeModelBase {
 			}
 			
 			if( supers) {
-				ResIterator it = subject.listSuperClasses(true);
+				ResIterator it = subject.listSuperClasses(false);
 				while( it.hasNext()) {
 					OntResource clss = it.nextResource();
 					if( ( exclude == null || ! clss.equals(exclude)) && clss.isURIResource() && clss.isClass()) {
-						add( new SuperClassNode( clss ));
+						if( clss.hasProperty(UML.hasStereotype, UML.extension))
+							add( new ExtensionNode( clss ));
+						else
+						    add( new SuperClassNode( clss ));
 					}
 				}
 			}
 			
 			if(subs) {
-				ResIterator it = subject.listSubClasses(true);
+				ResIterator it = subject.listSubClasses(false);
 				while( it.hasNext()) {
 					OntResource clss = it.nextResource();
 					if( ! clss.hasProperty(UML.hasStereotype, UML.enumeration) &&
@@ -358,6 +363,14 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		
 	}
 	
+	public class ExtensionClassNode extends ClassBaseNode {
+
+		public ExtensionClassNode(OntResource clss) {
+			super(clss);
+		}
+		
+	}
+	
 	/**
 	 * A class to be shown as a sub-class of the parent node.
 	 * 
@@ -384,7 +397,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 
 		@Override
 		protected String collation() {
-			return "6" + toString();
+			return "7" + toString();
 		}
 	}
 	/**
@@ -409,6 +422,35 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		@Override
 		public String toString() {
 			return "SuperClass: " + label(subject);
+		}
+
+		@Override
+		protected String collation() {
+			return "6" + toString();
+		}
+	}
+	/**
+	 * A class to be shown as an extension of the parent node.
+	 * 
+	 */
+	public class ExtensionNode extends ClassBaseNode {
+		public ExtensionNode(OntResource clss) {
+			super(clss);
+		}
+		
+		@Override
+		protected void populate() {
+			populate(false, true, false);
+		}
+		
+		@Override
+		public boolean isPruned() {
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "Extension: " + label(subject);
 		}
 
 		@Override

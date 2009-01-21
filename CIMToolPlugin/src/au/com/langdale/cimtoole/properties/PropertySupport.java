@@ -172,13 +172,13 @@ public class PropertySupport implements IAdapterFactory {
 		new ProfileDescriptor("Based on", "Name in information model") {
 			@Override
 			public Object getValueFrom(ModelNode node) {
-				return node.getBase().getLocalName();
+				return node.getBase().isAnon()? "" : node.getBase().getLocalName();
 			}
 		},
 		new ProfileDescriptor("Base namespace", "Namespace in information model") {
 			@Override
 			public Object getValueFrom(ModelNode node) {
-				return node.getBase().getNameSpace();
+				return node.getBase().isAnon()? "" : node.getBase().getNameSpace();
 			}
 		},
 		new PropertyDescriptor("Cardinality", "Property cardinality") {

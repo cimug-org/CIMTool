@@ -54,7 +54,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			return "0" + toString();
 		}
 	}
-
+	
 	public class CatalogNode extends SortedNode {
 		private OntResource message;
 		
@@ -70,7 +70,7 @@ public class ProfileModel extends JenaTreeModelBase {
 				if( profile.getBaseClass() != null) {
 					if( profile.getBaseClass().equals(MESSAGE.Message) )
 						add( new EnvelopeNode(profile));
-					else
+					else 
 						add( new TypeNode(profile));
 				}
 			}

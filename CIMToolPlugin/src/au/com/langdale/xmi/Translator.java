@@ -8,13 +8,10 @@ import java.util.Iterator;
 
 import org.apache.xerces.util.XMLChar;
 
-import au.com.langdale.cim.CIM;
-
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
-
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -149,15 +146,7 @@ public class Translator implements Runnable {
 				return result.createResource(UML.NS + l.toLowerCase());
 
 			else if (r.hasProperty(RDF.type, OWL.AnnotationProperty)) {
-				if (l.equals("documentation"))
-					return RDFS.comment;
-				else if (l.equals("NERCProfile"))
-					// TODO: how should NERC profile be represented?
-					return result.createResource(CIM.NS + l);
-				else if(l.equals(UML.baseuri.getLocalName()))
-					return UML.baseuri;
-				else
-					return null; // omit other annotations eg 'transient' defined in the UML
+				return annotationResource(l);
 			}
 			
 			else if( r.hasProperty(RDF.type, UML.Package)) 
@@ -177,6 +166,30 @@ public class Translator implements Runnable {
 			return uri.substring(0, uri.length()-1);
 		else
 			return uri;
+	}
+
+	public static boolean powercc = true;;
+
+	/**
+	 * Determine whether we are interested in a UML tag of given name
+	 * and return an annotation resource for it.
+	 */
+	public static FrontsNode annotationResource(String l) {
+		if (l.equals("documentation"))
+			return RDFS.comment;
+		else if(l.equals(UML.baseuri.getLocalName()))
+			return UML.baseuri;
+		else if(l.equals(UML.baseprefix.getLocalName()))
+			return UML.baseprefix;
+		else if( powercc ) {
+			if(l.equals("RationalRose$PowerCC:RdfRoleA"))
+				return UML.roleALabel;
+			else if(l.equals("RationalRose$PowerCC:RdfRoleB"))
+				return UML.roleBLabel;
+			else if(l.equals("RationalRose$PowerCC:Namespace"))
+				return UML.baseprefix;
+		}
+		return null; // omit other annotations eg 'transient' defined in the UML
 	}
 	
 	private static String pathName(OntResource r) {
@@ -254,6 +267,12 @@ public class Translator implements Runnable {
 				}
 			}
 
+			//System.out.println("Unrecognised UML element name: " + l + " uri: " + r.getURI());
+			// this is almost certainly a top level datatype declaration
+			FrontsNode x = selectXSDType(l);
+			if( x != null)
+				return x;
+			
 			return result.createResource(namespace + l);
 		}
 	};
@@ -345,6 +364,18 @@ public class Translator implements Runnable {
 		String b = r.getString(UML.baseuri);
 		if( b != null )
 			return b;
+		
+		String x = r.getString(UML.baseprefix);
+		if( x != null ) {
+			ResIterator it = model.listSubjectsWithProperty(UML.uriHasPrefix, x);
+			if( it.hasNext() ) {
+				b = it.nextResource().getURI();
+				if( ! b.contains("#"))
+					b += "#";
+				return b;
+			}
+		}
+			
 
 		OntResource p = r.getResource(RDFS.isDefinedBy);
 		if( p != null ) {
@@ -354,7 +385,6 @@ public class Translator implements Runnable {
 				return b;
 			if( uniqueNamespaces )
 				return q.getNameSpace();
-			
 		}
 
 		return defaultNamespace;
@@ -374,8 +404,8 @@ public class Translator implements Runnable {
 	 * Propagate a given annotation property from p's parent package to p.
 	 *
 	 */
-	private OntResource propagateAnnotation(OntResource p, FrontsNode a) {
-		OntResource v = p.getResource(a);
+	private String propagateAnnotation(OntResource p, FrontsNode a) {
+		String v = p.getString(a);
 		if( v != null )
 			return v;
 	

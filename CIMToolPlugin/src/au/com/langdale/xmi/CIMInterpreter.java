@@ -61,16 +61,17 @@ public class CIMInterpreter extends UMLInterpreter {
 		System.out.println("Stage 3 XMI model size: " + getModel().size());
 
 		propagateComments();
-		removeUntyped();
 		applyStereotypes();
 		classifyAttributes();
+		removeUntyped();
+//		convertToSubClassOf("extensionMSITE");
 		
 		
 		System.out.println("Stage 4 XMI model size: " + getModel().size());
 		
 		return getModel();
 	}
-	
+
 	private void propagateComments() {
 		ResIterator it = model.listObjectProperties();
 		while( it.hasNext()) {
@@ -106,7 +107,6 @@ public class CIMInterpreter extends UMLInterpreter {
 			OntResource assoc = node;
 			Node label = assoc.getNode(hasLabel);
 			if( label != null ) {
-				System.out.println("Relabeling using PowerCC tags:" + label.toString());
 				prop.addLabel(label.getLiteralLexicalForm(), "en");
 				return true;
 			}
@@ -142,6 +142,10 @@ public class CIMInterpreter extends UMLInterpreter {
 		while( kt.hasNext()) {
 			applyPrimitiveStereotype(kt.nextResource(), false);
 		}
+		ResIterator lt = model.listSubjectsBuffered(UML.hasStereotype, UML.extendedBy);
+		while( lt.hasNext()) {
+			convertAssocToSubClassOf(lt.nextResource());
+		}
 	}
 	
 	/**
@@ -164,7 +168,7 @@ public class CIMInterpreter extends UMLInterpreter {
 					// this is a CIM-style annotation to indicate the primitive datatype 
 					if( name.equals("value"))
 						truetype = m.getResource(RDFS.range);
-					if( name.equals("unit"))
+					if( name.equals("unit") || name.equals("units"))
 						units = m.getString(UML.hasInitialValue);
 					if( name.equals("multiplier"))
 						multiplier = m.getString(UML.hasInitialValue);
@@ -218,6 +222,31 @@ public class CIMInterpreter extends UMLInterpreter {
 				m.removeAll(UML.hasStereotype);
 				m.addProperty(RDF.type, clss);
 			}
+		}
+	}
+	
+	private void convertAssocToSubClassOf(OntResource assoc) {
+		OntResource prop = assoc.getSubject(UML.roleBOf);
+		if( prop != null )
+			convertPropToSubClassOf(prop);
+	}
+	
+	private void convertPropToSubClassOf(OntResource prop) {
+		OntResource range = prop.getRange();
+		OntResource domain = prop.getDomain();
+		if( range != null && domain != null) {
+			OntResource inv = prop.getInverseOf();
+			prop.remove();
+			
+			if( model.contains(domain, UML.hasStereotype, UML.extension))
+				range.addSuperClass(domain);
+			else if( model.contains(range, UML.hasStereotype, UML.extension))
+				domain.addSuperClass(range);
+			else
+				return;
+			
+			if( inv != null)
+				inv.remove();
 		}
 	}
 }	

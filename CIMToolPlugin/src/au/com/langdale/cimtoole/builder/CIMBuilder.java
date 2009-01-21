@@ -28,6 +28,7 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
+import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
 import au.com.langdale.cimtoole.project.Info;
 /**
  * The builder for CIMTool projects.  
@@ -47,6 +48,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	public Buildlet[] createBuildlets() {
 		return new Buildlet[] {
 			new SchemaBuildlet(),
+			new ProfileChecker(),
 			new XSDBuildlet(),
 			new TransformBuildlet(null, "xml"),
 			new TransformBuildlet("html", "html"),

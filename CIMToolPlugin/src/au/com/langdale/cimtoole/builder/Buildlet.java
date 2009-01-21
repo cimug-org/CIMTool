@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *	Represents a task to be performed as part of a build.
  */
 public abstract class Buildlet {
+	public static String NS = "http://langdale.com.au/2007/Buildlet#";
+
 	/**
 	 * Indicates which files would be built by this Buildlet if the
 	 * given input file was changed.

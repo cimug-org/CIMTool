@@ -70,8 +70,16 @@ public class OntModel {
 		return new Wrapper( this, new UniqueSubjects(graph.find(Node.ANY, prop.asNode(), Node.ANY)));
 	}
 
+	public ResIterator listSubjectsWithProperty(FrontsNode prop, Node value) {
+		return new Wrapper( this, new Subjects(graph.find(Node.ANY, prop.asNode(), value)));
+	}
+
 	public ResIterator listSubjectsWithProperty(FrontsNode prop, FrontsNode value) {
-		return new Wrapper( this, new Subjects(graph.find(Node.ANY, prop.asNode(), value.asNode())));
+		return listSubjectsWithProperty(prop, value.asNode());
+	}
+
+	public ResIterator listSubjectsWithProperty(FrontsNode prop, String value) {
+		return listSubjectsWithProperty(prop, Node.createLiteral(value, null, false));
 	}
 
 	public ResIterator listSubjectsBuffered(FrontsNode prop, FrontsNode value) {
@@ -98,12 +106,8 @@ public class OntModel {
 		return new UniqueObjects( graph.find(Triple.ANY));
 	}
 	
-	public ResIterator listResourcesOfType(FrontsNode type) {
-		return listSubjectsWithProperty(RDF.type, type);
-	}
-	
 	public ResIterator listIndividuals(FrontsNode type) {
-		return new Wrapper( this, new Subjects(graph.find(Node.ANY, RDF.type.asNode(), type.asNode())));
+		return listSubjectsWithProperty( RDF.type, type );
 	}
 	
 	public ResIterator listObjectProperties() {

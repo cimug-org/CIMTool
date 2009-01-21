@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true
-Bundle-Version: 1.4.1
+Bundle-Version: 1.4.2
 Bundle-ClassPath: cimtoole.jar,
  lib/antlr-2.7.5.jar,
  lib/commons-logging-1.1.jar,
@@ -27,7 +27,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.ui.forms,
  org.eclipse.compare
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Export-Package: au.com.langdale.cim,
  au.com.langdale.cimtoole,
  au.com.langdale.cimtoole.actions,
@@ -52,7 +52,6 @@ Export-Package: au.com.langdale.cim,
  au.com.langdale.ui,
  au.com.langdale.ui.binding,
  au.com.langdale.ui.builder,
- au.com.langdale.ui.icons,
  au.com.langdale.ui.plumbing,
  au.com.langdale.ui.util,
  au.com.langdale.util,

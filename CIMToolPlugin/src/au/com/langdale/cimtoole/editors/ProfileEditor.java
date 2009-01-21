@@ -4,6 +4,7 @@
  */
 package au.com.langdale.cimtoole.editors;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -35,9 +36,9 @@ import au.com.langdale.kena.OntResource;
 
 public class ProfileEditor extends ModelEditor {
 	private ProfileModel tree;
-	private OntModel profileModel;
 	private Refactory refactory;
-	private OntModel backgroundModel;
+	private OntModel backgroundModel, rawBackgroundModel, diagnosticModel, profileModel;
+	private boolean hasDiagnostics;
 	
 	@Override
 	protected void createPages() {
@@ -104,16 +105,29 @@ public class ProfileEditor extends ModelEditor {
 	}
 
 	private void fetchModels() {
-		backgroundModel = models.getProjectOntology(Info.getSchemaFolder(getFile().getProject()));
-		OntModel raw = models.getOntology(getFile());
-		profileModel = raw != null? Composition.copy(raw) : null;
+		rawBackgroundModel = models.getProjectOntology(Info.getSchemaFolder(getFile().getProject()));
+		OntModel rawProfileModel = models.getOntology(getFile());
+		if(rawProfileModel != null)
+			profileModel = Composition.copy(rawProfileModel);
+		else
+			profileModel = null;
+		IFile diagnostics = Info.getRelated(getFile(), "diagnostic");
+		hasDiagnostics = diagnostics.exists();
+		if( hasDiagnostics )
+			diagnosticModel = models.getOntology(diagnostics);
+		else 
+			diagnosticModel = null;
 		resetModels();
 	}
 	
 	public void resetModels() {
-		if( backgroundModel == null || profileModel == null || tree == null)
+		if( rawBackgroundModel == null || profileModel == null || tree == null || hasDiagnostics && diagnosticModel == null)
 			return;
-		
+
+		if( hasDiagnostics)
+			backgroundModel = Composition.simpleMerge( rawBackgroundModel, diagnosticModel);
+		else
+			backgroundModel = rawBackgroundModel;
 		tree.setOntModel(profileModel);
 		tree.setBackgroundModel(backgroundModel);
 		tree.setNamespace(getFileNamespace());

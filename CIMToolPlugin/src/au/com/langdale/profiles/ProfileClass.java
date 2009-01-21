@@ -65,6 +65,11 @@ public class ProfileClass {
 		ResIterator it = clss.listSuperClasses(true);
 		while( it.hasNext()) {
 			OntResource node = it.nextResource();
+			if( ! node.isClass() && ! node.isDatatype() && ! node.equals(MESSAGE.Reference)) {
+				System.out.println("Superclass not typed:");
+				System.out.println(node.describe());
+				
+			}
 			if( node.isClass() && ! node.equals(MESSAGE.Reference)) {
 				if(node.isRestriction()) {
 					OntResource prop = node.getOnProperty();
@@ -86,7 +91,11 @@ public class ProfileClass {
 	}
 
 	private void analyseBaseClass() {
-		enumerated = baseClass != null && baseClass.hasProperty(UML.hasStereotype, UML.enumeration);
+		if( OWL.Thing.equals(baseClass) && ! clss.isDatatype()) {
+			System.out.println("Profile with no schema class:");
+			System.out.println( clss.describe());
+		}
+		enumerated = baseClass.hasProperty(UML.hasStereotype, UML.enumeration);
 	}
 	
 	/**
@@ -109,7 +118,7 @@ public class ProfileClass {
 	 * Change the type of the node in the underlying ontology.
 	 */
 	public void setBaseClass(OntResource type) {
-		if( baseClass != null) {
+		if( ! OWL.Thing.equals(baseClass)) {
 			if( baseClass.equals(type))
 				return;
 			clss.removeSuperClass(baseClass);
@@ -493,7 +502,7 @@ public class ProfileClass {
 		ResIterator jt = profileModel.listNamedClasses();
 		while( jt.hasNext()) {
 			Resource symbol = jt.nextResource();
-			if(! symbol.getNameSpace().equals(MESSAGE.NS)) {
+			if(! symbol.getNameSpace().equals(MESSAGE.NS) && ! symbol.getNameSpace().equals(OWL.NS)) {
 				classes.add(fullModel.createResource(symbol.asNode()));
 			}
 		}
@@ -660,7 +669,7 @@ public class ProfileClass {
 	}
 
 	public boolean isPropertyRange() {
-		return defaultBase != null;
+		return ! defaultBase.equals(OWL.Thing);
 	}
 
 	public void removeSuperClass(OntResource child) {

@@ -22,15 +22,12 @@ import org.xml.sax.XMLReader;
 import au.com.langdale.kena.OntResource;
 
 import com.hp.hpl.jena.graph.FrontsNode;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.sax.XMLElement;
 import au.com.langdale.sax.XMLInterpreter;
 import au.com.langdale.sax.XMLMode;
 
 public class XMIParser extends XMIModel {
-
-	public boolean powercc = true;;
 
 	/**
 	 * Parse the given file as XMI producing an OWL model.
@@ -135,19 +132,10 @@ public class XMIParser extends XMIModel {
 			if(type == null)
 				type = element.getAttributes().getValue("name");
 
-			if( type != null ) {
-				if(type.equals("documentation"))
-					property = RDFS.comment;
-				else if(powercc) {
-					if(type.equals("RationalRose$PowerCC:RdfRoleA"))
-						property = UML.roleALabel;
-					else if(type.equals("RationalRose$PowerCC:RdfRoleB"))
-						property = UML.roleBLabel;
-				}
-			}
+			if( type != null )
+				property = Translator.annotationResource(type);
 
-	        
-	        // we overide the default subject here and in visit()
+			// we overide the default subject here and in visit()
 	    	OntResource ref = createUnknown(element.getAttributes().getValue("modelElement"));
 	    	if( ref != null)
 	    		subject = ref;
@@ -300,10 +288,12 @@ public class XMIParser extends XMIModel {
 				return null;
 			}
 			else if ( matchDef(element, "DataType")) {
-    	    	// TODO: pick up Datatype in package named by typename for MagicDraw
-    	    	// createDatatype(element);
-    	    	//return null;
-				return new DatatypeMode( element );
+				if(packResource.equals(UML.global_package)) {
+					createUnknown( element ); // top level datatypes are generally garbage
+				    return null;
+				}
+				else
+					return new DatatypeMode( element );
 			}
     		else if ( element.matches("Generalization")) {
 		        return new GeneralizationMode(element);

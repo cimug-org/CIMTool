@@ -1,5 +1,6 @@
 package au.com.langdale.kena;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import au.com.langdale.kena.filters.ListIterator;
@@ -10,6 +11,7 @@ import au.com.langdale.kena.filters.Wrapper;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -74,6 +76,25 @@ public class OntResource extends Resource  {
 		return false;
 	}
 	
+	public String describe() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(node);
+		Iterator it = model.getGraph().find(node, Node.ANY, Node.ANY);
+		if( it.hasNext()) {
+			do {
+				Triple t = (Triple) it.next();
+				sb.append("\n  ");
+				sb.append(t.getPredicate());
+				sb.append(" = ");
+				sb.append( t.getObject());
+			} while( it.hasNext());
+		}
+		else {
+			sb.append(" has no properties.");
+		}
+		return sb.toString();
+	}
+	
 	public boolean isClass() {
 		return hasRDFType(OWL.Class) || hasRDFType(OWL.Restriction);
 	}
@@ -92,6 +113,10 @@ public class OntResource extends Resource  {
 	
 	public boolean isDatatypeProperty() {
 		return hasRDFType(OWL.DatatypeProperty);
+	}
+	
+	public boolean isDatatype() {
+		return hasRDFType(RDFS.Datatype);
 	}
 	
 	public boolean isFunctionalProperty() {
@@ -462,7 +487,7 @@ public class OntResource extends Resource  {
 	}
 
 	public ResIterator listInstances() {
-		return model.listResourcesOfType(this);
+		return model.listIndividuals(this);
 	}
 
 	public void addProperty(FrontsNode prop, int value) {
