@@ -238,7 +238,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			}
 			else {
 				catalog.add(base, profile.getSubject());
-				if(profile.isEnumerated() || profile.isRestrictedEnum())
+				if((profile.isEnumerated() || profile.isRestrictedEnum()) && ! profile.isUnion())
 					enums.add(base, profile.getIndividuals());
 			}
 		}

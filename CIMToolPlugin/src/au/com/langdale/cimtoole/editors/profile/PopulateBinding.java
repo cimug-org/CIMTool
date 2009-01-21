@@ -182,7 +182,8 @@ public class PopulateBinding  {
 		private class RootFilter extends BasicFilter {
 			@Override
 			public boolean typeCheck(Node value) {
-				return value instanceof ClassNode 
+				return value instanceof ClassNode
+				    || value instanceof EnumClassNode
 					|| value instanceof PackageNode;
 			}
 			

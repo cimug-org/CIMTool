@@ -34,7 +34,7 @@ public class ProfileClass {
 	private OntResource clss;
 	private String namespace;
 	private OntModel model;
-	private boolean enumerated;
+	private boolean enumeratedBase;
 	private OntResource defaultBase;
 	
 	public ProfileClass(OntResource clss, String namespace, OntModel model, OntResource base) {
@@ -95,7 +95,7 @@ public class ProfileClass {
 			System.out.println("Profile with no schema class:");
 			System.out.println( clss.describe());
 		}
-		enumerated = baseClass.hasProperty(UML.hasStereotype, UML.enumeration);
+		enumeratedBase = baseClass.hasProperty(UML.hasStereotype, UML.enumeration);
 	}
 	
 	/**
@@ -262,7 +262,7 @@ public class ProfileClass {
 		if( clss.isEnumeratedClass()) {
 			return clss.getOneOf().listResourceElements();
 		}
-		if( enumerated && classes.size() == 0) {
+		if( enumeratedBase && classes.size() == 0) {
 			return baseClass.listInstances();
 		}
 		return Collections.EMPTY_LIST.iterator();	
@@ -334,6 +334,7 @@ public class ProfileClass {
 		while(jt.hasNext()) {
 			info.scanRestrict((OntResource)jt.next());
 		}
+		assert info.range != null;
 		return info;
 	}
 	
@@ -350,7 +351,7 @@ public class ProfileClass {
 	}
 
 	public boolean isEnumerated() {
-		return enumerated;
+		return enumeratedBase;
 	}
 	
 	public boolean isReference() {

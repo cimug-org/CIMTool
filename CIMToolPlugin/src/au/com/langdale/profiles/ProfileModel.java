@@ -256,6 +256,8 @@ public class ProfileModel extends JenaTreeModelBase {
 				@Override
 				public void destroy() {
 					ElementNode.this.destroy(this);
+					if( profile.getSubject().isAnon())
+						super.destroy();
 				}
 			}
 

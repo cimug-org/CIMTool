@@ -15,8 +15,15 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Development Release 1.4.2 </h2><ul><li><p>caveat: this is a development release.  While it passes the CIMTool test suite
-and unstructured testing, there could nevertheless be regressions. </p></li><li><p>new feature: profile consistency checking and problem display. CIMTool will
+          <div id="content"><p>Caveat: Releases 1.4.* are development releases.  They contain internal changes in 
+preparation for the a new guided profile update feature. While they pass the CIMTool 
+test suite and unstructured testing, there could nevertheless be regressions. </p><p>The 1.4.* releases can be only obtained from an eclipse update site at:
+<a href="http://files.cimtool.org/development" class="external">http://files.cimtool.org/development</a> </p><p>Stable releases are preferred and these are available in a number of forms 
+detailed here: <a href="http://wiki.cimtool.org/Download.html" class="internal">http://wiki.cimtool.org/Download.html</a></p><h2>Development Release 1.4.3 </h2><ul><li><p>enhancement: comparisons of profiles to profiles or schema to schema are now much faster and 
+require much less memory.  These operations now use CIMTool's cache for the inputs. </p></li><li><p>enhancement: Repair and remap profile function now corrects the namespace of 
+enumeration values</p></li><li><p>enhancement: enumerations can now be added directly to the profile 
+(previsously they were added only as a side effect of property definition)</p></li><li><p>correction: a regression prevented restriction of the range of a property to a subclass.</p></li><li><p>correction: enumeration restrictions were not carried into the generated OWL and RDFS
+artifacts and were not validated in instance documents.</p></li></ul><h2>Development Release 1.4.2 </h2><ul><li><p>new feature: profile consistency checking and problem display. CIMTool will
 check each profile against the project schema during the build phase.  
 Inconsistencies are recorded in a diagnostic file which can be viewed with
 CIMTool's diagnostic editor (also used for instance validation).</p><p>When consistency errors exist error markers appear on the profile resource
@@ -34,9 +41,8 @@ associate a namespace prefix such as 'ext' with each individual class,
 association or attribute.   To use this information you must declare
 each prefix in the annotation file with a statement like this:  </p><p>&lt;http://www.ercot.com/CIM11R0/2008/2.0/extension#&gt; uml:uriHasPrefix &quot;etx&quot; .</p></li><li><p>enhancements to support some older versions of CIM and EDF models: </p><ul><li><p>do not accept top level datatype definitions in an XMI file as written.
 Flexibly assign a type to these identifiers based on related definitions
-found elsewhere in the model.</p></li><li><p>accept 'units' as well as 'unit' for the units attribute of a datatype</p></li></ul></li><li><p>correction: the baseuri tag was not recognised in some XMI files.</p></li><li><p>corrections: various regressions introduced in the 1.4.1 development release.</p></li></ul><h2>Development Release 1.4.1 </h2><ul><li><p>caveat: this release contains internal changes in preparation for the a new
-guided profile update feature.  While the release passes the CIMTool test suite
-and unstructured testing, these changes could nevertheless cause regressions. </p></li><li><p>new feature: Schema comparison using the eclipse compare functionality.
+found elsewhere in the model.</p></li><li><p>accept 'units' as well as 'unit' for the units attribute of a datatype</p></li></ul></li><li><p>correction: the baseuri tag was not recognised in some XMI files.</p></li><li><p>corrections: various regressions introduced in the 1.4.1 development release.</p></li></ul><h2>Development Release 1.4.1 </h2><ul><li><p>First release with internal changes to the ontology API needed for future
+features.</p></li><li><p>new feature: Schema comparison using the eclipse compare functionality.
 Each project has at least one schema file (generally a .xmi file) in the Schema folder.
 To compare two schemas, select them in the Navigator, right click and
 choose Compare With &gt; Each Other.  To compare a schema with a recent
@@ -120,10 +126,10 @@ each class and property. It performs a number of other repairs as well.</p><p>Th
 incompatible with the new property range profiles and these will be lost if 
 this operation is performed.</p><h2>Changes 2008-02-15 </h2><ul><li><p>CIM/XML validator passes the full test suite, available at 
 <a href="http://files.cimtool.org/Validation-Cases-2008-02-15.zip" class="external">http://files.cimtool.org/Validation-Cases-2008-02-15.zip</a></p></li><li><p>Includes incremental CIM/XML validation.  </p></li><li><p>User interface improvements.</p></li></ul><h2>Changes 2008-01-31 </h2><ul><li><p>CIMTool has expanded namespace support described here:
-<a href="http://wiki.cimtool.org/cimtool/wiki/CIMToolNamespaceSupport.html" class="internal">http://wiki.cimtool.org/cimtool/wiki/CIMToolNamespaceSupport.html</a></p><ul><li><p>There is support for multiple extension model namespaces.</p></li><li><p>Optionally, those namespaces can be carried through to 
+<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/CIMToolNamespaceSupport.html" class="internal">PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/CIMToolNamespaceSupport.html</a></p><ul><li><p>There is support for multiple extension model namespaces.</p></li><li><p>Optionally, those namespaces can be carried through to 
 profile artifacts (legacy-rdfs and simple-owl).  This corresponds
 to the current practice on the ERCOT project. </p></li><li><p>The pros and cons of the latter practice are discussed here: 
-<a href="http://wiki.cimtool.org/cimtool/wiki/Namespaces.html" class="internal">http://wiki.cimtool.org/cimtool/wiki/Namespaces.html</a></p></li><li><p>For a discussion of CIM extension model techniques using CIMTool
+<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Namespaces.html" class="internal">PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Namespaces.html</a></p></li><li><p>For a discussion of CIM extension model techniques using CIMTool
 see the UISOL Distributech presentation.</p></li></ul></li><li><p>The CIM/XML validation function has been further developed.</p><ul><li><p>Basic topology validation tests are now included
 and the profile conformance tests have been expanded.  </p></li><li><p>Memory footprint is down and speed is up.  
 It is now possible to validate giant models such 

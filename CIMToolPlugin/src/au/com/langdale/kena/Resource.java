@@ -38,15 +38,15 @@ public class Resource implements FrontsNode {
 	}
 
 	public String getLocalName() {
-		return node.getLocalName();
+		return node.isBlank()? null: node.getLocalName();
 	}
 
 	public String getNameSpace() {
-		return node.getNameSpace();
+		return node.isBlank()? null: node.getNameSpace();
 	}
 	
 	public String getURI() {
-		return node.getURI();
+		return node.isBlank()? null: node.getURI();
 	}
 	
 	public boolean isAnon() {

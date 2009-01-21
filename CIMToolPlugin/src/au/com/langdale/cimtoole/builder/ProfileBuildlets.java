@@ -287,6 +287,7 @@ public class ProfileBuildlets extends Info {
 				new XSDBuildlet(),
 				new TransformBuildlet(null, "xml"),
 				new TransformBuildlet("html", "html"),
+				new TransformBuildlet("sql", "sql"),
 				new SimpleOWLBuildlet("RDF/XML", "simple-owl", false),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML", "simple-owl-augmented", true),

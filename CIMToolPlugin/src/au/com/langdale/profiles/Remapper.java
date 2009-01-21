@@ -133,6 +133,38 @@ public class Remapper implements Runnable {
 
 		clss.addSuperClass(base);
 		log("rebased profile class", clss);
+		rebaseEnumeration( clss, base );
+	}
+	
+	private void rebaseEnumeration( OntResource clss, Resource base ) {
+		OntResource list = clss.getOneOf();
+		if( list == null )
+			return;
+		
+		if( list.isList()) {
+			int count = 0;
+			Set buf = list.listResourceElements().toSet();
+			for( Iterator it = buf.iterator(); it.hasNext();) {
+				OntResource node = (OntResource) it.next();
+				Resource mapped = mapper.map(node, base);
+				if( ! node.equals(mapped)) {
+					list = list.remove(node);
+					if(mapped != null)
+						list = list.cons(mapped);
+					else
+						log("could not find enumeration value", node);
+					count++;
+				}
+			}
+			
+			if(count > 0) {
+				clss.setOneOf(list);
+				log("rebased " + count + " enumeration values", clss);
+			}
+		}
+		else {
+			log("invalid enumeration", clss);
+		}
 	}
 
 	private void rebaseRestriction(OntResource clss, Set props, Set defined, OntResource restrict) {

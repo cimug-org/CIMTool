@@ -435,6 +435,11 @@
    </extension>
    <extension
          point="org.eclipse.compare.structureMergeViewers">
+      <viewer
+            class="au.com.langdale.cimtoole.compare.ModelDiffViewerCreator"
+            extensions="owl,xmi"
+            id="au.com.langdale.cimtoole.ModelDiffViewer">
+      </viewer>
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">

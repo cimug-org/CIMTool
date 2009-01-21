@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
@@ -37,20 +37,22 @@ public class ModelStructureCreator implements IStructureCreator {
 	}
 
 	public IStructureComparator getStructure(final Object input) {
-		if( input instanceof IEncodedStreamContentAccessor && input instanceof ITypedElement && input instanceof IResourceProvider)
-			return new InputProxy(input);
-		else if(input instanceof Node)
+		if(input instanceof Node)
 			return new Proxy((Node)input);
 		else if( input instanceof Proxy)
 			return (Proxy)input;
-		else 
+		else if(input instanceof IResourceProvider && input instanceof ITypedElement) 
+			return new ResourceProxy(input);
+//		else if(input instanceof IStreamContentAccessor && input instanceof ITypedElement) 
+//			return new StreamProxy(input);
+		else
 			throw new RuntimeException("Unexpected input to profile comparison");
 	}
 	
-	public static class InputProxy implements IStructureComparator, ITypedElement {
-		private Object node; // should be both a ITypedElement and IEncodedStreamContentAccessor
+	public static abstract class InputProxy implements IStructureComparator, ITypedElement {
+		private ITypedElement node; 
 		
-		public InputProxy(Object node) {
+		public InputProxy(ITypedElement node) {
 			this.node = node;
 		}
 		
@@ -63,28 +65,16 @@ public class ModelStructureCreator implements IStructureCreator {
 			return false;
 		}
 
-		public Object[] getChildren() {
-			try {
-				IResourceProvider resourceProvider = ((IResourceProvider)node);
-				IFile file = ((IFile)resourceProvider.getResource());
-				
-				IEncodedStreamContentAccessor streamAccessor = ((IEncodedStreamContentAccessor)node);
-				InputStream contents = streamAccessor.getContents();
-				
-				TreeModelBase tree = Task.createTreeModel(file, contents);
-				return wrapChildren(tree.getRoot());
-				
-			} catch (CoreException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
 		public Image getImage() {
-			return ((ITypedElement)node).getImage();
+			return node.getImage();
 		}
 
 		public String getName() {
-			return ((ITypedElement)node).getName();
+			return node.getName();
+		}
+		
+		protected String getFileExtension() {
+			return node.getType().toLowerCase();
 		}
 
 		public String getType() {
@@ -92,6 +82,47 @@ public class ModelStructureCreator implements IStructureCreator {
 		}
 	}
 	
+	public static class ResourceProxy extends InputProxy {
+		IResourceProvider node;
+		
+		public ResourceProxy( Object node ) {
+			super((ITypedElement)node);
+			this.node = (IResourceProvider) node;
+		}
+		
+		public Object[] getChildren() {
+			try {
+				IFile file = ((IFile)node.getResource());
+				TreeModelBase tree = Task.createTreeModel(file);
+				return wrapChildren(tree.getRoot());
+				
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		
+	}
+//	
+//	public static class StreamProxy extends InputProxy {
+//		private IStreamContentAccessor node;
+//		public StreamProxy( Object node) {
+//			super((ITypedElement)node);
+//			this.node = (IStreamContentAccessor) node;
+//		}
+//		
+//		public Object[] getChildren() {
+//			try {
+//				InputStream contents = node.getContents();
+//				
+//				TreeModelBase tree = Task.createTreeModel(file, contents);
+//				return wrapChildren(tree.getRoot());
+//				
+//			} catch (CoreException e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
+//	}
+
 	public static class Proxy implements IStructureComparator, ITypedElement {
 		private Node node;
 		

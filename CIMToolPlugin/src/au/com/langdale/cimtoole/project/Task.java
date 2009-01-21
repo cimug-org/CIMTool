@@ -183,32 +183,34 @@ public class Task extends Info {
 		}
 	}
 
-	public static TreeModelBase createTreeModel(IFile file, InputStream contents)	throws CoreException {
-		String ext = file.getFileExtension().toLowerCase();
-		if( ext.equals("xmi")) {
-			return createUMLTreeModel(file, contents);
-		}
-		else {
-			return createProfileTreeModel(file, contents);
-		}
+	public static TreeModelBase createTreeModel(IResource resource) throws CoreException {
+		Cache cache = CIMToolPlugin.getCache();
+		if(resource instanceof IProject)
+			return createUMLTreeModel(cache.getMergedOntologyWait(getSchemaFolder((IProject)resource)));
+		else if( isSchemaFolder(resource))
+			return createUMLTreeModel(cache.getMergedOntologyWait((IFolder)resource));
+		else if( isSchema(resource))
+			return createUMLTreeModel(cache.getOntologyWait((IFile)resource));
+		else if(isProfile(resource)) {
+			OntModel model = cache.getOntologyWait((IFile)resource);
+			OntModel backgroundModel = cache.getMergedOntologyWait(getSchemaFolder(resource.getProject()));
+			return createProfileTreeModel(model, backgroundModel);
+		} else 
+			return new UMLTreeModel();
 	}
-
-	private static TreeModelBase createProfileTreeModel(IFile file,	InputStream contents) throws CoreException {
-		ProfileModel tree = new ProfileModel();
-		OntModel model = parseOWL(file, contents);
-		OntModel backgroundModel = CIMToolPlugin.getCache().getMergedOntologyWait(Info.getSchemaFolder(file.getProject()));
+	
+	private static TreeModelBase createUMLTreeModel(OntModel model) {
+		UMLTreeModel tree = new UMLTreeModel();
 		tree.setOntModel(model);
-		tree.setBackgroundModel(backgroundModel);
-		tree.setRootResource(MESSAGE.Message);
+		tree.setRootResource(UML.global_package);
 		return tree;
 	}
 
-	private static TreeModelBase createUMLTreeModel(IFile file,
-			InputStream contents) throws CoreException {
-		UMLTreeModel tree = new UMLTreeModel();
-		OntModel model = parseXMI(file, contents);
+	private static TreeModelBase createProfileTreeModel(OntModel model, OntModel backgroundModel) {
+		ProfileModel tree = new ProfileModel();
 		tree.setOntModel(model);
-		tree.setRootResource(UML.global_package);
+		tree.setBackgroundModel(backgroundModel);
+		tree.setRootResource(MESSAGE.Message);
 		return tree;
 	}
 

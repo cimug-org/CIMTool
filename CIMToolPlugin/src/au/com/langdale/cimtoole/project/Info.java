@@ -50,6 +50,10 @@ public class Info {
 		return isFile(resource, "Schema", "owl", "xmi");
 	}
 
+	public static boolean isSchemaFolder(IResource resource) {
+		return isFolder(resource, "Schema");
+	}
+
 	public static boolean isInstance(IResource resource) {
 		return isFile(resource, "Instances", "rdf", "xml");
 	}
