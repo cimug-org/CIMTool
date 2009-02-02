@@ -175,7 +175,7 @@ public class Translator implements Runnable {
 	 * and return an annotation resource for it.
 	 */
 	public static FrontsNode annotationResource(String l) {
-		if (l.equals("documentation"))
+		if (l.equals("documentation") || l.equals("description"))
 			return RDFS.comment;
 		else if(l.equals(UML.baseuri.getLocalName()))
 			return UML.baseuri;

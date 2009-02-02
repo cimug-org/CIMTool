@@ -54,6 +54,8 @@ def manifest():
 	yield findlast("plugins", "au.com.langdale.cimtoole_")
 	yield findlast("plugins", "au.com.langdale.cimtoole.help_")
 	yield "site.xml"
+	yield "artifacts.xml"
+	yield "content.xml"
 				
 def lastversion():
 	path = findlast("features", "au.com.langdale.cimtoole.feature_")
@@ -66,7 +68,7 @@ def build_update_dist(archive_name, manifest):
 	zipit(archive_name, manifest) 
 
 def build_eclipse_dist(dist, manifest, kit=KIT):
-	feature, plugin, docs, site = list(manifest)
+	feature, plugin, docs = list(manifest)[:3]
 	copyfile(kit, dist)
 	archive = ZipFile(dist, "a", ZIP_DEFLATED)
 	eclipsemerge(archive, feature)
@@ -104,9 +106,11 @@ def do_build():
 def do_interim(bucket_name=BUCKET):
 	build_update_dist(ARCHIVE, manifest())
 	bucket = get_bucket(bucket_name)
-	upload_files(bucket, manifest(), prefix=DEVEL)
-	mirror(bucket, ARCHIVE, DEVEL+ARCHIVE)
-
+	#upload_files(bucket, manifest(), prefix=DEVEL)
+	#mirror(bucket, ARCHIVE, DEVEL+ARCHIVE)
+	upload_files(bucket, manifest())
+	mirror(bucket, ARCHIVE)
+	
 def do_lastversion():
 	print lastversion()
 

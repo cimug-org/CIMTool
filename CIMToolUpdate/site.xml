@@ -42,5 +42,8 @@
    <feature url="features/au.com.langdale.cimtoole.feature_1.5.1.jar" id="au.com.langdale.cimtoole.feature" version="1.5.1">
       <category name="ontology"/>
    </feature>
+   <feature url="features/au.com.langdale.cimtoole.feature_1.5.2.jar" id="au.com.langdale.cimtoole.feature" version="1.5.2">
+      <category name="ontology"/>
+   </feature>
    <category-def name="ontology" label="Modelling and Ontology"/>
 </site>

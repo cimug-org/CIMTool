@@ -64,6 +64,7 @@ public class Populate extends FurnishedEditor {
 	public void profileAdd(Node target, Node node, boolean link) {
 		if( target instanceof ElementNode ) {
 			profileAddSingle(target, node, link);
+			target.structureChanged(); 
 		}
 		else {
 			Collection args = new ArrayList();
