@@ -71,7 +71,7 @@ th, td {
 	text-align : left;
 	vertical-align : top;
 }
-p.name, p.type { width: 15em;}
+th, td.type { width: 15em; overflow: visible; }
 
 p.cardinality { width: 4em; }
 
@@ -128,25 +128,24 @@ p.package { position: absolute; right: 10px; top: 0px}
 	    <!-- generates the body of a class -->
         <p class="package"><xsl:value-of select="@package"/></p>
         <xsl:apply-templates mode="annotate" />
-        <xsl:apply-templates select="a:SuperType"/>
         <xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated">
-	        <h3>Members</h3>
+	        <h3>Native Members</h3>
 	        <table>
 				<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" />
 			</table>
 		</xsl:if>
-	</xsl:template>
-
-	<xsl:template match="a:SuperType">
-	    <p class="declaration">Superclass: <a class="superclass" href="#{@name}"><xsl:value-of select="@name"/></a></p>
+		<xsl:if test="a:SuperType">
+			<h3>Inherited Members</h3>
+        	<xsl:apply-templates select="a:SuperType" mode="inherited"/>
+        </xsl:if>	
 	</xsl:template>
 
 	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain">
 		<!--  generates a property -->
 		<tr>
-	        <th><p class="name"><xsl:value-of select="@name"/></p></th>
+	        <th><p class="name" id="{../@name}.{@name}"><xsl:value-of select="@name"/></p></th>
 	        <td><p class="cardinality"><xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></p></td>
-	        <td><p class="type"><a href="#{@type}"><xsl:value-of select="@type"/></a></p></td>
+	        <td class="type"><p class="type"><a href="#{@type}"><xsl:value-of select="@type"/></a></p></td>
 	        <td> <xsl:apply-templates mode="annotate" /> </td>
         </tr>
 	</xsl:template>
@@ -154,10 +153,41 @@ p.package { position: absolute; right: 10px; top: 0px}
 	<xsl:template match="a:Simple">
         <!--  generates an attribute with an xsd part 2 simple type -->
         <tr>
+	        <th><p class="name" id="{../@name}.{@name}"><xsl:value-of select="@name"/></p></th>
+	        <td><p class="cardinality"><xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></p></td>
+	        <td class="type"><p class="type"><xsl:value-of select="@xstype"/></p></td>
+	        <td> <xsl:apply-templates mode="annotate" /> </td>
+        </tr>
+	</xsl:template>
+
+	<xsl:template match="a:SuperType" mode="inherited">
+		<xsl:apply-templates select="//a:ComplexType[@name=current()/@name]" mode="inherited"/>
+	</xsl:template>
+	
+	<xsl:template match="a:ComplexType" mode="inherited">
+		<table>
+				<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" mode="inherited"/>
+		</table>
+        <xsl:apply-templates select="a:SuperType" mode="inherited"/>
+	</xsl:template>
+
+	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain" mode="inherited">
+		<!--  generates an inherited property -->
+		<tr>
 	        <th><p class="name"><xsl:value-of select="@name"/></p></th>
 	        <td><p class="cardinality"><xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></p></td>
-	        <td><p class="type"><xsl:value-of select="@xstype"/></p></td>
-	        <td> <xsl:apply-templates mode="annotate" /> </td>
+	        <td class="type"><p class="type"><a href="#{@type}"><xsl:value-of select="@type"/></a></p></td>
+	        <td><p>see <a class="superclass" href="#{../@name}.{@name}"><xsl:value-of select="../@name"/></a></p></td>
+        </tr>
+	</xsl:template>
+
+	<xsl:template match="a:Simple"  mode="inherited">
+        <!--  generates an inherited attribute with an xsd part 2 simple type -->
+        <tr>
+	        <th><p class="name" ><xsl:value-of select="@name"/></p></th>
+	        <td><p class="cardinality"><xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></p></td>
+	        <td class="type"><p class="type"><xsl:value-of select="@xstype"/></p></td>
+	        <td><p>see <a  class="superclass" href="#{../@name}.{@name}"><xsl:value-of select="../@name"/></a></p></td>
         </tr>
 	</xsl:template>
 

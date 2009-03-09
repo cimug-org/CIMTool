@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true
-Bundle-Version: 1.5.2
+Bundle-Version: 1.5.3
 Bundle-ClassPath: cimtoole.jar,
  lib/antlr-2.7.5.jar,
  lib/commons-logging-1.1.jar,
