@@ -17,6 +17,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+
 import au.com.langdale.cimtoole.editors.profile.Detail;
 import au.com.langdale.cimtoole.editors.profile.Hierarchy;
 import au.com.langdale.cimtoole.editors.profile.Populate;
@@ -74,7 +75,7 @@ public class ProfileEditor extends ModelEditor {
 	public JenaTreeModelBase getTree() {
 		if( tree == null ) {
 			tree = new ProfileModel();
-			tree.setRootResource(MESSAGE.Message);
+			tree.setRootResource(MESSAGE.profile);
 			tree.setNamespace(getFileNamespace()); // this is used in Node.create()
 			tree.setSource(getFile().getFullPath().toString());
 			resetModels();
@@ -107,8 +108,16 @@ public class ProfileEditor extends ModelEditor {
 	private void fetchModels() {
 		rawBackgroundModel = models.getProjectOntology(Info.getSchemaFolder(getFile().getProject()));
 		OntModel rawProfileModel = models.getOntology(getFile());
-		if(rawProfileModel != null)
+		if(rawProfileModel != null) {
 			profileModel = Composition.copy(rawProfileModel);
+			String envname;
+			try {
+				envname = Info.getProperty(Info.PROFILE_ENVELOPE, getFile());
+			} catch (CoreException e) {
+				envname = "Profile";
+			}
+			Task.initProfile(profileModel, envname);
+		}
 		else
 			profileModel = null;
 		IFile diagnostics = Info.getRelated(getFile(), "diagnostic");
@@ -119,7 +128,7 @@ public class ProfileEditor extends ModelEditor {
 			diagnosticModel = null;
 		resetModels();
 	}
-	
+
 	public void resetModels() {
 		if( rawBackgroundModel == null || profileModel == null || tree == null || hasDiagnostics && diagnosticModel == null)
 			return;

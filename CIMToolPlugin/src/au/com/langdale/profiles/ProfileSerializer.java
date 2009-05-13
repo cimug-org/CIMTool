@@ -66,7 +66,6 @@ public class ProfileSerializer extends AbstractReader {
 	public static final String XSDGEN = "http://langdale.com.au/2005/xsdgen";
 	private JenaTreeModelBase model;
 	private String baseURI = "";
-	private String envelope = "Profile";
 	private String version = "";
 	private Templates templates;
 	TransformerFactory factory = TransformerFactory.newInstance();
@@ -189,7 +188,7 @@ public class ProfileSerializer extends AbstractReader {
 			tx = templates.newTransformer();
 			tx.setParameter("baseURI", baseURI);
 			tx.setParameter("version", version);
-			tx.setParameter("envelope", envelope);
+			tx.setParameter("envelope", model.getRoot().getName());
 		}
 		else {
 			tx = factory.newTransformer();
@@ -238,6 +237,8 @@ public class ProfileSerializer extends AbstractReader {
 		Element elem = new Element("Catalog", MESSAGE.NS);
 		elem.set("baseURI", baseURI);
 		elem.set("xmlns:m", baseURI);
+		elem.set("name", node.getName());
+		emitNote(node);
 		emitChildren(node);
 		
 		Iterator it = deferred.iterator();
@@ -466,14 +467,6 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("name", node.getName());
 		emit(value.getComment(null));
 		elem.close();
-	}
-
-	public String getEnvelope() {
-		return envelope;
-	}
-
-	public void setEnvelope(String envelope) {
-		this.envelope = envelope;
 	}
 
 	public String getVersion() {

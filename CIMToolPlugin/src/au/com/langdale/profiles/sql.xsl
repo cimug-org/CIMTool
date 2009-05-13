@@ -14,6 +14,8 @@
 		<xsl:param name="name" select="@name"/>
 		<xsl:text>"</xsl:text><xsl:value-of select="$name"/><xsl:text>"</xsl:text>
 	</xsl:template>
+	
+	<xsl:param name="mridType">CHAR VARYING(30)</xsl:param>
 
 	<xsl:template name="type">
 		<xsl:text> </xsl:text>
@@ -79,7 +81,8 @@
 		<xsl:text>CREATE TABLE </xsl:text>
 		<xsl:call-template name="ident"/> 
 		<xsl:call-template name="begin"/>
-		<xsl:text>"mRID" NUMBER NOT NULL UNIQUE</xsl:text>
+		<xsl:text>"mRID" </xsl:text><value-of select="$mridType"/>
+		<xsl:text> NOT NULL UNIQUE</xsl:text>
 		<xsl:apply-templates/>
 		<xsl:call-template name="end"/>
 	</xsl:template>
@@ -133,7 +136,7 @@
 			<xsl:call-template name="comma"/>
 			<xsl:call-template name="annotate" />
 			<xsl:call-template name="ident"/>
-			<xsl:text> NUMBER</xsl:text>
+			<xsl:text> </xsl:text><value-of select="$mridType"/>
 			<xsl:call-template name="notnull"/>
 		</xsl:if>
 	</xsl:template>

@@ -81,6 +81,7 @@ p.package { position: absolute; right: 10px; top: 0px}
 			</head>
 			<body>
 				<h1>Profile Documentation</h1>
+				<p><xsl:value-of select="a:Note" /></p>
 				<p class="declaration">
 					Profile namespace:
 					<span class="namespace"><xsl:value-of select="$baseURI" /></span>

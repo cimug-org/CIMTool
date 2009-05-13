@@ -15,7 +15,7 @@ import au.com.langdale.ui.builder.FurnishedWizard;
 
 public class NewProfile extends FurnishedWizard implements INewWizard {
 	
-	private ProfileWizardPage main = new ProfileWizardPage();
+	private NewProfilePage main = new NewProfilePage();
 	private IWorkbench workbench;
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {

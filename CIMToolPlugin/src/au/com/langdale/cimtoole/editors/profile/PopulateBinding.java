@@ -103,7 +103,7 @@ public class PopulateBinding  {
 				parent = node.getParent().getSubject();
 				getTree().setRootResource(parent);
 			}
-			else if(subject != null && (subject.isClass() || subject.equals(MESSAGE.Message))) {
+			else if(subject != null && (subject.isClass() || subject.equals(MESSAGE.profile))) {
 				parent = null;
 				getTree().setRootResource(subject);
 			}

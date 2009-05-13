@@ -26,6 +26,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+
 import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
@@ -69,11 +73,10 @@ public class Task extends Info {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				OntModel model = ModelFactory.createMem();
-				model.createClass(MESSAGE.Message.getURI());
+				initProfile(model, envname);
 				monitor.worked(1);
 				write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
 				file.setPersistentProperty(PROFILE_NAMESPACE, namespace);
-				file.setPersistentProperty(PROFILE_ENVELOPE, envname);
 				monitor.worked(1);
 			}
 		};
@@ -141,12 +144,13 @@ public class Task extends Info {
 		};
 	}
 	
-	public static IWorkspaceRunnable importProfile(final IFile file, final String pathname, final String namespace, final String envname) {
+	public static IWorkspaceRunnable importProfile(final IFile file, final String pathname, final String namespace) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				importFile(file, pathname, monitor);
+				OntModel model = parse(openExternalFile(pathname, monitor), "owl", namespace);
+				initProfile(model, getPreference(PROFILE_ENVELOPE));
+				writeProfile(file, model, namespace, monitor);
 				file.setPersistentProperty(PROFILE_NAMESPACE, namespace);
-				file.setPersistentProperty(PROFILE_ENVELOPE, envname);
 			}
 		};
 	}
@@ -210,7 +214,7 @@ public class Task extends Info {
 		ProfileModel tree = new ProfileModel();
 		tree.setOntModel(model);
 		tree.setBackgroundModel(backgroundModel);
-		tree.setRootResource(MESSAGE.Message);
+		tree.setRootResource(MESSAGE.profile);
 		return tree;
 	}
 
@@ -311,7 +315,7 @@ public class Task extends Info {
 	public static IWorkspaceRunnable saveProfile(final IFile file, final OntModel model, final String namespace) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
+				writeProfile(file, model, namespace, monitor);
 			}
 		};
 	}
@@ -337,6 +341,12 @@ public class Task extends Info {
 	}
 
 	private static void importFile(final IFile file, final String pathname, IProgressMonitor monitor) throws CoreException {
+		InputStream source = openExternalFile(pathname, monitor);
+		writeFile(file, source, monitor);
+		monitor.worked(1);
+	}
+
+	private static InputStream openExternalFile(final String pathname, IProgressMonitor monitor) throws CoreException {
 		InputStream source;
 		try {
 			source = new BufferedInputStream( new FileInputStream(pathname));
@@ -344,8 +354,7 @@ public class Task extends Info {
 			throw error("can't open " + pathname, e);
 		}
 		monitor.worked(1);
-		writeFile(file, source, monitor);
-		monitor.worked(1);
+		return source;
 	}
 
 	private static void writeFile(final IFile file, InputStream source,	IProgressMonitor monitor) throws CoreException {
@@ -355,4 +364,15 @@ public class Task extends Info {
 			file.create(source, false, monitor);
 	}
 
+	private static void writeProfile(final IFile file, final OntModel model, final String namespace, IProgressMonitor monitor) throws CoreException {
+		write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
+	}
+
+	public static void initProfile(OntModel profileModel, String envname) {
+		// add ontology header to an old or empty profile
+		if( ! profileModel.contains(MESSAGE.profile, RDF.type, OWL.Ontology)) {
+			MESSAGE.loadOntology(profileModel);
+			profileModel.add(MESSAGE.profile, RDFS.label, envname, null);
+		}
+	}
 }

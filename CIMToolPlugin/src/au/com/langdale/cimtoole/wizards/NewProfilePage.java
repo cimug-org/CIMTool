@@ -17,36 +17,20 @@ import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.plumbing.Template;
 import au.com.langdale.validation.Validation;
 
-public class ProfileWizardPage extends FurnishedWizardPage {
+public class NewProfilePage extends FurnishedWizardPage {
 
 	private final String NAMESPACE = Info.getPreference(Info.PROFILE_NAMESPACE);
 	private final String ENVELOPE = Info.getPreference(Info.PROFILE_ENVELOPE);
 	
 	private IFile file;
 	
-	private String[] sources;
-	private boolean importing;
-
 	private ProjectBinding projects = new ProjectBinding();
-	private TextBinding source = new TextBinding(Validation.EXTANT_FILE);
 	private LocalFileBinding filename = new LocalFileBinding("owl");
 	private TextBinding namespace = new TextBinding(Validation.NAMESPACE, NAMESPACE);
 	private TextBinding envelope = new TextBinding(Validation.NCNAME, ENVELOPE);
 	
-	public ProfileWizardPage() {
+	public NewProfilePage() {
 		super("main");
-	}
-
-	public boolean isImporting() {
-		return importing;
-	}
-
-	public void setImporting(boolean importing) {
-		this.importing = importing;
-	}
-
-	public String getPathname() {
-		return source.getText();
 	}
 
 	public void setSelected(IStructuredSelection selection) {
@@ -65,15 +49,6 @@ public class ProfileWizardPage extends FurnishedWizardPage {
 		return envelope.getText();
 	}
 
-	public String[] getSources() {
-		return sources;
-	}
-
-	public void setSources(String[] sources) {
-		this.sources = sources;
-		importing = sources != null;
-	}
-	
 	@Override
 	protected Content createContent() {
 		return new Content() {
@@ -82,7 +57,6 @@ public class ProfileWizardPage extends FurnishedWizardPage {
 			@Override
 			protected Template define() {
 				return Grid(
-					Source(),
 					Group(Label("Namespace URI:"), Field("namespace")),
 					Group(Label("Project")),
 					Group(CheckboxTableViewer("projects")),
@@ -90,21 +64,12 @@ public class ProfileWizardPage extends FurnishedWizardPage {
 					Group(Label("Envelope Element Name"), Field("envelope"))
 				);
 			}
-			
-			private Group Source() {
-				if(importing)
-					return Group(FileField("source", "File to import:", sources));
-				else
-					return null;
-			}
 
 			@Override
 			public Control realise(Composite parent) {
 				Control panel = super.realise(parent);
 				projects.bind("projects", this);
-				if( importing )
-					source.bind("source", this);
-				filename.bind("filename", this, source);
+				filename.bind("filename", this);
 				namespace.bind("namespace", this);
 				envelope.bind("envelope", this);
 				return panel;

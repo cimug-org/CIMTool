@@ -96,7 +96,7 @@ public class ProfileBuildlets extends Info {
 			ProfileModel model = new ProfileModel();
 			model.setOntModel(getProfileModel(file));
 			model.setBackgroundModel(getBackgroundModel(file));
-			model.setRootResource(MESSAGE.Message);
+			model.setRootResource(MESSAGE.profile);
 			model.setNamespace(getProperty(PROFILE_NAMESPACE, file));
 			return model;
 		}
@@ -160,10 +160,10 @@ public class ProfileBuildlets extends Info {
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
-			ProfileSerializer serializer = new ProfileSerializer(getMessageModel(file));
+			ProfileModel tree = getMessageModel(file);
+			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
 				serializer.setBaseURI(getProperty(PROFILE_NAMESPACE, file));
-				serializer.setEnvelope(getProperty(PROFILE_ENVELOPE, file));
 				
 				// TODO: make this better
 				serializer.setVersion("Beta");

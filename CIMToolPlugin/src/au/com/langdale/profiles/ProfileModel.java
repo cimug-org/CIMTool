@@ -53,13 +53,22 @@ public class ProfileModel extends JenaTreeModelBase {
 		protected String collation() {
 			return "0" + toString();
 		}
+		
+		public void setName(String newName) {
+			getSubject().setLabel(newName, null);
+			changed();
+		}
+		
+		public void setComment(String text) {
+			getSubject().setComment(text, null);
+		}
 	}
 	
 	public class CatalogNode extends SortedNode {
-		private OntResource message;
+		private OntResource subject;
 		
 		public CatalogNode(OntResource message) {
-			this.message = message;
+			this.subject = message;
 		}
 
 		@Override
@@ -81,7 +90,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		 */
 		public OntResource create(String uri) {
 			OntResource child = getOntModel().createClass(uri);
-			child.addSuperClass(message);
+			child.addSuperClass(MESSAGE.Message);
 			return child;
 		}
 
@@ -114,18 +123,17 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		@Override
 		public OntResource getSubject() {
-			return message;
+			return subject;
 		}
 		
-		@Override
-		public String toString() {
+		public String abbrevNamespace() {
 			try {
 				String path = new URI(namespace).getPath();
 				while( path.endsWith("/"))
 					path = path.substring(0, path.length()-1);
 				return path.substring(path.lastIndexOf('/') + 1);
 			} catch (URISyntaxException e) {
-				return super.toString();
+				return namespace;
 			}
 		}
 	}
@@ -157,17 +165,6 @@ public class ProfileModel extends JenaTreeModelBase {
 				node.destroy();
 			}
 			
-			// work around a Jena bug - exception thrown if by r.remove() if (r, p, rdf:nil)
-//			StmtIterator ii = profile.getSubject().listProperties();
-//			while (ii.hasNext()) {
-//				Statement s = ii.nextStatement();
-//				if( s.getObject().equals(RDF.nil)) {
-//					ii.close();
-//					s.remove();
-//					ii  = profile.getSubject().listProperties();
-//				}
-//			}
-			
 			profile.getSubject().remove();
 		}
 		
@@ -182,11 +179,6 @@ public class ProfileModel extends JenaTreeModelBase {
 		@Override
 		public boolean getErrorIndicator() {
 			return profile.getSubject().hasProperty(LOG.hasProblems);
-		}
-		
-		public void setName(String newName) {
-			profile.getSubject().setLabel(newName, null);
-			changed();
 		}
 		
 		public boolean setStereotype(Resource stereo, boolean state) {
@@ -507,8 +499,14 @@ public class ProfileModel extends JenaTreeModelBase {
 				NaturalNode.this.destroy(this);
 			}
 			
-			public String getName() {
-				return label(subject);
+			@Override
+			public void setName(String name) {
+				// TODO: to be implemented
+			}
+			
+			@Override
+			public void setComment(String name) {
+				// TODO: to be implemented
 			}
 		}
 
@@ -696,7 +694,7 @@ public class ProfileModel extends JenaTreeModelBase {
 	 */
 	@Override
 	protected Node classify(OntResource root) {
-		if( root.equals(MESSAGE.Message)) 
+		if( root.equals(MESSAGE.profile)) 
 			return new CatalogNode(root);
 		
 		if( root.hasSuperClass(MESSAGE.Message))

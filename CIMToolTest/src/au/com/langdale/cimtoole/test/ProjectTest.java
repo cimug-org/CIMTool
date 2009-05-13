@@ -79,8 +79,7 @@ public class ProjectTest extends WorkspaceTest {
 		IWorkspaceRunnable task = Task.importProfile(
 				profile, 
 				path, 
-				PROFILE_NS, 
-				PROFILE_ENVELOPE);
+				PROFILE_NS);
 		task.run(monitor);
 	}
 

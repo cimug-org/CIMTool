@@ -1,3 +1,6 @@
+#! /usr/bin/python
+#
+
 from botoscripts.s3 import *
 from botoscripts.util import *
 from os import listdir

@@ -26,8 +26,7 @@ public class ProfileTasks extends ProjectTest {
 		IWorkspaceRunnable action = Task.importProfile(
 				profile, 
 				getSamplesFolder() + SAMPLE_PROFILE, 
-				PROFILE_NS, 
-				PROFILE_ENVELOPE);
+				PROFILE_NS);
 		workspace.run(action, monitor);
 		assertTrue("profile exists", profile.exists());
 	}

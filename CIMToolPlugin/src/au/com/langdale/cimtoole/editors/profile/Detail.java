@@ -7,6 +7,7 @@ package au.com.langdale.cimtoole.editors.profile;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.profiles.ProfileModel.ProfileNode;
+import au.com.langdale.profiles.ProfileModel.SortedNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.plumbing.Template;
@@ -45,26 +46,27 @@ public class Detail extends FurnishedEditor {
 				getForm().setText(master.getComment());
 
 				ElementNode enode = null;
-				ProfileNode pnode = null;
+				SortedNode snode = null;
 				ModelNode   mnode = null;
 				
 				if (master.getNode() instanceof ModelNode) 
 					mnode = (ModelNode) master.getNode();
-				if (master.getNode() instanceof ProfileNode) 
-					pnode = (ProfileNode) master.getNode();
+				if (master.getNode() instanceof SortedNode) 
+					snode = (SortedNode) master.getNode();
+		
 				if (master.getNode() instanceof ElementNode) 
 					enode = (ElementNode) master.getNode();
 				
-				if( mnode != null && mnode.getBase() != null) {
-					setTextValue("base-notes", mnode.getBase().getComment(null));
+				if( mnode != null && mnode.getBase() != null && mnode.getBase() != mnode.getSubject()) {
+					setTextValue("base-notes", mnode.getBase().getComment(null)).setEnabled(true);
 				}
 				else {
-					setTextValue("base-notes", "");
+					setTextValue("base-notes", "").setEnabled(false);
 				}
 
-				if( pnode != null) {
-					setTextValue("name", pnode.getName()).setEnabled(true);
-					setTextValue("notes", pnode.getSubject().getComment(null)).setEnabled(true);
+				if( snode != null) {
+					setTextValue("name", snode.getName()).setEnabled(true);
+					setTextValue("notes", snode.getSubject().getComment(null)).setEnabled(true);
 				}
 				else {
 					setTextValue("name", "").setEnabled(false);
@@ -91,10 +93,10 @@ public class Detail extends FurnishedEditor {
 			
 			@Override
 			public void update() {
-				if (master.getNode() instanceof ProfileNode) { 
-					ProfileNode pnode = (ProfileNode) master.getNode();	
+				if (master.getNode() instanceof SortedNode) { 
+					SortedNode pnode = (SortedNode) master.getNode();	
 					pnode.setName(getText("name").getText().trim());
-					pnode.getSubject().setComment(getText("notes").getText(), null);
+					pnode.setComment(getText("notes").getText());
 				}
 			}
 		};

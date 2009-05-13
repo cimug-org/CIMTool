@@ -65,9 +65,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 			private Template defineProfilePage() {
 				return Grid(
 						Group(	Label("Namespace URI:"), 
-								new Property(Info.PROFILE_NAMESPACE, Validation.NAMESPACE)),
-						Group(	Label("Envelope Name:"), 
-								new Property(Info.PROFILE_ENVELOPE, Validation.NCNAME))
+								new Property(Info.PROFILE_NAMESPACE, Validation.NAMESPACE))
 				);
 			}
 

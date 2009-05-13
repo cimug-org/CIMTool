@@ -13,7 +13,7 @@ import au.com.langdale.ui.builder.FurnishedWizard;
 
 public class ImportProfile extends FurnishedWizard implements IImportWizard {
 	
-	private ProfileWizardPage main = new ProfileWizardPage();
+	private ImportProfilePage main = new ImportProfilePage();
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Import Profile"); 
@@ -31,6 +31,6 @@ public class ImportProfile extends FurnishedWizard implements IImportWizard {
 	
 	@Override
 	public boolean performFinish() {
-		return run(Task.importProfile(main.getFile(), main.getPathname(), main.getNamespace(), main.getEnvname()), main.getFile().getParent());
+		return run(Task.importProfile(main.getFile(), main.getPathname(), main.getNamespace()), main.getFile().getParent());
 	}
 }
