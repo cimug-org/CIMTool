@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -22,6 +23,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -67,7 +70,7 @@ public class ProfileSerializer extends AbstractReader {
 	private JenaTreeModelBase model;
 	private String baseURI = "";
 	private String version = "";
-	private Templates templates;
+	private ArrayList templates = new ArrayList(); 
 	TransformerFactory factory = TransformerFactory.newInstance();
 	private final String xsd = XSD.anyURI.getNameSpace();
 	private HashSet deferred = new HashSet();
@@ -96,22 +99,36 @@ public class ProfileSerializer extends AbstractReader {
 	}
 	
 	/**
-	 * Intall a stylesheet to transform the abstract message definition to a schema. 
+	 * Install a stylesheet to transform the abstract message definition to a schema. 
 	 */
 	public void setStyleSheet(InputStream s, String base) throws TransformerConfigurationException {
-		templates = factory.newTemplates(new StreamSource(s, base));
+		templates.clear();
+		addStyleSheet(s, base);
 		
+	}
+
+	/**
+	 * Install a stylesheet to apply after any previously installed stylesheets. 
+	 */
+	public void addStyleSheet(InputStream s, String base) throws TransformerConfigurationException {
+		templates.add( factory.newTemplates(new StreamSource(s, base)));
 	}
 	
 	/**
 	 * Install a stylesheet from the standard set. Use null for no stylesheet.
-	 * @throws TransformerConfigurationException 
 	 */
 	public void setStyleSheet(String name) throws TransformerConfigurationException {
 		if( name == null)
-			templates = null;
+			templates.clear();
 		else
 			setStyleSheet(getClass().getResourceAsStream(name + ".xsl"), XSDGEN);
+	}
+
+	/**
+	 * Install a stylesheet to apply after any previously installed stylesheets. 
+	 */
+	public void addStyleSheet(String name) throws TransformerConfigurationException {
+		addStyleSheet(getClass().getResourceAsStream(name + ".xsl"), "");
 	}
 	
 	/**
@@ -183,19 +200,29 @@ public class ProfileSerializer extends AbstractReader {
 	 * and write it to the given stream.
 	 */
 	public void write(OutputStream ostream) throws TransformerException, IOException {
-		Transformer tx;
-		if( templates != null) {
-			tx = templates.newTransformer();
-			tx.setParameter("baseURI", baseURI);
-			tx.setParameter("version", version);
-			tx.setParameter("envelope", model.getRoot().getName());
+		Transformer[] tx; 
+		if( ! templates.isEmpty()) {
+			tx = new Transformer[templates.size()];
+			for( int ix = 0; ix < templates.size(); ix++) {
+			  Transformer ti = ((Templates)templates.get(ix)).newTransformer();
+			  ti.setParameter("baseURI", baseURI);
+			  ti.setParameter("version", version);
+			  ti.setParameter("envelope", model.getRoot().getName());
+			  tx[ix] = ti;
+			}
 		}
 		else {
-			tx = factory.newTransformer();
+			tx = new Transformer[] { factory.newTransformer() };
 		}
 		Result result = new StreamResult(ostream);
 		Source source = new SAXSource(this, new InputSource());
-		tx.transform(source, result);
+		for( int ix = 0; ix < tx.length-1; ix++ ) {
+			DOMResult inter =  new DOMResult();
+			tx[0].transform(source, inter);
+			source = new DOMSource(inter.getNode());
+			
+		}
+		tx[tx.length-1].transform(source, result);
 		ostream.close();
 	}
 

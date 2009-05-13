@@ -15,7 +15,12 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.5.4 </h2><ul><li><p>enhancement: A description can be added to a profile
+          <div id="content"><h2>Release 1.5.5 </h2><ul><li><p>new feature: CIMTool can now generate java class definitions with JPA annotations.
+These classes can be used in a java program to implement the objects of a CIM profile. </p><p>The JPA (Java Persistance API) annotations map the classes to relational database tables.  
+Thus the CIM profile objects can be loaded from and saved to a database with a minimum of effort. 
+The JPA feature has been tested with a Hibernate and Oracle combination. See <a href="http://hibernate.org" class="external">http://hibernate.org</a> </p><p>The database can be created using the DDL feature released in version 1.4.4.</p><p>To use these features, check the SQL and java builder options on the summary page of your
+CIM profile.  SQL and java artifacts will be created.  The database structure is 
+described in the CIMTool help.</p><ul><li><p>correction: a regression in version 1.5.4 affecting mRID fields in SQL artifacts was fixed.</p></li></ul></li></ul><h2>Release 1.5.4 </h2><ul><li><p>enhancement: A description can be added to a profile
 and edited on the profile editor detail tab. It will appear
 in the HTML documentation and as an annotation to any XML schema.</p></li><li><p>enhancement: The profile envelope name is now preserved when
 profiles or projects containing profiles are exported and imported.

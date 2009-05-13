@@ -50,7 +50,7 @@ BUCKET="files.cimtool.org"
 DEVEL="development/"
 ARCHIVE="CIMToolUpdate.zip"
 ECLIPSE="CIMTool-Eclipse-VERSION.zip"
-KIT="eclipse-win32-kit.zip"
+KIT="/home/share/eclipse-3.4.2-win32-kit.zip"
 
 def manifest():
 	yield findlast("features", "au.com.langdale.cimtoole.feature_")
@@ -65,7 +65,7 @@ def lastversion():
 	return version(path)
 	
 def version(path):
-	return search("_([0-9]+[.][0-9]+[.][0-9]+)[.]jar$", path).group(1)
+	return search("_([0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?)[.]jar$", path).group(1)
 
 def build_update_dist(archive_name, manifest):
 	zipit(archive_name, manifest) 
@@ -114,6 +114,16 @@ def do_interim(bucket_name=BUCKET):
 	upload_files(bucket, manifest())
 	mirror(bucket, ARCHIVE)
 	
+
+def do_kit(bucket_name=BUCKET):
+	eclipse_dist = ECLIPSE.replace("VERSION", lastversion())
+	build_eclipse_dist(eclipse_dist, manifest())
+	print "built:", ARCHIVE, eclipse_dist
+	
+	bucket = get_bucket(bucket_name)
+	mirror(bucket, eclipse_dist)
+        
+        
 def do_lastversion():
 	print lastversion()
 

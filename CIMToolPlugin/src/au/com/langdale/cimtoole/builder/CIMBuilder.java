@@ -27,6 +27,7 @@ import org.xml.sax.SAXParseException;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
 import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
 import au.com.langdale.cimtoole.project.Info;
@@ -52,7 +53,8 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new XSDBuildlet(),
 			new TransformBuildlet(null, "xml"),
 			new TransformBuildlet("html", "html"),
-			new TransformBuildlet("sql", "sql"),
+			new TextBuildlet("sql", "sql"),
+			new TextBuildlet("jpa", "java"),
 			new SimpleOWLBuildlet("RDF/XML", "simple-owl", false),
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 			new SimpleOWLBuildlet("RDF/XML", "simple-owl-augmented", true),

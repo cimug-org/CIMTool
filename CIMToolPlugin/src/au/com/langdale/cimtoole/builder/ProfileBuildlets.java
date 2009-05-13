@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
@@ -157,6 +158,8 @@ public class ProfileBuildlets extends Info {
 				return Collections.EMPTY_LIST;
 		}
 		
+		protected void setupPostProcessors( ProfileSerializer serializer) throws TransformerConfigurationException {}
+		
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
@@ -177,12 +180,20 @@ public class ProfileBuildlets extends Info {
 					serializer.setStyleSheet(style);
 				}
 				
-				serializer.write(new ResourceOutputStream(result, monitor, false, true));
+				setupPostProcessors(serializer);
+				
+			} catch (TransformerConfigurationException e) {
+				error("error parsing XSLT script", e);
+			}
+			
+			try {
+			    serializer.write(new ResourceOutputStream(result, monitor, false, true));
 			} catch (TransformerException e) {
-				error("error transforming profile", e);
-			} catch (IOException e) {
+			    error("error transforming profile", e);
+		    }
+			catch(IOException e) {
 				error("error writing output", e);
-			}		
+			}	
 		}
 	}
 	/**
@@ -211,6 +222,22 @@ public class ProfileBuildlets extends Info {
 			}
 		}
 	}
+	
+	/**
+	 * Buildlet for java artifacts.
+	 */
+	public static class TextBuildlet extends TransformBuildlet {
+
+		public TextBuildlet(String style, String ext) {
+			super(style, ext);
+		}
+		
+		@Override
+		protected void setupPostProcessors( ProfileSerializer serializer) throws TransformerConfigurationException {
+			serializer.addStyleSheet("indent");
+		}
+	}
+	
 	/**
 	 * Buildlet for profile artifacts that are related to the simplified RDFS
 	 * representation.  
@@ -287,7 +314,8 @@ public class ProfileBuildlets extends Info {
 				new XSDBuildlet(),
 				new TransformBuildlet(null, "xml"),
 				new TransformBuildlet("html", "html"),
-				new TransformBuildlet("sql", "sql"),
+				new TextBuildlet("sql", "sql"),
+				new TextBuildlet("jpa", "java"),
 				new SimpleOWLBuildlet("RDF/XML", "simple-owl", false),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML", "simple-owl-augmented", true),

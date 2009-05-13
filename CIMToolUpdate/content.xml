@@ -1,46 +1,42 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?metadataRepository class='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'?>
-<repository name='file:/extra/projects/CIMToolEclipse/CIMToolUpdate/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+<repository name='file:/extra/projects/CIMToolEclipse/CIMToolUpdate/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1.0.0'>
   <properties size='2'>
     <property name='p2.compressed' value='false'/>
-    <property name='p2.timestamp' value='1237259325403'/>
+    <property name='p2.timestamp' value='1242122317489'/>
   </properties>
   <references size='2'>
-    <repository url='http://files.cimtool.org' type='1' options='0'/>
     <repository url='http://files.cimtool.org' type='0' options='0'/>
+    <repository url='http://files.cimtool.org' type='1' options='0'/>
   </references>
-  <units size='9'>
-    <unit id='au.com.langdale.cimtoole.feature.feature.group' version='1.5.4' singleton='false'>
-      <update id='au.com.langdale.cimtoole.feature.feature.group' range='[0.0.0,1.5.4)' severity='0'/>
-      <properties size='5'>
+  <units size='13'>
+    <unit id='au.com.langdale.cimtoole.feature.feature.jar' version='1.5.5.200905121713'>
+      <update id='au.com.langdale.cimtoole.feature.feature.jar' range='[0.0.0,1.5.5.200905121713)' severity='0'/>
+      <properties size='4'>
         <property name='org.eclipse.equinox.p2.name' value='CIMTool'/>
         <property name='org.eclipse.equinox.p2.description' value='CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.'/>
         <property name='org.eclipse.equinox.p2.description.url' value='http://cimtool.org'/>
         <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
-        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
       </properties>
-      <provides size='1'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.group' version='1.5.4'/>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.jar' version='1.5.5.200905121713'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='au.com.langdale.cimtoole.feature' version='1.5.5.200905121713'/>
       </provides>
-      <requires size='12'>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='org.junit' range='0.0.0'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole' range='[1.5.4,1.5.4]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.help' range='[1.5.4,1.5.4]'/>
-        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.jar' range='[1.5.4,1.5.4]'>
-          <filter>
-            (org.eclipse.update.install.features=true)
-          </filter>
-        </required>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='au.com.langdale.cimtoole.feature' version='1.5.5.200905121713'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
       <licenses size='1'>
         <license>
           This software is Copyright 2005,2006,2007,2008 Langdale Consultants &#xA;except where otherwise stated. &#xA;&#xA;Langdale Consultants can be contacted at:&#xA;&#xA;http://www.langdale.com.au&#xA;&#xA;You can redistribute this software and/or modify it under &#xA;the terms of the GNU Lesser General Public License version 2.1&#xA;as published by the Free Software Foundation.&#xA;&#xA;This software is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.&#xA;&#xA;You should have received a copy of the GNU Lesser General Public&#xA;License along with this library; if not, write to the &#xA;&#xA;Free Software Foundation, Inc., &#xA;51 Franklin Street, Fifth Floor, &#xA;Boston, MA  02110-1301  USA&#xA;&#xA;This software includes parts of the Jena package http://jena.sf.net&#xA;redistributed under the Jena license and the Apache license.&#xA;&#xA;This software includes parts of the POI package &#xA;redistributed under the Apache license. &#xA;D OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -50,38 +46,41 @@
         CIMTool is copyright 2005,2006,2007,2008,2009 &#xA;Langdale Consultants Pty Ltd&#xA;Suite 14 7 Narabang Way&#xA;Belrose NSW&#xA;AUSTRALIA
       </copyright>
     </unit>
-    <unit id='au.com.langdale.cimtoole.help' version='1.5.4'>
-      <update id='au.com.langdale.cimtoole.help' range='[0.0.0,1.5.4)' severity='0'/>
-      <properties size='2'>
-        <property name='org.eclipse.equinox.p2.name' value='CIMTool Help Plug-in'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+    <unit id='tooling.source.default' version='1.0.0' singleton='false'>
+      <hostRequirements size='1'>
+        <required namespace='org.eclipse.equinox.p2.eclipse.type' name='source' range='0.0.0' optional='true' multiple='true' greedy='false'/>
+      </hostRequirements>
+      <properties size='1'>
+        <property name='org.eclipse.equinox.p2.type.fragment' value='true'/>
       </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.help' version='1.5.4'/>
-        <provided namespace='osgi.bundle' name='au.com.langdale.cimtoole.help' version='1.5.4'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      <provides size='2'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='tooling.source.default' version='1.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.flavor' name='tooling' version='1.0.0'/>
       </provides>
-      <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='au.com.langdale.cimtoole.help' version='1.5.4'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <requires size='1'>
+        <required namespace='org.eclipse.equinox.p2.eclipse.type' name='source' range='0.0.0' optional='true' multiple='true' greedy='false'/>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
       <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='manifest'>
-            Bundle-Vendor: Langdale Consultants&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-SymbolicName: au.com.langdale.cimtoole.help;singleton:=true&#xA;Bundle-Name: CIMTool Help Plug-in&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.4&#xA;
+        <instructions size='2'>
+          <instruction key='install'>
+            addSourceBundle(bundle:${artifact})
+          </instruction>
+          <instruction key='uninstall'>
+            removeSourceBundle(bundle:${artifact})
           </instruction>
         </instructions>
       </touchpointData>
     </unit>
-    <unit id='au.com.langdale.cimtoole' version='1.5.4'>
-      <update id='au.com.langdale.cimtoole' range='[0.0.0,1.5.4)' severity='0'/>
+    <unit id='au.com.langdale.cimtoole' version='1.5.5.200905121713'>
+      <update id='au.com.langdale.cimtoole' range='[0.0.0,1.5.5.200905121713)' severity='0'/>
       <properties size='2'>
         <property name='org.eclipse.equinox.p2.name' value='CIMTool Plug-in'/>
         <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
       </properties>
       <provides size='90'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole' version='1.5.4'/>
-        <provided namespace='osgi.bundle' name='au.com.langdale.cimtoole' version='1.5.4'/>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole' version='1.5.5.200905121713'/>
+        <provided namespace='osgi.bundle' name='au.com.langdale.cimtoole' version='1.5.5.200905121713'/>
         <provided namespace='java.package' name='au.com.langdale.cim' version='0.0.0'/>
         <provided namespace='java.package' name='au.com.langdale.cimtoole' version='0.0.0'/>
         <provided namespace='java.package' name='au.com.langdale.cimtoole.actions' version='0.0.0'/>
@@ -183,78 +182,16 @@
         <required namespace='osgi.bundle' name='org.eclipse.compare' range='0.0.0'/>
       </requires>
       <artifacts size='1'>
-        <artifact classifier='osgi.bundle' id='au.com.langdale.cimtoole' version='1.5.4'/>
+        <artifact classifier='osgi.bundle' id='au.com.langdale.cimtoole' version='1.5.5.200905121713'/>
       </artifacts>
       <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
       <touchpointData size='1'>
         <instructions size='1'>
           <instruction key='manifest'>
-            Bundle-Vendor: Langdale Consultants&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin&#xA;Bundle-ClassPath: cimtoole.jar,lib/antlr-2.7.5.jar,lib/commons-logging-1.1.jar,lib/concurrent.jar,lib/icu4j_3_4.jar,lib/iri.jar,lib/jena.jar,lib/log4j-1.2.12.jar,lib/stax-api-1.0.jar,lib/xercesImpl.jar,lib/xml-apis.jar,lib/poi-3.0.1-FINAL-20070705.jar,lib/hsqldb.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.ui.ide,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.views,org.eclipse.ui.forms,org.eclipse.compare&#xA;Bundle-Name: CIMTool Plug-in&#xA;Bundle-ActivationPolicy: lazy&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true&#xA;Bundle-Version: 1.5.4&#xA;Export-Package: au.com.langdale.cim,au.com.langdale.cimtoole,au.com.langdale.cimtoole.actions,au.com.langdale.cimtoole.builder,au.com.langdale.cimtoole.compare,au.com.langdale.cimtoole.editors,au.com.langdale.cimtoole.editors.profile,au.com.langdale.cimtoole.handlers,au.com.langdale.cimtoole.popup.actions,au.com.langdale.cimtoole.preferences,au.com.langdale.cimtoole.project,au.com.langdale.cimtoole.properties,au.com.langdale.cimtoole.views,au.com.langdale.cimtoole.wizards,au.com.langdale.inference,au.com.langdale.jena,au.com.langdale.kena,au.com.langdale.kena.filters,au.com.langdale.profiles,au.com.langdale.sax,au.com.langdale.splitmodel,au.com.langdale.ui,au.com.langdale.ui.binding,au.com.langdale.ui.builder,au.com.langdale.ui.plumbing,au.com.langdale.ui.util,au.com.langdale.util,au.com.langdale.validation,au.com.langdale.xmi,com.hp.hpl.jena,com.hp.hpl.jena.assembler,com.hp.hpl.jena.assembler.acceptance,com.hp.hpl.jena.assembler.assemblers,com.hp.hpl.jena.assembler.exceptions,com.hp.hpl.jena.datatypes,com.hp.hpl.jena.datatypes.xsd,com.hp.hpl.jena.datatypes.xsd.impl,com.hp.hpl.jena.db,com.hp.hpl.jena.db.impl,com.hp.hpl.jena.enhanced,com.hp.hpl.jena.graph,com.hp.hpl.jena.graph.compose,com.hp.hpl.jena.graph.impl,com.hp.hpl.jena.graph.query,com.hp.hpl.jena.graph.query.regexptrees,com.hp.hpl.jena.iri,com.hp.hpl.jena.iri.impl,com.hp.hpl.jena.iri.test,com.hp.hpl.jena.mem,com.hp.hpl.jena.mem.faster,com.hp.hpl.jena.n3,com.hp.hpl.jena.n3.turtle,com.hp.hpl.jena.n3.turtle.parser,com.hp.hpl.jena.ontology,com.hp.hpl.jena.ontology.daml,com.hp.hpl.jena.ontology.daml.impl,com.hp.hpl.jena.ontology.event,com.hp.hpl.jena.ontology.impl,com.hp.hpl.jena.rdf.arp,com.hp.hpl.jena.rdf.arp.impl,com.hp.hpl.jena.rdf.arp.lang,com.hp.hpl.jena.rdf.arp.states,com.hp.hpl.jena.rdf.listeners,com.hp.hpl.jena.rdf.model,com.hp.hpl.jena.rdf.model.impl,com.hp.hpl.jena.reasoner,com.hp.hpl.jena.reasoner.dig,com.hp.hpl.jena.reasoner.rdfsReasoner1,com.hp.hpl.jena.reasoner.rulesys,com.hp.hpl.jena.reasoner.rulesys.builtins,com.hp.hpl.jena.reasoner.rulesys.impl,com.hp.hpl.jena.reasoner.rulesys.impl.oldCode,com.hp.hpl.jena.reasoner.transitiveReasoner,com.hp.hpl.jena.regression,com.hp.hpl.jena.shared,com.hp.hpl.jena.shared.impl,com.hp.hpl.jena.shared.uuid,com.hp.hpl.jena.shared.wg,com.hp.hpl.jena.util,com.hp.hpl.jena.util.cache,com.hp.hpl.jena.util.iterator,com.hp.hpl.jena.util.junit,com.hp.hpl.jena.util.tuple,com.hp.hpl.jena.util.xml,com.hp.hpl.jena.vocabulary,com.hp.hpl.jena.xmloutput,com.hp.hpl.jena.xmloutput.impl&#xA;
+            Bundle-Vendor: Langdale Consultants&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin&#xA;Bundle-ClassPath: cimtoole.jar,lib/antlr-2.7.5.jar,lib/commons-logging-1.1.jar,lib/concurrent.jar,lib/icu4j_3_4.jar,lib/iri.jar,lib/jena.jar,lib/log4j-1.2.12.jar,lib/stax-api-1.0.jar,lib/xercesImpl.jar,lib/xml-apis.jar,lib/poi-3.0.1-FINAL-20070705.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.ui.ide,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.views,org.eclipse.ui.forms,org.eclipse.compare&#xA;Bundle-Name: CIMTool Plug-in&#xA;Bundle-ActivationPolicy: lazy&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true&#xA;Bundle-Version: 1.5.5.200905121713&#xA;Export-Package: au.com.langdale.cim,au.com.langdale.cimtoole,au.com.langdale.cimtoole.actions,au.com.langdale.cimtoole.builder,au.com.langdale.cimtoole.compare,au.com.langdale.cimtoole.editors,au.com.langdale.cimtoole.editors.profile,au.com.langdale.cimtoole.handlers,au.com.langdale.cimtoole.popup.actions,au.com.langdale.cimtoole.preferences,au.com.langdale.cimtoole.project,au.com.langdale.cimtoole.properties,au.com.langdale.cimtoole.views,au.com.langdale.cimtoole.wizards,au.com.langdale.inference,au.com.langdale.jena,au.com.langdale.kena,au.com.langdale.kena.filters,au.com.langdale.profiles,au.com.langdale.sax,au.com.langdale.splitmodel,au.com.langdale.ui,au.com.langdale.ui.binding,au.com.langdale.ui.builder,au.com.langdale.ui.plumbing,au.com.langdale.ui.util,au.com.langdale.util,au.com.langdale.validation,au.com.langdale.xmi,com.hp.hpl.jena,com.hp.hpl.jena.assembler,com.hp.hpl.jena.assembler.acceptance,com.hp.hpl.jena.assembler.assemblers,com.hp.hpl.jena.assembler.exceptions,com.hp.hpl.jena.datatypes,com.hp.hpl.jena.datatypes.xsd,com.hp.hpl.jena.datatypes.xsd.impl,com.hp.hpl.jena.db,com.hp.hpl.jena.db.impl,com.hp.hpl.jena.enhanced,com.hp.hpl.jena.graph,com.hp.hpl.jena.graph.compose,com.hp.hpl.jena.graph.impl,com.hp.hpl.jena.graph.query,com.hp.hpl.jena.graph.query.regexptrees,com.hp.hpl.jena.iri,com.hp.hpl.jena.iri.impl,com.hp.hpl.jena.iri.test,com.hp.hpl.jena.mem,com.hp.hpl.jena.mem.faster,com.hp.hpl.jena.n3,com.hp.hpl.jena.n3.turtle,com.hp.hpl.jena.n3.turtle.parser,com.hp.hpl.jena.ontology,com.hp.hpl.jena.ontology.daml,com.hp.hpl.jena.ontology.daml.impl,com.hp.hpl.jena.ontology.event,com.hp.hpl.jena.ontology.impl,com.hp.hpl.jena.rdf.arp,com.hp.hpl.jena.rdf.arp.impl,com.hp.hpl.jena.rdf.arp.lang,com.hp.hpl.jena.rdf.arp.states,com.hp.hpl.jena.rdf.listeners,com.hp.hpl.jena.rdf.model,com.hp.hpl.jena.rdf.model.impl,com.hp.hpl.jena.reasoner,com.hp.hpl.jena.reasoner.dig,com.hp.hpl.jena.reasoner.rdfsReasoner1,com.hp.hpl.jena.reasoner.rulesys,com.hp.hpl.jena.reasoner.rulesys.builtins,com.hp.hpl.jena.reasoner.rulesys.impl,com.hp.hpl.jena.reasoner.rulesys.impl.oldCode,com.hp.hpl.jena.reasoner.transitiveReasoner,com.hp.hpl.jena.regression,com.hp.hpl.jena.shared,com.hp.hpl.jena.shared.impl,com.hp.hpl.jena.shared.uuid,com.hp.hpl.jena.shared.wg,com.hp.hpl.jena.util,com.hp.hpl.jena.util.cache,com.hp.hpl.jena.util.iterator,com.hp.hpl.jena.util.junit,com.hp.hpl.jena.util.tuple,com.hp.hpl.jena.util.xml,com.hp.hpl.jena.vocabulary,com.hp.hpl.jena.xmloutput,com.hp.hpl.jena.xmloutput.impl
           </instruction>
         </instructions>
       </touchpointData>
-    </unit>
-    <unit id='tooling.source.default' version='1.0.0' singleton='false'>
-      <hostRequirements size='1'>
-        <required namespace='org.eclipse.equinox.p2.eclipse.type' name='source' range='0.0.0' optional='true' multiple='true' greedy='false'/>
-      </hostRequirements>
-      <properties size='1'>
-        <property name='org.eclipse.equinox.p2.type.fragment' value='true'/>
-      </properties>
-      <provides size='2'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='tooling.source.default' version='1.0.0'/>
-        <provided namespace='org.eclipse.equinox.p2.flavor' name='tooling' version='1.0.0'/>
-      </provides>
-      <requires size='1'>
-        <required namespace='org.eclipse.equinox.p2.eclipse.type' name='source' range='0.0.0' optional='true' multiple='true' greedy='false'/>
-      </requires>
-      <touchpoint id='null' version='0.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='2'>
-          <instruction key='install'>
-            addSourceBundle(bundle:${artifact})
-          </instruction>
-          <instruction key='uninstall'>
-            removeSourceBundle(bundle:${artifact})
-          </instruction>
-        </instructions>
-      </touchpointData>
-    </unit>
-    <unit id='au.com.langdale.cimtoole.feature.feature.jar' version='1.5.4'>
-      <update id='au.com.langdale.cimtoole.feature.feature.jar' range='[0.0.0,1.5.4)' severity='0'/>
-      <properties size='4'>
-        <property name='org.eclipse.equinox.p2.name' value='CIMTool'/>
-        <property name='org.eclipse.equinox.p2.description' value='CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.'/>
-        <property name='org.eclipse.equinox.p2.description.url' value='http://cimtool.org'/>
-        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
-      </properties>
-      <provides size='3'>
-        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.jar' version='1.5.4'/>
-        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-        <provided namespace='org.eclipse.update.feature' name='au.com.langdale.cimtoole.feature' version='1.5.4'/>
-      </provides>
-      <filter>
-        (org.eclipse.update.install.features=true)
-      </filter>
-      <artifacts size='1'>
-        <artifact classifier='org.eclipse.update.feature' id='au.com.langdale.cimtoole.feature' version='1.5.4'/>
-      </artifacts>
-      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
-      <touchpointData size='1'>
-        <instructions size='1'>
-          <instruction key='zipped'>
-            true
-          </instruction>
-        </instructions>
-      </touchpointData>
-      <licenses size='1'>
-        <license>
-          This software is Copyright 2005,2006,2007,2008 Langdale Consultants &#xA;except where otherwise stated. &#xA;&#xA;Langdale Consultants can be contacted at:&#xA;&#xA;http://www.langdale.com.au&#xA;&#xA;You can redistribute this software and/or modify it under &#xA;the terms of the GNU Lesser General Public License version 2.1&#xA;as published by the Free Software Foundation.&#xA;&#xA;This software is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.&#xA;&#xA;You should have received a copy of the GNU Lesser General Public&#xA;License along with this library; if not, write to the &#xA;&#xA;Free Software Foundation, Inc., &#xA;51 Franklin Street, Fifth Floor, &#xA;Boston, MA  02110-1301  USA&#xA;&#xA;This software includes parts of the Jena package http://jena.sf.net&#xA;redistributed under the Jena license and the Apache license.&#xA;&#xA;This software includes parts of the POI package &#xA;redistributed under the Apache license. &#xA;D OF THE POSSIBILITY OF SUCH DAMAGE.
-        </license>
-      </licenses>
-      <copyright>
-        CIMTool is copyright 2005,2006,2007,2008,2009 &#xA;Langdale Consultants Pty Ltd&#xA;Suite 14 7 Narabang Way&#xA;Belrose NSW&#xA;AUSTRALIA
-      </copyright>
     </unit>
     <unit id='tooling.osgi.bundle.default' version='1.0.0' singleton='false'>
       <hostRequirements size='1'>
@@ -284,6 +221,69 @@
           </instruction>
           <instruction key='configure'>
             setStartLevel(startLevel:4);
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='au.com.langdale.cimtoole.feature.feature.group' version='1.5.5.200905121713' singleton='false'>
+      <update id='au.com.langdale.cimtoole.feature.feature.group' range='[0.0.0,1.5.5.200905121713)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='CIMTool'/>
+        <property name='org.eclipse.equinox.p2.description' value='CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://cimtool.org'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.group' version='1.5.5.200905121713'/>
+      </provides>
+      <requires size='12'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.junit' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole' range='[1.5.5.200905121713,1.5.5.200905121713]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.help' range='[1.5.5.200905121713,1.5.5.200905121713]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.jar' range='[1.5.5.200905121713,1.5.5.200905121713]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license>
+          This software is Copyright 2005,2006,2007,2008 Langdale Consultants &#xA;except where otherwise stated. &#xA;&#xA;Langdale Consultants can be contacted at:&#xA;&#xA;http://www.langdale.com.au&#xA;&#xA;You can redistribute this software and/or modify it under &#xA;the terms of the GNU Lesser General Public License version 2.1&#xA;as published by the Free Software Foundation.&#xA;&#xA;This software is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.&#xA;&#xA;You should have received a copy of the GNU Lesser General Public&#xA;License along with this library; if not, write to the &#xA;&#xA;Free Software Foundation, Inc., &#xA;51 Franklin Street, Fifth Floor, &#xA;Boston, MA  02110-1301  USA&#xA;&#xA;This software includes parts of the Jena package http://jena.sf.net&#xA;redistributed under the Jena license and the Apache license.&#xA;&#xA;This software includes parts of the POI package &#xA;redistributed under the Apache license. &#xA;D OF THE POSSIBILITY OF SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright>
+        CIMTool is copyright 2005,2006,2007,2008,2009 &#xA;Langdale Consultants Pty Ltd&#xA;Suite 14 7 Narabang Way&#xA;Belrose NSW&#xA;AUSTRALIA
+      </copyright>
+    </unit>
+    <unit id='au.com.langdale.cimtoole.help' version='1.5.5.200905121713'>
+      <update id='au.com.langdale.cimtoole.help' range='[0.0.0,1.5.5.200905121713)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='CIMTool Help Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.help' version='1.5.5.200905121713'/>
+        <provided namespace='osgi.bundle' name='au.com.langdale.cimtoole.help' version='1.5.5.200905121713'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='au.com.langdale.cimtoole.help' version='1.5.5.200905121713'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Langdale Consultants&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-SymbolicName: au.com.langdale.cimtoole.help;singleton:=true&#xA;Bundle-Name: CIMTool Help Plug-in&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.5.200905121713
           </instruction>
         </instructions>
       </touchpointData>
@@ -460,6 +460,226 @@
         <provided namespace='java.package' name='org.xml.sax.helpers' version='0.0.0'/>
       </provides>
       <touchpoint id='org.eclipse.equinox.p2.native' version='1.0.0'/>
+    </unit>
+    <unit id='au.com.langdale.cimtoole.help' version='1.5.5.200905121958'>
+      <update id='au.com.langdale.cimtoole.help' range='[0.0.0,1.5.5.200905121958)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='CIMTool Help Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.help' version='1.5.5.200905121958'/>
+        <provided namespace='osgi.bundle' name='au.com.langdale.cimtoole.help' version='1.5.5.200905121958'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='au.com.langdale.cimtoole.help' version='1.5.5.200905121958'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Langdale Consultants&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-SymbolicName: au.com.langdale.cimtoole.help;singleton:=true&#xA;Bundle-Name: CIMTool Help Plug-in&#xA;Manifest-Version: 1.0&#xA;Bundle-Version: 1.5.5.200905121958&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
+    </unit>
+    <unit id='au.com.langdale.cimtoole.feature.feature.jar' version='1.5.5.200905121958'>
+      <update id='au.com.langdale.cimtoole.feature.feature.jar' range='[0.0.0,1.5.5.200905121958)' severity='0'/>
+      <properties size='4'>
+        <property name='org.eclipse.equinox.p2.name' value='CIMTool'/>
+        <property name='org.eclipse.equinox.p2.description' value='CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://cimtool.org'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+      </properties>
+      <provides size='3'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.jar' version='1.5.5.200905121958'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
+        <provided namespace='org.eclipse.update.feature' name='au.com.langdale.cimtoole.feature' version='1.5.5.200905121958'/>
+      </provides>
+      <filter>
+        (org.eclipse.update.install.features=true)
+      </filter>
+      <artifacts size='1'>
+        <artifact classifier='org.eclipse.update.feature' id='au.com.langdale.cimtoole.feature' version='1.5.5.200905121958'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='zipped'>
+            true
+          </instruction>
+        </instructions>
+      </touchpointData>
+      <licenses size='1'>
+        <license>
+          This software is Copyright 2005,2006,2007,2008 Langdale Consultants &#xA;except where otherwise stated. &#xA;&#xA;Langdale Consultants can be contacted at:&#xA;&#xA;http://www.langdale.com.au&#xA;&#xA;You can redistribute this software and/or modify it under &#xA;the terms of the GNU Lesser General Public License version 2.1&#xA;as published by the Free Software Foundation.&#xA;&#xA;This software is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.&#xA;&#xA;You should have received a copy of the GNU Lesser General Public&#xA;License along with this library; if not, write to the &#xA;&#xA;Free Software Foundation, Inc., &#xA;51 Franklin Street, Fifth Floor, &#xA;Boston, MA  02110-1301  USA&#xA;&#xA;This software includes parts of the Jena package http://jena.sf.net&#xA;redistributed under the Jena license and the Apache license.&#xA;&#xA;This software includes parts of the POI package &#xA;redistributed under the Apache license. &#xA;D OF THE POSSIBILITY OF SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright>
+        CIMTool is copyright 2005,2006,2007,2008,2009 &#xA;Langdale Consultants Pty Ltd&#xA;Suite 14 7 Narabang Way&#xA;Belrose NSW&#xA;AUSTRALIA
+      </copyright>
+    </unit>
+    <unit id='au.com.langdale.cimtoole.feature.feature.group' version='1.5.5.200905121958' singleton='false'>
+      <update id='au.com.langdale.cimtoole.feature.feature.group' range='[0.0.0,1.5.5.200905121958)' severity='0'/>
+      <properties size='5'>
+        <property name='org.eclipse.equinox.p2.name' value='CIMTool'/>
+        <property name='org.eclipse.equinox.p2.description' value='CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.'/>
+        <property name='org.eclipse.equinox.p2.description.url' value='http://cimtool.org'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+        <property name='org.eclipse.equinox.p2.type.group' value='true'/>
+      </properties>
+      <provides size='1'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.group' version='1.5.5.200905121958'/>
+      </provides>
+      <requires size='12'>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='org.junit' range='0.0.0'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole' range='[1.5.5.200905121958,1.5.5.200905121958]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.help' range='[1.5.5.200905121958,1.5.5.200905121958]'/>
+        <required namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole.feature.feature.jar' range='[1.5.5.200905121958,1.5.5.200905121958]'>
+          <filter>
+            (org.eclipse.update.install.features=true)
+          </filter>
+        </required>
+      </requires>
+      <touchpoint id='null' version='0.0.0'/>
+      <licenses size='1'>
+        <license>
+          This software is Copyright 2005,2006,2007,2008 Langdale Consultants &#xA;except where otherwise stated. &#xA;&#xA;Langdale Consultants can be contacted at:&#xA;&#xA;http://www.langdale.com.au&#xA;&#xA;You can redistribute this software and/or modify it under &#xA;the terms of the GNU Lesser General Public License version 2.1&#xA;as published by the Free Software Foundation.&#xA;&#xA;This software is distributed in the hope that it will be useful,&#xA;but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&#xA;Lesser General Public License for more details.&#xA;&#xA;You should have received a copy of the GNU Lesser General Public&#xA;License along with this library; if not, write to the &#xA;&#xA;Free Software Foundation, Inc., &#xA;51 Franklin Street, Fifth Floor, &#xA;Boston, MA  02110-1301  USA&#xA;&#xA;This software includes parts of the Jena package http://jena.sf.net&#xA;redistributed under the Jena license and the Apache license.&#xA;&#xA;This software includes parts of the POI package &#xA;redistributed under the Apache license. &#xA;D OF THE POSSIBILITY OF SUCH DAMAGE.
+        </license>
+      </licenses>
+      <copyright>
+        CIMTool is copyright 2005,2006,2007,2008,2009 &#xA;Langdale Consultants Pty Ltd&#xA;Suite 14 7 Narabang Way&#xA;Belrose NSW&#xA;AUSTRALIA
+      </copyright>
+    </unit>
+    <unit id='au.com.langdale.cimtoole' version='1.5.5.200905121958'>
+      <update id='au.com.langdale.cimtoole' range='[0.0.0,1.5.5.200905121958)' severity='0'/>
+      <properties size='2'>
+        <property name='org.eclipse.equinox.p2.name' value='CIMTool Plug-in'/>
+        <property name='org.eclipse.equinox.p2.provider' value='Langdale Consultants'/>
+      </properties>
+      <provides size='90'>
+        <provided namespace='org.eclipse.equinox.p2.iu' name='au.com.langdale.cimtoole' version='1.5.5.200905121958'/>
+        <provided namespace='osgi.bundle' name='au.com.langdale.cimtoole' version='1.5.5.200905121958'/>
+        <provided namespace='java.package' name='au.com.langdale.cim' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.builder' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.compare' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.editors' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.editors.profile' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.handlers' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.popup.actions' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.preferences' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.project' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.properties' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.views' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.cimtoole.wizards' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.inference' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.jena' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.kena' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.kena.filters' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.profiles' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.sax' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.splitmodel' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.ui' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.ui.binding' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.ui.builder' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.ui.plumbing' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.ui.util' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.util' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.validation' version='0.0.0'/>
+        <provided namespace='java.package' name='au.com.langdale.xmi' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.assembler' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.assembler.acceptance' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.assembler.assemblers' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.assembler.exceptions' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.datatypes' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.datatypes.xsd' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.datatypes.xsd.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.db' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.db.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.enhanced' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.graph' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.graph.compose' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.graph.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.graph.query' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.graph.query.regexptrees' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.iri' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.iri.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.iri.test' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.mem' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.mem.faster' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.n3' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.n3.turtle' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.n3.turtle.parser' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.ontology' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.ontology.daml' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.ontology.daml.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.ontology.event' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.ontology.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.arp' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.arp.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.arp.lang' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.arp.states' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.listeners' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.model' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.rdf.model.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.dig' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.rdfsReasoner1' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.rulesys' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.rulesys.builtins' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.rulesys.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.rulesys.impl.oldCode' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.reasoner.transitiveReasoner' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.regression' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.shared' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.shared.impl' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.shared.uuid' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.shared.wg' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.util' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.util.cache' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.util.iterator' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.util.junit' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.util.tuple' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.util.xml' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.vocabulary' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.xmloutput' version='0.0.0'/>
+        <provided namespace='java.package' name='com.hp.hpl.jena.xmloutput.impl' version='0.0.0'/>
+        <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+      </provides>
+      <requires size='9'>
+        <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.views' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
+        <required namespace='osgi.bundle' name='org.eclipse.compare' range='0.0.0'/>
+      </requires>
+      <artifacts size='1'>
+        <artifact classifier='osgi.bundle' id='au.com.langdale.cimtoole' version='1.5.5.200905121958'/>
+      </artifacts>
+      <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+      <touchpointData size='1'>
+        <instructions size='1'>
+          <instruction key='manifest'>
+            Bundle-Vendor: Langdale Consultants&#xA;Bundle-ManifestVersion: 2&#xA;Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin&#xA;Bundle-ClassPath: cimtoole.jar,lib/antlr-2.7.5.jar,lib/commons-logging-1.1.jar,lib/concurrent.jar,lib/icu4j_3_4.jar,lib/iri.jar,lib/jena.jar,lib/log4j-1.2.12.jar,lib/stax-api-1.0.jar,lib/xercesImpl.jar,lib/xml-apis.jar,lib/poi-3.0.1-FINAL-20070705.jar&#xA;Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.core.resources,org.eclipse.ui.ide,org.eclipse.jface.text,org.eclipse.ui.editors,org.eclipse.ui.views,org.eclipse.ui.forms,org.eclipse.compare&#xA;Bundle-Name: CIMTool Plug-in&#xA;Bundle-ActivationPolicy: lazy&#xA;Manifest-Version: 1.0&#xA;Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true&#xA;Bundle-Version: 1.5.5.200905121958&#xA;Export-Package: au.com.langdale.cim,au.com.langdale.cimtoole,au.com.langdale.cimtoole.actions,au.com.langdale.cimtoole.builder,au.com.langdale.cimtoole.compare,au.com.langdale.cimtoole.editors,au.com.langdale.cimtoole.editors.profile,au.com.langdale.cimtoole.handlers,au.com.langdale.cimtoole.popup.actions,au.com.langdale.cimtoole.preferences,au.com.langdale.cimtoole.project,au.com.langdale.cimtoole.properties,au.com.langdale.cimtoole.views,au.com.langdale.cimtoole.wizards,au.com.langdale.inference,au.com.langdale.jena,au.com.langdale.kena,au.com.langdale.kena.filters,au.com.langdale.profiles,au.com.langdale.sax,au.com.langdale.splitmodel,au.com.langdale.ui,au.com.langdale.ui.binding,au.com.langdale.ui.builder,au.com.langdale.ui.plumbing,au.com.langdale.ui.util,au.com.langdale.util,au.com.langdale.validation,au.com.langdale.xmi,com.hp.hpl.jena,com.hp.hpl.jena.assembler,com.hp.hpl.jena.assembler.acceptance,com.hp.hpl.jena.assembler.assemblers,com.hp.hpl.jena.assembler.exceptions,com.hp.hpl.jena.datatypes,com.hp.hpl.jena.datatypes.xsd,com.hp.hpl.jena.datatypes.xsd.impl,com.hp.hpl.jena.db,com.hp.hpl.jena.db.impl,com.hp.hpl.jena.enhanced,com.hp.hpl.jena.graph,com.hp.hpl.jena.graph.compose,com.hp.hpl.jena.graph.impl,com.hp.hpl.jena.graph.query,com.hp.hpl.jena.graph.query.regexptrees,com.hp.hpl.jena.iri,com.hp.hpl.jena.iri.impl,com.hp.hpl.jena.iri.test,com.hp.hpl.jena.mem,com.hp.hpl.jena.mem.faster,com.hp.hpl.jena.n3,com.hp.hpl.jena.n3.turtle,com.hp.hpl.jena.n3.turtle.parser,com.hp.hpl.jena.ontology,com.hp.hpl.jena.ontology.daml,com.hp.hpl.jena.ontology.daml.impl,com.hp.hpl.jena.ontology.event,com.hp.hpl.jena.ontology.impl,com.hp.hpl.jena.rdf.arp,com.hp.hpl.jena.rdf.arp.impl,com.hp.hpl.jena.rdf.arp.lang,com.hp.hpl.jena.rdf.arp.states,com.hp.hpl.jena.rdf.listeners,com.hp.hpl.jena.rdf.model,com.hp.hpl.jena.rdf.model.impl,com.hp.hpl.jena.reasoner,com.hp.hpl.jena.reasoner.dig,com.hp.hpl.jena.reasoner.rdfsReasoner1,com.hp.hpl.jena.reasoner.rulesys,com.hp.hpl.jena.reasoner.rulesys.builtins,com.hp.hpl.jena.reasoner.rulesys.impl,com.hp.hpl.jena.reasoner.rulesys.impl.oldCode,com.hp.hpl.jena.reasoner.transitiveReasoner,com.hp.hpl.jena.regression,com.hp.hpl.jena.shared,com.hp.hpl.jena.shared.impl,com.hp.hpl.jena.shared.uuid,com.hp.hpl.jena.shared.wg,com.hp.hpl.jena.util,com.hp.hpl.jena.util.cache,com.hp.hpl.jena.util.iterator,com.hp.hpl.jena.util.junit,com.hp.hpl.jena.util.tuple,com.hp.hpl.jena.util.xml,com.hp.hpl.jena.vocabulary,com.hp.hpl.jena.xmloutput,com.hp.hpl.jena.xmloutput.impl&#xA;
+          </instruction>
+        </instructions>
+      </touchpointData>
     </unit>
   </units>
 </repository>
