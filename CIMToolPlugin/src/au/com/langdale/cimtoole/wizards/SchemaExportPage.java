@@ -11,10 +11,10 @@ import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.binding.TextBinding;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.validation.Validation;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
 public class SchemaExportPage extends FurnishedWizardPage {
@@ -23,8 +23,8 @@ public class SchemaExportPage extends FurnishedWizardPage {
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
 
 	private boolean internal;
-	private TextBinding path = new TextBinding(Validation.NEW_FILE);
-	private TextBinding namespace = new TextBinding(Validation.NAMESPACE, NAMESPACE);
+	private TextBinding path = new TextBinding(Validators.NEW_FILE);
+	private TextBinding namespace = new TextBinding(Validators.NAMESPACE, NAMESPACE);
 	private ProjectBinding projects = new ProjectBinding();
 
 	public SchemaExportPage() {

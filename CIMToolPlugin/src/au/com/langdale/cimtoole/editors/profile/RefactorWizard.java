@@ -7,6 +7,7 @@ package au.com.langdale.cimtoole.editors.profile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -21,12 +22,12 @@ import au.com.langdale.profiles.Reorganizer;
 import au.com.langdale.ui.binding.BooleanBinding;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.binding.BooleanModel.BooleanValue;
-import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
+import au.com.langdale.util.Jobs;
 import static au.com.langdale.ui.builder.Templates.*;
 
-public class RefactorWizard extends FurnishedWizard  {
+public class RefactorWizard extends Wizard  {
 	private ProfileEditor master;
 	
 	public RefactorWizard(ProfileEditor master) {
@@ -107,7 +108,7 @@ public class RefactorWizard extends FurnishedWizard  {
 	@Override
 	public boolean performFinish() {
 		WizardAction action = new WizardAction();
-		run(action, null);
+		Jobs.runInteractive(action, null, getContainer(), getShell());
 		action.updateProfileModel();
 		return true;
 	}

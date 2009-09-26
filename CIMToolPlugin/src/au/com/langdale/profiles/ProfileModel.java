@@ -149,7 +149,7 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		@Override
 		protected void populate() {
-			Iterator it = ProfileClass.getProfileClasses(profileModel, getOntModel(), namespace);
+			Iterator it = ProfileClass.getProfileClasses(profileModel, getOntModel());
 			while( it.hasNext()) {
 				ProfileClass profile = (ProfileClass) it.next();
 				if( profile.getBaseClass() != null) {

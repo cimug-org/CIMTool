@@ -4,7 +4,10 @@ Bundle-Name: CIMToolTest Plug-in
 Bundle-SymbolicName: CIMToolTest
 Bundle-Version: 1.0.0
 Require-Bundle: au.com.langdale.cimtoole,
+ au.com.langdale.kena,
+ au.com.langdale.rcputil,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.junit
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

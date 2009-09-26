@@ -12,6 +12,7 @@ import java.util.Map;
 import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.ProxyRegistry;
 import au.com.langdale.inference.StandardFunctorActions;
+import au.com.langdale.inference.ValidationBuiltins;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;

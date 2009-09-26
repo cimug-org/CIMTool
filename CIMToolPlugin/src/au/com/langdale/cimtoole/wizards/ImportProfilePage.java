@@ -13,11 +13,11 @@ import org.eclipse.swt.widgets.Control;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.NSChecker;
 import au.com.langdale.ui.binding.TextBinding;
-import au.com.langdale.ui.binding.ResourceUI.LocalFileBinding;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.validation.Validation;
+import au.com.langdale.workspace.ResourceUI.LocalFileBinding;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
 public class ImportProfilePage extends FurnishedWizardPage {
@@ -29,9 +29,9 @@ public class ImportProfilePage extends FurnishedWizardPage {
 	private String[] sources;
 
 	private ProjectBinding projects = new ProjectBinding();
-	private TextBinding source = new TextBinding(Validation.EXTANT_FILE);
+	private TextBinding source = new TextBinding(Validators.EXTANT_FILE);
 	private LocalFileBinding filename = new LocalFileBinding("owl", true);
-	private TextBinding namespace = new TextBinding(Validation.NAMESPACE, NAMESPACE);
+	private TextBinding namespace = new TextBinding(Validators.NAMESPACE, NAMESPACE);
 	private NSChecker checker = new NSChecker();
 	
 	public ImportProfilePage() {

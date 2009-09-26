@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.xml.sax.SAXException;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
@@ -33,8 +32,9 @@ import au.com.langdale.profiles.ProfileSerializer;
 import au.com.langdale.profiles.RDFSBasedGenerator;
 import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
-import au.com.langdale.ui.binding.OntModelProvider;
+import au.com.langdale.workspace.ResourceOutputStream;
 
+import au.com.langdale.jena.OntModelProvider;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;

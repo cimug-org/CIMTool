@@ -7,6 +7,7 @@ package au.com.langdale.cimtoole.wizards;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
@@ -14,14 +15,14 @@ import org.eclipse.ui.IWorkbenchWizard;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
-import au.com.langdale.ui.binding.ResourceUI.DiagnosticsBinding;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
-import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
+import au.com.langdale.util.Jobs;
+import au.com.langdale.workspace.ResourceUI.DiagnosticsBinding;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
-public class Cleanup extends FurnishedWizard implements IWorkbenchWizard {
+public class Cleanup extends Wizard implements IWorkbenchWizard {
 
 	private IResource[] resources;
 	private ProjectBinding projects = new ProjectBinding();
@@ -39,7 +40,7 @@ public class Cleanup extends FurnishedWizard implements IWorkbenchWizard {
 
 	@Override
 	public boolean performFinish() {
-		run(Task.delete(resources), projects.getProject());
+		Jobs.runInteractive(Task.delete(resources), projects.getProject(), getContainer(), getShell());
 		return true;
 	}
 

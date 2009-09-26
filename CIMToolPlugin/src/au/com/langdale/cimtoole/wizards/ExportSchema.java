@@ -9,15 +9,16 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import au.com.langdale.cimtoole.builder.SchemaBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.util.Jobs;
 
-public class ExportSchema extends FurnishedWizard implements IExportWizard {
+public class ExportSchema extends Wizard implements IExportWizard {
 	
 	private SchemaExportPage main = new SchemaExportPage();
 	
@@ -47,9 +48,9 @@ public class ExportSchema extends FurnishedWizard implements IExportWizard {
 	
 	@Override
 	public boolean performFinish() {
-		if( main.isInternal()) 
-			return run(new InternalSchemaTask(), main.getProject());
+		if( main.isInternal())
+			return Jobs.runInteractive(new InternalSchemaTask(), main.getProject(), getContainer(), getShell());
 		else
-			return run(Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace()), null);
+			return Jobs.runInteractive(Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace()), null, getContainer(), getShell());
 	}
 }

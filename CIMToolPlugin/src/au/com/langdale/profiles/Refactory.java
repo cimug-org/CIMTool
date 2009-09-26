@@ -153,7 +153,7 @@ public class Refactory extends ProfileUtility {
 	
 	private void buildMap() {
 		map = new ProfileMap();
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
 		while (it.hasNext()) {
 			ProfileClass profile = (ProfileClass) it.next();
 			map.add(profile.getBaseClass(), profile.getSubject());
@@ -161,7 +161,7 @@ public class Refactory extends ProfileUtility {
 	}
 	
 	public void setByReference() {
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
 		while (it.hasNext()) {
 			ProfileClass profile = (ProfileClass) it.next();
 			setByReference(profile);
@@ -180,7 +180,7 @@ public class Refactory extends ProfileUtility {
 	}
 	
 	public void setConcrete() {
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
 		while (it.hasNext()) {
 			ProfileClass profile = (ProfileClass) it.next();
 			profile.setStereotype(UML.concrete, shouldBeConcrete(profile));

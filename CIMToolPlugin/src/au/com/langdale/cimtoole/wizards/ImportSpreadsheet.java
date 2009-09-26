@@ -8,6 +8,7 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IImportWizard;
@@ -17,14 +18,14 @@ import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.SpreadsheetImporter;
 import au.com.langdale.cimtoole.project.SpreadsheetImporter.Choice;
 import au.com.langdale.profiles.SpreadsheetParser.CellSpec;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.validation.Validation;
+import au.com.langdale.util.Jobs;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
-public class ImportSpreadsheet extends FurnishedWizard  implements IImportWizard {
+public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 
 	private String namespace;
 	private Choice profileChoice;
@@ -74,7 +75,7 @@ public class ImportSpreadsheet extends FurnishedWizard  implements IImportWizard
 					
 					// preview the spreadsheet
 					if( importer.getPathName() == null || ! importer.getPathName().equals(pathname)) {
-						if( ! run(importer.getReader(pathname), null))
+						if( ! Jobs.runInteractive(importer.getReader(pathname), null, getContainer(), getShell()))
 							return "failed to read spreadsheet";
 						getCheckboxTableViewer("profiles").setInput(importer.getStandardFlags());
 					}
@@ -145,7 +146,7 @@ public class ImportSpreadsheet extends FurnishedWizard  implements IImportWizard
 					// TODO: replace with TextBinding.
 					// select the namespace
 					namespace = getText("namespace").getText().trim();
-					return Validation.NAMESPACE.validate(namespace);
+					return Validators.NAMESPACE.validate(namespace);
 				}
 				
 			};
@@ -161,6 +162,6 @@ public class ImportSpreadsheet extends FurnishedWizard  implements IImportWizard
 	@Override
 	public boolean performFinish() {
 		CellSpec[] standardCells = SpreadsheetImporter.getStandardCells(profileChoice.index);
-		return run(importer.getInterpreter(destin, namespace, standardCells), null);
+		return Jobs.runInteractive(importer.getInterpreter(destin, namespace, standardCells), null, getContainer(), getShell());
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
 import au.com.langdale.profiles.SpreadsheetParser;
 import au.com.langdale.profiles.SpreadsheetParser.AssocCellSpec;
@@ -27,6 +26,7 @@ import au.com.langdale.profiles.SpreadsheetParser.ClassCellSpec;
 import au.com.langdale.profiles.SpreadsheetParser.ColNum;
 import au.com.langdale.profiles.SpreadsheetParser.IndexNum;
 import au.com.langdale.util.Logger;
+import au.com.langdale.workspace.ResourceOutputStream;
 
 import au.com.langdale.kena.OntModel;
 

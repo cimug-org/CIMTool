@@ -8,14 +8,15 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import au.com.langdale.cimtoole.project.Task;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.util.Jobs;
 
-public class NewProject extends FurnishedWizard implements INewWizard {
+public class NewProject extends Wizard implements INewWizard {
 
 	public NewProject() {
 		setNeedsProgressMonitor(true);
@@ -59,6 +60,6 @@ public class NewProject extends FurnishedWizard implements INewWizard {
 			job = Task.chain( job, Task.importSchema(schemaFile, pathname, namespace));
 		}
 
-		return run( job, ResourcesPlugin.getWorkspace().getRoot());
+		return Jobs.runInteractive(job, ResourcesPlugin.getWorkspace().getRoot(), getContainer(), getShell());
 	}
 }

@@ -5,13 +5,14 @@
 package au.com.langdale.cimtoole.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import au.com.langdale.cimtoole.project.Task;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.util.Jobs;
 
-public class ImportProfile extends FurnishedWizard implements IImportWizard {
+public class ImportProfile extends Wizard implements IImportWizard {
 	
 	private ImportProfilePage main = new ImportProfilePage();
 	
@@ -31,6 +32,6 @@ public class ImportProfile extends FurnishedWizard implements IImportWizard {
 	
 	@Override
 	public boolean performFinish() {
-		return run(Task.importProfile(main.getFile(), main.getPathname(), main.getNamespace()), main.getFile().getParent());
+		return Jobs.runInteractive(Task.importProfile(main.getFile(), main.getPathname(), main.getNamespace()), main.getFile().getParent(), getContainer(), getShell());
 	}
 }

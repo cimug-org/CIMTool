@@ -5,15 +5,16 @@
 package au.com.langdale.cimtoole.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 
 import au.com.langdale.cimtoole.project.Task;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.util.Jobs;
 
-public class NewProfile extends FurnishedWizard implements INewWizard {
+public class NewProfile extends Wizard implements INewWizard {
 	
 	private NewProfilePage main = new NewProfilePage();
 	private IWorkbench workbench;
@@ -34,7 +35,7 @@ public class NewProfile extends FurnishedWizard implements INewWizard {
 	
 	@Override
 	public boolean performFinish() {
-		if( run(Task.createProfile(main.getFile(), main.getNamespace(), main.getEnvname()), main.getFile().getParent())) {
+		if( Jobs.runInteractive(Task.createProfile(main.getFile(), main.getNamespace(), main.getEnvname()), main.getFile().getParent(), getContainer(), getShell())) {
 			try {
 				workbench.getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(main.getFile()), "au.com.langdale.cimtoole.editors.MessageModelEditor");
 				return true;

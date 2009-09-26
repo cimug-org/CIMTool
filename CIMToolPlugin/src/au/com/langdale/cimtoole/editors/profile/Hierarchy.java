@@ -14,11 +14,11 @@ import org.eclipse.swt.widgets.Control;
 import au.com.langdale.kena.OntResource;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
+import au.com.langdale.jena.JenaCheckTreeBinding;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.profiles.HierarchyModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.ProfileModel.NaturalNode;
-import au.com.langdale.ui.binding.JenaCheckTreeBinding;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;

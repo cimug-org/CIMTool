@@ -8,10 +8,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
+import au.com.langdale.jena.OntModelAdapters;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.ui.binding.BooleanBinding;
 import au.com.langdale.ui.binding.BooleanModel;
-import au.com.langdale.ui.binding.OntModelAdapters;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;

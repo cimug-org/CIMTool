@@ -227,7 +227,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	}
 
 	private void scanProfiles() {
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
 		while( it.hasNext()) 
 			work.add(it.next());
 		

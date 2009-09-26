@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.CoreException;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.test.ProjectTest;
 import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
@@ -19,6 +18,7 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
+import au.com.langdale.workspace.ResourceOutputStream;
 
 public class KenaTests extends ProjectTest {
 	public final String NS = "http://example.com/example#";

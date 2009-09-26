@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/poi-3.0.1-FINAL-20070705.jar">
+	<classpathentry kind="lib" path="lib/poi-3.0.1-FINAL-20070705.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/home/share/poi-3.0.1-FINAL/docs/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/concurrent.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/icu4j_3_4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/iri.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jena.jar" sourcepath="/extra/share/Jena-2.5.3/src"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xercesImpl.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/jackcess-1.1.19.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>

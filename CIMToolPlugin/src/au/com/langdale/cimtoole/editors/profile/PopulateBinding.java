@@ -23,6 +23,7 @@ import au.com.langdale.kena.ResourceFactory;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
+import au.com.langdale.jena.JenaTreeBinding;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase.Node;
@@ -42,7 +43,6 @@ import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
-import au.com.langdale.ui.binding.JenaTreeBinding;
 import au.com.langdale.ui.binding.FilteredContentProvider.Filter;
 import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.xmi.UML;

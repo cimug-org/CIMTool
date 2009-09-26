@@ -4,7 +4,7 @@
 
 from botoscripts.s3 import *
 from botoscripts.util import *
-from os import listdir
+from os import listdir, unlink, rename
 from os.path import isfile, join, splitext, basename
 from re import search
 from subprocess import check_call
@@ -18,6 +18,8 @@ def manifest():
 	yield findlast("features", "au.com.langdale.cimtoole.feature_")
 	yield findlast("plugins", "au.com.langdale.cimtoole_")
 	yield findlast("plugins", "au.com.langdale.cimtoole.help_")
+	yield findlast("plugins", "au.com.langdale.kena_")
+	yield findlast("plugins", "au.com.langdale.rcputil_")
 	yield "site.xml"
 	yield "artifacts.jar"
 	yield "content.jar"
@@ -54,7 +56,14 @@ def do_upload(bucket_name=BUCKET):
 	
 def do_build():
 	eclipse_dist = ECLIPSE.replace("VERSION", lastversion())
-	check_call([ "sh", "package.sh", ARCHIVE, eclipse_dist ])
+	check_call([ "sh", "package.sh", eclipse_dist ])
+	
+	tmp = "_" + ARCHIVE
+	if isfile(tmp):
+	    unlink(tmp)
+	check_call([ "zip", "-r", "-n", "jar", tmp ] + list(manifest()))
+	rename( tmp, ARCHIVE)
+	
 	print "built:", ARCHIVE, eclipse_dist
         
 def do_lastversion():

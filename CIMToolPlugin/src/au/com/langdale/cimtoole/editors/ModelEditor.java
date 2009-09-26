@@ -22,12 +22,12 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import au.com.langdale.cimtoole.project.ModelMinder;
 import au.com.langdale.cimtoole.project.Cache.CacheListener;
 import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.JenaTreeProvider;
+import au.com.langdale.jena.OntModelProvider;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.ProfileModel;
-import au.com.langdale.ui.binding.JenaTreeProvider;
-import au.com.langdale.ui.binding.OntModelProvider;
 import au.com.langdale.ui.builder.FurnishedMultiEditor;
 import au.com.langdale.ui.util.SelectionProvider;
 

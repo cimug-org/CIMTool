@@ -2,7 +2,7 @@
 <feature
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
-      version="1.6.4.qualifier"
+      version="1.6.5.qualifier"
       provider-name="Langdale Consultants">
 
    <description url="http://cimtool.org">
@@ -74,6 +74,19 @@ D OF THE POSSIBILITY OF SUCH DAMAGE.
 
    <plugin
          id="au.com.langdale.cimtoole.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="au.com.langdale.kena"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="au.com.langdale.rcputil"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -12,10 +12,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
-import au.com.langdale.ui.binding.ResourceUI.ProfileBinding;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
+import au.com.langdale.workspace.ResourceUI.ProfileBinding;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
 public class RuleWizardPage extends FurnishedWizardPage {

@@ -5,13 +5,14 @@
 package au.com.langdale.cimtoole.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 import au.com.langdale.cimtoole.project.Task;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.util.Jobs;
 
-public class NewHTMLRules extends FurnishedWizard implements INewWizard {
+public class NewHTMLRules extends Wizard implements INewWizard {
 	
 	private RuleWizardPage main = new RuleWizardPage();
 
@@ -30,6 +31,6 @@ public class NewHTMLRules extends FurnishedWizard implements INewWizard {
 	
 	@Override
 	public boolean performFinish() {
-		return run(Task.createRules(main.getFile(), main.isCopyDefault()? "html": null), main.getFile().getParent());
+		return Jobs.runInteractive(Task.createRules(main.getFile(), main.isCopyDefault()? "html": null), main.getFile().getParent(), getContainer(), getShell());
 	}
 }

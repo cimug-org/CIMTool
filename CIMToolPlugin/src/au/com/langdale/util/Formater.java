@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import au.com.langdale.validation.Validation;
+import au.com.langdale.ui.binding.Validators;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
@@ -39,7 +39,7 @@ import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
  */
 public class Formater {
 	
-	public final String NCNAME_REGEX = Validation.NCNAME_REGEX;
+	public final String NCNAME_REGEX = Validators.NCNAME_REGEX;
     
     private PrefixMapping prefixMapping = PrefixMapping.Factory.create();
         

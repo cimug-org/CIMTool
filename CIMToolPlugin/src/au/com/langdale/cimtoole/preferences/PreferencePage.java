@@ -5,10 +5,10 @@
 package au.com.langdale.cimtoole.preferences;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.project.FurnishedPropertyPage;
 import au.com.langdale.cimtoole.project.Info;
-import au.com.langdale.ui.builder.FurnishedPropertyPage;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.validation.Validation;
 import static au.com.langdale.ui.builder.Templates.*;
 
 public class PreferencePage extends FurnishedPropertyPage {
@@ -26,16 +26,16 @@ public class PreferencePage extends FurnishedPropertyPage {
 				return Grid(
 						Group(
 								Label("Default Schema Namespace:"), 
-								new Preference(Info.SCHEMA_NAMESPACE, Validation.NAMESPACE)),
+								new Preference(Info.SCHEMA_NAMESPACE, Validators.NAMESPACE)),
 						Group(
 								Label("Default Instance Namespace:"),
-								new Preference(Info.INSTANCE_NAMESPACE, Validation.NAMESPACE)),
+								new Preference(Info.INSTANCE_NAMESPACE, Validators.NAMESPACE)),
 						Group(
 								Label("Default Profile Namespace:"),
-								new Preference(Info.PROFILE_NAMESPACE, Validation.NAMESPACE)),
+								new Preference(Info.PROFILE_NAMESPACE, Validators.NAMESPACE)),
 						Group(
 								Label("Default Envelope Element Name:"),
-								new Preference(Info.PROFILE_ENVELOPE, Validation.NCNAME)),
+								new Preference(Info.PROFILE_ENVELOPE, Validators.NCNAME)),
 						Group( 
 								new PreferenceOption(Info.PRESERVE_NAMESPACES, 
 								"Preserve schema namespaces in profiles")),

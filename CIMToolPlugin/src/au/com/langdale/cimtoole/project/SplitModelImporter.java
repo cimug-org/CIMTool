@@ -13,12 +13,12 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
 import au.com.langdale.kena.RDFParser;
 import au.com.langdale.kena.RDFParser.TerminateParseException;
 import au.com.langdale.splitmodel.SplitWriter;
 import au.com.langdale.util.Logger;
+import au.com.langdale.workspace.ResourceOutputStream;
 /**
  * A task to import an RDF/XML instance into the project as <code>SplitModel</code>.
  */
@@ -48,7 +48,7 @@ public class SplitModelImporter implements IWorkspaceRunnable {
 		
 		Logger logger = new Logger(new ResourceOutputStream(errors, null, true, true));
 		SplitWriter writer = new SplitWriter(destin.getLocation().toOSString(), namespace);
-		RDFParser splitter = new RDFParser(null, source, writer.getBase(), writer, logger, base!=null);
+		RDFParser splitter = new RDFParser(null, source, writer.getBase(), writer, logger.getSAXErrorHandler(), base!=null);
 		try {
 			splitter.run();
 			logger.close();

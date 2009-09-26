@@ -10,11 +10,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 import au.com.langdale.cimtoole.builder.SchemaBuildlet;
+import au.com.langdale.cimtoole.project.FurnishedPropertyPage;
 import au.com.langdale.cimtoole.project.Info;
-import au.com.langdale.ui.builder.FurnishedPropertyPage;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.util.Jobs;
-import au.com.langdale.validation.Validation;
 import static au.com.langdale.ui.builder.Templates.*;
 
 public class PropertyPage extends FurnishedPropertyPage {
@@ -44,9 +44,9 @@ public class PropertyPage extends FurnishedPropertyPage {
 			private Template defineInstancePage() {
 				return Grid(
 						Group(  Label("Namespace URI:"), 
-								new Property(Info.INSTANCE_NAMESPACE, Validation.NAMESPACE)),
+								new Property(Info.INSTANCE_NAMESPACE, Validators.NAMESPACE)),
 						Group(	Label("Profile Name:"), 
-								new Property(Info.PROFILE_PATH, Validation.OptionalFileWithExt("owl")))
+								new Property(Info.PROFILE_PATH, Validators.OptionalFileWithExt("owl")))
 				);
 			}
 
@@ -54,16 +54,16 @@ public class PropertyPage extends FurnishedPropertyPage {
 			private Template defineIncrementalPage() {
 				return Grid(
 						Group(  Label("Namespace URI:"), 
-								new Property(Info.INSTANCE_NAMESPACE, Validation.NAMESPACE)),
+								new Property(Info.INSTANCE_NAMESPACE, Validators.NAMESPACE)),
 						Group(	Label("Base Model Name:"), 
-								new Property(Info.BASE_MODEL_PATH, Validation.OptionalFileAnyExt()))
+								new Property(Info.BASE_MODEL_PATH, Validators.OptionalFileAnyExt()))
 				);
 			}
 
 			private Template defineProfilePage() {
 				return Grid(
 						Group(	Label("Namespace URI:"), 
-								new Property(Info.PROFILE_NAMESPACE, Validation.NAMESPACE))
+								new Property(Info.PROFILE_NAMESPACE, Validators.NAMESPACE))
 				);
 			}
 
@@ -71,9 +71,9 @@ public class PropertyPage extends FurnishedPropertyPage {
 				return Grid(
 						Group(Label("Merged Schema Output")),
 						Group(	Label("Namespace URI:"), 
-								new Property(Info.SCHEMA_NAMESPACE, Validation.NAMESPACE)),
+								new Property(Info.SCHEMA_NAMESPACE, Validators.NAMESPACE)),
 						Group(	Label("File Name:"), 
-								new Property(Info.MERGED_SCHEMA_PATH, Validation.OptionalFileWithExt("merged-owl")))
+								new Property(Info.MERGED_SCHEMA_PATH, Validators.OptionalFileWithExt("merged-owl")))
 				);
 			}
 
@@ -81,7 +81,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 			private Template defineSchemaPage() {
 				return Grid(
 						Group(	Label("Namespace URI:"), 
-								new Property(Info.SCHEMA_NAMESPACE, Validation.NAMESPACE)),
+								new Property(Info.SCHEMA_NAMESPACE, Validators.NAMESPACE)),
 						Group(	Label("Warning: changing this namespace will affect existing profiles."))
 				);
 			}

@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 
-import au.com.langdale.ui.binding.ResourceUI;
+import au.com.langdale.workspace.ResourceUI;
 
 public class ValidationView extends ViewPart {
 

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
@@ -27,6 +26,7 @@ import au.com.langdale.util.Logger;
 import au.com.langdale.util.Profiler;
 import au.com.langdale.util.Profiler.TimeSpan;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
+import au.com.langdale.workspace.ResourceOutputStream;
 
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
@@ -69,7 +69,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 		IResource base = Info.getBaseModelFor(instance);
 
 		if( ! schema.exists()) {
-			SimpleOWLBuildlet subordinate = new SimpleOWLBuildlet("RDF/XML", "simple-owl", false);
+			SimpleOWLBuildlet subordinate = new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false);
 			subordinate.build(schema, monitor);
 			if( ! schema.exists())
 				return;

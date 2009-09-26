@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,13 +41,13 @@ import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.SearchIndex;
 import au.com.langdale.ui.binding.ListBinding;
 import au.com.langdale.ui.binding.TextBinding;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
-import au.com.langdale.validation.Validation;
+import au.com.langdale.util.Jobs;
 
-public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
+public class SearchWizard extends Wizard implements IWorkbenchWizard {
 	
 	public SearchWizard(Searchable searchArea) {
 		this(searchArea, searchArea.getCriterion());
@@ -79,7 +80,7 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 		protected Object getInput() {
 			if( ! indexed) {
 				indexed = true;
-				run(job, null);
+				Jobs.runInteractive(job, null, getContainer(), getShell());
 			}
 			
 			String prefix = getParent().getValue().toString();
@@ -156,7 +157,7 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 
 	private Searchable searchArea;
 	private SearchIndex indexer;
-	private TextBinding search = new TextBinding(Validation.NONE);
+	private TextBinding search = new TextBinding(Validators.NONE);
 	private Matches matches = new Matches();
 	private SubMatches submatches = new SubMatches();
 	private OntModel model;

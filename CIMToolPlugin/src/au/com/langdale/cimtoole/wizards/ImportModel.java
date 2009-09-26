@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IImportWizard;
@@ -18,15 +19,15 @@ import org.eclipse.ui.IWorkbench;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.SplitModelImporter;
-import au.com.langdale.ui.binding.ResourceUI.ProfileBinding;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
-import au.com.langdale.ui.builder.FurnishedWizard;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.validation.Validation;
+import au.com.langdale.util.Jobs;
+import au.com.langdale.workspace.ResourceUI.ProfileBinding;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
-public class ImportModel extends FurnishedWizard implements IImportWizard {
+public class ImportModel extends Wizard implements IImportWizard {
 	private String pathname = "";
 	private String suggestion = "";
 	private IResource destin;
@@ -88,7 +89,7 @@ public class ImportModel extends FurnishedWizard implements IImportWizard {
 					// TODO: replace with TextBinding.
 					// the namespace
 					namespace = getText("namespace").getText();
-					String error = Validation.NAMESPACE.validate(namespace);
+					String error = Validators.NAMESPACE.validate(namespace);
 					if( error != null)
 						return error;
 
@@ -163,7 +164,8 @@ public class ImportModel extends FurnishedWizard implements IImportWizard {
 	@Override
 	public boolean performFinish() {
 		IWorkspaceRunnable op = new SplitModelImporter((IFolder)destin, pathname, namespace, profiles.getFile(), null);
-		return runJob(op, instances, "Importing model " + destin.getName());
+		Jobs.runJob(op, instances, ("Importing model " + destin.getName()));
+		return true;
 	}
 	
 }

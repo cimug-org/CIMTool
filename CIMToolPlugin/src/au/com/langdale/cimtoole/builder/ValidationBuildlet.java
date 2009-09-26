@@ -12,7 +12,7 @@ import org.eclipse.core.resources.IResource;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.validation.Validator;
+import au.com.langdale.validation.ModelValidator;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 
@@ -31,6 +31,6 @@ public class ValidationBuildlet extends ValidationBaseBuildlet {
 	protected ValidatorProtocol getValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
 		if( ruleText == null)
 			ruleText = ValidatorUtil.openStandardRules("cimtool-simple");
-		return new Validator(schema, namespace, ruleText);
+		return new ModelValidator(schema, namespace, ruleText);
 	}
 }

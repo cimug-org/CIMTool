@@ -15,8 +15,7 @@ ASSEMBLY=$PWD/"Assembly"
 JRE="/extra/distfiles/sun-jre-v6-win32.zip"
 PLATFORM="/extra/distfiles/eclipse-platform-3.5-win32.zip"
 ECLIPSE="/extra/share/eclipse-rcp-galileo/eclipse"
-ARCHIVE=$PWD/${1:-CIMToolUpdate.zip}
-PACKAGE=$PWD/${2:-CIMTool-Eclipse.zip}
+PACKAGE=$PWD/${1:-CIMTool-Eclipse.zip}
 
 
 make_package() {
@@ -75,11 +74,8 @@ rm -f $ARCHIVE
 }
 
 
-# make_kit
-# make_site
-
 echo eclipse package is $PACKAGE 
 make_package
 
-echo archive site is $ARCHIVE
-make_site
+#echo archive site is $ARCHIVE
+#make_site

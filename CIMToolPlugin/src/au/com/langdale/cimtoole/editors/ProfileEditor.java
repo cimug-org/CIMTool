@@ -30,6 +30,7 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.wizards.SearchWizard;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.JenaTreeProvider;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;
@@ -39,7 +40,6 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Refactory;
-import au.com.langdale.ui.binding.JenaTreeProvider;
 import au.com.langdale.ui.util.IconCache;
 
 public class ProfileEditor extends ModelEditor {

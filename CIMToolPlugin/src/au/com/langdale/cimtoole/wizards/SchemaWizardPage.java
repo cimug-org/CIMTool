@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Control;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.binding.RadioTextBinding;
 import au.com.langdale.ui.binding.TextBinding;
-import au.com.langdale.ui.binding.ResourceUI.LocalFileBinding;
-import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
+import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.validation.Validation;
+import au.com.langdale.workspace.ResourceUI.LocalFileBinding;
+import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 import static au.com.langdale.ui.builder.Templates.*;
 
 public class SchemaWizardPage extends FurnishedWizardPage {
@@ -40,9 +40,9 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private IFile file;
 	boolean importing;
 
-	private TextBinding source = new TextBinding(Validation.OPTIONAL_EXTANT_FILE);
+	private TextBinding source = new TextBinding(Validators.OPTIONAL_EXTANT_FILE);
 	private LocalFileBinding filename = new LocalFileBinding(sources, false);
-	private RadioTextBinding namespace = new RadioTextBinding(Validation.NAMESPACE, NAMESPACE);
+	private RadioTextBinding namespace = new RadioTextBinding(Validators.NAMESPACE, NAMESPACE);
 	
 	private String[] presets = new String[] {
 			"cim12", "http://iec.ch/TC57/2007/CIM-schema-cim12#",

@@ -19,6 +19,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import au.com.langdale.cimtoole.actions.JumpAction.Jumpable;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.JenaTreeProvider;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase.Node;
@@ -27,7 +28,6 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.ui.binding.JenaTreeProvider;
 import au.com.langdale.xmi.UML;
 
 /**

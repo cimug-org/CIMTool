@@ -499,7 +499,7 @@ public class ProfileClass {
 	/**
 	 * Returns a ProfileClass for each named class.
 	 */
-	public static Iterator getProfileClasses(final OntModel profileModel, final OntModel fullModel, final String namespace) {
+	public static Iterator getProfileClasses(final OntModel profileModel, final OntModel fullModel) {
 		return new Iterator() {
 			List classes = getNamedProfiles(profileModel, fullModel);
 			int ix;
@@ -509,7 +509,8 @@ public class ProfileClass {
 			}
 
 			public Object next() {
-				return new ProfileClass((OntResource)classes.get(ix++), namespace);
+				OntResource clss = (OntResource)classes.get(ix++);
+				return new ProfileClass(clss, clss.getNameSpace());
 			}
 
 			public void remove() {
