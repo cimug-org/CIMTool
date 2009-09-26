@@ -92,6 +92,8 @@ public class EAPExtractor extends XMIModel {
 				if( row.hasStereotype())
 					subject.addProperty(UML.hasStereotype, createStereotypeByName(row.getStereotype()));
 			}
+//			else
+//				System.out.println("Ignoring object type " + row.getObjectType() + " id " + row.getObjectID());
 		}
 	}
 
@@ -99,18 +101,23 @@ public class EAPExtractor extends XMIModel {
 		Iterator it = getAttributeTable().iterator();
 		while( it.hasNext()) {
 			Row row = new Row(it.next());
-			OntResource subject = createAttributeProperty(row.getXUID(), row.getName());
-			subject.addDomain(objectIDs.getID(row.getObjectID()));
-			annotate( subject, row.getNotes());
-			if( row.hasClassifier()) {
-				OntResource range = objectIDs.getID(row.getClassifier());
-				if( range != null)
-					subject.addRange(range);
-				else
-					System.out.println("Could not find the range of attribute. Range = " + row.getClassifier());
+			OntResource id = objectIDs.getID(row.getObjectID());
+			if( id != null ) {
+				OntResource subject = createAttributeProperty(row.getXUID(), row.getName());
+				subject.addDomain(id);
+				annotate( subject, row.getNotes());
+				if( row.hasClassifier()) {
+					OntResource range = objectIDs.getID(row.getClassifier());
+					if( range != null)
+						subject.addRange(range);
+					else
+						System.out.println("Could not find the range of attribute " + row.getName() + ". Range ID = " + row.getClassifier());
+				}
+				if( row.hasDefault())
+					subject.addProperty(UML.hasInitialValue, row.getDefault());
 			}
-			if( row.hasDefault())
-				subject.addProperty(UML.hasInitialValue, row.getDefault());
+			else
+				System.out.println("Could not find the domain of attribute " + row.getName() + ". Domain ID = " + row.getObjectID());
 		}
 		
 	}
