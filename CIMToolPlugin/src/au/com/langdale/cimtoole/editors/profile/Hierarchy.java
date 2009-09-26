@@ -4,25 +4,27 @@
  */
 package au.com.langdale.cimtoole.editors.profile;
 
+import static au.com.langdale.ui.builder.Templates.CheckboxTreeViewer;
+import static au.com.langdale.ui.builder.Templates.Form;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
-import au.com.langdale.kena.OntResource;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.JenaCheckTreeBinding;
 import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.HierarchyModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.ProfileModel.NaturalNode;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class Hierarchy extends FurnishedEditor {
 	private ProfileEditor master;
@@ -110,13 +112,11 @@ public class Hierarchy extends FurnishedEditor {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control form = super.realise(parent);
+			protected void addBindings() {
 				bases.bind("bases", this);
 				TreeViewer viewer = getTreeViewer("bases");
 				master.listenToDoubleClicks(viewer);
 				master.listenToSelection(viewer);
-				return form;
 			}
 
 			@Override

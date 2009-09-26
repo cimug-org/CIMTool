@@ -15,6 +15,8 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
+import au.com.langdale.util.NSMapper;
+
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;

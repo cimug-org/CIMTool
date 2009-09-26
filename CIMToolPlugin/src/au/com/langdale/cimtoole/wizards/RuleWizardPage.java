@@ -4,19 +4,23 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import static au.com.langdale.ui.builder.Templates.CheckBox;
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.FileField;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.workspace.ResourceUI.ProfileBinding;
 import au.com.langdale.workspace.ResourceUI.ProjectBinding;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class RuleWizardPage extends FurnishedWizardPage {
 	
@@ -89,13 +93,11 @@ public class RuleWizardPage extends FurnishedWizardPage {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control panel = super.realise(parent);
+			protected void addBindings() {
 				projects.bind("projects", this);
 				profiles.bind("profiles", this, projects);
 				if( ! importing)
 					getButton("copy").setSelection(true);
-				return panel;
 			}
 
 			@Override

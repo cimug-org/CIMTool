@@ -25,10 +25,8 @@ import au.com.langdale.inference.Extractor.TerminateExtractor;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.profiles.NSMapper;
+import au.com.langdale.util.NSMapper;
 import au.com.langdale.splitmodel.SplitReader;
-import au.com.langdale.validation.LOG;
-import au.com.langdale.validation.ValidatorUtil;
 
 /**
  * Functor definitions for use by <code>Extractor</code>. 
@@ -37,7 +35,7 @@ import au.com.langdale.validation.ValidatorUtil;
  * they implement <code>FunctorActions</code> and are compatible with the 
  * asynchronous design of <code>Extractor</code> and <code>SplitReader</code>. 
  */
-public class StandardFunctorActions extends ValidatorUtil {
+public class StandardFunctorActions extends Reporting {
 	public static final String ARGS = "incorrect number of arguments";
 	public static final String SUBJECT = "no subject supplied";
 	public static final String INT_ARG = "first argument must be an integer";
@@ -45,10 +43,10 @@ public class StandardFunctorActions extends ValidatorUtil {
 	public static final String BODY = "not allowed in rule body";
 	public static final String NS = "http://langdale.com.au/2007/Functor#";
 	
-	public static final Node SUB_CLASS_OF = RDFS.subClassOf.asNode();
-	public static final Node RDF_TYPE = RDF.type.asNode();
+	public static final Node SUB_CLASS_OF = RDFS.Nodes.subClassOf;
+	public static final Node RDF_TYPE = RDF.Nodes.type;
 	public static final Node HAS_PROBLEMS = LOG.hasProblems.asNode();
-	public static final Node COMMENT = RDFS.comment.asNode();
+	public static final Node COMMENT = RDFS.Nodes.comment;
 	public static final Node PROBLEM_PER_SUBJECT = Node.createURI(NS + "problem_per_subject");
 	public static final Node OPTION = Node.createURI(NS + "Option");
 	
@@ -321,8 +319,8 @@ public class StandardFunctorActions extends ValidatorUtil {
 			check(nodes.length >= 2, ARGS);
 
 			Node repair = Node.createAnon();
-			model.add(new Triple(repair, RDF.type.asNode(), LOG.Repair.asNode()));
-			model.add(new Triple(repair, RDFS.comment.asNode(), nodes[1]));
+			model.add(new Triple(repair, RDF.Nodes.type, LOG.Repair.asNode()));
+			model.add(new Triple(repair, RDFS.Nodes.comment, nodes[1]));
 			model.add(new Triple(nodes[0], LOG.hasRepairs.asNode(), repair));
 		}
 

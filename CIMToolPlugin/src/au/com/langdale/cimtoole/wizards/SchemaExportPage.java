@@ -4,10 +4,17 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.Field;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+import static au.com.langdale.ui.builder.Templates.RadioButton;
+import static au.com.langdale.ui.builder.Templates.Row;
+import static au.com.langdale.ui.builder.Templates.SaveButton;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.binding.TextBinding;
@@ -15,7 +22,6 @@ import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.workspace.ResourceUI.ProjectBinding;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class SchemaExportPage extends FurnishedWizardPage {
 
@@ -68,12 +74,10 @@ public class SchemaExportPage extends FurnishedWizardPage {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control panel = super.realise(parent);
+			protected void addBindings() {
 				projects.bind("projects", this);
 				path.bind("path", this);
 				namespace.bind("namespace", this);
-				return panel;
 			}
 			
 			private IProject last;

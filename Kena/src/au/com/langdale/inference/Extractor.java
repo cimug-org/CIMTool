@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import au.com.langdale.util.Profiler.TimeSpan;
-
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -158,7 +156,6 @@ public class Extractor {
 	 * @throws IOException
 	 */
 	public void run() throws IOException {
-		TimeSpan span = new TimeSpan("Extractor Run");
 		result = new GraphMem();
 		
 		for (Iterator it = rules.iterator(); it.hasNext();) {
@@ -171,7 +168,6 @@ public class Extractor {
 		} catch (TerminateExtractor e) {
 			// enough already
 		}
-		span.stop();
 	}
 
 	private void invoke(CompoundRule rule) {

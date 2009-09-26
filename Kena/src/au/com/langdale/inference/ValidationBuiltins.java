@@ -4,8 +4,6 @@
  */
 package au.com.langdale.inference;
 
-import au.com.langdale.validation.ValidatorUtil;
-
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -17,7 +15,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 /**
  * Custom builtins for the Jena rule based inference engine.
  */
-public class ValidationBuiltins extends ValidatorUtil {
+public class ValidationBuiltins extends Reporting {
     
 	public static abstract class VarArgsBuiltin extends BaseBuiltin {
 		

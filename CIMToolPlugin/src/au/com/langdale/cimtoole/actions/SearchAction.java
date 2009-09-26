@@ -13,6 +13,7 @@ import org.eclipse.ui.part.PageBookView;
 
 import au.com.langdale.cimtoole.wizards.SearchWizard;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
+import au.com.langdale.ui.util.WizardLauncher;
 
 public class SearchAction extends WizardLauncher implements Runnable {
 

@@ -4,18 +4,17 @@
  */
 package au.com.langdale.cimtoole.editors.profile;
 
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import au.com.langdale.kena.OntModel;
-
 import au.com.langdale.cimtoole.editors.ProfileEditor;
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.Remapper;
 import au.com.langdale.profiles.Reorganizer;
@@ -25,7 +24,6 @@ import au.com.langdale.ui.binding.BooleanModel.BooleanValue;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.util.Jobs;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class RefactorWizard extends Wizard  {
 	private ProfileEditor master;
@@ -130,10 +128,8 @@ public class RefactorWizard extends Wizard  {
 				}
 				
 				@Override
-				public Control realise(Composite parent) {
-					Control viewer = super.realise(parent);
+				protected void addBindings() {
 					options.bind("options", this);
-					return viewer;
 				}
 			};
 		}

@@ -8,16 +8,12 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import au.com.langdale.ui.binding.Validators;
-
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Node_ANY;
 import com.hp.hpl.jena.graph.Node_Literal;
 import com.hp.hpl.jena.graph.Node_URI;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.vocabulary.DAML_OIL;
@@ -39,7 +35,7 @@ import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
  */
 public class Formater {
 	
-	public final String NCNAME_REGEX = Validators.NCNAME_REGEX;
+	public static final String NCNAME_REGEX = "[A-Za-z_][A-Za-z0-9-_.]*";
     
     private PrefixMapping prefixMapping = PrefixMapping.Factory.create();
         
@@ -116,14 +112,6 @@ public class Formater {
     }
     
     /**
-     * Return a simplified print string for an RDFNode. 
-     */
-    public String print(RDFNode node) {
-        if (node == null) return "null";
-        return print(node.asNode());
-    }
-    
-    /**
      * Return a simplified print string for a Triple
      */
     public String print(Triple triple) {
@@ -144,14 +132,6 @@ public class Formater {
     }
     
     /**
-     * Return a simplified print string for a statment
-     */
-    public String print(Statement stmt) {
-        if (stmt == null) return "(null)";
-        return print(stmt.asTriple());
-    }
-    
-    /**
      * Default print which just uses tostring
      */
     public String print(Object obj) {
@@ -162,10 +142,6 @@ public class Formater {
             return print((TriplePattern)obj);
         } else if (obj instanceof Node) {
             return print((Node)obj);
-        } else if (obj instanceof RDFNode) {
-            return print((RDFNode)obj);
-        } else if (obj instanceof Statement) {
-            return print((Statement)obj);
         } else {
             return obj.toString();
         }

@@ -43,9 +43,9 @@ public class ArrayComposite extends ScrolledComposite {
 			}
 			
 			while( size > elements.size()) {
-				Assembly sub = assembly.createSubAssembly(template);
+				Assembly sub = assembly.createSubAssembly(content, template);
 				elements.add(sub);
-				Control root = sub.realise(content);
+				Control root = sub.getRoot();
 				LayoutGenerator.defaultsFor(root).span(1, 1).applyTo(root);
 				models.add(null);
 			}

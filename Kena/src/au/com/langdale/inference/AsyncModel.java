@@ -3,9 +3,30 @@ package au.com.langdale.inference;
 import java.io.IOException;
 
 import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.NodeVisitor;
+import com.hp.hpl.jena.graph.Node_Fluid;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 
 public interface AsyncModel {
+
+	public static final class Wildcard extends Node_Fluid {
+	
+		protected Wildcard() {
+			super("*");
+		}
+	
+		@Override
+		public boolean equals(Object o) {
+			return o instanceof Wildcard;
+		}
+	
+		@Override
+		public Object visitWith(NodeVisitor v) {
+			return null;
+		}
+	}
+
+	public static final Node WILDCARD = new AsyncModel.Wildcard();
 
 	/**
 	 * Access a submodel.

@@ -4,11 +4,15 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.Field;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.NSChecker;
@@ -18,7 +22,6 @@ import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.workspace.ResourceUI.LocalFileBinding;
 import au.com.langdale.workspace.ResourceUI.ProjectBinding;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class NewProfilePage extends FurnishedWizardPage {
 
@@ -70,13 +73,11 @@ public class NewProfilePage extends FurnishedWizardPage {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control panel = super.realise(parent);
+			protected void addBindings() {
 				projects.bind("projects", this);
 				filename.bind("filename", this);
 				namespace.bind("namespace", this);
 				envelope.bind("envelope", this);
-				return panel;
 			}
 
 			@Override

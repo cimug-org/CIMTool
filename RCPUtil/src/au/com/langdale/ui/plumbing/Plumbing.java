@@ -63,14 +63,23 @@ package au.com.langdale.ui.plumbing;
  *  the widgets to the underlying data (the model). 
  *  
  */
-public abstract class Plumbing implements Binding, Observer, ICanRefresh {
+public abstract class Plumbing implements Binding, ICanRefresh {
 	
 	private Controller controller;
 	private Bindings bindings;
 	private Plumbing parent;
+	
+	private Observer noObserver = new Observer() {
+		public void markDirty() {}
+		public void markInvalid(String message) {}
+		public void markValid() {}
+	};
 
 	/**
 	 * Construct a new set of form plumbing.
+	 * 
+	 * The observer parameter is an object that will be notified
+	 * of the state of the assembly after each refresh or update cycle.
 	 * 
 	 * The synchronous parameter indicates that the underlying model (data) 
 	 * will be kept synchronised with the widgets by widget events. 
@@ -78,10 +87,10 @@ public abstract class Plumbing implements Binding, Observer, ICanRefresh {
 	 * to transfer widget values to the underlying model.
 	 * 
 	 */
-	public Plumbing(boolean synchronous) {
+	public Plumbing(Observer observer, boolean synchronous) {
 		bindings = new Bindings();
 		bindings.push(this);
-		controller = new Controller(bindings, this, synchronous);
+		controller = new Controller(bindings, observer != null? observer: noObserver, synchronous);
 	}
 	
 	/**
@@ -126,21 +135,6 @@ public abstract class Plumbing implements Binding, Observer, ICanRefresh {
 	public String validate() {
 		return null;
 	}
-	
-	/**
-	 * Default implementation of Observer.
-	 */
-	public void markDirty() {}
-
-	/**
-	 * Default implementation of Observer.
-	 */
-	public void markInvalid(String message) {}
-
-	/**
-	 * Default implementation of Observer.
-	 */
-	public void markValid() {}
 
 	/**
 	 *  The method should be called following realise() to initialise 

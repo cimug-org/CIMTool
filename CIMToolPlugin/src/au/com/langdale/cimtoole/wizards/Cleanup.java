@@ -4,12 +4,15 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
@@ -20,7 +23,6 @@ import au.com.langdale.ui.builder.Template;
 import au.com.langdale.util.Jobs;
 import au.com.langdale.workspace.ResourceUI.DiagnosticsBinding;
 import au.com.langdale.workspace.ResourceUI.ProjectBinding;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class Cleanup extends Wizard implements IWorkbenchWizard {
 
@@ -70,11 +72,9 @@ public class Cleanup extends Wizard implements IWorkbenchWizard {
 				}
 				
 				@Override
-				public Control realise(Composite parent) {
-					Control panel = super.realise(parent);
+				protected void addBindings() {
 					projects.bind("projects", this);
 					models.bind("models", this, projects);
-					return panel;
 				}
 
 				@Override

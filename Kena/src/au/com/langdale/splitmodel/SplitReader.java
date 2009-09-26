@@ -17,9 +17,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import au.com.langdale.inference.AsyncModel;
-import au.com.langdale.inference.RuleParser;
 import au.com.langdale.inference.AsyncResult;
-import au.com.langdale.util.Profiler.TimeSpan;
 
 import com.hp.hpl.jena.graph.Factory;
 import com.hp.hpl.jena.graph.Graph;
@@ -28,8 +26,6 @@ import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.n3.turtle.ParserTurtle;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  * A query processor for split models.
@@ -249,7 +245,7 @@ public class SplitReader extends SplitBase implements AsyncModel {
 
 	public static final int DEFAULT_QUOTA = 2;
 	
-	private static final Node RDF_TYPE = RDF.type.asNode();
+	private static final Node RDF_TYPE = Node.createURI(RDF_TYPE_URI);
 	
 	private Bucket[] buckets;
 
@@ -468,14 +464,14 @@ public class SplitReader extends SplitBase implements AsyncModel {
 	}
 
 	public static Node var2Any(Node node) {
-		return node.isVariable() || node == RuleParser.WILDCARD ? Node.ANY: node;
+		return node.isVariable() || node == AsyncModel.WILDCARD ? Node.ANY: node;
 	}
 
 	private static Integer getInteger(Graph data, String subj, String pred) {
 	    Iterator it = data.find(Node.createURI(subj), Node.createURI(pred), Node.ANY);
 	    while (it.hasNext()) {
 			Triple t = (Triple) it.next();
-			if( t.getObject().isLiteral() && t.getObject().getLiteralDatatypeURI().equals(XSD.integer.getURI())) {
+			if( t.getObject().isLiteral() && t.getObject().getLiteralDatatypeURI().equals(XSD_INTEGER_URI)) {
 				return (Integer) t.getObject().getLiteralValue();
 			}
 		}
@@ -483,13 +479,11 @@ public class SplitReader extends SplitBase implements AsyncModel {
 	}
 
 	private static Graph read(File file) throws IOException {
-		TimeSpan span = new TimeSpan("Model read");
 		Graph graph = Factory.createDefaultGraph();
 		if( file.exists()) {
 			ParserTurtle parser = new ParserTurtle();
 			parser.parse(graph, file.toURI().toString(), new BufferedInputStream(new FileInputStream(file)));
 		}
-		span.stop();
 		return graph;
 	}
 }

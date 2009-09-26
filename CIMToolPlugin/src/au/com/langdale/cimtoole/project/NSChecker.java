@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.profiles.NSMapper;
+import au.com.langdale.util.NSMapper;
 import au.com.langdale.util.Jobs;
 
 public class NSChecker implements IWorkspaceRunnable {

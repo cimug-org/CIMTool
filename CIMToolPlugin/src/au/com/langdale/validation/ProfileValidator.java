@@ -12,6 +12,7 @@ import java.util.Map;
 
 import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.GraphAdapter;
+import au.com.langdale.inference.LOG;
 import au.com.langdale.inference.RepairLibrary;
 import au.com.langdale.inference.RuleParser;
 import au.com.langdale.inference.StandardFunctorActions;

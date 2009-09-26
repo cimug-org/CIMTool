@@ -4,6 +4,14 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import static au.com.langdale.ui.builder.Templates.CheckBox;
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.Field;
+import static au.com.langdale.ui.builder.Templates.FileField;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import java.io.File;
 
 import org.eclipse.core.resources.IFolder;
@@ -12,8 +20,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -25,7 +31,6 @@ import au.com.langdale.ui.builder.Template;
 import au.com.langdale.util.Jobs;
 import au.com.langdale.workspace.ResourceUI.ProfileBinding;
 import au.com.langdale.workspace.ResourceUI.ProjectBinding;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class ImportModel extends Wizard implements IImportWizard {
 	private String pathname = "";
@@ -68,11 +73,9 @@ public class ImportModel extends Wizard implements IImportWizard {
 				}
 				
 				@Override
-				public Control realise(Composite parent) {
-					Control panel = super.realise(parent);
+				protected void addBindings() {
 					projects.bind("projects", this);
 					profiles.bind("profiles", this, projects);
-					return panel;
 				}
 
 				@Override

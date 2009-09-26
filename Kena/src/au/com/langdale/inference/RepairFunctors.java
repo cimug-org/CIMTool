@@ -11,7 +11,6 @@ import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
-import au.com.langdale.validation.LOG;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;

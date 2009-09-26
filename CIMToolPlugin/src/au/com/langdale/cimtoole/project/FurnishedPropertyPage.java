@@ -4,7 +4,8 @@
  */
 package au.com.langdale.cimtoole.project;
 
-import static au.com.langdale.ui.builder.Templates.*;
+import static au.com.langdale.ui.builder.Templates.CheckBox;
+import static au.com.langdale.ui.builder.Templates.Field;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -17,24 +18,24 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import au.com.langdale.ui.binding.Validator;
 import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.plumbing.Binding;
+import au.com.langdale.ui.plumbing.Observer;
 
 /**
  * A preference or property page provided with a Assembly and
  * a set of templates for various property and preference types.
  */
 public abstract class FurnishedPropertyPage extends PreferencePage 
-			implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
+			implements Observer, IWorkbenchPreferencePage, IWorkbenchPropertyPage {
 	
 	private Content content;
 	private Control body;
 	private IResource resource;
-
+	
 	public FurnishedPropertyPage(String title, ImageDescriptor image) {
 		super(title, image);
 	}
@@ -170,23 +171,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 	
 	protected abstract class Content extends Assembly {
 		public Content() {
-			super(createDialogToolkit(), false);
-		}
-
-		@Override
-		public void markInvalid(String message) {
-			super.markInvalid(message);
-			setErrorMessage(message);
-			setValid(false);
-		}
-
-		@Override
-		public void markValid() {
-			super.markValid();
-			setErrorMessage(null);
-			setValid(true);
+			super(createDialogToolkit(), FurnishedPropertyPage.this, false);
 		}
 		
+		protected abstract Template define();
+		protected void addBindings() {}
 	}
 	
 	protected abstract Content createContent();
@@ -194,12 +183,24 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 	@Override
 	protected final Control createContents(Composite parent) {
 		content = createContent();
-		body = content.realise(parent);
+		body = content.realise(parent, content.define());
+		content.addBindings();
 		content.doRefresh(); 
-		ScrolledForm form = content.getForm();
-		if( form != null && form.getText().length() == 0)
-			form.setText(getTitle());
 		return body;
+	}
+
+	public void markInvalid(String message) {
+		setErrorMessage(message);
+		setValid(false);
+	}
+
+	public void markValid() {
+		setErrorMessage(null);
+		setValid(true);
+	}
+	
+	public void markDirty() {
+		
 	}
 	
 	@Override

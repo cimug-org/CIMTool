@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.PageBook;
 
@@ -249,6 +251,24 @@ public class Templates {
 		}
 	}
 	
+	private static class MarkupTemplate extends SubjectTemplate {
+		private IHyperlinkListener listener;
+		
+		MarkupTemplate(int style, String name, String text, IHyperlinkListener listener) {
+			super(style, name, text);
+			this.listener = listener;
+		}
+
+		public Control realise(Composite parent, Assembly assembly) {
+			FormText widget = assembly.getToolkit().createFormText(parent, false);
+			widget.setText(text, true, false);
+			if( listener != null)
+				widget.addHyperlinkListener(listener);
+			register(widget, assembly);
+			return widget;
+		}
+	}
+	
 	private static abstract class ViewerTemplate implements Template {
 
 		protected int style;
@@ -260,6 +280,7 @@ public class Templates {
 			this.name = name;
 		}
 		
+		@SuppressWarnings("unused")
 		public StructuredViewer getViewer() {
 			return viewer;
 		}
@@ -437,10 +458,10 @@ public class Templates {
 	 * A sequence of templates specifying a row of a Grid.
 	 *
 	 */
-	public static class Group {
+	public static class GroupTemplate {
 		private Template[] parts;
 
-		public Group(Template[] parts) {
+		public GroupTemplate(Template[] parts) {
 			this.parts = parts;
 		}
 
@@ -473,9 +494,9 @@ public class Templates {
 	}
 	
 	private static class GridTemplate implements Template {
-		private Group[] parts;
+		private GroupTemplate[] parts;
 
-		GridTemplate(Group[] parts) {
+		GridTemplate(GroupTemplate[] parts) {
 			this.parts = parts;
 		}
 
@@ -536,11 +557,10 @@ public class Templates {
 				form.setText(title);
 			if(image != null)
 				form.setImage(IconCache.get(image));
-			assembly.setForm(form);
 			Composite body = form.getBody();
 			body.setLayout(new FillLayout());
 			part.realise(body, assembly);
-			return body;
+			return form;
 		}
 	}
 	
@@ -561,6 +581,17 @@ public class Templates {
 			}
 			book.showPage(page);
 			return book;
+		}
+	}
+	
+	private static class SeparatorTemplate implements Template {
+		int style;
+		
+		public SeparatorTemplate(int style) {
+			this.style = style;
+		}
+		public Control realise(Composite parent, Assembly assembly) {
+			return assembly.getToolkit().createSeparator(parent, style);
 		}
 	}
 	
@@ -623,23 +654,23 @@ public class Templates {
 	}
 	
 	public static Template Column(Template a, Template b) {
-		return new GridTemplate(new Group[] {Group(a), Group(b)}); 
+		return new GridTemplate(new GroupTemplate[] {Group(a), Group(b)}); 
 	}
 	
 	public static Template Column(Template a, Template b, Template c) {
-		return new GridTemplate(new Group[] {Group(a), Group(b), Group(c)}); 
+		return new GridTemplate(new GroupTemplate[] {Group(a), Group(b), Group(c)}); 
 	}
 	
 	public static Template Column(Template a, Template b, Template c, Template d) {
-		return new GridTemplate(new Group[] {Group(a), Group(b), Group(c), Group(d)}); 
+		return new GridTemplate(new GroupTemplate[] {Group(a), Group(b), Group(c), Group(d)}); 
 	}
 	
 	public static Template Column(Template a, Template b, Template c, Template d, Template e) {
-		return new GridTemplate(new Group[] {Group(a), Group(b), Group(c), Group(d), Group(e)}); 
+		return new GridTemplate(new GroupTemplate[] {Group(a), Group(b), Group(c), Group(d), Group(e)}); 
 	}
 	
 	public static Template Column(Template a, Template b, Template c, Template d, Template e, Template f) {
-		return new GridTemplate(new Group[] {Group(a), Group(b), Group(c), Group(d), Group(e), Group(f)}); 
+		return new GridTemplate(new GroupTemplate[] {Group(a), Group(b), Group(c), Group(d), Group(e), Group(f)}); 
 	}
 	
 	public static Template Field(String name) {
@@ -652,6 +683,18 @@ public class Templates {
 	
 	public static Template DisplayField(String name) {
 		return new TextTemplate(SWT.SINGLE|SWT.READ_ONLY, name, "", 0);
+	}
+	
+	public static Template Markup(String text) {
+		return new MarkupTemplate(0, null, text, null);
+	}
+	
+	public static Template Markup(String name, String text) {
+		return new MarkupTemplate(0, name, text, null);
+	}
+	
+	public static Template Markup(String text, IHyperlinkListener listener) {
+		return new MarkupTemplate(0, null, text, listener);
 	}
 	
 	public static Template TextArea(String name) {
@@ -767,56 +810,68 @@ public class Templates {
 		return new StackTemplate(new Template[] {a, b, c, d, e});
 	}
 	
-	public static Template Grid(Group a) {
-		return new GridTemplate(new Group[] {a});
+	public static Template Grid(GroupTemplate[] groups) {
+		return new GridTemplate(groups);
 	}
 	
-	public static Template Grid(Group a, Group b) {
-		return new GridTemplate(new Group[] {a, b});
+	public static Template Grid(GroupTemplate a) {
+		return new GridTemplate(new GroupTemplate[] {a});
 	}
 	
-	public static Template Grid(Group a, Group b, Group c) {
-		return new GridTemplate(new Group[] {a, b, c});
+	public static Template Grid(GroupTemplate a, GroupTemplate b) {
+		return new GridTemplate(new GroupTemplate[] {a, b});
 	}
 	
-	public static Template Grid(Group a, Group b, Group c, Group d) {
-		return new GridTemplate(new Group[] {a, b, c, d});
+	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c) {
+		return new GridTemplate(new GroupTemplate[] {a, b, c});
 	}
 	
-	public static Template Grid(Group a, Group b, Group c, Group d, Group e) {
-		return new GridTemplate(new Group[] {a, b, c, d, e});
+	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c, GroupTemplate d) {
+		return new GridTemplate(new GroupTemplate[] {a, b, c, d});
 	}
 	
-	public static Template Grid(Group a, Group b, Group c, Group d, Group e, Group f) {
-		return new GridTemplate(new Group[] {a, b, c, d, e, f});
+	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c, GroupTemplate d, GroupTemplate e) {
+		return new GridTemplate(new GroupTemplate[] {a, b, c, d, e});
 	}
 	
-	public static Template Grid(Group a, Group b, Group c, Group d, Group e, Group f, Group g) {
-		return new GridTemplate(new Group[] {a, b, c, d, e, f, g});
+	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c, GroupTemplate d, GroupTemplate e, GroupTemplate f) {
+		return new GridTemplate(new GroupTemplate[] {a, b, c, d, e, f});
 	}
 	
-	public static Template Grid(Group a, Group b, Group c, Group d, Group e, Group f, Group g, Group h) {
-		return new GridTemplate(new Group[] {a, b, c, d, e, f, g, h});
+	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c, GroupTemplate d, GroupTemplate e, GroupTemplate f, GroupTemplate g) {
+		return new GridTemplate(new GroupTemplate[] {a, b, c, d, e, f, g});
 	}
 	
-	public static Group Group( Template a ) {
-		return new Group(new Template[] {a});
+	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c, GroupTemplate d, GroupTemplate e, GroupTemplate f, GroupTemplate g, GroupTemplate h) {
+		return new GridTemplate(new GroupTemplate[] {a, b, c, d, e, f, g, h});
 	}
 	
-	public static Group Group( Template a, Template b ) {
-		return new Group(new Template[] {a, b});
+	public static GroupTemplate Group( Template a ) {
+		return new GroupTemplate(new Template[] {a});
 	}
 	
-	public static Group Group( Template a, Template b, Template c ) {
-		return new Group(new Template[] {a, b, c});
+	public static GroupTemplate Group( Template a, Template b ) {
+		return new GroupTemplate(new Template[] {a, b});
 	}
 	
-	public static Group Group( Template a, Template b, Template c, Template d ) {
-		return new Group(new Template[] {a, b, c, d});
+	public static GroupTemplate Group( Template a, Template b, Template c ) {
+		return new GroupTemplate(new Template[] {a, b, c});
 	}
 	
-	public static Group Group( Template a, Template b, Template c, Template d, Template e ) {
-		return new Group(new Template[] {a, b, c, d, e});
+	public static GroupTemplate Group( Template a, Template b, Template c, Template d ) {
+		return new GroupTemplate(new Template[] {a, b, c, d});
+	}
+	
+	public static GroupTemplate Group( Template a, Template b, Template c, Template d, Template e ) {
+		return new GroupTemplate(new Template[] {a, b, c, d, e});
+	}
+	
+	public static Template HRule() {
+		return new SeparatorTemplate(SWT.HORIZONTAL);
+	}
+	
+	public static Template VBar() {
+		return new SeparatorTemplate(SWT.VERTICAL);
 	}
 	
 	public static Template Array( String name, Template elem ) {

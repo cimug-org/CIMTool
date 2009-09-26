@@ -2,7 +2,7 @@
  * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
  * Langdale Consultants can be contacted at: http://www.langdale.com.au
  */
-package au.com.langdale.validation;
+package au.com.langdale.inference;
 
 import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;

@@ -14,10 +14,11 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.EditorPart;
 
 import au.com.langdale.ui.plumbing.ICanRefresh;
+import au.com.langdale.ui.plumbing.Observer;
 /**
  * An eclipse editor that is provided with an <code>Assembly</code> and event plumbing.
  */
-public abstract class FurnishedEditor extends EditorPart implements ICanRefresh {
+public abstract class FurnishedEditor extends EditorPart implements Observer, ICanRefresh {
 	private boolean dirty;
 
 	public FurnishedEditor() {
@@ -61,8 +62,10 @@ public abstract class FurnishedEditor extends EditorPart implements ICanRefresh 
 	@Override
 	public final void createPartControl(Composite parent) {
 		content = createContent();
-		content.realise(parent);
+		content.realise(parent, content.define());
+		content.addBindings();
 		content.doRefresh(); 
+		
 		ScrolledForm form = content.getForm();
 		if( form != null && form.getText().length() == 0)
 			form.setText(getTitle());
@@ -73,12 +76,16 @@ public abstract class FurnishedEditor extends EditorPart implements ICanRefresh 
 		// TODO Auto-generated method stub
 	}
 	
-	protected void markDirty() {
+	public void markDirty() {
 		if( ! dirty ) {
 			dirty = true;
 			firePropertyChange(PROP_DIRTY);
 		}
 	}
+	
+	public void markValid() {}
+	
+	public void markInvalid(String message) {}
 	
 	public void doRefresh() {
 		if( content != null) 
@@ -87,13 +94,11 @@ public abstract class FurnishedEditor extends EditorPart implements ICanRefresh 
 	
 	protected abstract class Content extends Assembly {
 		public Content(FormToolkit toolkit) {
-			super(toolkit, true);
+			super(toolkit, FurnishedEditor.this, true);
 		}
 		
-		@Override
-		public void markDirty() {
-			FurnishedEditor.this.markDirty();
-		}
+		protected abstract Template define();
+		protected void addBindings() {}
 	}
 	
 	private Content content;

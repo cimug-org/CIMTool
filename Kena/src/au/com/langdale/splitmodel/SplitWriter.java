@@ -25,8 +25,6 @@ import au.com.langdale.kena.ConversionException;
 import au.com.langdale.kena.Injector;
 
 import com.hp.hpl.jena.rdf.model.impl.Util;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class SplitWriter extends SplitBase implements Injector {
 	
@@ -39,7 +37,6 @@ public class SplitWriter extends SplitBase implements Injector {
 	private static final CharSequence ESCAPE_ESCAPE = "\\\\";
 	private static final CharSequence ESCAPE_QUOTE_MARK = "\\\"";
 	private static final Pattern NCNAME_REGEX = Pattern.compile("[A-Za-z_][A-Za-z0-9-_.]*");
-	private static final String RDF_TYPE = RDF.type.getURI(); 
 	private static final Random random = new Random();
 	
 	private final String local = LOCAL + Integer.toHexString(random.nextInt()) + "#";
@@ -68,7 +65,7 @@ public class SplitWriter extends SplitBase implements Injector {
 		prefixes = new HashMap();
 		setPrefix("local", local);
 		setPrefix("split", SPLITMODEL);
-		setPrefix("xsd", XSD.getURI());
+		setPrefix("xsd", XSD_URI);
 	}
 	/**
 	 * Initialise with base namespace (recommended).  URI's that 
@@ -196,8 +193,8 @@ public class SplitWriter extends SplitBase implements Injector {
 		result.write("\n");
 
 		try {
-			result.write(createStatement(DOCUMENT, HASH, createSymbol(Integer.toString(key), XSD.integer.getURI())));
-			result.write(createStatement(DOCUMENT, MODULUS, createSymbol(Integer.toString(modulus), XSD.integer.getURI())));
+			result.write(createStatement(DOCUMENT, HASH, createSymbol(Integer.toString(key), XSD_INTEGER_URI)));
+			result.write(createStatement(DOCUMENT, MODULUS, createSymbol(Integer.toString(modulus), XSD_INTEGER_URI)));
 		} catch (ConversionException e) {
 			throw new Error(e);
 		}
@@ -306,7 +303,7 @@ public class SplitWriter extends SplitBase implements Injector {
 		String stmnt = createStatement(s, pred, createSymbol(o));
 		int subjKey = hashURI(s);
 		getWriter(subjKey).write(stmnt);
-		if( ! pred.equals(RDF_TYPE)) {
+		if( ! pred.equals(RDF_TYPE_URI)) {
 			int objKey = hashURI(o);
 			if( subjKey != objKey )
 				getWriter(objKey).write(stmnt);

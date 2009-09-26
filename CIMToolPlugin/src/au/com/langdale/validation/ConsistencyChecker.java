@@ -8,6 +8,7 @@ package au.com.langdale.validation;
 import java.util.Iterator;
 
 import au.com.langdale.cimtoole.builder.Buildlet;
+import au.com.langdale.inference.LOG;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntResource;

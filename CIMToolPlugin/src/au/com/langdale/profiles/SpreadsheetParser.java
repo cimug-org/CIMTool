@@ -15,6 +15,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.util.Logger;
+import au.com.langdale.util.NSMapper;
 
 import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;

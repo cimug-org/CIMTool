@@ -7,6 +7,7 @@ package au.com.langdale.cimtoole.actions;
 import org.eclipse.ui.IWorkbenchWizard;
 
 import au.com.langdale.cimtoole.wizards.ImportProfile;
+import au.com.langdale.ui.util.WizardLauncher;
 
 public class ImportProfileAction extends WizardLauncher {
 

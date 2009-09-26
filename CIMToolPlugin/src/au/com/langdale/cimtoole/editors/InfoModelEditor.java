@@ -104,10 +104,10 @@ public class InfoModelEditor extends ModelEditor {
 				}
 			};
 		}
-
-		@Override
-		protected void markDirty() {
-			// we are a readonly view
-		}
 	};
+
+	@Override
+	protected void markDirty() {
+		// we are a readonly view
+	}
 }

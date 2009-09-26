@@ -7,7 +7,6 @@ package au.com.langdale.ui.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -32,6 +31,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.PageBook;
 
+import au.com.langdale.ui.plumbing.Observer;
 import au.com.langdale.ui.plumbing.Plumbing;
 import au.com.langdale.ui.util.IconCache;
 
@@ -51,10 +51,9 @@ import au.com.langdale.ui.util.IconCache;
  *  FormToolkit is an eclipse UI concept. This class also provides factory 
  *  methods for FormToolkits. 
  */
-public abstract class Assembly extends Plumbing {
+public class Assembly extends Plumbing {
 
 	private FormToolkit toolkit;
-	private ScrolledForm form;
 	private Map subjects;
 	private Control root;
 
@@ -62,8 +61,8 @@ public abstract class Assembly extends Plumbing {
 	 * An Assembly requires a FormToolkit, that may be shared with other assemblies.
 	 * The synchronous argument determines the behaviour of the assembly's plumbing.
 	 */
-	public Assembly(FormToolkit toolkit, boolean synchronous) {
-		super(synchronous);
+	public Assembly(FormToolkit toolkit, Observer observer, boolean synchronous) {
+		super(observer, synchronous);
 		this.toolkit = toolkit;
 		subjects = new HashMap();
 	}
@@ -90,11 +89,10 @@ public abstract class Assembly extends Plumbing {
 	 * Create an assembly that can realise the given template
 	 * and shares a controller and toolkit with the present assembly.     
 	 */
-	public Assembly createSubAssembly(final Template template) {
-		return new Assembly(this) {
-			@Override
-			protected Template define() { return template;	}
-		};
+	public Assembly createSubAssembly(Composite parent, Template template) {
+		Assembly sub = new Assembly(this);
+		sub.realise(parent, template);
+		return sub;
 	}
 	
 	/**
@@ -102,52 +100,23 @@ public abstract class Assembly extends Plumbing {
 	 * form construction toolkit.  The synchronous argument determines the 
 	 * behaviour of the plumbing.
 	 */
-	public static Assembly createAssembly(FormToolkit toolkit, boolean synchronous, final Template template) {
-		return new Assembly(toolkit, synchronous) {
-			@Override
-			protected Template define() { return template;	}
-		};
+	public static Assembly createAssembly(Composite parent, Template template, FormToolkit toolkit, Observer observer, boolean synchronous) {
+		Assembly assembly = new Assembly(toolkit, observer, synchronous);
+		assembly.realise(parent, template);
+		return assembly;
 	}
 	
 	/**
 	 *  Build a widget hierarchy under the given composite
-	 *  using the template associated with this assembly. 
+	 *  using the given template associated with this assembly. 
 	 *  
 	 *  This method should only be called once as the
 	 *  Template will hook widget events and register 
 	 *  them against their names. 
 	 */
-	public Control realise(Composite parent) {
-		root = define().realise(parent, this);
+	public Control realise(Composite parent, Template template) {
+		root = template.realise(parent, this);
 		return root;
-	}
-
-	/**
-	 *  The implementation should construct and return a Template instance.
-	 *  These are canned layout and widget specifications. 
-	 *  They are created with the template 
-	 *  methods such as Row(), Column() and Label().
-	 */
-	protected abstract Template define();
-
-	/**
-	 * Subclasses may extend this to monitor the validation message.
-	 */
-	@Override
-	public void markInvalid(String message) {
-		super.markInvalid(message);
-		if( form != null )
-			form.setMessage(message, IMessageProvider.NONE);
-	}
-
-	/**
-	 * Subclasses may extend this to monitor the validation message.
-	 */
-	@Override
-	public void markValid() {
-		super.markValid();
-		if( form != null )
-			form.setMessage("", IMessageProvider.NONE);
 	}
 
 	/**
@@ -155,6 +124,13 @@ public abstract class Assembly extends Plumbing {
 	 */
 	public Text getText(String name) {
 		return (Text) getControl(name);
+	}
+
+	/**
+	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 */
+	public FormText getMarkup(String name) {
+		return (FormText) getControl(name);
 	}
 
 	/**
@@ -207,7 +183,11 @@ public abstract class Assembly extends Plumbing {
 	 * layers are created with Stack().  
 	 */
 	public void showStackLayer(String name) {
-		showStackLayer(getControl(name));
+		Object subject = subjects.get(name);
+		if( subject instanceof Viewer)
+		    showStackLayer(((Viewer)subject).getControl());
+		else
+			showStackLayer((Control)subject);
 	}
 	
 	private void showStackLayer(Control control) {
@@ -277,14 +257,20 @@ public abstract class Assembly extends Plumbing {
 	}
 	
 	/**
+	 * Get the root widget, which was created by the realise() method.
+	 */
+	public Control getRoot() {
+		return root;
+	}
+	
+	/**
 	 * Get the Form widget (if one was used) or null.
 	 */
 	public ScrolledForm getForm() {
-		return form;
-	}
-	
-	public void setForm(ScrolledForm form) {
-		this.form = form;
+		if( root instanceof ScrolledForm)
+		    return (ScrolledForm) root;
+		else
+			return null;
 	}
 	
 	public FormToolkit getToolkit() {

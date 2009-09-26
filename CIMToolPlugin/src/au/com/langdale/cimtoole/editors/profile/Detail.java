@@ -25,8 +25,7 @@ public class Detail extends FurnishedEditor {
 	protected Content createContent() {
 		return new Content(master.getToolkit()) {
 
-			@Override
-			protected Template define() {
+			public Template define() {
 				return Form(
 					Grid(
 						Group(Label("Name:"), Field("name")),

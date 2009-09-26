@@ -79,30 +79,45 @@ public class IconCache {
 	 * @return
 	 */
 	public static Image get(String type, boolean error, int size) {
+		String key = keyString(type, error, size);
+		Image image;
+		
 		if( registry == null ) {
 			display = PlatformUI.getWorkbench().getDisplay();
 			registry = new ImageRegistry(display);
+			image = null;
+		}
+		else 
+			image = registry.get(key);
+		
+		if( image == null ) {
+			if( error ) {
+				Image base = get(type, false, size);
+				ImageDescriptor overlay = ImageDescriptor.createFromImage(get("error_tsk", false, size));
+				image = new DecorationOverlayIcon(base, overlay, IDecoration.BOTTOM_LEFT).createImage();
+			}
+			else {
+				image = readImage(type, size);
+				if( image == null) 
+					image = new Image(display, size, size);
+			}
+
+			registry.put(key, image);
 		}
 		
-		String key = type + (error? "-error": "") + "-" + Integer.toString(size);
-		
-		Image image = registry.get(key);
-		if( image != null )
-			return image;
-		
-		if( error ) {
-			Image base = get(type, false, size);
-			ImageDescriptor overlay = ImageDescriptor.createFromImage(get("error_tsk", false, size));
-			image = new DecorationOverlayIcon(base, overlay, IDecoration.BOTTOM_LEFT).createImage();
-		}
-		else {
-		    image = readImage(type, size);
-		    if( image == null) 
-			   image = new Image(display, size, size);
-		}
-		
-		registry.put(key, image);
 		return image;
+	}
+
+	private static String keyString(String type, boolean error, int size) {
+		return type + (error? "-error": "") + "-" + Integer.toString(size);
+	}
+	
+	/**
+	 * Get an ImageDescriptor that will refer to the icon of the given type.
+	 */
+	public static ImageDescriptor getDescriptor(String type, boolean error, int size) {
+		get(type, error, size); // side effect places image descriptor in registry
+		return registry.getDescriptor(keyString(type, error, size));
 	}
 	
 	/**

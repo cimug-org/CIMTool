@@ -4,10 +4,17 @@
  */
 package au.com.langdale.cimtoole.editors.profile;
 
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.DisplayField;
+import static au.com.langdale.ui.builder.Templates.Form;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+import static au.com.langdale.ui.builder.Templates.PushButton;
+import static au.com.langdale.ui.builder.Templates.Row;
+
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.builder.ProfileBuildlets;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
@@ -15,7 +22,6 @@ import au.com.langdale.ui.binding.BooleanBinding;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public final class Summary extends FurnishedEditor {
 	private ProfileEditor master;
@@ -67,10 +73,8 @@ public final class Summary extends FurnishedEditor {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control form = super.realise(parent);
+			protected void addBindings() {
 				buildlets.bind("buildlets", this);
-				return form;
 			}
 			
 //			private SelectionListener remap = new SelectionListener() {

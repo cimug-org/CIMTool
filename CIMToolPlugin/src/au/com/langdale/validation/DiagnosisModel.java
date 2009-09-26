@@ -4,6 +4,7 @@
  */
 package au.com.langdale.validation;
 
+import au.com.langdale.inference.LOG;
 import au.com.langdale.inference.RepairFunctors;
 import au.com.langdale.inference.RepairFunctors.RepairAction;
 import au.com.langdale.jena.JenaTreeModelBase;

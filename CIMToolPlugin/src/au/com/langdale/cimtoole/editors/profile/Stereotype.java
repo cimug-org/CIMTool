@@ -4,9 +4,11 @@
  */
 package au.com.langdale.cimtoole.editors.profile;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
+import static au.com.langdale.ui.builder.Templates.CheckboxTableViewer;
+import static au.com.langdale.ui.builder.Templates.Form;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.OntModelAdapters;
 import au.com.langdale.jena.TreeModelBase.Node;
@@ -16,7 +18,6 @@ import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class Stereotype extends FurnishedEditor {
 	private ProfileEditor master;
@@ -50,10 +51,8 @@ public class Stereotype extends FurnishedEditor {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control form = super.realise(parent);
+			protected void addBindings() {
 				stereos.bind("stereos", this);
-				return form;
 			}
 
 			@Override

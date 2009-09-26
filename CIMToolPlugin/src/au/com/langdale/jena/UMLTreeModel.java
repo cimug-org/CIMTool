@@ -11,11 +11,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import au.com.langdale.validation.LOG;
 import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 
+import au.com.langdale.inference.LOG;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.OntResource;

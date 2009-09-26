@@ -23,8 +23,6 @@ import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeVisitor;
-import com.hp.hpl.jena.graph.Node_Fluid;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 import com.hp.hpl.jena.reasoner.rulesys.BuiltinRegistry;
 import com.hp.hpl.jena.reasoner.rulesys.ClauseEntry;
@@ -188,25 +186,6 @@ public class RuleParser {
         return node;
     }
 
-    public static final class Wildcard extends Node_Fluid {
-
-		protected Wildcard() {
-			super("*");
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			return o instanceof Wildcard;
-		}
-
-		@Override
-		public Object visitWith(NodeVisitor v) {
-			return null;
-		}
-    }
-    
-    public static final Node WILDCARD = new Wildcard();
-    
     /**
      * Parse a single variable, qname, uri, literal string, number or functor.
      */
@@ -223,7 +202,7 @@ public class RuleParser {
     	
         if(token.equals("*")) {
         	next();
-        	return WILDCARD;
+        	return AsyncModel.WILDCARD;
         } 
 
         if ( Character.isDigit(token.charAt(0)) || 

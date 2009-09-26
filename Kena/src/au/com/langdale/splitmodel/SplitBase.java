@@ -5,6 +5,9 @@
 package au.com.langdale.splitmodel;
 
 import java.io.File;
+
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.vocabulary.RDF;
 /**
  * A vocabulary use in split models and the mapping function between URI's and files.
  */
@@ -15,6 +18,9 @@ public class SplitBase {
 	public static final String HASH = "http://langdale.com.au/2007/SplitModel#hasHash";
 	public static final String MODULUS = "http://langdale.com.au/2007/SplitModel#hasModulus";
 	public static final String SPLITMODEL = "http://langdale.com.au/2007/SplitModel#";
+	public static final String RDF_TYPE_URI = RDF.Nodes.type.getURI();
+	public static final String XSD_URI = XSDDatatype.XSD + "#";
+	public static final String XSD_INTEGER_URI = XSDDatatype.XSDinteger.getURI();
 
 	public static int hashURI(String uri, int modulus) {
 		return Math.abs(uri.hashCode()) % modulus;

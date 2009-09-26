@@ -25,8 +25,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
@@ -210,12 +208,10 @@ public class SearchWizard extends Wizard implements IWorkbenchWizard {
 				}
 				
 				@Override
-				public Control realise(Composite parent) {
-					Control panel = super.realise(parent);
+				protected void addBindings() {
 					search.bind("search", this);
 					matches.bind("matches", this, search);
 					submatches.bind("submatches", this, matches);
-					return panel;
 				}
 				
 				@Override

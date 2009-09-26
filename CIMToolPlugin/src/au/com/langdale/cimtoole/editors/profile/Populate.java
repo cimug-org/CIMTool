@@ -5,6 +5,20 @@
 package au.com.langdale.cimtoole.editors.profile;
 
 
+import static au.com.langdale.ui.builder.Templates.CheckBox;
+import static au.com.langdale.ui.builder.Templates.Column;
+import static au.com.langdale.ui.builder.Templates.Field;
+import static au.com.langdale.ui.builder.Templates.Form;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+import static au.com.langdale.ui.builder.Templates.PushButton;
+import static au.com.langdale.ui.builder.Templates.Right;
+import static au.com.langdale.ui.builder.Templates.Row;
+import static au.com.langdale.ui.builder.Templates.Stack;
+import static au.com.langdale.ui.builder.Templates.TreeViewer;
+import static au.com.langdale.ui.builder.Templates.ViewCheckBox;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,11 +32,8 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import au.com.langdale.cimtoole.actions.WizardLauncher;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.LeftBinding;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.RightBinding;
@@ -31,6 +42,7 @@ import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.UMLTreeModel.PackageNode;
 import au.com.langdale.jena.UMLTreeModel.SubClassNode;
 import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.ProfileModel.Cardinality;
@@ -42,11 +54,10 @@ import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
+import au.com.langdale.ui.util.WizardLauncher;
 import au.com.langdale.xmi.UML;
 
-import au.com.langdale.kena.OntResource;
 import com.hp.hpl.jena.reasoner.InfGraph;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class Populate extends FurnishedEditor {
 	private ProfileEditor master;
@@ -162,11 +173,8 @@ public class Populate extends FurnishedEditor {
 			}
 
 			@Override
-			public Control realise(Composite parent) {
-				Control form = super.realise(parent);
-				
+			protected void addBindings() {
 				TreeViewer left = getTreeViewer("left");
-				//JenaTreeProvider.displayJenaTree(left, master.getSubmodel().getElementTreeModel());
 				
 				leftBinding.bind("left", this, master);
 				rightBinding.bind("right", "duplicates", this, master);
@@ -178,8 +186,6 @@ public class Populate extends FurnishedEditor {
 				TreeViewer right = getTreeViewer("right");
 				right.addSelectionChangedListener(new Target("left"));
 				master.listenToSelection(right);
-				
-				return form;
 			}
 			
 			class Target implements ISelectionChangedListener {

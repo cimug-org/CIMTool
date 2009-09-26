@@ -16,9 +16,9 @@ import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import au.com.langdale.inference.LOG;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.validation.LOG;
 import au.com.langdale.xmi.UML;
 
 import au.com.langdale.kena.Composition;
