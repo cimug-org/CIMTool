@@ -255,18 +255,16 @@ public class ProfileBuildlets extends Info {
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
-			RDFSBasedGenerator generator = getGenerator(file);
+			boolean preserveNS = getPreferenceOption(PRESERVE_NAMESPACES);
+			String namespace = preserveNS? getSchemaNamespace(file): getProperty(file, PROFILE_NAMESPACE);
+			RDFSBasedGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, preserveNS);
 			generator.run();
 			System.out.println("Generated ontology size: " + generator.getResult().size());
-			Task.write(generator.getResult(), getNamespace(file), true, result, lang, monitor);
+			Task.write(generator.getResult(), namespace, true, result, lang, monitor);
 			result.setDerived(true);
 		}
 
-		protected String getNamespace(IFile file) throws CoreException {
-			return getProperty(file, PROFILE_NAMESPACE);
-		}
-
-		protected abstract RDFSBasedGenerator getGenerator(IFile file) throws CoreException ;
+		protected abstract RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException;
 	}
 	/**
 	 * Buildlet for the simple OWL representation of the profile.
@@ -277,8 +275,8 @@ public class ProfileBuildlets extends Info {
 		}
 
 		@Override
-		protected RDFSBasedGenerator getGenerator(IFile file) throws CoreException {
-			return new OWLGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), getPreferenceOption(PRESERVE_NAMESPACES), withInverses);
+		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
+			return new OWLGenerator(profileModel, backgroundModel, namespace, preserveNS, withInverses);
 		}
 	}
 	/**
@@ -290,8 +288,8 @@ public class ProfileBuildlets extends Info {
 		}
 
 		@Override
-		protected RDFSBasedGenerator getGenerator(IFile file) throws CoreException {
-			return new RDFSGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), getPreferenceOption(PRESERVE_NAMESPACES), withInverses);
+		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
+			return new RDFSGenerator(profileModel, backgroundModel, namespace, preserveNS, withInverses);
 		}
 	}
 	
@@ -313,9 +311,9 @@ public class ProfileBuildlets extends Info {
 				new TransformBuildlet("html", "html"),
 				new TextBuildlet("sql", "sql"),
 				new TextBuildlet("jpa", "java"),
-				new SimpleOWLBuildlet("RDF/XML", "simple-owl", false),
+				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
-				new SimpleOWLBuildlet("RDF/XML", "simple-owl-augmented", true),
+				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
 				
 			};

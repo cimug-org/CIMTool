@@ -4,88 +4,70 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import static au.com.langdale.ui.builder.Templates.Column;
+import static au.com.langdale.ui.builder.Templates.Field;
+import static au.com.langdale.ui.builder.Templates.Label;
+import static au.com.langdale.ui.builder.Templates.TableViewer;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
-import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.project.Info;
-import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
-import au.com.langdale.splitmodel.SearchIndex;
+import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.kena.LocalNameIndex;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Property;
+import au.com.langdale.kena.PropertyIndex;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.SearchIndex;
 import au.com.langdale.ui.binding.ListBinding;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 import au.com.langdale.ui.builder.Template;
+import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.validation.Validation;
-
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.ModelFactory;
-
-import au.com.langdale.kena.Resource;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 	
 	public SearchWizard(Searchable searchArea) {
-		setSearchArea(searchArea);
+		this(searchArea, searchArea.getCriterion());
 	}
 	
-	public SearchWizard() {}
+	private SearchWizard(Searchable searchArea, Property prop) {
+		this.searchArea = searchArea;
+		model = searchArea.getOntModel();
+		indexer = prop == null? new LocalNameIndex(): new PropertyIndex(prop);
+	}
 
 	public interface Searchable {
 		OntModel getOntModel();
-		void selectTarget(Resource target);
-		boolean previewTarget(Resource target);
+		Property getCriterion();
+		void previewTarget(Node node);
+		Node findNode(Resource target);
+		String getDescription();
 	}
 
-	public static OntModel findModel( ISelection selection) {
-		OntModel model = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
-			Object item = structured.getFirstElement();
-			if( item instanceof IResource) {
-				IResource resource = (IResource)item;
-				IProject project = resource.getProject();
-				if( project != null) 
-					model = CIMToolPlugin.getCache().getMergedOntology(Info.getSchemaFolder(project));
-			}
-			else if (item instanceof ModelNode) {
-				ModelNode node = (ModelNode) item;
-				model = node.getModel().getOntModel();
-			}
-		}
-		return model;
-	}
-
-	public class Indexer extends SearchIndex implements IWorkspaceRunnable {
-		public Indexer() {
-			super(100);
-		}
-		
-		public void run(IProgressMonitor monitor) throws CoreException {
-			scan(model);
-		}
-
-		public Set locate(String name) {
-			return super.locate(name, model);
-		}
-	}
-	
 	public class Matches extends ListBinding {
+		private static final int LIMIT = 100;
 		private boolean indexed;
 
 		@Override
@@ -97,43 +79,109 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 		protected Object getInput() {
 			if( ! indexed) {
 				indexed = true;
-				run(indexer, null);
+				run(job, null);
 			}
 			
 			String prefix = getParent().getValue().toString();
 			if( prefix.length() == 0)
 				return Collections.EMPTY_SET;
+			else {
+				Collection result = indexer.match(prefix, LIMIT);
+				if(result.size() == 1)
+					setValue(result.iterator().next());
+				return result;
+			}
+		}	
+	}
+
+	public class SubMatches extends ListBinding {
+
+		@Override
+		protected void configureViewer(StructuredViewer viewer) {
+			viewer.setLabelProvider(new SubMatchLabel());
+		}
+
+		@Override
+		protected Object getInput() {
+			
+			Object value = getParent().getValue();
+			if( value != null ) {
+				String word = value.toString();
+				List result = findNodes(indexer.locate(word, model));
+				if( result.size() == 1)
+					setValue(result.get(0));
+				else
+					Collections.sort(result);
+				return result;
+			}
 			else
-				return indexer.match(prefix);
+				return Collections.EMPTY_LIST;
+		}
+
+		private List findNodes(Set resources) {
+			ArrayList result = new ArrayList(resources.size());
+			Iterator it = resources.iterator();
+			while( it.hasNext()) {
+				Node node = searchArea.findNode((OntResource)it.next());
+				if( node != null)
+					result.add(node);
+			}
+			return result;
 		}	
 	}
 	
-	private Searchable searchArea= EMPTY_AREA;
-	private Indexer indexer = new Indexer();
+	public class SubMatchLabel extends LabelProvider {
+		@Override
+		public Image getImage(Object element) {
+			return IconCache.get(element);
+		}
+
+		@Override
+		public String getText(Object element) {
+			if( element instanceof Node ) {
+				Node node = (Node) element;
+				String text = node.toString();
+				Node parent = node.getParent();
+				if( parent != null)
+					text = text + " (" + parent.getName() + ")";
+				return text;
+			}
+			
+			if( element == null)
+				return "";
+			
+			return element.toString();
+		}
+	}
+
+	private Searchable searchArea;
+	private SearchIndex indexer;
 	private TextBinding search = new TextBinding(Validation.NONE);
 	private Matches matches = new Matches();
+	private SubMatches submatches = new SubMatches();
 	private OntModel model;
-	private Resource target;
-	private boolean found;
+	
+	private IWorkspaceRunnable job = new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			indexer.scan(model);
+		}
+	};
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Search Schema");
+		setWindowTitle("CIMTool Search");
 		page.setTitle(getWindowTitle());
-		page.setDescription("Search for a class or property in the schema");
+		page.setDescription(searchArea.getDescription());
 		setNeedsProgressMonitor(true);
 	}
 	
-	public void setSearchArea(Searchable area) {
-		searchArea = area;
-		model = area.getOntModel();
-	}
-
 	private static final OntModel EMPTY_MODEL = ModelFactory.createMem();
 	
-	private static final Searchable EMPTY_AREA = new Searchable() {
-		public void selectTarget(Resource target) {}
+	public static final Searchable EMPTY_AREA = new Searchable() {
 		public OntModel getOntModel() {	return EMPTY_MODEL;	}
-		public boolean previewTarget(Resource target) {return true;}
+		public void previewTarget(Node node) {}
+		public Property getCriterion() { return null; }
+		public Node findNode(Resource target) { return null; }
+		public String getDescription() { return "";	}
 	};
 	
 	@Override
@@ -153,9 +201,10 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 					return Column(
 							Label("Search string:"),
 							Field("search"),
-							Label("Matches"),
+							Label("Select a matching term:"),
 							TableViewer("matches"),
-							DisplayField("namespace")
+							Label("Select a matching item:"),
+							TableViewer("submatches")
 						);
 				}
 				
@@ -164,31 +213,13 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 					Control panel = super.realise(parent);
 					search.bind("search", this);
 					matches.bind("matches", this, search);
+					submatches.bind("submatches", this, matches);
 					return panel;
 				}
 				
 				@Override
-				public void refresh() {
-					Object value = matches.getValue();
-					if(value != null) {
-						Set resources = indexer.locate(value.toString());
-						target = (Resource) resources.iterator().next();
-						setTextValue("namespace", target.toString());
-						found = searchArea.previewTarget(target);
-						
-					}
-					else {
-						setTextValue("namespace", "");
-						target = null;
-						found = false;
-						
-					}
-				}
-				
-				@Override
 				public String validate() {
-					// TODO Auto-generated method stub
-					return found? null: "";
+					return submatches.getValue() != null? null: "";
 				}
 			};
 		}
@@ -196,10 +227,11 @@ public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 
 	@Override
 	public boolean performFinish() {
-		if( found ) 
-			searchArea.selectTarget(target);
+		Node node = (Node) submatches.getValue();
+		if( node != null ) 
+			searchArea.previewTarget(node);
 		
-		return found;
+		return node != null;
 	}
 
 }

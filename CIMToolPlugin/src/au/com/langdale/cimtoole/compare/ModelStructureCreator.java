@@ -4,11 +4,9 @@
  */
 package au.com.langdale.cimtoole.compare;
 
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;

@@ -638,6 +638,10 @@ public class Templates {
 		return new GridTemplate(new Group[] {Group(a), Group(b), Group(c), Group(d), Group(e)}); 
 	}
 	
+	public static Template Column(Template a, Template b, Template c, Template d, Template e, Template f) {
+		return new GridTemplate(new Group[] {Group(a), Group(b), Group(c), Group(d), Group(e), Group(f)}); 
+	}
+	
 	public static Template Field(String name) {
 		return new TextTemplate(SWT.SINGLE, name, "", 0);
 	}

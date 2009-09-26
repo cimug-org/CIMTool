@@ -36,8 +36,6 @@
 
 package com.hp.hpl.jena.rdf.arp.impl;
 
-import java.rmi.server.UID;
-
 
 /**
  *

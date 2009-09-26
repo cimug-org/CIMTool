@@ -20,7 +20,7 @@ public abstract class SelectionFollower extends ViewPart implements ISelectionLi
 	private IWorkbenchPage page;
 	
 	public abstract void selectProject(IProject project);
-	public abstract boolean previewTarget(Resource base);
+	public abstract void previewTarget(Resource base);
 	public abstract boolean ignoreNode( ModelNode node);
 
 	public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {

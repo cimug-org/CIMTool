@@ -94,7 +94,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			OntResource assoc = node;
 			Node label = assoc.getNode(hasLabel);
 			if( label != null ) {
-				prop.addLabel(label.getLiteralLexicalForm(), "en");
+				prop.addLabel(label.getLiteralLexicalForm(), XMIModel.LANG);
 				return true;
 			}
 		}

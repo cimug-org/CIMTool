@@ -7,14 +7,11 @@ package au.com.langdale.validation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import au.com.langdale.inference.CompoundRule;
 import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.GraphAdapter;
-import au.com.langdale.inference.ProxyRegistry;
 import au.com.langdale.inference.RepairLibrary;
 import au.com.langdale.inference.RuleParser;
 import au.com.langdale.inference.StandardFunctorActions;

@@ -6,7 +6,15 @@ package au.com.langdale.profiles;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
@@ -47,6 +55,56 @@ public class ProfileModel extends JenaTreeModelBase {
 	private void initModels() {
 		if( profileModel != null && backgroundModel != null)
 			super.setOntModel(Composition.merge(profileModel, backgroundModel));
+	}
+	
+	@Override
+	protected List findResourcePathTo(FrontsNode symbol) {
+		OntResource target = profileModel.createResource(symbol.asNode());
+		if( getRoot() == null || target == null) 
+			return null;
+
+		OntResource start = getRoot().getSubject();
+		if( start == null)
+			return null;
+		
+		ArrayList path = new ArrayList(6);
+		path.add(target);
+
+		while( ! target.equals(start)) {
+			OntResource parent;
+			if( target.isClass() && target.isURIResource())
+				parent = start;
+			else {
+				parent = findParent(target);
+				while( parent != null && ! parent.hasRDFType(OWL.Class))
+					parent = findParent(parent);
+			}
+			if(parent == null)
+				return null;
+			path.add(parent);
+			target = parent;
+		}
+		
+		Collections.reverse(path);
+		return path;
+	}
+	
+	private FrontsNode[] steps = new FrontsNode[] { 
+		RDFS.subClassOf, OWL.allValuesFrom, RDF.first, RDF.rest, OWL.unionOf, OWL.oneOf
+	};
+	
+	private OntResource findParent(OntResource target) {
+		for(int ix = 0; ix < steps.length; ix++) {
+			OntResource parent = target.getSubject(steps[ix]);
+			if( parent != null)
+				return parent;
+		}
+		
+//		OntResource type = backgroundModel.createResource(target.asNode()).getResource(RDF.type);
+//		if( type != null && type.hasProperty(UML.hasStereotype, UML.enumeration)) 
+//			return profileModel.createResource(type.asNode());
+		
+		return null;
 	}
 	
 	/**

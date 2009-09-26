@@ -7,9 +7,9 @@ package au.com.langdale.cimtoole.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.part.PageBookView;
 
 import au.com.langdale.cimtoole.wizards.SearchWizard;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
@@ -25,28 +25,28 @@ public class SearchAction extends WizardLauncher implements Runnable {
 	
 	@Override
 	protected IWorkbenchWizard createWizard() {
-		SearchWizard wizard = new SearchWizard();
-		Searchable area = getSearchArea();
-		if( area != null)
-			wizard.setSearchArea(area);
-		return wizard;
+		return new SearchWizard(getSearchArea());
 	}
 
 	private Searchable getSearchArea() {
 
-		IWorkbenchPart part = getPart();
+		Object part = getPart();
+		if( part instanceof PageBookView) {
+			part = ((PageBookView)part).getCurrentPage();
+		}
+		
 		if (part instanceof Searchable) {
 			Searchable 	result = (Searchable) part;
 			if(result.getOntModel() != null)
 				return result;
 		}
-		return null;
+		return SearchWizard.EMPTY_AREA;
 	}
 
 	private void refresh() {
 		IAction action = getAction();
 		if(action != null)
-			action.setEnabled((getSearchArea() != null));
+			action.setEnabled((getSearchArea() != SearchWizard.EMPTY_AREA));
 	}
 
 	@Override

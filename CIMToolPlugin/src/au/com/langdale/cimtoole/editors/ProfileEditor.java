@@ -9,15 +9,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+import com.hp.hpl.jena.vocabulary.RDFS;
 
+import au.com.langdale.cimtoole.actions.WizardLauncher;
 import au.com.langdale.cimtoole.editors.profile.Detail;
 import au.com.langdale.cimtoole.editors.profile.Hierarchy;
 import au.com.langdale.cimtoole.editors.profile.Populate;
@@ -25,15 +27,20 @@ import au.com.langdale.cimtoole.editors.profile.Stereotype;
 import au.com.langdale.cimtoole.editors.profile.Summary;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.cimtoole.wizards.SearchWizard;
+import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.Property;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.ui.binding.JenaTreeProvider;
-import au.com.langdale.kena.Composition;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
+import au.com.langdale.ui.util.IconCache;
 
 public class ProfileEditor extends ModelEditor {
 	private ProfileModel tree;
@@ -46,7 +53,6 @@ public class ProfileEditor extends ModelEditor {
 		addPage(new Populate("Add/Remove", this));
 		addPage(new Hierarchy("Hierarchy", this));
 		addPage(new Detail("Detail", this));
-		//addPage(new Refine("Refine Type", this));
 		addPage( new Stereotype("Stereotypes", this));
 		addPage(new Summary("Summary", this));
 	}
@@ -55,22 +61,8 @@ public class ProfileEditor extends ModelEditor {
 	public void init(IEditorSite site, IEditorInput editorInput)throws PartInitException {
 		super.init(site, editorInput);
 		fetchModels();
-		//tickler.start();
 	}
 	
-//	private static Tickler tickler = new Tickler(){
-//		private int last_count;
-//
-//		@Override
-//		protected void action() {
-//			int create_count = TreeModelBase.create_count;
-//			int amount = create_count - last_count;
-//			last_count = create_count;
-//			if( amount > 0 )
-//				System.out.println("Nodes created: " + amount);
-//		}
-//	};
-
 	@Override
 	public JenaTreeModelBase getTree() {
 		if( tree == null ) {
@@ -84,14 +76,8 @@ public class ProfileEditor extends ModelEditor {
 	}
 
 	@Override
-	protected JenaTreeProvider getProvider() {
+	public JenaTreeProvider getProvider() {
 		return new JenaTreeProvider(true);
-	}
-
-	@Override
-	protected void hookOutline(ModelOutliner outline) {
-		super.hookOutline(outline);
-		listenToDoubleClicks(outline.getTreeViewer());
 	}
 
 	public void modelCached(IResource key) {
@@ -130,8 +116,10 @@ public class ProfileEditor extends ModelEditor {
 	}
 
 	public void resetModels() {
-		if( rawBackgroundModel == null || profileModel == null || tree == null || hasDiagnostics && diagnosticModel == null)
+		if( rawBackgroundModel == null || profileModel == null || tree == null || hasDiagnostics && diagnosticModel == null) {
+			searchAction.setEnabled(false);
 			return;
+		}
 
 		if( hasDiagnostics)
 			backgroundModel = Composition.simpleMerge( rawBackgroundModel, diagnosticModel);
@@ -141,6 +129,7 @@ public class ProfileEditor extends ModelEditor {
 		tree.setOntModel(profileModel);
 		tree.setBackgroundModel(backgroundModel);
 		refactory = new Refactory(profileModel, backgroundModel, tree.getNamespace());
+		searchAction.setEnabled(true);
 		doRefresh();
 	}
 	
@@ -162,19 +151,6 @@ public class ProfileEditor extends ModelEditor {
 			}
 		}
 		super.doSave(monitor);
-	}
-
-	private IDoubleClickListener drill = new IDoubleClickListener() {
-		public void doubleClick(DoubleClickEvent event) {
-			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-			Node node = (Node) selection.getFirstElement();
-			OntResource subject = node.getSubject();
-			drillTo(subject);
-		}
-	};
-	
-	public void listenToDoubleClicks(StructuredViewer source) {
-		source.addDoubleClickListener(drill);
 	}
 
 	public boolean isLoaded() {
@@ -205,4 +181,46 @@ public class ProfileEditor extends ModelEditor {
 		else
 			return null;
 	}
+	
+	@Override
+	protected void configureOutline(ModelOutliner outline) {
+		outline.getSite().getActionBars().getToolBarManager().add(searchAction);
+		
+	}
+	
+	private IAction searchAction = new Action("Search Profile", ImageDescriptor.createFromImage(IconCache.get("prosearch"))) {
+		@Override
+		public void run() {
+			if(isLoaded()) {
+				SearchWizard wizard = new SearchWizard(searchArea);
+				WizardLauncher.run(wizard, getSite().getWorkbenchWindow(), StructuredSelection.EMPTY);
+			}
+		}
+	};
+	
+	private Searchable searchArea = new Searchable() {
+		
+		public Property getCriterion() {
+			return  ResourceFactory.createProperty(RDFS.label);
+		}
+
+		public OntModel getOntModel() {
+			return profileModel;
+		}
+
+		public void previewTarget(Node node) {
+			ModelOutliner outline = getOutline();
+			if( outline != null) 
+				outline.drillTo(node.getPath(true));
+		}
+
+		public Node findNode(Resource target) {
+			Node[] path = getTree().findPathTo(target, true);
+			return path != null? path[path.length-1]: null;
+		}
+
+		public String getDescription() {
+			return "Search the profile for classes or their members by name.";
+		}
+	};
 }

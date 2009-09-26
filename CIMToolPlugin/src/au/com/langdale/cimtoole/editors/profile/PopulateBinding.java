@@ -13,10 +13,13 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Button;
 
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
@@ -256,32 +259,36 @@ public class PopulateBinding  {
 			return getTree().getOntModel();
 		}
 
-		public boolean previewTarget(Resource base) {
-			Node[] path = getTree().findPathTo(base, false);
-			if( path != null) {
-				if(path.length > 1) {
-					Node node = path[path.length-1];
-					if( node instanceof PropertyNode || node instanceof IndividualNode) 
-						path = copyOf(path, path.length-1);
-				}
-				getViewer().setSelection(new TreeSelection(new TreePath(path)), true);
-				return ! getViewer().getSelection().isEmpty();
-			}
-			return false;
+		public Node findNode(Resource target) {
+			Node[] path = getTree().findPathTo(target, false);
+			return path != null? path[path.length-1]: null;
 		}
-		
-		private Node[] copyOf(Node[] nodes, int length) {
+
+		public void previewTarget(Node node) {
+			Filter filter = new RootFilter();
+			Node[] path = truncate(node.getPath(false), filter);
+			getViewer().setSelection(new TreeSelection(new TreePath(path)), true);
+		}
+
+		public String getDescription() {
+			return "Search the schema for packages or classes by their name or the name of a member.";
+		}
+
+		private Node[] truncate(Node[] nodes, Filter filter) {
+			int length = nodes.length; 
+			while( length > 0 && ! filter.allow(nodes[length-1])) 
+				length--;
+
 			Node[] result = new Node[length];
-			for (int ix = 0; ix < length; ix++) 
+			for (int ix = 0; ix < length; ix++)
 				result[ix] = nodes[ix];
-			
+
 			return result;
 		}
 
-		public void selectTarget(Resource target) {
-			// TODO Auto-generated method stub
-			
-		}
+		public Property getCriterion() {
+			return  ResourceFactory.createProperty(RDFS.label);
+		}	
 		
 		public void reset() {
 			
@@ -293,6 +300,6 @@ public class PopulateBinding  {
 
 		public String validate() {
 			return null;
-		}	
+		}
 	}
 }

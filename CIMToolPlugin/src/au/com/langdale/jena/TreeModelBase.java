@@ -63,6 +63,21 @@ public class TreeModelBase {
 		public Node getParent() {
 			return parent;
 		}
+		
+		public Node[] getPath(boolean includeRoot) {
+			ArrayList path = new ArrayList();
+			Node next = this;
+			do {
+				path.add(next);
+				next = next.getParent();
+			} while(next != null);
+			
+			int size = path.size() - (includeRoot? 0: 1);
+			Node[] result = new Node[size];
+			for(int ix = 0; ix < size; ix++)
+				result[size - ix - 1] = (Node) path.get(ix);
+			return result;
+		}
 
 		/** See javax.swing.tree.TreeNode */
 		public boolean isLeaf() {

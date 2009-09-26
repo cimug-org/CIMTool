@@ -268,6 +268,20 @@ public class Info {
 	public static boolean getPreferenceOption(QualifiedName symbol) {
 		return CIMToolPlugin.getDefault().getPluginPreferences().getBoolean(symbol.getLocalName());
 	}
+	
+	public static String getSchemaNamespace(IResource resource) throws CoreException {
+		IResource[] schemas = getSchemaFolder(resource.getProject()).members();
+		for(int ix = 0; ix < schemas.length; ix++) {
+			IResource schema = schemas[ix];
+			if( isSchema(schema)) {
+				Settings settings = CIMToolPlugin.getSettings();
+				String ns = settings.getSetting(schema, SCHEMA_NAMESPACE);
+				if(ns != null)
+					return ns;
+			}				
+		}
+		return getPreference(SCHEMA_NAMESPACE);
+	}
 
 	public static CoreException error(String m) {
 		return new CoreException(new Status(Status.ERROR, CIMToolPlugin.PLUGIN_ID, m));

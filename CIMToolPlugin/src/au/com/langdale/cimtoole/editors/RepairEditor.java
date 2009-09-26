@@ -12,7 +12,6 @@ import static au.com.langdale.ui.builder.Templates.DisplayField;
 import static au.com.langdale.ui.builder.Templates.Form;
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
-import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.Stack;
 import static au.com.langdale.ui.builder.Templates.Image;
 
@@ -92,19 +91,17 @@ public class RepairEditor extends ModelEditor {
 				@Override
 				protected Template define() {
 					return Form(
-						Grid(
-							Group(Label("Name:"), DisplayField("name")),
-							Group(Label("URI:"),  DisplayField("uri")),
-							Group(Stack(
-								Array("problems", 
-									Column(
-										Grid(Group(Image("symbol", "problem"), DisplayArea("problem", 3))),
-										Array("corrections", 
-											Grid(Group(CheckBox("check", "Select this repair action.", "right"), DisplayArea("correction",2))))
-									)
-								),
-								DisplayField("summary")
-							))
+						Stack(
+							Array("problems", 
+								Column(
+									Grid(Group(Image("symbol", "problem"), DisplayArea("problem", 3))),
+									Array("corrections", 
+										Grid(Group(
+											CheckBox("check", "Select this repair action.", "right"),
+											DisplayArea("correction",2))))
+								)
+							),
+							DisplayField("summary")
 						)
 					);
 				}
@@ -112,13 +109,14 @@ public class RepairEditor extends ModelEditor {
 				@Override
 				public void refresh() {
 					Node node = getNode();
-					getForm().setImage(IconCache.get(node, 32));
+					
 					
 					if( node  instanceof ModelNode) {
-						showStackLayer("problems");
 						OntResource subject = node.getBase();
-						setTextValue("name", DiagnosisModel.label(subject));
-						setTextValue("uri", subject.isAnon()? "": subject.getURI());
+						getForm().setImage(IconCache.get("key", 32));
+						getForm().setText(DiagnosisModel.label(subject));
+						showStackLayer("problems");
+//						setTextValue("uri", subject.isAnon()? "": subject.getURI());
 
 						if( node instanceof RepairNode ) {
 							show((DetailNode)node.getParent(), Collections.singletonList(node));
@@ -132,9 +130,10 @@ public class RepairEditor extends ModelEditor {
 						getForm().layout(true, true);
 					}
 					else {
+						getForm().setImage(IconCache.get("general", 32));
+						getForm().setText(getFile().getName());
 						showStackLayer("summary");
-						setTextValue("name", "");
-						setTextValue("uri", "");
+//						setTextValue("uri", "");
 						setTextValue("summary", "There are " + node.getChildren().size() +
 							" problems found.  Select an item in the outline for more information.");
 					}

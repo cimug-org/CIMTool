@@ -7,6 +7,7 @@ package au.com.langdale.cimtoole.editors.profile;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -112,7 +113,9 @@ public class Hierarchy extends FurnishedEditor {
 			public Control realise(Composite parent) {
 				Control form = super.realise(parent);
 				bases.bind("bases", this);
-				master.listenToDoubleClicks(getTreeViewer("bases"));
+				TreeViewer viewer = getTreeViewer("bases");
+				master.listenToDoubleClicks(viewer);
+				master.listenToSelection(viewer);
 				return form;
 			}
 

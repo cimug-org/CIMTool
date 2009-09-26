@@ -14,6 +14,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
 
+import com.hp.hpl.jena.vocabulary.RDFS;
+
+import au.com.langdale.cimtoole.actions.JumpAction.Jumpable;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
@@ -21,14 +24,16 @@ import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.ui.binding.JenaTreeProvider;
 import au.com.langdale.xmi.UML;
 
 /**
 * View the merged information model: CIM plus extensions.
 */
-public class ProjectModelView extends ProjectModelFollower implements Searchable {
+public class ProjectModelView extends ProjectModelFollower implements Searchable, Jumpable {
 
 	private TreeViewer treeViewer;
 	private UMLTreeModel tree;
@@ -47,22 +52,7 @@ public class ProjectModelView extends ProjectModelFollower implements Searchable
 		public void doubleClick(DoubleClickEvent event) {
 			ITreeSelection selection = (ITreeSelection) event.getSelection();
 			Node node = (Node) selection.getFirstElement();
-			OntResource subject = node.getSubject();
-			if( subject != null ) {
-				if( subject.isProperty()) {
-					OntResource inverse = subject.getInverseOf();
-					if(inverse != null)
-						previewTarget(inverse);
-					else {
-						OntResource range = subject.getRange();
-						if( range != null )
-							previewTarget(range);
-					}
-				}
-				else {
-					previewTarget(subject);
-				}
-			}
+			jump(node);
 		}
 		
 	};
@@ -90,22 +80,50 @@ public class ProjectModelView extends ProjectModelFollower implements Searchable
 		return node.getModel() == tree;
 	}
 
-	public boolean previewTarget(Resource base) {
-		Node[] path = tree.findPathTo(base, false);
-		if( path != null) {
-			//System.out.println("ProjectModelView selecting " + base);
-			treeViewer.setSelection(new TreeSelection(new TreePath(path)), true);
-			return true;
-		}
-		return false;
+	public Node findNode(Resource target) {
+		Node[] path = tree.findPathTo(target, false);
+		return path != null? path[path.length-1]: null;
 	}
-	
-	public void selectTarget(Resource base) {
-		// no action
+
+	public void previewTarget(Resource target) {
+		Node node = findNode(target);
+		if( node != null)
+			previewTarget(node);
+	}
+
+	public String getDescription() {
+		return "Search the schema for packages, classes or their members by name.";
+	}
+
+	public void previewTarget(Node node) {
+		treeViewer.setSelection(new TreeSelection(new TreePath(node.getPath(false))), true);
+	}
+
+	public Property getCriterion() {
+		return  ResourceFactory.createProperty(RDFS.label);
 	}
 	
 	public void selectModel(OntModel model) {
 		tree.setOntModel(model);
 		treeViewer.setSelection(treeViewer.getSelection());
+	}
+
+	public void jump(Node node) {
+		OntResource subject = node.getSubject();
+		if( subject != null ) {
+			if( subject.isProperty()) {
+				OntResource inverse = subject.getInverseOf();
+				if(inverse != null)
+					previewTarget(inverse);
+				else {
+					OntResource range = subject.getRange();
+					if( range != null )
+						previewTarget(range);
+				}
+			}
+			else {
+				previewTarget(subject);
+			}
+		}
 	}
 }

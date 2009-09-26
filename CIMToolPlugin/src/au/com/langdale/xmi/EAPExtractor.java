@@ -76,7 +76,7 @@ public class EAPExtractor extends XMIModel {
 		if( note.length() == 0)
 			return;
 		
-		subject.addComment(note, "en");
+		subject.addComment(note, LANG);
 	}
 
 	private void extractClasses() throws IOException {

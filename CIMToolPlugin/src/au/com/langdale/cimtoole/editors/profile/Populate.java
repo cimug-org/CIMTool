@@ -27,7 +27,6 @@ import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.LeftBinding;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.RightBinding;
 import au.com.langdale.cimtoole.wizards.SearchWizard;
-import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.UMLTreeModel.PackageNode;
 import au.com.langdale.jena.UMLTreeModel.SubClassNode;
@@ -45,9 +44,7 @@ import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
 
-import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.reasoner.InfGraph;
 import static au.com.langdale.ui.builder.Templates.*;
 
@@ -152,7 +149,7 @@ public class Populate extends FurnishedEditor {
 									Grid(Group(
 										Label("top", "Select classes or packages to profile."),
 										ViewCheckBox("duplicates", "Allow multiple profiles per class"),
-										Right( PushButton("search", "Search by name", "search", search))))
+										Right( PushButton("search", "Search Schema", "search", search))))
 								)
 							),
 							Group( 
@@ -176,9 +173,11 @@ public class Populate extends FurnishedEditor {
 				
 				left.addSelectionChangedListener(new Target("right"));
 				master.listenToDoubleClicks(left);
+				master.listenToSelection(left);
 
 				TreeViewer right = getTreeViewer("right");
 				right.addSelectionChangedListener(new Target("left"));
+				master.listenToSelection(right);
 				
 				return form;
 			}
@@ -193,8 +192,9 @@ public class Populate extends FurnishedEditor {
 				public void selectionChanged(SelectionChangedEvent event) {
 					boolean selected = !event.getSelection().isEmpty();
 					getButton("to-" + side).setEnabled(selected);
-					if(selected)
+					if(selected) {
 						getTreeViewer(side).setSelection(null);
+					}
 				}
 			}
 
@@ -271,27 +271,13 @@ public class Populate extends FurnishedEditor {
 				public void widgetSelected(SelectionEvent e) {
 					Node node = master.getNode();
 					if( node instanceof CatalogNode || node instanceof EnvelopeNode) {
-						SearchWizard wizard = new SearchWizard(searchArea);
+						SearchWizard wizard = new SearchWizard(rightBinding);
 						WizardLauncher.run(wizard, getSite().getWorkbenchWindow(), StructuredSelection.EMPTY);
 					}
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {
 					// no action
-				}
-			};
-			
-			private Searchable searchArea = new Searchable() {
-				public OntModel getOntModel() {
-					return rightBinding.getOntModel();
-				}
-
-				public boolean previewTarget(Resource base) {
-					return rightBinding.previewTarget(base);
-				}
-				
-				public void selectTarget(Resource target) {
-					toLeft.widgetSelected(null);
 				}
 			};
 			
@@ -305,7 +291,6 @@ public class Populate extends FurnishedEditor {
 				Node node = master.getNode();
 				getForm().setImage(IconCache.get(node));
 				getForm().setText(master.getComment());
-
 				
 				if (node instanceof CatalogNode) {
 					showStackLayer("top");

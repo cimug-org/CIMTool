@@ -19,6 +19,8 @@ import au.com.langdale.kena.OntResource;
  */
 public class XMIModel {
 
+	public static final String LANG = null; // if changed, review the SearchWizard code
+
 	/** the ontology under construction */
 	protected OntModel model = ModelFactory.createMem();
 	
@@ -95,7 +97,7 @@ public class XMIModel {
 	protected OntResource createClass(String xuid, String name) {
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createClass(XMI.NS + xuid);
-			subject.addLabel(name, "en");
+			subject.addLabel(name, LANG);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
@@ -114,7 +116,7 @@ public class XMIModel {
 //		String name = atts.getValue("name");
 //		if( xuid != null && name != null ) { 
 //			OntResource subject = model.createIndividual(XMI.NS + xuid, RDFS.Datatype);
-//			subject.addLabel(name, "en");
+//			subject.addLabel(name, LANG);
 //			if(keepID)
 //				subject.addProperty(UML.id, xuid);
 //			return subject;
@@ -140,7 +142,7 @@ public class XMIModel {
 		if( xuid != null ) { 
 			OntResource subject = model.createObjectProperty(XMI.NS + xuid);
 			if(name != null)
-				subject.addLabel(name, "en");
+				subject.addLabel(name, LANG);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
@@ -167,7 +169,7 @@ public class XMIModel {
 			String synth = xuid + "-" + (sideA? "A": "B");
 			OntResource subject = model.createObjectProperty(XMI.NS + synth);
 			if( name != null)
-				subject.addLabel(name, "en");	
+				subject.addLabel(name, LANG);	
 			if(keepID)
 				subject.addProperty(UML.id, synth);
 			return subject;
@@ -195,7 +197,7 @@ public class XMIModel {
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createAnnotationProperty(XMI.NS + xuid);
-			subject.addLabel(name, "en");
+			subject.addLabel(name, LANG);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
@@ -250,7 +252,7 @@ public class XMIModel {
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createOntProperty(XMI.NS + xuid);
 			subject.addProperty(UML.hasStereotype, UML.attribute);
-			subject.addLabel(name, "en");
+			subject.addLabel(name, LANG);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
@@ -274,7 +276,7 @@ public class XMIModel {
 	protected OntResource createIndividual(String xuid, String name, FrontsNode type) {
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createIndividual(XMI.NS + xuid, type);
-			subject.addLabel(name, "en");
+			subject.addLabel(name, LANG);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;

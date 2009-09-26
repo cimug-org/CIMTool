@@ -49,6 +49,11 @@ public class HierarchyModel extends JenaTreeModelBase {
 		public OntResource getSubject() {
 			return profile.getSubject();
 		}
+		
+		@Override
+		public OntResource getBase() {
+			return profile.getBaseClass();
+		}
 
 		@Override
 		public boolean getErrorIndicator() {

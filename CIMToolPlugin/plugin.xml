@@ -430,7 +430,7 @@
                id="au.com.langdale.cimtoole.actions.JumpAction"
                label="Jump"
                toolbarPath="cimtool"
-               tooltip="Seach the project model for a class or property.">
+               tooltip="Jump to the other end of a relationship.">
          </action>
       </viewContribution>
    </extension>

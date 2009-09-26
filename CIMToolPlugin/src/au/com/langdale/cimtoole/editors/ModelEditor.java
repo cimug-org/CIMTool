@@ -4,100 +4,78 @@
  */
 package au.com.langdale.cimtoole.editors;
 
-
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import au.com.langdale.cimtoole.project.ModelMinder;
 import au.com.langdale.cimtoole.project.Cache.CacheListener;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.ui.binding.JenaTreeProvider;
 import au.com.langdale.ui.binding.OntModelProvider;
 import au.com.langdale.ui.builder.FurnishedMultiEditor;
+import au.com.langdale.ui.util.SelectionProvider;
 
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
+public abstract class ModelEditor extends FurnishedMultiEditor implements CacheListener, OntModelProvider {
 
-public abstract class ModelEditor extends FurnishedMultiEditor  implements ISelectionChangedListener, CacheListener, OntModelProvider {
-
-	public class ModelOutliner extends ContentOutlinePage {
-
-		@Override
-		public void createControl(Composite parent) {
-			super.createControl(parent);
-			TreeViewer viewer = getTreeViewer();
-			viewer.setUseHashlookup(true);
-			viewer.setContentProvider(getProvider());
-			viewer.setInput(getTree());
-			hookOutline(this);
-		}
-
-		public void drillTo(OntResource subject) {
-			TreeViewer viewer = getTreeViewer();
-			Node root = getTree().getRoot();
-			Node top = root.findChild(subject);
-			if( top != null ) {
-				TreePath path = new TreePath(new Object[]{root, top});
-				viewer.setSelection(new TreeSelection(path), true);
-			}
-			else {
-				ITreeSelection selection = (ITreeSelection) viewer.getSelection();
-				TreePath[] paths = selection.getPaths();
-				if( paths.length == 1) {
-					TreePath current = paths[0];
-					Node parent = (Node) current.getLastSegment();
-					Node child = parent.findChild(subject);
-					if( child != null ) {
-						TreePath path = current.createChildPath(child);
-						viewer.setSelection(new TreeSelection(path), true);
-					}
-				}
-			}
-		}
-		
-		@Override
-		public TreeViewer getTreeViewer() {
-			return super.getTreeViewer();
-		}
-	}
-
-	
 	abstract public JenaTreeModelBase getTree();
 
-	protected JenaTreeProvider getProvider() {
+	public JenaTreeProvider getProvider() {
 		return new JenaTreeProvider(false);
 	}
 
-	protected void hookOutline(ModelOutliner outline) {
-		outline.addSelectionChangedListener(this);
-		getSite().setSelectionProvider(outline);
-		outline_ready = true;
+	protected final ModelMinder models = new ModelMinder(this);
+	protected final SelectionProvider selections = new SelectionProvider();
+	
+	public void listenToSelection(ISelectionProvider source) {
+		source.addSelectionChangedListener(selections);
 	}
-
-	public void drillTo(OntResource subject) {
-		if( outline_ready)
-			outline.drillTo(subject);
-	}
-
+	
 	private ModelOutliner outline;
-	private boolean outline_ready;
-	protected ModelMinder models = new ModelMinder(this);
+	
+	protected ModelOutliner getOutline() {
+		return outline;
+	}
+
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (IContentOutlinePage.class.equals(adapter)) {
+			if( outline == null) {
+				outline = new ModelOutliner(this);
+			}
+			return outline;
+		}
+		return super.getAdapter(adapter);
+	}
+
+	private IDoubleClickListener drill = new IDoubleClickListener() {
+		public void doubleClick(DoubleClickEvent event) {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			Node node = (Node) selection.getFirstElement();
+			OntResource subject = node.getSubject();
+			if(outline != null)
+				outline.drillTo(subject);
+		}
+	};
+	
+	public void listenToDoubleClicks(StructuredViewer source) {
+		source.addDoubleClickListener(drill);
+	}
 	
 	/**
 	 * Check that the input is an instance of <code>IFileEditorInput</code>.
@@ -107,23 +85,13 @@ public abstract class ModelEditor extends FurnishedMultiEditor  implements ISele
 		if (!(editorInput instanceof IFileEditorInput))
 			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
 		super.init(site, editorInput);
+		getSite().setSelectionProvider(selections);
 	}
 
 	@Override
 	public void dispose() {
 		models.dispose();
 		super.dispose();
-	}
-
-	@Override
-	public Object getAdapter(Class adapter) {
-		if (IContentOutlinePage.class.equals(adapter)) {
-			if( outline == null) {
-				outline = new ModelOutliner();
-			}
-			return outline;
-		}
-		return super.getAdapter(adapter);
 	}
 	
 	private boolean guard;
@@ -135,7 +103,7 @@ public abstract class ModelEditor extends FurnishedMultiEditor  implements ISele
 		
 		guard = true;
 		try {
-			if( outline_ready && outline.getSelection().isEmpty())
+			if( outline != null && outline.getSelection().isEmpty())
 				outline.setSelection(new TreeSelection(new TreePath(new Object[] {getTree().getRoot()})));
 			
 			super.doRefresh();
@@ -143,10 +111,6 @@ public abstract class ModelEditor extends FurnishedMultiEditor  implements ISele
 		finally {
 			guard = false;
 		}
-	}
-
-	public void selectionChanged(SelectionChangedEvent event) {
-		doRefresh();
 	}
 
 	public OntResource getSubject() {
@@ -178,7 +142,7 @@ public abstract class ModelEditor extends FurnishedMultiEditor  implements ISele
 	}
 
 	public Node getNode() {
-		if( outline_ready) {
+		if( outline != null ) {
 			ISelection selection = outline.getSelection();
 			if( ! selection.isEmpty() && selection instanceof IStructuredSelection) {
 				IStructuredSelection structured = (IStructuredSelection) selection;
@@ -196,5 +160,9 @@ public abstract class ModelEditor extends FurnishedMultiEditor  implements ISele
 			return tree.getOntModel();
 		else
 			return null;
+	}
+
+	protected void configureOutline( ModelOutliner outline) {
+		
 	}
 }

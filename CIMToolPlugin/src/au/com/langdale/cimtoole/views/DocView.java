@@ -22,7 +22,7 @@ public class DocView extends ProjectModelFollower {
 	}
 	
 	@Override
-	public boolean previewTarget(Resource base) {
+	public void previewTarget(Resource base) {
 		text.setText("");
 		if( model != null) {
 			OntResource subject = model.createResource(base.asNode());
@@ -33,7 +33,6 @@ public class DocView extends ProjectModelFollower {
 			if( descr != null)
 				text.append(descr);
 		}
-		return true;
 	}
 
 	@Override
