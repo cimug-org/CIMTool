@@ -1,1 +1,9 @@
 .metadata
+Assembly
+CIMToolUpdate/features
+CIMToolUpdate/plugins
+CIMToolUpdate/artifacts.jar
+CIMToolUpdate/content.jar
+boto
+botoscripts
+CIMToolPlugin/console.log

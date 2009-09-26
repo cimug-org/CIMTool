@@ -119,6 +119,9 @@ public class ConsistencyChecker {
 		}
 	}
 	
+	/**
+	 * True if the resource belongs to the reference schema (as opposed to the profile).
+	 */
 	private boolean isRefNode(Resource s) {
 		if( s.isAnon())
 			return false;

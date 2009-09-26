@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.inference.AsyncModel;
 import au.com.langdale.splitmodel.SplitReader;
 
 public class ProjectTest extends WorkspaceTest {
@@ -32,7 +33,7 @@ public class ProjectTest extends WorkspaceTest {
 	protected IFile profile;
 	protected IFolder model;
 	protected IFolder increment;
-	protected SplitReader reader;
+	protected AsyncModel reader;
 	
 	@Override
 	protected void setUp() throws Exception {

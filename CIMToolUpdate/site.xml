@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://files.cimtool.org">
+   <description name="CIMTool" url="http://files.cimtool.org">
       CIMTool distribution site.
    </description>
-   <feature url="features/au.com.langdale.cimtoole.feature_1.5.5.200905121958.jar" id="au.com.langdale.cimtoole.feature" version="1.5.5.200905121958">
+   <feature url="features/au.com.langdale.cimtoole.feature_1.6.1.200908062256.jar" id="au.com.langdale.cimtoole.feature" version="1.6.1.200908062256">
       <category name="ontology"/>
    </feature>
    <category-def name="ontology" label="Modelling and Ontology"/>

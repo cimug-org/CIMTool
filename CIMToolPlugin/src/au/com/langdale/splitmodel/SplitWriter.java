@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import au.com.langdale.kena.ConversionException;
+import au.com.langdale.kena.Injector;
+
+import com.hp.hpl.jena.rdf.model.impl.Util;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-public class SplitWriter extends SplitBase {
-	
-	public static class ConversionException extends Exception {
-		private static final long serialVersionUID = 9060636904114094601L;
-	}
+public class SplitWriter extends SplitBase implements Injector {
 	
 	public static final int DEFAULT_MODULUS = 128;
 	public static final int DEFAULT_QUOTA = 128;
@@ -40,14 +40,15 @@ public class SplitWriter extends SplitBase {
 	private static final CharSequence ESCAPE_QUOTE_MARK = "\\\"";
 	private static final Pattern NCNAME_REGEX = Pattern.compile("[A-Za-z_][A-Za-z0-9-_.]*");
 	private static final String RDF_TYPE = RDF.type.getURI(); 
-
-	private final String local;
+	private static final Random random = new Random();
+	
+	private final String local = LOCAL + Integer.toHexString(random.nextInt()) + "#";
 	private final Map spaces;
 	private final Map prefixes;
 	private final Writer[] cache;
 	private final int quota;
 	
-	private int sweep, active;
+	private int sweep, active, sequ = 0x1000;
 	private String base;
 	private boolean freeze, imprinted;
 	/**
@@ -63,7 +64,6 @@ public class SplitWriter extends SplitBase {
 		setBase(base);
 		setModulus(modulus);
 		cache = new Writer[modulus];
-		local = LOCAL + Integer.toHexString(new Random().nextInt()) + "#";
 		spaces = new LinkedHashMap();
 		prefixes = new HashMap();
 		setPrefix("local", local);
@@ -93,23 +93,20 @@ public class SplitWriter extends SplitBase {
 		setBase(parent.base);
 		setModulus(parent.modulus);
 		cache = new Writer[modulus];
-		local = parent.local;
-		prefixes = parent.prefixes;
-		spaces = parent.spaces;
-		freeze = true;
+		prefixes = new HashMap(parent.prefixes);
+		spaces = new HashMap(parent.spaces);
+		removePrefix("local");
+		setPrefix("local", local);
 	}
-	/**
-	 * Create a submodel in a subdirectory with a given name. The resulting
-	 * SplitWriter has the same parameters as its parent.
-	 * 
-	 * @param name: the name of the submodel 
-	 * @return a new SplitWriter instance
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#createQuote(java.lang.String)
 	 */
-	public SplitWriter createQuote(String name) {
-		return new SplitWriter(this, name);
+	public Injector createQuote(Object node) {
+		String uri = (String) node;
+		return new SplitWriter(this, uri.substring( Util.splitNamespace( uri )));
 	}
-	/**
-	 * @return the base URI of the model
+	/* (non-Javadoc)
+	 * @see au.com.langdale.splitmodel.Injector#getBase()
 	 */
 	public String getBase() {
 		return base;
@@ -136,13 +133,8 @@ public class SplitWriter extends SplitBase {
 			throw new IllegalArgumentException("split model modulus must be 2 or greater");
 		this.modulus = modulus;
 	}
-	/**
-	 * Assign a namespace prefix.  Assigning prefixes to common namespaces
-	 * will reduce the space requirement of the model.  Prefix assignments
-	 * made after the first statement has been added to the model are 
-	 * ignored.
-	 * @param prefix: a short string conforming to NCNAME
-	 * @param namespace: a http URI terminated by '#' 
+	/* (non-Javadoc)
+	 * @see au.com.langdale.splitmodel.Injector#setPrefix(java.lang.String, java.lang.String)
 	 */
 	public void setPrefix(String prefix, String namespace) {
 		if( freeze )
@@ -153,6 +145,15 @@ public class SplitWriter extends SplitBase {
 			return;
 		spaces.put(namespace, prefix);
 		prefixes.put(prefix, namespace);
+	}
+	
+	private void removePrefix(String prefix) {
+		if( freeze )
+			return;
+		
+		Object ns = prefixes.remove(prefix);
+		if( ns != null)
+			spaces.remove(ns);
 	}
 	
 	private Writer getWriter(int key) throws IOException {
@@ -195,17 +196,15 @@ public class SplitWriter extends SplitBase {
 		result.write("\n");
 
 		try {
-			result.write(createStatement(createSymbol(DOCUMENT), createSymbol(HASH), createSymbol(Integer.toString(key), XSD.integer.getURI())));
-			result.write(createStatement(createSymbol(DOCUMENT), createSymbol(MODULUS), createSymbol(Integer.toString(modulus), XSD.integer.getURI())));
+			result.write(createStatement(DOCUMENT, HASH, createSymbol(Integer.toString(key), XSD.integer.getURI())));
+			result.write(createStatement(DOCUMENT, MODULUS, createSymbol(Integer.toString(modulus), XSD.integer.getURI())));
 		} catch (ConversionException e) {
 			throw new Error(e);
 		}
 		result.write("\n");
 	}
-	/**
-	 * Flush pending  output and release resources.
-	 * 
-	 * @throws IOException
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#close()
 	 */
 	public void close() throws IOException {
 		for( int ix = 0; active > 0; ix++ ) {
@@ -259,8 +258,8 @@ public class SplitWriter extends SplitBase {
 		return QUOTE + escaped + QUOTE + suffix;
 	}
 
-	private String createStatement(String subj, String pred, String obj) {
-		return subj + " " + pred + " " + obj + " .\n";
+	private String createStatement(String subj, String pred, String obj) throws ConversionException {
+		return createSymbol(subj) + " " + createSymbol(pred) + " " + obj + " .\n";
 	}
 
 	private void evict() throws IOException {
@@ -275,55 +274,52 @@ public class SplitWriter extends SplitBase {
 		}
 	}
 	
-	/**
-	 * Create a URI reference that can be used as a poor man's anonymous resource.  
-	 * The URI is constructed so that it will not be found in any other model.
-	 * 
-	 * @param id
-	 * @return
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#createAnon(java.lang.String)
 	 */
-	public String createAnon(String id) {
-		return local + id;
+	public Object createAnon(String id) throws ConversionException {
+		if( id != null )
+			return local + id;
+		else 
+			return local + "_" + Integer.toHexString(sequ++);
 	}
-	/**
-	 * Add a statement referring to a resource.
-	 * 
-	 * @param subj: the URI of the subject
-	 * @param pred: the URI of the predicate or property
-	 * @param obj: the URI of the object 
-	 * @throws IOException
+	
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#createNamed(java.lang.String)
 	 */
-	public void add(String subj, String pred, String obj) throws IOException {
-		String stmnt;
-		try {
-			stmnt = createStatement(createSymbol(subj), createSymbol(pred), createSymbol(obj));
-		} catch (ConversionException e) {
-			return;
-		}
-		int subjKey = hashURI(subj);
+	public Object createNamed(String uri) throws ConversionException {
+		return uri;
+	}
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#createLiteral
+	 */
+	public Object createLiteral(String value, String lang, String type, boolean isXML) throws ConversionException {
+		return createSymbol(value, type);
+	}
+	
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#addObjectProperty(java.lang.Object, java.lang.String, java.lang.Object)
+	 */
+	public void addObjectProperty(Object subj, String pred, Object obj) throws IOException, ConversionException {
+		String s = (String)subj;
+		String o = (String)obj;
+		String stmnt = createStatement(s, pred, createSymbol(o));
+		int subjKey = hashURI(s);
 		getWriter(subjKey).write(stmnt);
 		if( ! pred.equals(RDF_TYPE)) {
-			int objKey = hashURI(obj);
+			int objKey = hashURI(o);
 			if( subjKey != objKey )
 				getWriter(objKey).write(stmnt);
 		}
 	}
-	/**
-	 * Add a statement referring to a literal value.
-	 * @param subj: the URI of the subject
-	 * @param pred: the URI of the object
-	 * @param value: the object as a string (its lexical form)
-	 * @param type: the URI of the object's datatype
-	 * @throws IOException
+	/* 
+	 * @see au.com.langdale.splitmodel.Injector#addDatatypeProperty(java.lang.Object, java.lang.String, java.lang.Object)
 	 */
-	public void add(String subj, String pred, String value, String type) throws IOException {
-		String stmnt;
-		try {
-			stmnt = createStatement(createSymbol(subj), createSymbol(pred), createSymbol(value, type));
-		} catch (ConversionException e) {
-			return;
-		}
-		int subjKey = hashURI(subj);
+	public void addDatatypeProperty(Object subj, String pred, Object obj) throws IOException, ConversionException {
+		String s = (String)subj;
+		String o = (String)obj;
+		String stmnt = createStatement(s, pred, o);
+		int subjKey = hashURI(s);
 		getWriter(subjKey).write(stmnt);
 	}
 }

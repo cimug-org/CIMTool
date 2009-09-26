@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Lexical analyser for the rule language.  Splits a stream of characters into tokens.
  */
@@ -39,6 +41,7 @@ public class RuleLexer {
 	
 	private Reader source;
 	StringBuffer lookahead = new StringBuffer();
+	List comments = new ArrayList();
 	int cursor = 0;
 
 	private int nextLineNumber = 1;
@@ -131,6 +134,8 @@ public class RuleLexer {
 	 * @throws IOException
 	 */
 	public String nextToken() throws IOException {
+		comments.clear();
+		
 		for(;;) {
 			if( Character.isWhitespace(get())) {
 				next();
@@ -138,9 +143,12 @@ public class RuleLexer {
 			}
 			else if( get() == '#') {
 				next();
-				while(get() != EOI && get() != EOL)
-					next();
 				take();
+				String comment = interpolate();
+				while(comment.length() > 0) {
+					comments.add(comment);
+					comment = interpolate();
+				}
 			}
 			else {
 				break;
@@ -167,6 +175,13 @@ public class RuleLexer {
 		}
 		else
 			revert();
+		
+		if(get() == '|' && next() == '|') {
+			next();
+			return take();
+		}
+		else
+			revert();
 
 		if( get() == '<' )
 			return quoted('>');
@@ -186,6 +201,32 @@ public class RuleLexer {
 		
 		next();
 		return take();
+	}
+	
+	/**
+	 * The comments that preceded the token delivered by the most recent call to nextToken()
+	 */
+	public List getComments() {
+		return comments;
+	}
+	
+	private String interpolate() throws IOException {
+		while(get() != EOL && Character.isWhitespace(get())) {
+			next();
+			take();
+		}
+		
+		if( get() == '?') {
+			next();
+			while( isWord())
+				next();
+			return take();
+		}
+		else {
+			while(get() != EOL && get() != EOI && get() != '?')
+				next();
+			return take().trim();
+		}
 	}
 	
 	private String quoted(char delim) throws IOException {

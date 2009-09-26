@@ -7,7 +7,7 @@ import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.test.WorkbenchTest;
 import au.com.langdale.cimtoole.wizards.ImportProfile;
 import au.com.langdale.cimtoole.wizards.NewProfile;
-import au.com.langdale.ui.builder.ContentBuilder;
+import au.com.langdale.ui.builder.Assembly;
 
 public class ProfileWizards extends WorkbenchTest {
 
@@ -21,7 +21,7 @@ public class ProfileWizards extends WorkbenchTest {
 		IWorkbenchWizard wizard = new ImportProfile();
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
-		ContentBuilder content = dialog.getContent();
+		Assembly content = dialog.getContent();
 		content.getText("source").setText(getSamplesFolder() + SAMPLE_PROFILE);
 		assertEquals("suggested file", SAMPLE_PROFILE, content.getText("filename").getText());
 		pause();
@@ -40,7 +40,7 @@ public class ProfileWizards extends WorkbenchTest {
 		IWorkbenchWizard wizard = new NewProfile();
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
-		ContentBuilder content = dialog.getContent();
+		Assembly content = dialog.getContent();
 		content.getText("filename").setText(SAMPLE_PROFILE);
 		pause();
 		content.getCheckboxTableViewer("projects").setChecked(project, true);

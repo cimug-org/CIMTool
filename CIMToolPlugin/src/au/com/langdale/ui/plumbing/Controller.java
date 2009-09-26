@@ -7,11 +7,12 @@ package au.com.langdale.ui.plumbing;
 /**
  *  Implements the heart of the form plumbing logic.  
  *  
- *  Binding events received are passed to the delegate with additional, 
- *  consequential events.  A widget event is implemented with suppression
- *  of event loops. Finally, Observer events are generated. 
+ *  Controller methods trigger Binding and Observer methods
+ *  in a prescribed sequence that depends on the synchronous parameter.
+ *  
+ *  Loops are prevented for calls representing widget events.
  */
-public class Controller implements Binding {
+public class Controller implements ICanRefresh {
 	
 	private Binding binding;
 	private Observer observer;
@@ -42,21 +43,32 @@ public class Controller implements Binding {
 	/**
 	 * Trigger processing of a user action or entry. 
 	 * 
-	 * This method is normally hooked to widget events. However,
-	 * it might be explicitly called in unit tests or where
-	 * widget events are not sufficient to monitor widget state.
+	 * This method is normally hooked to widget events by the 
+	 * various widget templates.
 	 * 
+	 * Unit tests might explicitly call this if widget events 
+	 * are not sufficient to monitor widget state.
+	 * 
+	 * This triggers validate(). If synchronous mode, 
+	 * update() and refresh() are also triggered.
 	 */
 	public void fireWidgetEvent() {
 		if( preventer > 0)
 			return;
 		if(synchronous)
-			update();
+			fireUpdate();
 		else
-			validate();
+			fireValidate();
 	}
 
-	public void refresh() {
+	/**
+	 *  The method should be called to initialise the widget values 
+	 *  and again whenever the underlying data (the model) changes.  
+	 *  
+	 *  This triggers refresh() and validate() while suppressing events that 
+	 *  would trigger update().
+	 */
+	public void doRefresh() {
 		preventer++;
 		try {
 			binding.refresh();
@@ -64,10 +76,16 @@ public class Controller implements Binding {
 		finally {
 			preventer--;
 		}
-		validate();
+		fireValidate();
 	}
 
-	public void reset() {
+	/**
+	 *  Initialise the widgets with default values. 
+	 *  This triggers reset() and validate(). 
+	 *  
+	 *  If synchronous mode, update() and refresh() are also triggered.
+	 */
+	public void doReset() {
 		preventer++;
 		try {
 			binding.reset();
@@ -78,13 +96,20 @@ public class Controller implements Binding {
 		fireWidgetEvent();
 	}
 
-	public void update() {
+	/**
+	 * Commit user entries from the widgets to the underlying data (the model).
+	 * This triggers update(), refresh() and validate(). 
+	 */
+	public void fireUpdate() {
 		binding.update();
 		observer.markDirty();
-		refresh();
+		doRefresh();
 	}
 
-	public String validate() {
+	/**
+	 * Trigger validation.
+	 */
+	public String fireValidate() {
 		String message = binding.validate();
 		if( message != null)
 			observer.markInvalid(message);
@@ -92,5 +117,4 @@ public class Controller implements Binding {
 			observer.markValid();
 		return message;
 	}
-
 }

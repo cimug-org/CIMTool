@@ -452,11 +452,15 @@ public class ProfileSerializer extends AbstractReader {
 			elem = new Element("Root");
 		else if(node.isEnumerated()) 
 			elem = new Element("EnumeratedType");
+		else if( node.hasStereotype(UML.compound))
+			elem = new Element("CompoundType");
 		else
 			elem = new Element("ComplexType");
 		elem.set("name", node.getName());
 		elem.set("baseClass", node.getBaseClass().getURI());
 		elem.set("package", node.getPackageName());
+		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
+		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
 		emit(node.getBaseClass().getComment(null));
 		emitNote(node);
 

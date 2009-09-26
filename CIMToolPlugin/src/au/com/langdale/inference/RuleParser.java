@@ -84,6 +84,8 @@ public class RuleParser {
     private PrefixMapping prefixMapping;
 
 	private BuiltinRegistry registry;
+	
+	private boolean debug;
    
 	/**
 	 * Prepare to parse.
@@ -112,6 +114,17 @@ public class RuleParser {
         this(stream,  PrefixMapping.Factory.create(), registry);
     }
     
+    public RuleParser(InputStream stream) throws IOException {
+    	this(stream, new ProxyRegistry());
+    }
+    
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public boolean getDebug() {
+		return debug;
+	}
 	private int getLineNumber() {
 		return lexer.getLineNumber();
 	}
@@ -158,6 +171,11 @@ public class RuleParser {
         return lookahead;
     }
     
+    private List comments() throws IOException {
+    	get();
+    	return lexer.getComments();
+    }
+    
     /**
      * Find the variable index for the given variable name
      * and return a Node_RuleVariable with that index.
@@ -194,11 +212,11 @@ public class RuleParser {
      * Parse a single variable, qname, uri, literal string, number or functor.
      */
     private Node parseNode(Map varMap) throws ParserException, DatatypeFormatException, IOException {
-    	Node node = parseBasicNode(varMap);
+    	Node node = parseLiteral();
     	if( node != null)
     		return node;
-    	
-    	node = parseLiteral();
+
+    	node = parseBasicNode(varMap);
     	if( node != null)
     		return node;
 
@@ -390,11 +408,7 @@ public class RuleParser {
         if( token.length() > 0 && Character.isLetter(token.charAt(0))) {
             next();
             List args = parseNodeList(varMap);
-            Functor clause = new Functor(token, args, registry);
-            if(clause.getImplementor() == null) {
-            	throw new ParserException("Functor name not recognised: " + clause.getName(), this);
-            }
-            return clause;
+            return new Functor(token, args, registry);
         }
         return null;
     }
@@ -487,9 +501,7 @@ public class RuleParser {
 	}
 
 	/**
-     * Parse a rule, optionally use the context of an outer rule.
-     * @param retainVarMap set to true to cause the existing varMap to be left in place, which
-     * is required for nested rules.
+     * Parse a rule with any alternative rules.
      */
     private CompoundRule parseRule(Map varMap, boolean nested) throws ParserException, IOException {
     	CompoundRule result;
@@ -501,6 +513,16 @@ public class RuleParser {
     			next();
     		else
     			throw new ParserException("Expected a rule clause or ']' to complete rule", this);
+    		
+    		if( get().equals("||")) {
+    			next();
+    			if( get().equals("[")) {
+    				CompoundRule alt = parseRule(varMap, nested);
+    				result = new CompoundRule(result, alt);
+    			}
+    			else
+    				throw new ParserException("Expected '[' to start an alternative rule", this);
+    		}
     	}
     	else {
     		result = parseBareRule(varMap, nested);
@@ -588,8 +610,29 @@ public class RuleParser {
     		if(clause == null)
     			break;
     		body.add(clause);
+    		if( debug ) {
+    			Functor comment = parseComment(varMap);
+    			if( comment != null)
+    				body.add(comment);
+    		}
     	}
 		return body;
+	}
+	
+	private Functor parseComment(Map varMap) throws IOException {
+		if( comments().isEmpty())
+			return null;
+		
+		List nodes = new ArrayList();
+	
+		for( Iterator it = comments().iterator(); it.hasNext();) {
+			String next = (String)it.next();
+			if( next.startsWith("?") && varMap.containsKey(next)) 
+				nodes.add(varMap.get(next));
+			else
+				nodes.add(Node.createLiteral(next));
+		}
+		return new Functor("debug", nodes);
 	}
 	
 	public static void main(String[] args) {

@@ -1,8 +1,8 @@
 package au.com.langdale.cimtoole.test;
 
+import au.com.langdale.inference.AsyncModel;
+import au.com.langdale.inference.AsyncResult;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.splitmodel.SplitReader;
-import au.com.langdale.splitmodel.SplitReader.SplitResult;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -48,7 +48,7 @@ public class TestUtility extends TestCase {
 		return new Triple(Node.createURI(s), Node.createURI(p), o);
 	}
 
-	public static class Deferred implements SplitResult {
+	public static class Deferred implements AsyncResult {
 		private boolean complete;
 		private int count = 0;
 		private Triple result;
@@ -76,18 +76,18 @@ public class TestUtility extends TestCase {
 		}
 	}
 
-	public static abstract class Chain implements SplitResult {
+	public static abstract class Chain implements AsyncResult {
 		private TriplePattern pattern;
-		private SplitResult delegate;
+		private AsyncResult delegate;
 		private int pending = 1;
 		private boolean more = true;
 		
-		public Chain(TriplePattern pattern, SplitResult delegate) {
+		public Chain(TriplePattern pattern, AsyncResult delegate) {
 			this.pattern = pattern;
 			this.delegate = delegate;
 		}
 		
-		private class Link implements SplitResult {
+		private class Link implements AsyncResult {
 			public boolean add(Triple result) {
 				if(more) 
 					more = delegate.add(result);
@@ -107,7 +107,7 @@ public class TestUtility extends TestCase {
 			return more;
 		}
 		
-		protected abstract void find(TriplePattern pattern, SplitResult result);
+		protected abstract void find(TriplePattern pattern, AsyncResult result);
 
 		public void close() {
 			pending --;
@@ -119,32 +119,32 @@ public class TestUtility extends TestCase {
 	public static class ChainGraph extends Chain {
 		private Graph graph;
 
-		public ChainGraph(Graph graph, TriplePattern pattern, SplitResult delegate) {
+		public ChainGraph(Graph graph, TriplePattern pattern, AsyncResult delegate) {
 			super(pattern, delegate);
 			this.graph = graph;
 		}
 
 		@Override
-		protected void find(TriplePattern pattern, SplitResult result) {
+		protected void find(TriplePattern pattern, AsyncResult result) {
 			TestUtility.find(graph, pattern, result);
 		}
 	}
 	
 	public static class ChainReader extends Chain {
-		private SplitReader reader;
+		private AsyncModel reader;
 
-		public ChainReader(SplitReader reader, TriplePattern pattern, SplitResult delegate) {
+		public ChainReader(AsyncModel reader, TriplePattern pattern, AsyncResult delegate) {
 			super(pattern, delegate);
 			this.reader = reader;
 		}
 
 		@Override
-		protected void find(TriplePattern pattern, SplitResult result) {
+		protected void find(TriplePattern pattern, AsyncResult result) {
 			reader.find(pattern, result);
 		}
 	}
 
-	protected static Deferred find(SplitReader reader, TriplePattern pattern) {
+	protected static Deferred find(AsyncModel reader, TriplePattern pattern) {
 		Deferred deferred = new Deferred();
 		reader.find(pattern, deferred);
 		return deferred;
@@ -164,7 +164,7 @@ public class TestUtility extends TestCase {
 		return deferred;
 	}
 	
-	protected static void find(OntModel model, TriplePattern pattern, SplitResult deferred) {
+	protected static void find(OntModel model, TriplePattern pattern, AsyncResult deferred) {
 		find(model.getGraph(), pattern, deferred);
 	}
 
@@ -174,7 +174,7 @@ public class TestUtility extends TestCase {
 		return deferred;
 	}
 
-	protected static void find(Graph graph, TriplePattern pattern, SplitResult deferred) {
+	protected static void find(Graph graph, TriplePattern pattern, AsyncResult deferred) {
 		ExtendedIterator it = graph.find(pattern.asTripleMatch());
 		while (it.hasNext()) {
 			Triple triple = (Triple) it.next();

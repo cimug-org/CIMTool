@@ -4,14 +4,6 @@
  */
 package au.com.langdale.xmi;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
@@ -30,13 +22,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class CIMInterpreter extends UMLInterpreter {
 	
-	/**
-	 * Utility to parse an XMI file, apply CIM conventions, and return a Jena OWL model.
-	 */
-	public static OntModel parse(InputStream stream, String baseURI, OntModel annote, boolean usePackageNames) throws IOException, SAXException, ParserConfigurationException, FactoryConfigurationError {
-		XMIParser parser = new XMIParser();
-		parser.parse(stream);
-		OntModel raw = parser.getModel();
+	public static OntModel interpret(OntModel raw, String baseURI,
+			OntModel annote, boolean usePackageNames) {
 		if( annote != null)
 			raw.add(annote);
 		CIMInterpreter interpreter = new CIMInterpreter();

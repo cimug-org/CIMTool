@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import au.com.langdale.inference.AsyncModel;
 import au.com.langdale.inference.RuleParser;
+import au.com.langdale.inference.AsyncResult;
 import au.com.langdale.util.Profiler.TimeSpan;
 
 import com.hp.hpl.jena.graph.Factory;
@@ -32,22 +34,14 @@ import com.hp.hpl.jena.vocabulary.XSD;
 /**
  * A query processor for split models.
  */
-public class SplitReader extends SplitBase {
+public class SplitReader extends SplitBase implements AsyncModel {
 	
-	/**
-	 * Clients implement this interface to receive query results.
-	 */
-	public interface SplitResult {
-		public boolean add(Triple result);
-		public void close();
-	}
-
 	private static class Query {
 		protected Triple pattern; 
-		protected SplitResult results;
+		protected AsyncResult results;
 		protected int pending;
 	
-		public Query(Triple pattern, SplitResult results, int pending) {
+		public Query(Triple pattern, AsyncResult results, int pending) {
 			this.pattern = pattern;
 			this.results = results;
 			this.pending = pending;
@@ -74,7 +68,7 @@ public class SplitReader extends SplitBase {
 	
 	private static class ObjectQuery extends Query {
 
-		public ObjectQuery(Triple pattern, SplitResult results, int pending) {
+		public ObjectQuery(Triple pattern, AsyncResult results, int pending) {
 			super(pattern, results, pending);
 		}
 
@@ -89,7 +83,7 @@ public class SplitReader extends SplitBase {
 	
 	private static class SubjectQuery extends Query {
 
-		public SubjectQuery(Triple pattern, SplitResult results, int pending) {
+		public SubjectQuery(Triple pattern, AsyncResult results, int pending) {
 			super(pattern, results, pending);
 		}
 
@@ -294,17 +288,14 @@ public class SplitReader extends SplitBase {
 		createBuckets(boot);
 	}
 	
-	/**
-	 * Access a submodel.
-	 * @param quote: the node in the present model that represents with the submodel
-	 * @return another <code>SplitReader</code> instance for the submodel
-	 * @throws IOException
+	/* (non-Javadoc)
+	 * @see au.com.langdale.splitmodel.AsyncModel#getQuote(com.hp.hpl.jena.graph.Node)
 	 */
-	public SplitReader getQuote(Node quote) throws IOException {
-		SplitReader result = null;
+	public AsyncModel getQuote(Node quote) throws IOException {
+		AsyncModel result = null;
 		if( quote.isURI()) {
 			String name = quote.getLocalName();
-			result = (SplitReader) quotes.get(name);
+			result = (AsyncModel) quotes.get(name);
 			if( result == null) {
 				File nested = new File(destin, name);
 				if( nested.exists()) {
@@ -315,6 +306,7 @@ public class SplitReader extends SplitBase {
 		}
 		return result;
 	}
+
 	/**
 	 * Associate an external model with a node in the current model.
 	 * This is used to link a base model to an difference model, for example.
@@ -323,15 +315,15 @@ public class SplitReader extends SplitBase {
 	 * @throws IOException
 	 */
 	public void assignQuote(Node quote, String location) throws IOException {
-		quotes.put(quote.getLocalName(), new SplitReader(new File(location), cache));
+		assignQuote(quote, new SplitReader(new File(location), cache));
 	}
 	
-	/**
-	 * Execute all pending queries and all consequential queries.
-	 * This method returns when no further queries are pending.
-	 * A query is pending if some of its results have not yet been
-	 * delivered.
-	 * @throws IOException
+	private void assignQuote(Node quote, AsyncModel model) {
+		quotes.put(quote.getLocalName(), model);
+	}
+	
+	/* (non-Javadoc)
+	 * @see au.com.langdale.splitmodel.AsyncModel#run()
 	 */
 	public void run() throws IOException {
 		if(running)
@@ -367,12 +359,10 @@ public class SplitReader extends SplitBase {
 			buckets[ix] = new Bucket(ix);
 		}
 	}
-	/**
-	 * Issue a query.
-	 * @param clause: a template that results will match
-	 * @param results: the object to receive results
+	/* (non-Javadoc)
+	 * @see au.com.langdale.splitmodel.AsyncModel#find(com.hp.hpl.jena.reasoner.TriplePattern, au.com.langdale.splitmodel.SplitReader.SplitResult)
 	 */
-	public void find(TriplePattern clause, SplitResult results) {
+	public void find(TriplePattern clause, AsyncResult results) {
 		Triple pattern =  new Triple(
 				var2Any(clause.getSubject()), 
 				var2Any(clause.getPredicate()), 

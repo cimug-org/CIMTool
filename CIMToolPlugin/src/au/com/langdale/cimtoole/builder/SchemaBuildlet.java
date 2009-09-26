@@ -28,15 +28,15 @@ public class SchemaBuildlet extends Buildlet {
 		IProject project = result.getProject();
 		IFolder folder = Info.getSchemaFolder(project);
 		OntModel schema = CIMToolPlugin.getCache().getMergedOntologyWait(folder);
-		String namespace = Info.getProperty(Info.SCHEMA_NAMESPACE, project);
+		String namespace = Info.getProperty(project, Info.SCHEMA_NAMESPACE);
 		Task.write(schema, namespace, true, result, "RDF/XML", monitor);
 	}
-
+	
 	@Override
 	protected Collection getOutputs(IResource file) throws CoreException {
-		IProject project = file.getProject();
-		if( Info.getSchemaFolder(project).equals(file)) {
-			String name = project.getPersistentProperty(Info.MERGED_SCHEMA_PATH);
+		if( Info.isSchema(file)) {
+			IProject project = file.getProject();
+			String name = Info.getProperty(project, Info.MERGED_SCHEMA_PATH);
 			if( name != null && name.length() != 0)
 				return Collections.singletonList(project.getFile(name)); 
 		}

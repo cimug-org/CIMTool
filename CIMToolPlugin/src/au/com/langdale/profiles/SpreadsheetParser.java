@@ -224,7 +224,7 @@ public class SpreadsheetParser {
 			Resource base = mapper.map(name, CLASS); // construct a base class URI
 			if( base == null )
 				throw new ParseProblem("undefined class: " + name);
-			profile = new ProfileClass(model.createClass(uri), namespace, model, model.createResource(base.asNode()));
+			profile = new ProfileClass(model.createClass(uri), namespace,  model.createResource(base.asNode()));
 			profiles.put(uri, profile);
 		}
 		return profile;

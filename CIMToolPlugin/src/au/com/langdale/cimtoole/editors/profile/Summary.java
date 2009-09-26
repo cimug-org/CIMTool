@@ -14,7 +14,8 @@ import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.ui.binding.BooleanBinding;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public final class Summary extends FurnishedEditor {
 	private ProfileEditor master;
@@ -35,7 +36,7 @@ public final class Summary extends FurnishedEditor {
 		}
 	}
 	
-	private SelectionListener more = new SelectionListener() {
+	private SelectionListener reorg = new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// no action
 		}
@@ -58,11 +59,7 @@ public final class Summary extends FurnishedEditor {
 						Grid(
 							Group(Label("Location:"), DisplayField("location")),
 							Group(Label("Namespace:"), DisplayField("namespace")),
-							Group(Row(PushButton("more", "Reorganize and Repair", more))), 
-								//Row(
-									// PushButton("remap", "Remap Profile", remap), 
-									//PushButton("reorg", "Reorganize Profile", reorg),
-									//CheckBox("refs", "all associations by reference"))),
+							Group(Row(PushButton("more", "Reorganize and Repair", reorg))), 
 							Group(Label("Build the following from this profile:")),
 							Group(CheckboxTableViewer("buildlets", true))
 						)

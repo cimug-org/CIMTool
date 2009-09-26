@@ -26,11 +26,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Scrollable;
 
 /**
  * Public version of a private jface class. 
- * The logic has been reworked to suit ContentBuilder.
+ * The logic has been reworked to suit Templates and Assembly.
  *
  */
 public class LayoutGenerator {
@@ -70,38 +69,35 @@ public class LayoutGenerator {
             }
         }
 
-        if (control instanceof Scrollable) {
-            Scrollable scrollable = (Scrollable) control;
+        if (control instanceof Composite) {
+            Composite composite = (Composite) control;
 
-            if (scrollable instanceof Composite) {
-                Composite composite = (Composite) control;
+            Layout theLayout = composite.getLayout();
+            if (theLayout instanceof GridLayout) {
+                boolean growsHorizontally = false;
+                boolean growsVertically = false;
 
-                Layout theLayout = composite.getLayout();
-                if (theLayout instanceof GridLayout) {
-                    boolean growsHorizontally = false;
-                    boolean growsVertically = false;
+                Control[] children = composite.getChildren();
+                for (int i = 0; i < children.length; i++) {
+                    Control child = children[i];
 
-                    Control[] children = composite.getChildren();
-                    for (int i = 0; i < children.length; i++) {
-                        Control child = children[i];
+                    GridData data = (GridData) child.getLayoutData();
 
-                        GridData data = (GridData) child.getLayoutData();
-
-                        if (data != null) {
-                            if (data.grabExcessHorizontalSpace) {
-                                growsHorizontally = true;
-                            }
-                            if (data.grabExcessVerticalSpace) {
-                                growsVertically = true;
-                            }
+                    if (data != null) {
+                        if (data.grabExcessHorizontalSpace) {
+                            growsHorizontally = true;
+                        }
+                        if (data.grabExcessVerticalSpace) {
+                            growsVertically = true;
                         }
                     }
-
-                    return GridDataFactory.fillDefaults().grab(growsHorizontally, growsVertically);
                 }
+
+                return GridDataFactory.fillDefaults().grab(growsHorizontally, growsVertically);
             }
         }
 
+        Point size = control.getSize();
         boolean wrapping = hasStyle(control, SWT.WRAP);
         boolean containsText = hasMethod(control, "setText", new Class[] { String.class }); //$NON-NLS-1$
         boolean variable = ! (control instanceof Label);
@@ -111,7 +107,7 @@ public class LayoutGenerator {
         boolean multiLine = hasStyle(control, SWT.MULTI);
  
         boolean grabHorizontal = hScroll || variableText && !wrapping || containsText && wrapping;
-		boolean grabVertical = vScroll || variableText && multiLine;
+		boolean grabVertical =   (vScroll || variableText && multiLine) && size.y <= 0;
 
         int hHint, vHint, vAlign;
         
@@ -142,7 +138,10 @@ public class LayoutGenerator {
         	hHint = SWT.DEFAULT;
         }
 
-        if(grabVertical) {
+        if( size.y > 0) {
+        	vHint = size.y;
+        }
+        else if(grabVertical) {
         	vHint = defaultSize.y;
         }
         else {

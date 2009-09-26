@@ -7,14 +7,14 @@ import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.test.WorkbenchTest;
 import au.com.langdale.cimtoole.wizards.ImportSchema;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.ui.builder.ContentBuilder;
+import au.com.langdale.ui.builder.Assembly;
 
 public class SchemaWizards extends WorkbenchTest {
 	public final void testImportSchema() throws CoreException  {
 		ImportSchema wizard = new ImportSchema();
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
-		ContentBuilder content = dialog.getContent();
+		Assembly content = dialog.getContent();
 		content.getText("source").setText(getSamplesFolder() + SAMPLE_SCHEMA);
 		assertEquals("suggested file", SAMPLE_SCHEMA, content.getText("filename").getText());
 		pause();

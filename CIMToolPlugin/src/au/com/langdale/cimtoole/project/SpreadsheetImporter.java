@@ -175,7 +175,7 @@ public class SpreadsheetImporter {
 				
 				Task.write(parser.getResult(), namespace, false, destin, "RDF/XML-ABBREV", monitor);
 				monitor.worked(1);
-				destin.setPersistentProperty(Info.PROFILE_NAMESPACE, namespace);
+				Info.putProperty( destin, Info.PROFILE_NAMESPACE, namespace);
 
 				try {
 					logger.close();

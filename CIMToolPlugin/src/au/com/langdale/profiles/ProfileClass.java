@@ -28,29 +28,26 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * Represents a class in a profile, encapsulating its base (original) class and restrictions.
  */
 public class ProfileClass {
+	private final OntResource clss;
+	private final String namespace;
+	private final OntModel model;
+
 	private OneToManyMap props;
 	private OntResource baseClass;
 	private Set classes;
-	private OntResource clss;
-	private String namespace;
-	private OntModel model;
 	private boolean enumeratedBase;
-	private OntResource defaultBase;
+	private final OntResource defaultBase;
 	
-	public ProfileClass(OntResource clss, String namespace, OntModel model, OntResource base) {
+	public ProfileClass(OntResource clss, String namespace, OntResource base) {
 		this.clss = clss;
 		this.namespace = namespace;
-		this.model = model;
+		this.model = clss.getOntModel();
 		this.defaultBase = base;
 		analyse();
 	}
 	
-	public ProfileClass(OntResource clss, String namespace, OntModel model) {
-		this(clss, namespace, model, model.createClass( OWL.Thing.getURI()));
-	}
-	
-	public ProfileClass(OntResource clss) {
-		this(clss, clss.getNameSpace(), clss.getOntModel());
+	public ProfileClass(OntResource clss, String namespace) {
+		this(clss, namespace, clss.getOntModel().createClass( OWL.Thing.getURI()));
 	}
 	
 	/**
@@ -139,6 +136,31 @@ public class ProfileClass {
 		}
 		props.remove(prop);
 	}
+	
+	public void setMaxCardinality(int card) {
+		if( card < Integer.MAX_VALUE)
+			clss.setProperty(UML.hasMaxCardinality, card);
+		else
+			clss.removeAll(UML.hasMaxCardinality);
+	}
+
+	
+	public void setMinCardinality(int card) {
+		if( card > 0)
+			clss.setProperty(UML.hasMinCardinality, card);
+		else
+			clss.removeAll(UML.hasMinCardinality);
+	}
+	
+	public int getMaxCardinality() {
+		Integer card = clss.getInteger(UML.hasMaxCardinality);
+		return card != null? card.intValue(): Integer.MAX_VALUE;
+	}
+	
+	public int getMinCardinality() {
+		Integer card = clss.getInteger(UML.hasMinCardinality);
+		return card != null? card.intValue(): 0;
+	}
 
 	private boolean removeCardinality(OntResource prop) {
 		boolean removed = false;
@@ -207,7 +229,7 @@ public class ProfileClass {
 	}
 	
 	public boolean hasStereotype(Resource stereo) {
-		return clss.hasProperty(UML.hasStereotype, stereo);
+		return clss.hasProperty(UML.hasStereotype, stereo) || baseClass.hasProperty(UML.hasStereotype, stereo);
 	}
 
 	public OntResource createSomeValuesFrom(OntResource prop, OntResource type) {
@@ -390,9 +412,9 @@ public class ProfileClass {
 			
 			OntResource type = prop.getRange();
 			if( type != null && type.isClass()) 
-				return new ProfileClass(range, namespace, model, type);
+				return new ProfileClass(range, namespace, type);
 			else
-				return new ProfileClass(range, namespace, model);
+				return new ProfileClass(range, namespace);
 		}
 		
 		public ProfileClass getDomainProfile() {
@@ -477,7 +499,7 @@ public class ProfileClass {
 	/**
 	 * Returns a ProfileClass for each named class.
 	 */
-	public static Iterator getProfileClasses(final OntModel profileModel, final OntModel fullModel) {
+	public static Iterator getProfileClasses(final OntModel profileModel, final OntModel fullModel, final String namespace) {
 		return new Iterator() {
 			List classes = getNamedProfiles(profileModel, fullModel);
 			int ix;
@@ -487,7 +509,7 @@ public class ProfileClass {
 			}
 
 			public Object next() {
-				return new ProfileClass((OntResource)classes.get(ix++));
+				return new ProfileClass((OntResource)classes.get(ix++), namespace);
 			}
 
 			public void remove() {
@@ -656,15 +678,15 @@ public class ProfileClass {
 			for (ResIterator it = union.listResourceElements(); it.hasNext();) {
 				OntResource item = it.nextResource();
 				if( item.isClass()) {
-					members.add(new ProfileClass(item));
+					members.add(new ProfileClass(item, namespace));
 				}
 			}
 		}
 		else if(isPropertyRange()) {
 			for (Iterator it = classes.iterator(); it.hasNext();) 
-				members.add(new ProfileClass((OntResource) it.next()));
+				members.add(new ProfileClass((OntResource) it.next(), namespace));
 			if( ! props.isEmpty())
-				members.add(new ProfileClass(clss, namespace, model, baseClass));
+				members.add(new ProfileClass(clss, namespace, baseClass));
 		}
 		return members;
 	}

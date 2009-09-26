@@ -39,8 +39,8 @@ public class ExportSchema extends FurnishedWizard implements IExportWizard {
 		String ns = main.getNamespace();
 		
 		public void run(IProgressMonitor monitor) throws CoreException {
-			project.setPersistentProperty(Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
-			project.setPersistentProperty(Info.PROFILE_NAMESPACE, ns);
+			Info.putProperty( project, Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
+			Info.putProperty( project, Info.PROFILE_NAMESPACE, ns);
 			build(project.getFile(SchemaExportPage.SCHEMA), monitor);
 		}
 	}

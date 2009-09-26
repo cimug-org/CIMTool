@@ -199,6 +199,8 @@ public class UMLTreeModel extends JenaTreeModelBase {
 						add(new EnumClassNode(child));
 					else if( child.hasProperty(UML.hasStereotype, UML.extension))
 						add(new ExtensionClassNode(child));
+					else if( child.hasProperty(UML.hasStereotype, UML.compound))
+						add(new CompoundClassNode(child));
 					else
 						add(new ClassNode( child ));
 				}
@@ -366,6 +368,14 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	public class ExtensionClassNode extends ClassBaseNode {
 
 		public ExtensionClassNode(OntResource clss) {
+			super(clss);
+		}
+		
+	}
+	
+	public class CompoundClassNode extends ClassBaseNode {
+
+		public CompoundClassNode(OntResource clss) {
 			super(clss);
 		}
 		

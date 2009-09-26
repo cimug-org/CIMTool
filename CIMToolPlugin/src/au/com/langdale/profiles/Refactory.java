@@ -42,6 +42,10 @@ public class Refactory extends ProfileUtility {
 		return model;
 	}
 	
+	public String getNamespace() {
+		return namespace;
+	}
+	
 	public void refresh() {
 		map = null;
 		this.model = Composition.merge(profileModel, backgroundModel);
@@ -88,7 +92,7 @@ public class Refactory extends ProfileUtility {
 		Iterator it = subs.iterator();
 		while (it.hasNext()) {
 			OntResource sub = (OntResource) it.next();
-			ProfileClass subprof = new ProfileClass(sub);
+			ProfileClass subprof = new ProfileClass(sub, namespace);
 
 			// mark it if has no supers
 			Iterator kt = subprof.getSuperClasses();
@@ -122,7 +126,7 @@ public class Refactory extends ProfileUtility {
 			map.removeProfile(clss);
 		
 		// super profiles to be inherited by sub profiles
-		Set supers = asSet(new ProfileClass(clss).getSuperClasses());
+		Set supers = asSet(new ProfileClass(clss, namespace).getSuperClasses());
 		
 		// TODO: properties to be duplicated in sub profiles
 		//PropertyAccumulator props = new PropertyAccumulator();
@@ -149,7 +153,7 @@ public class Refactory extends ProfileUtility {
 	
 	private void buildMap() {
 		map = new ProfileMap();
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
 		while (it.hasNext()) {
 			ProfileClass profile = (ProfileClass) it.next();
 			map.add(profile.getBaseClass(), profile.getSubject());
@@ -157,7 +161,7 @@ public class Refactory extends ProfileUtility {
 	}
 	
 	public void setByReference() {
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
 		while (it.hasNext()) {
 			ProfileClass profile = (ProfileClass) it.next();
 			setByReference(profile);
@@ -176,7 +180,7 @@ public class Refactory extends ProfileUtility {
 	}
 	
 	public void setConcrete() {
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
 		while (it.hasNext()) {
 			ProfileClass profile = (ProfileClass) it.next();
 			profile.setStereotype(UML.concrete, shouldBeConcrete(profile));

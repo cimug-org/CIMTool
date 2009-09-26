@@ -11,6 +11,7 @@ import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.shared.PrefixMapping;
 
 import au.com.langdale.cimtoole.test.SplitModelTest;
+import au.com.langdale.inference.AsyncModel;
 import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.ProxyRegistry;
 import au.com.langdale.inference.RuleParser;
@@ -21,7 +22,7 @@ import au.com.langdale.splitmodel.SplitReader;
 public class ExtractorTest extends SplitModelTest {
 
 	public static final String TEST = "http://langdale.com.au/2007/test#";
-	protected SplitReader reader;
+	protected AsyncModel reader;
 	
 	@Override
 	protected void setUp() throws Exception {

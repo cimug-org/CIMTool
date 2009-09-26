@@ -23,15 +23,13 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.util.Jobs;
 
 import com.hp.hpl.jena.graph.compose.MultiUnion;
 /**
@@ -134,6 +132,19 @@ public class Cache extends Info {
 	public void removeCacheListener(CacheListener listener) {
 		listeners.remove(listener);
 	}
+	
+	/**
+	 * Inject a model into the cache (which may then be out of sync with the
+	 * underlying file).
+	 */
+	public void setOntology(IFile resource, OntModel model ) {
+		try {
+			resource.setSessionProperty(ONTMODEL, model);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+		fireModelCached(resource);
+	}
 
 	private Object getCached(CacheWorker worker) {
 		if( ! worker.getResource().exists())
@@ -144,9 +155,7 @@ public class Cache extends Info {
 			if( raw != null)
 				return raw;
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 
 		runJob(worker);
@@ -154,20 +163,19 @@ public class Cache extends Info {
 	}
 	
 	private Object getCachedWait(CacheWorker worker) throws CoreException {
+		if( ! worker.getResource().exists())
+			return null;
+		
 		Object raw = worker.getCached();
 		if( raw != null )
 			return raw;
-		runWait(worker);
+		Jobs.runWait(worker, worker.getResource());
 		return worker.getCached();
 	}
 	
+
 	private void runJob(CacheWorker worker) {
-		Job job = new CacheJob(worker);
-		job.schedule();
-	}
-	
-	private void runWait(CacheWorker worker) throws CoreException {
-		ResourcesPlugin.getWorkspace().run(worker, worker.getResource(), 0, null);
+		Jobs.runJob(worker, worker.getResource(), "Parsing " + worker.getResource().getName());
 	}
 	
 	private void fireModelCached(IResource key) {
@@ -183,26 +191,6 @@ public class Cache extends Info {
 		for (int ix = 0; ix < current.length; ix++) {
 			CacheListener listener = (CacheListener) current[ix];
 			listener.modelDropped(key);
-		}
-	}
-	
-	private class CacheJob extends Job {
-		private CacheWorker worker;
-		
-		public CacheJob(CacheWorker worker) {
-			super("Parsing " + worker.getResource().getName());
-			setRule(worker.getResource());
-			this.worker = worker;
-		}
-		
-		@Override
-		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				worker.run(monitor);
-			} catch (CoreException e) {
-				return e.getStatus();
-			}
-			return Status.OK_STATUS;
 		}
 	}
 	
@@ -342,45 +330,18 @@ public class Cache extends Info {
 	}
 
 	private class ResourceListener implements IResourceChangeListener {
+
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (event.getType() != IResourceChangeEvent.POST_CHANGE)
 				return;
 
-			final Set projects = new HashSet();
-
+			DeltaVisitor visitor = new DeltaVisitor();
+			
 			try {
-				event.getDelta().accept(new IResourceDeltaVisitor(){
-					public boolean visit(IResourceDelta delta) {
-						IResource raw = delta.getResource();
-						if( raw instanceof IFile ) {
-							IFile file = (IFile) raw;
-							if( isParseable(file)) {
-								IProject project = file.getProject();
-								int kind = delta.getKind();
-								if( kind == IResourceDelta.CHANGED ) {
-									runJob(new ParseWorker(file, true));
-								}
-								else if( kind  == IResourceDelta.ADDED ) {
-									projects.add(project);
-								}
-								else if( kind  == IResourceDelta.REMOVED ) {
-									projects.add(project);
-									fireModelDropped(file);
-								}
-							}
-							else {
-								IFile master = findMasterFor(file);
-								if( master != null )
-									runJob(new ParseWorker(master, true));
-							}
-							return false;
-						}
-						else
-							return true;
-					}
-				});
 
-				for (Iterator it = projects.iterator(); it.hasNext();) {
+				event.getDelta().accept(visitor);
+
+				for (Iterator it = visitor.listProjects(); it.hasNext();) {
 					IProject project = (IProject) it.next();
 					IFolder schema = getSchemaFolder(project);
 					if( schema.exists())
@@ -388,9 +349,44 @@ public class Cache extends Info {
 				}
 
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
+	}
+	
+	private class DeltaVisitor implements IResourceDeltaVisitor {
+		private final Set projects = new HashSet();;
+
+		public boolean visit(IResourceDelta delta) {
+			IResource raw = delta.getResource();
+			if( raw instanceof IFile ) {
+				IFile file = (IFile) raw;
+				if( isParseable(file)) {
+					IProject project = file.getProject();
+					int kind = delta.getKind();
+					if( kind == IResourceDelta.CHANGED) { 
+						if((delta.getFlags()&(IResourceDelta.CONTENT|IResourceDelta.REPLACED)) != 0)
+							runJob(new ParseWorker(file, true));
+					}
+					else if( kind  == IResourceDelta.ADDED ) {
+						projects.add(project);
+					}
+					else if( kind  == IResourceDelta.REMOVED ) {
+						projects.add(project);
+						fireModelDropped(file);
+					}
+				}
+				else {
+					IFile master = findMasterFor(file);
+					if( master != null )
+						runJob(new ParseWorker(master, true));
+				}
+				return false;
+			}
+			else
+				return true;
+		}
+		
+		public Iterator listProjects() { return projects.iterator(); }
 	}
 }

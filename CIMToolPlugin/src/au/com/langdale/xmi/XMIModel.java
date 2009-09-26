@@ -7,12 +7,10 @@ package au.com.langdale.xmi;
 import org.xml.sax.Attributes;
 
 import au.com.langdale.sax.XMLElement;
-
 import com.hp.hpl.jena.graph.FrontsNode;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntResource;
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * A base for the XMI2OWL interpretor that wraps a Jena OWL model
@@ -91,6 +89,10 @@ public class XMIModel {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
+		return createClass(xuid, name);
+	}
+
+	protected OntResource createClass(String xuid, String name) {
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createClass(XMI.NS + xuid);
 			subject.addLabel(name, "en");
@@ -131,6 +133,10 @@ public class XMIModel {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
+		return createObjectProperty(xuid, name);
+	}
+
+	protected OntResource createObjectProperty(String xuid, String name) {
 		if( xuid != null ) { 
 			OntResource subject = model.createObjectProperty(XMI.NS + xuid);
 			if(name != null)
@@ -153,6 +159,10 @@ public class XMIModel {
 	protected OntResource createObjectProperty(XMLElement element, String xuid, boolean sideA) {
 		Attributes atts = element.getAttributes();
 		String name = atts.getValue("name");
+		return createObjectProperty(xuid, sideA, name);
+	}
+
+	protected OntResource createObjectProperty(String xuid, boolean sideA, String name) {
 		if( xuid != null ) { 
 			String synth = xuid + "-" + (sideA? "A": "B");
 			OntResource subject = model.createObjectProperty(XMI.NS + synth);
@@ -199,7 +209,7 @@ public class XMIModel {
 	protected OntResource createStereotype(XMLElement element) {
 		String xuid = element.getAttributes().getValue("xmi.idref");
         if( xuid != null ) {
-         	return createStereoType(xuid); 
+         	return createStereotype(xuid); 
         }
         else
         	return createIndividual(element, UML.Stereotype);
@@ -208,11 +218,18 @@ public class XMIModel {
 	/**
 	 * Reference a stereotype by id string.
 	 */
-	protected OntResource createStereoType(String xuid) {
+	protected OntResource createStereotype(String xuid) {
        	OntResource subject = model.createIndividual(XMI.NS + xuid, UML.Stereotype);
 		if(keepID)
 			subject.addProperty(UML.id, xuid);
     	return subject; 
+	}
+	
+	/**
+	 * Create or reference a stereotype by name.
+	 */
+	protected OntResource createStereotypeByName(String name) {
+       	return model.createIndividual(UML.NS + name.toLowerCase(), UML.Stereotype);
 	}
 	
 	/**
@@ -226,6 +243,10 @@ public class XMIModel {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
+		return createAttributeProperty(xuid, name);
+	}
+
+	protected OntResource createAttributeProperty(String xuid, String name) {
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createOntProperty(XMI.NS + xuid);
 			subject.addProperty(UML.hasStereotype, UML.attribute);
@@ -247,6 +268,10 @@ public class XMIModel {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
+		return createIndividual(xuid, name, type);
+	}
+
+	protected OntResource createIndividual(String xuid, String name, FrontsNode type) {
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createIndividual(XMI.NS + xuid, type);
 			subject.addLabel(name, "en");
@@ -328,5 +353,53 @@ public class XMIModel {
 		return element.matches(type) 
 				&& atts.getValue("xmi.id") != null 
 				&& atts.getValue("name") != null;
+	}
+
+	protected OntResource createGlobalPackage() {
+		OntResource packResource = model.createIndividual(UML.global_package.getURI(), UML.Package);
+		packResource.addLabel("Global", null);
+		return packResource;
+	}
+	
+	/**
+	 * Description of an association role.
+	 *
+	 */
+	protected class Role {
+	    OntResource range;
+	    OntResource property;
+	    int lower =-1, upper=-1;
+		boolean composite, aggregate;
+		
+		/**
+		 * Interpret this association role in the context of its mate.
+		 * Establish the OWL domain and rage.  Interpret the UML
+		 * multiplicity as OWL functional and inverse functional
+		 * property types.
+		 */
+		public void mate(Role other) {
+			if( property == null)
+				return;
+    		if( composite )
+    			property.addProperty(UML.hasStereotype, UML.ofComposite);
+    		if( aggregate )
+    			property.addProperty(UML.hasStereotype, UML.ofAggregate);
+			if( other.range != null)
+				property.addDomain(other.range);
+			if( range != null ) 
+				property.addRange(range);
+			if( other.property != null )
+				property.addInverseOf(other.property);
+			if( upper == 1 )
+				property.convertToFunctionalProperty();
+			if( other.upper == 1)
+				property.convertToInverseFunctionalProperty();
+    		if( other.composite )
+    			property.addProperty(UML.hasStereotype, UML.compositeOf);
+    		if( other.aggregate )
+    			property.addProperty(UML.hasStereotype, UML.aggregateOf);
+
+		}
+		
 	}
 }

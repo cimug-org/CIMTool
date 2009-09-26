@@ -4,6 +4,8 @@
  */
 package au.com.langdale.ui.builder;
 
+import static au.com.langdale.ui.builder.Templates.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -17,10 +19,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
+import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.ui.plumbing.Binding;
 import au.com.langdale.validation.Validation.Validator;
+
 /**
- * A preference or property page provided with a ContentBuilder and
- * a set of bound templates for various property and preference types.
+ * A preference or property page provided with a Assembly and
+ * a set of templates for various property and preference types.
  */
 public abstract class FurnishedPropertyPage extends PreferencePage 
 			implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
@@ -43,124 +48,126 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 	public FurnishedPropertyPage() {
 	}
+
+	public static abstract class TextBinding implements Template, Binding {
+		public final QualifiedName symbol;
+		public final Validator validator;
+		private Assembly assembly;
+
+		public TextBinding(QualifiedName symbol, Validator validator) {
+			this.symbol = symbol;
+			this.validator = validator;
+		}
+
+		protected String getValue() {
+			return assembly.getText(symbol.getLocalName()).getText().trim();
+		}
+
+		protected void setValue(String value) {
+			assembly.setTextValue(symbol.getLocalName(), value);
+		}
+
+		public String validate() {
+			return validator.validate(getValue());
+		}
+
+		public Control realise(Composite parent, Assembly assembly) {
+			this.assembly = assembly;
+			assembly.addBinding(this);
+			return Field(symbol.getLocalName()).realise(parent, assembly);
+		}
+	}
 	
-	protected abstract class Content extends ContentBuilder {
-		protected abstract class TextBinding extends BoundTemplate {
-			public final QualifiedName symbol;
-			public final Validator validator;
+	public static abstract class OptionBinding implements Template, Binding {
+		public final QualifiedName symbol;
+		public final String label;
+		private Assembly assembly;
 
-			public TextBinding(QualifiedName symbol, Validator validator) {
-				this.symbol = symbol;
-				this.validator = validator;
-			}
-
-			protected String getValue() {
-				return getText(symbol.getLocalName()).getText().trim();
-			}
-
-			protected void setValue(String value) {
-				setTextValue(symbol.getLocalName(), value);
-			}
-
-			public String validate() {
-				return validator.validate(getValue());
-			}
-
-			public Control realise(Composite parent) {
-				return Field(symbol.getLocalName()).realise(parent);
-			}
+		public OptionBinding(QualifiedName symbol, String label) {
+			this.symbol = symbol;
+			this.label = label;
 		}
-		
-		protected abstract class OptionBinding extends BoundTemplate {
-			public final QualifiedName symbol;
-			public final String label;
 
-			public OptionBinding(QualifiedName symbol, String label) {
-				this.symbol = symbol;
-				this.label = label;
-			}
-
-			protected boolean getValue() {
-				return getButton(symbol.getLocalName()).getSelection();
-			}
-
-			protected void setValue(boolean value) {
-				getButton(symbol.getLocalName()).setSelection(value);
-			}
-
-			public String validate() {
-				return null;
-			}
-
-			public Control realise(Composite parent) {
-				return CheckBox(symbol.getLocalName(), label).realise(parent);
-			}
+		protected boolean getValue() {
+			return assembly.getButton(symbol.getLocalName()).getSelection();
 		}
-		
-		protected class Property extends TextBinding {
-			public Property(QualifiedName symbol, Validator validator) {
-				super( symbol, validator );
-			}
 
-			public void refresh() {
-				try {
-					setValue(getResource().getPersistentProperty(symbol));
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			public void update() {
-				try {
-					getResource().setPersistentProperty(symbol, getValue());
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			public void reset() {
-				setValue(getPreferenceStore().getString(symbol.getLocalName()));				
-			}
+		protected void setValue(boolean value) {
+			assembly.getButton(symbol.getLocalName()).setSelection(value);
 		}
-		
-		protected class Preference extends TextBinding {
-			public Preference(QualifiedName symbol, Validator validator) {
-				super(symbol, validator);
-			}
 
-			public void refresh() {
-				setValue(getPreferenceStore().getString(symbol.getLocalName()));		
-			}
-
-			public void reset() {
-				setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));		
-			}
-
-			public void update() {
-				getPreferenceStore().setValue(symbol.getLocalName(), getValue());
-			}
+		public String validate() {
+			return null;
 		}
-		
-		protected class PreferenceOption extends OptionBinding {
-			public PreferenceOption(QualifiedName symbol, String label) {
-				super(symbol, label);
-			}
 
-			public void refresh() {
-				setValue(getPreferenceStore().getBoolean(symbol.getLocalName()));		
-			}
+		public Control realise(Composite parent, Assembly assembly) {
+			this.assembly = assembly;
+			assembly.addBinding(this);
+			return CheckBox(symbol.getLocalName(), label).realise(parent, assembly);
+		}
+	}
+	
+	protected class Property extends TextBinding {
+		public Property(QualifiedName symbol, Validator validator) {
+			super( symbol, validator );
+		}
 
-			public void reset() {
-				setValue(getPreferenceStore().getDefaultBoolean(symbol.getLocalName()));		
-			}
-
-			public void update() {
-				getPreferenceStore().setValue(symbol.getLocalName(), getValue());
+		public void refresh() {
+			try {
+				setValue(Info.getProperty(getResource(), symbol));
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
+		public void update() {
+			Info.putProperty(getResource(), symbol, getValue());
+		}
+
+		public void reset() {
+			setValue(getPreferenceStore().getString(symbol.getLocalName()));				
+		}
+	}
+	
+	protected class Preference extends TextBinding {
+		public Preference(QualifiedName symbol, Validator validator) {
+			super(symbol, validator);
+		}
+
+		public void refresh() {
+			setValue(getPreferenceStore().getString(symbol.getLocalName()));		
+		}
+
+		public void reset() {
+			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));		
+		}
+
+		public void update() {
+			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
+		}
+	}
+	
+	protected class PreferenceOption extends OptionBinding {
+		public PreferenceOption(QualifiedName symbol, String label) {
+			super(symbol, label);
+		}
+
+		public void refresh() {
+			setValue(getPreferenceStore().getBoolean(symbol.getLocalName()));		
+		}
+
+		public void reset() {
+			setValue(getPreferenceStore().getDefaultBoolean(symbol.getLocalName()));		
+		}
+
+		public void update() {
+			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
+		}
+	}
+
+	
+	protected abstract class Content extends Assembly {
 		public Content() {
 			super(createDialogToolkit(), false);
 		}

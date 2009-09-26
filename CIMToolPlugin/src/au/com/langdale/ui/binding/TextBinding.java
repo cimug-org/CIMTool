@@ -6,8 +6,8 @@ package au.com.langdale.ui.binding;
 
 import org.eclipse.swt.widgets.Text;
 
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.plumbing.Binding;
-import au.com.langdale.ui.plumbing.Plumbing;
 import au.com.langdale.validation.Validation;
 import au.com.langdale.validation.Validation.Validator;
 /**
@@ -16,7 +16,7 @@ import au.com.langdale.validation.Validation.Validator;
 public class TextBinding implements Binding, TextModel, AnyModel {
 	
 	protected String value = "";
-	private Plumbing plumbing;
+	private Assembly plumbing;
 	private Validator validator = Validation.NONE;
 	private Text control;
 	private AnyModel parent;
@@ -31,14 +31,14 @@ public class TextBinding implements Binding, TextModel, AnyModel {
 		this(validator, "");
 	}
 
-	public void bind(String name, Plumbing plumbing, AnyModel parent) {
+	public void bind(String name, Assembly plumbing, AnyModel parent) {
 		this.plumbing = plumbing;
 		this.parent = parent;
 		control = (Text) plumbing.getControl(name);
 		plumbing.addBinding(this, parent);
 	}
 	
-	public void bind(String name, Plumbing plumbing) {
+	public void bind(String name, Assembly plumbing) {
 		bind(name, plumbing, null);
 	}
 

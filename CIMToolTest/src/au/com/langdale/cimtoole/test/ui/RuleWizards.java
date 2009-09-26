@@ -13,7 +13,7 @@ import au.com.langdale.cimtoole.wizards.NewHTMLRules;
 import au.com.langdale.cimtoole.wizards.NewIncRuleset;
 import au.com.langdale.cimtoole.wizards.NewRuleset;
 import au.com.langdale.cimtoole.wizards.NewXSDRules;
-import au.com.langdale.ui.builder.ContentBuilder;
+import au.com.langdale.ui.builder.Assembly;
 
 public class RuleWizards extends WorkbenchTest {
 
@@ -96,7 +96,7 @@ public class RuleWizards extends WorkbenchTest {
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
 		
-		ContentBuilder content = dialog.getContent();
+		Assembly content = dialog.getContent();
 		content.getText("source").setText(getSamplesFolder() + sample);
 		pause();
 		
@@ -117,7 +117,7 @@ public class RuleWizards extends WorkbenchTest {
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
 		
-		ContentBuilder content = dialog.getContent();
+		Assembly content = dialog.getContent();
 		content.getCheckboxTableViewer("projects").setChecked(project, true);
 		content.fireWidgetEvent();
 		pause();

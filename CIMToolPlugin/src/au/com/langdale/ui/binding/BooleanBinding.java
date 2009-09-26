@@ -7,8 +7,8 @@ package au.com.langdale.ui.binding;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.plumbing.Binding;
-import au.com.langdale.ui.plumbing.Plumbing;
 /**
  * Bind an array of <code>BooleanModel</code>s to a CheckboxTableViewer.
  */
@@ -26,7 +26,7 @@ public abstract class BooleanBinding implements Binding {
 		super();
 	}
 
-	public void bind(String name, Plumbing plumbing) {
+	public void bind(String name, Assembly plumbing) {
 		viewer = (CheckboxTableViewer) plumbing.getViewer(name);
 		viewer.setComparator(new ViewerComparator());
 		plumbing.addBinding(this);

@@ -23,7 +23,8 @@ import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.binding.BooleanModel.BooleanValue;
 import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class RefactorWizard extends FurnishedWizard  {
 	private ProfileEditor master;

@@ -10,6 +10,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import au.com.langdale.cimtoole.project.Cache;
+import au.com.langdale.cimtoole.project.Settings;
 import au.com.langdale.ui.util.IconCache;
 
 
@@ -23,6 +24,12 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "au.com.langdale.cimtoole";
 	
+	// The RDF namespace for settings subjects
+	public static final String PROJECT_NS = "http://cimtoole.langdale.com.au/2009/project/";
+	
+	// The RDF namespace for settings properties
+	public static final String SETTING_NS = "http://cimtoole.langdale.com.au/2009/setting#";
+	
 	// The shared instance
 	private static CIMToolPlugin plugin;
 	
@@ -30,6 +37,9 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	private static Cache cache;
 	
 
+	// the settings database
+	private static Settings settings;
+	
 	/**
 	 * The constructor
 	 */
@@ -46,6 +56,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 		IconCache.setSource(context.getBundle(), "/icons/");
 		plugin = this;
 		cache = new Cache();
+		settings = new Settings();
 	}
 
 	/*
@@ -80,5 +91,9 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 
 	public static Cache getCache() {
 		return cache;
+	}
+	
+	public static Settings getSettings() {
+		return settings;
 	}
 }

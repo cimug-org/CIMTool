@@ -13,9 +13,10 @@ import au.com.langdale.ui.binding.BooleanBinding;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.binding.OntModelAdapters;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class Stereotype extends FurnishedEditor {
 	private ProfileEditor master;

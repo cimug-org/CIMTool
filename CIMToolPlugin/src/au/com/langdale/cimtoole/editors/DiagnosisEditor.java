@@ -10,12 +10,13 @@ import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.validation.DiagnosisModel;
 import au.com.langdale.validation.DiagnosisModel.DetailNode;
 
 import au.com.langdale.kena.OntResource;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class DiagnosisEditor extends ModelEditor {
 

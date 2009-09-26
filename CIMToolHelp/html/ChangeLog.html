@@ -15,12 +15,27 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.5.5 </h2><ul><li><p>new feature: CIMTool can now generate java class definitions with JPA annotations.
+          <div id="content"><h2>Release 1.6.1 </h2><ul><li><p>new feature: Profile Repair Assistant.</p><p>The Profile Repair Assistant helps correct errors in profiles, especially those which
+arise when the profile is paired with an updated CIM.</p><p>Each time a profile is saved or a the CIM schema is changed, the profile is checked against
+a set of rules.  If any errors are detected, a repair file appears as a red icon adjacent to
+the profile in the project explorer.</p><p>Opening the repair file causes the repair assistant to run, which displays the errors and 
+offers suggested repair actions.   Any desired repairs can be checked and are applied when the 
+save button is pressed.</p></li><li><p>new feature: directly import Enterprise Architect project files </p><p>The create project and import schema wizards now offer the option to directly import an Enterprise
+Architect project file.  This eliminates the need to create an XMI file for import to CIMTool and
+speeds up the round trip when the CIM or an extension is edited concurrently with a profile.</p><p>The feature is limited to EA project files in the Jet4 format.  This requires the project
+to be converted to Jet4 and the &quot;use Jet4&quot; option in EA to be enabled.</p></li><li><p>new feature: cardinality for concrete profile classes.</p><p>It is mow possible to set the minimum and maximum cardinality of a a top-level, concrete
+class.   This is reflected in generated XML schemas by the cardinality of the corresponding 
+first-level element defintions.</p></li><li><p>new feature: preliminary support for compound datatypes.</p><p>The &lt;&lt;Compound&gt;&gt; stereotype is now recognised and compound classes are displayed and documented
+differently to normal classes.</p></li><li><p>enhancement: namespaces and other settings are stored in the project, enabling projects
+to be exported and imported between projects without loss of information or functionality.</p></li><li><p>enhancement: commonly used namespaces are offered by the schema import and project creation wizards.</p></li><li><p>enhancement: profile namespace checked against schema namespaces in the import profile and
+new profile wizards.  conflicts between the profile namespaces and a schema namespace are prevented.</p></li><li><p>enhancement: improved software update system (better support of the P2 provisioning system)</p></li><li><p>enhancement: now based on eclipse 3.5 (Galileo)</p></li><li><p>correction: the namespace field in the import schema wizard was ignored.</p></li><li><p>correction: cases where the build system failed to trigger a build or triggered
+the same build twice corrected.</p></li><li><p>correction: the bases of an anonymous profile class could not be changed on the
+hierarchy page of the profile editor.</p></li></ul><h2>Release 1.5.5 </h2><ul><li><p>new feature: CIMTool can now generate java class definitions with JPA annotations.
 These classes can be used in a java program to implement the objects of a CIM profile. </p><p>The JPA (Java Persistance API) annotations map the classes to relational database tables.  
 Thus the CIM profile objects can be loaded from and saved to a database with a minimum of effort. 
 The JPA feature has been tested with a Hibernate and Oracle combination. See <a href="http://hibernate.org" class="external">http://hibernate.org</a> </p><p>The database can be created using the DDL feature released in version 1.4.4.</p><p>To use these features, check the SQL and java builder options on the summary page of your
 CIM profile.  SQL and java artifacts will be created.  The database structure is 
-described in the CIMTool help.</p><ul><li><p>correction: a regression in version 1.5.4 affecting mRID fields in SQL artifacts was fixed.</p></li></ul></li></ul><h2>Release 1.5.4 </h2><ul><li><p>enhancement: A description can be added to a profile
+described in the CIMTool help.</p></li><li><p>correction: a regression in version 1.5.4 affecting mRID fields in SQL artifacts was fixed.</p></li></ul><h2>Release 1.5.4 </h2><ul><li><p>enhancement: A description can be added to a profile
 and edited on the profile editor detail tab. It will appear
 in the HTML documentation and as an annotation to any XML schema.</p></li><li><p>enhancement: The profile envelope name is now preserved when
 profiles or projects containing profiles are exported and imported.
@@ -188,5 +203,6 @@ namespace(s) change is being developed.</p></li></ul></li></ul></div>
     </ul></div>
         </div>  
         <div id="footer"></div>
+          
       </body>
     </html>

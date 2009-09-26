@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import au.com.langdale.inference.AsyncModel;
 import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.ProxyRegistry;
 import au.com.langdale.inference.StandardFunctorActions;

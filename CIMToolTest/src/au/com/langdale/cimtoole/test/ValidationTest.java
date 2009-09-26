@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.SplitModelImporter;
+import au.com.langdale.kena.IO;
 import au.com.langdale.kena.OntModel;
 
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -54,6 +55,7 @@ public class ValidationTest extends ProjectTest {
 
 	protected void assertNoProblems() {
 		record.print("Expected result: no problems." + SEP);
+		IO.print(diagnostics);
 		assertTrue("no validation messages expected", diagnostics.size() == 0);
 	}
 

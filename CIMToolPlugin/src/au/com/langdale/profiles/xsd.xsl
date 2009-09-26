@@ -53,8 +53,8 @@
 
 	<xsl:template match="a:Root">
 		<!--  generates the payload element definitions -->
-		<xs:element name="{@name}" type="m:{@name}" minOccurs="0"
-			maxOccurs="unbounded" />
+		<xs:element name="{@name}" type="m:{@name}"  minOccurs="{@minOccurs}"
+			maxOccurs="{@maxOccurs}" />
 	</xsl:template>
 
 	<xsl:template match="a:Complex">
@@ -149,7 +149,7 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="a:ComplexType|a:Root" mode="declare">
+	<xsl:template match="a:ComplexType|a:Root|a:CompoundType" mode="declare">
 		<xs:complexType name="{@name}" sawsdl:modelReference="{@baseClass}">
 			<xsl:call-template name="annotate" />
 			<xsl:call-template  name="type_body" />

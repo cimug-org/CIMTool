@@ -5,13 +5,13 @@
 package au.com.langdale.cimtoole.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IExportWizard;
+import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.ui.builder.FurnishedWizard;
 
-public class ImportSchema extends FurnishedWizard implements IExportWizard {
+public class ImportSchema extends FurnishedWizard implements IImportWizard {
 	
 	private SchemaWizardPage main = new SchemaWizardPage();
 	
@@ -19,7 +19,7 @@ public class ImportSchema extends FurnishedWizard implements IExportWizard {
 		setWindowTitle("Import Schema"); 
 		setNeedsProgressMonitor(true);
 		main.setTitle(getWindowTitle());
-		main.setDescription("Export the merged schema as an OWL document.");
+		main.setDescription("Import an additional schema (XMI, OWL or EAP file).");
 		main.setSelected(selection);
 	}
 	

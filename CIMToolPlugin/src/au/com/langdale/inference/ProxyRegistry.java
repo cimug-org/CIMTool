@@ -23,7 +23,7 @@ import com.hp.hpl.jena.reasoner.rulesys.RuleContext;
  *  
  */
 public class ProxyRegistry extends BuiltinRegistry {
-	public static class Proxy implements Builtin {
+	private static class Proxy implements Builtin {
 		
 		public boolean bodyCall(Node[] args, int length, RuleContext context) {
 			return false;
@@ -53,12 +53,15 @@ public class ProxyRegistry extends BuiltinRegistry {
 		}
 	}
 	
+	public static final Builtin IMPLIMENTED = new Proxy();
+	public static final Builtin UNIMPLIMENTED = new Proxy();
+	
 	private boolean matchAll;
 	
 	public ProxyRegistry(Collection names) {
 		for (Iterator it = names.iterator(); it.hasNext();) {
 			String name = (String) it.next();
-			builtins.put(name, new Proxy());
+			builtins.put(name, IMPLIMENTED);
 		}
 	}
 	
@@ -70,7 +73,7 @@ public class ProxyRegistry extends BuiltinRegistry {
 	public Builtin getImplementation(String name) {
 		Builtin result = (Builtin)builtins.get(name);
 		if( result == null && matchAll) {
-			result = new Proxy();
+			result = UNIMPLIMENTED;
 			builtins.put(name, result);
 		}
 		return result;

@@ -28,7 +28,7 @@ public abstract class FurnishedMultiEditor extends MultiPageEditorPart  implemen
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
 		setPartName(input.getName());
-		toolkit = ContentBuilder.createFormToolkit();
+		toolkit = Assembly.createFormToolkit();
 	}
 	
 	public void close() {

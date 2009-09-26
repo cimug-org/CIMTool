@@ -7,18 +7,18 @@ package au.com.langdale.ui.binding;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.plumbing.Binding;
-import au.com.langdale.ui.plumbing.Plumbing;
 /**
  * A binding that displays an array as the checked items in a table viewer.
  */
 public abstract class TableBinding implements Binding, ArrayModel, AnyModel {
 	private Object[] values = new Object[0];
 	private CheckboxTableViewer viewer;
-	private Plumbing plumbing;
+	private Assembly plumbing;
 	private AnyModel parent;
 	
-	public void bind(String name, Plumbing plumbing, AnyModel parent) {
+	public void bind(String name, Assembly plumbing, AnyModel parent) {
 		this.plumbing = plumbing;
 		this.parent = parent;
 		viewer = (CheckboxTableViewer) plumbing.getViewer(name);
@@ -26,7 +26,7 @@ public abstract class TableBinding implements Binding, ArrayModel, AnyModel {
 		plumbing.addBinding(this, parent);
 	}
 	
-	public void bind(String name, Plumbing plumbing) {
+	public void bind(String name, Assembly plumbing) {
 		bind(name, plumbing, null);
 	}
 

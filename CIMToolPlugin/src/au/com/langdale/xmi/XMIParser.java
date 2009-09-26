@@ -135,7 +135,7 @@ public class XMIParser extends XMIModel {
 			if( type != null )
 				property = Translator.annotationResource(type);
 
-			// we overide the default subject here and in visit()
+			// we override the default subject here and in visit()
 	    	OntResource ref = createUnknown(element.getAttributes().getValue("modelElement"));
 	    	if( ref != null)
 	    		subject = ref;
@@ -249,8 +249,7 @@ public class XMIParser extends XMIModel {
 	     * Construct for the top-level package.
 	     */
 	    PackageMode() {
-	    	packResource = model.createIndividual(UML.global_package.getURI(), UML.Package);
-	    	packResource.addLabel("Global", null);
+	    	packResource = createGlobalPackage();
 	    }
 	    
 	    /**
@@ -396,8 +395,8 @@ public class XMIParser extends XMIModel {
 			@Override
 			public void leave() {
 				if( endA != null && endB != null) {
-					endA.mate(endB);
-					endB.mate(endA);
+					endA.role.mate(endB.role);
+					endB.role.mate(endA.role);
 				}
 			}
 
@@ -405,32 +404,25 @@ public class XMIParser extends XMIModel {
 			 * Interpret a UML AssociationEnd as an OWL ObjectProperty.
 			 */
 			private class AssociationEndMode extends BaseMode {
-			    OntResource range;
-			    OntResource property;
-			    int lower =-1, upper=-1;
-				boolean composite, aggregate;
+				Role role = new Role();
 	
 			    AssociationEndMode( XMLElement element, boolean sideA ) {
-			    	property = createObjectProperty(element);
-			    	if( property == null) 
-			    		property = createObjectProperty(element, associd, sideA);
-			    	if( property != null ) {
-			    		packageDefines(property);
+			    	role.property = createObjectProperty(element);
+			    	if( role.property == null) 
+			    		role.property = createObjectProperty(element, associd, sideA);
+			    	if( role.property != null ) {
+			    		packageDefines(role.property);
 			    		if( assoc != null )
-			    			property.addProperty(sideA? UML.roleAOf: UML.roleBOf, assoc);
+			    			role.property.addProperty(sideA? UML.roleAOf: UML.roleBOf, assoc);
 			    	}
-			    	range = findClass( element, "type");
-			    	if( range == null )
-			    		range = findClass( element, "participant");
+			    	role.range = findClass( element, "type");
+			    	if( role.range == null )
+			    		role.range = findClass( element, "participant");
 			    	
 			    	String agg = element.getAttributes().getValue("aggregation");
 			    	if( agg != null) {
-			    		composite = agg.equals("composite");
-			    		aggregate = agg.equals("aggregate");
-			    		if( composite )
-			    			property.addProperty(UML.hasStereotype, UML.ofComposite);
-			    		if( aggregate )
-			    			property.addProperty(UML.hasStereotype, UML.ofAggregate);
+			    		role.composite = agg.equals("composite");
+			    		role.aggregate = agg.equals("aggregate");
 			    	}
 			    }
 			    
@@ -439,42 +431,15 @@ public class XMIParser extends XMIModel {
 						return new MultiplicityMode();
 					
 				    else if ( element.matches("Class")) {
-				        range = findClass(element);
+				        role.range = findClass(element);
 				        return null;
 				    }
-				    else if( property != null)
-				    	return visit(element, property);
+				    else if( role.property != null)
+				    	return visit(element, role.property);
 				    else
 				    	return null;
 				}
 				
-				/**
-				 * Interpret this association end in the context of its mate.
-				 * Establish the OWL domain and rage.  Interpret the UML
-				 * multiplicity as OWL functional and inverse functional
-				 * property types.
-				 * 
-				 * @param other the other end of this association.
-				 */
-				public void mate(AssociationEndMode other) {
-					if( property == null)
-						return;
-					if( other.range != null)
-						property.addDomain(other.range);
-					if( range != null ) 
-						property.addRange(range);
-					if( other.property != null )
-						property.addInverseOf(other.property);
-					if( upper == 1 )
-						property.convertToFunctionalProperty();
-					if( other.upper == 1)
-						property.convertToInverseFunctionalProperty();
-		    		if( other.composite )
-		    			property.addProperty(UML.hasStereotype, UML.compositeOf);
-		    		if( other.aggregate )
-		    			property.addProperty(UML.hasStereotype, UML.aggregateOf);
-
-				}
 				
 				/**
 				 * Collect multiplicity information for one association end.
@@ -483,8 +448,8 @@ public class XMIParser extends XMIModel {
 					public XMLMode visit(XMLElement element) {
 						if ( element.matches("MultiplicityRange")) {
 						    Attributes attrs = element.getAttributes();
-					        lower = number(attrs, "lower");
-					        upper = number(attrs, "upper");
+					        role.lower = number(attrs, "lower");
+					        role.upper = number(attrs, "upper");
 							return null;
 						}
 						return this;
@@ -552,7 +517,7 @@ public class XMIParser extends XMIModel {
 				Attributes atts = element.getAttributes();
 				String sxuid = atts.getValue("stereotype");
 				if( sxuid != null ) {
-					classResource.addProperty(UML.hasStereotype, createStereoType(sxuid));
+					classResource.addProperty(UML.hasStereotype, createStereotype(sxuid));
 				}
 				packageDefines(classResource);
 			}

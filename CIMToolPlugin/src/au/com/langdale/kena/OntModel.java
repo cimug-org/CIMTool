@@ -11,6 +11,7 @@ import au.com.langdale.kena.filters.ResourceObjects;
 import au.com.langdale.kena.filters.Subjects;
 import au.com.langdale.kena.filters.UniqueObjects;
 import au.com.langdale.kena.filters.UniqueSubjects;
+import au.com.langdale.kena.filters.UnnamedObjects;
 import au.com.langdale.kena.filters.Wrapper;
 
 import com.hp.hpl.jena.graph.FrontsNode;
@@ -94,6 +95,10 @@ public class OntModel {
 		return new Wrapper(this, new ResourceObjects(graph.find(subject.asNode(), prop.asNode(), Node.ANY)));
 	}
 	
+	public ResIterator listUnnamedObjects(FrontsNode subject) {
+		return new Wrapper(this, new UnnamedObjects(graph.find(subject.asNode(), Node.ANY, Node.ANY)));
+	}
+	
 	public NodeIterator listLiteralObjectsOfProperty(FrontsNode subject, FrontsNode prop) {
 		return new LiteralObjects(graph.find(subject.asNode(), prop.asNode(), Node.ANY));
 	}
@@ -146,6 +151,10 @@ public class OntModel {
 		return graph.contains(subject.asNode(), prop.asNode(), Node.ANY);
 	}
 
+	public boolean contains(FrontsNode subject) {
+		return graph.contains(subject.asNode(), Node.ANY, Node.ANY);
+	}
+
 	public OntResource createList() {
 		return new OntResource(RDF.nil.asNode(), this);
 	}
@@ -154,6 +163,17 @@ public class OntModel {
 		OntResource result = new OntResource(RDF.nil.asNode(), this);
 		while( it.hasNext())
 			result = result.cons(it.nextResource());
+		return result;
+	}
+	
+	public OntResource createList(Node[] elements) {
+		return createList(elements, 0, elements.length);
+	}	
+	
+	public OntResource createList(Node[] elements, int offset1, int offset2) {
+		OntResource result = new OntResource(RDF.nil.asNode(), this);
+		for( int ix = offset2 - 1; ix >= offset1; ix-- ) 
+			result = result.cons(elements[ix]);
 		return result;
 	}
 	

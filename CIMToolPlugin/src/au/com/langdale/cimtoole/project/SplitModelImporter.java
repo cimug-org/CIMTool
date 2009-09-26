@@ -15,8 +15,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import au.com.langdale.cimtoole.ResourceOutputStream;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
-import au.com.langdale.splitmodel.ModelSplitter;
-import au.com.langdale.splitmodel.ModelSplitter.TerminateParseException;
+import au.com.langdale.kena.RDFParser;
+import au.com.langdale.kena.RDFParser.TerminateParseException;
+import au.com.langdale.splitmodel.SplitWriter;
 import au.com.langdale.util.Logger;
 /**
  * A task to import an RDF/XML instance into the project as <code>SplitModel</code>.
@@ -46,7 +47,8 @@ public class SplitModelImporter implements IWorkspaceRunnable {
 			errors.delete(false, monitor);
 		
 		Logger logger = new Logger(new ResourceOutputStream(errors, null, true, true));
-		ModelSplitter splitter = new ModelSplitter(source, destin.getLocation().toOSString(), namespace, logger, base!=null);
+		SplitWriter writer = new SplitWriter(destin.getLocation().toOSString(), namespace);
+		RDFParser splitter = new RDFParser(null, source, writer.getBase(), writer, logger, base!=null);
 		try {
 			splitter.run();
 			logger.close();
@@ -61,11 +63,11 @@ public class SplitModelImporter implements IWorkspaceRunnable {
 		}
 		
 		destin.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		destin.setPersistentProperty(Info.INSTANCE_NAMESPACE, namespace);
+		Info.putProperty( destin, Info.INSTANCE_NAMESPACE, namespace);
 
 		if( profile != null)
-			destin.setPersistentProperty(Info.PROFILE_PATH, profile.getName());
+			Info.putProperty( destin, Info.PROFILE_PATH, profile.getName());
 		if( base != null)
-			destin.setPersistentProperty(Info.BASE_MODEL_PATH, base.getName());
+			Info.putProperty( destin, Info.BASE_MODEL_PATH, base.getName());
 	}
 }

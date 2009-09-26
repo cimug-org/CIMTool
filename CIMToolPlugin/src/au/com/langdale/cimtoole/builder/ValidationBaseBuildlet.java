@@ -145,7 +145,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 		else
 			contents = null;
 			
-		String namespace = Info.getProperty(Info.PROFILE_NAMESPACE, profile);
+		String namespace = Info.getProperty(profile, Info.PROFILE_NAMESPACE);
 		previousValidator = getValidator(schema, namespace, contents);
 		previousProfile = profile;
 		monitor.worked(1);
@@ -163,7 +163,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 
 		Logger logger = new Logger(new ResourceOutputStream(result, monitor, true, true));
 		try {
-			String namespace = Info.getProperty(Info.INSTANCE_NAMESPACE, instance);
+			String namespace = Info.getProperty(instance, Info.INSTANCE_NAMESPACE);
 			String instpath = instance.getLocation().toOSString();
 			String basepath = base != null? base.getLocation().toOSString(): null;
 

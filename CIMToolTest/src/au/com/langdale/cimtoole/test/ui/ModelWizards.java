@@ -1,13 +1,11 @@
 package au.com.langdale.cimtoole.test.ui;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWizard;
 
-import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.test.WorkbenchTest;
 import au.com.langdale.cimtoole.wizards.ImportModel;
-import au.com.langdale.ui.builder.ContentBuilder;
+import au.com.langdale.ui.builder.Assembly;
 
 public class ModelWizards extends WorkbenchTest {
 
@@ -22,7 +20,6 @@ public class ModelWizards extends WorkbenchTest {
 	public final void testCase1() throws Exception {
 		final String TEST_CASE = "base_case.xml";
 		testImportModel(new ImportModel(), TEST_CASE);
-		Job.getJobManager().join(Info.WIZARD_JOBS, monitor);
 		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		assertTrue("model created", model.exists() );
 		assertTrue("diagnostics created", getModelRelated("diagnostic").exists() );
@@ -39,7 +36,7 @@ public class ModelWizards extends WorkbenchTest {
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
 		
-		ContentBuilder content = dialog.getContent();
+		Assembly content = dialog.getContent();
 		String path = getSmallCasesFolder() + sample;
 		content.getText("source").setText(path);
 		pause();

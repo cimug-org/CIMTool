@@ -4,6 +4,9 @@
  */
 package au.com.langdale.cimtoole.project;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -12,6 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+
+import com.healthmarketscience.jackcess.Database;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 /**
@@ -31,9 +36,9 @@ public class Info {
 	public static final QualifiedName PRESERVE_NAMESPACES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "preserve_namespaces");
 	public static final QualifiedName USE_PACKAGE_NAMES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "user_package_names");
 	public static final QualifiedName PROBLEM_PER_SUBJECT = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "problem_per_subject");
-	
-	public static final String WIZARD_JOBS = "WIZARD_JOBS";
 
+	public static final String SETTINGS_EXTENSION = "cimtool-settings";
+	
 	public static boolean isProfile(IResource resource) {
 		return isFile(resource, "Profiles", "owl", "n3");
 	}
@@ -43,11 +48,11 @@ public class Info {
 	}
 
 	public static boolean isRuleSet(IResource resource, String type) {
-		return isFile(resource, "Profiles", type, null);
+		return isFile(resource, "Profiles", type);
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi");
+		return isFile(resource, "Schema", "owl", "xmi", "eap");
 	}
 
 	public static boolean isSchemaFolder(IResource resource) {
@@ -67,14 +72,33 @@ public class Info {
 	}
 
 	public static boolean isDiagnostic(IResource resource) {
-		return isFile(resource, "Instances", "diagnostic", null);
+		return isFile(resource, "Instances", "diagnostic");
 	}
 
-	public static boolean isFile(IResource resource, String location, String type1, String type2) {
+	public static boolean isRepair(IResource resource) {
+		return isFile(resource, "Profiles", "repair");
+	}
+
+	private static boolean isFile(IResource resource, String location, String type1, String type2, String type3) {
+		return isFile(resource, location) && (hasExt(resource, type1) || hasExt(resource, type2) || hasExt(resource, type3));
+	}
+
+	private static boolean isFile(IResource resource, String location, String type1, String type2) {
+		return isFile(resource, location) && (hasExt(resource, type1) || hasExt(resource, type2));
+	}
+
+	private static boolean isFile(IResource resource, String location, String type1) {
+		return isFile(resource, location) && hasExt(resource, type1);
+	}
+
+	private static boolean isFile(IResource resource, String location) {
 		IPath path = resource.getProjectRelativePath();
-		String ext = path.getFileExtension();
-		return (resource instanceof IFile) && path.segmentCount() == 2 && path.segment(0).equals(location)
-				&& ext != null && (ext.equals(type1) || type2 != null && ext.equals(type2));
+		return (resource instanceof IFile) && path.segmentCount() == 2 && path.segment(0).equals(location);
+	}
+	
+	private static boolean hasExt(IResource file, String type) {
+		String ext = file.getFileExtension();
+		return ext != null && ext.equals(type);
 	}
 
 	public static boolean isFolder(IResource resource, String location) {
@@ -98,17 +122,24 @@ public class Info {
 		
 		return 
 			ext.equals("xmi") || 
+			ext.equals("eap") ||
 			ext.equals("owl") || 
 			ext.equals("n3") || 
 			ext.equals("simple-owl") || 
 			ext.equals("merged-owl") || 
-			ext.equals("diagnostic");
+			ext.equals("diagnostic")|| 
+			ext.equals("cimtool-settings") || 
+			ext.equals("repair");
 	}
 	
 	public static IFile findMasterFor(IFile file) {
 		String ext = file.getFileExtension();
 		if( ext != null &&  ext.equalsIgnoreCase("annotation")) {
 			IFile master = getRelated(file, "xmi");
+			if( master.exists())
+				return master;
+			
+			master = getRelated( file, "eap");
 			if( master.exists())
 				return master;
 		}
@@ -141,6 +172,10 @@ public class Info {
 		return project != null? project.getFolder("Incremental"): null;
 	}
 	
+	public static IFile getSettings(IProject project) {
+		return project != null? project.getFile("." + SETTINGS_EXTENSION): null;
+	}
+	
 	public static IResource getInstanceFor(IResource result) {
 		IResource instance = getRelated(result, "ttl");
 		if( !instance.exists())
@@ -161,7 +196,7 @@ public class Info {
 		if( instance != null)
 			resource = instance;
 		
-		String path = getProperty(Info.PROFILE_PATH, resource);
+		String path = getProperty(resource, Info.PROFILE_PATH);
 		if( path.length() == 0)
 			return null;
 		
@@ -195,7 +230,7 @@ public class Info {
 	}
 	
 	public static IResource getBaseModelFor(IResource resource) throws CoreException {
-		String path = getProperty(Info.BASE_MODEL_PATH, resource);
+		String path = getProperty(resource, Info.BASE_MODEL_PATH);
 		if( path.length() == 0)
 			return null;
 		
@@ -206,25 +241,24 @@ public class Info {
 		return instance;
 	}
 
-	public static String getInheritedProperty(QualifiedName symbol, IFile file)	throws CoreException {
-		String path = file.getPersistentProperty(symbol);
-		if( path == null || path.trim().length() == 0)
-			path = file.getParent().getPersistentProperty(symbol);
-		if( path == null || path.trim().length() == 0)
-			path = getPreference(symbol);
-		return path;
-	}
-
-	public static String getProperty(QualifiedName symbol, IResource resource) throws CoreException {
+	public static String getProperty(IResource resource, QualifiedName symbol) throws CoreException {
 		String value;
 		if( resource.exists()) {
-			value = resource.getPersistentProperty(symbol);
-			if(value != null && value.trim().length() > 0)
-				return value;
+			Settings settings = CIMToolPlugin.getSettings();
+			value = settings.getSetting(resource, symbol);
+			if(value == null) {
+				value = getPreference(symbol);
+				settings.putSetting(resource, symbol, value);
+			}
 		}
-		value = getPreference(symbol);
-		resource.setPersistentProperty(symbol, value);
+		else {
+			value = getPreference(symbol);
+		}
 		return value;
+	}
+	
+	public static void putProperty(IResource resource, QualifiedName symbol, String value) {
+		CIMToolPlugin.getSettings().putSetting(resource, symbol, value);
 	}
 
 	public static String getPreference(QualifiedName symbol) {
@@ -241,5 +275,15 @@ public class Info {
 
 	public static CoreException error(String m, Exception e) {
 		return new CoreException(new Status(Status.ERROR, CIMToolPlugin.PLUGIN_ID, m, e));
+	}
+
+	public static String checkValidEAP(File source) {
+		try {
+			Database.open(source, true).close();
+			return null;
+		}
+		catch (IOException e) {
+			return "The EAP file appears to be in Jet3 format. It must be converted to Jet4.";
+		}
 	}
 }

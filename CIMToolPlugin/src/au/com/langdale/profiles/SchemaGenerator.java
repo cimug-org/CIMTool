@@ -46,6 +46,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	
 	private List work = new LinkedList(); // unprocessed profiles
 	private boolean withInverses;
+	private boolean preserveNamespaces;
 	
 	public class Catalog extends BaseMap {
 		protected Map classes = new HashMap(); 	// base class to profile uri 
@@ -158,16 +159,17 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean inverses) {
+	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNamespaces, boolean inverses) {
 		this.profileModel = profileModel;
 		this.model = Composition.merge(profileModel, backgroundModel);
 		this.namespace = namespace;
+		this.preserveNamespaces = preserveNamespaces;
 		this.catalog = new Catalog();
 		this.withInverses = inverses;
 	}
 	
 	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
-		this( profileModel, backgroundModel, namespace, false);
+		this( profileModel, backgroundModel, namespace, false, false);
 	}
 	
 	public void run() {
@@ -210,7 +212,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 
 	// construct a URI for a base model class, datatype, property or individual 
 	private String constructURI(OntResource base) {
-		if( namespace != null)
+		if( ! preserveNamespaces)
 			return namespace + base.getLocalName();
 		else
 			return base.getURI();
@@ -218,14 +220,14 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 
 	// construct a URI for named profile
 	private String constructURI(OntResource base, OntResource profile) {
-		if( namespace != null)
+		if( ! preserveNamespaces)
 			return profile.getURI(); // use the profile URI directly, usually in namespace but not always
 		else
 			return base.getURI();
 	}
 
 	private void scanProfiles() {
-		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
+		Iterator it = ProfileClass.getProfileClasses(profileModel, model, namespace);
 		while( it.hasNext()) 
 			work.add(it.next());
 		
@@ -370,7 +372,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 				TypeInfo range = new TypeInfo( rest.prop.getRange(), this);
 				emitRestriction(uri, domain, range.xsdtype);
 			}
-			else {
+			else if( rest.base_range != null){
 				emitRestriction(uri, domain, catalog.getURI(rest.base_range));
 			}
 			if( rest.required || rest.functional ) {

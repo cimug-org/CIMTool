@@ -20,6 +20,7 @@ import com.hp.hpl.jena.reasoner.rulesys.impl.BindingVector;
  * A Rule whose clauses may include other rules.
  */
 public class CompoundRule extends Rule {
+	private CompoundRule alternative;
 
 	public CompoundRule(String name, List head, List body, int numVars) {
 		super(name, head, body);
@@ -30,11 +31,35 @@ public class CompoundRule extends Rule {
 		super(name, head, body);
 		this.numVars = numVars;
 	}
+	
+	public CompoundRule(CompoundRule main, CompoundRule alternative) {
+		super(main.name, main.head, main.body);
+		this.numVars = main.numVars;
+		this.name = main.name;
+		this.isBackward = main.isBackward;
+		this.alternative = alternative;
+	}
+	
+	public boolean isFunction() {
+		if( body.length == 0 || ! (body[0] instanceof Functor))
+			return false;
+		
+		Node[] formals = ((Functor)body[0]).getArgs();
+		for(int ix = 0; ix < formals.length; ix++)
+			if(! formals[ix].isVariable())
+				return false;
+
+		return true;
+	}
 
 	@Override
 	public int getNumVars() {
 		assert numVars > -1;
 		return numVars;
+	}
+	
+	public CompoundRule getAlternative() {
+		return alternative;
 	}
 
 	/**
@@ -139,6 +164,14 @@ public class CompoundRule extends Rule {
 	    } else {
 	        return n;
 	    }
+	}
+	
+	@Override
+	public String toString() {
+		if( alternative == null )
+			return super.toString();
+		else
+			return super.toString() + "||" + alternative.toString();
 	}
 
 }

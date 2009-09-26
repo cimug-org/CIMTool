@@ -41,7 +41,7 @@ import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
 import au.com.langdale.ui.binding.JenaTreeBinding;
 import au.com.langdale.ui.binding.FilteredContentProvider.Filter;
-import au.com.langdale.ui.plumbing.Plumbing;
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.xmi.UML;
 
 public class PopulateBinding  {
@@ -85,7 +85,7 @@ public class PopulateBinding  {
 		private OntResource subject;
 		private OntResource parent;
 
-		public void bind(String name, Plumbing plumbing, ProfileEditor master ) {
+		public void bind(String name, Assembly plumbing, ProfileEditor master ) {
 			this.master = master;
 			super.bind(name, plumbing);
 		}
@@ -95,9 +95,11 @@ public class PopulateBinding  {
 			Node node = master.getNode();
 			subject = node.getSubject();
 			
-			getTree().setRootResource((OntResource)null);
-			getTree().setOntModel(master.getProfileModel());
-			((ProfileModel)getTree()).setBackgroundModel(master.getProjectModel());
+			ProfileModel tree = (ProfileModel)getTree();
+			tree.setRootResource((OntResource)null);
+			tree.setNamespace(master.getNamespace());
+			tree.setOntModel(master.getProfileModel());
+			tree.setBackgroundModel(master.getProjectModel());
 			
 			if( node instanceof ElementNode) {
 				parent = node.getParent().getSubject();
@@ -200,7 +202,7 @@ public class PopulateBinding  {
 		protected Set bases;
 		protected Button control;
 
-		public void bind(String name, String duplicates, Plumbing plumbing, ProfileEditor master) {
+		public void bind(String name, String duplicates, Assembly plumbing, ProfileEditor master) {
 			this.master = master;
 			this.control = (Button) plumbing.getControl(duplicates);
 			super.bind(name, plumbing, duplicates);

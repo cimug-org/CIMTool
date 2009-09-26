@@ -12,7 +12,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * A wizard page provided with a ContentBuilder and event plumbing.
+ * A wizard page provided with a widget Assembly and event plumbing.
  */
 public abstract class FurnishedWizardPage extends WizardPage {
 
@@ -24,7 +24,7 @@ public abstract class FurnishedWizardPage extends WizardPage {
 		super(pageName, title, titleImage);
 	}
 
-	public abstract class Content extends ContentBuilder {
+	public abstract class Content extends Assembly {
 		public Content(FormToolkit toolkit) {
 			super(toolkit, true);
 		}

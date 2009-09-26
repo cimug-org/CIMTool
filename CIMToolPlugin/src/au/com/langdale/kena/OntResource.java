@@ -1,5 +1,6 @@
 package au.com.langdale.kena;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -7,6 +8,7 @@ import au.com.langdale.kena.filters.ListIterator;
 import au.com.langdale.kena.filters.ListResourceIterator;
 import au.com.langdale.kena.filters.ObjectsExcluding;
 import au.com.langdale.kena.filters.SubjectsExcluding;
+import au.com.langdale.kena.filters.TransitiveIterator;
 import au.com.langdale.kena.filters.Wrapper;
 
 import com.hp.hpl.jena.graph.FrontsNode;
@@ -46,6 +48,19 @@ public class OntResource extends Resource  {
 	
 	public NodeIterator listElements() {
 		return new ListIterator(this);
+	}
+	
+	public Node[] toElementArray() {
+		ArrayList buffer = new ArrayList();
+		NodeIterator it = listElements();
+		while( it.hasNext()) {
+			buffer.add(it.next());
+		}
+		Node[] result = new Node[buffer.size()];
+		for(int ix = 0; ix < result.length; ix ++) {
+			result[ix] = (Node) buffer.get(ix);
+		}
+		return result;
 	}
 	
 	public ResIterator listResourceElements() {
@@ -208,6 +223,11 @@ public class OntResource extends Resource  {
 		model.remove(this, prop);
 		model.add(this, prop, value);
 	}
+
+	public void setProperty(FrontsNode prop, Node value) {
+		model.remove(this, prop);
+		model.add(this, prop, value);
+	}
 	
 	public OntResource cons(FrontsNode element) {
 		return cons(element.asNode());
@@ -248,6 +268,22 @@ public class OntResource extends Resource  {
 			cell = cell.cons((Node)stack.remove(stack.size()-1));
 		}
 		return cell;
+	}
+	
+	public void removeRecursive() {
+		ResIterator it = new TransitiveIterator(this) {
+			@Override
+			protected ResIterator traverse(OntResource subject) {
+				return model.listUnnamedObjects(subject);
+			}
+		};
+		
+		Iterator jt = it.toSet().iterator();
+		while( jt.hasNext()) {
+			OntResource obj = (OntResource) jt.next();
+			obj.removeProperties();
+		}
+		remove();
 	}
 	
 	public OntResource remove(FrontsNode element) {
@@ -421,6 +457,10 @@ public class OntResource extends Resource  {
 		return model.listResourceObjectsOfProperty(this, prop);
 	}
 	
+	public NodeIterator listObjects(FrontsNode prop) {
+		return model.listObjectsOfProperty(this, prop);
+	}
+	
 	public NodeIterator listLiteralProperties(FrontsNode prop) {
 		return model.listLiteralObjectsOfProperty(this, prop);
 	}
@@ -491,6 +531,11 @@ public class OntResource extends Resource  {
 	}
 
 	public void addProperty(FrontsNode prop, int value) {
+		model.add(this, prop, value);
+	}
+
+	public void setProperty(FrontsNode prop, int value) {
+		model.remove(this, prop);
 		model.add(this, prop, value);
 	}
 	

@@ -1,8 +1,8 @@
 package au.com.langdale.cimtoole.test.headless;
 
 import au.com.langdale.cimtoole.test.SplitModelTest;
+import au.com.langdale.inference.AsyncResult;
 import au.com.langdale.splitmodel.SplitReader;
-import au.com.langdale.splitmodel.SplitReader.SplitResult;
 
 import com.hp.hpl.jena.graph.Triple;
 
@@ -25,7 +25,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind01() throws Exception {
-		reader.find(pattern(NET + "_1744201", CIM + "IdentifiedObject.name", ANY), new SplitResult() {
+		reader.find(pattern(NET + "_1744201", CIM + "IdentifiedObject.name", ANY), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				count ++;
@@ -45,7 +45,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind02() throws Exception {
-		reader.find(pattern(NET + "_1744201", CIM + "IdentifiedObject.localName", ANY), new SplitResult() {
+		reader.find(pattern(NET + "_1744201", CIM + "IdentifiedObject.localName", ANY), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				assertEquals(triple(NET + "_1744201", CIM + "IdentifiedObject.localName", "VOLTAGE"), result);
@@ -66,7 +66,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind03() throws Exception {
-		reader.find(pattern(ANY, CIM + "IdentifiedObject.name", "TROYTRAFO1  SL_CURRN"), new SplitResult() {
+		reader.find(pattern(ANY, CIM + "IdentifiedObject.name", "TROYTRAFO1  SL_CURRN"), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				assertEquals(triple(NET + "_2217201", CIM + "IdentifiedObject.name", "TROYTRAFO1  SL_CURRN"), result);
@@ -87,7 +87,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind04() throws Exception {
-		reader.find(pattern(ANY, CIM + "IdentifiedObject.name", "TROYTRAFO1  SL_CURRN"), new SplitResult() {
+		reader.find(pattern(ANY, CIM + "IdentifiedObject.name", "TROYTRAFO1  SL_CURRN"), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				assertEquals(triple(NET + "_2217201", CIM + "IdentifiedObject.name", "TROYTRAFO1  SL_CURRN"), result);
@@ -108,7 +108,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind05() throws Exception {
-		reader.find(pattern(NET + "_2217201", ANY, ANY), new SplitResult() {
+		reader.find(pattern(NET + "_2217201", ANY, ANY), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				assertEquals(uri(NET + "_2217201"), result.getSubject());
@@ -130,7 +130,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind06() throws Exception {
-		reader.find(pattern(ANY, ANY, uri(NET + "_2217201")), new SplitResult() {
+		reader.find(pattern(ANY, ANY, uri(NET + "_2217201")), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				assertEquals(uri(NET + "_2217201"), result.getObject());

@@ -29,13 +29,14 @@ import au.com.langdale.ui.binding.ListBinding;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.validation.Validation;
 
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
 
 import au.com.langdale.kena.Resource;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class SearchWizard extends FurnishedWizard implements IWorkbenchWizard {
 	

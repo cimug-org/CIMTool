@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -58,5 +59,14 @@ public abstract class Buildlet {
 			clean( result, monitor );
 		else
 			build( result, monitor );				
+	}
+	
+	
+	public IWorkspaceRunnable asRunnable(final IFile result, final boolean cleanup) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				Buildlet.this.run(result, cleanup, monitor);
+			}
+		};
 	}
 }

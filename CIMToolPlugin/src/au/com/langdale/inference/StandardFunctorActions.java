@@ -4,8 +4,11 @@
  */
 package au.com.langdale.inference;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -19,8 +22,11 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import au.com.langdale.inference.Extractor.FunctorActions;
 import au.com.langdale.inference.Extractor.RuleState;
 import au.com.langdale.inference.Extractor.TerminateExtractor;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
+import au.com.langdale.profiles.NSMapper;
 import au.com.langdale.splitmodel.SplitReader;
-import au.com.langdale.splitmodel.SplitReader.SplitResult;
 import au.com.langdale.validation.LOG;
 import au.com.langdale.validation.ValidatorUtil;
 
@@ -33,6 +39,7 @@ import au.com.langdale.validation.ValidatorUtil;
  */
 public class StandardFunctorActions extends ValidatorUtil {
 	public static final String ARGS = "incorrect number of arguments";
+	public static final String SUBJECT = "no subject supplied";
 	public static final String INT_ARG = "first argument must be an integer";
 	public static final String HEAD = "not allowed in rule head";
 	public static final String BODY = "not allowed in rule body";
@@ -81,33 +88,55 @@ public class StandardFunctorActions extends ValidatorUtil {
 	}	
 	
 	public static abstract class SimpleTest extends Test {
-		public void match(Node[] nodes, SplitReader model, Graph axioms, RuleState state) {
-			if( eval(nodes, axioms))
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
+			if( eval(nodes, axioms, state))
 				state.dispatch();
+			else
+				state.cancel();
 		}
 
-		protected abstract boolean eval(Node[] nodes, Graph axioms);
+		protected abstract boolean eval(Node[] nodes, Graph axioms, RuleState state);
 	}
 	
 	public static class Axiom extends SimpleTest {
 		@Override
-		protected boolean eval(Node[] nodes, Graph axioms) {
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
 			check(nodes.length == 3, ARGS);
-			return axioms.contains(var2Any(nodes[0]), var2Any(nodes[1]), var2Any(nodes[2]));
+			Iterator it = axioms.find(var2Any(nodes[0]), var2Any(nodes[1]), var2Any(nodes[2]));
+			if( it.hasNext()) {
+				Triple t = (Triple) it.next();
+				state.bind(nodes[0], t.getSubject());
+				state.bind(nodes[1], t.getPredicate());
+				state.bind(nodes[2], t.getObject());
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 	}
 
 	public static class Same extends SimpleTest {
 		@Override
-		protected boolean eval(Node[] nodes, Graph axioms) {
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
 			check(nodes.length == 2, ARGS);
 			return nodes[0].equals(nodes[1]);
 		}
 	}
 	
+	public static class Greater extends SimpleTest {
+		@Override
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
+			check(nodes.length == 2, ARGS);
+			Integer a = getInteger(nodes[0]);
+			Integer b = getInteger(nodes[1]);
+			return a != null && b != null && a.intValue() > b.intValue();
+		}
+	}
+	
 	public static class DatatypeTest extends SimpleTest {
 		@Override
-		protected boolean eval(Node[] nodes, Graph axioms) {
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
 			check(nodes.length == 2, ARGS);
 			return isLexicalForm(nodes[0], nodes[1]);
 		}
@@ -115,9 +144,17 @@ public class StandardFunctorActions extends ValidatorUtil {
 	
 	public static class LiteralTest extends SimpleTest {
 		@Override
-		protected boolean eval(Node[] nodes, Graph axioms) {
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
 			check(nodes.length == 1, ARGS);
 			return nodes[0].isLiteral();
+		}
+	}
+	
+	public static class AnonTest extends SimpleTest {
+		@Override
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
+			check(nodes.length == 1, ARGS);
+			return nodes[0].isBlank();
 		}
 	}
 	
@@ -129,8 +166,8 @@ public class StandardFunctorActions extends ValidatorUtil {
 		}
 
 		@Override
-		protected boolean eval(Node[] nodes, Graph axioms) {
-			return ! delegate.eval(nodes, axioms);
+		protected boolean eval(Node[] nodes, Graph axioms, RuleState state) {
+			return ! delegate.eval(nodes, axioms, state);
 		}
 	}
 	
@@ -140,17 +177,15 @@ public class StandardFunctorActions extends ValidatorUtil {
 		public Any(boolean sense) {
 			this.sense = sense;
 		}
-		public void match(Node[] nodes, SplitReader model, Graph axioms, RuleState state) {
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
 			check(nodes.length == 3, ARGS);
 			boolean axiom = axioms.contains(var2Any(nodes[0]), var2Any(nodes[1]), var2Any(nodes[2]));
-			if(sense && axiom) {
+			if(sense && axiom) 
 				state.dispatch();
-				return;
-			}
-			else if( (! sense) && axiom ) {
-				return;
-			}
-			model.find(new TriplePattern(nodes[0], nodes[1], nodes[2]), new CountResult(state, sense, 1));
+			else if( (! sense) && axiom ) 
+				state.cancel();
+			else
+				model.find(new TriplePattern(nodes[0], nodes[1], nodes[2]), new CountResult(state, sense, 1));
 		}
 	}
 	
@@ -160,53 +195,10 @@ public class StandardFunctorActions extends ValidatorUtil {
 		public TypeTest(boolean sense) {
 			this.sense = sense;
 		}
-		public void match(Node[] nodes, SplitReader model, Graph axioms, RuleState state) {
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
 			check(nodes.length == 2, ARGS);
 			model.find(new TriplePattern(nodes[0], RDF_TYPE, Node.ANY), 
 					new TypeResult(axioms, nodes[1], state, sense));
-		}
-	}
-	
-	public static class Count extends Test {
-		private boolean greater, equal;
-
-		public Count(boolean greater, boolean equal) {
-			this.greater = greater;
-			this.equal = equal;
-		}
-		public void match(Node[] nodes, SplitReader model, Graph axioms, RuleState state) {
-			check(nodes.length == 4, ARGS);
-			Integer arg = getInteger(nodes[0]);
-			check(arg != null, INT_ARG);
-			int limit = (greater^equal)? arg.intValue()+1: arg.intValue();
-			model.find(new TriplePattern(nodes[1], nodes[2], nodes[3]), 
-					new CountResult(state, greater, limit));
-		}
-	}
-	
-	public static class CountResult implements SplitResult {
-		private RuleState state;
-		private boolean sense;
-		private int limit;
-		private int count;
-		
-		public CountResult(RuleState state, boolean sense, int limit) {
-			this.state = state;
-			this.sense = sense;
-			this.limit = limit;
-		}
-		public boolean add(Triple result) {
-			count++;
-			if(count >= limit) {
-				if( sense )
-					state.dispatch();
-				return false; // do not continue
-			}
-			return true;
-		}
-		public void close() {
-			if( ! sense )
-				state.dispatch();
 		}
 	}
 	
@@ -222,10 +214,64 @@ public class StandardFunctorActions extends ValidatorUtil {
 
 		@Override
 		public boolean add(Triple result) {
-			if(axioms.contains(result.getObject(), SUB_CLASS_OF, clss))
+			if(result.getObject().equals(clss) || axioms.contains(result.getObject(), SUB_CLASS_OF, clss))
 				return super.add(result);
 			else
 				return true;
+		}
+	}
+
+	public static class NoMatch extends Test {
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
+			check(nodes.length == 3, ARGS);
+			model.find(new TriplePattern(nodes[0], nodes[1], nodes[2]), new CountResult(state, false, 1));
+		}
+	}
+	
+	public static class Count extends Test {
+		private boolean greater, equal;
+
+		public Count(boolean greater, boolean equal) {
+			this.greater = greater;
+			this.equal = equal;
+		}
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
+			check(nodes.length == 4, ARGS);
+			Integer arg = getInteger(nodes[0]);
+			check(arg != null, INT_ARG);
+			int limit = (greater^equal)? arg.intValue()+1: arg.intValue();
+			model.find(new TriplePattern(nodes[1], nodes[2], nodes[3]), 
+					new CountResult(state, greater, limit));
+		}
+	}
+	
+	public static class CountResult implements AsyncResult {
+		private RuleState state;
+		private boolean sense;
+		private int limit;
+		private int count;
+		
+		public CountResult(RuleState state, boolean sense, int limit) {
+			this.state = state;
+			this.sense = sense;
+			this.limit = limit;
+		}
+		public boolean add(Triple result) {
+			count++;
+			if(count >= limit) {
+				if( sense )
+					state.dispatch();
+				else
+					state.cancel();
+				return false; // do not continue
+			}
+			return true;
+		}
+		public void close() {
+			if( ! sense )
+				state.dispatch();
+			else
+				state.cancel();
 		}
 	}
 	
@@ -235,8 +281,10 @@ public class StandardFunctorActions extends ValidatorUtil {
 		private static final int STATEMENTS_PER_PROBLEM = 5;
 
 		public void apply(Node[] nodes, Graph model, Graph axioms, RuleState state) {
-			Node subject = getReportSubject(nodes, 0, nodes.length);
-			Node phrase = getReportPhrase("error", nodes, 0, nodes.length);
+			int start = nodes.length > 0 && nodes[0].isVariable() ? 1 : 0;
+			
+			Node subject = getReportSubject(nodes, start, nodes.length);
+			Node phrase = getReportPhrase("error", nodes, start, nodes.length);
 			
 			if(subject != null && getOption(axioms, PROBLEM_PER_SUBJECT)) {
 				ExtendedIterator it = model.find(subject, HAS_PROBLEMS, Node.ANY);
@@ -247,7 +295,11 @@ public class StandardFunctorActions extends ValidatorUtil {
 				}
 			}
 
-			createReport(model, subject, phrase, nodes, 0, nodes.length);
+			Node report = createReport(model, subject, phrase, nodes, start, nodes.length);
+			
+			if( start == 1) {
+				state.bind(nodes[0], report);
+			}
 			
 			int size = model.size()/STATEMENTS_PER_PROBLEM;
 			if( size % 100 == 0)
@@ -259,9 +311,71 @@ public class StandardFunctorActions extends ValidatorUtil {
 			}
 		}
 
-		public void match(Node[] nodes, SplitReader model, Graph axioms, RuleState state) {
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
 			check(false, BODY);
 		}
+	}
+	
+	public static class Correction implements FunctorActions {
+		public void apply(Node[] nodes, Graph model, Graph axioms, RuleState state) {
+			check(nodes.length >= 2, ARGS);
+
+			Node repair = Node.createAnon();
+			model.add(new Triple(repair, RDF.type.asNode(), LOG.Repair.asNode()));
+			model.add(new Triple(repair, RDFS.comment.asNode(), nodes[1]));
+			model.add(new Triple(nodes[0], LOG.hasRepairs.asNode(), repair));
+		}
+
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
+			check(false, BODY);
+		}
+	}
+	
+	public static class Similar implements FunctorActions {
+		
+		WeakReference contextCheck;
+		Set spaces;
+		
+		private boolean contextChange(Object context) {
+			if( contextCheck == null || context != contextCheck.get()) {
+				if(contextCheck != null) 
+					contextCheck.clear();
+				contextCheck = new WeakReference(context);
+				return true;
+			}
+			return false;
+		}
+
+		public void apply(Node[] nodes, Graph model, Graph axioms, RuleState state) {
+			check(false, HEAD);
+		}
+
+		public void match(Node[] nodes, AsyncModel model, Graph axioms,	RuleState state) {
+			check(nodes.length == 3, ARGS);
+			Node type = nodes[0];
+			Node subject = nodes[1];
+			Node variable = nodes[2];
+			
+			if(contextChange(axioms))
+				spaces = NSMapper.extractNamespaces(ModelFactory.createMem(axioms));
+			
+			if(subject.isURI()) {
+				Resource result = NSMapper.resourceWithLocalName(
+						subject.getLocalName(), 
+						ResourceFactory.createResource(type), 
+						spaces, 
+						ModelFactory.createMem(axioms));
+				if(result != null) {
+					state.bind(variable, result.asNode());
+					state.dispatch();
+				}
+				else
+					state.cancel();
+			}
+			else
+				state.cancel();
+		}
+		
 	}
 	
 	public static class Debug implements FunctorActions {
@@ -275,7 +389,7 @@ public class StandardFunctorActions extends ValidatorUtil {
 			print(nodes);
 		}
 
-		public void match(Node[] nodes, SplitReader model, Graph axioms, RuleState state) {
+		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
 			System.out.print("matched:");
 			String name = state.getRule().getName();
 			if(name != null) {
@@ -297,21 +411,28 @@ public class StandardFunctorActions extends ValidatorUtil {
 		Map map = new HashMap();
 		map.put("axiom", new Axiom());		
 		map.put("notAxiom", new Not(new Axiom()));
-		map.put("same", new Same());
+		map.put("same", new Same());		
 		map.put("notSame", new Not(new Same()));
+		map.put("greater", new Greater());
+		map.put("notGreater", new Not(new Greater()));
 		map.put("datatype", new DatatypeTest());
 		map.put("notDatatype", new Not( new DatatypeTest()));
 		map.put("literal", new LiteralTest());
 		map.put("notLiteral", new Not( new LiteralTest()));
+		map.put("anon", new AnonTest());
+		map.put("uri", new Not( new AnonTest()));
 		map.put("any", new Any(true));
 		map.put("notAny", new Any(false));
 		map.put("type", new TypeTest(true));
 		map.put("notType", new TypeTest(false));
+		map.put("not", new NoMatch());
 		map.put("countMoreThan", new Count(true, false));
 		map.put("countLessThan", new Count(false, false));
 		map.put("countAtLeast", new Count(true, true));
 		map.put("countAtMost", new Count(false, true));
 		map.put("problem", new Problem());
+		map.put("correction", new Correction());
+		map.put("similar", new Similar());
 		map.put("debug", new Debug());
 		return map;
 	}

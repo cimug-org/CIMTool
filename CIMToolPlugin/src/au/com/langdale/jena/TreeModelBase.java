@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import au.com.langdale.ui.NodeTraits;
+import au.com.langdale.ui.util.NodeTraits;
 
 import au.com.langdale.kena.OntResource;
 import com.hp.hpl.jena.graph.FrontsNode;

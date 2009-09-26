@@ -2,11 +2,12 @@
  * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
  * Langdale Consultants can be contacted at: http://www.langdale.com.au
  */
-package au.com.langdale.splitmodel;
+package au.com.langdale.kena;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import org.xml.sax.SAXException;
@@ -23,15 +24,16 @@ import com.hp.hpl.jena.rdf.arp.NamespaceHandler;
 import com.hp.hpl.jena.rdf.arp.QuotedStatementHandler;
 import com.hp.hpl.jena.rdf.arp.StatementHandler;
 /**
- * Bridge a Jena ARP RDF parser to a SplitWriter.  The run() method causes statements 
- * harvested from a a potentially very large RDF/XML document to be inserted into 
- * a series of files (a split model) using constant memory.
+ * Bridge a Jena ARP RDF parser to the Injector interface.  This interface
+ * supports quoting, preservation of blank node id's, and lightweight rewriting
+ * of the source by SplitWriter.
  */
-public class ModelSplitter implements Runnable {
+public class RDFParser implements Runnable {
 
-	private String source;
-	private SplitWriter destin;
-	List stack = new LinkedList();
+	private InputStream stream;
+	private String source, base;
+	private Injector destin;
+	private List stack = new LinkedList();
 
 	private ARP arp;
 	
@@ -39,14 +41,16 @@ public class ModelSplitter implements Runnable {
 	 * 
 	 * @param source: the filename of the RDF/XML input
 	 * @param destin: the directory name of the split output
-	 * @param namespace: default namespace for abreviating URI's in the output
+	 * @param namespace: default namespace for abbreviating URI's in the output
 	 * @param logger: destination for error messages
 	 * @param allowQuotes: true causes parseType="Statements" to be recognised, which is
 	 * used in Incremental CIM/XML
 	 */
-	public ModelSplitter(String source, String destin, String namespace, Logger logger, boolean allowQuotes) {
+	public RDFParser(InputStream stream, String source, String base, Injector destin, Logger logger, boolean allowQuotes) {
 		this.source = source;
-		this.destin = new SplitWriter(destin, namespace);
+		this.destin = destin;
+		this.base = base;
+		this.stream = stream;
 		arp = new ARP();
 		
 		ARPOptions options = arp.getOptions();
@@ -67,7 +71,9 @@ public class ModelSplitter implements Runnable {
 	 */
 	public void run() {
 		try {
-			arp.load(new BufferedInputStream( new FileInputStream(source)), destin.getBase());
+			if(stream == null)
+				stream = new FileInputStream(source);
+			arp.load(new BufferedInputStream( stream ), base);
 			destin.close();
 		} catch (SAXException e) {
 			throw new TerminateParseException("fatal parse error", e);
@@ -76,13 +82,13 @@ public class ModelSplitter implements Runnable {
 		}
 	}
 	
-	private void push(SplitWriter quoteWriter) {
+	private void push(Injector quoteWriter) {
 		stack.add(destin);
 		destin = quoteWriter;
 	}
 	
 	private void pop() {
-		destin = (SplitWriter) stack.remove(stack.size()-1);
+		destin = (Injector) stack.remove(stack.size()-1);
 	}
 	
 	private class Namespaces implements NamespaceHandler {
@@ -98,34 +104,53 @@ public class ModelSplitter implements Runnable {
 	}
 
 	private class Statements implements StatementHandler {
+		
 		public void statement(AResource subj, AResource pred, AResource obj) {
 			try {
-				destin.add(getURI(subj), pred.getURI(), getURI(obj));
+				destin.addObjectProperty(getNode(subj), pred.getURI(), getNode(obj));
 			} catch (IOException e) {
 				throw new TerminateParseException("error writing to split model", e);
+			} catch (ConversionException e) {
+				// skip this statement TODO: possibly terminate parsing here
 			}
 		}
 
 		public void statement(AResource subj, AResource pred, ALiteral lit) {
 			try {
-				destin.add(getURI(subj), pred.getURI(), lit.toString(), lit.getDatatypeURI());
+				Object value = destin.createLiteral(lit.toString(), lit.getLang(), lit.getDatatypeURI(), lit.isWellFormedXML());
+				destin.addDatatypeProperty(getNode(subj), pred.getURI(), value);
 			} catch (IOException e) {
 				throw new TerminateParseException("error writing to split model", e);
+			} catch (ConversionException e) {
+				// skip this statement TODO: possibly terminate parsing here
 			}
 		}
+	}
 
-		private String getURI(AResource node) {
-			if( node.isAnonymous())
-				return destin.createAnon(node.getAnonymousID());
-			else
-				return node.getURI();
+	private Object getNode(AResource node) throws ConversionException {
+		if( node.isAnonymous()) {
+			Object symbol = node.getUserData();
+			if( symbol == null) {
+				if(node.hasNodeID())
+					symbol = destin.createAnon(node.getAnonymousID());
+				else 
+					symbol = destin.createAnon(null);
+				node.setUserData(symbol);
+			}
+			return symbol;
 		}
+		else
+			return destin.createNamed(node.getURI());
 	}
 	
 	private class QuotedStatements extends Statements implements QuotedStatementHandler {
 		
 		public void startQuote(AResource quote) {
-			push(destin.createQuote(quote.getAnonymousID()));
+			try {
+				push(destin.createQuote(getNode(quote)));
+			} catch (ConversionException e) {
+				throw new TerminateParseException("error writing to split model", e);
+			}
 		}
 
 		public void endQuote() {

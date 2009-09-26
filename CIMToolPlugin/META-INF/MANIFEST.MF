@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true
-Bundle-Version: 1.5.5.qualifier
+Bundle-Version: 1.6.1.qualifier
 Bundle-ClassPath: cimtoole.jar,
  lib/antlr-2.7.5.jar,
  lib/commons-logging-1.1.jar,
@@ -14,7 +14,9 @@ Bundle-ClassPath: cimtoole.jar,
  lib/stax-api-1.0.jar,
  lib/xercesImpl.jar,
  lib/xml-apis.jar,
- lib/poi-3.0.1-FINAL-20070705.jar
+ lib/poi-3.0.1-FINAL-20070705.jar,
+ lib/commons-lang-2.4.jar,
+ lib/jackcess-1.1.19.jar
 Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin
 Bundle-Vendor: Langdale Consultants
 Require-Bundle: org.eclipse.ui,
@@ -48,7 +50,6 @@ Export-Package: au.com.langdale.cim,
  au.com.langdale.profiles,
  au.com.langdale.sax,
  au.com.langdale.splitmodel,
- au.com.langdale.ui,
  au.com.langdale.ui.binding,
  au.com.langdale.ui.builder,
  au.com.langdale.ui.plumbing,

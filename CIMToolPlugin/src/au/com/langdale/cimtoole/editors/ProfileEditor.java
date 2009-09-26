@@ -75,8 +75,8 @@ public class ProfileEditor extends ModelEditor {
 	public JenaTreeModelBase getTree() {
 		if( tree == null ) {
 			tree = new ProfileModel();
-			tree.setRootResource(MESSAGE.profile);
 			tree.setNamespace(getFileNamespace()); // this is used in Node.create()
+			tree.setRootResource(MESSAGE.profile);
 			tree.setSource(getFile().getFullPath().toString());
 			resetModels();
 		}
@@ -112,7 +112,7 @@ public class ProfileEditor extends ModelEditor {
 			profileModel = Composition.copy(rawProfileModel);
 			String envname;
 			try {
-				envname = Info.getProperty(Info.PROFILE_ENVELOPE, getFile());
+				envname = Info.getProperty(getFile(), Info.PROFILE_ENVELOPE);
 			} catch (CoreException e) {
 				envname = "Profile";
 			}
@@ -137,9 +137,9 @@ public class ProfileEditor extends ModelEditor {
 			backgroundModel = Composition.simpleMerge( rawBackgroundModel, diagnosticModel);
 		else
 			backgroundModel = rawBackgroundModel;
+		tree.setNamespace(getFileNamespace());
 		tree.setOntModel(profileModel);
 		tree.setBackgroundModel(backgroundModel);
-		tree.setNamespace(getFileNamespace());
 		refactory = new Refactory(profileModel, backgroundModel, tree.getNamespace());
 		doRefresh();
 	}
@@ -187,9 +187,9 @@ public class ProfileEditor extends ModelEditor {
 		resetModels();
 	}
 
-	private String getFileNamespace() {
+	public String getFileNamespace() {
 		try {
-			return Info.getProperty(Info.PROFILE_NAMESPACE, getFile());
+			return Info.getProperty(getFile(), Info.PROFILE_NAMESPACE);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}

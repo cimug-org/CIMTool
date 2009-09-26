@@ -72,6 +72,12 @@ Supply the CPSM2007-CIMTool-Profile.owl you downloaded above.
 <p>
 4. You project is ready.   Browse around.
 </p>
+<p><strong>Update:</strong> Since IOP10 the concept of a <em>concrete class</em> has been added to the CIMTool validation rules.
+This tests that a model declares its instances using their concrete class (such as ACLineSegment) and does not declare an instance 
+using an abstract class (such as IdentifiedObject).   To update the profile you have just created with concrete class information,
+open it in the Profile Editor, select the Summary tab, click Reorganise and Repair, check the Stereotype leaf classes as Concrete option,
+click Finish and, finally, click the Save button to save the profile.
+</p>
 <p>
 You can browse around by double clicking the profile 
 (under the Profiles folder in the Project Explorer). Then clicking on items
@@ -146,5 +152,6 @@ diagnostic results from the project.
     </ul></div>
         </div>  
         <div id="footer"></div>
+          
       </body>
     </html>

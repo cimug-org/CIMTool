@@ -95,10 +95,10 @@ public class ProfileBuildlets extends Info {
 		
 		protected ProfileModel getMessageModel(IFile file) throws CoreException {
 			ProfileModel model = new ProfileModel();
+			model.setNamespace(getProperty(file, PROFILE_NAMESPACE));
 			model.setOntModel(getProfileModel(file));
 			model.setBackgroundModel(getBackgroundModel(file));
 			model.setRootResource(MESSAGE.profile);
-			model.setNamespace(getProperty(PROFILE_NAMESPACE, file));
 			return model;
 		}
 
@@ -166,7 +166,7 @@ public class ProfileBuildlets extends Info {
 			ProfileModel tree = getMessageModel(file);
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
-				serializer.setBaseURI(getProperty(PROFILE_NAMESPACE, file));
+				serializer.setBaseURI(getProperty(file, PROFILE_NAMESPACE));
 				
 				// TODO: make this better
 				serializer.setVersion("Beta");
@@ -263,10 +263,7 @@ public class ProfileBuildlets extends Info {
 		}
 
 		protected String getNamespace(IFile file) throws CoreException {
-			if(getPreferenceOption(PRESERVE_NAMESPACES))
-				return null;
-			else
-				return getProperty(PROFILE_NAMESPACE, file);
+			return getProperty(file, PROFILE_NAMESPACE);
 		}
 
 		protected abstract RDFSBasedGenerator getGenerator(IFile file) throws CoreException ;
@@ -281,7 +278,7 @@ public class ProfileBuildlets extends Info {
 
 		@Override
 		protected RDFSBasedGenerator getGenerator(IFile file) throws CoreException {
-			return new OWLGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), withInverses);
+			return new OWLGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), getPreferenceOption(PRESERVE_NAMESPACES), withInverses);
 		}
 	}
 	/**
@@ -294,7 +291,7 @@ public class ProfileBuildlets extends Info {
 
 		@Override
 		protected RDFSBasedGenerator getGenerator(IFile file) throws CoreException {
-			return new RDFSGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), withInverses);
+			return new RDFSGenerator(getProfileModel(file), getBackgroundModel(file), getNamespace(file), getPreferenceOption(PRESERVE_NAMESPACES), withInverses);
 		}
 	}
 	

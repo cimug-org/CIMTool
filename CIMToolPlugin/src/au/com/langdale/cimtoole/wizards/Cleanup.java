@@ -18,7 +18,8 @@ import au.com.langdale.ui.binding.ResourceUI.DiagnosticsBinding;
 import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
 import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class Cleanup extends FurnishedWizard implements IWorkbenchWizard {
 

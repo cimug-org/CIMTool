@@ -4,23 +4,21 @@
  */
 package au.com.langdale.cimtoole.properties;
 
-
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.builder.SchemaBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.builder.FurnishedPropertyPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
+import au.com.langdale.util.Jobs;
 import au.com.langdale.validation.Validation;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class PropertyPage extends FurnishedPropertyPage {
 
-	public PropertyPage() {
-		setPreferenceStore(CIMToolPlugin.getDefault().getPreferenceStore());
-	}
-	
 	@Override
 	protected Content createContent() {
 		return new Content() {
@@ -48,7 +46,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 						Group(  Label("Namespace URI:"), 
 								new Property(Info.INSTANCE_NAMESPACE, Validation.NAMESPACE)),
 						Group(	Label("Profile Name:"), 
-								new Property(Info.PROFILE_PATH, Validation.OptionalFile("owl")))
+								new Property(Info.PROFILE_PATH, Validation.OptionalFileWithExt("owl")))
 				);
 			}
 
@@ -58,7 +56,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 						Group(  Label("Namespace URI:"), 
 								new Property(Info.INSTANCE_NAMESPACE, Validation.NAMESPACE)),
 						Group(	Label("Base Model Name:"), 
-								new Property(Info.BASE_MODEL_PATH, Validation.OPTIONAL_FILE))
+								new Property(Info.BASE_MODEL_PATH, Validation.OptionalFileAnyExt()))
 				);
 			}
 
@@ -75,7 +73,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 						Group(	Label("Namespace URI:"), 
 								new Property(Info.SCHEMA_NAMESPACE, Validation.NAMESPACE)),
 						Group(	Label("File Name:"), 
-								new Property(Info.MERGED_SCHEMA_PATH, Validation.OptionalFile("merged-owl")))
+								new Property(Info.MERGED_SCHEMA_PATH, Validation.OptionalFileWithExt("merged-owl")))
 				);
 			}
 
@@ -87,26 +85,27 @@ public class PropertyPage extends FurnishedPropertyPage {
 						Group(	Label("Warning: changing this namespace will affect existing profiles."))
 				);
 			}
+			
+			@Override
+			public void update() {
+				try {
+					IResource resource = getResource();
+					if( resource instanceof IProject) {
+						
+						String merged = Info.getProperty(resource, Info.MERGED_SCHEMA_PATH);
+						if( merged != null && merged.length() != 0) {
+							IFile file = resource.getProject().getFile(merged);
+							Jobs.runJob(new SchemaBuildlet().asRunnable(file, false), resource, "Generating merged OWL");
+						}
+
+					}
+					else
+						resource.touch(null);
+				} catch (CoreException e) {
+					throw new RuntimeException(e);
+				}
+				
+			}
 		};
 	}
-	
-	@Override
-	public boolean performOk() {
-		boolean permit = super.performOk();
-		if(permit)
-			try {
-				IResource r = getResource();
-				if( r instanceof IProject) {
-					IProject p = (IProject)r;
-					Info.getSchemaFolder(p).touch(null);
-				}
-				else
-					r.touch(null);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		return permit;
-	}
-
 }

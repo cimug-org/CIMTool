@@ -15,7 +15,7 @@ import org.eclipse.ui.part.EditorPart;
 
 import au.com.langdale.ui.plumbing.ICanRefresh;
 /**
- * An eclipse editor that is provided with a <code>ContentBuilder</code> and event plumbing.
+ * An eclipse editor that is provided with an <code>Assembly</code> and event plumbing.
  */
 public abstract class FurnishedEditor extends EditorPart implements ICanRefresh {
 	private boolean dirty;
@@ -85,7 +85,7 @@ public abstract class FurnishedEditor extends EditorPart implements ICanRefresh 
 			content.doRefresh();
 	}
 	
-	protected abstract class Content extends ContentBuilder {
+	protected abstract class Content extends Assembly {
 		public Content(FormToolkit toolkit) {
 			super(toolkit, true);
 		}

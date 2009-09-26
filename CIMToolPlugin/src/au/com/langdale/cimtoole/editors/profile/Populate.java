@@ -34,14 +34,14 @@ import au.com.langdale.jena.UMLTreeModel.SubClassNode;
 import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
+import au.com.langdale.profiles.ProfileModel.Cardinality;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode;
 import au.com.langdale.profiles.ProfileModel.TypeNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
 
@@ -49,6 +49,7 @@ import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.reasoner.InfGraph;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class Populate extends FurnishedEditor {
 	private ProfileEditor master;
@@ -129,21 +130,23 @@ public class Populate extends FurnishedEditor {
 							Group( 
 								Stack(
 									Column(
+										Stack(
+											Grid(Group(
+												Label("prop", "Select type and cardinality of this property."),	
+												CheckBox("reference", "By Reference"))),
+											Grid(Group(
+												Label("class", "Select members and cardinality of this class."),
+												CheckBox("concrete", "Make this class concrete")))),
 										Grid(Group(
-											Label("Select type and cardinality of this property."),	
-											Label("Min"), Row(Field("minimum")),
-											Label("Max"), Row(Field("maximum")))),
-										Row(
-											CheckBox("reference", "By Reference"), 
-											CheckBox("require", "At least one"), 
-											CheckBox("functional", "At most one"),
-											CheckBox("unbounded", "Unbounded"))),
+											Label("card", "Min"), Row(Field("minimum")),
+											Label("Max"), Row(Field("maximum")),
+											Row(
+												CheckBox("require", "At least one"), 
+												CheckBox("single", "At most one"),
+												CheckBox("unbounded", "Unbounded"))))),
 									Grid(Group(
 										Label("nested", "Select members of this nested class."), 
 										Right(Grid(Group(Label("local",""), Row(PushButton("named", "Change", named))))))),
-									Grid(Group(
-										Label("class", "Select members of this class."),
-										Right(CheckBox("concrete", "Make this class concrete")))),
 									Grid(Group(
 										Label("info", "Select profile members:"))),
 									Grid(Group(
@@ -310,31 +313,27 @@ public class Populate extends FurnishedEditor {
 				else if (node instanceof EnvelopeNode) {
 					showStackLayer("top");
 				}
-				else if (node instanceof NaturalNode) {
-					NaturalNode pnode = (NaturalNode)node;
-					
-					if(pnode instanceof SubTypeNode) {
-						getLabel("local").setText("This definition is " + kindOfProfile(false));
-						getButton("named").setText( "Convert to " + kindOfProfile(true));
-						showStackLayer("nested");
-					}
-					else if(pnode instanceof TypeNode) {
-						showStackLayer("concrete");
-						setButtonValue("concrete", pnode.hasStereotype(UML.concrete));
-					}
-					else {
-						showStackLayer("info");
-					}
+				else if(node instanceof SubTypeNode) {
+					getLabel("local").setText("This definition is " + kindOfProfile(false));
+					getButton("named").setText( "Convert to " + kindOfProfile(true));
+					showStackLayer("nested");
+				}
+				else if(node instanceof TypeNode) {
+					TypeNode tnode = (TypeNode)node;
+					boolean concrete = tnode.hasStereotype(UML.concrete);
+					setButtonValue("concrete", concrete);
+					refreshCardinality(tnode);
+					showStackLayer("card");
+					showStackLayer("class");
 				}
 				else if( node instanceof ElementNode) {
 					ElementNode enode = (ElementNode) node;
-					setButtonValue("functional", enode.isFunctional()).setEnabled(! enode.isAlwaysFunctional());
-					setButtonValue("require", enode.isRequired()).setEnabled(enode.canBeRequired());
 					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype());
-					setButtonValue("unbounded", enode.isUnbounded()).setEnabled(! enode.isAlwaysFunctional());
-					setTextValue("minimum", ProfileModel.cardString(enode.getMinCardinality()));
-					setTextValue("maximum", ProfileModel.cardString(enode.getMaxCardinality()));
-					showStackLayer("reference");
+
+					refreshCardinality(enode);
+					
+					showStackLayer("card");
+					showStackLayer("prop");
 				}
 				else {
 					showStackLayer("info");
@@ -348,28 +347,69 @@ public class Populate extends FurnishedEditor {
 					ElementNode enode = (ElementNode) node;
 					enode.setReference(getButton("reference").getSelection());
 					
-					if(enode.setFunctional(getButton("functional").getSelection()))
-						return;
-					if(enode.setRequired(getButton("require").getSelection()))
-						return;
-					if(enode.setUnbounded(getButton("unbounded").getSelection()))
-						return;
-					
-					try {
-						if(enode.setMaxCardinality(ProfileModel.cardInt(getText("maximum").getText())))
-							return;
-						if(enode.setMinCardinality(ProfileModel.cardInt(getText("minimum").getText())))
-							return;
-					}
-					catch( NumberFormatException e) {
-						
-					}
+					updateCardinality(enode);
 				}
 				else if(node instanceof TypeNode) {
 					TypeNode tnode = (TypeNode) node;
-					tnode.setStereotype(UML.concrete, getButton("concrete").getSelection());
+					boolean selection = getButton("concrete").getSelection();
+					if( ! selection ) {
+						tnode.setMinCardinality(0);
+						tnode.setMaxCardinality(Integer.MAX_VALUE);
+					}
+					tnode.setStereotype(UML.concrete, selection);
+					if( selection )
+						updateCardinality(tnode);
+						
 				}
 
+			}
+
+			private void refreshCardinality(Cardinality cnode) {
+				setButtonValue("single", (cnode.getMaxCardinality() == 1)).setEnabled(cnode.isMaxVariable());
+				setButtonValue("require", (cnode.getMinCardinality() > 0)).setEnabled(cnode.isMinVariable());
+				setButtonValue("unbounded", (cnode.getMaxCardinality() == Integer.MAX_VALUE)).setEnabled(cnode.isMaxVariable());
+				setTextValue("minimum", ProfileModel.cardString(cnode.getMinCardinality())).setEnabled(cnode.isMinVariable());
+				setTextValue("maximum", ProfileModel.cardString(cnode.getMaxCardinality())).setEnabled(cnode.isMaxVariable());
+			}
+
+			private void updateCardinality(Cardinality node) {
+				int max = node.getMaxCardinality();
+				int min = node.getMinCardinality();
+
+				int newMax, newMin;
+
+				try {
+					newMax = ProfileModel.cardInt(getText("maximum").getText());
+					newMin = ProfileModel.cardInt(getText("minimum").getText());
+				}
+				catch( NumberFormatException e) {
+					return;
+				}
+
+				if( newMax == max ) {
+
+					if(getButton("single").getSelection()) 
+						newMax = 1;
+					else if( max == 1 ) 
+						newMax = Integer.MAX_VALUE;
+				}
+				
+				if( newMax == max ) {
+					if(getButton("unbounded").getSelection())
+						newMax = Integer.MAX_VALUE;
+					else if (max == Integer.MAX_VALUE)
+						newMax = 1;
+				}
+				
+				if( newMin == min ) {
+				   if(! getButton("require").getSelection())
+					   newMin = 0;
+				   else if( min == 0 )
+					   newMin = 1;
+				}
+				
+				node.setMaxCardinality(newMax);
+				node.setMinCardinality(newMin);
 			}
 		};
 	}

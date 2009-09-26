@@ -29,7 +29,7 @@ public class HierarchyModel extends JenaTreeModelBase {
 
 	@Override
 	protected Node classify(OntResource root) {
-		return new SubjectNode( new ProfileClass(root));
+		return new SubjectNode( new ProfileClass(root, refactory.getNamespace()));
 	}
 	
 	private abstract class HierarchyNode extends ModelNode {
@@ -70,7 +70,7 @@ public class HierarchyModel extends JenaTreeModelBase {
 			Collection related = refactory.findRelatedProfiles(profile.getBaseClass(), false, false);
 			for (Iterator it = related.iterator(); it.hasNext();) {
 				OntResource clss = (OntResource) it.next();
-				add( new NestedNode( new ProfileClass(clss)));
+				add( new NestedNode( new ProfileClass(clss, refactory.getNamespace())));
 			}
 		}
 	}
@@ -86,7 +86,7 @@ public class HierarchyModel extends JenaTreeModelBase {
 			Iterator it = profile.getSuperClasses();
 			while (it.hasNext()) {
 				OntResource clss = (OntResource) it.next();
-				add( new NestedNode( new ProfileClass(clss)));
+				add( new NestedNode( new ProfileClass(clss, profile.getNamespace())));
 			}
 		}
 	}

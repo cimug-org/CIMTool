@@ -9,8 +9,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.plumbing.Binding;
-import au.com.langdale.ui.plumbing.Plumbing;
 /**
  * Bind a collection or array to a TableViewer.    
  */
@@ -24,7 +24,7 @@ public abstract class ListBinding implements Binding, AnyModel {
 	 * @param plumbing: the event plumbing to which the viewer is connected.
 	 * @param parent: a parent model that can be used to obtain the input for the viewer
 	 */
-	public void bind(String name, Plumbing plumbing, AnyModel parent) {
+	public void bind(String name, Assembly plumbing, AnyModel parent) {
 		this.parent = parent;
 		viewer = (TableViewer) plumbing.getViewer(name);
 		configureViewer(viewer);
@@ -35,7 +35,7 @@ public abstract class ListBinding implements Binding, AnyModel {
 	 * @param name: the name of the viewer
 	 * @param plumbing: the event plumbing to which the viewer is connected.
 	 */
-	public void bind(String name, Plumbing plumbing) {
+	public void bind(String name, Assembly plumbing) {
 		bind(name, plumbing, null);
 	}
 	/**

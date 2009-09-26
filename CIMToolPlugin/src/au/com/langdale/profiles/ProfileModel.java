@@ -20,6 +20,8 @@ import au.com.langdale.kena.Resource;
 
 public class ProfileModel extends JenaTreeModelBase {
 	
+	public ProfileModel() {}
+	
 	private String namespace = "http://example.com/NoName#";
 	private OntModel profileModel, backgroundModel;
 
@@ -45,6 +47,22 @@ public class ProfileModel extends JenaTreeModelBase {
 	private void initModels() {
 		if( profileModel != null && backgroundModel != null)
 			super.setOntModel(Composition.merge(profileModel, backgroundModel));
+	}
+	
+	/**
+	 * Interface for manipulating the cardinality of a Node.
+	 * 
+	 * Both TypeNodes (concrete classes) and ElementNodes (properties)
+	 * have cardinality.
+	 *
+	 */
+	public interface Cardinality {
+		public int getMaxCardinality();
+		public int getMinCardinality();
+		public boolean setMaxCardinality(int max);
+		public boolean setMinCardinality(int min);
+		public boolean isMinVariable();
+		public boolean isMaxVariable();
 	}
 
 	public abstract class SortedNode extends ModelNode {
@@ -73,7 +91,7 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		@Override
 		protected void populate() {
-			Iterator it = ProfileClass.getProfileClasses(profileModel, getOntModel());
+			Iterator it = ProfileClass.getProfileClasses(profileModel, getOntModel(), namespace);
 			while( it.hasNext()) {
 				ProfileClass profile = (ProfileClass) it.next();
 				if( profile.getBaseClass() != null) {
@@ -182,7 +200,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 		
 		public boolean setStereotype(Resource stereo, boolean state) {
-			if( profile.hasStereotype(stereo) == state)
+			if( hasStereotype(stereo) == state)
 				return false;
 			profile.setStereotype(stereo, state);
 			changed();
@@ -230,7 +248,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * 
 		 *
 		 */
-		public class ElementNode extends ProfileNode {
+		public class ElementNode extends ProfileNode implements Cardinality {
 			/**
 			 * A union member
 			 */
@@ -318,14 +336,6 @@ public class ProfileModel extends JenaTreeModelBase {
 				return prop;
 			}
 			
-			public boolean isRequired() {
-				return info.isRequired();
-			}
-		
-			public boolean canBeRequired() {
-				return info.canBeRequired();
-			}
-			
 			public boolean isReference() {
 				return profile.isReference();
 			}
@@ -334,16 +344,12 @@ public class ProfileModel extends JenaTreeModelBase {
 				return prop.isDatatypeProperty();
 			}
 			
-			public boolean isFunctional() {
-				return info.isFunctional();
+			public boolean isMaxVariable() {
+				return ! info.isAlwaysFunctional();
 			}
 			
-			public boolean isUnbounded() {
-				return info.getMaxCardinality() == Integer.MAX_VALUE;
-			}
-		
-			public boolean isAlwaysFunctional() {
-				return info.isAlwaysFunctional(); 
+			public boolean isMinVariable() {
+				return info.canBeRequired();
 			}
 			
 			public int getMaxCardinality() {
@@ -370,27 +376,8 @@ public class ProfileModel extends JenaTreeModelBase {
 				changed();
 			}
 			
-			public boolean setFunctional(boolean state) {
-				if( state == info.isFunctional()) 
-					return false;
-				
-				info.setMaxCardinality(state? 1:Integer.MAX_VALUE);
-				changed();
-				return true;
-			}
-			
-			public boolean setUnbounded(boolean state) {
-				boolean actual = info.getMaxCardinality() == Integer.MAX_VALUE;
-				if(state == actual)
-					return false;
-
-				info.setMaxCardinality(state? Integer.MAX_VALUE:1);
-				changed();
-				return true;
-			}
-			
 			public boolean setMaxCardinality(int card) {
-				if(info.getMaxCardinality() == card || card != 1 && isAlwaysFunctional())
+				if(getMaxCardinality() == card || card < getMinCardinality() || ! isMaxVariable())
 					return false;
 				
 				info.setMaxCardinality(card);
@@ -399,7 +386,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 			
 			public boolean setMinCardinality(int card) {
-				if(info.getMinCardinality() == card || card > 0 && ! info.canBeRequired())
+				if(getMinCardinality() == card || card > getMaxCardinality() || ! isMinVariable())
 					return false;
 				
 				info.setMinCardinality(card);
@@ -407,15 +394,6 @@ public class ProfileModel extends JenaTreeModelBase {
 				return true;
 			}
 			
-			public boolean setRequired(boolean state) {
-				if( state == info.isRequired() || state && ! info.canBeRequired())
-					return false;
-		
-				info.setMinCardinality(state? 1:0);
-				changed();
-				return true;
-			}
-
 			@Override
 			protected void populate() {
 				populateUnion();
@@ -570,7 +548,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			
 			while( it.hasNext()) {
 				OntResource clss = (OntResource) it.next();
-				SuperTypeNode node = new SuperTypeNode(new ProfileClass(clss));
+				SuperTypeNode node = new SuperTypeNode(new ProfileClass(clss, namespace));
 				add(node);
 			}
 		}
@@ -587,14 +565,55 @@ public class ProfileModel extends JenaTreeModelBase {
 	/**
 	 * A root element in a message
 	 */
-	public class TypeNode extends NaturalNode {
+	public class TypeNode extends NaturalNode implements Cardinality {
 		public TypeNode(ProfileClass profile) {
 			super(profile);
 		}
 
 		@Override
 		public Class getIconClass() {
-			return profile.hasStereotype(UML.concrete)? RootElementNode.class: TypeNode.class;
+			if(hasStereotype(UML.concrete))
+				return RootElementNode.class;
+			else if(hasStereotype(UML.compound))
+				return CompoundElementNode.class;
+			else if(hasStereotype(UML.enumeration))
+				return EnumElementNode.class;
+			else
+				return TypeNode.class;
+		}
+
+		public int getMaxCardinality() {
+			return profile.getMaxCardinality();
+		}
+
+		public int getMinCardinality() {
+			return profile.getMinCardinality();
+		}
+
+		public boolean isMaxVariable() {
+			return hasStereotype(UML.concrete);
+		}
+
+		public boolean isMinVariable() {
+			return hasStereotype(UML.concrete);
+		}
+
+		public boolean setMaxCardinality(int card) {
+			if(getMaxCardinality() == card || card < getMinCardinality() || ! isMaxVariable())
+				return false;
+			
+			profile.setMaxCardinality(card);
+			changed();
+			return true;
+		}
+
+		public boolean setMinCardinality(int card) {
+			if(getMinCardinality() == card || card > getMaxCardinality() || ! isMinVariable())
+				return false;
+			
+			profile.setMinCardinality(card);
+			changed();
+			return true;
 		}
 	}
 	
@@ -637,7 +656,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			    if( res.isSomeValuesFromRestriction()) {
 			    	OntResource type =  res.getSomeValuesFrom();
 			    	if(type != null && type.isClass()) {
-			    		Node node = new MessageNode(new ProfileClass(type));
+			    		Node node = new MessageNode(new ProfileClass(type, namespace));
 			    		add(node);
 			    	}
 			    }
@@ -669,25 +688,31 @@ public class ProfileModel extends JenaTreeModelBase {
 	 * A marker class returned by getIconClass() is the node is attribute-like; 
 	 *
 	 */
-	public interface AttributeNode {
-		
-	}
+	public interface AttributeNode {}
 	
 	/**
 	 * A marker class returned by getIconClass() is the node is reference-like; 
 	 *
 	 */
-	public interface ReferenceNode {
-		
-	}
+	public interface ReferenceNode {}
 	
 	/**
 	 * A marker class returned for concrete type nodes; 
 	 *
 	 */
-	public interface RootElementNode {
-		
-	}
+	public interface RootElementNode {}
+	
+	/**
+	 * A marker class returned for compound type nodes; 
+	 *
+	 */
+	public interface CompoundElementNode {}
+	
+	/**
+	 * A marker class returned for compound type nodes; 
+	 *
+	 */
+	public interface EnumElementNode {}
 	
 	/**
 	 * The root should be a subclass of the generic Message class.
@@ -698,9 +723,9 @@ public class ProfileModel extends JenaTreeModelBase {
 			return new CatalogNode(root);
 		
 		if( root.hasSuperClass(MESSAGE.Message))
-			return new EnvelopeNode(new ProfileClass(root));
+			return new EnvelopeNode(new ProfileClass(root, namespace));
 		
-		return new TypeNode(new ProfileClass(root));
+		return new TypeNode(new ProfileClass(root, namespace));
 	}
 	
 	public static String cardString(int card) {

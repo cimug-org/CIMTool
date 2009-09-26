@@ -7,9 +7,9 @@ package au.com.langdale.cimtoole.preferences;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.builder.FurnishedPropertyPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.validation.Validation;
-
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class PreferencePage extends FurnishedPropertyPage {
 

@@ -4,39 +4,62 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.ui.binding.RadioTextBinding;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.binding.ResourceUI.LocalFileBinding;
 import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.validation.Validation;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class SchemaWizardPage extends FurnishedWizardPage {
+	private final boolean expectNewProject;
+
+	public SchemaWizardPage(boolean expectNewProject) {
+		super("schema");
+		this.expectNewProject = expectNewProject;
+	}
+	
+	public SchemaWizardPage() {
+		this(false);
+	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static final String[] sources = {"*.xmi", "*.owl"};
+	private static final String[] sources = {"*.xmi", "*.owl", "*.eap"};
 
 	private IFile file;
 	boolean importing;
 
-	private TextBinding source = new TextBinding(Validation.EXTANT_FILE);
-	private LocalFileBinding filename = new LocalFileBinding(sources);
-	private TextBinding namespace = new TextBinding(Validation.NAMESPACE, NAMESPACE);
+	private TextBinding source = new TextBinding(Validation.OPTIONAL_EXTANT_FILE);
+	private LocalFileBinding filename = new LocalFileBinding(sources, false);
+	private RadioTextBinding namespace = new RadioTextBinding(Validation.NAMESPACE, NAMESPACE);
+	
+	private String[] presets = new String[] {
+			"cim12", "http://iec.ch/TC57/2007/CIM-schema-cim12#",
+			"cim13", "http://iec.ch/TC57/2008/CIM-schema-cim13#",
+			"cim14", "http://iec.ch/TC57/2009/CIM-schema-cim14#",
+			"preset", NAMESPACE
+	};
 
 	private ProjectBinding projects = new ProjectBinding();
-
-	public SchemaWizardPage() {
-		super("schema");
-	}
+	private IProject newProject;
 	
 	public void setSelected(IStructuredSelection selection) {
 		projects.setSelected(selection);
+	}
+	
+	public void setNewProject(IProject newProject) {
+		this.newProject = newProject;
 	}
 
 	public IFile getFile() {
@@ -59,28 +82,55 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 			protected Template define() {
 				return Grid(
 					Group(FileField("source", "File to import:", sources)),
+					Group(
+						RadioButton("cim12", "CIM 12 (2007)"), 
+						RadioButton("cim13", "CIM 13 (2008)"),
+						RadioButton("cim14", "CIM 14 (2009)"),
+						RadioButton("preset", "Preference*")),
 					Group(Label("Namespace URI:"), Field("namespace")),
 					Group(Label("Project")), 
-					Group(CheckboxTableViewer("projects")),
-					Group(Label("Schema name:"), Field("filename"))
+					expectNewProject? null :Group(CheckboxTableViewer("projects")),
+					Group(Label("Schema name:"), Field("filename")),
+					Group(CheckBox("replace", "Replace existing schema.")),
+					Group(Label("* Set this under Windows > Preferences > CIMTool"))
 				);
 			}
 
 			@Override
 			public Control realise(Composite parent) {
 				Control panel = super.realise(parent);
-				projects.bind("projects", this);
+				if( ! expectNewProject )
+					projects.bind("projects", this);
 				source.bind("source", this);
 				filename.bind("filename", this, source);
+				namespace.bind("namespace", presets, this);
 				return panel;
 			}
 
 			@Override
 			public String validate() {
-				// TODO: incorporate replace checkbox
-				file = filename.getFile(Info.getSchemaFolder(projects.getProject()));
-				if( file.exists())
-					return "A schema of that name already exists.";
+				if( source.getText().length() == 0)
+					if(expectNewProject)
+						return null;
+					else
+						return "A schema XMI, OWL or EAP file is required";
+				
+				IProject project = expectNewProject? newProject: projects.getProject();
+				file = filename.getFile(Info.getSchemaFolder(project));
+				if( file == null )
+					return "A project resource name is required";
+				
+				boolean exists = file.exists();
+				getButton("replace").setEnabled(exists);
+				if( exists && ! getButton("replace").getSelection())
+					return "A schema named " + filename.getText() + " already exists. " +
+							"Check option to replace.";
+
+				if( source.getText().endsWith(".eap")) {
+					String check = Info.checkValidEAP(new File(source.getText()));
+					if( check != null)
+						return check;
+				}
 				return null;
 			}
 		};

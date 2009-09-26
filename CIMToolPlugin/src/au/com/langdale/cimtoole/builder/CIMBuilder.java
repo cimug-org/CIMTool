@@ -144,7 +144,6 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private static class Worker implements IResourceDeltaVisitor, IResourceVisitor, IWorkspaceRunnable {
-		protected IProgressMonitor monitor;
 		private boolean cleanup;
 		private boolean rebuild; 
 		private Buildlet[] buildlets;
@@ -163,9 +162,12 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED:
 				case IResourceDelta.REMOVED:
-				case IResourceDelta.CHANGED:
-					//System.out.println("CIMBuilder: change detected in: " + delta.getResource().getName());
 					collect(delta.getResource());
+					break;
+
+				case IResourceDelta.CHANGED:
+					if((delta.getFlags()&(IResourceDelta.CONTENT|IResourceDelta.REPLACED)) != 0)
+						collect(delta.getResource());
 					break;
 			}
 			return true;
@@ -177,7 +179,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 		}
 
 		private void collect(IResource resource) throws CoreException {
-			rebuild = rebuild || Info.getSchemaFolder(resource.getProject()).equals(resource);
+			rebuild = rebuild || Info.isSchema(resource);
 
 			for( int ix = 0; ix < buildlets.length; ix++) {
 				Buildlet buildlet = buildlets[ix];

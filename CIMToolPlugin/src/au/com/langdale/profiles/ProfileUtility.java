@@ -201,13 +201,14 @@ public class ProfileUtility {
 			base_domain = selectType(prop.getDomain(), info.getDomainProfile().getBaseClass());
 			base_range = selectType(prop.getRange(), range_profile != null? range_profile.getBaseClass(): null);
 
-			String l = info.getRange().getLabel(null);
+			OntResource range = info.getRange();
+			String l = range != null? range.getLabel(null): null;
 			if( l != null )
 				label = l;
 			else
 				label = prop.getLabel(null);
 
-			comment = extractComment(info.getRange());
+			comment = extractComment(range);
 		}
 		
 		public PropertySpec(OntResource prop, OntResource domain, OntResource range) {

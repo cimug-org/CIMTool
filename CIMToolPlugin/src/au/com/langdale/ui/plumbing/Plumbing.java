@@ -4,19 +4,13 @@
  */
 package au.com.langdale.ui.plumbing;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 /**
  *  A base class to supply form construction, refresh and update logic.  
  *  
  *  Subclasses implement define() to return a Template instance.
  *  These are canned layout and widget specifications. 
- *  (See ContentBuilder for an inventory of templates.)
+ *  (See Templates for an inventory of templates.)
  *  
  *  Clients call realise() to build a widget hierarchy conforming to 
  *  the Template returned by define(). realise() should only be called once.
@@ -69,21 +63,11 @@ import org.eclipse.swt.widgets.Control;
  *  the widgets to the underlying data (the model). 
  *  
  */
-public abstract class Plumbing implements Template, Binding, Observer, ICanRefresh {
-
-	public abstract class BoundTemplate implements Template, Binding {
-		public BoundTemplate() {
-			addBinding(this);
-		}
-
-		protected Plumbing getPlumbing() {
-			return Plumbing.this;
-		}
-	}
+public abstract class Plumbing implements Binding, Observer, ICanRefresh {
 	
 	private Controller controller;
 	private Bindings bindings;
-	private Map subjects;
+	private Plumbing parent;
 
 	/**
 	 * Construct a new set of form plumbing.
@@ -98,14 +82,24 @@ public abstract class Plumbing implements Template, Binding, Observer, ICanRefre
 		bindings = new Bindings();
 		bindings.push(this);
 		controller = new Controller(bindings, this, synchronous);
-		subjects = new HashMap();
 	}
+	
 	/**
-	 *  Returns an implementation of Binding through which events may be 
-	 *  injected into the form plumbing.   
+	 * Construct a branch of a given parent Plumbing. 
 	 */
-	public Binding getController() {
-		return controller;
+	public Plumbing(Plumbing parent) {
+		controller = parent.controller;
+		bindings = new Bindings();
+		bindings.push(this);
+		parent.bindings.push(bindings);
+	}
+	
+	/**
+	 * Release resources and registrations. 
+	 */
+	public void dispose() {
+		if( parent != null )
+			parent.bindings.remove(bindings);
 	}
 	
 	/**
@@ -157,7 +151,7 @@ public abstract class Plumbing implements Template, Binding, Observer, ICanRefre
 	 *  would trigger update().
 	 */
 	public final void doRefresh() {
-		getController().refresh();
+		controller.doRefresh();
 	}
 
 	/**
@@ -167,7 +161,7 @@ public abstract class Plumbing implements Template, Binding, Observer, ICanRefre
 	 *  If synchronous mode, update() and refresh() are also triggered.
 	 */
 	public final void doReset() {
-		getController().reset();
+		controller.doReset();
 	}
 
 	/**
@@ -175,7 +169,7 @@ public abstract class Plumbing implements Template, Binding, Observer, ICanRefre
 	 * This triggers update(), refresh() and validate(). 
 	 */
 	public final void fireUpdate() {
-		getController().update();
+		controller.fireUpdate();
 	}
 
 	/**
@@ -198,62 +192,22 @@ public abstract class Plumbing implements Template, Binding, Observer, ICanRefre
 	 * Trigger validation.
 	 */
 	public final void fireValidate() {
-		getController().validate();
-	}
-	
-	/**
-	 *  Build a widget hierarchy conforming to 
-	 *  the Template returned by define(). 
-	 *  
-	 *  This method should only be called once as the
-	 *  Template will hook widget events and register 
-	 *  them against their names. 
-	 */
-	public Control realise(Composite parent) {
-		return define().realise(parent);
+		controller.fireValidate();
 	}
 
 	/**
-	 *  The implementation should construct and return a Template instance.
-	 *  These are canned layout and widget specifications. 
-	 *  They are created with the template 
-	 *  methods such as Row(), Column() and Label().
+	 * Add a delegate Binding to the top of the binding stack.
+	 * It will receive events before all previously added delegates.
 	 */
-	protected abstract Template define();
-
-	/**
-	 * Get a generic control.
-	 */
-	public Control getControl(String name) {
-		return (Control) subjects.get(name);
-	}
-
-	/**
-	 * Get a generic Viewer.
-	 */
-	public Viewer getViewer(String name) {
-		return (Viewer) subjects.get(name);
-	}
-
 	public void addBinding(Binding bind) {
 		bindings.push(bind);
 	}
 
+	/**
+	 * Add a delegate Binding at a specific position in the stack.
+	 * It will receive events immediately after the given reference. 
+	 */
 	public void addBinding(Binding bind, Object after) {
 		bindings.push(bind, after);
-	}
-
-	/**
-	 * Register a control under its name.
-	 */
-	public void putControl(String name, Control control) {
-		subjects.put(name, control);
-	}
-
-	/**
-	 * Register a viewer under its name.
-	 */
-	public void putViewer(String name, Viewer viewer) {
-		subjects.put(name, viewer);
 	}
 }

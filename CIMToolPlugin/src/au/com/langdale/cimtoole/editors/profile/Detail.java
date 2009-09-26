@@ -6,12 +6,12 @@ package au.com.langdale.cimtoole.editors.profile;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
-import au.com.langdale.profiles.ProfileModel.ProfileNode;
 import au.com.langdale.profiles.ProfileModel.SortedNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class Detail extends FurnishedEditor {
 	private ProfileEditor master;

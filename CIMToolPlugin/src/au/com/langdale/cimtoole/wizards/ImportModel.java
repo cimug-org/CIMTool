@@ -22,8 +22,9 @@ import au.com.langdale.ui.binding.ResourceUI.ProfileBinding;
 import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
 import au.com.langdale.ui.builder.FurnishedWizard;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.validation.Validation;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class ImportModel extends FurnishedWizard implements IImportWizard {
 	private String pathname = "";

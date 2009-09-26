@@ -19,4 +19,7 @@ public class LOG {
 	public static final Property hasProblems = ResourceFactory.createProperty(NS + "hasProblem");
 	public static final Property problemDetail = ResourceFactory.createProperty(NS + "problemDetail");
 	public static final Property problemReference = ResourceFactory.createProperty(NS + "problemReference");
+	public static final Resource Repair = ResourceFactory.createResource(NS + "Repair");
+	public static final Property hasRepairs = ResourceFactory.createProperty(NS + "hasRepairs");
+	public static final Property repairArgs = ResourceFactory.createProperty(NS + "repairArgs");
 }

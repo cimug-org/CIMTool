@@ -2,7 +2,7 @@
 <feature
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
-      version="1.5.5.qualifier"
+      version="1.6.1.qualifier"
       provider-name="Langdale Consultants">
 
    <description url="http://cimtool.org">
@@ -62,7 +62,7 @@ D OF THE POSSIBILITY OF SUCH DAMAGE.
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.compare"/>
    </requires>
 
    <plugin

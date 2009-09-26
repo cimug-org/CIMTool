@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
-import au.com.langdale.ui.NodeTraits;
 /**
  * Select an image to represent an object, instantiate it as an <code>Image</code> 
  * and cache it.
  */
 public class IconCache {
+	public static final int DEFAULT_IMAGE_SIZE = 16;
 	private static ImageRegistry registry;
 	private static Display display;
 	private static String prefix = "/au/com/langdale/ui/icons/";
@@ -43,15 +43,16 @@ public class IconCache {
 		}
      }
 
-	private static InputStream getData(String path) {
+	private static InputStream getData(String path, int size) {
+		String scode = size == DEFAULT_IMAGE_SIZE? "": "-" + Integer.toString(size);
 		if( bundle != null) 
-			return getData(new Path(prefix + path + ".png")); // normal source here
+			return getData(new Path(prefix + path + scode + ".png")); // normal source here
 		else
-		    return IconCache.class.getResourceAsStream(prefix + path + ".png"); 
+		    return IconCache.class.getResourceAsStream(prefix + path + scode + ".png"); 
 	}
 	
-	private static Image readImage(String type) {
-		InputStream stream = getData(type);
+	private static Image readImage(String type, int size) {
+		InputStream stream = getData(type, size);
 		if( stream != null ) {
 			try {
     			return new Image(display, stream);
@@ -77,27 +78,27 @@ public class IconCache {
 	 * @param error 
 	 * @return
 	 */
-	public static Image get(String type, boolean error) {
+	public static Image get(String type, boolean error, int size) {
 		if( registry == null ) {
 			display = PlatformUI.getWorkbench().getDisplay();
 			registry = new ImageRegistry(display);
 		}
 		
-		String key = type + (error? "-error": "");
+		String key = type + (error? "-error": "") + "-" + Integer.toString(size);
 		
 		Image image = registry.get(key);
 		if( image != null )
 			return image;
 		
 		if( error ) {
-			Image base = get(type, false);
-			ImageDescriptor overlay = ImageDescriptor.createFromImage(get("error_tsk", false));
+			Image base = get(type, false, size);
+			ImageDescriptor overlay = ImageDescriptor.createFromImage(get("error_tsk", false, size));
 			image = new DecorationOverlayIcon(base, overlay, IDecoration.BOTTOM_LEFT).createImage();
 		}
 		else {
-		    image = readImage(type);
+		    image = readImage(type, size);
 		    if( image == null) 
-			   image = new Image(display, 32,32);
+			   image = new Image(display, size, size);
 		}
 		
 		registry.put(key, image);
@@ -114,8 +115,8 @@ public class IconCache {
 	 * @param error 
 	 * @return
 	 */
-	public static Image get(Class clss, boolean error) {
-		return get( getName(clss), error);
+	public static Image get(Class clss, boolean error, int size) {
+		return get( getName(clss), error, size);
 	}
 
 	public static String getName(Class clss) {
@@ -135,15 +136,25 @@ public class IconCache {
 	 * @return
 	 */
 	public static Image get(Object value) {
+		return get(value, DEFAULT_IMAGE_SIZE);
+	}
+	
+	public static Image get(Object value, int size) {
 		if( value instanceof NodeTraits ) {
 			NodeTraits node = (NodeTraits)value;
-			return get(node.getIconClass(), node.getErrorIndicator());
+			return get(node.getIconClass(), node.getErrorIndicator(), size);
+		}
+		else if( value instanceof String) {
+			return get((String)value, false, size);
+		}
+		else if( value instanceof Class) {
+			return get((Class)value, false, size);
 		}
 		else if( value != null ){
-			return get(value.getClass(), false);
+			return get(value.getClass(), false, size);
 		}
 		else {
-			return get("unknown", false);
+			return get("unknown", false, size);
 		}
 	}
 }

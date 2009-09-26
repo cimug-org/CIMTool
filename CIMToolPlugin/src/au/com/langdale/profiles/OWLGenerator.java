@@ -21,8 +21,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 public class OWLGenerator extends RDFSBasedGenerator {
 	private boolean useRestrictions = true;
 
-	public OWLGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean withInverses) {
-		super(profileModel, backgroundModel, namespace, withInverses);
+	public OWLGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNamespaces, boolean withInverses) {
+		super(profileModel, backgroundModel, namespace, preserveNamespaces, withInverses);
 		result.setNsPrefix("uml", UML.NS);
 	}
 

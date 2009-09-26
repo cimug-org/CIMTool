@@ -5,17 +5,20 @@
 package au.com.langdale.cimtoole.wizards;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.cimtoole.project.NSChecker;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.binding.ResourceUI.LocalFileBinding;
 import au.com.langdale.ui.binding.ResourceUI.ProjectBinding;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.validation.Validation;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class ImportProfilePage extends FurnishedWizardPage {
 
@@ -27,8 +30,9 @@ public class ImportProfilePage extends FurnishedWizardPage {
 
 	private ProjectBinding projects = new ProjectBinding();
 	private TextBinding source = new TextBinding(Validation.EXTANT_FILE);
-	private LocalFileBinding filename = new LocalFileBinding("owl");
+	private LocalFileBinding filename = new LocalFileBinding("owl", true);
 	private TextBinding namespace = new TextBinding(Validation.NAMESPACE, NAMESPACE);
+	private NSChecker checker = new NSChecker();
 	
 	public ImportProfilePage() {
 		super("main");
@@ -86,12 +90,13 @@ public class ImportProfilePage extends FurnishedWizardPage {
 
 			@Override
 			public String validate() {
-				file = filename.getFile(Info.getProfileFolder(projects.getProject()));
+				IProject project = projects.getProject();
+				file = filename.getFile(Info.getProfileFolder(project));
 				
 				if( file.exists())
 					return "A profile of that name already exists.";
 
-				return null;
+				return checker.validate(project, namespace.getText(), getContainer(), getShell());
 			}
 		};
 	}

@@ -19,8 +19,9 @@ import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.ProfileModel.NaturalNode;
 import au.com.langdale.ui.binding.JenaCheckTreeBinding;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class Hierarchy extends FurnishedEditor {
 	private ProfileEditor master;
@@ -68,8 +69,8 @@ public class Hierarchy extends FurnishedEditor {
 		@Override
 		protected void fillTree() {
 			related = Refactory.asSet(nnode.getProfile().getSuperClasses());
-			tree.setRootResource(nnode.getSubject());
 			tree.setRefactory(master.getRefactory());
+			tree.setRootResource(nnode.getSubject());
 		}
 
 		@Override

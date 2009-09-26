@@ -42,9 +42,12 @@ import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
+import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.xmi.CIMInterpreter;
+import au.com.langdale.xmi.EAPExtractor;
 import au.com.langdale.xmi.UML;
+import au.com.langdale.xmi.XMIParser;
 
 /**
  * Utility tasks for CIMTool plugin.  Tasks are instances of <code>IWorkspaceRunnable</code>
@@ -76,7 +79,7 @@ public class Task extends Info {
 				initProfile(model, envname);
 				monitor.worked(1);
 				write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
-				file.setPersistentProperty(PROFILE_NAMESPACE, namespace);
+				putProperty( file, PROFILE_NAMESPACE, namespace);
 				monitor.worked(1);
 			}
 		};
@@ -98,6 +101,7 @@ public class Task extends Info {
 				getProfileFolder(project).create(false, true, monitor);
 				getInstanceFolder(project).create(false, true, monitor);
 				getIncrementalFolder(project).create(false, true, monitor);
+				saveSettings(project, ModelFactory.createMem()).run(monitor);
 				monitor.worked(1);
 			}
 		};
@@ -139,7 +143,7 @@ public class Task extends Info {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				importFile(file, pathname, monitor);
-				file.setPersistentProperty(SCHEMA_NAMESPACE, namespace);
+				putProperty( file, SCHEMA_NAMESPACE, namespace);
 			}
 		};
 	}
@@ -150,7 +154,7 @@ public class Task extends Info {
 				OntModel model = parse(openExternalFile(pathname, monitor), "owl", namespace);
 				initProfile(model, getPreference(PROFILE_ENVELOPE));
 				writeProfile(file, model, namespace, monitor);
-				file.setPersistentProperty(PROFILE_NAMESPACE, namespace);
+				putProperty( file, PROFILE_NAMESPACE, namespace);
 			}
 		};
 	}
@@ -167,23 +171,21 @@ public class Task extends Info {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				importFile(file, pathname, monitor);
-				file.setPersistentProperty(PROFILE_PATH, profile.getName());
-				file.setPersistentProperty(INSTANCE_NAMESPACE, namespace);
+				putProperty( file, PROFILE_PATH, profile.getName());
+				putProperty( file, INSTANCE_NAMESPACE, namespace);
 			}
 		};
 	}
 	
 	public static OntModel parse(IFile file) throws CoreException {
-		return parse(file, new BufferedInputStream( file.getContents()));
-	}
-
-	private static OntModel parse(IFile file, InputStream contents)	throws CoreException {
 		String ext = file.getFileExtension().toLowerCase();
 		if( ext.equals("xmi")) {
-			return parseXMI(file, contents);
+			return parseXMI(file);
 		}
+		else if( ext.equals("eap"))
+			return parseEAP(file);
 		else {
-			return parseOWL(file, contents);
+			return parseOWL(file);
 		}
 	}
 
@@ -198,7 +200,7 @@ public class Task extends Info {
 		else if(isProfile(resource)) {
 			OntModel model = cache.getOntologyWait((IFile)resource);
 			OntModel backgroundModel = cache.getMergedOntologyWait(getSchemaFolder(resource.getProject()));
-			return createProfileTreeModel(model, backgroundModel);
+			return createProfileTreeModel(model, backgroundModel, getProperty(resource, PROFILE_NAMESPACE));
 		} else 
 			return new UMLTreeModel();
 	}
@@ -210,45 +212,73 @@ public class Task extends Info {
 		return tree;
 	}
 
-	private static TreeModelBase createProfileTreeModel(OntModel model, OntModel backgroundModel) {
+	private static TreeModelBase createProfileTreeModel(OntModel model, OntModel backgroundModel, String namespace) {
 		ProfileModel tree = new ProfileModel();
+		tree.setNamespace(namespace);
 		tree.setOntModel(model);
 		tree.setBackgroundModel(backgroundModel);
 		tree.setRootResource(MESSAGE.profile);
 		return tree;
 	}
 
-	private static OntModel parseXMI(IFile file, InputStream contents) throws CoreException {
-		String base = getProperty(SCHEMA_NAMESPACE, file);
+	private static OntModel parseXMI(IFile file) throws CoreException {
+		XMIParser parser = new XMIParser();
+		try {
+			parser.parse(new BufferedInputStream( file.getContents()));
+		} catch (Exception e) {
+			throw error("Can't parse model file " + file.getName(), e);
+		}
+		return interpretSchema(parser.getModel(), file);
+	}
+	
+	private static OntModel parseEAP(IFile file) throws CoreException {
+		EAPExtractor extractor;
+		try {
+			extractor = new EAPExtractor(file.getLocation().toFile());
+			extractor.run();
+		} catch (IOException e) {
+			throw error("can't access EA project", e);
+		}
+		return interpretSchema(extractor.getModel(), file);
+	}
+
+	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {
+		String base = getProperty(file, SCHEMA_NAMESPACE);
 		if( base == null ) {
 			if( file.getName().toLowerCase().startsWith("cim"))
 				base = CIM.NS;
 			else
 				base = file.getLocationURI().toString() + "#";
 		}
-		try {
-			IFile auxfile = getRelated(file, "annotation");
-			OntModel annote;
-			if(auxfile.exists()) {
-				annote = ModelFactory.createMem();
-				IO.read(annote, auxfile.getContents(), base, "TURTLE");
-			}
-			else
-				annote = null;
-			return CIMInterpreter.parse(contents, base, annote, getPreferenceOption(USE_PACKAGE_NAMES));
-		} catch (Exception e) {
-			throw error("Can't parse model file " + file.getName(), e);
+		IFile auxfile = getRelated(file, "annotation");
+		OntModel annote;
+		if(auxfile.exists()) {
+			annote = ModelFactory.createMem();
+			IO.read(annote, auxfile.getContents(), base, "TURTLE");
 		}
+		else
+			annote = null;
+		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES));
 	}
 
-	private static OntModel parseOWL(IFile file, InputStream contents) throws CoreException {
+	private static OntModel parseOWL(IFile file) throws CoreException {
 		OntModel model;
-		String extn = file.getFileExtension().toLowerCase();
-		String base = getProperty(PROFILE_NAMESPACE, file);
-		if( base == null ) 
+		String extn = file.getFileExtension();
+		
+		if( extn == null )
+			extn = "";
+		else
+			extn = extn.toLowerCase();
+		
+		String base;
+		if( isProfile(file))
+			base = getProperty(file, PROFILE_NAMESPACE);
+		else if( extn.equals(SETTINGS_EXTENSION))
+			base = CIMToolPlugin.PROJECT_NS;
+		else
 			base = file.getLocationURI().toString() + "#";
 		try {
-			model = parse(contents, extn, base);
+			model = parse(new BufferedInputStream( file.getContents()), extn, base);
 		}
 		catch( Exception ex) {
 			throw error("Can't parse model file " + file.getName(), ex);
@@ -261,8 +291,10 @@ public class Task extends Info {
 		String syntax;
 		if(ext.equals("n3"))
 			syntax = "N3";
-		else if(ext.equals("diagnostic"))
+		else if(ext.equals("diagnostic") || ext.equals("cimtool-settings"))
 			syntax = "TURTLE";
+		else if(ext.equals("owl") || ext.equals("repair"))
+			syntax = IO.RDF_XML_WITH_NODEIDS;
 		else
 			syntax = "RDF/XML";
 		IO.read(model, contents, base, syntax);
@@ -312,6 +344,19 @@ public class Task extends Info {
 		};
 	}
 	
+	public static IWorkspaceRunnable repairProfile(final IFile file, final RepairMan repairs) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				if( repairs.size() > 0 ) {
+					IFile related = Info.getRelated(file, "owl");
+					OntModel model = CIMToolPlugin.getCache().getOntologyWait(related);
+					model = repairs.apply(model);
+					writeProfile(related, model, Info.getProperty(related, Info.PROFILE_NAMESPACE), monitor);
+				}
+			}
+		};
+	}
+	
 	public static IWorkspaceRunnable saveProfile(final IFile file, final OntModel model, final String namespace) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -320,6 +365,16 @@ public class Task extends Info {
 		};
 	}
 	
+	public static IWorkspaceRunnable saveSettings(final IProject project, final OntModel model) {
+		model.setNsPrefix("tool", CIMToolPlugin.SETTING_NS);
+		model.setNsPrefix("project", CIMToolPlugin.PROJECT_NS);
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				write(model, CIMToolPlugin.PROJECT_NS, true, getSettings(project), "TURTLE", monitor);
+			}
+		};
+	}
+
 	public static IWorkspaceRunnable delete(final IResource resource) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -365,7 +420,7 @@ public class Task extends Info {
 	}
 
 	private static void writeProfile(final IFile file, final OntModel model, final String namespace, IProgressMonitor monitor) throws CoreException {
-		write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
+		write(model, namespace, false, file, IO.RDF_XML_WITH_NODEIDS, monitor);
 	}
 
 	public static void initProfile(OntModel profileModel, String envname) {

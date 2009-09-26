@@ -98,6 +98,10 @@ p.package { position: absolute; right: 10px; top: 0px}
 				<xsl:apply-templates select="a:EnumeratedType" >
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				<h1>Compound Types</h1>
+				<xsl:apply-templates select="a:CompoundType"  >
+					<xsl:sort select="@name"/>
+				</xsl:apply-templates>
 				<h1>Datatypes</h1>
 				<xsl:apply-templates select="a:SimpleType" >
 					<xsl:sort select="@name"/>
@@ -167,7 +171,7 @@ p.package { position: absolute; right: 10px; top: 0px}
 	
 	<xsl:template match="a:ComplexType" mode="inherited">
 		<table>
-				<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" mode="inherited"/>
+		  <xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" mode="inherited"/>
 		</table>
         <xsl:apply-templates select="a:SuperType" mode="inherited"/>
 	</xsl:template>
@@ -193,12 +197,26 @@ p.package { position: absolute; right: 10px; top: 0px}
 	</xsl:template>
 
     <xsl:template match="a:ComplexType">
-        <div id="{@name}" class="group">
-       <a href="#{@name}">
-        <h2 class="abstract"><xsl:value-of select="@name"/></h2>
-       </a>
+      <div id="{@name}" class="group">
+        <a href="#{@name}">
+          <h2 class="abstract"><xsl:value-of select="@name"/></h2>
+        </a>
         <xsl:call-template name="complex_type" />
-        </div>
+      </div>
+    </xsl:template>
+
+    <xsl:template match="a:CompoundType">
+      <div id="{@name}" class="group">
+        <a href="#{@name}">
+          <h2 class="abstract"><xsl:value-of select="@name"/></h2>
+        </a>
+        <p class="package"><xsl:value-of select="@package"/></p>
+        <xsl:apply-templates mode="annotate" />
+        <h3>Members</h3>
+	    <table>
+		  <xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" />
+		</table>
+      </div>
     </xsl:template>
 
 	<xsl:template match="a:SimpleType">

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * An output stream that, on close(), sets contents of the given eclipse resource.
@@ -54,7 +55,8 @@ public class ResourceOutputStream extends ByteArrayOutputStream {
 	@Override
 	public void close() throws IOException {
 		try {
-			ResourcesPlugin.getWorkspace().run(save, file.getParent(), 0, monitor);
+			ISchedulingRule rule = file.exists()? file: file.getParent();
+			ResourcesPlugin.getWorkspace().run(save, rule, 0, monitor);
 		} catch (final CoreException e) {
 			IOException i = new IOException();
 			i.initCause(e);

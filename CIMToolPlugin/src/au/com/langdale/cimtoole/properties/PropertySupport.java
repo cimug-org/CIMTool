@@ -163,7 +163,7 @@ public class PropertySupport implements IAdapterFactory {
 			@Override
 			public Object getValueFrom(Node node) {
 				OntResource subject = node.getSubject();
-				if( subject.isURIResource())
+				if( subject != null && subject.isURIResource())
 					return subject.getURI();
 				else
 					return "anonymous";

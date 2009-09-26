@@ -1,5 +1,6 @@
 package au.com.langdale.cimtoole.builder;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -12,8 +13,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.IO;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.validation.ConsistencyChecker;
+import au.com.langdale.validation.ProfileValidator;
 
 public class ConsistencyChecks extends Task {
 
@@ -40,13 +43,19 @@ public class ConsistencyChecks extends Task {
 			
 			CIMBuilder.removeMarkers(file);
 
-			ConsistencyChecker checker = new ConsistencyChecker(getProfileModel(file), getBackgroundModel(file), getProperty(PROFILE_NAMESPACE, file));
-			checker.run();
+			ProfileValidator checker = new ProfileValidator(getProfileModel(file), getBackgroundModel(file), getProperty(file, PROFILE_NAMESPACE));
+			try {
+				checker.run();
+			} catch (IOException e) {
+				throw error("Failed to validate profile", e);
+			} catch (ParserException e) {
+				throw error("Failed to validate profile", e);
+			}
 			
-			if( checker.errorCount() > 0) {
-				write(checker.getLog(), null, false, result, "TURTLE", monitor);
+			if( checker.hasErrors()) {
+				write(checker.getLog(), null, false, result, IO.RDF_XML_WITH_NODEIDS, monitor);
 				result.setDerived(true);				
-				CIMBuilder.addMarker(file, "Profile " + file.getName() + " has " + checker.errorCount() + " consistency error(s) with respect to its schema");
+				CIMBuilder.addMarker(file, "Profile " + file.getName() + " has consistency errors with respect to its schema");
 			}
 			else {
 				if( result.exists())
@@ -57,7 +66,7 @@ public class ConsistencyChecks extends Task {
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if(isProfile(file))
-				return Collections.singletonList(getRelated(file, "diagnostic"));
+				return Collections.singletonList(getRelated(file, "repair"));
 			else
 				return Collections.EMPTY_LIST;
 		}

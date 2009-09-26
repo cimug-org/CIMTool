@@ -25,7 +25,7 @@ public class TransformTasks extends ProjectTest {
 
 	public final void testXSDGeneration() throws CoreException {
 		OntModel model = CIMToolPlugin.getCache().getOntologyWait(profile);
-		String namespace = Task.getProperty(Task.PROFILE_NAMESPACE, profile);
+		String namespace = Task.getProperty(profile, Task.PROFILE_NAMESPACE);
 		xsdBuildlet.setFlagged(model, true);
 		workspace.run(Task.saveProfile(profile, model, namespace), monitor);
 		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
@@ -36,7 +36,7 @@ public class TransformTasks extends ProjectTest {
 	public final void testCustomXSDGeneration() throws CoreException {
 		workspace.run(Task.importRules(getRelated("xsd-xslt"), getSamplesFolder() + ALT_XSD_RULES), monitor);
 		OntModel model = CIMToolPlugin.getCache().getOntologyWait(profile);
-		String namespace = Task.getProperty(Task.PROFILE_NAMESPACE, profile);
+		String namespace = Task.getProperty(profile, Task.PROFILE_NAMESPACE);
 		xsdBuildlet.setFlagged(model, true);
 		workspace.run(Task.saveProfile(profile, model, namespace), monitor);
 		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);

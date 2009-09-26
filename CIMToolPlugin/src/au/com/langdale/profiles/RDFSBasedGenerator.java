@@ -18,8 +18,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  */
 public abstract class RDFSBasedGenerator extends SchemaGenerator {
 
-	public RDFSBasedGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean withInverses) {
-		super(profileModel, backgroundModel, namespace, withInverses);
+	public RDFSBasedGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNamespaces, boolean withInverses) {
+		super(profileModel, backgroundModel, namespace, preserveNamespaces, withInverses);
 		if(namespace != null)
 			result.setNsPrefix("cim", namespace);
 	}

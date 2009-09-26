@@ -26,12 +26,14 @@ public class Reorganizer extends SchemaGenerator {
 	private OntModel model, result;
 	private Map classes = new HashMap();
 	private Map proxies = new HashMap();
+	private String namespace;
 	private boolean useRefs;
 	
 	public Reorganizer(OntModel profile, OntModel background, String namespace, boolean useRefs) {
 		super(profile, background, namespace);
 		model = Composition.overlay(background);
 		result = Composition.getUpdatableModel(model);
+		this.namespace = namespace;
 		this.useRefs = useRefs;
 	}
 	
@@ -41,7 +43,7 @@ public class Reorganizer extends SchemaGenerator {
 
 	@Override
 	protected void emitClass(String uri, String base) {
-		ProfileClass profile = new ProfileClass(model.createClass(uri));
+		ProfileClass profile = new ProfileClass(model.createClass(uri), namespace);
 		profile.setBaseClass(model.createResource(base));
 		classes.put(uri, profile);
 	}

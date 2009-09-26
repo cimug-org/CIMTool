@@ -4,13 +4,15 @@
  */
 package au.com.langdale.validation;
 
+import au.com.langdale.inference.RepairFunctors;
+import au.com.langdale.inference.RepairFunctors.RepairAction;
 import au.com.langdale.jena.JenaTreeModelBase;
-
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Property;
 import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.ResourceFactory;
 
 import com.hp.hpl.jena.graph.FrontsNode;
-import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
@@ -19,6 +21,22 @@ import com.hp.hpl.jena.vocabulary.RDF;
  * messages.
  */
 public class DiagnosisModel extends JenaTreeModelBase {
+
+	public DiagnosisModel() {
+		this.repairs = new RepairMan();
+	}
+
+	public DiagnosisModel(RepairMan repairs) {
+		this.repairs = repairs;
+	}
+
+	public RepairMan getRepairs() {
+		return repairs;
+	}
+
+	public void setRepairs(RepairMan repairs) {
+		this.repairs = repairs;
+	}
 
 	public static FrontsNode DIAGNOSIS_ROOT = ResourceFactory.createResource("http://langdale.com.au/2007/Diagnosis#root");
 	public static FrontsNode DIAGNOSIS_GENERAL = ResourceFactory.createResource("http://langdale.com.au/2007/Diagnosis#general");
@@ -29,7 +47,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return true;
+			return false;
 		}
 
 		@Override
@@ -58,7 +76,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return true;
+			return false;
 		}
 
 		@Override
@@ -102,7 +120,7 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return true;
+			return false;
 		}
 
 		@Override
@@ -133,12 +151,89 @@ public class DiagnosisModel extends JenaTreeModelBase {
 
 		@Override
 		public boolean getErrorIndicator() {
-			return true;
+			return false;
 		}
 
 		@Override
 		public OntResource getSubject() {
 			return problem;
+		}
+
+		@Override
+		public OntResource getBase() {
+			return subject;
+		}
+
+		@Override
+		protected void populate() {
+			populate(LOG.hasRepairs);
+		}
+
+		private void populate(Property prop) {
+			ResIterator it = problem.listProperties(prop);
+			boolean prefer = true;
+			while (it.hasNext()) {
+				OntResource node = it.nextResource();
+				add( new RepairNode(subject, asOntResource(node), prefer));
+				prefer = false;
+			}
+		}
+		
+		@Override
+		public String getName() {
+			return problem.getComment();
+		}
+
+		@Override
+		public String toString() {
+			return problem.getComment();
+		}
+
+		public String getDescription() {
+			return problem.getString(LOG.problemDetail);
+		}
+	}
+	
+	/**
+	 * A node representing a single diagnostic message.
+	 */
+	public class RepairNode extends ModelNode {
+		private OntResource subject,repair;
+		private boolean prefer;
+		private RepairAction action;
+		
+		public RepairNode(OntResource subject, OntResource repair, boolean prefer) {
+			this.subject = subject;
+			this.repair = repair;
+			action = RepairFunctors.getAction(repair);
+			this.prefer = prefer && action.getPriority() <= 5;
+		}
+		
+		public boolean isPreferred() {
+			return prefer;
+		}
+		
+		public boolean isSelected() {
+			return repairs.hasAction(action);
+		}
+		
+		public void setSelected(boolean state) {
+			if( state ) {
+				repairs.addAction(action);
+			}
+			else {
+				repairs.removeAction(action);
+			}
+		}
+
+		@Override
+		public boolean getErrorIndicator() {
+			return false;
+		}
+
+		@Override
+		public OntResource getSubject() {
+			return repair;
 		}
 
 		@Override
@@ -158,21 +253,29 @@ public class DiagnosisModel extends JenaTreeModelBase {
 		
 		@Override
 		public String getName() {
-			return problem.getComment();
+			return repair.getComment();
 		}
 
 		@Override
 		public String toString() {
-			return problem.getComment();
+			return repair.getComment();
 		}
 
 		public String getDescription() {
-			return problem.getString(LOG.problemDetail);
+			return action.getDescription();
+		}
+		
+		@Override
+		protected String collation() {
+			return action.getPriority() + repair.getComment();
 		}
 	}
 	
+	private RepairMan repairs;
+	
 	@Override
 	protected Node classify(OntResource root) {
+		// repairs.clear();
 		if( root.equals(DIAGNOSIS_ROOT))
 			return new RootNode();
 		else

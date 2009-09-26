@@ -8,7 +8,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 
-import au.com.langdale.ui.builder.ContentBuilder;
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
 
 public class WorkbenchTest extends ProjectTest {
@@ -55,7 +55,7 @@ public class WorkbenchTest extends ProjectTest {
 			super.nextPressed();
 		}
 		
-		public ContentBuilder getContent() {
+		public Assembly getContent() {
 			FurnishedWizardPage page = (FurnishedWizardPage) getCurrentPage();
 			return page.getContent();
 		}

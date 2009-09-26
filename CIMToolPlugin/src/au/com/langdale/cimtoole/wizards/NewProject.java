@@ -28,12 +28,12 @@ public class NewProject extends FurnishedWizard implements INewWizard {
 			if( !super.validatePage())
 				return false;
 			
-			schema.setProject(main.getProjectHandle());
+			schema.setNewProject(main.getProjectHandle());
 			return true;
 		}
 	};
 	
-	private OptionalSchemaWizardPage schema = new OptionalSchemaWizardPage(); 
+	private SchemaWizardPage schema = new SchemaWizardPage(true); 
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		main.setTitle("New CIMTool Project");
@@ -52,9 +52,12 @@ public class NewProject extends FurnishedWizard implements INewWizard {
 	public boolean performFinish() {
 		IWorkspaceRunnable job =  Task.createProject(main.getProjectHandle(), main.useDefaults()? null: main.getLocationURI());
 
-		IFile schemaFile = schema.getFile();
-		if( schemaFile != null )
-			job = Task.chain( job, Task.importSchema(schemaFile, schema.getPathname(), schema.getNamespace()));
+		String pathname = schema.getPathname();
+		if( pathname.length() != 0) {
+			IFile schemaFile = schema.getFile();
+			String namespace = schema.getNamespace();
+			job = Task.chain( job, Task.importSchema(schemaFile, pathname, namespace));
+		}
 
 		return run( job, ResourcesPlugin.getWorkspace().getRoot());
 	}

@@ -183,13 +183,13 @@ public class ResourceUI {
 	public static class LocalFileBinding extends TextBinding {
 		private String ext;
 		
-		public LocalFileBinding(String ext) {
-			super(Validation.SimpleFile(ext));
+		public LocalFileBinding(String ext, boolean required) {
+			super(Validation.SimpleFile(ext, required));
 			this.ext = ext;
 		}
 		
-		public LocalFileBinding(String[] exts) {
-			super(Validation.SimpleFile(exts));
+		public LocalFileBinding(String[] exts, boolean required) {
+			super(Validation.SimpleFile(exts, required));
 		}
 
 		@Override
@@ -202,8 +202,12 @@ public class ResourceUI {
 		
 		public IFile getFile(IFolder folder) {
 			String name = getText();
-			if( ! name.contains("."))
+			if( name.length() == 0)
+				return null;
+			
+			if( ! name.contains(".") && ext != null)
 				name = name + "." + ext;
+			
 			return folder.getFile(name);
 		}
 	}

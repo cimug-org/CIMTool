@@ -9,8 +9,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.ui.binding.FilteredContentProvider.Filter;
+import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.plumbing.Binding;
-import au.com.langdale.ui.plumbing.Plumbing;
 /**
  * Bind a hierarchy of resources to a tree view.
  */
@@ -61,11 +61,11 @@ public abstract class  JenaTreeBinding implements Binding {
 	 * @param name: the name of the TreeViewer
 	 * @param plumbing: the event plumbing to which the TreeViewer is connected. 
 	 */
-	public void bind(String name, Plumbing plumbing) {
+	public void bind(String name, Assembly plumbing) {
 		bind(name, plumbing, null);
 	}
 	
-	protected void bind(String name, Plumbing plumbing, Object after) {
+	protected void bind(String name, Assembly plumbing, Object after) {
 		viewer = (TreeViewer) plumbing.getViewer(name);
 		viewer.setContentProvider(provider);
 		viewer.setInput(tree);

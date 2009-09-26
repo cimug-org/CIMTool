@@ -9,11 +9,12 @@ import org.eclipse.core.resources.IResource;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.ui.builder.FurnishedEditor;
-import au.com.langdale.ui.plumbing.Template;
+import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
 
 import au.com.langdale.kena.OntResource;
+import static au.com.langdale.ui.builder.Templates.*;
 
 public class InfoModelEditor extends ModelEditor {
 	private JenaTreeModelBase tree;

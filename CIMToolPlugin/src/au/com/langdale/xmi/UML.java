@@ -43,6 +43,7 @@ public class UML {
 	public final static Resource xmlattribute = ResourceFactory.createResource(NS + "xmlattribute");
 	public final static Resource byreference = ResourceFactory.createResource(NS + "byreference");
 	public final static Resource concrete = ResourceFactory.createResource(NS + "concrete");
+	public final static Resource compound = ResourceFactory.createResource(NS + "compound");
 	public final static Resource preserve = ResourceFactory.createResource(NS + "preserve");
 	
 	// stereotype the two forms of aggregation, each in two directions
@@ -75,6 +76,10 @@ public class UML {
 	
 	// the XMI id of a model element can be preserved in the graph for debugging
 	public final static Property id = ResourceFactory.createProperty(NS + "id");
+
+	// the cardinality of a class (as opposed to a property)
+	public final static Property hasMaxCardinality = ResourceFactory.createProperty(NS + "hasMaxCardinality");
+	public final static Property hasMinCardinality = ResourceFactory.createProperty(NS + "hasMinCardinality");
 	
 	public static void loadOntology( OntModel model ) {
 		model.createClass(Stereotype.getURI());
@@ -100,6 +105,7 @@ public class UML {
 		model.createIndividual(xmlattribute.getURI(), Stereotype).addLabel("XML Attribute", null);		
 		model.createIndividual(byreference.getURI(), Stereotype).addLabel("By Reference", null);
 		model.createIndividual(concrete.getURI(), Stereotype).addLabel("Concrete", null);
+		model.createIndividual(compound.getURI(), Stereotype).addLabel("Compound Datatype", null);
 		model.createIndividual(preserve.getURI(), Stereotype).addLabel("Preserve", null);
 		model.createIndividual(ofComposite.getURI(), Stereotype).addLabel("Of Composite", null);
 		model.createIndividual(ofAggregate.getURI(), Stereotype).addLabel("Of Aggregate", null);
@@ -118,5 +124,7 @@ public class UML {
 		model.createAnnotationProperty(hasUnits.getURI());
 		model.createAnnotationProperty(hasMultiplier.getURI());
 		model.createAnnotationProperty(id.getURI());
+		model.createAnnotationProperty(hasMaxCardinality.getURI());
+		model.createAnnotationProperty(hasMinCardinality.getURI());
 	}
 }

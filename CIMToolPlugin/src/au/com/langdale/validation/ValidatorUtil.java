@@ -97,11 +97,11 @@ public abstract class ValidatorUtil  {
 //				System.out.println(t);
 //		}
 
-		System.out.println("---initial rules---");
-		PrintUtil.printOut(rules.iterator());
-
-		System.out.println("---expanded rules---");
-		PrintUtil.printOut(brules.iterator());
+//		System.out.println("---initial rules---");
+//		PrintUtil.printOut(rules.iterator());
+//
+//		System.out.println("---expanded rules---");
+//		PrintUtil.printOut(brules.iterator());
 	}
 
 	public static void logProblems(Logger log, Graph deductions) {
@@ -155,7 +155,7 @@ public abstract class ValidatorUtil  {
 		return Node.createLiteral(alternate);
 	}
 
-	public static void createReport(Graph graph, Node subject, Node phrase,
+	public static Node createReport(Graph graph, Node subject, Node phrase,
 			Node[] nodes, int offset1, int offset2) {
 
 		Node report = Node.createAnon();
@@ -173,6 +173,8 @@ public abstract class ValidatorUtil  {
 					graph.add(new Triple(report, LOG.problemReference.asNode(), nodes[ix]));
 			}
 		}
+		
+		return report;
 	}
 
 	public static String getString(Graph graph, Node subject, Node prop,

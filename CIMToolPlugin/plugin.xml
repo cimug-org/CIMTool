@@ -187,7 +187,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="au.com.langdale.cimtoole.editors.InfoModelEditor"
-            extensions="xmi,simple-owl,merged-owl"
+            extensions="xmi,simple-owl,merged-owl,eap"
             icon="icons/package.png"
             id="au.com.langdale.cimtoole.editors.InfoModelEditor"
             name="Model Browser">
@@ -202,9 +202,16 @@
       <editor
             class="au.com.langdale.cimtoole.editors.DiagnosisEditor"
             extensions="diagnostic"
-            icon="icons/individuals.png"
+            icon="icons/general.png"
             id="au.com.langdale.cimtoole.editors.DiagnosisEditor"
             name="Diagnostic Browser">
+      </editor>
+      <editor
+            class="au.com.langdale.cimtoole.editors.RepairEditor"
+            extensions="repair"
+            icon="icons/general.png"
+            id="au.com.langdale.cimtoole.editors.RepairEditor"
+            name="Profile Repair Editor">
       </editor>
    </extension>
    <extension

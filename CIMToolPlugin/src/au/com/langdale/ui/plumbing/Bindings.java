@@ -4,8 +4,8 @@
  */
 package au.com.langdale.ui.plumbing;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,47 +17,117 @@ import java.util.List;
  */
 public class Bindings implements Binding {
 
-	private List properties = new LinkedList();
+	public static class GuardedList  {
+	    private int guard = 0;
+	    private ArrayList contents = new ArrayList();
+	    
+	    public List get() {
+	    	return contents;
+	    }
 
+	    public GuardedList use() {
+	    	guard++;
+	    	return this;
+	    }
+	    
+	    public void release() {
+	    	guard--;
+	    }
+	    
+	    public GuardedList copy() {
+	    	if(guard > 0) {
+	    		GuardedList clone = new GuardedList();
+	    		clone.contents.addAll(contents);
+	    		return clone;
+	    	}
+	    	else
+	    		return this;
+	    }
+	}
+	
+	private GuardedList delegates = new GuardedList();
+	
 	public void refresh() {
-		// tell each property to copy from store to widget
-		Iterator it = properties.iterator();
-		while(it.hasNext()) {
-			((Binding)it.next()).refresh();
+		GuardedList stable = delegates.use();
+		try {
+			Iterator it = stable.get().iterator();
+			while(it.hasNext()) {
+				((Binding)it.next()).refresh();
+			}
+		}
+		finally {
+			stable.release();
 		}
 	}
 
 	public void update() {
-		Iterator it = properties.iterator();
-		while(it.hasNext()) {
-			((Binding)it.next()).update();
+		GuardedList stable = delegates.use();
+		try {
+			Iterator it = stable.get().iterator();
+			while(it.hasNext()) {
+				((Binding)it.next()).update();
+			}
+		}
+		finally {
+			stable.release();
 		}
 	}
 
 	public String validate() {
-		Iterator it = properties.iterator();
-		while(it.hasNext()) {
-			String result = ((Binding)it.next()).validate();
-			if( result != null )
-				return result;
+		GuardedList stable = delegates.use();
+		try {
+			Iterator it = stable.get().iterator();
+			while(it.hasNext()) {
+				String result = ((Binding)it.next()).validate();
+				if( result != null )
+					return result;
+			}
+			return null;
 		}
-		return null;
+		finally {
+			stable.release();
+		}
 	}
 
 	public void reset() {
-		Iterator it = properties.iterator();
-		while(it.hasNext()) {
-			((Binding)it.next()).reset();
+		GuardedList stable = delegates.use();
+		try {
+			Iterator it = stable.get().iterator();
+			while(it.hasNext()) {
+				((Binding)it.next()).reset();
+			}
+		}
+		finally {
+			stable.release();
 		}
 	}
 
+	/**
+	 * Add a delegate Binding to the top of the binding stack.
+	 * It will receive events before all previously added delegates.
+	 */
 	public void push(Binding bind) {
-		properties.add(0, bind);
+		delegates = delegates.copy();
+		delegates.get().add(0, bind);
 	}
 	
 
+	/**
+	 * Add a delegate Binding at a specific position in the stack.
+	 * It will receive events immediately after the given reference. 
+	 */
 	public void push(Binding bind, Object after) {
-		int ix = after != null? properties.indexOf(after) + 1: 0;
-		properties.add(ix, bind);
+		delegates = delegates.copy();
+		int ix = after != null? delegates.get().indexOf(after) + 1: 0;
+		delegates.get().add(ix, bind);
+	}
+	
+
+	/**
+	 * Remove a delegate Binding.
+	 */
+	public void remove(Binding bind) {
+		delegates = delegates.copy();
+		delegates.get().remove(bind);
 	}
 }
