@@ -4,6 +4,7 @@
  */
 package au.com.langdale.cimtoole;
 
+import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 /**
@@ -15,10 +16,15 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 		layout.addView("au.com.langdale.cimtoole.views.ProjectModelView", IPageLayout.LEFT, .25f, layout.getEditorArea());
 		layout.addView("org.eclipse.ui.navigator.ProjectExplorer", IPageLayout.TOP, .5f, "au.com.langdale.cimtoole.views.ProjectModelView");
 		layout.addView("org.eclipse.ui.views.ContentOutline", IPageLayout.RIGHT, .66f, layout.getEditorArea());
-		layout.addView("org.eclipse.ui.views.PropertySheet", IPageLayout.BOTTOM, .66f, layout.getEditorArea());
-
+		
+		
+		IFolderLayout folder = layout.createFolder("org.eclipse.ui.folder.Detail", IPageLayout.BOTTOM, .66f, layout.getEditorArea());
+		folder.addView("au.com.langdale.cimtoole.views.Documentation");
+		folder.addView("org.eclipse.ui.views.PropertySheet");
+		
 		layout.addShowViewShortcut("org.eclipse.ui.views.ProblemView");
 		layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
+		layout.addShowViewShortcut("au.com.langdale.cimtoole.views.Documentation");
 		layout.addShowViewShortcut("org.eclipse.ui.views.ContentOutline");
 		layout.addShowViewShortcut("au.com.langdale.cimtoole.views.ProjectModelView");
 		layout.addShowViewShortcut("org.eclipse.ui.navigator.ProjectExplorer");
@@ -30,6 +36,7 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewRuleset");
 		
 		layout.addActionSet("au.com.langdale.cimtoole.CIMToolActions");
+		layout.addPerspectiveShortcut("au.com.langdale.cimtoole.CIMToolBrowsingPerspective");
 		layout.addPerspectiveShortcut("au.com.langdale.cimtoole.ValidationPerspective");
 	}
 

@@ -308,6 +308,15 @@
             id="au.com.langdale.cimtoole.views.ValidationView"
             name="Validation Projects">
       </view>
+      <view
+            allowMultiple="false"
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.views.DocView"
+            icon="icons/note.png"
+            id="au.com.langdale.cimtoole.views.Documentation"
+            name="Documentation"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -322,6 +331,12 @@
             icon="icons/validate.png"
             id="au.com.langdale.cimtoole.ValidationPerspective"
             name="Validation">
+      </perspective>
+      <perspective
+            class="au.com.langdale.cimtoole.CIMToolBrowsingPerspective"
+            icon="icons/search.png"
+            id="au.com.langdale.cimtoole.CIMToolBrowsingPerspective"
+            name="Browsing">
       </perspective>
    </extension>
    <extension
@@ -406,6 +421,14 @@
                icon="icons/search.png"
                id="au.com.langdale.cimtoole.actions.SearchAction"
                label="Search"
+               toolbarPath="cimtool"
+               tooltip="Seach the project model for a class or property.">
+         </action>
+         <action
+               class="au.com.langdale.cimtoole.actions.JumpAction"
+               icon="icons/functional.png"
+               id="au.com.langdale.cimtoole.actions.JumpAction"
+               label="Jump"
                toolbarPath="cimtool"
                tooltip="Seach the project model for a class or property.">
          </action>

@@ -54,6 +54,16 @@
 	checkStructure(?PClass ?SClass)
 ->
 	[
+		(?PClass rdfs:subClassOf ?XClass)
+		notSame(?PClass ?XClass)
+		notSame(?SClass ?XClass)
+		uri(?XClass)
+		axiom(?XClass rdf:type owl:Class)		# for each superclass of ?PClass defined in the schema ?SClass
+	->
+		problem(?Ref ?PClass "is a profile of more than one schema class" )
+		remove(?Ref ?PClass rdfs:subClassOf ?XClass)
+	]||
+	[
 		(?PClass rdfs:subClassOf ?PBase)
 		notSame(?PClass ?PBase)				# for each superclass ?PBase
 	->
@@ -101,7 +111,7 @@
 	->
 	
 		[
-			axiom(?Prop rdfs:domain ?Domain)	# for each domain of ?Prop defined as ?Domain we are looking for a subclass ?SDomain
+			axiom(?Prop rdfs:domain ?Domain)	# for a domain of ?Prop defined as ?Domain we are looking for a subclass ?SDomain
 		->
 			[						
 				axiom(?SDomain rdfs:subClassOf ?Domain)	# if ?Domain is compatible with ?SDomain
@@ -110,8 +120,13 @@
 			[	same(?Domain ?SDomain)			# or exactly agrees
 			->
 			]||
+			[
+				axiom(?Domain rdfs:subClassOf ?SDomain) # ?Domain is partially compatible with ?SDomain
+			->
+				checkOptional(?Prop ?PDomain ?SDomain)
+			]||
 			[->
-				problem(?Ref ?Prop  "does not belong to the profile of the declared schema class" ?SDomain)
+				problem(?Ref ?Prop  "does not belong to this class" ?PDomain "based on" ?SDomain)
 				remove(?Ref ?Restrict)
 			]
 		]
@@ -198,19 +213,16 @@
 		[
 			(?Restrict owl:minCardinality ?V)
 		->
-			# TODO: check min cardinality
 			checkCard(?Prop ?Restrict ?V)
 		] ||
 		[
 			(?Restrict owl:maxCardinality ?V)
 		->
-			# TODO: check max cardinality
 			checkCard(?Prop ?Restrict ?V)
 		] ||
 		[
 			(?Restrict owl:cardinality ?V)
 		->
-			# TODO: check exact cardinality
 			checkCard(?Prop ?Restrict ?V)
 		] ||
 		[ -> 
@@ -320,6 +332,30 @@
 	]||
 	[->
 		problem(?Ref ?Prop "is restricted to a range not declared as a class")
+		remove(?Ref ?Restrict)				# propose remove restriction ?Restrict
+	]
+]
+
+[
+	checkOptional(?Prop ?PDomain ?SDomain)
+->
+	[
+		(?PDomain rdfs:subClassOf ?Restrict)
+		(?Restrict rdf:type owl:Restriction)
+	->
+		[
+			(?Restrict owl:cardinality ?V)
+		->
+			problem(?Ref ?Prop "may not be mandatory in this class" ?PDomain "based on" ?SDomain)
+			remove(?Ref, ?Restrict)
+		]||
+		[
+			(?Restrict owl:minCardinality ?V)
+			greater(?V 0)
+		->
+			problem(?Ref ?Prop "may not be mandatory in this class" ?PDomain "based on" ?SDomain)
+			remove(?Ref, ?Restrict)
+		]
 	]
 ]
 

@@ -1,5 +1,7 @@
 package au.com.langdale.cimtoole.project;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -105,9 +107,12 @@ public class Settings extends Task {
 	}
 
 	private OntResource createSubject(IPath path, OntModel store) {
-		return store.createResource(CIMToolPlugin.PROJECT_NS + path.toPortableString());
+		try {
+			return store.createResource(CIMToolPlugin.PROJECT_NS + new URI(null, path.toPortableString(), null).toASCIIString());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
-
 
 	private OntModel getSettingsStore(IProject project) throws CoreException {
 		OntModel store = (OntModel) project.getSessionProperty(SETTINGS);

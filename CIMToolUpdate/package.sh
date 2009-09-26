@@ -21,7 +21,7 @@ PACKAGE=$PWD/${2:-CIMTool-Eclipse.zip}
 
 make_package() {
 
-rm -rf $ASSEMBLY
+rm -rf $ASSEMBLY $PACKAGE
 mkdir $ASSEMBLY
 unzip $PLATFORM -d $ASSEMBLY
 unzip $JRE -d $ASSEMBLY/eclipse
