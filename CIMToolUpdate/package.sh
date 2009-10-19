@@ -14,7 +14,7 @@ REPO=$PWD
 ASSEMBLY=$PWD/"Assembly"
 JRE="/home/adv/distfiles/sun-jre-v6-win32.zip"
 PLATFORM="/home/adv/distfiles/eclipse-platform-3.5-win32.zip"
-ECLIPSE="/home/adv/share/eclipse-rcp-galileo/eclipse"
+ECLIPSE="/home/adv/share/eclipse/eclipse"
 PACKAGE=$PWD/${1:-CIMTool-Eclipse.zip}
 
 
