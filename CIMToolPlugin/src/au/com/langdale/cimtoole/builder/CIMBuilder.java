@@ -32,9 +32,9 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
 import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
 import au.com.langdale.cimtoole.project.Info;
 /**
- * The builder for CIMTool projects.  
- * 
- * This class divides the build into smaller units of work 
+ * The builder for CIMTool projects.
+ *
+ * This class divides the build into smaller units of work
  * performed by <code>Buildlets</code>.
  */
 public class CIMBuilder extends IncrementalProjectBuilder {
@@ -42,7 +42,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDER_ID = "au.com.langdale.cimtoole.CIMBuilder";
 
 	private static final String MARKER_TYPE = "au.com.langdale.cimtoole.problem";
-	
+
 	/**
 	 * @return an array of buildlets that together build a CIMTool project
 	 */
@@ -55,6 +55,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new TransformBuildlet("html", "html"),
 			new TextBuildlet("sql", "sql"),
 			new TextBuildlet("jpa", "java"),
+			new TextBuildlet("python", "py"),
 			new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false),
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 			new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
@@ -62,7 +63,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new ValidationBuildlet(),
 			new SplitValidationBuildlet(),
 			new IncrementalValidationBuildlet(),
-			
+
 		};
 	}
 
@@ -142,22 +143,22 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 		if( file.exists())
 			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ZERO);
 	}
-	
+
 	private static class Worker implements IResourceDeltaVisitor, IResourceVisitor, IWorkspaceRunnable {
 		private boolean cleanup;
-		private boolean rebuild; 
+		private boolean rebuild;
 		private Buildlet[] buildlets;
 		private Map work = new LinkedHashMap();
-		
+
 		public Worker(Buildlet[] buildlets, boolean cleanup) {
 			this.buildlets = buildlets;
 			this.cleanup = cleanup;
 		}
-		
+
 		public boolean getRebuild() {
 			return rebuild;
 		}
-		
+
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED:
@@ -195,7 +196,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		
+
 		public void run(IProgressMonitor monitor) throws CoreException {
 			Iterator outputs = work.keySet().iterator();
 			while(outputs.hasNext()) {
@@ -212,7 +213,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 		Buildlet[] buildlets = createBuildlets();
 		Worker worker = new Worker(buildlets, false);
 		IProject project = getProject();
-		
+
 		if (kind == FULL_BUILD) {
 			project.accept(worker);
 		} else {
@@ -225,7 +226,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 					project.accept(worker);
 			}
 		}
-		
+
 		worker.run(monitor);
 		return null;
 	}
@@ -234,6 +235,6 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		Worker worker = new Worker(createBuildlets(), true);
 		getProject().accept(worker);
-		worker.run(monitor);		
+		worker.run(monitor);
 	}
 }

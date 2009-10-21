@@ -44,18 +44,18 @@ import com.hp.hpl.jena.vocabulary.RDF;
  */
 public class ProfileBuildlets extends Info {
 	/**
-	 * Buildlet for a profile artifact. 
-	 * 
+	 * Buildlet for a profile artifact.
+	 *
 	 * Each type of profile buildlet is characterised by a specific file type
 	 * and a flag in the profile that enables it.
 	 */
 	public abstract static class ProfileBuildlet extends Buildlet {
 		private String ext;
-		
+
 		protected ProfileBuildlet(String fileType) {
 			ext = fileType;
 		}
-	
+
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if(isProfile(file))
@@ -63,15 +63,15 @@ public class ProfileBuildlets extends Info {
 			else
 				return Collections.EMPTY_LIST;
 		}
-		
+
 		public BooleanModel getFlag(final OntModelProvider context) {
 			return new BooleanModel() {
-				
+
 				public boolean isTrue() {
 					OntModel model = context.getModel();
 					return model != null && isFlagged(model);
 				}
-				
+
 				public void setTrue(boolean flag) {
 					OntModel model = context.getModel();
 					if( model != null)
@@ -84,15 +84,15 @@ public class ProfileBuildlets extends Info {
 				}
 			};
 		}
-		
+
 		public Resource getIdentifier() {
-			return ResourceFactory.createResource(NS + getFileType()); 
+			return ResourceFactory.createResource(NS + getFileType());
 		}
-		
+
 		public String getFileType() {
 			return ext;
 		}
-		
+
 		protected ProfileModel getMessageModel(IFile file) throws CoreException {
 			ProfileModel model = new ProfileModel();
 			model.setNamespace(getProperty(file, PROFILE_NAMESPACE));
@@ -136,7 +136,7 @@ public class ProfileBuildlets extends Info {
 			if( cleanup || ! file.exists() || ! isFlagged(file))
 				clean( result, monitor );
 			else
-				build( result, monitor );				
+				build( result, monitor );
 		}
 	}
 	/**
@@ -149,7 +149,7 @@ public class ProfileBuildlets extends Info {
 			super(ext);
 			this.style = style;
 		}
-		
+
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if(isProfile(file) || isRuleSet(file, style + "-xslt") && isProfile(getRelated(file, "owl")))
@@ -157,9 +157,9 @@ public class ProfileBuildlets extends Info {
 			else
 				return Collections.EMPTY_LIST;
 		}
-		
+
 		protected void setupPostProcessors( ProfileSerializer serializer) throws TransformerConfigurationException {}
-		
+
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
@@ -167,10 +167,10 @@ public class ProfileBuildlets extends Info {
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
 				serializer.setBaseURI(getProperty(file, PROFILE_NAMESPACE));
-				
+
 				// TODO: make this better
 				serializer.setVersion("Beta");
-				
+
 				IFile local = getRelated(result, style + "-xslt");
 				if( local.exists()) {
 					serializer.setErrorHandler(CIMBuilder.createErrorHandler(local));
@@ -179,13 +179,13 @@ public class ProfileBuildlets extends Info {
 				else {
 					serializer.setStyleSheet(style);
 				}
-				
+
 				setupPostProcessors(serializer);
-				
+
 			} catch (TransformerConfigurationException e) {
 				error("error parsing XSLT script", e);
 			}
-			
+
 			try {
 			    serializer.write(new ResourceOutputStream(result, monitor, false, true));
 			} catch (TransformerException e) {
@@ -193,12 +193,12 @@ public class ProfileBuildlets extends Info {
 		    }
 			catch(IOException e) {
 				error("error writing output", e);
-			}	
+			}
 		}
 	}
 	/**
 	 * Buildlet for XML Schema profiles.
-	 * 
+	 *
 	 * The basic XSLT transform is followed by XML Schema validation.
 	 */
 	public static class XSDBuildlet extends TransformBuildlet {
@@ -208,7 +208,7 @@ public class ProfileBuildlets extends Info {
 		public XSDBuildlet(String style) {
 			super(style, "xsd");
 		}
-		
+
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			super.build(result, monitor);
@@ -222,7 +222,7 @@ public class ProfileBuildlets extends Info {
 			}
 		}
 	}
-	
+
 	/**
 	 * Buildlet for java artifacts.
 	 */
@@ -231,21 +231,21 @@ public class ProfileBuildlets extends Info {
 		public TextBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-		
+
 		@Override
 		protected void setupPostProcessors( ProfileSerializer serializer) throws TransformerConfigurationException {
 			serializer.addStyleSheet("indent");
 		}
 	}
-	
+
 	/**
 	 * Buildlet for profile artifacts that are related to the simplified RDFS
-	 * representation.  
+	 * representation.
 	 */
 	public static abstract class RDFSBasedBuildlet extends ProfileBuildlet {
 		private String lang;
 		protected boolean withInverses;
-		
+
 		protected RDFSBasedBuildlet(String lang, String fileType, boolean withInverses) {
 			super(fileType);
 			this.lang = lang;
@@ -280,7 +280,7 @@ public class ProfileBuildlets extends Info {
 		}
 	}
 	/**
-	 * Buildlet for a profile in the original IEC RDFS language. 
+	 * Buildlet for a profile in the original IEC RDFS language.
 	 */
 	public static class LegacyRDFSBuildlet extends RDFSBasedBuildlet {
 		public LegacyRDFSBuildlet(String lang, String fileType, boolean withInverses) {
@@ -292,7 +292,7 @@ public class ProfileBuildlets extends Info {
 			return new RDFSGenerator(profileModel, backgroundModel, namespace, preserveNS, withInverses);
 		}
 	}
-	
+
 	public static BooleanModel[] getAvailable(OntModelProvider context) {
 		ProfileBuildlet[] buildlets = getAvailable();
 		BooleanModel[] flags = new BooleanModel[buildlets.length];
@@ -305,17 +305,18 @@ public class ProfileBuildlets extends Info {
 	 */
 	private static ProfileBuildlet[] getAvailable() {
 		return new ProfileBuildlet[] {
-				
+
 				new XSDBuildlet(),
 				new TransformBuildlet(null, "xml"),
 				new TransformBuildlet("html", "html"),
 				new TextBuildlet("sql", "sql"),
 				new TextBuildlet("jpa", "java"),
+				new TextBuildlet("python", "py"),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-				
+
 			};
 	}
 }
