@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.PageBook;
@@ -37,19 +38,19 @@ import au.com.langdale.ui.util.IconCache;
 
 /**
  *  A base class for form content and associated logic.  See the base class, Plumbing,
- *  for details of the form update/refresh logic. 
+ *  for details of the form update/refresh logic.
  *
  *  This class holds a collection of controls and viewers, accessible by name,
  *  and the event listeners needed to link them to the plumbing.
- *  
+ *
  *  They can be retrieved by that name with an accessor method of the appropriate type
- *  such as getText() or getButton(). The accessor methods are generally required 
+ *  such as getText() or getButton(). The accessor methods are generally required
  *  to implement the plumbing update() and refresh() methods.
- *  
- *  The widgets are built with a FormToolkit which determines their look and feel.  
- *  
- *  FormToolkit is an eclipse UI concept. This class also provides factory 
- *  methods for FormToolkits. 
+ *
+ *  The widgets are built with a FormToolkit which determines their look and feel.
+ *
+ *  FormToolkit is an eclipse UI concept. This class also provides factory
+ *  methods for FormToolkits.
  */
 public class Assembly extends Plumbing {
 
@@ -57,7 +58,7 @@ public class Assembly extends Plumbing {
 	private Map subjects;
 	private Control root;
 
-	/** 
+	/**
 	 * An Assembly requires a FormToolkit, that may be shared with other assemblies.
 	 * The synchronous argument determines the behaviour of the assembly's plumbing.
 	 */
@@ -66,9 +67,9 @@ public class Assembly extends Plumbing {
 		this.toolkit = toolkit;
 		subjects = new HashMap();
 	}
-	
+
 	/**
-	 * A sub-assembly is linked to the same event plumbing as its parent 
+	 * A sub-assembly is linked to the same event plumbing as its parent
 	 * and uses the same form construction toolkit.
 	 * @param parent
 	 */
@@ -77,27 +78,27 @@ public class Assembly extends Plumbing {
 		toolkit = parent.toolkit;
 		subjects = new HashMap();
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();
 		if( root != null)
 			root.dispose();
 	};
-	
+
 	/**
 	 * Create an assembly that can realise the given template
-	 * and shares a controller and toolkit with the present assembly.     
+	 * and shares a controller and toolkit with the present assembly.
 	 */
 	public Assembly createSubAssembly(Composite parent, Template template) {
 		Assembly sub = new Assembly(this);
 		sub.realise(parent, template);
 		return sub;
 	}
-	
+
 	/**
 	 * Create an assembly that can realise the given template with the given
-	 * form construction toolkit.  The synchronous argument determines the 
+	 * form construction toolkit.  The synchronous argument determines the
 	 * behaviour of the plumbing.
 	 */
 	public static Assembly createAssembly(Composite parent, Template template, FormToolkit toolkit, Observer observer, boolean synchronous) {
@@ -105,14 +106,14 @@ public class Assembly extends Plumbing {
 		assembly.realise(parent, template);
 		return assembly;
 	}
-	
+
 	/**
 	 *  Build a widget hierarchy under the given composite
-	 *  using the given template associated with this assembly. 
-	 *  
+	 *  using the given template associated with this assembly.
+	 *
 	 *  This method should only be called once as the
-	 *  Template will hook widget events and register 
-	 *  them against their names. 
+	 *  Template will hook widget events and register
+	 *  them against their names.
 	 */
 	public Control realise(Composite parent, Template template) {
 		root = template.realise(parent, this);
@@ -120,14 +121,14 @@ public class Assembly extends Plumbing {
 	}
 
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public Text getText(String name) {
 		return (Text) getControl(name);
 	}
 
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public FormText getMarkup(String name) {
 		return (FormText) getControl(name);
@@ -148,7 +149,7 @@ public class Assembly extends Plumbing {
 			setText((Button) widget, value);
 		return widget;
 	}
-	
+
 
 	/**
 	 * Convenience to locate an icon and set the image of a control.
@@ -176,11 +177,11 @@ public class Assembly extends Plumbing {
 		widget.setText(value);
 		widget.getParent().layout(true);
 	}
-	
+
 	/**
 	 * Make the named control visible along with the
 	 * stack layer to which it belongs.  A Stack and its
-	 * layers are created with Stack().  
+	 * layers are created with Stack().
 	 */
 	public void showStackLayer(String name) {
 		Object subject = subjects.get(name);
@@ -189,13 +190,13 @@ public class Assembly extends Plumbing {
 		else
 			showStackLayer((Control)subject);
 	}
-	
+
 	private void showStackLayer(Control control) {
 		Composite parent = control.getParent();
 		if( parent instanceof PageBook) {
 			PageBook book = (PageBook) parent;
 			book.showPage(control);
-			
+
 			book.getParent().layout(true, true);
 		}
 		else if( parent != null) {
@@ -204,49 +205,49 @@ public class Assembly extends Plumbing {
 	}
 
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public Label getLabel(String name) {
 		return (Label) getControl(name);
 	}
-	
+
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public TreeViewer getTreeViewer(String name) {
 		return (TreeViewer) getViewer(name);
 	}
-	
+
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public CheckboxTreeViewer getCheckboxTreeViewer(String name) {
 		return (CheckboxTreeViewer) getViewer(name);
 	}
-	
-	
+
+
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public CheckboxTableViewer getCheckboxTableViewer(String name) {
 		return (CheckboxTableViewer) getViewer(name);
 	}
-	
+
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public ArrayComposite getArrayComposite(String name) {
 		return (ArrayComposite) getControl(name);
 	}
-	
-	
+
+
 	/**
-	 * Get a widget from the realised hierarchy of the indicated type and given name. 
+	 * Get a widget from the realised hierarchy of the indicated type and given name.
 	 */
 	public Button getButton(String name) {
 		return (Button) getControl(name);
 	}
-	
+
 	/**
 	 * Convenience to set a Button widget's selected value in one operation.
 	 */
@@ -255,14 +256,14 @@ public class Assembly extends Plumbing {
 		widget.setSelection(value);
 		return widget;
 	}
-	
+
 	/**
 	 * Get the root widget, which was created by the realise() method.
 	 */
 	public Control getRoot() {
 		return root;
 	}
-	
+
 	/**
 	 * Get the Form widget (if one was used) or null.
 	 */
@@ -272,11 +273,11 @@ public class Assembly extends Plumbing {
 		else
 			return null;
 	}
-	
+
 	public FormToolkit getToolkit() {
 		return toolkit;
 	}
-	
+
 	/**
 	 * Get a generic control.
 	 */
@@ -314,9 +315,9 @@ public class Assembly extends Plumbing {
 		public void widgetSelected(SelectionEvent e) {
 			fireWidgetEvent();
 		}
-		
+
 	};
-	
+
 	public final SelectionListener refreshSelectionListener = new SelectionListener() {
 
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -326,9 +327,9 @@ public class Assembly extends Plumbing {
 		public void widgetSelected(SelectionEvent e) {
 			doRefresh();
 		}
-		
+
 	};
-	
+
 	public final ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			fireWidgetEvent();
@@ -340,15 +341,15 @@ public class Assembly extends Plumbing {
 		public void selectionChanged(SelectionChangedEvent event) {
 			fireWidgetEvent();
 		}
-		
+
 	};
-	
+
 	public final ICheckStateListener checkStateListener = new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			fireWidgetEvent();
 		}
 	};
-	
+
 	public final ICheckStateListener singleCheckedTableListener = new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			if( event.getChecked()) {
@@ -358,7 +359,7 @@ public class Assembly extends Plumbing {
 			fireWidgetEvent();
 		}
 	};
-	
+
 	public final ICheckStateListener singleCheckedTreeListener = new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			if( event.getChecked()) {
@@ -368,7 +369,7 @@ public class Assembly extends Plumbing {
 			fireWidgetEvent();
 		}
 	};
-	
+
 
 
 	/**
@@ -377,7 +378,7 @@ public class Assembly extends Plumbing {
 	public static FormToolkit createDialogToolkit() {
 		FormToolkit toolkit = createFormToolkit();
 		toolkit.setBackground(null);
-		return toolkit; 
+		return toolkit;
 	}
 
 	/**
