@@ -21,6 +21,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.xml.sax.SAXException;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Info;
@@ -31,6 +36,7 @@ import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.ProfileSerializer;
 import au.com.langdale.profiles.RDFSBasedGenerator;
 import au.com.langdale.profiles.RDFSGenerator;
+import au.com.langdale.profiles.ECoreGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.workspace.ResourceOutputStream;
 
@@ -139,6 +145,44 @@ public class ProfileBuildlets extends Info {
 				build( result, monitor );
 		}
 	}
+
+	/**
+	 * Buildlet for ECore profile.
+	 */
+	public static class ECoreBuildlet extends ProfileBuildlet {
+
+		protected ECoreBuildlet(String fileType) {
+			super(fileType);
+		}
+
+		@Override
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
+			IFile file = getRelated(result, "owl");
+			boolean preserveNS = getPreferenceOption(PRESERVE_NAMESPACES);
+			String namespace = preserveNS? getSchemaNamespace(file): getProperty(file, PROFILE_NAMESPACE);
+			ECoreGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, preserveNS);
+			generator.run();
+			System.out.println("Generated ECore model: " + generator.getResult().getName());
+			ResourceSet metaResourceSet = new ResourceSetImpl();
+			// Register XML Factory implementation to handle .ecore files
+			metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+				"ecore", new  XMLResourceFactoryImpl());
+			// Create empty resource with the given URI
+			org.eclipse.emf.ecore.resource.Resource metaResource =
+				metaResourceSet.createResource(URI.createURI(result.getFullPath().toString()));
+			metaResource.getContents().add(generator.getResult());
+			try {
+			    metaResource.save(null);
+			} catch (IOException e) {
+			    e.printStackTrace();
+			}
+		}
+
+		protected ECoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
+			return new ECoreGenerator(profileModel, backgroundModel, namespace, preserveNS, true);
+		}
+	}
+
 	/**
 	 * Buildlet for a profile artifact that is the product of an XSLT transform.
 	 */
@@ -316,7 +360,7 @@ public class ProfileBuildlets extends Info {
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-
+				new ECoreBuildlet("ecore"),
 			};
 	}
 }

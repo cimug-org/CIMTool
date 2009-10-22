@@ -24,6 +24,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.ECoreBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
@@ -60,6 +61,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 			new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
+			new ECoreBuildlet("ecore"),
 			new ValidationBuildlet(),
 			new SplitValidationBuildlet(),
 			new IncrementalValidationBuildlet(),
