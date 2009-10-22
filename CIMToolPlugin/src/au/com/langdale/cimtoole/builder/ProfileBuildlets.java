@@ -151,8 +151,8 @@ public class ProfileBuildlets extends Info {
 	 */
 	public static class ECoreBuildlet extends ProfileBuildlet {
 
-		protected ECoreBuildlet(String fileType) {
-			super(fileType);
+		protected ECoreBuildlet() {
+			super("ecore");
 		}
 
 		@Override
@@ -359,7 +359,7 @@ public class ProfileBuildlets extends Info {
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-				new ECoreBuildlet("ecore"),
+				new ECoreBuildlet(),
 			};
 	}
 }

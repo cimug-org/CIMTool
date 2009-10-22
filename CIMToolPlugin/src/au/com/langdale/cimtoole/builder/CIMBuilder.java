@@ -60,7 +60,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 			new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-			new ECoreBuildlet("ecore"),
+			new ECoreBuildlet(),
 			new ValidationBuildlet(),
 			new SplitValidationBuildlet(),
 			new IncrementalValidationBuildlet(),

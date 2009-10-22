@@ -2,7 +2,6 @@ package au.com.langdale.profiles;
 
 import org.eclipse.emf.ecore.*;
 
-import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 
 public class ECoreGenerator extends SchemaGenerator {
@@ -23,95 +22,116 @@ public class ECoreGenerator extends SchemaGenerator {
 		return result;
 	}
 
+	public String getUriFragment(String uri) {
+		String[] fragments = uri.split("#");
+		return fragments[1];
+	}
+
+	public String[] getFragment(String frag) {
+		String[] fragments = frag.split("\\.");
+		return fragments;
+	}
+
 	@Override
-	protected void emitBaseStereotype(String uri, String stereo) {
-		// ignored
+	protected void emitPackage(String uri) {
+		System.out.println("Package: " + uri);
+
+		EPackage pkg = coreFactory.createEPackage();
+		pkg.setName(uri);
+		pkg.setNsPrefix("cim");
+		pkg.setNsURI(uri);
+		result.getESubpackages().add(pkg);
 	}
 
 	@Override
 	protected void emitClass(String uri, String base) {
-		EClass emitted = coreFactory.createEClass();
-		emitted.setName(base);
-		result.getEClassifiers().add(emitted);
+		System.out.println("Class: " + uri + ", " + base);
+
+		EClass klass = coreFactory.createEClass();
+		klass.setName(uri);
+		result.getEClassifiers().add(klass);
 	}
 
 	@Override
-	protected void emitComment(String uri, String baseComment,
-			String profileComment) {
-		// ignored
+	protected void emitLabel(String uri, String label) {
+		System.out.println("Label: " + uri + ", " + label);
+	}
+
+	@Override
+	protected void emitSuperClass(String subClass, String superClass) {
+		System.out.println("SuperClass: " + subClass + ", " + superClass);
 	}
 
 	@Override
 	protected void emitDatatype(String uri, String xsdtype) {
-		// ignored
+		System.out.println("DataType: " + uri + ", " + xsdtype);
 	}
 
 	@Override
 	protected void emitDatatypeProperty(String uri, String base, String domain,
 			String type, String xsdtype, boolean required) {
-		// ignored
+		System.out.println("DataType Property: " + uri + ", " + base + ", " +
+				domain + ", " + type + ", " + xsdtype + ", " + required);
+	}
+
+	@Override
+	protected void emitStereotype(String uri, String stereo) {
+		System.out.println("StereoType: " + uri + ", " + stereo);
+	}
+
+	@Override
+	protected void emitBaseStereotype(String uri, String stereo) {
+		System.out.println("BaseStereoType: " + uri + ", " + stereo);
+	}
+
+	@Override
+	protected void emitComment(String uri, String baseComment,
+			String profileComment) {
+		System.out.println("Comment: " + uri + ", " + baseComment + ", " + profileComment);
 	}
 
 	@Override
 	protected void emitDefinedBy(String uri, String container) {
-		// ignored
+		System.out.println("DefinedBy: " + uri + ", " + container);
 	}
 
 	@Override
 	protected void emitInstance(String uri, String base, String type) {
-		// ignored
+		System.out.println("Instance: " + uri + ", " + base + ", " + type);
 	}
 
 	@Override
 	protected void emitInverse(String uri, String iuri) {
-		// ignored
-	}
-
-	@Override
-	protected void emitLabel(String uri, String label) {
-		// ignored
+		System.out.println("Inverse: " + uri + ", " + iuri);
 	}
 
 	@Override
 	protected void emitObjectProperty(String uri, String base, String domain,
 			String range, boolean required, boolean functional) {
-		// ignored
+		System.out.println("Object Property: " + uri + ", " + base + ", " +
+				domain + ", " + range + ", " + required + ", " + functional);
 	}
 
 	@Override
 	protected void emitOntProperty(String uri) {
-		// ignored
+		System.out.println("Ont Property: " + uri);
 	}
 
 	@Override
 	protected void emitOntProperty(String uri, String value) {
-		// ignored
-	}
-
-	@Override
-	protected void emitPackage(String uri) {
-		// ignored
+		System.out.println("Ont Property2: " + uri + ", " + value);
 	}
 
 	@Override
 	protected void emitRestriction(String uri, String domain, String range) {
-		// ignored
+		System.out.println("Restriction: " + uri + ", " + domain + ", " + range);
 	}
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,
 			boolean functional) {
-		// ignored
-	}
-
-	@Override
-	protected void emitStereotype(String uri, String stereo) {
-		// ignored
-	}
-
-	@Override
-	protected void emitSuperClass(String subClass, String superClass) {
-		// ignored
+		System.out.println("Restriction: " + uri + ", " + domain + ", " +
+				required + ", " + functional);
 	}
 
 }
