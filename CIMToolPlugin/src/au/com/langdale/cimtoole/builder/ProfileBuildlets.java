@@ -355,7 +355,6 @@ public class ProfileBuildlets extends Info {
 				new TransformBuildlet("html", "html"),
 				new TextBuildlet("sql", "sql"),
 				new TextBuildlet("jpa", "java"),
-				new TextBuildlet("python", "py"),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
