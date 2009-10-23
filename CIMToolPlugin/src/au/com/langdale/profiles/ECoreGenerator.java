@@ -3,17 +3,22 @@ package au.com.langdale.profiles;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.impl.EStringToStringMapEntryImpl;
 
 import au.com.langdale.kena.OntModel;
 
 public class ECoreGenerator extends SchemaGenerator {
 
+	private String namespace;
+
 	public ECoreGenerator(OntModel profileModel, OntModel backgroundModel,
 			String namespace, boolean preserveNamespaces, boolean inverses) {
 		super(profileModel, backgroundModel, namespace, preserveNamespaces, inverses);
 		if(namespace != null)
+			this.namespace = namespace;
 			result.setNsPrefix("cim");
 			result.setNsURI(namespace);
 	}
@@ -22,27 +27,17 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	EPackage result = coreFactory.createEPackage();
 
-	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
-	Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
-
 	public EPackage getResult() {
 		return result;
 	}
 
-	public String getUriFragment(String uri) {
-		String[] fragments = uri.split("#");
-		return fragments[1];
-	}
-
-	public String[] getFragment(String frag) {
-		String[] fragments = frag.split("\\.");
-		return fragments;
-	}
+	Map<String, EModelElement> eModelElements = new HashMap<String, EModelElement>();
+	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
+	Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
+	Map<String, EEnumLiteral> eEnumLiterals = new HashMap<String, EEnumLiteral>();
 
 	/*
 	 * Adds packages and classifiers without parent packages to the resulting package.
-	 *
-	 * @see au.com.langdale.profiles.SchemaGenerator#run()
 	 */
 	@Override
 	public void run() {
@@ -50,44 +45,33 @@ public class ECoreGenerator extends SchemaGenerator {
 
 		for (Iterator<EPackage> i = ePackages.values().iterator(); i.hasNext();) {
 			EPackage pkg = i.next();
-			if (pkg.getESuperPackage() == null) {
+			if (pkg.getESuperPackage() == null)
 				result.getESubpackages().add(pkg);
-			}
 		}
 
 		for (Iterator<EClass> i = eClasses.values().iterator(); i.hasNext();) {
 			EClass klass = i.next();
-			if (klass.getEPackage() == null) {
+			if (klass.getEPackage() == null)
 				result.getEClassifiers().add(klass);
-			}
 		}
 	}
 
 	@Override
 	protected void emitPackage(String uri) {
-//		System.out.println("Package: " + uri);
-
 		EPackage pkg = coreFactory.createEPackage();
 		pkg.setNsPrefix("cim");
 		pkg.setNsURI(uri);
 		ePackages.put(uri, pkg);
-//		result.getESubpackages().add(pkg);
 	}
 
 	@Override
 	protected void emitClass(String uri, String base) {
-//		System.out.println("Class: " + uri + ", " + base);
-
 		EClass klass = coreFactory.createEClass();
 		eClasses.put(uri, klass);
-//		klass.setName(uri);
-//		result.getEClassifiers().add(klass);
 	}
 
 	@Override
 	protected void emitDefinedBy(String uri, String container) {
-//		System.out.println("DefinedBy: " + uri + ", " + container);
-
 		if (ePackages.containsKey(container) && ePackages.containsKey(uri)) {
 			EPackage parent = ePackages.get(container);
 			EPackage child = ePackages.get(uri);
@@ -97,29 +81,8 @@ public class ECoreGenerator extends SchemaGenerator {
 			EClass child = eClasses.get(uri);
 			parent.getEClassifiers().add(child);
 		} else {
-			System.out.println("Container [" + container + "] for " + uri + " not found.");
+			log("Container [" + container + "] for " + uri + " not found.");
 		}
-	}
-
-	/*
-	 * Label: http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, length
-	 */
-	@Override
-	protected void emitLabel(String uri, String label) {
-//		System.out.println("Label: " + uri + ", " + label);
-
-		if (ePackages.containsKey(uri)) {
-			EPackage named = ePackages.get(uri);
-			named.setName(label);
-		} else if (eClasses.containsKey(uri)) {
-			EClass named = eClasses.get(uri);
-			named.setName(label);
-		}
-	}
-
-	@Override
-	protected void emitSuperClass(String subClass, String superClass) {
-//		System.out.println("SuperClass: " + subClass + ", " + superClass);
 	}
 
 	@Override
@@ -127,9 +90,6 @@ public class ECoreGenerator extends SchemaGenerator {
 //		System.out.println("DataType: " + uri + ", " + xsdtype);
 	}
 
-	/*
-	 * DataType Property: http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor, http://iec.ch/TC57/2009/CIM-schema-cim14#Length, http://www.w3.org/2001/XMLSchema#float, false
-	 */
 	@Override
 	protected void emitDatatypeProperty(String uri, String base, String domain,
 			String type, String xsdtype, boolean required) {
@@ -142,26 +102,32 @@ public class ECoreGenerator extends SchemaGenerator {
 //		System.out.println("StereoType: " + uri + ", " + stereo);
 	}
 
-	/*
-	 * BaseStereoType: http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, http://langdale.com.au/2005/UML#attribute
-	 */
 	@Override
 	protected void emitBaseStereotype(String uri, String stereo) {
-//		System.out.println("BaseStereoType: " + uri + ", " + stereo);
-	}
+		if ((stereo == "http://langdale.com.au/2005/UML#enumeration") && eClasses.containsKey(uri)) {
+			EClass klass = eClasses.get(uri);
 
-	/*
-	 * Comment: http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, Segment length for calculating line section capabilities, null
-	 */
-	@Override
-	protected void emitComment(String uri, String baseComment,
-			String profileComment) {
-//		System.out.println("Comment: " + uri + ", " + baseComment + ", " + profileComment);
+			EEnum eEnum = coreFactory.createEEnum();
+			eEnum.setName(klass.getName());
+
+			Integer j = new Integer(0);
+
+			for (Iterator<EAttribute> ix = klass.getEAttributes().iterator(); ix.hasNext();) {
+				EAttribute attr = ix.next();
+
+				EEnumLiteral literal = coreFactory.createEEnumLiteral();
+				literal.setName(attr.getName());
+				literal.setValue(j);
+				eEnum.getELiterals().add(literal);
+				j++;
+			}
+		}
 	}
 
 	@Override
 	protected void emitInstance(String uri, String base, String type) {
-//		System.out.println("Instance: " + uri + ", " + base + ", " + type);
+		EEnumLiteral literal = coreFactory.createEEnumLiteral();
+		eEnumLiterals.put(uri, literal);
 	}
 
 	@Override
@@ -177,21 +143,6 @@ public class ECoreGenerator extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitOntProperty(String uri) {
-//		System.out.println("Ont Property: " + uri);
-	}
-
-	@Override
-	protected void emitOntProperty(String uri, String value) {
-//		System.out.println("Ont Property2: " + uri + ", " + value);
-	}
-
-
-	/*
-	 * Restriction: http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor, http://www.w3.org/2001/XMLSchema#float
-	 * Restriction: http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor.length, http://iec.ch/TC57/2009/CIM-schema-cim14#Conductor, false, true
-	 */
-	@Override
 	protected void emitRestriction(String uri, String domain, String range) {
 //		System.out.println("Restriction: " + uri + ", " + domain + ", " + range);
 	}
@@ -201,6 +152,71 @@ public class ECoreGenerator extends SchemaGenerator {
 			boolean functional) {
 //		System.out.println("Restriction2: " + uri + ", " + domain + ", " +
 //				required + ", " + functional);
+	}
+
+	@Override
+	protected void emitSuperClass(String subClass, String superClass) {
+		if (eClasses.containsKey(subClass) && eClasses.containsKey(superClass)) {
+			EClass subEClass = eClasses.get(subClass);
+			EClass superEClass = eClasses.get(superClass);
+			subEClass.getESuperTypes().add(superEClass);
+		} else {
+			log("Error setting super type [" + superClass + "] for " + subClass + ".");
+		}
+	}
+
+	@Override
+	protected void emitLabel(String uri, String label) {
+		ENamedElement named = null;
+
+		if (ePackages.containsKey(uri)) {
+			named = ePackages.get(uri);
+		} else if (eClasses.containsKey(uri)) {
+			named = eClasses.get(uri);
+		} else {
+			log("Problem applying [" + uri +"] label: " + label);
+		}
+
+		if (named != null)
+			named.setName(label);
+	}
+
+	@Override
+	protected void emitComment(String uri, String baseComment, String profileComment) {
+		EModelElement annotated = null;
+
+		if (ePackages.containsKey(uri)) {
+			annotated = ePackages.get(uri);
+		} else if (eClasses.containsKey(uri)) {
+			annotated = eClasses.get(uri);
+		} else {
+			log("Problem locating annotated element [" + uri + "].");
+			return;
+		}
+
+		if (baseComment != null) {
+			EAnnotation baseAnnotation = coreFactory.createEAnnotation();
+			baseAnnotation.setSource(namespace);
+			baseAnnotation.getDetails().put("Comment", baseComment);
+			annotated.getEAnnotations().add(baseAnnotation);
+		}
+
+		if (profileComment != null) {
+			EAnnotation profileAnnotation = coreFactory.createEAnnotation();
+			profileAnnotation.setSource("http://langdale.com.au/2005/UML");
+			profileAnnotation.getDetails().put("Profile Comment", profileComment);
+			annotated.getEAnnotations().add(profileAnnotation);
+		}
+	}
+
+	@Override
+	protected void emitOntProperty(String uri) {
+		// ignore
+	}
+
+	@Override
+	protected void emitOntProperty(String uri, String value) {
+		// ignore
 	}
 
 }
