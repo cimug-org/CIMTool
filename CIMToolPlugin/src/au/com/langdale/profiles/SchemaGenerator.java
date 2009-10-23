@@ -28,10 +28,10 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
- * This class is the driver for a number of profile model transformation and 
- * conversion utilities.  It traverses a profile model and fires events (defined 
+ * This class is the driver for a number of profile model transformation and
+ * conversion utilities.  It traverses a profile model and fires events (defined
  * by abstract methods) for each feature of the profile.
- * 
+ *
  * TODO: this class has not been updated to handle OWL unions in the profile.
  */
 public abstract class SchemaGenerator extends ProfileUtility implements Runnable {
@@ -43,21 +43,21 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	private Set packages = new HashSet();
 	private PropertyAccumulator props = new PropertyAccumulator();
 	private EnumAccumulator enums = new EnumAccumulator();
-	
+
 	private List work = new LinkedList(); // unprocessed profiles
 	private boolean withInverses;
 	private boolean preserveNamespaces;
-	
+
 	public class Catalog extends BaseMap {
-		protected Map classes = new HashMap(); 	// base class to profile uri 
+		protected Map classes = new HashMap(); 	// base class to profile uri
 		private Map profiles = new HashMap(); 	// profile uri to base class
-		
+
 		public Catalog() {
 		}
 
 		@Override
 		public void add(OntResource base, OntResource clss) {
-			
+
 			if(clss.isAnon()) {
 				if( ! classes.containsKey(base)) {
 					add(base, constructURI(base));
@@ -75,22 +75,22 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		public void add(OntResource base, String uri) {
 			Object alias = profiles.get(uri);
 			if( alias != null ){
-				if(alias.equals(base)) 
+				if(alias.equals(base))
 					return;
 				rename((OntResource)alias);
 			}
 			classes.put(base, uri);
 			profiles.put(uri, base);
 		}
-		
+
 		public boolean add(OntResource base) {
-			if( classes.containsKey(base)) 
+			if( classes.containsKey(base))
 				return false;
 
 			add(base, constructURI(base));
 			return true;
 		}
-		
+
 		private void rename(OntResource base) {
 			String uri = constructURI(base);
 			String old = (String) classes.get(base);
@@ -108,11 +108,11 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		public String getURI(OntResource base) {
 			return (String) classes.get(base);
 		}
-		
+
 		public Collection getBases() {
 			return classes.keySet();
 		}
-		
+
 		public Collection getURIs() {
 			return classes.values();
 		}
@@ -124,7 +124,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			while(it.hasNext()) {
 				OntResource clss = (OntResource)it.next();
 				OntResource profile = hierarchy.createClass(getURI(clss));
-				
+
 				Iterator jt = clss.listSuperClasses(false);
 				while(jt.hasNext()) {
 					OntResource superClass = (OntResource) jt.next();
@@ -167,25 +167,25 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		this.catalog = new Catalog();
 		this.withInverses = inverses;
 	}
-	
+
 	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
 		this( profileModel, backgroundModel, namespace, false, false);
 	}
-	
+
 	public void run() {
-		
+
 		scanProfiles();
 		if(withInverses)
 			addInverseProperties();
 		scanDomainsAndRanges();
-		
+
 		// emit classes first
 		Iterator it = catalog.getBases().iterator();
 		while( it.hasNext()) {
 			OntResource base = (OntResource)it.next();
 			generateClass(base);
 		}
-		
+
 		// emit datatypes
 		Iterator nt = datatypes.iterator();
 		while( nt.hasNext()) {
@@ -196,21 +196,21 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 				annotate(info.type, type);
 			}
 		}
-		
+
 		// emit properties
 		Iterator lt = props.getGroups().iterator();
 		while( lt.hasNext()) {
 			generateProperty((PropertyGroup)lt.next());
 		}
-		
+
 		// emit superclass relationships
 		generateLattice(catalog.buildLattice());
-		
+
 		// emit any ontology (header) properties
 		generateOntologyFlags();
 	}
 
-	// construct a URI for a base model class, datatype, property or individual 
+	// construct a URI for a base model class, datatype, property or individual
 	private String constructURI(OntResource base) {
 		if( ! preserveNamespaces)
 			return namespace + base.getLocalName();
@@ -228,9 +228,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 
 	private void scanProfiles() {
 		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
-		while( it.hasNext()) 
+		while( it.hasNext())
 			work.add(it.next());
-		
+
 		while( ! work.isEmpty()) {
 			ProfileClass profile = (ProfileClass) work.remove(0);
 			scanProperties(profile);
@@ -249,17 +249,17 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	private boolean scanProperties(ProfileClass profile) {
 		Iterator it = profile.getProperties();
 		boolean some = it.hasNext();
-		
+
 		while( it.hasNext()) {
 			PropertyInfo info = profile.getPropertyInfo((OntResource) it.next());
 			ProfileClass range_profile = props.add( info );
 			if( range_profile != null)
 				work.add(range_profile);
 		}
-		
+
 		return some;
 	}
-	
+
 	private void addInverseProperties() {
 		Iterator it = new ArrayList(props.getGroups()).iterator();
 		while( it.hasNext()) {
@@ -269,7 +269,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			if( inverse != null && ! props.containsKey(inverse)) {
 				props.add(inverse, info.base_domain, info.base_range);
 			}
-		}		
+		}
 	}
 
 	private void scanDomainsAndRanges() {
@@ -300,7 +300,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		Iterator it = uris.iterator();
 		while(it.hasNext()) {
 			OntResource profile = hierarchy.createResource((String)it.next());
-		
+
 			Iterator jt = profile.listSuperClasses(true);
 			while(jt.hasNext()) {
 				OntResource superClass = (OntResource) jt.next();
@@ -336,7 +336,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	private void generateProperty(PropertyGroup group) {
 		PropertySpec info = group.getSummary();
 		OntResource prop = group.getProperty();
-		String uri = constructURI(prop); 
+		String uri = constructURI(prop);
 		String domain = catalog.getURI(info.base_domain);
 		if(prop.isDatatypeProperty()) {
 			TypeInfo range = new TypeInfo( prop.getRange(), this);
@@ -345,7 +345,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		else {
 			String range = catalog.getURI(info.base_range);
 			emitObjectProperty(uri, prop.getURI(), domain, range, info.required, info.functional);
-			
+
 			OntResource inverse = prop.getInverse();
 			if( inverse != null && props.containsKey(inverse)) {
 				emitInverse(uri, constructURI(inverse));
@@ -353,18 +353,18 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 		if( info.label != null)
 			emitLabel(uri, info.label);
-		
+
 		generateRestrictions(group);
-		
+
 		emitComment(uri, extractComment(prop), info.comment);
 		generateBaseStereotypes(uri, prop);
 		if(info.reference)
 			emitStereotype(uri, UML.byreference.getURI());
 	}
-	
+
 	private void generateRestrictions(PropertyGroup group) {
 		String uri = constructURI(group.getProperty());
-		
+
 		for (Iterator it = group.getRestrictions().iterator(); it.hasNext();) {
 			PropertySpec rest = (PropertySpec) it.next();
 			String domain = catalog.getURI(rest.base_domain);
@@ -380,21 +380,21 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			}
 		}
 	}
-	
+
 	private void generateBaseStereotypes(String uri, OntResource base) {
 		ResIterator it = base.listProperties(UML.hasStereotype);
 		while (it.hasNext()) {
 			emitBaseStereotype(uri, it.nextResource().getURI());
 		}
 	}
-	
+
 	private void generateOntologyFlags() {
 		for (Iterator it = profileModel.listIndividuals(MESSAGE.Flag); it.hasNext();) {
 			OntResource	flag = (OntResource) it.next();
 			emitOntProperty(flag.getURI());
 		}
 	}
-	
+
 	private void generateStereotypes(String uri, OntResource base) {
 		ResIterator it = base.listProperties(UML.hasStereotype);
 		while (it.hasNext()) {
@@ -406,7 +406,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		Resource symbol = base.getIsDefinedBy();
 		if( symbol == null)
 			return;
-		
+
 		OntResource pack = (OntResource)symbol;
 		String curi = constructURI(pack);
 		if( ! packages.contains(pack)) {
@@ -422,12 +422,12 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		String comment = null;
 
 		Iterator it = catalog.find(base).iterator();
-		while(it.hasNext()) 
+		while(it.hasNext())
 			comment = appendComment(comment, (OntResource) it.next());
 
 		return comment;
 	}
-	
+
 	private void annotate(String uri, OntResource base) {
 		String label = base.getLabel(null);
 		if( label != null)
@@ -436,7 +436,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		if( comment != null)
 			emitComment(uri, comment, null);
 	}
-	
+
 	protected abstract void emitLabel(String uri, String label);
 	protected abstract void emitComment(String uri, String baseComment, String profileComment);
 	protected abstract void emitSuperClass(String subClass, String superClass);
@@ -454,11 +454,11 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	protected abstract void emitOntProperty(String uri, String value);
 	protected abstract void emitDefinedBy(String uri, String container);
 	protected abstract void emitPackage(String uri) ;
-	
+
 	protected void log(String string, FrontsNode node) {
 		log(string + ": " + node);
 	}
-	
+
 	protected void log(String item) {
 		System.out.println(item);
 	}
