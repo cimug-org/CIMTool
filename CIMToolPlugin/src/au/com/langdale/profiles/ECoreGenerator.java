@@ -13,6 +13,7 @@ public class ECoreGenerator extends SchemaGenerator {
 	private String namespace;
 
 	Map<String, String>	xsdTypes = new HashMap<String, String>(); // xsdtype to java
+	Map<String, EDataType> eTypes = new HashMap<String, EDataType>(); // xsdtype to ecore
 
 	public ECoreGenerator(OntModel profileModel, OntModel backgroundModel,
 			String namespace, boolean preserveNamespaces, boolean inverses) {
@@ -27,17 +28,25 @@ public class ECoreGenerator extends SchemaGenerator {
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", "double");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", "int");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", "boolean");
+
+		this.eTypes.put("http://www.w3.org/2001/XMLSchema#string", corePackage.getEString());
+		this.eTypes.put("http://www.w3.org/2001/XMLSchema#float", corePackage.getEFloat());
+		this.eTypes.put("http://www.w3.org/2001/XMLSchema#integer", corePackage.getEInt());
+		this.eTypes.put("http://www.w3.org/2001/XMLSchema#boolean", corePackage.getEBoolean());
+
 	}
 
 	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
+	EcorePackage corePackage = EcorePackage.eINSTANCE;
 
 	EPackage result = coreFactory.createEPackage();
 
 	public EPackage getResult() { return result; }
 
-	Map<String, EModelElement> eModelElements = new HashMap<String, EModelElement>();
 	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
 	Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
+	Map<String, EAttribute> eAttributes = new HashMap<String, EAttribute>();
+	Map<String, EReference> eReferences = new HashMap<String, EReference>();
 	Map<String, EEnum> eEnums = new HashMap<String, EEnum>();
 	Map<String, EDataType> eDataTypes = new HashMap<String, EDataType>();
 
@@ -48,16 +57,28 @@ public class ECoreGenerator extends SchemaGenerator {
 	public void run() {
 		super.run();
 
-		for (Iterator<EPackage> i = ePackages.values().iterator(); i.hasNext();) {
-			EPackage pkg = i.next();
+		for (Iterator<EPackage> ix = ePackages.values().iterator(); ix.hasNext();) {
+			EPackage pkg = ix.next();
 			if (pkg.getESuperPackage() == null)
 				result.getESubpackages().add(pkg);
 		}
 
-		for (Iterator<EClass> i = eClasses.values().iterator(); i.hasNext();) {
-			EClass klass = i.next();
+		for (Iterator<EClass> ix = eClasses.values().iterator(); ix.hasNext();) {
+			EClass klass = ix.next();
 			if (klass.getEPackage() == null)
 				result.getEClassifiers().add(klass);
+		}
+
+		for (Iterator<EEnum> ix = eEnums.values().iterator(); ix.hasNext();) {
+			EEnum eEnum= ix.next();
+			if (eEnum.getEPackage() == null)
+				result.getEClassifiers().add(eEnum);
+		}
+
+		for (Iterator<EDataType> ix = eDataTypes.values().iterator(); ix.hasNext();) {
+			EDataType dt = ix.next();
+			if (dt.getEPackage() == null)
+				result.getEClassifiers().add(dt);
 		}
 	}
 
@@ -92,7 +113,7 @@ public class ECoreGenerator extends SchemaGenerator {
 				EEnum child = eEnums.get(uri);
 				parent.getEClassifiers().add(child);
 			} else {
-				log("Problem location container [" + container + "] element [" + uri + "].");
+				log("Problem location contained [" + container + "] element [" + uri + "].");
 			}
 		} else {
 			log("Container [" + container + "] for " + uri + " not found.");
@@ -108,8 +129,11 @@ public class ECoreGenerator extends SchemaGenerator {
 		profileAnnotation.getDetails().put("baseType", xsdtype);
 		dt.getEAnnotations().add(profileAnnotation);
 
-		if (xsdTypes.containsKey(xsdtype))
+		if (xsdTypes.containsKey(xsdtype)) {
 			dt.setInstanceTypeName(xsdTypes.get(xsdtype));
+		} else {
+			log("Data type [" + xsdtype + "] not found.");
+		}
 
 		eDataTypes.put(uri, dt);
 	}
@@ -122,6 +146,10 @@ public class ECoreGenerator extends SchemaGenerator {
 		if (eDataTypes.containsKey(type)) {
 			EDataType dt = eDataTypes.get(type);
 			attr.setEType(dt);
+		} else if (eTypes.containsKey(xsdtype)) {
+			attr.setEType(eTypes.get(xsdtype));
+		} else {
+			log("Not EType [" + xsdtype + "] found for " + uri + ".");
 		}
 
 		if (required == true) {
@@ -129,12 +157,14 @@ public class ECoreGenerator extends SchemaGenerator {
 			attr.setLowerBound(1);
 		}
 
-		if (eClasses.containsKey(uri)) {
-			EClass klass = eClasses.get(uri);
-			klass.getEAttributes().add(attr);
+		if (eClasses.containsKey(domain)) {
+			EClass klass = eClasses.get(domain);
+			klass.getEStructuralFeatures().add(attr);
 		} else {
 			log("Problem locating class [" + uri + "] for attribute [" + type + "].");
 		}
+
+		eAttributes.put(uri, attr);
 	}
 
 	/*
@@ -161,7 +191,7 @@ public class ECoreGenerator extends SchemaGenerator {
 		if (eClasses.containsKey(type)) {
 			EClass klass = eClasses.get(type);
 			EAttribute attr = coreFactory.createEAttribute();
-			klass.getEAttributes().add(attr);
+			klass.getEStructuralFeatures().add(attr);
 		} else {
 			log("Problem locating class [" + type + "] for instance [" + uri + "]");
 		}
@@ -187,8 +217,8 @@ public class ECoreGenerator extends SchemaGenerator {
 				j++;
 			}
 
-			eEnums.put(uri, eEnum);
-			eClasses.remove(klass); // Remove the temporary class.
+			eEnums.put(uri, eEnum); // Substitute the class with the enumeration.
+			eClasses.remove(klass);
 		}
 	}
 
@@ -198,44 +228,45 @@ public class ECoreGenerator extends SchemaGenerator {
 
 		EReference ref = coreFactory.createEReference();
 
-		if (eClasses.containsKey(uri) && eClasses.containsKey(domain)) {
-			EClass klass = eClasses.get(uri);
-			klass.getEReferences().add(ref);
-			EClass referenced = eClasses.get(domain);
+		if (eClasses.containsKey(domain) && eClasses.containsKey(range)) {
+			EClass klass = eClasses.get(domain);
+			klass.getEStructuralFeatures().add(ref);
+
+			EClass referenced = eClasses.get(range);
 			ref.setEType(referenced);
 		} else {
-			log("Problem locating classes [" + domain +", " + range + "] for reference [" + uri + "].");
+			log("Problem locating classes [" + domain + ", " + range + "] for reference [" + uri + "].");
 		}
 
 		if (required == true) {
 			ref.setUpperBound(1);
 			ref.setLowerBound(1);
 		}
+
+		eReferences.put(uri, ref);
 	}
 
 	@Override
 	protected void emitInverse(String uri, String iuri) {
-//		System.out.println("Inverse: " + uri + ", " + iuri);
+		if (eReferences.containsKey(uri) && eReferences.containsKey(iuri))
+			eReferences.get(uri).setEOpposite(eReferences.get(iuri));
 	}
 
 	@Override
 	protected void emitRestriction(String uri, String domain, String range) {
-//		System.out.println("Restriction: " + uri + ", " + domain + ", " + range);
+		// ignore
 	}
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,
 			boolean functional) {
-//		System.out.println("Restriction2: " + uri + ", " + domain + ", " +
-//				required + ", " + functional);
+		// ignore
 	}
 
 	@Override
 	protected void emitSuperClass(String subClass, String superClass) {
 		if (eClasses.containsKey(subClass) && eClasses.containsKey(superClass)) {
-			EClass subEClass = eClasses.get(subClass);
-			EClass superEClass = eClasses.get(superClass);
-			subEClass.getESuperTypes().add(superEClass);
+			eClasses.get(subClass).getESuperTypes().add(eClasses.get(superClass));
 		} else {
 			log("Error setting super type [" + superClass + "] for " + subClass + ".");
 		}
@@ -249,6 +280,14 @@ public class ECoreGenerator extends SchemaGenerator {
 			named = ePackages.get(uri);
 		} else if (eClasses.containsKey(uri)) {
 			named = eClasses.get(uri);
+		} else if (eAttributes.containsKey(uri)) {
+			named = eAttributes.get(uri);
+		} else if (eReferences.containsKey(uri)) {
+			named = eReferences.get(uri);
+		} else if (eEnums.containsKey(uri)) {
+			named = eEnums.get(uri);
+		} else if (eDataTypes.containsKey(uri)) {
+			named = eDataTypes.get(uri);
 		} else {
 			log("Problem applying [" + uri +"] label: " + label);
 		}
@@ -265,6 +304,10 @@ public class ECoreGenerator extends SchemaGenerator {
 			annotated = ePackages.get(uri);
 		} else if (eClasses.containsKey(uri)) {
 			annotated = eClasses.get(uri);
+		} else if (eAttributes.containsKey(uri)) {
+			annotated = eAttributes.get(uri);
+		} else if (eReferences.containsKey(uri)) {
+			annotated = eReferences.get(uri);
 		} else if (eDataTypes.containsKey(uri)) {
 			annotated = eDataTypes.get(uri);
 		} else if (eEnums.containsKey(uri)) {
