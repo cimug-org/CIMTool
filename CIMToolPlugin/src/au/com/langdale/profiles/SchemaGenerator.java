@@ -194,6 +194,8 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			if( info.type != null) {
 				emitDatatype(info.type, info.xsdtype);
 				annotate(info.type, type);
+				// Emit definedby for datatypes also [rwl].
+				generatePackage(info.type, type);
 			}
 		}
 
