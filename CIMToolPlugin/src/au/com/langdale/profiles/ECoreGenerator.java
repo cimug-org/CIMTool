@@ -1,5 +1,6 @@
 package au.com.langdale.profiles;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,8 +13,22 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	private String namespace;
 
+	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
+	EcorePackage corePackage = EcorePackage.eINSTANCE;
+
+	EPackage result = coreFactory.createEPackage();
+
 	Map<String, String>	xsdTypes = new HashMap<String, String>(); // xsdtype to java
 	Map<String, EDataType> eTypes = new HashMap<String, EDataType>(); // xsdtype to ecore
+
+	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
+	Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
+	Map<String, EAttribute> eAttributes = new HashMap<String, EAttribute>();
+	Map<String, EReference> eReferences = new HashMap<String, EReference>();
+	Map<String, EEnum> eEnums = new HashMap<String, EEnum>();
+	Map<String, EDataType> eDataTypes = new HashMap<String, EDataType>();
+
+	ArrayList<EReference> notInverted = new ArrayList<EReference>();
 
 	public ECoreGenerator(OntModel profileModel, OntModel backgroundModel,
 			String namespace, boolean preserveNamespaces, boolean inverses) {
@@ -28,27 +43,18 @@ public class ECoreGenerator extends SchemaGenerator {
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", "double");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", "int");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", "boolean");
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", "java.util.Date");
 
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#string", corePackage.getEString());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#float", corePackage.getEFloat());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#integer", corePackage.getEInt());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#boolean", corePackage.getEBoolean());
-
+		this.eTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", corePackage.getEDate());
 	}
 
-	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
-	EcorePackage corePackage = EcorePackage.eINSTANCE;
-
-	EPackage result = coreFactory.createEPackage();
-
-	public EPackage getResult() { return result; }
-
-	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
-	Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
-	Map<String, EAttribute> eAttributes = new HashMap<String, EAttribute>();
-	Map<String, EReference> eReferences = new HashMap<String, EReference>();
-	Map<String, EEnum> eEnums = new HashMap<String, EEnum>();
-	Map<String, EDataType> eDataTypes = new HashMap<String, EDataType>();
+	public EPackage getResult() {
+		return result;
+	}
 
 	/*
 	 * Adds packages and classifiers without parent packages to the resulting package.
@@ -79,6 +85,11 @@ public class ECoreGenerator extends SchemaGenerator {
 			EDataType dt = ix.next();
 			if (dt.getEPackage() == null)
 				result.getEClassifiers().add(dt);
+		}
+
+		for (Iterator<EReference> ix = notInverted.iterator(); ix.hasNext();) {
+			EReference ref = ix.next();
+			log("Non-inverted reference: " + ref.getName());
 		}
 	}
 
@@ -149,13 +160,12 @@ public class ECoreGenerator extends SchemaGenerator {
 		} else if (eTypes.containsKey(xsdtype)) {
 			attr.setEType(eTypes.get(xsdtype));
 		} else {
-			log("Not EType [" + xsdtype + "] found for " + uri + ".");
+			log("No EType [" + xsdtype + "] found for " + uri + ".");
 		}
 
-		if (required == true) {
+		if (required == true)
 			attr.setUpperBound(1);
 			attr.setLowerBound(1);
-		}
 
 		if (eClasses.containsKey(domain)) {
 			EClass klass = eClasses.get(domain);
@@ -174,17 +184,18 @@ public class ECoreGenerator extends SchemaGenerator {
 	 */
 	@Override
 	protected void emitStereotype(String uri, String stereo) {
-		if (eClasses.containsKey(uri)) {
+		if (eClasses.containsKey(uri) || eReferences.containsKey(uri)) {
 			// EClass klass = eClasses.get(uri);
 		} else {
-			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
+//			log("Problem locating stereotype [" + stereo + "] class/reference [" + uri + "].");
 		}
 	}
 
 	/*
 	 * Enumerations are emitted as classes and must be converted to EEnums when
 	 * the base stereotype is emitted.  Instances for the enumeration get stored
-	 * as attributes of the class before being converted to EEnumLiterals.
+	 * as attributes of the class before being converted to EEnumLiterals.  The
+	 * EAttributes are also stored in the list of all attributes for labelling.
 	 */
 	@Override
 	protected void emitInstance(String uri, String base, String type) {
@@ -192,6 +203,7 @@ public class ECoreGenerator extends SchemaGenerator {
 			EClass klass = eClasses.get(type);
 			EAttribute attr = coreFactory.createEAttribute();
 			klass.getEStructuralFeatures().add(attr);
+			eAttributes.put(uri, attr);
 		} else {
 			log("Problem locating class [" + type + "] for instance [" + uri + "]");
 		}
@@ -199,6 +211,7 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitBaseStereotype(String uri, String stereo) {
+		// Convert classes with enumeration base sterotypes to EEnums.
 		if ((stereo == "http://langdale.com.au/2005/UML#enumeration") && eClasses.containsKey(uri)) {
 			EClass klass = eClasses.get(uri);
 
@@ -214,11 +227,12 @@ public class ECoreGenerator extends SchemaGenerator {
 				literal.setName(attr.getName());
 				literal.setValue(j);
 				eEnum.getELiterals().add(literal);
+				eAttributes.remove(uri + "." + attr.getName());
 				j++;
 			}
 
 			eEnums.put(uri, eEnum); // Substitute the class with the enumeration.
-			eClasses.remove(klass);
+			eClasses.remove(uri);
 		}
 	}
 
@@ -226,30 +240,48 @@ public class ECoreGenerator extends SchemaGenerator {
 	protected void emitObjectProperty(String uri, String base, String domain,
 			String range, boolean required, boolean functional) {
 
-		EReference ref = coreFactory.createEReference();
-
 		if (eClasses.containsKey(domain) && eClasses.containsKey(range)) {
+			EReference ref = coreFactory.createEReference();
 			EClass klass = eClasses.get(domain);
 			klass.getEStructuralFeatures().add(ref);
 
 			EClass referenced = eClasses.get(range);
 			ref.setEType(referenced);
+
+			if (required == true)
+				ref.setLowerBound(1);
+
+			eReferences.put(uri, ref);
+		} else if (eClasses.containsKey(domain) && eEnums.containsKey(range)) {
+			EAttribute attr = coreFactory.createEAttribute();
+			EClass klass = eClasses.get(domain);
+			klass.getEStructuralFeatures().add(attr);
+
+			EEnum eEnum = eEnums.get(range);
+			attr.setEType(eEnum);
+
+			if (required == true)
+				attr.setLowerBound(1);
+
+			eAttributes.put(uri, attr);
 		} else {
 			log("Problem locating classes [" + domain + ", " + range + "] for reference [" + uri + "].");
 		}
-
-		if (required == true) {
-			ref.setUpperBound(1);
-			ref.setLowerBound(1);
-		}
-
-		eReferences.put(uri, ref);
 	}
 
 	@Override
 	protected void emitInverse(String uri, String iuri) {
-		if (eReferences.containsKey(uri) && eReferences.containsKey(iuri))
+		if (eReferences.containsKey(uri) && eReferences.containsKey(iuri)) {
 			eReferences.get(uri).setEOpposite(eReferences.get(iuri));
+			notInverted.remove(eReferences.get(uri));
+			notInverted.remove(eReferences.get(iuri));
+		} else if (eReferences.containsKey(uri)) {
+			notInverted.add(eReferences.get(uri));
+		} else if (eReferences.containsKey(iuri)) {
+			notInverted.add(eReferences.get(iuri));
+		} else {
+			log("Problem inverting " + uri + " and " + iuri + ".");
+		}
 	}
 
 	@Override
