@@ -162,7 +162,9 @@ public class ProfileBuildlets extends Info {
 			String namespace = preserveNS? getSchemaNamespace(file): getProperty(file, PROFILE_NAMESPACE);
 			ECoreGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, preserveNS);
 			generator.run();
-			System.out.println("Generated ECore model: " + generator.getResult().getName());
+			// Use file name for top level package name.
+			generator.getResult().setName(result.getName().split("\\.")[0]);
+			System.out.println("Generated ECore model: " + result.getName());
 			ResourceSet metaResourceSet = new ResourceSetImpl();
 			// Register XML Factory implementation to handle .ecore files
 			metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
