@@ -391,18 +391,30 @@ public class ECoreGenerator extends SchemaGenerator {
 		}
 
 		if (annotated != null) {
-			if (baseComment != null) {
-				EAnnotation baseAnnotation = coreFactory.createEAnnotation();
-				baseAnnotation.setSource(namespace);
-				baseAnnotation.getDetails().put("Comment", baseComment);
-				annotated.getEAnnotations().add(baseAnnotation);
-			}
+			if ((baseComment != null) || (profileComment != null)) {
+				/* Annotations with GenModel source are added to EMF generated code. */
+				EAnnotation genModelAnnotation = coreFactory.createEAnnotation();
+				genModelAnnotation.setSource("http://www.eclipse.org/emf/2002/GenModel");
 
-			if (profileComment != null) {
-				EAnnotation profileAnnotation = coreFactory.createEAnnotation();
-				profileAnnotation.setSource("http://langdale.com.au/2005/UML");
-				profileAnnotation.getDetails().put("Profile Comment", profileComment);
-				annotated.getEAnnotations().add(profileAnnotation);
+				if (baseComment != null) {
+					EAnnotation baseAnnotation = coreFactory.createEAnnotation();
+					baseAnnotation.setSource(namespace);
+					baseAnnotation.getDetails().put("Documentation", baseComment);
+					annotated.getEAnnotations().add(baseAnnotation);
+
+					genModelAnnotation.getDetails().put("Documentation", baseComment);
+				}
+
+				if (profileComment != null) {
+					EAnnotation profileAnnotation = coreFactory.createEAnnotation();
+					profileAnnotation.setSource("http://langdale.com.au/2005/UML");
+					profileAnnotation.getDetails().put("Profile documentation", profileComment);
+					annotated.getEAnnotations().add(profileAnnotation);
+
+					genModelAnnotation.getDetails().put("Profile documentation", profileComment);
+				}
+
+				annotated.getEAnnotations().add(genModelAnnotation);
 			}
 		}
 	}
