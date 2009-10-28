@@ -292,6 +292,9 @@ public class ECoreGenerator extends SchemaGenerator {
 			if (required == true)
 				ref.setLowerBound(1);
 
+			if (functional == false)
+				ref.setUpperBound(-1);
+
 			eReferences.put(uri, ref);
 		} else if (eClasses.containsKey(domain) && eEnums.containsKey(range)) {
 			EAttribute attr = coreFactory.createEAttribute();
