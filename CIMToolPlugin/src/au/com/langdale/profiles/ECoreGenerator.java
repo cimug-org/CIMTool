@@ -1,3 +1,5 @@
+/* Copyright (c) 2009 Richard Lincoln */
+
 package au.com.langdale.profiles;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import au.com.langdale.kena.OntModel;
 public class ECoreGenerator extends SchemaGenerator {
 
 	private String namespace;
+	private boolean addRootClass;
 
 	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
 	EcorePackage corePackage = EcorePackage.eINSTANCE;
@@ -31,8 +34,11 @@ public class ECoreGenerator extends SchemaGenerator {
 	ArrayList<EReference> notInverted = new ArrayList<EReference>();
 
 	public ECoreGenerator(OntModel profileModel, OntModel backgroundModel,
-			String namespace, boolean preserveNamespaces, boolean inverses) {
+			String namespace, boolean preserveNamespaces, boolean inverses,
+			boolean addRootClass) {
 		super(profileModel, backgroundModel, namespace, preserveNamespaces, inverses);
+
+		this.addRootClass = addRootClass;
 
 		if(namespace != null)
 			this.namespace = namespace;
@@ -58,10 +64,41 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	/*
 	 * Adds packages and classifiers without parent packages to the resulting package.
+	 * Create an Element class from which all other classes derive.  Create a Model
+	 * class to contain all model elements.
 	 */
 	@Override
 	public void run() {
 		super.run();
+
+		/* Create root Element class from which all other classes derive. */
+		EClass element = coreFactory.createEClass();
+		if (addRootClass) {
+			element.setName("Element");
+			EAttribute uri = coreFactory.createEAttribute();
+			uri.setName("URI");
+			uri.setEType(corePackage.getEString());
+			uri.setID(true);
+			element.getEStructuralFeatures().add(uri);
+			EReference modelRef = coreFactory.createEReference();
+			modelRef.setName("Model");
+			modelRef.setLowerBound(1);
+			element.getEStructuralFeatures().add(modelRef);
+			result.getEClassifiers().add(element);
+
+			/* Add a Model class to contain all model elements. */
+			EClass model = coreFactory.createEClass();
+			model.setName("Model");
+			modelRef.setEType(model); // Set the model reference type now.
+			EReference elements = coreFactory.createEReference();
+			elements.setName("Elements");
+			elements.setEType(element);
+			elements.setUpperBound(-1);
+			elements.setEOpposite(modelRef);
+			modelRef.setEOpposite(elements);
+			model.getEStructuralFeatures().add(elements);
+			result.getEClassifiers().add(model);
+		}
 
 		for (Iterator<EPackage> ix = ePackages.values().iterator(); ix.hasNext();) {
 			EPackage pkg = ix.next();
@@ -73,6 +110,10 @@ public class ECoreGenerator extends SchemaGenerator {
 			EClass klass = ix.next();
 			if (klass.getEPackage() == null)
 				result.getEClassifiers().add(klass);
+			/* Make all classes derive from Element. */
+			if (addRootClass && (klass.getESuperTypes().size() == 0)) {
+				klass.getESuperTypes().add(element);
+			}
 		}
 
 		for (Iterator<EEnum> ix = eEnums.values().iterator(); ix.hasNext();) {
@@ -273,6 +314,7 @@ public class ECoreGenerator extends SchemaGenerator {
 	protected void emitInverse(String uri, String iuri) {
 		if (eReferences.containsKey(uri) && eReferences.containsKey(iuri)) {
 			eReferences.get(uri).setEOpposite(eReferences.get(iuri));
+			eReferences.get(iuri).setEOpposite(eReferences.get(uri));
 			notInverted.remove(eReferences.get(uri));
 			notInverted.remove(eReferences.get(iuri));
 		} else if (eReferences.containsKey(uri)) {

@@ -181,7 +181,7 @@ public class ProfileBuildlets extends Info {
 		}
 
 		protected ECoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
-			return new ECoreGenerator(profileModel, backgroundModel, namespace, preserveNS, true);
+			return new ECoreGenerator(profileModel, backgroundModel, namespace, preserveNS, true, true);
 		}
 	}
 
