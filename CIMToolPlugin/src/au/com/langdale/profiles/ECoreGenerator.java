@@ -219,8 +219,16 @@ public class ECoreGenerator extends SchemaGenerator {
 	}
 
 	/*
+	 * Aggregation (has a).
 	 * http://iec.ch/TC57/2009/CIM-schema-cim14#VoltageLevel, http://langdale.com.au/2005/UML#ofAggregate
+	 *
+	 * Composition (owns a).  If the container is destroyed, normally every instance that it contains is destroyed as well.
+	 * http://langdale.com.au/2005/UML#compositeOf
+	 *
+	 * Changes the element from a nested structure to a reference.
 	 * http://iec.ch/TC57/2009/CIM-schema-cim14#VoltageLevel, http://langdale.com.au/2005/UML#byreference
+	 *
+	 * Normally, any structured class that has no subclasses would be marked concrete.
      * http://iec.ch/TC57/2009/CIM-schema-cim14#VoltageLevel, http://langdale.com.au/2005/UML#concrete
 	 */
 	@Override
