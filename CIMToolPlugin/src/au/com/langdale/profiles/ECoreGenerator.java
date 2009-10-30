@@ -90,6 +90,11 @@ public class ECoreGenerator extends SchemaGenerator {
 			EClass model = coreFactory.createEClass();
 			model.setName("Model");
 			modelRef.setEType(model); // Set the model reference type now.
+			EAttribute uriAttr = coreFactory.createEAttribute();
+			uriAttr.setName("URI");
+			uriAttr.setEType(corePackage.getEString());
+			uriAttr.setID(true);
+			model.getEStructuralFeatures().add(uriAttr);
 			EReference elements = coreFactory.createEReference();
 			elements.setName("Elements");
 			elements.setEType(element);
