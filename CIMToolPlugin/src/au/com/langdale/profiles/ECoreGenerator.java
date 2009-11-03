@@ -48,12 +48,14 @@ public class ECoreGenerator extends SchemaGenerator {
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", "java.lang.String");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", "double");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", "int");
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#int", "int");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", "boolean");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", "java.util.Date");
 
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#string", corePackage.getEString());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#float", corePackage.getEFloat());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#integer", corePackage.getEInt());
+		this.eTypes.put("http://www.w3.org/2001/XMLSchema#int", corePackage.getEInt());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#boolean", corePackage.getEBoolean());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", corePackage.getEDate());
 	}
