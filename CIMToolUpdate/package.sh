@@ -12,6 +12,7 @@ fi
 
 REPO=$PWD
 ASSEMBLY=$PWD/"Assembly"
+ARCHIVE=$PWD/CIMToolUpdate.zip
 JRE="/home/adv/distfiles/sun-jre-v6-win32.zip"
 PLATFORM="/home/adv/distfiles/eclipse-platform-3.5-win32.zip"
 ECLIPSE="/home/adv/share/eclipse/eclipse"
@@ -39,17 +40,22 @@ patch $ASSEMBLY/eclipse/eclipse.ini << EOF
  -vmargs
 EOF
 
+inject
+
+( cd $ASSEMBLY && zip -r $PACKAGE eclipse )
+
+
+}
+
+inject () {
 $ECLIPSE \
     -application org.eclipse.equinox.p2.director \
    -repository file:$REPO \
    -installIU au.com.langdale.cimtoole.feature.feature.group \
    -destination $ASSEMBLY/eclipse \
    -profile PlatformProfile
-
-( cd $ASSEMBLY && zip -r $PACKAGE eclipse )
-
-
 }
+
 
 mirror_site() {
 
