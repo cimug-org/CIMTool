@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 
 import au.com.langdale.kena.OntModel;
@@ -240,11 +241,14 @@ public class ECoreGenerator extends SchemaGenerator {
 	 */
 	@Override
 	protected void emitStereotype(String uri, String stereo) {
-		if (eClasses.containsKey(uri) || eReferences.containsKey(uri)) {
-			// EClass klass = eClasses.get(uri);
-		} else {
-//			log("Problem locating stereotype [" + stereo + "] class/reference [" + uri + "].");
-		}
+//		if (eClasses.containsKey(uri)) {
+//			EClass klass = eClasses.get(uri);
+//			if (stereo == "http://langdale.com.au/2005/UML#ofAggregate") {
+//				// TODO: Handle aggregate properties.
+//			}
+//		} else {
+//			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
+//		}
 	}
 
 	/*
@@ -289,6 +293,11 @@ public class ECoreGenerator extends SchemaGenerator {
 
 			eEnums.put(uri, eEnum); // Substitute the class with the enumeration.
 			eClasses.remove(uri);
+
+		} else if ((stereo == "http://langdale.com.au/2005/UML#compositeOf") && eReferences.containsKey(uri)) {
+			EReference ref = eReferences.get(uri);
+
+			ref.setContainment(true);
 		}
 	}
 
