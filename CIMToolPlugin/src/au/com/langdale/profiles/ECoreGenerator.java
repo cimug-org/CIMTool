@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.*;
 
 import au.com.langdale.kena.OntModel;
@@ -66,9 +65,8 @@ public class ECoreGenerator extends SchemaGenerator {
 	}
 
 	/*
-	 * Adds packages and classifiers without parent packages to the resulting package.
-	 * Create an Element class from which all other classes derive.  Create a Model
-	 * class to contain all model elements.
+	 * Adds packages and classifiers without parent packages to the 'result' package.
+	 * Create an Element class from which all other classes derive.
 	 */
 	@Override
 	public void run() {
@@ -83,29 +81,8 @@ public class ECoreGenerator extends SchemaGenerator {
 			uri.setEType(corePackage.getEString());
 			uri.setID(true);
 			element.getEStructuralFeatures().add(uri);
-			EReference modelRef = coreFactory.createEReference();
-			modelRef.setName("Model");
-			modelRef.setLowerBound(1);
-			element.getEStructuralFeatures().add(modelRef);
 			result.getEClassifiers().add(element);
 
-			/* Add a Model class to contain all model elements. */
-			EClass model = coreFactory.createEClass();
-			model.setName("Model");
-			modelRef.setEType(model); // Set the model reference type now.
-			EAttribute uriAttr = coreFactory.createEAttribute();
-			uriAttr.setName("URI");
-			uriAttr.setEType(corePackage.getEString());
-			uriAttr.setID(true);
-			model.getEStructuralFeatures().add(uriAttr);
-			EReference elements = coreFactory.createEReference();
-			elements.setName("Elements");
-			elements.setEType(element);
-			elements.setUpperBound(-1);
-			elements.setEOpposite(modelRef);
-			modelRef.setEOpposite(elements);
-			model.getEStructuralFeatures().add(elements);
-			result.getEClassifiers().add(model);
 		}
 
 		for (Iterator<EPackage> ix = ePackages.values().iterator(); ix.hasNext();) {
@@ -295,9 +272,8 @@ public class ECoreGenerator extends SchemaGenerator {
 			eClasses.remove(uri);
 
 		} else if ((stereo == "http://langdale.com.au/2005/UML#compositeOf") && eReferences.containsKey(uri)) {
-			EReference ref = eReferences.get(uri);
-
-			ref.setContainment(true);
+//			EReference ref = eReferences.get(uri);
+//			ref.setContainment(true);
 		}
 	}
 
