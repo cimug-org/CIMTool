@@ -76,6 +76,7 @@ public class ECoreGenerator extends SchemaGenerator {
 		EClass element = coreFactory.createEClass();
 		if (addRootClass) {
 			element.setName("Element");
+			element.setAbstract(true);
 			EAttribute uri = coreFactory.createEAttribute();
 			uri.setName("URI");
 			uri.setEType(corePackage.getEString());
@@ -129,7 +130,10 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitClass(String uri, String base) {
-		eClasses.put(uri, coreFactory.createEClass());
+		EClass klass = coreFactory.createEClass();
+		// Assume abstract unless 'concrete' stereotype emitted.
+		klass.setAbstract(true);
+		eClasses.put(uri, klass);
 	}
 
 	@Override
@@ -218,14 +222,14 @@ public class ECoreGenerator extends SchemaGenerator {
 	 */
 	@Override
 	protected void emitStereotype(String uri, String stereo) {
-//		if (eClasses.containsKey(uri)) {
-//			EClass klass = eClasses.get(uri);
-//			if (stereo == "http://langdale.com.au/2005/UML#ofAggregate") {
-//				// TODO: Handle aggregate properties.
-//			}
-//		} else {
+		if (eClasses.containsKey(uri)) {
+			EClass klass = eClasses.get(uri);
+			if (stereo == "http://langdale.com.au/2005/UML#concrete") {
+				klass.setAbstract(false);
+			}
+		} else {
 //			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
-//		}
+		}
 	}
 
 	/*
