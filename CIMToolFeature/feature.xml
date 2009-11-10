@@ -2,7 +2,7 @@
 <feature
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
-      version="1.6.9.qualifier"
+      version="1.7.1.qualifier"
       provider-name="Langdale Consultants">
 
    <description url="http://cimtool.org">
