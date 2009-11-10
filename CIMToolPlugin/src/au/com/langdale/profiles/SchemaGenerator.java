@@ -267,7 +267,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			PropertySpec info = group.getSummary();
 			OntResource inverse = info.prop.getInverse();
 			if( inverse != null && ! props.containsKey(inverse)) {
-				props.add(inverse, info.base_domain, info.base_range);
+				props.add(inverse, info.base_range, info.base_domain);
 			}
 		}		
 	}
