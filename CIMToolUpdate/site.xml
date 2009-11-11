@@ -3,7 +3,7 @@
    <description name="CIMTool" url="http://files.cimtool.org">
       CIMTool distribution site.
    </description>
-   <feature url="features/au.com.langdale.cimtoole.feature_1.7.1.200911091813.jar" id="au.com.langdale.cimtoole.feature" version="1.7.1.200911091813">
+   <feature url="features/au.com.langdale.cimtoole.feature_1.7.1.200911111412.jar" id="au.com.langdale.cimtoole.feature" version="1.7.1.200911111412">
       <category name="ontology"/>
    </feature>
    <category-def name="ontology" label="Modelling and Ontology"/>

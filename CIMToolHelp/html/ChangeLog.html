@@ -15,7 +15,8 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.6.9 </h2><ul><li><p>enhancement: new added .simple-flat-owl format which corresponds to the simple-owl format 
+          <div id="content"><h2>Release 1.7.1 </h2><ul><li><p>correction: the inverse properties that are added the profile for the &quot;augmented&quot; OWL and RDFS
+artifacts are incorrect when the range and domain are related by inheritance.</p></li></ul><h2>Release 1.6.9 </h2><ul><li><p>enhancement: new .simple-flat-owl format which corresponds to the simple-owl format 
 in version 1.6.3 </p></li></ul><h2>Release 1.6.8 </h2><ul><li><p>enhancement: new options on the profile add/remove page control whether super or sub class members are available. 
 It is now possible to redefine or separately define a member in subclasses.</p></li></ul><h2>Release 1.6.7 </h2><ul><li><p>correction: ensure artifact generation runs to completion even when a profile contains severe errors.</p></li></ul><h2>Release 1.6.6 </h2><ul><li><p>correction: a problem introduced in 1.6.5 that prevented importing Enterprise Architect Jet4 projects</p></li></ul><h2>Release 1.6.5 </h2><ul><li><p>enhancement: additional help</p></li><li><p>correction: corrected problem introduced in 1.6.4 with the new simple-owl format that also affected validation</p></li><li><p>note: deployment now contains separate plugins for the main supporting libraries</p></li></ul><h2>Release 1.6.4 </h2><ul><li><p>new feature: profile searching and enhanced CIM searches.  The search wizard is now available
 on the profile outline as well as the add/remove page and the project model view.  The wizard
@@ -109,7 +110,7 @@ choose Compare With &gt; Each Other.  To compare a schema with a recent
 version select it, right click and choose Compare With &gt; Local History.</p></li><li><p>new feature: Integrated help.  To access CIMTool help and documentation within
 eclipse, choose Help &gt; Help Contents from the main menu.  Look for the topic
 &quot;Common CIMTool Tasks&quot; in the table of contents. In the release, the included
-help consists of the most useful material from the <a href="" class="contents"></a> web site.</p></li></ul><h2>Release 1.3.3 </h2><ul><li><p>new feature: &quot;Add package name to default schema namespaces&quot; preference causes 
+help consists of the most useful material from the <a href="http://wiki.cimtool.org/index.html" class="internal">http://cimtool.org</a> web site.</p></li></ul><h2>Release 1.3.3 </h2><ul><li><p>new feature: &quot;Add package name to default schema namespaces&quot; preference causes 
 unique RDF namespaces to be generated from the UML package hierarchy.</p></li><li><p>new feature: CIM/XML profiles can now have more than one restriction, in different
 contexts, on the same property. This was previously only supported for XSD profiles.</p><p>The simple-owl format now preserves all property restrictions and the validation 
 rules have been reworked to enforce them. </p><p>The standard CIM/XML RDFS format cannot support this and CIMTool rolls up the 
@@ -186,10 +187,10 @@ each class and property. It performs a number of other repairs as well.</p><p>Th
 incompatible with the new property range profiles and these will be lost if 
 this operation is performed.</p><h2>Changes 2008-02-15 </h2><ul><li><p>CIM/XML validator passes the full test suite, available at 
 <a href="http://files.cimtool.org/Validation-Cases-2008-02-15.zip" class="external">http://files.cimtool.org/Validation-Cases-2008-02-15.zip</a></p></li><li><p>Includes incremental CIM/XML validation.  </p></li><li><p>User interface improvements.</p></li></ul><h2>Changes 2008-01-31 </h2><ul><li><p>CIMTool has expanded namespace support described here:
-<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/CIMToolNamespaceSupport.html" class="internal">PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/CIMToolNamespaceSupport.html</a></p><ul><li><p>There is support for multiple extension model namespaces.</p></li><li><p>Optionally, those namespaces can be carried through to 
+<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/CIMToolNamespaceSupport.html" class="internal">http://wiki.cimtool.org/CIMToolNamespaceSupport.html</a></p><ul><li><p>There is support for multiple extension model namespaces.</p></li><li><p>Optionally, those namespaces can be carried through to 
 profile artifacts (legacy-rdfs and simple-owl).  This corresponds
 to the current practice on the ERCOT project. </p></li><li><p>The pros and cons of the latter practice are discussed here: 
-<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Namespaces.html" class="internal">PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Namespaces.html</a></p></li><li><p>For a discussion of CIM extension model techniques using CIMTool
+<a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Namespaces.html" class="internal">http://wiki.cimtool.org/Namespaces.html</a></p></li><li><p>For a discussion of CIM extension model techniques using CIMTool
 see the UISOL Distributech presentation.</p></li></ul></li><li><p>The CIM/XML validation function has been further developed.</p><ul><li><p>Basic topology validation tests are now included
 and the profile conformance tests have been expanded.  </p></li><li><p>Memory footprint is down and speed is up.  
 It is now possible to validate giant models such 
