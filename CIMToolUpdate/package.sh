@@ -23,8 +23,8 @@ make_package() {
 
 rm -rf $ASSEMBLY $PACKAGE
 mkdir $ASSEMBLY
-unzip $PLATFORM -d $ASSEMBLY
-unzip $JRE -d $ASSEMBLY/eclipse
+unzip -q $PLATFORM -d $ASSEMBLY
+unzip -q $JRE -d $ASSEMBLY/eclipse
 
 patch $ASSEMBLY/eclipse/eclipse.ini << EOF
 --- Assembly/eclipse/eclipse.ini        2009-06-12 08:33:48.000000000 +1000
@@ -42,7 +42,7 @@ EOF
 
 inject
 
-( cd $ASSEMBLY && zip -r $PACKAGE eclipse )
+( cd $ASSEMBLY && zip -q -r $PACKAGE eclipse )
 
 
 }
@@ -68,14 +68,14 @@ $ECLIPSE \
     -source file:$REPO \
     -destination file:$ASSEMBLY/site
 
-( cd $ASSEMBLY && zip -r $ARCHIVE  * )
+( cd $ASSEMBLY && zip -q -r $ARCHIVE  * )
 
 }
 
 make_site() {
 
 rm -f $ARCHIVE
-( cd $REPO && zip -r -n jar $ARCHIVE site.xml content.jar artifacts.jar plugins features )
+( cd $REPO && zip -q -r -n jar $ARCHIVE site.xml content.jar artifacts.jar plugins features )
 
 }
 
