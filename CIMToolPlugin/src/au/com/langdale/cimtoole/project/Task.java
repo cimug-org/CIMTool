@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -36,12 +37,21 @@ import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
 import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
+import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.MESSAGE;
+import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Refactory;
+import au.com.langdale.profiles.Reorganizer;
+import au.com.langdale.profiles.SpreadsheetParser.ParseProblem;
+import au.com.langdale.util.NSMapper;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.workspace.ResourceOutputStream;
@@ -74,16 +84,7 @@ public class Task extends Info {
     }
 
     public static IWorkspaceRunnable createProfile(final IFile file, final String namespace, final String envname) {
-        return new IWorkspaceRunnable() {
-            public void run(IProgressMonitor monitor) throws CoreException {
-                OntModel model = ModelFactory.createMem();
-                initProfile(model, envname);
-                monitor.worked(1);
-                write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
-                putProperty( file, PROFILE_NAMESPACE, namespace);
-                monitor.worked(1);
-            }
-        };
+        return createProfile(file, namespace, envname, false);
     }
 
 
@@ -94,15 +95,20 @@ public class Task extends Info {
     public static IWorkspaceRunnable createProfile(final IFile file, final String namespace, final String envname, final Boolean fill) {
         return new IWorkspaceRunnable() {
             public void run(IProgressMonitor monitor) throws CoreException {
-                OntModel model = ModelFactory.createMem();
-                initProfile(model, envname);
+                OntModel model;
+
                 if (fill.equals(Boolean.TRUE)) {
                     Cache cache = CIMToolPlugin.getCache();
                     IFolder schemaDir = getSchemaFolder(file.getProject());
                     OntModel schemaModel = cache.getMergedOntologyWait(schemaDir);
 
-                    fillProfile(model, schemaModel, namespace);
-                }
+                    model = fillProfile(schemaModel, namespace);
+                } else {
+                    model = ModelFactory.createMem();
+				}
+
+				initProfile(model, envname);
+
                 monitor.worked(1);
                 write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
                 putProperty( file, PROFILE_NAMESPACE, namespace);
@@ -459,10 +465,43 @@ public class Task extends Info {
         }
     }
 
-    public static void fillProfile(OntModel profileModel, OntModel schemaModel, String namespace) {
+    public static OntModel fillProfile(OntModel schemaModel, String namespace) {
         if (schemaModel != null) {
+        	Resource CLASS = ResourceFactory.createResource(OWL.Class);
+
 //            Refactory refactory = new Refactory(profileModel, schemaModel, namespace);
-            System.out.println("ns: " + namespace);
-        }
+//            ProfileModel treeModel = (ProfileModel) createProfileTreeModel(profileModel, schemaModel, namespace);
+
+    		NSMapper mapper = new NSMapper(schemaModel);
+    		OntModel model = Composition.overlay(schemaModel);
+    		OntModel result = Composition.getUpdatableModel(model);
+    		Map profiles = new HashMap();
+
+	        ResIterator it = schemaModel.listNamedClasses();
+	        while (it.hasNext()) {
+				OntResource res = (OntResource) it.next();
+				String name = res.getLocalName();
+
+				String uri = namespace + name; // construct a profile class URI
+
+				Resource base = mapper.map(name, CLASS); // construct a base class URI
+				if( base == null )
+					System.err.println("Undefined class: " + name);
+
+				OntResource cl = model.createClass(uri);
+
+	            System.out.println("Print: " + cl.getURI());
+
+//				ProfileClass profile = new ProfileClass(model.createClass(uri), namespace,  model.createResource(base.asNode()));
+//				profiles.put(uri, profile);
+			}
+
+//			Reorganizer utility = new Reorganizer(result, schemaModel, namespace, true);
+//			utility.run();
+//			return utility.getResult();
+			return result; //ModelFactory.createMem();
+        } else {
+        	return ModelFactory.createMem();
+		}
     }
 }
