@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.ICommand;
@@ -26,6 +27,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.ecore.EEnum;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -50,7 +52,6 @@ import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.Reorganizer;
-import au.com.langdale.profiles.SpreadsheetParser.ParseProblem;
 import au.com.langdale.util.NSMapper;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
@@ -488,18 +489,25 @@ public class Task extends Info {
 				if( base == null )
 					System.err.println("Undefined class: " + name);
 
-				OntResource cl = model.createClass(uri);
+//	            System.out.println("Print: " + res.getIsDefinedBy());
 
-	            System.out.println("Print: " + cl.getURI());
+				OntResource clss = model.createClass(uri);
+				clss.addSuperClass(res);
 
-//				ProfileClass profile = new ProfileClass(model.createClass(uri), namespace,  model.createResource(base.asNode()));
-//				profiles.put(uri, profile);
+				ProfileClass profile = new ProfileClass(clss, namespace, model.createResource(base.asNode()));
+				profiles.put(uri, profile);
+			}
+
+			for (ResIterator ix = schemaModel.listObjectProperties(); ix.hasNext();) {
+				OntResource resource = (OntResource) ix.next();
+
+//	            System.out.println("Obj: " + resource.getLocalName());
 			}
 
 //			Reorganizer utility = new Reorganizer(result, schemaModel, namespace, true);
 //			utility.run();
 //			return utility.getResult();
-			return result; //ModelFactory.createMem();
+			return result;//ModelFactory.createMem();
         } else {
         	return ModelFactory.createMem();
 		}
