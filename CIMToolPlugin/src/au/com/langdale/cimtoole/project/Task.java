@@ -48,6 +48,8 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
+import au.com.langdale.profiles.Reorganizer;
+import au.com.langdale.profiles.SpreadsheetParser.ParseProblem;
 import au.com.langdale.util.NSMapper;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
@@ -468,6 +470,8 @@ public class Task extends Info {
         }
 
         Resource CLASS = ResourceFactory.createResource(OWL.Class);
+    	Resource OBJECT_PROPERTY = ResourceFactory.createResource(OWL.ObjectProperty);
+    	Resource PROPERTY = ResourceFactory.createResource(RDF.Property);
 
 		NSMapper mapper = new NSMapper(schemaModel);
 		OntModel model = Composition.overlay(schemaModel);
@@ -492,24 +496,35 @@ public class Task extends Info {
 			profiles.put(uri, profile);
 		}
 
+//        Qualified: TransformerWinding.xground
+//        Base: http://iec.ch/TC57/2008/CIM-schema-cim13#TransformerWinding.xground
+//        Prop: http://iec.ch/TC57/2008/CIM-schema-cim13#TransformerWinding.xground
 		for (ResIterator ix = schemaModel.listObjectProperties(); ix.hasNext();) {
-			OntResource prop = (OntResource) ix.next();
+			OntResource objProp = (OntResource) ix.next();
+			String qualified = objProp.getLocalName();
 
-            System.out.println("ObjProp: " + prop.getURI() + " " + prop.getDomain().getURI());
+            System.out.println("ObjProp: " + objProp.getURI() + " " + objProp.getDomain().getURI());
+//            String baseUri = prop.getDomain().getURI();
 
-            String baseUri = prop.getDomain().getURI();
+    		System.out.println("Qualified: " + qualified);
+    		Resource base = mapper.map(qualified, OBJECT_PROPERTY); // construct a base property URI
+    		if( base == null )
+    			System.err.println("undefined "+ OBJECT_PROPERTY.asNode().getLocalName() + " : " + qualified);
 
-    		ProfileClass profile = (ProfileClass) profiles.get(namespace + prop.getDomain().getLocalName());
+    		ProfileClass profile = (ProfileClass) profiles.get(namespace + objProp.getDomain().getLocalName());
     		if( profile != null) {
-    			System.out.println("SETTING PROPERTY!!!");
-	    		OntResource property = model.createResource(baseUri);
-	    		profile.createAllValuesFrom(property, false);
+	    		OntResource prop = model.createResource(base.getURI());
+
+	    		System.out.println("Base: " + base.getURI());
+	    		System.out.println("Prop: " + prop.getURI());
+
+	    		profile.createAllValuesFrom(prop, false);
     		}
 		}
 
-//		Reorganizer utility = new Reorganizer(result, schemaModel, namespace, true);
-//		utility.run();
-//		return utility.getResult();
-		return result;
+		Reorganizer utility = new Reorganizer(result, schemaModel, namespace, true);
+		utility.run();
+		return utility.getResult();
+//		return result;
     }
 }
