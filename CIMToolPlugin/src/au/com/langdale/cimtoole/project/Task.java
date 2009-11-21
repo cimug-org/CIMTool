@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.ICommand;
@@ -27,7 +26,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.ecore.EEnum;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -50,8 +48,6 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
-import au.com.langdale.profiles.Refactory;
-import au.com.langdale.profiles.Reorganizer;
 import au.com.langdale.util.NSMapper;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
@@ -467,49 +463,53 @@ public class Task extends Info {
     }
 
     public static OntModel fillProfile(OntModel schemaModel, String namespace) {
-        if (schemaModel != null) {
-        	Resource CLASS = ResourceFactory.createResource(OWL.Class);
-
-//            Refactory refactory = new Refactory(profileModel, schemaModel, namespace);
-//            ProfileModel treeModel = (ProfileModel) createProfileTreeModel(profileModel, schemaModel, namespace);
-
-    		NSMapper mapper = new NSMapper(schemaModel);
-    		OntModel model = Composition.overlay(schemaModel);
-    		OntModel result = Composition.getUpdatableModel(model);
-    		Map profiles = new HashMap();
-
-	        ResIterator it = schemaModel.listNamedClasses();
-	        while (it.hasNext()) {
-				OntResource res = (OntResource) it.next();
-				String name = res.getLocalName();
-
-				String uri = namespace + name; // construct a profile class URI
-
-				Resource base = mapper.map(name, CLASS); // construct a base class URI
-				if( base == null )
-					System.err.println("Undefined class: " + name);
-
-//	            System.out.println("Print: " + res.getIsDefinedBy());
-
-				OntResource clss = model.createClass(uri);
-				clss.addSuperClass(res);
-
-				ProfileClass profile = new ProfileClass(clss, namespace, model.createResource(base.asNode()));
-				profiles.put(uri, profile);
-			}
-
-			for (ResIterator ix = schemaModel.listObjectProperties(); ix.hasNext();) {
-				OntResource resource = (OntResource) ix.next();
-
-//	            System.out.println("Obj: " + resource.getLocalName());
-			}
-
-//			Reorganizer utility = new Reorganizer(result, schemaModel, namespace, true);
-//			utility.run();
-//			return utility.getResult();
-			return result;//ModelFactory.createMem();
-        } else {
+        if (schemaModel == null) {
         	return ModelFactory.createMem();
+        }
+
+        Resource CLASS = ResourceFactory.createResource(OWL.Class);
+
+		NSMapper mapper = new NSMapper(schemaModel);
+		OntModel model = Composition.overlay(schemaModel);
+		OntModel result = Composition.getUpdatableModel(model);
+		Map profiles = new HashMap();
+
+        ResIterator it = schemaModel.listNamedClasses();
+        while (it.hasNext()) {
+			OntResource res = (OntResource) it.next();
+			String name = res.getLocalName();
+
+			String uri = namespace + name; // construct a profile class URI
+
+			Resource base = mapper.map(name, CLASS); // construct a base class URI
+			if( base == null )
+				System.err.println("Undefined class: " + name);
+
+			OntResource clss = model.createClass(uri);
+			clss.addSuperClass(res);
+
+			ProfileClass profile = new ProfileClass(clss, namespace, model.createResource(base.asNode()));
+			profiles.put(uri, profile);
 		}
+
+		for (ResIterator ix = schemaModel.listObjectProperties(); ix.hasNext();) {
+			OntResource prop = (OntResource) ix.next();
+
+            System.out.println("ObjProp: " + prop.getURI() + " " + prop.getDomain().getURI());
+
+            String baseUri = prop.getDomain().getURI();
+
+    		ProfileClass profile = (ProfileClass) profiles.get(namespace + prop.getDomain().getLocalName());
+    		if( profile != null) {
+    			System.out.println("SETTING PROPERTY!!!");
+	    		OntResource property = model.createResource(baseUri);
+	    		profile.createAllValuesFrom(property, false);
+    		}
+		}
+
+//		Reorganizer utility = new Reorganizer(result, schemaModel, namespace, true);
+//		utility.run();
+//		return utility.getResult();
+		return result;
     }
 }
