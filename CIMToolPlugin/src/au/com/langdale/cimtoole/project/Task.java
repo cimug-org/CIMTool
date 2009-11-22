@@ -49,6 +49,7 @@ import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Reorganizer;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.profiles.SpreadsheetParser.ParseProblem;
 import au.com.langdale.util.NSMapper;
 import au.com.langdale.validation.RepairMan;
@@ -471,6 +472,7 @@ public class Task extends Info {
 
         Resource CLASS = ResourceFactory.createResource(OWL.Class);
     	Resource OBJECT_PROPERTY = ResourceFactory.createResource(OWL.ObjectProperty);
+    	Resource DATATYPE_PROPERTY = ResourceFactory.createResource(OWL.DatatypeProperty);
     	Resource PROPERTY = ResourceFactory.createResource(RDF.Property);
 
 		NSMapper mapper = new NSMapper(schemaModel);
@@ -496,15 +498,9 @@ public class Task extends Info {
 			profiles.put(uri, profile);
 		}
 
-//        Qualified: TransformerWinding.xground
-//        Base: http://iec.ch/TC57/2008/CIM-schema-cim13#TransformerWinding.xground
-//        Prop: http://iec.ch/TC57/2008/CIM-schema-cim13#TransformerWinding.xground
 		for (ResIterator ix = schemaModel.listObjectProperties(); ix.hasNext();) {
 			OntResource objProp = (OntResource) ix.next();
 			String qualified = objProp.getLocalName();
-
-            System.out.println("ObjProp: " + objProp.getURI() + " " + objProp.getDomain().getURI());
-//            String baseUri = prop.getDomain().getURI();
 
     		System.out.println("Qualified: " + qualified);
     		Resource base = mapper.map(qualified, OBJECT_PROPERTY); // construct a base property URI
@@ -519,6 +515,32 @@ public class Task extends Info {
 	    		System.out.println("Prop: " + prop.getURI());
 
 	    		profile.createAllValuesFrom(prop, false);
+
+//	    		PropertyInfo info = profile.getPropertyInfo(prop);
+//	    		if( ((OntResource) base).getMinCardinality() == 1 )
+//	    			info.setMinCardinality(1);
+//	    		if( ((OntResource) base).getMaxCardinality() == 1 )
+//	    			info.setMaxCardinality(1);
+    		}
+		}
+
+		for (ResIterator ix = schemaModel.listIndividuals(PROPERTY); ix.hasNext();) {
+			OntResource ontProp = (OntResource) ix.next();
+
+    		ProfileClass profile = (ProfileClass) profiles.get(namespace + ontProp.getDomain().getLocalName());
+
+    		if( profile != null) {
+				String qualified = ontProp.getLocalName();
+	    		Resource base = mapper.map(qualified, PROPERTY);
+
+	    		if( base == null ) {
+	    			System.err.println("undefined "+ PROPERTY.asNode().getLocalName() + " : " + qualified);
+	    		} else {
+		    		OntResource prop = model.createResource(base.getURI());
+		    		profile.createAllValuesFrom(prop, false);
+		    		PropertyInfo info = profile.getPropertyInfo(prop);
+		    		info.setMinCardinality(0);
+				}
     		}
 		}
 
