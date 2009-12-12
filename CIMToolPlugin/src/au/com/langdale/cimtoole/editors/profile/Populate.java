@@ -139,12 +139,17 @@ public class Populate extends FurnishedEditor {
 								Stack(
 									Column(
 										Stack(
-											Grid(Group(
-												Label("prop", "Select type and cardinality of this property."),	
-												CheckBox("reference", "By Reference"))),
-											Grid(Group(
-												Label("class", "Select members and cardinality of this class."),
-												CheckBox("concrete", "Make this class concrete")))),
+											Grid(
+												Group(
+												    Label("prop", "Select type and cardinality of this property."),	
+												    CheckBox("reference", "By Reference"))),
+											Grid(
+											    Group(
+												    Label("class", "Select members and cardinality of this class."),
+												    CheckBox("concrete", "Make this class concrete")),
+												Group(Row(
+													ViewCheckBox("showsuper","Offer superclass members"),
+													ViewCheckBox("showsub","Offer subclass members"))))),
 										Grid(Group(
 											Label("card", "Min"), Row(Field("minimum")),
 											Label("Max"), Row(Field("maximum")),
@@ -177,7 +182,7 @@ public class Populate extends FurnishedEditor {
 				TreeViewer left = getTreeViewer("left");
 				
 				leftBinding.bind("left", this, master);
-				rightBinding.bind("right", "duplicates", this, master);
+				rightBinding.bind("right", "duplicates", "showsuper", "showsub", this, master);
 				
 				left.addSelectionChangedListener(new Target("right"));
 				master.listenToDoubleClicks(left);
@@ -319,17 +324,15 @@ public class Populate extends FurnishedEditor {
 					boolean concrete = tnode.hasStereotype(UML.concrete);
 					setButtonValue("concrete", concrete);
 					refreshCardinality(tnode);
-					showStackLayer("card");
 					showStackLayer("class");
+					showStackLayer("card");
 				}
 				else if( node instanceof ElementNode) {
 					ElementNode enode = (ElementNode) node;
 					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype());
-
 					refreshCardinality(enode);
-					
-					showStackLayer("card");
 					showStackLayer("prop");
+					showStackLayer("card");
 				}
 				else {
 					showStackLayer("info");

@@ -198,7 +198,9 @@ public class CIMInterpreter extends UMLInterpreter {
 		
 		// some UML models have inconsistent stereotypes
 		model.remove(clss, UML.hasStereotype, UML.datatype);
+		model.remove(clss, UML.hasStereotype, UML.base);
 		model.remove(clss, UML.hasStereotype, UML.primitive);
+		
 		ResIterator it = model.listSubjectsBuffered(RDFS.domain, clss);
 		while(it.hasNext()) {
 			OntResource m = it.nextResource();

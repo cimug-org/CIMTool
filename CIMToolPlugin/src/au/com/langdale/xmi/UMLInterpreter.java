@@ -104,13 +104,18 @@ public class UMLInterpreter {
 			OntResource type = attrib.getResource(RDFS.range);
 			if( type != null ) {
 				//attrib.removeAll(RDF.type);
-				if( (type.hasProperty(RDF.type, RDFS.Datatype) 
+				if( (type.hasRDFType(RDFS.Datatype) 
 						|| type.getNameSpace().equals(XSD.getURI())) 
 							&& ! type.hasProperty(UML.hasStereotype, UML.enumeration))
-					attrib.addProperty( RDF.type, OWL.DatatypeProperty);
+					attrib.addRDFType( OWL.DatatypeProperty);
+				else if( ! type.hasRDFType()) {
+					type.addRDFType(RDFS.Datatype);
+					attrib.addRDFType( OWL.DatatypeProperty);
+					System.out.println("Inferring that " + type + " is a Datatype");
+				}
 				else
-					attrib.addProperty( RDF.type, OWL.ObjectProperty);
-				attrib.addProperty( RDF.type, OWL.FunctionalProperty);
+					attrib.addRDFType( OWL.ObjectProperty);
+				attrib.addRDFType(OWL.FunctionalProperty);
 			}
 		}
 	}

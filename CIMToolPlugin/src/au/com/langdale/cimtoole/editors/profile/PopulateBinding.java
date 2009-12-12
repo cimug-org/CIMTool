@@ -134,7 +134,7 @@ public class PopulateBinding  {
 			public boolean allow(Object value) {
 				Node node = (Node)value;
 				OntResource subject = node.getSubject();
-				return ! bases.contains(subject) && typeCheck(node);
+				return ! excluded.contains(subject) && typeCheck(node);
 			}
 			
 			protected abstract boolean typeCheck(Node value);
@@ -172,8 +172,8 @@ public class PopulateBinding  {
 				return value instanceof PropertyNode 
 					|| value instanceof DatatypeNode
     				|| value instanceof ExtensionNode
-					|| value instanceof SuperClassNode
-					|| value instanceof SubClassNode
+					|| (value instanceof SuperClassNode) && showSuper.getSelection()
+					|| (value instanceof SubClassNode) && showSub.getSelection()
 					|| value instanceof IndividualNode;
 			}
 			
@@ -202,13 +202,15 @@ public class PopulateBinding  {
 		}
 		
 		ProfileEditor master;
-		protected Set bases;
-		protected Button control;
+		protected Set excluded;
+		protected Button showDups, showSuper, showSub;
 
-		public void bind(String name, String duplicates, Assembly plumbing, ProfileEditor master) {
+		public void bind(String name, String duplicates, String supers, String subs, Assembly plumbing, ProfileEditor master) {
 			this.master = master;
-			this.control = (Button) plumbing.getControl(duplicates);
-			super.bind(name, plumbing, duplicates);
+			showDups = (Button) plumbing.getControl(duplicates);
+			showSuper = (Button) plumbing.getControl(supers);
+			showSub = (Button) plumbing.getControl(subs);
+			super.bind(name, plumbing);
 		}
 
 		public void refresh() {
@@ -236,14 +238,15 @@ public class PopulateBinding  {
 				filter = null;
 			}
 			
-			bases = new HashSet();
+			excluded = new HashSet();
 			
-			boolean duplicates = (node instanceof CatalogNode) && control.getSelection();
+			boolean duplicates = (node instanceof CatalogNode) && showDups.getSelection();
 			if(! duplicates) {
 				Iterator it = node.iterator();
 				while (it.hasNext()) {
 					ModelNode child = (ModelNode) it.next();
-					bases.add(child.getBase());
+					if( ! (child instanceof SuperTypeNode))
+					    excluded.add(child.getBase());
 				}
 			}
 

@@ -53,6 +53,11 @@ def do_upload(bucket_name=BUCKET):
 	upload_files(bucket, manifest())
 	mirror(bucket, ARCHIVE)
 	mirror(bucket, eclipse_dist)
+
+def do_interim(bucket_name=BUCKET):
+	bucket = get_bucket(bucket_name)
+	upload_files(bucket, manifest())
+	mirror(bucket, ARCHIVE)
 	
 def do_build():
 	eclipse_dist = ECLIPSE.replace("VERSION", lastversion())

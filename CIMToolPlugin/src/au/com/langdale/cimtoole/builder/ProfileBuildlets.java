@@ -311,11 +311,12 @@ public class ProfileBuildlets extends Info {
 				new TransformBuildlet("html", "html"),
 				new TextBuildlet("sql", "sql"),
 				new TextBuildlet("jpa", "java"),
+				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
+				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-				
+				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true)
 			};
 	}
 }

@@ -331,6 +331,8 @@ public class ProfileSerializer extends AbstractReader {
 		
 		if( node.isDatatype() ) {
 			OntResource range = node.getBaseProperty().getRange();
+			if( range == null )
+				range = model.getOntModel().createResource(XSD.xstring.asNode());
 			if( range.getNameSpace().equals(xsd))  {
 				elem = new Element("Simple");
 			}

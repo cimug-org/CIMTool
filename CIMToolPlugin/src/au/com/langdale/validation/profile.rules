@@ -342,16 +342,18 @@
 	[
 		(?PDomain rdfs:subClassOf ?Restrict)
 		(?Restrict rdf:type owl:Restriction)
+		(?Restrict owl:onProperty ?Prop)
 	->
 		[
 			(?Restrict owl:cardinality ?V)
+			greater(?V 0) # cardinality ?V is greater than 0
 		->
 			problem(?Ref ?Prop "may not be mandatory in this class" ?PDomain "based on" ?SDomain)
 			remove(?Ref, ?Restrict)
 		]||
 		[
 			(?Restrict owl:minCardinality ?V)
-			greater(?V 0)
+			greater(?V 0) # minimum cardinality ?V is greater than 0
 		->
 			problem(?Ref ?Prop "may not be mandatory in this class" ?PDomain "based on" ?SDomain)
 			remove(?Ref, ?Restrict)

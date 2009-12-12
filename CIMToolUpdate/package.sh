@@ -12,9 +12,10 @@ fi
 
 REPO=$PWD
 ASSEMBLY=$PWD/"Assembly"
+ARCHIVE=$PWD/CIMToolUpdate.zip
 JRE="/home/adv/distfiles/sun-jre-v6-win32.zip"
 PLATFORM="/home/adv/distfiles/eclipse-platform-3.5-win32.zip"
-ECLIPSE="/home/adv/share/eclipse-rcp-galileo/eclipse"
+ECLIPSE="/home/adv/share/eclipse/eclipse"
 PACKAGE=$PWD/${1:-CIMTool-Eclipse.zip}
 
 
@@ -22,8 +23,8 @@ make_package() {
 
 rm -rf $ASSEMBLY $PACKAGE
 mkdir $ASSEMBLY
-unzip $PLATFORM -d $ASSEMBLY
-unzip $JRE -d $ASSEMBLY/eclipse
+unzip -q $PLATFORM -d $ASSEMBLY
+unzip -q $JRE -d $ASSEMBLY/eclipse
 
 patch $ASSEMBLY/eclipse/eclipse.ini << EOF
 --- Assembly/eclipse/eclipse.ini        2009-06-12 08:33:48.000000000 +1000
@@ -39,17 +40,22 @@ patch $ASSEMBLY/eclipse/eclipse.ini << EOF
  -vmargs
 EOF
 
+inject
+
+( cd $ASSEMBLY && zip -q -r $PACKAGE eclipse )
+
+
+}
+
+inject () {
 $ECLIPSE \
     -application org.eclipse.equinox.p2.director \
    -repository file:$REPO \
    -installIU au.com.langdale.cimtoole.feature.feature.group \
    -destination $ASSEMBLY/eclipse \
    -profile PlatformProfile
-
-( cd $ASSEMBLY && zip -r $PACKAGE eclipse )
-
-
 }
+
 
 mirror_site() {
 
@@ -62,14 +68,14 @@ $ECLIPSE \
     -source file:$REPO \
     -destination file:$ASSEMBLY/site
 
-( cd $ASSEMBLY && zip -r $ARCHIVE  * )
+( cd $ASSEMBLY && zip -q -r $ARCHIVE  * )
 
 }
 
 make_site() {
 
 rm -f $ARCHIVE
-( cd $REPO && zip -r -n jar $ARCHIVE site.xml content.jar artifacts.jar plugins features )
+( cd $REPO && zip -q -r -n jar $ARCHIVE site.xml content.jar artifacts.jar plugins features )
 
 }
 

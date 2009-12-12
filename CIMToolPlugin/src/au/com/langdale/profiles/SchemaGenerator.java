@@ -267,7 +267,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			PropertySpec info = group.getSummary();
 			OntResource inverse = info.prop.getInverse();
 			if( inverse != null && ! props.containsKey(inverse)) {
-				props.add(inverse, info.base_domain, info.base_range);
+				props.add(inverse, info.base_range, info.base_domain);
 			}
 		}		
 	}
@@ -370,7 +370,8 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			String domain = catalog.getURI(rest.base_domain);
 			if(rest.prop.isDatatypeProperty()) {
 				TypeInfo range = new TypeInfo( rest.prop.getRange(), this);
-				emitRestriction(uri, domain, range.xsdtype);
+				if( range.xsdtype != null)
+					emitRestriction(uri, domain, range.xsdtype);
 			}
 			else if( rest.base_range != null){
 				emitRestriction(uri, domain, catalog.getURI(rest.base_range));
