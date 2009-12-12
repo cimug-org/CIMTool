@@ -2,7 +2,7 @@
 <feature
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
-      version="1.6.5.qualifier"
+      version="1.6.6.qualifier"
       provider-name="Langdale Consultants">
 
    <description url="http://cimtool.org">
@@ -46,11 +46,14 @@ redistributed under the Jena license and the Apache license.
 
 This software includes parts of the POI package 
 redistributed under the Apache license. 
-D OF THE POSSIBILITY OF SUCH DAMAGE.
+
+This software includes parts of the Jackcess package http://jackcess.sourceforge.net/ 
+info@healthmarketscience redistributed under the LGPL version 2.1.
    </license>
 
    <url>
       <update label="CIMTool Update Site" url="http://files.cimtool.org"/>
+      <discovery label="CIMTool Update Site" url="http://files.cimtool.org"/>
    </url>
 
    <requires>

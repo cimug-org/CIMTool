@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.PageBook;
@@ -104,15 +103,12 @@ public class Templates {
 	}
 
 	private static class PushButtonTemplate extends ButtonTemplate {
-		private SelectionListener listener;
-
-		PushButtonTemplate(int style, String name, String text, Object image,	SelectionListener listener) {
+		PushButtonTemplate(int style, String name, String text, Object image) {
 			super(style, name, text, image);
-			this.listener = listener;
 		}
 		
 		protected void listen(Button widget, Assembly assembly) {
-			widget.addSelectionListener(listener);
+			widget.addSelectionListener(assembly.createButtonListener(name));
 		}
 	}
 
@@ -252,19 +248,15 @@ public class Templates {
 	}
 	
 	private static class MarkupTemplate extends SubjectTemplate {
-		private IHyperlinkListener listener;
-		
-		MarkupTemplate(int style, String name, String text, IHyperlinkListener listener) {
+		MarkupTemplate(int style, String name, String text) {
 			super(style, name, text);
-			this.listener = listener;
 		}
 
 		public Control realise(Composite parent, Assembly assembly) {
 			FormText widget = assembly.getToolkit().createFormText(parent, false);
 			widget.setText(text, true, false);
-			if( listener != null)
-				widget.addHyperlinkListener(listener);
 			register(widget, assembly);
+			widget.addHyperlinkListener(assembly.hyperlinkListener);
 			return widget;
 		}
 	}
@@ -361,6 +353,21 @@ public class Templates {
 			viewer.setContentProvider(new DefaultContentProvider());
 			return table;
 		}
+	}
+	
+	private static class FocusMarker implements Template {
+		private Template inner;
+
+		public FocusMarker(Template inner) {
+			this.inner = inner;
+		}
+
+		public Control realise(Composite parent, Assembly assembly) {
+			Control widget = inner.realise(parent, assembly);
+			assembly.putControl("focus", widget);
+			return widget;
+		}
+		
 	}
 	
 	public static class DefaultContentProvider implements IStructuredContentProvider {
@@ -625,6 +632,10 @@ public class Templates {
 		return new RightAlignTemplate(a); 
 	}
 	
+	public static Template Row(Template[] templates) {
+		return new RowTemplate(SWT.HORIZONTAL, templates); 
+	}
+	
 	public static Template Row(Template a) {
 		return new RowTemplate(SWT.HORIZONTAL, new Template[] {a}); 
 	}
@@ -686,15 +697,11 @@ public class Templates {
 	}
 	
 	public static Template Markup(String text) {
-		return new MarkupTemplate(0, null, text, null);
+		return new MarkupTemplate(0, null, text);
 	}
 	
 	public static Template Markup(String name, String text) {
-		return new MarkupTemplate(0, name, text, null);
-	}
-	
-	public static Template Markup(String text, IHyperlinkListener listener) {
-		return new MarkupTemplate(0, null, text, listener);
+		return new MarkupTemplate(0, name, text);
 	}
 	
 	public static Template TextArea(String name) {
@@ -778,12 +785,12 @@ public class Templates {
 		return new CheckBoxTemplate(SWT.RADIO, name, text, null);
 	}
 	
-	public static Template PushButton(String name, String text, SelectionListener listener) {
-		return new PushButtonTemplate(SWT.PUSH, name, text, null, listener);
+	public static Template PushButton(String name, String text) {
+		return new PushButtonTemplate(SWT.PUSH, name, text, null);
 	}
 	
-	public static Template PushButton(String name, String text, Object image, SelectionListener listener) {
-		return new PushButtonTemplate(SWT.PUSH, name, text, image, listener);
+	public static Template PushButton(String name, String text, Object image) {
+		return new PushButtonTemplate(SWT.PUSH, name, text, image);
 	}
 	
 	public static Template FileField(String name, String text, String ext) {
@@ -792,6 +799,14 @@ public class Templates {
 	
 	public static Template FileField(String name, String text, String[] exts) {
 		return new FileFieldTemplate(SWT.NONE, name, text, exts);
+	}
+	
+	public static Template Focus(Template template) {
+		return new FocusMarker(template);
+	}
+	
+	public static Template Stack(Template[] templates) {
+		return new StackTemplate(templates);
 	}
 	
 	public static Template Stack(Template a, Template b) {
@@ -844,6 +859,10 @@ public class Templates {
 	
 	public static Template Grid(GroupTemplate a, GroupTemplate b, GroupTemplate c, GroupTemplate d, GroupTemplate e, GroupTemplate f, GroupTemplate g, GroupTemplate h) {
 		return new GridTemplate(new GroupTemplate[] {a, b, c, d, e, f, g, h});
+	}
+	
+	public static GroupTemplate Group( Template[] templates ) {
+		return new GroupTemplate(templates);
 	}
 	
 	public static GroupTemplate Group( Template a ) {

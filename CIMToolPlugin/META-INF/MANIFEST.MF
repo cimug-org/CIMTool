@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true
-Bundle-Version: 1.6.5.qualifier
+Bundle-Version: 1.6.6.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: cimtoole.jar,
  lib/xercesImpl.jar,
  lib/poi-3.0.1-FINAL-20070705.jar,
- lib/jackcess-1.1.19.jar
+ lib/jackcess-1.1.19.jar,
+ lib/commons-logging-1.1.1.jar
 Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin
 Bundle-Vendor: Langdale Consultants
 Require-Bundle: org.eclipse.ui,

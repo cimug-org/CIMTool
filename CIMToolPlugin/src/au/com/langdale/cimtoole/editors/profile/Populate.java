@@ -154,21 +154,21 @@ public class Populate extends FurnishedEditor {
 												CheckBox("unbounded", "Unbounded"))))),
 									Grid(Group(
 										Label("nested", "Select members of this nested class."), 
-										Right(Grid(Group(Label("local",""), Row(PushButton("named", "Change", named))))))),
+										Right(Grid(Group(Label("local",""), Row(PushButton("named", "Change"))))))),
 									Grid(Group(
 										Label("info", "Select profile members:"))),
 									Grid(Group(
 										Label("top", "Select classes or packages to profile."),
 										ViewCheckBox("duplicates", "Allow multiple profiles per class"),
-										Right( PushButton("search", "Search Schema", "search", search))))
+										Right( PushButton("search", "Search Schema", "search"))))
 								)
 							),
 							Group( 
 								TreeViewer("left", true), 
 								TreeViewer("right", true)),
 							Group( 
-								Right(Row(PushButton("to-left", "Add the selected items to the profile", "left", toLeft))), 
-								Row(PushButton("to-right", "Remove the selected items from the profile", "right", toRight)))
+								Right(Row(PushButton("to-left", "Add the selected items to the profile", "left"))), 
+								Row(PushButton("to-right", "Remove the selected items from the profile", "right")))
 						));
 			}
 
@@ -186,6 +186,11 @@ public class Populate extends FurnishedEditor {
 				TreeViewer right = getTreeViewer("right");
 				right.addSelectionChangedListener(new Target("left"));
 				master.listenToSelection(right);
+				
+				addListener("to-right", toRight);
+				addListener("to-left", toLeft);
+				addListener("search", search);
+				addListener("named", named);
 			}
 			
 			class Target implements ISelectionChangedListener {

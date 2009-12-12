@@ -65,7 +65,7 @@ public final class Summary extends FurnishedEditor {
 						Grid(
 							Group(Label("Location:"), DisplayField("location")),
 							Group(Label("Namespace:"), DisplayField("namespace")),
-							Group(Row(PushButton("more", "Reorganize and Repair", reorg))), 
+							Group(Row(PushButton("more", "Reorganize and Repair"))), 
 							Group(Label("Build the following from this profile:")),
 							Group(CheckboxTableViewer("buildlets", true))
 						)
@@ -75,27 +75,8 @@ public final class Summary extends FurnishedEditor {
 			@Override
 			protected void addBindings() {
 				buildlets.bind("buildlets", this);
+				addListener("more", reorg);
 			}
-			
-//			private SelectionListener remap = new SelectionListener() {
-//				public void widgetDefaultSelected(SelectionEvent e) {
-//					// no action
-//				}
-//				
-//				public void widgetSelected(SelectionEvent e) {
-//					master.remap();
-//				}
-//			};
-//			
-//			private SelectionListener reorg = new SelectionListener() {
-//				public void widgetDefaultSelected(SelectionEvent e) {
-//					// no action
-//				};
-//				
-//				public void widgetSelected(SelectionEvent e) {
-//					master.reorganize(getButton("refs").getSelection());
-//				};
-//			};
 
 			@Override
 			public void refresh() {

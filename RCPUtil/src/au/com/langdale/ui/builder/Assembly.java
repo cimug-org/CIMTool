@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.PageBook;
@@ -56,6 +59,7 @@ public class Assembly extends Plumbing {
 	private FormToolkit toolkit;
 	private Map subjects;
 	private Control root;
+	private ButtonObserver buttonObserver;
 
 	/** 
 	 * An Assembly requires a FormToolkit, that may be shared with other assemblies.
@@ -118,6 +122,14 @@ public class Assembly extends Plumbing {
 		root = template.realise(parent, this);
 		return root;
 	}
+	
+	/**
+	 * Add a generic button and hyperlink observer that will be attached to
+	 * all buttons and markup regions.
+	 */
+	public void setButtonObserver(ButtonObserver obs) {
+		this.buttonObserver = obs;
+	}
 
 	/**
 	 * Get a widget from the realised hierarchy of the indicated type and given name. 
@@ -149,6 +161,20 @@ public class Assembly extends Plumbing {
 		return widget;
 	}
 	
+	/**
+	 * Add a listener to a button.
+	 * @return 
+	 */
+	public void addListener( String name, SelectionListener listener) {
+		getButton(name).addSelectionListener(listener);
+	}
+	
+	/**
+	 * Add listener to a markup region.
+	 */
+	public void addListener( String name, IHyperlinkListener listener) {
+		getMarkup(name).addHyperlinkListener(listener);
+	}
 
 	/**
 	 * Convenience to locate an icon and set the image of a control.
@@ -327,6 +353,37 @@ public class Assembly extends Plumbing {
 			doRefresh();
 		}
 		
+	};
+	
+	public SelectionListener createButtonListener(final String name) {
+		return new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if( buttonObserver != null )
+					buttonObserver.clicked(name);
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				if( buttonObserver != null )
+					buttonObserver.clicked(name);
+			}
+		};
+	}
+
+	public final IHyperlinkListener hyperlinkListener = new IHyperlinkListener() {
+		public void linkActivated(HyperlinkEvent e) {
+			if( buttonObserver != null )
+				buttonObserver.clicked(e.getHref().toString());
+		}
+
+		public void linkEntered(HyperlinkEvent e) {
+			if( buttonObserver != null )
+				buttonObserver.entered(e.getHref().toString());
+		}
+
+		public void linkExited(HyperlinkEvent e) {
+			if( buttonObserver != null )
+				buttonObserver.exited(e.getHref().toString());
+		}
 	};
 	
 	public final ModifyListener modifyListener = new ModifyListener() {
