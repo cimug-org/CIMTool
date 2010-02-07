@@ -13,15 +13,14 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.util.Logger;
-import au.com.langdale.util.NSMapper;
-
 import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.util.Logger;
+import au.com.langdale.util.NSMapper;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -171,13 +170,13 @@ public class SpreadsheetParser {
 	 * @param namespace: the namespace for newly created profile defintions
 	 * @param logger: destination for error messages
 	 */
-	public SpreadsheetParser(HSSFWorkbook book, OntModel background, String namespace, Logger logger) {
+	public SpreadsheetParser(HSSFWorkbook book, OntModel result, OntModel background, String namespace, Logger logger) {
 		this.namespace = namespace;
 		this.book = book;
+		this.result = result;
 		this.background = background;
 		mapper = new NSMapper(background);
-		model = Composition.overlay(background);
-		result = Composition.getUpdatableModel(model);
+		model = Composition.merge(result, background);
 		this.logger = logger;
 	}
 
@@ -212,7 +211,7 @@ public class SpreadsheetParser {
 	 * This is called once all cells of interest have been scanned.
 	 */
 	public void reorganize() {
-		Reorganizer utility = new Reorganizer(result, background, namespace, true);
+		Reorganizer utility = new Reorganizer(result, background, true);
 		utility.run();
 		result = utility.getResult();
 	}

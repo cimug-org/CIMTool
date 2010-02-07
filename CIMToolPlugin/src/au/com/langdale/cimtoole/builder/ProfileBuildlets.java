@@ -15,7 +15,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,8 +22,12 @@ import org.xml.sax.SAXException;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
-import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.jena.OntModelProvider;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.OWLGenerator;
 import au.com.langdale.profiles.ProfileModel;
@@ -34,15 +37,11 @@ import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.workspace.ResourceOutputStream;
 
-import au.com.langdale.jena.OntModelProvider;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.Resource;
-import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDF;
 /**
  * A series of <code>Buildlet</code>s for building profile artifacts.
  */
-public class ProfileBuildlets extends Info {
+public class ProfileBuildlets extends Task {
 	/**
 	 * Buildlet for a profile artifact. 
 	 * 
@@ -93,26 +92,6 @@ public class ProfileBuildlets extends Info {
 			return ext;
 		}
 		
-		protected ProfileModel getMessageModel(IFile file) throws CoreException {
-			ProfileModel model = new ProfileModel();
-			model.setNamespace(getProperty(file, PROFILE_NAMESPACE));
-			model.setOntModel(getProfileModel(file));
-			model.setBackgroundModel(getBackgroundModel(file));
-			model.setRootResource(MESSAGE.profile);
-			return model;
-		}
-
-		protected OntModel getBackgroundModel(IFile file) throws CoreException {
-			Cache cache = CIMToolPlugin.getCache();
-			IFolder schema = getSchemaFolder(file.getProject());
-			return cache.getMergedOntologyWait(schema);
-		}
-
-		protected OntModel getProfileModel(IFile file) throws CoreException {
-			Cache cache = CIMToolPlugin.getCache();
-			return cache.getOntologyWait(file);
-		}
-
 		public boolean isFlagged(IFile file) throws CoreException {
 			Cache cache = CIMToolPlugin.getCache();
 			OntModel model = cache.getOntologyWait(file);
@@ -139,6 +118,26 @@ public class ProfileBuildlets extends Info {
 				build( result, monitor );				
 		}
 	}
+	
+	/**
+	 * Buildlet that merely outputs the profile in a different language.
+	 */
+	public static class CopyBuildlet extends ProfileBuildlet {
+		private String format;
+		
+		public CopyBuildlet(String format, String ext) {
+			super(ext);
+			this.format = format;
+		}
+		@Override
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
+			IFile file = getRelated(result, "owl");
+			OntModel model = getProfileModel(file);
+			writeOntology( result, model, format, monitor );
+		}
+	
+	}
+	
 	/**
 	 * Buildlet for a profile artifact that is the product of an XSLT transform.
 	 */
@@ -166,7 +165,7 @@ public class ProfileBuildlets extends Info {
 			ProfileModel tree = getMessageModel(file);
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
-				serializer.setBaseURI(getProperty(file, PROFILE_NAMESPACE));
+				serializer.setBaseURI(tree.getNamespace());
 				
 				// TODO: make this better
 				serializer.setVersion("Beta");
@@ -256,15 +255,19 @@ public class ProfileBuildlets extends Info {
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			boolean preserveNS = getPreferenceOption(PRESERVE_NAMESPACES);
-			String namespace = preserveNS? getSchemaNamespace(file): getProperty(file, PROFILE_NAMESPACE);
-			RDFSBasedGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, preserveNS);
+			
+			OntModel profileModel = getProfileModel(file);
+			OntModel backgroundModel = getBackgroundModel(file);
+			RDFSBasedGenerator generator = getGenerator(profileModel, backgroundModel, preserveNS);
 			generator.run();
-			System.out.println("Generated ontology size: " + generator.getResult().size());
-			Task.write(generator.getResult(), namespace, true, result, lang, monitor);
+			OntModel resultModel = generator.getResult();
+			System.out.println("Generated ontology size: " + resultModel.size());
+	
+			Task.write(resultModel, generator.getOntURI(), true, result, lang, monitor);
 			result.setDerived(true);
 		}
 
-		protected abstract RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException;
+		protected abstract RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNS) throws CoreException;
 	}
 	/**
 	 * Buildlet for the simple OWL representation of the profile.
@@ -275,8 +278,8 @@ public class ProfileBuildlets extends Info {
 		}
 
 		@Override
-		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
-			return new OWLGenerator(profileModel, backgroundModel, namespace, preserveNS, withInverses);
+		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNS) throws CoreException {
+			return new OWLGenerator(profileModel, backgroundModel, preserveNS, withInverses);
 		}
 	}
 	/**
@@ -288,8 +291,8 @@ public class ProfileBuildlets extends Info {
 		}
 
 		@Override
-		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
-			return new RDFSGenerator(profileModel, backgroundModel, namespace, preserveNS, withInverses);
+		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNS) throws CoreException {
+			return new RDFSGenerator(profileModel, backgroundModel, preserveNS, withInverses);
 		}
 	}
 	
@@ -316,7 +319,8 @@ public class ProfileBuildlets extends Info {
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
 				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true)
+				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
+				new CopyBuildlet("TURTLE", "ttl")
 			};
 	}
 }

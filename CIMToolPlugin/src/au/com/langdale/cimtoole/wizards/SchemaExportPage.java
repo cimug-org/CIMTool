@@ -16,7 +16,6 @@ import static au.com.langdale.ui.builder.Templates.SaveButton;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.FurnishedWizardPage;
@@ -26,11 +25,9 @@ import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 public class SchemaExportPage extends FurnishedWizardPage {
 
 	public static final String SCHEMA = "schema.merged-owl";
-	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
 
 	private boolean internal;
 	private TextBinding path = new TextBinding(Validators.NEW_FILE);
-	private TextBinding namespace = new TextBinding(Validators.NAMESPACE, NAMESPACE);
 	private ProjectBinding projects = new ProjectBinding();
 
 	public SchemaExportPage() {
@@ -39,10 +36,6 @@ public class SchemaExportPage extends FurnishedWizardPage {
 	
 	public void setSelected(IStructuredSelection selection) {
 		projects.setSelected(selection);
-	}
-	
-	public String getNamespace() {
-		return namespace.getText();
 	}
 
 	public String getPathname() {
@@ -66,7 +59,6 @@ public class SchemaExportPage extends FurnishedWizardPage {
 				return Grid(
 					Group(Label("Project")), 
 					Group(CheckboxTableViewer("projects")),
-					Group(Label("Namespace URI:"), Field("namespace")),
 					Group(RadioButton("internal", "Create "+ SCHEMA + " in the project")),
 					Group(RadioButton("external", "Export a file to filesystem")),
 					Group(Label("File to export:"), Field("path"), Row(SaveButton("save", "path", "*.owl")))
@@ -77,7 +69,6 @@ public class SchemaExportPage extends FurnishedWizardPage {
 			protected void addBindings() {
 				projects.bind("projects", this);
 				path.bind("path", this);
-				namespace.bind("namespace", this);
 			}
 			
 			private IProject last;

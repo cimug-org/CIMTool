@@ -44,11 +44,11 @@ public class SplitValidator extends ValidatorUtil implements ValidatorProtocol {
 	 * @throws ParserException
 	 * @throws IOException
 	 */
-	public SplitValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
+	public SplitValidator(OntModel schema, InputStream ruleText) throws ParserException, IOException {
 		functors = StandardFunctorActions.create();
 		BuiltinRegistry registry = new ProxyRegistry(functors.keySet());
 		ValidationBuiltins.registerAll(registry);
-		rules = expandRules(schema, namespace, ruleText, registry);
+		rules = expandRules(schema, ruleText, registry);
 	}
 	/**
 	 * Set an option that will be available to the validation rules.

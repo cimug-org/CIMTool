@@ -53,6 +53,18 @@ public final class Summary extends FurnishedEditor {
 			wizard.dispose();
 		}
 	};
+	
+	private SelectionListener edns = new SelectionListener() {
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// no action
+		}
+		
+		public void widgetSelected(SelectionEvent e) {
+			NamespaceWizard wizard = new NamespaceWizard(master);
+			wizard.run();
+			wizard.dispose();
+		}
+	};
 
 	@Override
 	protected Content createContent() {
@@ -64,7 +76,7 @@ public final class Summary extends FurnishedEditor {
 				return Form(
 						Grid(
 							Group(Label("Location:"), DisplayField("location")),
-							Group(Label("Namespace:"), DisplayField("namespace")),
+							Group(Label("Namespace:"), DisplayField("namespace"), PushButton("edns", "Edit")),
 							Group(Row(PushButton("more", "Reorganize and Repair"))), 
 							Group(Label("Build the following from this profile:")),
 							Group(CheckboxTableViewer("buildlets", true))
@@ -76,6 +88,7 @@ public final class Summary extends FurnishedEditor {
 			protected void addBindings() {
 				buildlets.bind("buildlets", this);
 				addListener("more", reorg);
+				addListener("edns", edns);
 			}
 
 			@Override

@@ -5,7 +5,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/arq.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/icu4j_3_4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/iri.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jena.jar" sourcepath="/extra/share/Jena-2.6.0/src"/>
+	<classpathentry exported="true" kind="lib" path="lib/jena.jar" sourcepath="/home/adv/share/Jena-2.6.0/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/jenatest.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/json.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.5.jar"/>

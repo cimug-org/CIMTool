@@ -69,7 +69,6 @@ public class RefactorWizard extends Wizard  {
 	public class WizardAction implements IWorkspaceRunnable {
 		OntModel profileModel = master.getProfileModel();
 		OntModel projectModel = master.getProjectModel();
-		String namespace = master.getNamespace();
 
 		public void run(IProgressMonitor monitor) throws CoreException {
 			if( profileModel == null || projectModel == null)
@@ -81,18 +80,18 @@ public class RefactorWizard extends Wizard  {
 				monitor.worked(1);
 			}
 			if( reorg.isTrue()) {
-				Reorganizer utility = new Reorganizer(profileModel, projectModel, namespace, refs.isTrue());
+				Reorganizer utility = new Reorganizer(profileModel, projectModel, refs.isTrue());
 				utility.run();
 				profileModel = utility.getResult();
 				monitor.worked(1);
 			}
 			else if( refs.isTrue()) {
-				Refactory refactory = new Refactory(profileModel, projectModel, namespace);
+				Refactory refactory = new Refactory(profileModel, projectModel);
 				refactory.setByReference();
 				monitor.worked(1);
 			}
 			if( concrete.isTrue()) {
-				Refactory refactory = new Refactory(profileModel, projectModel, namespace);
+				Refactory refactory = new Refactory(profileModel, projectModel);
 				refactory.setConcrete();
 				monitor.worked(1);
 			}

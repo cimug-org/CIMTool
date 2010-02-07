@@ -21,9 +21,18 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 public class OWLGenerator extends RDFSBasedGenerator {
 	private boolean useRestrictions = true;
 
-	public OWLGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNamespaces, boolean withInverses) {
-		super(profileModel, backgroundModel, namespace, preserveNamespaces, withInverses);
+	public OWLGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNamespaces, boolean withInverses) {
+		super(profileModel, backgroundModel, preserveNamespaces, withInverses);
 		result.setNsPrefix("uml", UML.NS);
+	}
+	
+	@Override
+	protected void emitHeader(String uri, String label, String comment) {
+		OntResource node = result.createIndividual(uri, OWL.Ontology);
+		if( label != null )
+			node.addLabel(label, null);
+		if( comment != null )
+			node.addComment(comment, null);
 	}
 
 	@Override

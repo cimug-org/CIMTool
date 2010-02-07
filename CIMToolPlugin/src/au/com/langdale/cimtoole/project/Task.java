@@ -26,19 +26,17 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-
 import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
 import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
+import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.RepairMan;
@@ -48,6 +46,8 @@ import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAPExtractor;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
+
+import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
  * Utility tasks for CIMTool plugin.  Tasks are instances of <code>IWorkspaceRunnable</code>
@@ -76,9 +76,10 @@ public class Task extends Info {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				OntModel model = ModelFactory.createMem();
-				initProfile(model, envname);
+				OntModel backgroundModel = getBackgroundModel(file);
+				initProfile(model, backgroundModel, namespace, envname, null);
 				monitor.worked(1);
-				write(model, namespace, false, file, "RDF/XML-ABBREV", monitor);
+				writeProfile(file, model, monitor);
 				putProperty( file, PROFILE_NAMESPACE, namespace);
 				monitor.worked(1);
 			}
@@ -148,12 +149,14 @@ public class Task extends Info {
 		};
 	}
 	
-	public static IWorkspaceRunnable importProfile(final IFile file, final String pathname, final String namespace) {
-		return new IWorkspaceRunnable() {
+	public static IWorkspaceRunnable importProfile(final IFile file, final String pathname) {
+		return new IWorkspaceRunnable() { 
 			public void run(IProgressMonitor monitor) throws CoreException {
+				String defaultName = getPreference(PROFILE_ENVELOPE);
+				String namespace = getPreference(PROFILE_NAMESPACE);
 				OntModel model = parse(openExternalFile(pathname, monitor), "owl", namespace);
-				initProfile(model, getPreference(PROFILE_ENVELOPE));
-				writeProfile(file, model, namespace, monitor);
+				model = fixupProfile(model, getBackgroundModel(file), defaultName, namespace);
+				writeProfile(file, model, monitor);
 				putProperty( file, PROFILE_NAMESPACE, namespace);
 			}
 		};
@@ -198,9 +201,8 @@ public class Task extends Info {
 		else if( isSchema(resource))
 			return createUMLTreeModel(cache.getOntologyWait((IFile)resource));
 		else if(isProfile(resource)) {
-			OntModel model = cache.getOntologyWait((IFile)resource);
-			OntModel backgroundModel = cache.getMergedOntologyWait(getSchemaFolder(resource.getProject()));
-			return createProfileTreeModel(model, backgroundModel, getProperty(resource, PROFILE_NAMESPACE));
+			IFile file = (IFile) resource;
+			return getMessageModel(file);
 		} else 
 			return new UMLTreeModel();
 	}
@@ -211,14 +213,12 @@ public class Task extends Info {
 		tree.setRootResource(UML.global_package);
 		return tree;
 	}
-
-	private static TreeModelBase createProfileTreeModel(OntModel model, OntModel backgroundModel, String namespace) {
-		ProfileModel tree = new ProfileModel();
-		tree.setNamespace(namespace);
-		tree.setOntModel(model);
-		tree.setBackgroundModel(backgroundModel);
-		tree.setRootResource(MESSAGE.profile);
-		return tree;
+	
+	public static ProfileModel getMessageModel(IFile file) throws CoreException {
+		ProfileModel model = new ProfileModel();
+		model.setOntModel(getProfileModel(file));
+		model.setBackgroundModel(getBackgroundModel(file));
+		return model;
 	}
 
 	private static OntModel parseXMI(IFile file) throws CoreException {
@@ -327,7 +327,7 @@ public class Task extends Info {
 		}
 	}
 
-	public static IWorkspaceRunnable exportSchema(final IProject project,	final String pathname, final String namespace) {
+	public static IWorkspaceRunnable exportSchema(final IProject project,	final String pathname) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IFolder folder = Info.getSchemaFolder(project);
@@ -339,7 +339,7 @@ public class Task extends Info {
 				catch( IOException ex) {
 					throw error("can't write to " + pathname);
 				}
-				write(schema, namespace, true, "RDF/XML", output);
+				writeOntology(output, schema, "RDF/XML", monitor);
 			}
 		};
 	}
@@ -349,18 +349,18 @@ public class Task extends Info {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if( repairs.size() > 0 ) {
 					IFile related = Info.getRelated(file, "owl");
-					OntModel model = CIMToolPlugin.getCache().getOntologyWait(related);
+					OntModel model = Task.getProfileModel(related);
 					model = repairs.apply(model);
-					writeProfile(related, model, Info.getProperty(related, Info.PROFILE_NAMESPACE), monitor);
+					writeProfile(related, model, monitor);
 				}
 			}
 		};
 	}
 	
-	public static IWorkspaceRunnable saveProfile(final IFile file, final OntModel model, final String namespace) {
+	public static IWorkspaceRunnable saveProfile(final IFile file, final OntModel model) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				writeProfile(file, model, namespace, monitor);
+				writeProfile(file, model, monitor);
 			}
 		};
 	}
@@ -419,15 +419,92 @@ public class Task extends Info {
 			file.create(source, false, monitor);
 	}
 
-	private static void writeProfile(final IFile file, final OntModel model, final String namespace, IProgressMonitor monitor) throws CoreException {
-		write(model, namespace, false, file, IO.RDF_XML_WITH_NODEIDS, monitor);
+	public static void writeProfile(IFile file, OntModel model, IProgressMonitor monitor) throws CoreException {
+		writeOntology(file, model, IO.RDF_XML_WITH_NODEIDS, monitor);
+	}
+	
+	public static void writeOntology(IFile file, OntModel model, String format, IProgressMonitor monitor) throws CoreException {
+		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
+		writeOntology(stream, model, format, monitor);
+	}
+	
+	public static void writeOntology(OutputStream stream, OntModel model, String format, IProgressMonitor monitor) throws CoreException {
+		OntResource ont = model.getValidOntology();
+		String namespace;
+		if( ont != null ) {
+			namespace = ont.getURI() + "#";
+			model.setNsPrefix("", namespace);
+		}
+		else
+			namespace = null;
+		write(model, namespace, true, format, stream);
+		
 	}
 
-	public static void initProfile(OntModel profileModel, String envname) {
-		// add ontology header to an old or empty profile
-		if( ! profileModel.contains(MESSAGE.profile, RDF.type, OWL.Ontology)) {
-			MESSAGE.loadOntology(profileModel);
-			profileModel.add(MESSAGE.profile, RDFS.label, envname, null);
+	public static OntModel getBackgroundModel(IFile file) throws CoreException {
+		Cache cache = CIMToolPlugin.getCache();
+		IFolder schema = getSchemaFolder(file.getProject());
+		return cache.getMergedOntologyWait(schema);
+	}
+
+	public static OntModel getProfileModel(IFile file) throws CoreException {
+		Cache cache = CIMToolPlugin.getCache();
+		return fixupProfile(file, cache.getOntologyWait(file), getBackgroundModel(file));
+	}
+	
+	public static OntModel fixupProfile(IFile file, OntModel model, OntModel backgroundModel) {
+		
+		String defaultName, namespace;
+		try {
+			defaultName = getProperty(file, Info.PROFILE_ENVELOPE);
+			namespace = getProperty(file, PROFILE_NAMESPACE);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return fixupProfile(model, backgroundModel, defaultName, namespace);
+	}
+	
+	private static OntModel fixupProfile(OntModel model, OntModel backgroundModel, String defaultName, String namespace) {
+		OntResource header = model.getValidOntology();
+		if( header != null ) 
+			return model;
+		
+		model = Composition.copy(model);
+		
+		// remove any old style header
+		OntResource old = MESSAGE.profile.inModel(model);
+		String envname = old.getLabel();
+		String comment = old.getComment();
+		old.remove();
+
+		if( envname == null)
+			envname = defaultName;
+		
+		initProfile(model, backgroundModel, namespace, envname, comment);
+		return model;
+	}
+
+	public static void initProfile(OntModel profileModel, OntModel backgroundModel, String namespace, String envname, String comment) {
+		// add standard ontology header
+		if( ! namespace.endsWith("#"))
+			namespace += "#";
+		String uri = namespace.substring(0, namespace.length()-1);
+		OntResource header = profileModel.createResource(uri);
+		header.addRDFType(OWL.Ontology);
+		header.addLabel(envname, null);
+		if( comment != null)
+			header.addComment(comment, null);
+		profileModel.setNsPrefix("", namespace);
+		
+		
+		// add the import to the CIM
+		if( backgroundModel != null ) {
+			OntResource backOnt = backgroundModel.getValidOntology();
+			if( backOnt != null ) {
+				header.addProperty(OWL.imports, backOnt);
+				profileModel.setNsPrefix("cim", backOnt.getURI() + "#");
+			}
 		}
 	}
 }

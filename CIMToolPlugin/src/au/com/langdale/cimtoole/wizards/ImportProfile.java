@@ -32,6 +32,6 @@ public class ImportProfile extends Wizard implements IImportWizard {
 	
 	@Override
 	public boolean performFinish() {
-		return Jobs.runInteractive(Task.importProfile(main.getFile(), main.getPathname(), main.getNamespace()), main.getFile().getParent(), getContainer(), getShell());
+		return Jobs.runInteractive(Task.importProfile(main.getFile(), main.getPathname()), main.getFile().getParent(), getContainer(), getShell());
 	}
 }

@@ -31,11 +31,11 @@ public class Refactory extends ProfileUtility {
 	private OntModel profileModel;
 	private OntModel backgroundModel;
 	
-	public Refactory(OntModel profileModel, OntModel backgroundModel, String namespace) {
+	public Refactory(OntModel profileModel, OntModel backgroundModel) {
 		this.profileModel = profileModel;
 		this.backgroundModel = backgroundModel;
 		this.model = Composition.merge(profileModel, backgroundModel);
-		this.namespace = namespace;
+		this.namespace = profileModel.getValidOntology().getURI() + "#";
 	}
 	
 	public OntModel getModel() {
@@ -133,7 +133,7 @@ public class Refactory extends ProfileUtility {
 		//collectProps(profile, props);
 		
 		// consider sub profiles
-		Set subs = asSet(clss.listSubClasses(true));
+		Set subs = clss.listSubClasses(true).toSet();
 		Iterator it = subs.iterator();
 		while (it.hasNext()) {
 			OntResource sub = (OntResource) it.next();
@@ -209,19 +209,21 @@ public class Refactory extends ProfileUtility {
 		return result;
 	}
 
-	public void convert(ProfileClass profile, boolean named) {
+	@Deprecated 
+	private void convertXX(ProfileClass profile, boolean named) {
 		if( ! profile.getSubject().isAnon()) 
 			return;
 		
-		boolean hasNamed = hasNamedSuper(profile);
+		boolean hasNamed = hasNamedSuperXX(profile);
 		
 		if( !hasNamed && named)
-			convertToNamed(profile);
+			convertToNamedXX(profile);
 		else if(hasNamed && !named)
-			convertToUnnamed(profile);
+			convertToUnnamedXX(profile);
 	}
 
-	public boolean hasNamedSuper(ProfileClass profile) {
+	@Deprecated 
+	private boolean hasNamedSuperXX(ProfileClass profile) {
 		return profile.getSuperClasses().hasNext();
 //		Iterator it = profile.getSuperClasses();
 //		while (it.hasNext()) {
@@ -232,7 +234,8 @@ public class Refactory extends ProfileUtility {
 //		return false;
 	}
 
-	private void convertToNamed(ProfileClass profile) {
+	@Deprecated 
+	private void convertToNamedXX(ProfileClass profile) {
 
 		//PropertyAccumulator props = new PropertyAccumulator();
 		//removeProps(profile, props);
@@ -244,8 +247,9 @@ public class Refactory extends ProfileUtility {
 //		allocateProperties(props);
 	}
 
-	private void convertToUnnamed(ProfileClass profile) {
-		removeSupers(profile);
+	@Deprecated 
+	private void convertToUnnamedXX(ProfileClass profile) {
+		removeSupersXX(profile);
 	}
 
 	public OntResource findOrCreateNamedProfile(OntResource base) {
@@ -258,13 +262,14 @@ public class Refactory extends ProfileUtility {
 		return clss;
 	}
 	
-	public OntResource findBaseClass(OntResource clss) {
+	@Deprecated 
+	private OntResource findBaseClassXX(OntResource clss) {
 		if( map == null)
 			buildMap();
 		return map.getBase(clss);
 	}
 
-	public OntResource findNamedProfile(OntResource base) {
+	private OntResource findNamedProfile(OntResource base) {
 		if( map == null)
 			buildMap();
 
@@ -277,13 +282,15 @@ public class Refactory extends ProfileUtility {
 		return map.findRelatedProfiles(base, subclass, unique);
 	}
 	
-	public Collection findProfiles(OntResource base) {
+	@Deprecated 
+	private Collection findProfilesXX(OntResource base) {
 		if( map == null)
 			buildMap();
 		return map.find(base);
 	}
 
-	private void removeSupers(ProfileClass profile) {
+	@Deprecated 
+	private void removeSupersXX(ProfileClass profile) {
 		Iterator it = profile.getSuperClasses();
 		while (it.hasNext()) {
 			OntResource parent = (OntResource) it.next();

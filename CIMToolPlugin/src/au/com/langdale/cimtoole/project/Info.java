@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 
-import com.healthmarketscience.jackcess.Database;
-
 import au.com.langdale.cimtoole.CIMToolPlugin;
+
+import com.healthmarketscience.jackcess.Database;
 /**
  * A set of utilities that define the file locations, file types,  
  * properties and preferences used in a CIMTool project. 
@@ -28,14 +28,16 @@ public class Info {
 	// properties and preferences
 	public static final QualifiedName PROFILE_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_path");
 	public static final QualifiedName BASE_MODEL_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "base_model_path");
-	public static final QualifiedName PROFILE_ENVELOPE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_envelope");
 	public static final QualifiedName SCHEMA_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "schema_namespace");
-	public static final QualifiedName PROFILE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_namespace");
 	public static final QualifiedName INSTANCE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "instance_namespace");
 	public static final QualifiedName MERGED_SCHEMA_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "merged_schema_path");
 	public static final QualifiedName PRESERVE_NAMESPACES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "preserve_namespaces");
 	public static final QualifiedName USE_PACKAGE_NAMES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "user_package_names");
 	public static final QualifiedName PROBLEM_PER_SUBJECT = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "problem_per_subject");
+
+	// these are preferences only: use as file properties is deprecated
+	public static final QualifiedName PROFILE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_namespace");
+	public static final QualifiedName PROFILE_ENVELOPE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_envelope");
 
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
 	

@@ -52,11 +52,16 @@ public class CIMInterpreter extends UMLInterpreter {
 		classifyAttributes();
 		removeUntyped();
 //		convertToSubClassOf("extensionMSITE");
-		
+		createOntologyHeader(baseURI);
 		
 		System.out.println("Stage 4 XMI model size: " + getModel().size());
 		
 		return getModel();
+	}
+
+	private void createOntologyHeader(String baseURI) {
+		model.createIndividual(Translator.stripHash(baseURI), OWL.Ontology);
+		model.setNsPrefix("", baseURI);
 	}
 
 	private void propagateComments() {
@@ -176,7 +181,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			clss.addProperty(RDF.type, RDFS.Datatype);
 
 			if( truetype != null && ! clss.equals(truetype)) 
-				clss.addProperty( OWL.sameAs, truetype );
+				clss.addProperty( OWL.equivalentClass, truetype );
 			if( units != null )
 				clss.addProperty( UML.hasUnits, units);
 			if( multiplier != null )

@@ -5,31 +5,16 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.IO;
-import au.com.langdale.kena.OntModel;
 import au.com.langdale.validation.ProfileValidator;
 
 public class ConsistencyChecks extends Task {
-
-	public static OntModel getBackgroundModel(IFile file) throws CoreException {
-		Cache cache = CIMToolPlugin.getCache();
-		IFolder schema = getSchemaFolder(file.getProject());
-		return cache.getMergedOntologyWait(schema);
-	}
-
-	public static OntModel getProfileModel(IFile file) throws CoreException {
-		Cache cache = CIMToolPlugin.getCache();
-		return cache.getOntologyWait(file);
-	}
 	
 	public static class ProfileChecker extends Buildlet {
 
@@ -43,7 +28,7 @@ public class ConsistencyChecks extends Task {
 			
 			CIMBuilder.removeMarkers(file);
 
-			ProfileValidator checker = new ProfileValidator(getProfileModel(file), getBackgroundModel(file), getProperty(file, PROFILE_NAMESPACE));
+			ProfileValidator checker = new ProfileValidator(getProfileModel(file), getBackgroundModel(file));
 			try {
 				checker.run();
 			} catch (IOException e) {

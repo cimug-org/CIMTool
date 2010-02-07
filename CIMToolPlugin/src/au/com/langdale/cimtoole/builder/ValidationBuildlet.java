@@ -28,9 +28,9 @@ public class ValidationBuildlet extends ValidationBaseBuildlet {
 	}
 
 	@Override
-	protected ValidatorProtocol getValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
+	protected ValidatorProtocol getValidator(OntModel schema, InputStream ruleText) throws ParserException, IOException {
 		if( ruleText == null)
 			ruleText = ValidatorUtil.openStandardRules("cimtool-simple");
-		return new ModelValidator(schema, namespace, ruleText);
+		return new ModelValidator(schema, ruleText);
 	}
 }

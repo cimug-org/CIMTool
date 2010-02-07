@@ -79,8 +79,7 @@ public class ProjectTest extends WorkspaceTest {
 	protected void setupProfile(final String path) throws CoreException {
 		IWorkspaceRunnable task = Task.importProfile(
 				profile, 
-				path, 
-				PROFILE_NS);
+				path);
 		task.run(monitor);
 	}
 

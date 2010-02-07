@@ -6,12 +6,8 @@ import java.util.Map;
 
 import au.com.langdale.inference.RepairFunctors.RepairAction;
 import au.com.langdale.kena.Composition;
-import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
-
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
+import au.com.langdale.profiles.Renamer;
 
 public class RepairMan {
 	private Map actions = new HashMap();
@@ -47,24 +43,10 @@ public class RepairMan {
 			RepairAction action = (RepairAction) it.next(); 
 			action.repair(profile.getGraph(), renames);
 		}
-		if( renames.size() > 0 )
-			profile = applyRenamings( profile, renames );
-		
-		return profile;
-	}
-
-	private OntModel applyRenamings(OntModel profile, Map renames) {
-		OntModel result = ModelFactory.createMem();
-		Graph graph = result.getGraph();
-		Iterator it = profile.getGraph().find(Triple.ANY);
-		while( it.hasNext()) {
-			Triple t = (Triple) it.next();
-			Node s = (Node) renames.get(t.getSubject());
-			Node o = (Node) (t.getObject().isURI() ? renames.get(t.getObject()) : null);
-			if( s != null || o != null)
-				t = Triple.create(s != null? s: t.getSubject(), t.getPredicate(), o != null? o: t.getObject());
-			graph.add(t);
+		if( renames.size() > 0 ) {
+			Renamer mapper = new Renamer.URIMapper(profile, renames);
+			profile = mapper.applyRenamings();
 		}
-		return result;
+		return profile;
 	}
 }

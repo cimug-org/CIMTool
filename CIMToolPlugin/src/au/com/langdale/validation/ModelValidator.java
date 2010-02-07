@@ -32,8 +32,8 @@ public class ModelValidator extends ValidatorUtil implements ValidatorProtocol {
 
 	private Reasoner reasoner;
 	
-	public ModelValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
-		reasoner = new SimpleReasoner(expandRules(schema, namespace, ruleText, BuiltinRegistry.theRegistry));
+	public ModelValidator(OntModel schema, InputStream ruleText) throws ParserException, IOException {
+		reasoner = new SimpleReasoner(expandRules(schema, ruleText, BuiltinRegistry.theRegistry));
 	}
 	
 	public OntModel run(String source, String base, String namespace, Logger errors) throws IOException {

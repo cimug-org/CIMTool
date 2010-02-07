@@ -36,7 +36,6 @@ import au.com.langdale.jena.UMLTreeModel.PropertyNode;
 import au.com.langdale.jena.UMLTreeModel.SubClassNode;
 import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
 import au.com.langdale.jena.UMLTreeModel.ExtensionNode;
-import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
@@ -100,7 +99,6 @@ public class PopulateBinding  {
 			
 			ProfileModel tree = (ProfileModel)getTree();
 			tree.setRootResource((OntResource)null);
-			tree.setNamespace(master.getNamespace());
 			tree.setOntModel(master.getProfileModel());
 			tree.setBackgroundModel(master.getProjectModel());
 			
@@ -108,7 +106,7 @@ public class PopulateBinding  {
 				parent = node.getParent().getSubject();
 				getTree().setRootResource(parent);
 			}
-			else if(subject != null && (subject.isClass() || subject.equals(MESSAGE.profile))) {
+			else if(subject != null && (subject.isClass() || subject.hasRDFType(OWL.Ontology))) {
 				parent = null;
 				getTree().setRootResource(subject);
 			}

@@ -25,8 +25,7 @@ public class ProfileTasks extends ProjectTest {
 	public final void testImportProfile() throws CoreException {
 		IWorkspaceRunnable action = Task.importProfile(
 				profile, 
-				getSamplesFolder() + SAMPLE_PROFILE, 
-				PROFILE_NS);
+				getSamplesFolder() + SAMPLE_PROFILE);
 		workspace.run(action, monitor);
 		assertTrue("profile exists", profile.exists());
 	}

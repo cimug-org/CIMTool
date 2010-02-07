@@ -28,6 +28,7 @@ import au.com.langdale.profiles.SpreadsheetParser.IndexNum;
 import au.com.langdale.util.Logger;
 import au.com.langdale.workspace.ResourceOutputStream;
 
+import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 
 /**
@@ -159,12 +160,15 @@ public class SpreadsheetImporter {
 				OntModel background = CIMToolPlugin.getCache().getMergedOntologyWait(schema);
 				monitor.worked(1);
 				
+				OntModel result = ModelFactory.createMem();
+				Task.initProfile(result, background, namespace, "Profile", "Derived from spreadsheet");
+
 				IFile log = Info.getRelated(destin, "log");
 				if(log.exists())
 					log.delete(false, monitor);
 				
 				Logger logger = new Logger(new ResourceOutputStream(log, null, true, true));
-				SpreadsheetParser parser = new SpreadsheetParser(book, background, namespace, logger);
+				SpreadsheetParser parser = new SpreadsheetParser(book, result, background, namespace, logger);
 				for( int ix = 0; ix < specs.length; ix++) {
 					parser.scanCells(specs[ix]);
 					monitor.worked(1);
@@ -173,7 +177,7 @@ public class SpreadsheetImporter {
 				parser.reorganize();
 				monitor.worked(1);
 				
-				Task.write(parser.getResult(), namespace, false, destin, "RDF/XML-ABBREV", monitor);
+				Task.writeProfile(destin, result, monitor);
 				monitor.worked(1);
 				Info.putProperty( destin, Info.PROFILE_NAMESPACE, namespace);
 

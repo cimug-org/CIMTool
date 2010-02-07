@@ -15,7 +15,13 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.7.3 </h2><ul><li><p>correction: profile validation rules for the case where a member of a child class is lifted into a parent 
+          <div id="content"><h2>Release 1.8.1 </h2><p>This release incorporates changes to make CIMTool compatible with commonly used ontology editors.
+It has been tested with Protege 4 and Top Braid 3.2.</p><ul><li><p>enhancement: namespaces for OWL files are not longer stored as properties in the CIMTool project
+they are embedded in the files as part of the ontology header.  This change affects the user 
+interface for profile properties as well as several wizards and the Detail tab of the profile
+editor for the root element of the profile.  </p></li><li><p>enhancement: the ontology header is now compliant and includes the profile description, label, 
+and (implicitly) namespace. the .owl header includes an import for the merged information schema.</p></li><li><p>enchancement: CIM datatypes are now modeled using equivalentClass axioms.  Anonymous classes in their
+profile are linked by equivalentClass or subClass to their respective information model classes.</p></li></ul><h2>Release 1.7.3 </h2><ul><li><p>correction: profile validation rules for the case where a member of a child class is lifted into a parent 
 caused spurious diagnostics. This affected the EndDeviceAssett profile in the IEC 61968 part 9 profiles.</p></li></ul><h2>Release 1.7.2 </h2><ul><li><p>correction: Older Rose based CIM versions sometimes have invalid, top level datatype definitions.
 Attempts in release 1.4.1 to deal with these in some older EDF CIM versions broke compatibility 
 with some older Siemens models. They are now interpreted even more flexibly in the light of other 
@@ -223,6 +229,7 @@ This is mainly useful for CIM/XML profiles where that as the
 correct way to model associations.</p></li><li><p>The ''Remap Profile'' has been temporarily withdrawn.  A more 
 reliable way to adjust a profile when the information model
 namespace(s) change is being developed.</p></li></ul></li></ul></div>
+          
           <div id="menu"><ul>
     
     </ul></div>

@@ -29,6 +29,7 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
 import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
 import au.com.langdale.cimtoole.project.Info;
 /**
@@ -61,6 +62,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true),
 			new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
+			new CopyBuildlet("TURTLE", "ttl"),
 			new ValidationBuildlet(),
 			new SplitValidationBuildlet(),
 			new IncrementalValidationBuildlet(),

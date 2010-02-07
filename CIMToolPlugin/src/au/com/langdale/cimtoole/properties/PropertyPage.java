@@ -28,8 +28,6 @@ public class PropertyPage extends FurnishedPropertyPage {
 				IResource resource = getResource();
 				if(Info.isSchema(resource ))
 					return defineSchemaPage();
-				else if(Info.isProfile(resource))
-					return defineProfilePage();
 				else if(Info.isInstance(resource) || Info.isSplitInstance(resource))
 					return defineInstancePage();
 				else if(Info.isIncremental(resource))
@@ -60,18 +58,9 @@ public class PropertyPage extends FurnishedPropertyPage {
 				);
 			}
 
-			private Template defineProfilePage() {
-				return Grid(
-						Group(	Label("Namespace URI:"), 
-								new Property(Info.PROFILE_NAMESPACE, Validators.NAMESPACE))
-				);
-			}
-
 			private Template defineProjectPage() {
 				return Grid(
 						Group(Label("Merged Schema Output")),
-						Group(	Label("Namespace URI:"), 
-								new Property(Info.SCHEMA_NAMESPACE, Validators.NAMESPACE)),
 						Group(	Label("File Name:"), 
 								new Property(Info.MERGED_SCHEMA_PATH, Validators.OptionalFileWithExt("merged-owl")))
 				);

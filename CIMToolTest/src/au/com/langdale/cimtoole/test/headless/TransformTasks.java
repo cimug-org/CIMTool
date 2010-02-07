@@ -5,11 +5,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 
-import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.ProjectTest;
-
 import au.com.langdale.kena.OntModel;
 
 public class TransformTasks extends ProjectTest {
@@ -24,10 +22,9 @@ public class TransformTasks extends ProjectTest {
 	}
 
 	public final void testXSDGeneration() throws CoreException {
-		OntModel model = CIMToolPlugin.getCache().getOntologyWait(profile);
-		String namespace = Task.getProperty(profile, Task.PROFILE_NAMESPACE);
+		OntModel model = Task.getProfileModel(profile);
 		xsdBuildlet.setFlagged(model, true);
-		workspace.run(Task.saveProfile(profile, model, namespace), monitor);
+		workspace.run(Task.saveProfile(profile, model), monitor);
 		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		assertTrue("generated XSD exists", getRelated("xsd").exists());
 		assertTrue("generated XSD valid", getRelated("xsd").findMaxProblemSeverity(null, true, IResource.DEPTH_ZERO) < IMarker.SEVERITY_ERROR);
@@ -35,10 +32,9 @@ public class TransformTasks extends ProjectTest {
 
 	public final void testCustomXSDGeneration() throws CoreException {
 		workspace.run(Task.importRules(getRelated("xsd-xslt"), getSamplesFolder() + ALT_XSD_RULES), monitor);
-		OntModel model = CIMToolPlugin.getCache().getOntologyWait(profile);
-		String namespace = Task.getProperty(profile, Task.PROFILE_NAMESPACE);
+		OntModel model = Task.getProfileModel(profile);
 		xsdBuildlet.setFlagged(model, true);
-		workspace.run(Task.saveProfile(profile, model, namespace), monitor);
+		workspace.run(Task.saveProfile(profile, model), monitor);
 		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		assertTrue("generated XSD exists", getRelated("xsd").exists());
 		assertTrue("generated XSD valid", getRelated("xsd").findMaxProblemSeverity(null, true, IResource.DEPTH_ZERO) < IMarker.SEVERITY_ERROR);

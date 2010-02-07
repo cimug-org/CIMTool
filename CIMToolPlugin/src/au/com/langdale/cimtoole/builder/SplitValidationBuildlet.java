@@ -28,10 +28,10 @@ public class SplitValidationBuildlet extends ValidationBaseBuildlet {
 	}
 
 	@Override
-	protected ValidatorProtocol getValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException {
+	protected ValidatorProtocol getValidator(OntModel schema, InputStream ruleText) throws ParserException, IOException {
 		if( ruleText == null)
 			ruleText = ValidatorUtil.openStandardRules("cimtool-split");
-		SplitValidator validator = new SplitValidator(schema, namespace, ruleText);
+		SplitValidator validator = new SplitValidator(schema, ruleText);
 		validator.setOption(StandardFunctorActions.PROBLEM_PER_SUBJECT, Info.getPreferenceOption(Info.PROBLEM_PER_SUBJECT));
 		return validator;
 	}

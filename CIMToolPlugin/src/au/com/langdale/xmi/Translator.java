@@ -161,7 +161,7 @@ public class Translator implements Runnable {
 		}
 	};
 	
-	private static String stripHash(String uri) {
+	public static String stripHash(String uri) {
 		if( uri.endsWith("#")) 
 			return uri.substring(0, uri.length()-1);
 		else

@@ -37,11 +37,9 @@ public class ExportSchema extends Wizard implements IExportWizard {
 	
 	class InternalSchemaTask extends SchemaBuildlet implements IWorkspaceRunnable {
 		IProject project = main.getProject();
-		String ns = main.getNamespace();
 		
 		public void run(IProgressMonitor monitor) throws CoreException {
 			Info.putProperty( project, Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
-			Info.putProperty( project, Info.PROFILE_NAMESPACE, ns);
 			build(project.getFile(SchemaExportPage.SCHEMA), monitor);
 		}
 	}
@@ -51,6 +49,6 @@ public class ExportSchema extends Wizard implements IExportWizard {
 		if( main.isInternal())
 			return Jobs.runInteractive(new InternalSchemaTask(), main.getProject(), getContainer(), getShell());
 		else
-			return Jobs.runInteractive(Task.exportSchema(main.getProject(), main.getPathname(), main.getNamespace()), null, getContainer(), getShell());
+			return Jobs.runInteractive(Task.exportSchema(main.getProject(), main.getPathname()), null, getContainer(), getShell());
 	}
 }

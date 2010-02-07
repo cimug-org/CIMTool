@@ -25,6 +25,7 @@ import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
@@ -37,7 +38,6 @@ import com.hp.hpl.jena.vocabulary.XSD;
 public abstract class SchemaGenerator extends ProfileUtility implements Runnable {
 	private OntModel model;
 	private OntModel profileModel;
-	private String namespace;
 	private Catalog catalog;
 	private Set datatypes = new HashSet();
 	private Set packages = new HashSet();
@@ -47,6 +47,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	private List work = new LinkedList(); // unprocessed profiles
 	private boolean withInverses;
 	private boolean preserveNamespaces;
+	private OntModel backgroundModel;
+	private String ontURI;
+	private OntResource ontNode;
 	
 	public class Catalog extends BaseMap {
 		protected Map classes = new HashMap(); 	// base class to profile uri 
@@ -159,17 +162,34 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNamespaces, boolean inverses) {
+	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNamespaces, boolean inverses) {
 		this.profileModel = profileModel;
+		this.backgroundModel = backgroundModel;
 		this.model = Composition.merge(profileModel, backgroundModel);
-		this.namespace = namespace;
 		this.preserveNamespaces = preserveNamespaces;
 		this.catalog = new Catalog();
 		this.withInverses = inverses;
+		
+		ontNode = profileModel.getValidOntology();
+		
+		if(preserveNamespaces) {
+			OntResource base = backgroundModel.getValidOntology();
+			if( base != null )
+				ontURI = base.getURI();
+			else
+				ontURI = null;
+		}
+		else
+			ontURI = ontNode.getURI();
+			
 	}
 	
-	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel, String namespace) {
-		this( profileModel, backgroundModel, namespace, false, false);
+	public SchemaGenerator(OntModel profileModel, OntModel backgroundModel) {
+		this( profileModel, backgroundModel, false, false);
+	}
+	
+	public String getOntURI() {
+		return ontURI;
 	}
 	
 	public void run() {
@@ -207,15 +227,15 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		generateLattice(catalog.buildLattice());
 		
 		// emit any ontology (header) properties
-		generateOntologyFlags();
+		generateOntologyProperties();
 	}
 
 	// construct a URI for a base model class, datatype, property or individual 
 	private String constructURI(OntResource base) {
-		if( ! preserveNamespaces)
-			return namespace + base.getLocalName();
-		else
+		if(preserveNamespaces)
 			return base.getURI();
+		else
+			return ontURI + "#" + base.getLocalName();
 	}
 
 	// construct a URI for named profile
@@ -389,10 +409,15 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 	
-	private void generateOntologyFlags() {
-		for (Iterator it = profileModel.listIndividuals(MESSAGE.Flag); it.hasNext();) {
-			OntResource	flag = (OntResource) it.next();
-			emitOntProperty(flag.getURI());
+	private void generateOntologyProperties() {
+		if( ontURI != null ) {
+			emitHeader(ontURI, ontNode.getLabel(), ontNode.getComment());
+			
+			for( ResIterator it = ontNode.listProperties(OWL.imports); it.hasNext();)
+				emitImport(it.nextResource().getURI());
+			
+			for (ResIterator it = profileModel.listIndividuals(MESSAGE.Flag); it.hasNext();) 
+				emitFlag(it.nextResource().getURI());
 		}
 	}
 	
@@ -451,8 +476,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	protected abstract void emitInverse(String uri, String iuri) ;
 	protected abstract void emitStereotype(String uri, String stereo) ;
 	protected abstract void emitBaseStereotype(String uri, String stereo) ;
-	protected abstract void emitOntProperty(String uri);
-	protected abstract void emitOntProperty(String uri, String value);
+	protected abstract void emitHeader(String uri, String label, String comment);
+	protected abstract void emitFlag(String uri);
+	protected abstract void emitImport(String uri);
 	protected abstract void emitDefinedBy(String uri, String container);
 	protected abstract void emitPackage(String uri) ;
 	

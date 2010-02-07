@@ -28,8 +28,7 @@ public class SchemaBuildlet extends Buildlet {
 		IProject project = result.getProject();
 		IFolder folder = Info.getSchemaFolder(project);
 		OntModel schema = CIMToolPlugin.getCache().getMergedOntologyWait(folder);
-		String namespace = Info.getProperty(project, Info.SCHEMA_NAMESPACE);
-		Task.write(schema, namespace, true, result, "RDF/XML", monitor);
+		Task.writeOntology(result, schema, "RDF/XML", monitor);
 	}
 	
 	@Override

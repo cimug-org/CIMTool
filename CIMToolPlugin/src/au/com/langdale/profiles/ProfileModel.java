@@ -36,19 +36,24 @@ public class ProfileModel extends JenaTreeModelBase {
 	public String getNamespace() {
 		return namespace;
 	}
-
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
 	
 	public void setBackgroundModel(OntModel backgroundModel) {
+		super.setOntModel(null);
 		this.backgroundModel = backgroundModel;
 		initModels();
 	}
 	
 	@Override
 	public void setOntModel(OntModel profileModel) {
+		super.setOntModel(null);
 		this.profileModel = profileModel;
+		if( profileModel != null) {
+			OntResource ont = profileModel.getValidOntology();
+			if( ont != null) {
+				namespace = ont.getURI() + "#";
+				setRootResource(ont);
+			}
+		}
 		initModels();
 	}
 	
@@ -777,7 +782,7 @@ public class ProfileModel extends JenaTreeModelBase {
 	 */
 	@Override
 	protected Node classify(OntResource root) {
-		if( root.equals(MESSAGE.profile)) 
+		if( root.hasRDFType(OWL.Ontology)) 
 			return new CatalogNode(root);
 		
 		if( root.hasSuperClass(MESSAGE.Message))

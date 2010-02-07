@@ -247,10 +247,18 @@ public class ProfileClass {
 
 	public OntResource createAllValuesFrom(OntResource prop, boolean required) {
 		OntResource child; 
-		if( prop.isDatatypeProperty())
-			child = model.createIndividual(RDFS.Datatype); // its not really an individual
-		else
+		OntResource range = prop.getRange();
+		
+		if( prop.isDatatypeProperty()) {
+			child = model.createIndividual(RDFS.Datatype);
+			if( range != null )
+				child.addProperty(OWL.equivalentClass, range);
+		}
+		else {
 			child = model.createClass();
+			if( range != null )
+				child.addSuperClass(range);
+		}
 		String label = prop.getLabel(null);
 		if( label == null)
 			label = prop.getLocalName();

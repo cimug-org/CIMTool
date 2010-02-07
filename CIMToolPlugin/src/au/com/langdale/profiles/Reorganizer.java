@@ -11,9 +11,12 @@ import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
 import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResourceFactory;
+
+import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
@@ -26,24 +29,43 @@ public class Reorganizer extends SchemaGenerator {
 	private OntModel model, result;
 	private Map classes = new HashMap();
 	private Map proxies = new HashMap();
-	private String namespace;
 	private boolean useRefs;
+	private OntResource ontNode;
 	
-	public Reorganizer(OntModel profile, OntModel background, String namespace, boolean useRefs) {
-		super(profile, background, namespace);
-		model = Composition.overlay(background);
-		result = Composition.getUpdatableModel(model);
-		this.namespace = namespace;
+	public Reorganizer(OntModel profile, OntModel background, boolean useRefs) {
+		super(profile, background);
+		result = ModelFactory.createMem();
+		model = Composition.merge(result, background);
 		this.useRefs = useRefs;
 	}
 	
 	public OntModel getResult() {
 		return result;
 	}
+	
+	@Override
+	protected void emitHeader(String uri, String label, String comment) {
+		ontNode = model.createIndividual(uri, OWL.Ontology);
+		if( label != null )
+			ontNode.addLabel(label, null);
+		if( comment != null )
+			ontNode.addComment(comment, null);
+	}
+	
+	@Override
+	protected void emitImport(String uri) {
+		ontNode.addProperty(OWL.imports, model.createResource(uri));
+	}
+
+	@Override
+	protected void emitFlag(String uri) {
+		model.add(model.createResource(uri), RDF.type, MESSAGE.Flag);
+	}
 
 	@Override
 	protected void emitClass(String uri, String base) {
-		ProfileClass profile = new ProfileClass(model.createClass(uri), namespace);
+		OntResource clss = model.createClass(uri);
+		ProfileClass profile = new ProfileClass(clss, clss.getNameSpace());
 		profile.setBaseClass(model.createResource(base));
 		classes.put(uri, profile);
 	}
@@ -139,16 +161,6 @@ public class Reorganizer extends SchemaGenerator {
 	@Override
 	protected void emitBaseStereotype(String uri, String iuri) {
 		// ignore base stereotypes
-	}
-
-	@Override
-	protected void emitOntProperty(String uri) {
-		model.add(model.createResource(uri), RDF.type, MESSAGE.Flag);
-	}
-	
-	@Override
-	protected void emitOntProperty(String uri, String value) {
-		// ignored
 	}
 	
 	@Override

@@ -44,7 +44,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 	private IFile previousProfile = null;
 
 	protected abstract boolean isInstanceResource(IResource resource);
-	protected abstract ValidatorProtocol getValidator(OntModel schema, String namespace, InputStream ruleText) throws ParserException, IOException;
+	protected abstract ValidatorProtocol getValidator(OntModel schema, InputStream ruleText) throws ParserException, IOException;
 	
 	@Override
 	protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
@@ -145,8 +145,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 		else
 			contents = null;
 			
-		String namespace = Info.getProperty(profile, Info.PROFILE_NAMESPACE);
-		previousValidator = getValidator(schema, namespace, contents);
+		previousValidator = getValidator(schema, contents);
 		previousProfile = profile;
 		monitor.worked(1);
 

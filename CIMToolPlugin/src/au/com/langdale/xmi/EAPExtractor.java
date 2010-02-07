@@ -297,6 +297,7 @@ public class EAPExtractor extends XMIModel {
 		}
 	}
 	
+	@SuppressWarnings("serial")
 	private class IDList extends ArrayList {
 		
 		public IDList(int size) {

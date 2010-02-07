@@ -17,8 +17,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
-import com.hp.hpl.jena.vocabulary.RDFS;
-
 import au.com.langdale.cimtoole.editors.profile.Detail;
 import au.com.langdale.cimtoole.editors.profile.Hierarchy;
 import au.com.langdale.cimtoole.editors.profile.Populate;
@@ -36,11 +34,12 @@ import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.ui.util.WizardLauncher;
+
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class ProfileEditor extends ModelEditor {
 	private ProfileModel tree;
@@ -67,8 +66,6 @@ public class ProfileEditor extends ModelEditor {
 	public JenaTreeModelBase getTree() {
 		if( tree == null ) {
 			tree = new ProfileModel();
-			tree.setNamespace(getFileNamespace()); // this is used in Node.create()
-			tree.setRootResource(MESSAGE.profile);
 			tree.setSource(getFile().getFullPath().toString());
 			resetModels();
 		}
@@ -94,15 +91,8 @@ public class ProfileEditor extends ModelEditor {
 	private void fetchModels() {
 		rawBackgroundModel = models.getProjectOntology(Info.getSchemaFolder(getFile().getProject()));
 		OntModel rawProfileModel = models.getOntology(getFile());
-		if(rawProfileModel != null) {
-			profileModel = Composition.copy(rawProfileModel);
-			String envname;
-			try {
-				envname = Info.getProperty(getFile(), Info.PROFILE_ENVELOPE);
-			} catch (CoreException e) {
-				envname = "Profile";
-			}
-			Task.initProfile(profileModel, envname);
+		if(rawProfileModel != null && rawBackgroundModel != null) {
+			profileModel = Task.fixupProfile(getFile(), Composition.copy(rawProfileModel), rawBackgroundModel);
 		}
 		else
 			profileModel = null;
@@ -125,10 +115,10 @@ public class ProfileEditor extends ModelEditor {
 			backgroundModel = Composition.simpleMerge( rawBackgroundModel, diagnosticModel);
 		else
 			backgroundModel = rawBackgroundModel;
-		tree.setNamespace(getFileNamespace());
+		
 		tree.setOntModel(profileModel);
 		tree.setBackgroundModel(backgroundModel);
-		refactory = new Refactory(profileModel, backgroundModel, tree.getNamespace());
+		refactory = new Refactory(profileModel, backgroundModel);
 		searchAction.setEnabled(true);
 		doRefresh();
 	}
@@ -145,7 +135,7 @@ public class ProfileEditor extends ModelEditor {
 	public void doSave(IProgressMonitor monitor) {
 		if( profileModel != null) {
 			try {
-				ResourcesPlugin.getWorkspace().run(Task.saveProfile(getFile(), profileModel, tree.getNamespace()), monitor);
+				ResourcesPlugin.getWorkspace().run(Task.saveProfile(getFile(), profileModel), monitor);
 			} catch (CoreException e) {
 				throw new RuntimeException(e);
 			}
@@ -161,14 +151,6 @@ public class ProfileEditor extends ModelEditor {
 		this.profileModel = profileModel;
 		markDirty();
 		resetModels();
-	}
-
-	public String getFileNamespace() {
-		try {
-			return Info.getProperty(getFile(), Info.PROFILE_NAMESPACE);
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public Refactory getRefactory() {

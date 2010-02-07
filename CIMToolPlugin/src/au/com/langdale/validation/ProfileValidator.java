@@ -31,7 +31,6 @@ import com.hp.hpl.jena.reasoner.transitiveReasoner.TransitiveReasoner;
 public class ProfileValidator {
 	
 	private OntModel log, target, reference;
-	private String namespace;
 	private static List rules;
 	private static Map functors;
 
@@ -42,11 +41,10 @@ public class ProfileValidator {
 	 * @param ref the base schema
 	 * @param namespace the namespace of the profile
 	 */
-	public ProfileValidator(OntModel target, OntModel reference, String namespace) {
+	public ProfileValidator(OntModel target, OntModel reference) {
 		this.log = ModelFactory.createMem();
 		this.target = target;
 		this.reference = reference;
-		this.namespace = namespace;
 	}
 	
 	private void buildRules() throws IOException, ParserException {

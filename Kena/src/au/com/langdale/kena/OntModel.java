@@ -20,21 +20,39 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.LiteralLabel;
 import com.hp.hpl.jena.shared.PrefixMapping;
+import com.hp.hpl.jena.vocabulary.DC_11;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 public class OntModel {
+
+    /**
+        A PrefixMapping that contains the "standard" prefixes we know about.
+    */
+    public static final PrefixMapping Standard = PrefixMapping.Factory.create()
+        .setNsPrefix( "rdfs", RDFS.getURI() )
+        .setNsPrefix( "rdf", RDF.getURI() )
+        .setNsPrefix( "dc", DC_11.getURI() )
+        .setNsPrefix( "owl", OWL.getURI() )
+        .setNsPrefix( "xsd", XSD.getURI() )
+        .setNsPrefix( "uml", "http://langdale.com.au/2005/UML#")
+        .setNsPrefix( "msg", "http://langdale.com.au/2005/Message#")
+        .lock()
+        ;
+
 	private final Graph graph;
-	private PrefixMapping prefixes = PrefixMapping.Standard;
+	private PrefixMapping prefixes = Standard;
 
 	OntModel(Graph graph) {
 		this.graph = graph;
 	}
 	
 	public void setNsPrefix(String prefix, String uri) {
-		if(prefixes == PrefixMapping.Standard) {
+		if(prefixes == Standard) {
 			prefixes = PrefixMapping.Factory.create();
-			prefixes.setNsPrefixes(PrefixMapping.Standard);
+			prefixes.setNsPrefixes(Standard);
 		}
 		prefixes.setNsPrefix(prefix, uri);
 	}
@@ -49,6 +67,16 @@ public class OntModel {
 	
 	public int size() {
 		return graph.size();
+	}
+	
+	public OntResource getValidOntology() {
+		ResIterator it = listSubjectsWithProperty(RDF.type, OWL.Ontology);
+		if( it.hasNext()) {
+			OntResource ont = it.nextResource();
+			if( ! it.hasNext() && ! ont.getURI().contains("#"))
+				return ont;
+		}
+		return null;
 	}
 	
 	public ResIterator listSubjectsWithNoProperty(FrontsNode prop) {

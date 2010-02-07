@@ -52,7 +52,7 @@ public abstract class ValidatorUtil extends Reporting {
 		return ValidatorUtil.class.getResourceAsStream(name + ".rules");
 	}
 
-	public static List expandRules(OntModel schema, String namespace, InputStream ruleText, BuiltinRegistry registry) throws ParserException, IOException  {
+	public static List expandRules(OntModel schema, InputStream ruleText, BuiltinRegistry registry) throws ParserException, IOException  {
 		TimeSpan span = new TimeSpan("Parse Rules");
 		RuleParser parser = new RuleParser(ruleText, registry);
 		parser.registerPrefix("topol", guessTopolNameSpace(schema));
