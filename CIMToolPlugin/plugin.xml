@@ -455,6 +455,22 @@
             name="CIMTool">
       </category>
    </extension>
+   
+<extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.ExportEcore"
+            icon="icons/package.png"
+            id="au.com.langdale.cimtoole.wizards.ExportEcore"
+            name="Export merged schema as Ecore">
+      </wizard>
+      <category
+            id="au.com.langdale.cimtoole"
+            name="CIMTool">
+      </category>
+   </extension>
+
    <extension
          point="org.eclipse.compare.structureCreators">
       <structureCreator

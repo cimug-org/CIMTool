@@ -24,14 +24,20 @@ import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 
 public class SchemaExportPage extends FurnishedWizardPage {
 
-	public static final String SCHEMA = "schema.merged-owl";
-
+	private String SCHEMA = "schema.merged-owl";
+	
 	private boolean internal;
 	private TextBinding path = new TextBinding(Validators.NEW_FILE);
 	private ProjectBinding projects = new ProjectBinding();
 
-	public SchemaExportPage() {
+	
+	public SchemaExportPage(){
 		super("schema");
+	}
+	
+	public SchemaExportPage(String fileName) {
+		super("schema");
+		this.SCHEMA = fileName;
 	}
 	
 	public void setSelected(IStructuredSelection selection) {

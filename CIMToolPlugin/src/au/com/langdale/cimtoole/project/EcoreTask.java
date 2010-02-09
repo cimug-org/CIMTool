@@ -79,7 +79,7 @@ public class EcoreTask {
 				EPackage npkg = EcoreFactory.eINSTANCE.createEPackage();
 				npkg.setName(p.getLabel());
 				npkg.setNsURI(nsURI+"#"+p.getLabel());
-				npkg.setNsPrefix(nsPrefix+"."+p.getLabel().toLowerCase());
+				npkg.setNsPrefix(nsPrefix+p.getLabel());
 				packageMap.put(p, npkg);
 				if (p.getIsDefinedBy()!=null){
 					EPackage parent = getEPackage(p.getIsDefinedBy());
