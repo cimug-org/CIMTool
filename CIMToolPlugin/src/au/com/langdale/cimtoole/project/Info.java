@@ -52,7 +52,7 @@ public class Info {
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi", "eap");
+		return isFile(resource, "Schema", "owl", "xmi", "eap", "ecore");
 	}
 
 	public static boolean isSchemaFolder(IResource resource) {
@@ -79,6 +79,10 @@ public class Info {
 		return isFile(resource, "Profiles", "repair");
 	}
 
+	private static boolean isFile(IResource resource, String location, String type1, String type2, String type3, String type4) {
+		return isFile(resource, location) && (hasExt(resource, type1) || hasExt(resource, type2) || hasExt(resource, type3) || hasExt(resource, type4));
+	}
+	
 	private static boolean isFile(IResource resource, String location, String type1, String type2, String type3) {
 		return isFile(resource, location) && (hasExt(resource, type1) || hasExt(resource, type2) || hasExt(resource, type3));
 	}
@@ -123,6 +127,7 @@ public class Info {
 		return 
 			ext.equals("xmi") || 
 			ext.equals("eap") ||
+			ext.equals("ecore") ||
 			ext.equals("owl") || 
 			ext.equals("n3") || 
 			ext.equals("simple-owl") || 
@@ -142,6 +147,10 @@ public class Info {
 			master = getRelated( file, "eap");
 			if( master.exists())
 				return master;
+			
+			master = getRelated( file, "ecore");
+			if( master.exists())
+				return master;			
 		}
 		return null;
 	}

@@ -93,7 +93,9 @@ public class ECoreExtractor extends XMIModel {
 
 		EPackage root = (EPackage)res.getContents().get(0);
 		try{
-			model.setNsPrefix(root.getNsPrefix(), root.getNsURI());
+			String ns = root.getNsURI();
+			if (!ns.endsWith("#")) ns += "#";
+			model.setNsPrefix(root.getNsPrefix(), ns);
 			processEPackage(root);
 			for (EClassifier c: classMap.keySet())
 				postProcessEClassifiers(c);

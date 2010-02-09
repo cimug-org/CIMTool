@@ -59,11 +59,6 @@ public class NewProfilePage extends FurnishedWizardPage {
     }
 
 
-    public Boolean getFillProfile() {
-        return getContent().getButton("fill").getSelection();
-    }
-
-
     @Override
     protected Content createContent() {
         return new Content() {
@@ -71,15 +66,12 @@ public class NewProfilePage extends FurnishedWizardPage {
 
             @Override
             protected Template define() {
-                return Column(
-                    Grid(
+                return  Grid(
                         Group(Label("Namespace URI:"), Field("namespace")),
                         Group(Label("Project")),
                         Group(CheckboxTableViewer("projects")),
                         Group(Label("Profile name:"), Field("filename")),
-                        Group(Label("Envelope Element Name"), Field("envelope"))),
-                    CheckBox("fill", "Copy schema contents")
-                );
+                        Group(Label("Envelope Element Name"), Field("envelope")));
             }
 
             @Override

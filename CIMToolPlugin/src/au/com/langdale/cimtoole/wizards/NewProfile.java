@@ -35,7 +35,7 @@ public class NewProfile extends Wizard implements INewWizard {
 
     @Override
     public boolean performFinish() {
-        if( Jobs.runInteractive(Task.createProfile(main.getFile(), main.getNamespace(), main.getEnvname(), main.getFillProfile()), main.getFile().getParent(), getContainer(), getShell())) {
+        if( Jobs.runInteractive(Task.createProfile(main.getFile(), main.getNamespace(), main.getEnvname()), main.getFile().getParent(), getContainer(), getShell())) {
             try {
                 workbench.getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(main.getFile()), "au.com.langdale.cimtoole.editors.MessageModelEditor");
                 return true;

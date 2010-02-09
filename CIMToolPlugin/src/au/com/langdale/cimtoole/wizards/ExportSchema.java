@@ -20,7 +20,9 @@ import au.com.langdale.util.Jobs;
 
 public class ExportSchema extends Wizard implements IExportWizard {
 	
-	private SchemaExportPage main = new SchemaExportPage();
+	public static final String SCHEMA = "schema.merged-owl";
+	
+	private SchemaExportPage main = new SchemaExportPage(SCHEMA);
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export Schema"); 
@@ -40,9 +42,9 @@ public class ExportSchema extends Wizard implements IExportWizard {
 		String ns = main.getNamespace();
 		
 		public void run(IProgressMonitor monitor) throws CoreException {
-			Info.putProperty( project, Info.MERGED_SCHEMA_PATH, SchemaExportPage.SCHEMA);
+			Info.putProperty( project, Info.MERGED_SCHEMA_PATH, ExportSchema.SCHEMA);
 			Info.putProperty( project, Info.PROFILE_NAMESPACE, ns);
-			build(project.getFile(SchemaExportPage.SCHEMA), monitor);
+			build(project.getFile(ExportSchema.SCHEMA), monitor);
 		}
 	}
 	

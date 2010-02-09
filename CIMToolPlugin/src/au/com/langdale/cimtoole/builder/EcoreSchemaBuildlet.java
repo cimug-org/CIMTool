@@ -32,14 +32,6 @@ public class EcoreSchemaBuildlet extends Buildlet {
 		try{
 			
 			Resource ecore = new EcoreTask(schema).createEcore(true, "cim", namespace);
-			/*
-			OntModel filledProfile = Task.fillProfile(schema,  "http://example.com/profile/filled");
-			ECoreGenerator gen  = new ECoreGenerator(filledProfile, schema,
-					namespace, true, true,
-					true);
-			gen.run();
-			EPackage pkg = gen.getResult();
-			*/
 			try {
 				ecore.save(new BufferedOutputStream(new FileOutputStream(result.getLocation().toFile())), Collections.EMPTY_MAP);
 			} catch (IOException e) {

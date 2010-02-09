@@ -27,10 +27,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-
 import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
@@ -50,15 +46,19 @@ import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.Reorganizer;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.profiles.SpreadsheetParser.ParseProblem;
 import au.com.langdale.util.NSMapper;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.workspace.ResourceOutputStream;
 import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAPExtractor;
+import au.com.langdale.xmi.ECoreExtractor;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
+
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * Utility tasks for CIMTool plugin.  Tasks are instances of <code>IWorkspaceRunnable</code>
@@ -83,29 +83,14 @@ public class Task extends Info {
 
     }
 
-    public static IWorkspaceRunnable createProfile(final IFile file, final String namespace, final String envname) {
-        return createProfile(file, namespace, envname, false);
-    }
-
-
     /**
      * Overloads createProfile to provide the option to fully populate the profile with all
      * classes, attributes and references from the schema.
      */
-    public static IWorkspaceRunnable createProfile(final IFile file, final String namespace, final String envname, final Boolean fill) {
+    public static IWorkspaceRunnable createProfile(final IFile file, final String namespace, final String envname) {
         return new IWorkspaceRunnable() {
             public void run(IProgressMonitor monitor) throws CoreException {
-                OntModel model;
-
-                if (fill.equals(Boolean.TRUE)) {
-                    Cache cache = CIMToolPlugin.getCache();
-                    IFolder schemaDir = getSchemaFolder(file.getProject());
-                    OntModel schemaModel = cache.getMergedOntologyWait(schemaDir);
-
-                    model = fillProfile(schemaModel, namespace);
-                } else {
-                    model = ModelFactory.createMem();
-				}
+                OntModel model = ModelFactory.createMem();
 
 				initProfile(model, envname);
 
@@ -218,6 +203,8 @@ public class Task extends Info {
         }
         else if( ext.equals("eap"))
             return parseEAP(file);
+        else if( ext.equals("ecore"))
+            return parseECore(file);
         else {
             return parseOWL(file);
         }
@@ -274,6 +261,18 @@ public class Task extends Info {
             throw error("can't access EA project", e);
         }
         return interpretSchema(extractor.getModel(), file);
+    }
+    
+    private static OntModel parseECore(IFile file) throws CoreException{
+    	ECoreExtractor extractor;
+    	try{
+    		extractor = new ECoreExtractor(file);
+    		extractor.run();
+    	}catch (IOException e){
+    		e.printStackTrace();
+    		throw error("Can't parse ECore model", e);
+    	}
+    	return interpretSchema(extractor.getModel(), file);
     }
 
     private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {

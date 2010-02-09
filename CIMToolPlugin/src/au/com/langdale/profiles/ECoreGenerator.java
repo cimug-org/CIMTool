@@ -16,6 +16,11 @@ public class ECoreGenerator extends SchemaGenerator {
 	private String namespace;
 	private boolean addRootClass;
 
+	public static final String ELEMENT_CLASS_NAME = "Element";
+	public static final String ELEMENT_CLASS_IDENTIFIER = "UUID";
+	public static final String RDF_SERIALISATION_ANNOTATION = "http://cimphony.com/rdf/2010/serialisation";
+	public static final String PROFILE_ANNOTATION = "http://cimphony.com/profiles/2010/profile";
+
 	EcoreFactory coreFactory = EcoreFactory.eINSTANCE;
 	EcorePackage corePackage = EcorePackage.eINSTANCE;
 
@@ -34,16 +39,39 @@ public class ECoreGenerator extends SchemaGenerator {
 	ArrayList<EReference> notInverted = new ArrayList<EReference>();
 
 	public ECoreGenerator(OntModel profileModel, OntModel backgroundModel,
-			String namespace, boolean preserveNamespaces, boolean inverses,
+			String namespace, String profileNamespace, boolean preserveNamespaces, boolean inverses,
 			boolean addRootClass) {
 		super(profileModel, backgroundModel, namespace, preserveNamespaces, inverses);
 
+		if (!namespace.equals(profileNamespace)){
+			EAnnotation pAnnotation = EcoreFactory.eINSTANCE.createEAnnotation();
+			pAnnotation.setSource(PROFILE_ANNOTATION);
+			if (profileNamespace.endsWith("#"))
+				profileNamespace = profileNamespace.substring(0, profileNamespace.length()-1);
+			pAnnotation.getDetails().put("nsURI", profileNamespace);
+			result.getEAnnotations().add(pAnnotation);
+		}
+
+
 		this.addRootClass = addRootClass;
 
-		if(namespace != null)
+		if(namespace != null){
+			if (namespace.endsWith("#")){
+				namespace = namespace.substring(0, namespace.length()-1);
+				EAnnotation annotation = EcoreFactory.eINSTANCE.createEAnnotation();
+				annotation.setSource(RDF_SERIALISATION_ANNOTATION);
+				annotation.getDetails().put("suffix", "#");
+				result.getEAnnotations().add(annotation);
+
+			}
 			this.namespace = namespace;
-			result.setNsPrefix("cim");
-			result.setNsURI(namespace);
+		}
+		if (namespace!=null && profileNamespace!=null && !namespace.equals(preserveNamespaces))
+			this.namespace = namespace+"?profile="+profileNamespace;
+		
+		result.setNsPrefix("cim");
+		// TODO: Need a nice option pane to set whether we do this or not
+		result.setNsURI(this.namespace);
 
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", "java.lang.String");
 		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", "double");
@@ -75,10 +103,10 @@ public class ECoreGenerator extends SchemaGenerator {
 		/* Create root Element class from which all other classes derive. */
 		EClass element = coreFactory.createEClass();
 		if (addRootClass) {
-			element.setName("Element");
+			element.setName(ECoreGenerator.ELEMENT_CLASS_NAME);
 			element.setAbstract(true);
 			EAttribute uri = coreFactory.createEAttribute();
-			uri.setName("URI");
+			uri.setName(ECoreGenerator.ELEMENT_CLASS_IDENTIFIER);
 			uri.setEType(corePackage.getEString());
 			uri.setID(true);
 			element.getEStructuralFeatures().add(uri);
@@ -123,8 +151,6 @@ public class ECoreGenerator extends SchemaGenerator {
 	@Override
 	protected void emitPackage(String uri) {
 		EPackage pkg = coreFactory.createEPackage();
-		pkg.setNsPrefix("cim");
-		pkg.setNsURI(uri);
 		ePackages.put(uri, pkg);
 	}
 
@@ -195,7 +221,7 @@ public class ECoreGenerator extends SchemaGenerator {
 
 		if (required == true)
 			attr.setUpperBound(1);
-			attr.setLowerBound(1);
+		attr.setLowerBound(1);
 
 		if (eClasses.containsKey(domain)) {
 			EClass klass = eClasses.get(domain);
@@ -218,7 +244,7 @@ public class ECoreGenerator extends SchemaGenerator {
 	 * http://iec.ch/TC57/2009/CIM-schema-cim14#VoltageLevel, http://langdale.com.au/2005/UML#byreference
 	 *
 	 * Normally, any structured class that has no subclasses would be marked concrete.
-     * http://iec.ch/TC57/2009/CIM-schema-cim14#VoltageLevel, http://langdale.com.au/2005/UML#concrete
+	 * http://iec.ch/TC57/2009/CIM-schema-cim14#VoltageLevel, http://langdale.com.au/2005/UML#concrete
 	 */
 	@Override
 	protected void emitStereotype(String uri, String stereo) {
@@ -228,7 +254,7 @@ public class ECoreGenerator extends SchemaGenerator {
 				klass.setAbstract(false);
 			}
 		} else {
-//			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
+			//			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
 		}
 	}
 
@@ -276,8 +302,8 @@ public class ECoreGenerator extends SchemaGenerator {
 			eClasses.remove(uri);
 
 		} else if ((stereo == "http://langdale.com.au/2005/UML#compositeOf") && eReferences.containsKey(uri)) {
-//			EReference ref = eReferences.get(uri);
-//			ref.setContainment(true);
+			//			EReference ref = eReferences.get(uri);
+			//			ref.setContainment(true);
 		}
 	}
 
@@ -359,6 +385,9 @@ public class ECoreGenerator extends SchemaGenerator {
 
 		if (ePackages.containsKey(uri)) {
 			named = ePackages.get(uri);
+			EPackage pkg = (EPackage)named;
+			pkg.setNsURI(namespace+"#"+label);
+			pkg.setNsPrefix("cim"+label);
 		} else if (eClasses.containsKey(uri)) {
 			named = eClasses.get(uri);
 		} else if (eAttributes.containsKey(uri)) {

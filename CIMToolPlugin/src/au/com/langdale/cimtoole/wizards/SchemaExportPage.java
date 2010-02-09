@@ -25,7 +25,7 @@ import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 
 public class SchemaExportPage extends FurnishedWizardPage {
 
-	public static final String SCHEMA = "schema.merged-owl";
+	private String SCHEMA = "schema.merged-owl";
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
 
 	private boolean internal;
@@ -33,8 +33,9 @@ public class SchemaExportPage extends FurnishedWizardPage {
 	private TextBinding namespace = new TextBinding(Validators.NAMESPACE, NAMESPACE);
 	private ProjectBinding projects = new ProjectBinding();
 
-	public SchemaExportPage() {
+	public SchemaExportPage(String schemaFileName) {
 		super("schema");
+		this.SCHEMA = schemaFileName;
 	}
 	
 	public void setSelected(IStructuredSelection selection) {

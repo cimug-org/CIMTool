@@ -64,7 +64,14 @@ public class EcoreTask {
 		if (!packageMap.containsKey(p)){
 			if (p.equals(UML.global_package)){
 				String namespace = p.getNameSpace();
-				if (namespace.endsWith("#")) namespace = namespace.substring(0, namespace.length()-1);
+				if (namespace.endsWith("#")){
+					namespace = namespace.substring(0, namespace.length()-1);
+					EAnnotation annotation = EcoreFactory.eINSTANCE.createEAnnotation();
+					annotation.setSource(ECoreGenerator.RDF_SERIALISATION_ANNOTATION);
+					annotation.getDetails().put("suffix", "#");
+					rootPackage.getEAnnotations().add(annotation);
+
+				}
 				rootPackage.setNsURI(namespace);
 				packageMap.put(p, rootPackage);
 			}else{
@@ -255,8 +262,13 @@ public class EcoreTask {
 
 					referenceMap.put(prop, nRef);
 					if (prop.getInverse()!=null){
+						try{
 						EReference op = (EReference)getFeature(prop.getInverse());
 						nRef.setEOpposite(op);
+						}catch (ClassCastException cce){
+							System.err.println(referenceMap.get(prop)+" opposite "+getFeature(prop.getInverse()));
+							cce.printStackTrace();
+						}
 					}
 
 					if (prop.getComment()!=null){

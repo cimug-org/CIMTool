@@ -160,7 +160,7 @@ public class ProfileBuildlets extends Info {
             IFile file = getRelated(result, "owl");
             boolean preserveNS = getPreferenceOption(PRESERVE_NAMESPACES);
             String namespace = preserveNS? getSchemaNamespace(file): getProperty(file, PROFILE_NAMESPACE);
-            ECoreGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, preserveNS);
+            ECoreGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, getProperty(file, PROFILE_NAMESPACE), preserveNS);
             generator.run();
             // Use file name for top level package name.
             generator.getResult().setName(result.getName().split("\\.")[0]);
@@ -180,8 +180,8 @@ public class ProfileBuildlets extends Info {
             }
         }
 
-        protected ECoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, boolean preserveNS) throws CoreException {
-            return new ECoreGenerator(profileModel, backgroundModel, namespace, preserveNS, true, true);
+        protected ECoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, String profileNamespace, boolean preserveNS) throws CoreException {
+            return new ECoreGenerator(profileModel, backgroundModel, namespace, profileNamespace, preserveNS, true, true);
         }
     }
 

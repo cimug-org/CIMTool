@@ -41,7 +41,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static final String[] sources = {"*.xmi", "*.owl", "*.eap"};
+	private static final String[] sources = {"*.xmi", "*.owl", "*.eap", "*.ecore"};
 
 	private IFile file;
 	boolean importing;
@@ -117,7 +117,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					if(expectNewProject)
 						return null;
 					else
-						return "A schema XMI, OWL or EAP file is required";
+						return "A schema XMI, OWL, EAP or ECore file is required";
 				
 				IProject project = expectNewProject? newProject: projects.getProject();
 				file = filename.getFile(Info.getSchemaFolder(project));
