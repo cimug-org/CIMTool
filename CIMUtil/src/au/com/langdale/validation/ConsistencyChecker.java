@@ -7,7 +7,6 @@ package au.com.langdale.validation;
 
 import java.util.Iterator;
 
-import au.com.langdale.cimtoole.builder.Buildlet;
 import au.com.langdale.inference.LOG;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
@@ -30,7 +29,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * 
  */
 public class ConsistencyChecker {
-	
+	public static String BUILDLET_NS = "http://langdale.com.au/2007/Buildlet#";
+
 	private int errors;
 	private OntModel log, target, reference;
 	private String namespace;
@@ -133,7 +133,7 @@ public class ConsistencyChecker {
 				|| ns.equals(RDFS.getURI()) 
 				|| ns.equals(RDF.getURI())
 				|| ns.equals(MESSAGE.NS)
-				|| ns.equals(Buildlet.NS));
+				|| ns.equals(BUILDLET_NS));
 	}
 
 	/**

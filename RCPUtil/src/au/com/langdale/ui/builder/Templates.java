@@ -248,12 +248,21 @@ public class Templates {
 	}
 	
 	private static class MarkupTemplate extends SubjectTemplate {
-		MarkupTemplate(int style, String name, String text) {
+		private static final int LINE_HEIGHT_GUESS =15;
+		private int lines;
+		
+		MarkupTemplate(int style, String name, String text, int lines) {
 			super(style, name, text);
+			this.lines = lines;
 		}
 
 		public Control realise(Composite parent, Assembly assembly) {
 			FormText widget = assembly.getToolkit().createFormText(parent, false);
+			if( lines > 0 ) {
+				Point size = widget.getSize();
+				size.y = LINE_HEIGHT_GUESS * lines;
+				widget.setSize(size);
+			}
 			widget.setText(text, true, false);
 			register(widget, assembly);
 			widget.addHyperlinkListener(assembly.hyperlinkListener);
@@ -355,19 +364,20 @@ public class Templates {
 		}
 	}
 	
-	private static class FocusMarker implements Template {
+	private static class Marker implements Template {
+		private String name;
 		private Template inner;
 
-		public FocusMarker(Template inner) {
+		public Marker(String name, Template inner) {
+			this.name = name;
 			this.inner = inner;
 		}
 
 		public Control realise(Composite parent, Assembly assembly) {
 			Control widget = inner.realise(parent, assembly);
-			assembly.putControl("focus", widget);
+			assembly.putControl(name, widget);
 			return widget;
-		}
-		
+		}	
 	}
 	
 	public static class DefaultContentProvider implements IStructuredContentProvider {
@@ -697,11 +707,15 @@ public class Templates {
 	}
 	
 	public static Template Markup(String text) {
-		return new MarkupTemplate(0, null, text);
+		return new MarkupTemplate(0, null, text, 0);
 	}
 	
 	public static Template Markup(String name, String text) {
-		return new MarkupTemplate(0, name, text);
+		return new MarkupTemplate(0, name, text, 0);
+	}
+	
+	public static Template Markup(String name, String text, int lines) {
+		return new MarkupTemplate(0, name, text, lines);
 	}
 	
 	public static Template TextArea(String name) {
@@ -710,6 +724,10 @@ public class Templates {
 	
 	public static Template TextArea(String name, int lines) {
 		return new TextTemplate(SWT.MULTI|SWT.WRAP, name, "", lines);
+	}
+	
+	public static Template TextArea(String name, int lines, boolean scroll) {
+		return new TextTemplate(SWT.MULTI|SWT.WRAP|(scroll?SWT.V_SCROLL:0), name, "", lines);
 	}
 	
 	public static Template DisplayArea(String name) {
@@ -801,8 +819,8 @@ public class Templates {
 		return new FileFieldTemplate(SWT.NONE, name, text, exts);
 	}
 	
-	public static Template Focus(Template template) {
-		return new FocusMarker(template);
+	public static Template Mark(String name, Template template) {
+		return new Marker(name, template);
 	}
 	
 	public static Template Stack(Template[] templates) {

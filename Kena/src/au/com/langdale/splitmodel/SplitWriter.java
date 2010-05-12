@@ -66,6 +66,7 @@ public class SplitWriter extends SplitBase implements Injector {
 		setPrefix("local", local);
 		setPrefix("split", SPLITMODEL);
 		setPrefix("xsd", XSD_URI);
+		clear();
 	}
 	/**
 	 * Initialise with base namespace (recommended).  URI's that 
@@ -94,7 +95,17 @@ public class SplitWriter extends SplitBase implements Injector {
 		spaces = new HashMap(parent.spaces);
 		removePrefix("local");
 		setPrefix("local", local);
+		clear();
 	}
+	
+	private void clear() {
+		for( int ix = 0; ix < modulus; ix++) {
+			File f = getFile(ix);
+			if( f.exists())
+				f.delete();
+		}
+	}
+	
 	/* 
 	 * @see au.com.langdale.splitmodel.Injector#createQuote(java.lang.String)
 	 */

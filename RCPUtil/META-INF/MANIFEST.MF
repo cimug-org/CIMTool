@@ -30,5 +30,6 @@ Export-Package: au.com.langdale.ui.binding;
    org.eclipse.jface.viewers,
    org.eclipse.swt.widgets",
  au.com.langdale.ui.plumbing,
- au.com.langdale.ui.util;uses:="org.eclipse.jface.viewers,org.eclipse.swt.graphics,org.osgi.framework"
+ au.com.langdale.ui.util;uses:="org.eclipse.jface.viewers,org.eclipse.swt.graphics,org.osgi.framework",
+ au.com.langdale.util
 

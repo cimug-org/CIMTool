@@ -18,6 +18,12 @@ public abstract class TableBinding implements Binding, ArrayModel, AnyModel {
 	private Assembly plumbing;
 	private AnyModel parent;
 	
+	/**
+	 * Bind to the CheckboxTableViewer and a parent model.
+	 * @param name: the name of the viewer
+	 * @param plumbing: the event plumbing to which the viewer is connected.
+	 * @param parent: a parent model that can be used to obtain the input for the viewer
+	 */
 	public void bind(String name, Assembly plumbing, AnyModel parent) {
 		this.plumbing = plumbing;
 		this.parent = parent;
@@ -26,13 +32,28 @@ public abstract class TableBinding implements Binding, ArrayModel, AnyModel {
 		plumbing.addBinding(this, parent);
 	}
 	
+	/**
+	 * Bind to the CheckboxTableViewer
+	 * @param name: the name of the viewer
+	 * @param plumbing: the event plumbing to which the viewer is connected.
+	 */
 	public void bind(String name, Assembly plumbing) {
 		bind(name, plumbing, null);
 	}
 
+	/**
+	 * Configure the viewer, if necessary.  This may involve setting a content
+	 * provider that translates the input to an array.   
+	 */
 	protected abstract void configureViewer(StructuredViewer viewer);
+	/**
+	 * @return: implementations provider the viewer input, generally an array or collection
+	 */
 	protected abstract Object getInput();
 
+	/**
+	 * @return: get the parent model, or null if none is bound.
+	 */
 	public AnyModel getParent() {
 		return parent;
 	}
@@ -43,16 +64,27 @@ public abstract class TableBinding implements Binding, ArrayModel, AnyModel {
 			viewer.setInput(input);
 	}
 
+
+	/**
+	 * @return: the values checked in the viewer.
+	 */
 	public Object[] getValues() {
 		return values;
 	}
 
+	/**
+	 * set the values to be checked, *and* refresh the whole form/assembly 
+	 * FIXME: probably should not refresh here! 
+	 */
 	public void setValues(Object[] values) {
 		this.values = values;
 		if( plumbing != null)
 			plumbing.doRefresh();
 	}
 	
+	/**
+	 * @return: the value checked in the viewer, if a singleton.
+	 */
 	public Object getValue() {
 		if( values.length > 0)
 			return values[0];

@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.forms.widgets.FormText;
 
 /**
  * Public version of a private jface class. 
@@ -99,7 +100,7 @@ public class LayoutGenerator {
 
         Point size = control.getSize();
         boolean wrapping = hasStyle(control, SWT.WRAP);
-        boolean containsText = hasMethod(control, "setText", new Class[] { String.class }); //$NON-NLS-1$
+        boolean containsText = hasMethod(control, "setText", new Class[] { String.class }) || (control instanceof FormText); 
         boolean variable = ! (control instanceof Label);
 		boolean variableText = containsText && variable;
         boolean hScroll = hasStyle(control, SWT.H_SCROLL);

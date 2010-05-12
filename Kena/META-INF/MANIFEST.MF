@@ -112,4 +112,5 @@ Export-Package: au.com.langdale.inference,
  com.hp.hpl.jena.util.junit,
  com.hp.hpl.jena.util.tuple,
  com.hp.hpl.jena.vocabulary,
- com.hp.hpl.jena.xmloutput
+ com.hp.hpl.jena.xmloutput,
+ org.apache.xerces.util
