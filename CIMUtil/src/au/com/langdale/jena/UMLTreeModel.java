@@ -507,7 +507,7 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		
 		@Override
 		public String toString() {
-			OntResource base = subject.getSameAs();
+			OntResource base = subject.getEquivalentClass();
 			String units = subject.getString(UML.hasUnits);
 			
 			return "Datatype: " + label(subject) 

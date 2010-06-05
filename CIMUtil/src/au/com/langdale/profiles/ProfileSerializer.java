@@ -440,7 +440,7 @@ public class ProfileSerializer extends AbstractReader {
 		if(type.getNameSpace().equals(xsd))
 			return type.getLocalName();
 		
-		OntResource xtype = type.getSameAs();
+		OntResource xtype = type.getEquivalentClass();
 		if( xtype != null && xtype.getNameSpace().equals(xsd))
 			return xtype.getLocalName();
 

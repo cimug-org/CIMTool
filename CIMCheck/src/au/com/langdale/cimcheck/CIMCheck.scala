@@ -1,5 +1,5 @@
 package au.com.langdale.cimcheck
-import util.CommandLine.parse
+import au.com.langdale.util.CommandLine.parse
 import Console.err
 import java.io._
 
@@ -39,7 +39,7 @@ object CIMCheck {
     new Checker(profileName, opt(ruleName))
   
   val usage = 
-    """|CIMCheck version 20100512 - utility for validating CIM/XML documents. 
+    """|CIMCheck version 20100605 - utility for validating CIM/XML documents. 
        |
        |usage: java -jar cimcheck.jar [option...] profile_file model_file...
        |

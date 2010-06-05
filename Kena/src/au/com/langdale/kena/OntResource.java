@@ -341,6 +341,10 @@ public class OntResource extends Resource  {
 	public OntResource getSameAs() {
 		return getResource(OWL.sameAs);
 	}
+	
+	public OntResource getEquivalentClass() {
+		return getResource(OWL.equivalentClass);
+	}
 
 	public void addRange(FrontsNode value) {
 		model.add(this, RDFS.range, value);
