@@ -73,8 +73,11 @@ public abstract class ListBinding implements Binding, AnyModel {
 	public void refresh() {
 		resetInput(viewer);
 		if(viewer.getInput() != null ) {
-			if( value != null)
-				viewer.setSelection(new StructuredSelection(value), true);
+			if( value != null) {
+				StructuredSelection proposed = new StructuredSelection(value);
+				if( ! proposed.equals(viewer.getSelection()))
+				  viewer.setSelection(proposed, true);
+			}
 			else
 				viewer.setSelection(StructuredSelection.EMPTY);
 		}

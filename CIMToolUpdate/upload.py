@@ -18,6 +18,7 @@ def manifest():
 	yield findlast("features", "au.com.langdale.cimtoole.feature_")
 	yield findlast("plugins", "au.com.langdale.cimtoole_")
 	yield findlast("plugins", "au.com.langdale.cimtoole.help_")
+	yield findlast("plugins", "au.com.langdale.cimutil_")
 	yield findlast("plugins", "au.com.langdale.kena_")
 	yield findlast("plugins", "au.com.langdale.rcputil_")
 	yield "site.xml"

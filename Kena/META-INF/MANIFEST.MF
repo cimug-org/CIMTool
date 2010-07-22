@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.1.0.qualifier
 Bundle-Vendor: Langdale Consultants
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ClassPath: kena.jar,
@@ -112,4 +112,5 @@ Export-Package: au.com.langdale.inference,
  com.hp.hpl.jena.util.junit,
  com.hp.hpl.jena.util.tuple,
  com.hp.hpl.jena.vocabulary,
- com.hp.hpl.jena.xmloutput
+ com.hp.hpl.jena.xmloutput,
+ org.apache.xerces.util

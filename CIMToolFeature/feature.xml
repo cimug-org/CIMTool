@@ -2,7 +2,7 @@
 <feature
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
-      version="1.8.1.qualifier"
+      version="1.8.2.qualifier"
       provider-name="Langdale Consultants">
 
    <description url="http://cimtool.org">
@@ -101,5 +101,11 @@ info@healthmarketscience redistributed under the LGPL version 2.1.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="au.com.langdale.cimutil"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

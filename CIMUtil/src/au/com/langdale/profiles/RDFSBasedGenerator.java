@@ -31,6 +31,8 @@ public abstract class RDFSBasedGenerator extends SchemaGenerator {
 	protected void emit(String subject, FrontsNode prop, String object) {
 		if( subject != null && object != null)
 			result.createResource(subject).addProperty(prop, result.createResource(object));
+		else
+			System.out.println("Null statement with predicate " + prop);
 	}
 	
 	protected Resource emit(String uri, FrontsNode type) {

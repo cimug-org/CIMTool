@@ -149,7 +149,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 				}
 				else {
 					type = context.constructURI(range);
-					Resource cand = range.getSameAs();
+					Resource cand = range.getEquivalentClass();
 					if( cand != null && cand.getNameSpace().equals(XSD.getURI()))
 						xsdtype = cand.getURI();
 					else
