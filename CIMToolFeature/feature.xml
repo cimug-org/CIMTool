@@ -66,6 +66,13 @@ info@healthmarketscience redistributed under the LGPL version 2.1.
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="org.eclipse.emf.ecore.xmi"/>
+      <import plugin="org.eclipse.emf" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.forms" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

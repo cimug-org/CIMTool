@@ -54,7 +54,7 @@ public class Info {
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi", "eap");
+		return isFile(resource, "Schema", "owl", "xmi", "eap", "ecore");
 	}
 
 	public static boolean isSchemaFolder(IResource resource) {
@@ -81,16 +81,11 @@ public class Info {
 		return isFile(resource, "Profiles", "repair");
 	}
 
-	private static boolean isFile(IResource resource, String location, String type1, String type2, String type3) {
-		return isFile(resource, location) && (hasExt(resource, type1) || hasExt(resource, type2) || hasExt(resource, type3));
-	}
-
-	private static boolean isFile(IResource resource, String location, String type1, String type2) {
-		return isFile(resource, location) && (hasExt(resource, type1) || hasExt(resource, type2));
-	}
-
-	private static boolean isFile(IResource resource, String location, String type1) {
-		return isFile(resource, location) && hasExt(resource, type1);
+	private static boolean isFile(IResource resource, String location, String... types) {
+		boolean hasExt = false;
+		for (String t: types)
+			hasExt = hasExt | hasExt(resource, t);
+		return isFile(resource, location) && hasExt;
 	}
 
 	private static boolean isFile(IResource resource, String location) {
@@ -131,7 +126,8 @@ public class Info {
 			ext.equals("merged-owl") || 
 			ext.equals("diagnostic")|| 
 			ext.equals("cimtool-settings") || 
-			ext.equals("repair");
+			ext.equals("repair") ||
+			ext.equals("ecore");
 	}
 	
 	public static IFile findMasterFor(IFile file) {
@@ -142,6 +138,9 @@ public class Info {
 				return master;
 			
 			master = getRelated( file, "eap");
+			if( master.exists())
+				return master;
+			master = getRelated( file, "ecore");
 			if( master.exists())
 				return master;
 		}

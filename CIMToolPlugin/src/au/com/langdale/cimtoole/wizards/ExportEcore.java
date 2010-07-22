@@ -1,9 +1,6 @@
 package au.com.langdale.cimtoole.wizards;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IFolder;
@@ -11,7 +8,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
@@ -27,8 +27,9 @@ import au.com.langdale.util.Jobs;
 public class ExportEcore extends Wizard implements IExportWizard {
 
 	public static final String SCHEMA = "schema.ecore";
+	public static final String FILE_EXT = "ecore";
 
-	private SchemaExportPage main = new SchemaExportPage(SCHEMA);
+	private SchemaExportPage main = new SchemaExportPage(SCHEMA, FILE_EXT);
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Export Schema"); 
@@ -73,24 +74,12 @@ public class ExportEcore extends Wizard implements IExportWizard {
 				System.out.println("Getting merged Schema at "+folder.getLocation().toString());
 				OntModel schema = CIMToolPlugin.getCache().getMergedOntologyWait(folder);
 
-				Resource ecore = new EcoreTask(schema).createEcore(true, "cim", namespace);
-				/*
-				OntModel filledProfile = Task.fillProfile(schema, "http://example.com/profile/filled");
-				ECoreGenerator gen  = new ECoreGenerator(filledProfile, schema,
-						namespace, true, true,
-						true);
-				gen.run();
-				EPackage pkg = gen.getResult();
-				 */
-				OutputStream output;
+				EPackage ecoreModel = new EcoreTask(schema).createEcore(true, "cim", namespace);
+				URI fileURI = URI.createFileURI(pathname);
+				Resource ecore = new ResourceSetImpl().createResource(fileURI);
+				ecore.getContents().add(ecoreModel);
 				try {
-					output = new BufferedOutputStream( new FileOutputStream(pathname));
-				}
-				catch( IOException ex) {
-					throw Info.error("can't write to " + pathname);
-				}
-				try {
-					ecore.save(output, Collections.EMPTY_MAP);
+					ecore.save(Collections.EMPTY_MAP);
 				} catch (IOException e) {
 					Info.error("can't write to " + pathname);
 				}

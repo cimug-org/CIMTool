@@ -20,7 +20,7 @@ public class ImportSchema extends Wizard implements IImportWizard {
 		setWindowTitle("Import Schema"); 
 		setNeedsProgressMonitor(true);
 		main.setTitle(getWindowTitle());
-		main.setDescription("Import an additional schema (XMI, OWL or EAP file).");
+		main.setDescription("Import an additional schema (XMI, OWL, EAP or Ecore file).");
 		main.setSelected(selection);
 	}
 	

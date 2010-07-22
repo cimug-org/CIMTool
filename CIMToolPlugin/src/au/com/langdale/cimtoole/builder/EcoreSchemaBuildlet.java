@@ -1,7 +1,5 @@
 package au.com.langdale.cimtoole.builder;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +13,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.EcoreTask;
@@ -31,9 +32,12 @@ public class EcoreSchemaBuildlet extends Buildlet {
 		String namespace = Info.getProperty(project, Info.SCHEMA_NAMESPACE);
 		try{
 			
-			Resource ecore = new EcoreTask(schema).createEcore(true, "cim", namespace);
+			EPackage ecoreModel = new EcoreTask(schema).createEcore(true, "cim", namespace);
+			URI fileURI = URI.createFileURI(result.getLocation().toFile().getAbsolutePath());
+			Resource ecore = new ResourceSetImpl().createResource(fileURI);
+			ecore.getContents().add(ecoreModel);
 			try {
-				ecore.save(new BufferedOutputStream(new FileOutputStream(result.getLocation().toFile())), Collections.EMPTY_MAP);
+				ecore.save(Collections.EMPTY_MAP);
 			} catch (IOException e) {
 				Info.error("can't write to " +result.getLocation().toString());
 			}
@@ -44,7 +48,7 @@ public class EcoreSchemaBuildlet extends Buildlet {
 		}
 
 	}
-
+	
 	@Override
 	protected Collection getOutputs(IResource file) throws CoreException {
 		if( Info.isSchema(file)) {

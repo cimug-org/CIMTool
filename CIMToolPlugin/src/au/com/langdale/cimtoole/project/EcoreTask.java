@@ -20,11 +20,15 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.XMLHelper;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
+import au.com.langdale.kena.NodeIterator;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.ECoreGenerator;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.xmi.UML;
@@ -44,6 +48,8 @@ public class EcoreTask {
 	OntModel model;
 	String nsURI;
 	String nsPrefix;
+	
+	public static final au.com.langdale.kena.Resource XMLSimpleType = ResourceFactory.createResource(UML.NS+"xsdsimpletype");
 
 	public EcoreTask(OntModel model){
 		this.model = model;
@@ -77,13 +83,25 @@ public class EcoreTask {
 				packageMap.put(p, rootPackage);
 			}else{
 				EPackage npkg = EcoreFactory.eINSTANCE.createEPackage();
-				npkg.setName(p.getLabel());
-				npkg.setNsURI(nsURI+"#"+p.getLabel());
-				npkg.setNsPrefix(nsPrefix+p.getLabel());
+				String pName = p.getLabel().replaceAll("\\W", "");
+				npkg.setName(pName);
+				npkg.setNsURI(nsURI+"#"+pName);
+				npkg.setNsPrefix(nsPrefix+pName);
 				packageMap.put(p, npkg);
 				if (p.getIsDefinedBy()!=null){
 					EPackage parent = getEPackage(p.getIsDefinedBy());
-					parent.getESubpackages().add(npkg);
+					if (parent == npkg){
+						EPackage sParent = null;
+						try{
+							sParent = getEPackage(p.getIsDefinedBy().getIsDefinedBy());
+						}catch (NullPointerException npe){}
+						if (sParent == null || sParent == npkg){
+							rootPackage.getESubpackages().add(npkg);
+						}else{
+							sParent.getESubpackages().add(npkg);
+						}
+					}else
+						parent.getESubpackages().add(npkg);
 				}else{
 					rootPackage.getESubpackages().add(npkg);
 				}
@@ -108,12 +126,28 @@ public class EcoreTask {
 	private boolean isDataType(OntResource c){
 		ResIterator resIt = c.listProperties(UML.hasStereotype);
 		while (resIt.hasNext()){
-			if (resIt.next().equals(UML.datatype)) return true;
+			OntResource next = (OntResource)resIt.next();
+			if (next.equals(UML.datatype)) return true;
+			else if (next.equals(XMLSimpleType)){
+				System.out.println(c.getLocalName()+" is XMLSimpleType");
+				return true;
+			}
+			
 		}
 		resIt = c.listProperties(RDF.type);
 		while (resIt.hasNext()){
 			if (resIt.next().equals(RDFS.Datatype)) return true;
 		}
+		/*
+		ResIterator sc = c.listProperties(RDFS.subClassOf);
+		while (sc.hasNext()){
+			OntResource next = (OntResource)sc.next();
+			if (isDataType(next)){
+				System.out.println(c.getLocalName()+" is subclass of XMLSimpleType ("+next.getLocalName()+")");
+				return true;
+			}
+		}
+		*/
 		return false;
 	}
 
@@ -129,7 +163,8 @@ public class EcoreTask {
 		ResIterator sc = c.listProperties(RDFS.subClassOf);
 		Collection<EClass> supers = new HashSet<EClass>(); 
 		while (sc.hasNext()){
-			supers.add((EClass)getEClass((OntResource)sc.next()));					
+			if (getEClass((OntResource)sc.next()) instanceof EClass)
+				supers.add((EClass)getEClass((OntResource)sc.next()));					
 		}
 		return supers;
 	}
@@ -156,6 +191,17 @@ public class EcoreTask {
 		eSuper.removeAll(remove);
 		return eSuper;
 	}
+	
+	private Collection<EDataType> getComplexTypeSuperTypes(OntResource c){
+		ResIterator sc = c.listProperties(RDFS.subClassOf);
+		Collection<EDataType> supers = new HashSet<EDataType>(); 
+		while (sc.hasNext()){
+			if (getEClass((OntResource)sc.next()) instanceof EDataType)
+				supers.add((EDataType)getEClass((OntResource)sc.next()));					
+		}
+		return supers;
+
+	}
 
 	private EClassifier getEClass(OntResource c){
 		if (!classMap.containsKey(c) && !basicTypeMap.containsKey(c)){
@@ -165,13 +211,28 @@ public class EcoreTask {
 				ResIterator resIt = c.listInstances();
 				while (resIt.hasNext()){
 					OntResource r = resIt.nextResource();
-					r.getLocalName();
-					EEnumLiteral lit = EcoreFactory.eINSTANCE.createEEnumLiteral();
-					String litName = r.getLabel().replaceAll("[^a-zA-Z0-9\\_]", "_");
-					lit.setLiteral(r.getLabel());
-					lit.setName(litName);
-					lit.setValue(((EEnum)cls).getELiterals().size()+1);
-					((EEnum)cls).getELiterals().add(lit);
+					if (!r.isInverseFunctionalProperty()){
+						EEnumLiteral lit = EcoreFactory.eINSTANCE.createEEnumLiteral();
+						String litName = r.getLabel().replaceAll("\\W", "_");
+						int value;
+						try{
+							value = Integer.parseInt(r.getLabel());
+						}catch (NumberFormatException nfe){
+							value = ((EEnum)cls).getELiterals().size()+1;
+						}
+						try{
+							Integer.parseInt(litName.substring(0,1));
+							litName = "_"+litName;
+						}catch (NumberFormatException nfe){}
+
+						lit.setLiteral(r.getLabel());
+						lit.setName(litName);
+						while (((EEnum)cls).getEEnumLiteral(value)!=null){
+							value++;
+						}
+						lit.setValue(value);
+						((EEnum)cls).getELiterals().add(lit);
+					}
 				}
 				/* Ecore doesn't like EEnum literals of the same name and different cases */
 
@@ -197,8 +258,20 @@ public class EcoreTask {
 					profileAnnotation.setSource("http:///org/eclipse/emf/ecore/util/ExtendedMetaData");
 					profileAnnotation.getDetails().put("baseType", getSameAs(c).getURI());
 					cls.getEAnnotations().add(profileAnnotation);
+				}else if(getSameAs(c)!=null){
+					System.err.println("Has sameAs but not a basicType "+getSameAs(c));
 				}else{
 					((EDataType)cls).setInstanceClass(Object.class);
+				}
+				if (getIndirectSuperOntResources(c).size()>0){
+					for (EDataType d : getComplexTypeSuperTypes(c)){
+						EAnnotation profileAnnotation = EcoreFactory.eINSTANCE.createEAnnotation();
+						profileAnnotation.setSource("http:///org/eclipse/emf/ecore/util/ExtendedMetaData");
+						profileAnnotation.getDetails().put("baseType", d.getName());
+						cls.getEAnnotations().add(profileAnnotation);						
+					}
+				}else{
+					System.out.println(c.getLocalName()+" has no supertypes");
 				}
 
 			}else{
@@ -207,6 +280,18 @@ public class EcoreTask {
 
 				for (EClass s: getDirectSuperEClasses(c)){
 					((EClass)cls).getESuperTypes().add(s);
+				}
+				
+				if (isComplexType(c)){
+					System.out.println(c.getLocalName()+" has EDataType super-types");
+					for (EDataType d : getComplexTypeSuperTypes(c)){
+						EAttribute a = EcoreFactory.eINSTANCE.createEAttribute();
+						a.setName(d.getName()+"Value");
+						a.setUpperBound(1);
+						a.setEType(d);
+						((EClass)cls).getEStructuralFeatures().add(a);
+					}
+					
 				}
 
 			}
@@ -228,6 +313,16 @@ public class EcoreTask {
 		if (basicTypeMap.containsKey(c)) return basicTypeMap.get(c);
 		return classMap.get(c);
 	}
+	
+	/* If this class is a subtype of a DataType then it's a complex type
+	 * Can thank the Multispeak XML-based model for this one...
+	 */
+	private boolean isComplexType(OntResource c){
+		Collection<OntResource> superTypes = getIndirectSuperOntResources(c);
+		for (OntResource st : superTypes)
+			if (isDataType(st)) return true;
+		return false;
+	}
 
 	private void addComment(ENamedElement c, String comment){
 		if (comment != null) {
@@ -243,7 +338,7 @@ public class EcoreTask {
 		if (domain instanceof EClass && ((EClass)domain).getEStructuralFeature(prop.getLabel())==null){
 			EStructuralFeature feature;
 			EClassifier range = getEClass(prop.getRange());
-			if (prop.isDatatype() || range instanceof EEnum || range instanceof EDataType){
+			if (isDataType(prop) || range instanceof EEnum || range instanceof EDataType){
 				feature = EcoreFactory.eINSTANCE.createEAttribute();
 				feature.setUnsettable(true);
 				if (prop.getComment()!=null){
@@ -270,8 +365,8 @@ public class EcoreTask {
 					referenceMap.put(prop, nRef);
 					if (prop.getInverse()!=null){
 						try{
-						EReference op = (EReference)getFeature(prop.getInverse());
-						nRef.setEOpposite(op);
+							EReference op = (EReference)getFeature(prop.getInverse());
+							nRef.setEOpposite(op);
 						}catch (ClassCastException cce){
 							System.err.println(referenceMap.get(prop)+" opposite "+getFeature(prop.getInverse()));
 							cce.printStackTrace();
@@ -286,30 +381,38 @@ public class EcoreTask {
 				feature = referenceMap.get(prop);
 			}
 			feature.setEType(range);
-			feature.setName(prop.getLabel());
+			if (prop.getLabel()!=null)
+				feature.setName(prop.getLabel());
+			else{
+				String name = range.getName().substring(0,1).toLowerCase()+range.getName().substring(1);
+				String origName = name; int i=0;
+				while (((EClass)domain).getEStructuralFeature(name)!=null){
+					name = origName+i++;
+				}
+				feature.setName(name);
+			}
 			((EClass)domain).getEStructuralFeatures().add(feature);
 
 
 			return feature;
 		}else if (domain instanceof EEnum){
-			System.out.println("Adding literal");
-
+			/* Should already be set 
 			EEnumLiteral lit = EcoreFactory.eINSTANCE.createEEnumLiteral();
 			lit.setLiteral(prop.getLocalName());
 			((EEnum)domain).getELiterals().add(lit);
+			*/
 		}else{
 			if (!(domain instanceof EClass))
 				System.err.println(prop.getLabel()+" domain is not EClass "+domain);
 			else if (((EClass)domain).getEStructuralFeature(prop.getLabel())!=null && ((EClass)domain).getEStructuralFeature(prop.getLabel()) instanceof EAttribute)
 				return ((EClass)domain).getEStructuralFeature(prop.getLabel());
-			
+
 		}
 		return null;	
 	}
 
 	@SuppressWarnings("unused")
-	public Resource createEcore(boolean createRootElement, String nsPrefix, String nsURI){
-		Resource xmiResource = new XMIResourceImpl();
+	public EPackage createEcore(boolean createRootElement, String nsPrefix, String nsURI){
 		ResIterator cit = model.listNamedClasses();
 
 		this.nsPrefix = nsPrefix;
@@ -319,7 +422,6 @@ public class EcoreTask {
 		rootPackage.setNsPrefix(this.nsPrefix);
 		rootPackage.setNsURI(this.nsURI);
 		rootPackage.setName("Global");
-		xmiResource.getContents().add(rootPackage);
 
 		while (cit.hasNext()){
 			OntResource res = (OntResource) cit.next();
@@ -351,7 +453,7 @@ public class EcoreTask {
 				for (EStructuralFeature f: cls.getEStructuralFeatures()){
 					boolean remove = false;
 					for (EStructuralFeature sf : cls.getEAllStructuralFeatures()){
-						if (sf.getEContainingClass()!=cls){
+						if (sf.getEContainingClass()!=cls && sf.getName()!=null){
 							if (sf.getName().equals(f.getName())){
 								remove = true;
 								System.out.println("Marking "+f.getName()+" in "+cls.getName()+" for removal - duplicate in "+sf.getEContainingClass().getName());
@@ -375,8 +477,6 @@ public class EcoreTask {
 			newRoot.setNsPrefix(this.nsPrefix);
 			newRoot.setNsURI(this.nsURI);
 			rootPackage.getESubpackages().remove(newRoot);
-			xmiResource.getContents().remove(rootPackage);
-			xmiResource.getContents().add(newRoot);
 			rootPackage = newRoot;
 		}
 
@@ -412,8 +512,7 @@ public class EcoreTask {
 				}
 			}
 		}
-
-		return xmiResource;
+		System.out.println("Finished ecore export");
+		return rootPackage;
 	}
-
 }

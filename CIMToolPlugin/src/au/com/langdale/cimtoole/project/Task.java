@@ -44,6 +44,7 @@ import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.workspace.ResourceOutputStream;
 import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAPExtractor;
+import au.com.langdale.xmi.ECoreExtractor;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
 
@@ -187,6 +188,8 @@ public class Task extends Info {
 		}
 		else if( ext.equals("eap"))
 			return parseEAP(file);
+		else if (ext.equals("ecore"))
+			return parseEcore(file);
 		else {
 			return parseOWL(file);
 		}
@@ -506,5 +509,15 @@ public class Task extends Info {
 				profileModel.setNsPrefix("cim", backOnt.getURI() + "#");
 			}
 		}
+	}
+	
+	private static OntModel parseEcore(IFile file) throws CoreException {
+		ECoreExtractor extractor = new ECoreExtractor(file);
+		try {
+			extractor.run();
+		} catch (Exception e) {
+			throw error("Can't parse model file " + file.getName(), e);
+		}
+		return interpretSchema(extractor.getModel(), file);
 	}
 }
