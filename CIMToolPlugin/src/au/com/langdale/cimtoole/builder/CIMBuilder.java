@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -24,15 +23,16 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.ECoreBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
 import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
 import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
 /**
  * The builder for CIMTool projects.  
  * 
@@ -49,7 +49,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	 * @return an array of buildlets that together build a CIMTool project
 	 */
 	public Buildlet[] createBuildlets() {
-		return new Buildlet[] {
+		Buildlet[] defaultBuildlets = new Buildlet[] {
 			new SchemaBuildlet(),
 			new ProfileChecker(),
 			new XSDBuildlet(),
@@ -64,12 +64,20 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 			new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
 			new CopyBuildlet("TURTLE", "ttl"),
-			new ECoreBuildlet(),
 			new ValidationBuildlet(),
 			new SplitValidationBuildlet(),
 			new IncrementalValidationBuildlet(),
 
 		};
+		
+		ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();
+		if (registered.length>0){
+			Buildlet[] combined = new Buildlet[defaultBuildlets.length+registered.length];
+			System.arraycopy(defaultBuildlets, 0, combined, 0, defaultBuildlets.length);
+			System.arraycopy(registered, 0, combined, defaultBuildlets.length, registered.length);
+			return combined;
+		}else
+			return defaultBuildlets;
 	}
 
 	/**

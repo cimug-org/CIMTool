@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.registries.ModelParser;
+import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 
 import com.healthmarketscience.jackcess.Database;
 /**
@@ -40,7 +42,7 @@ public class Info {
 	public static final QualifiedName PROFILE_ENVELOPE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_envelope");
 
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
-	
+
 	public static boolean isProfile(IResource resource) {
 		return isFile(resource, "Profiles", "owl", "n3");
 	}
@@ -54,7 +56,7 @@ public class Info {
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi", "eap", "ecore");
+		return isFile(resource, "Schema", "owl", "xmi", "eap") || isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
 	}
 
 	public static boolean isSchemaFolder(IResource resource) {
@@ -92,7 +94,7 @@ public class Info {
 		IPath path = resource.getProjectRelativePath();
 		return (resource instanceof IFile) && path.segmentCount() == 2 && path.segment(0).equals(location);
 	}
-	
+
 	private static boolean hasExt(IResource file, String type) {
 		String ext = file.getFileExtension();
 		return ext != null && ext.equals(type);
@@ -102,7 +104,7 @@ public class Info {
 		IPath path = resource.getProjectRelativePath();
 		return (resource instanceof IFolder) && path.segmentCount() == 2 && path.segment(0).equals(location);
 	}
-/*
+	/*
 	public static boolean isXMI(IFile file) {
 		String ext = file.getFileExtension();
 		if( ext == null)
@@ -110,39 +112,41 @@ public class Info {
 		ext = ext.toLowerCase();
 		return ext.equals("xmi");
 	}
-*/
+	 */
 	public static boolean isParseable(IFile file) {
 		String ext = file.getFileExtension();
 		if( ext == null)
 			return false;
 		ext = ext.toLowerCase();
-		
+
 		return 
-			ext.equals("xmi") || 
-			ext.equals("eap") ||
-			ext.equals("owl") || 
-			ext.equals("n3") || 
-			ext.equals("simple-owl") || 
-			ext.equals("merged-owl") || 
-			ext.equals("diagnostic")|| 
-			ext.equals("cimtool-settings") || 
-			ext.equals("repair") ||
-			ext.equals("ecore");
+		ext.equals("xmi") || 
+		ext.equals("eap") ||
+		ext.equals("owl") || 
+		ext.equals("n3") || 
+		ext.equals("simple-owl") || 
+		ext.equals("merged-owl") || 
+		ext.equals("diagnostic")|| 
+		ext.equals("cimtool-settings") || 
+		ext.equals("repair") ||
+		ModelParserRegistry.INSTANCE.hasParserForExtension(ext);
 	}
-	
+
 	public static IFile findMasterFor(IFile file) {
 		String ext = file.getFileExtension();
 		if( ext != null &&  ext.equalsIgnoreCase("annotation")) {
 			IFile master = getRelated(file, "xmi");
 			if( master.exists())
 				return master;
-			
+
 			master = getRelated( file, "eap");
 			if( master.exists())
 				return master;
-			master = getRelated( file, "ecore");
-			if( master.exists())
-				return master;
+			for (String s : ModelParserRegistry.INSTANCE.getExtensions()){
+				master = getRelated( file, s);
+				if( master.exists())
+					return master;
+			}
 		}
 		return null;
 	}
@@ -172,11 +176,11 @@ public class Info {
 	public static IFolder getIncrementalFolder(IProject project) {
 		return project != null? project.getFolder("Incremental"): null;
 	}
-	
+
 	public static IFile getSettings(IProject project) {
 		return project != null? project.getFile("." + SETTINGS_EXTENSION): null;
 	}
-	
+
 	public static IResource getInstanceFor(IResource result) {
 		IResource instance = getRelated(result, "ttl");
 		if( !instance.exists())
@@ -189,30 +193,30 @@ public class Info {
 			instance = null;
 		}
 		return instance;
-		
+
 	}
 
 	public static IFile getProfileFor(IResource resource) throws CoreException {
 		IResource instance = getBaseModelFor(resource);
 		if( instance != null)
 			resource = instance;
-		
+
 		String path = getProperty(resource, Info.PROFILE_PATH);
 		if( path.length() == 0)
 			return null;
-		
+
 		IFile profile = getProfileFolder(resource.getProject()).getFile(path);
 		if( ! profile.exists())
 			return null;
-		
+
 		return profile;
 	}
-	
+
 	public static IFile getRulesFor(IResource resource) throws CoreException {
 		IFile profile = getProfileFor(resource);
 		if(profile == null)
 			return null;
-		
+
 		String type;
 		if( isInstance(resource))
 			type = "simple-rules";
@@ -222,23 +226,23 @@ public class Info {
 			type = "inc-rules";
 		else
 			return null;
-		
+
 		IFile rules = getRelated(profile, type);
 		if( ! rules.exists())
 			return null;
-		
+
 		return rules;
 	}
-	
+
 	public static IResource getBaseModelFor(IResource resource) throws CoreException {
 		String path = getProperty(resource, Info.BASE_MODEL_PATH);
 		if( path.length() == 0)
 			return null;
-		
+
 		IFolder instance = getInstanceFolder(resource.getProject()).getFolder(path);
 		if( ! instance.exists())
 			return null;
-		
+
 		return instance;
 	}
 
@@ -257,7 +261,7 @@ public class Info {
 		}
 		return value;
 	}
-	
+
 	public static void putProperty(IResource resource, QualifiedName symbol, String value) {
 		CIMToolPlugin.getSettings().putSetting(resource, symbol, value);
 	}
@@ -269,7 +273,7 @@ public class Info {
 	public static boolean getPreferenceOption(QualifiedName symbol) {
 		return CIMToolPlugin.getDefault().getPluginPreferences().getBoolean(symbol.getLocalName());
 	}
-	
+
 	public static String getSchemaNamespace(IResource resource) throws CoreException {
 		IResource[] schemas = getSchemaFolder(resource.getProject()).members();
 		for(int ix = 0; ix < schemas.length; ix++) {

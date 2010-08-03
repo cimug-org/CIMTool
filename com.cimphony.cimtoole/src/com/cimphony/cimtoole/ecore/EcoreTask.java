@@ -1,4 +1,4 @@
-package au.com.langdale.cimtoole.project;
+package com.cimphony.cimtoole.ecore;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,18 +19,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.XMLHelper;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
-import au.com.langdale.kena.NodeIterator;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.profiles.ECoreGenerator;
-import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -74,7 +67,7 @@ public class EcoreTask {
 				if (namespace.endsWith("#")){
 					namespace = namespace.substring(0, namespace.length()-1);
 					EAnnotation annotation = EcoreFactory.eINSTANCE.createEAnnotation();
-					annotation.setSource(ECoreGenerator.RDF_SERIALISATION_ANNOTATION);
+					annotation.setSource(EcoreGenerator.RDF_SERIALISATION_ANNOTATION);
 					annotation.getDetails().put("suffix", "#");
 					rootPackage.getEAnnotations().add(annotation);
 
@@ -152,10 +145,13 @@ public class EcoreTask {
 	}
 
 	private OntResource getSameAs(OntResource d){
+		return d.getEquivalentClass();
+		/*
 		ResIterator resIt = d.listProperties(OWL.sameAs);
 		if (resIt.hasNext())
 			return resIt.nextResource();
 		return null;
+		*/
 
 	}
 
@@ -483,9 +479,9 @@ public class EcoreTask {
 		if (createRootElement){
 			EClass root = EcoreFactory.eINSTANCE.createEClass();
 			root.setAbstract(true);
-			root.setName(ECoreGenerator.ELEMENT_CLASS_NAME);
+			root.setName(EcoreGenerator.ELEMENT_CLASS_NAME);
 			EAttribute identifier = EcoreFactory.eINSTANCE.createEAttribute();
-			identifier.setName(ECoreGenerator.ELEMENT_CLASS_IDENTIFIER);
+			identifier.setName(EcoreGenerator.ELEMENT_CLASS_IDENTIFIER);
 			identifier.setEType(EcorePackage.eINSTANCE.getEString());
 			identifier.setID(true);
 			root.getEStructuralFeatures().add(identifier);

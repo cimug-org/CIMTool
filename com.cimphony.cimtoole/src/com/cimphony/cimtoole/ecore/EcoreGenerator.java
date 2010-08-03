@@ -1,6 +1,6 @@
 /* Copyright (c) 2009 Richard Lincoln */
 
-package au.com.langdale.profiles;
+package com.cimphony.cimtoole.ecore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,9 @@ import java.util.Map;
 import org.eclipse.emf.ecore.*;
 
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.profiles.SchemaGenerator;
 
-public class ECoreGenerator extends SchemaGenerator {
+public class EcoreGenerator extends SchemaGenerator {
 
 	private String namespace;
 	private boolean addRootClass;
@@ -26,7 +27,7 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	EPackage result = coreFactory.createEPackage();
 
-	Map<String, String>	xsdTypes = new HashMap<String, String>(); // xsdtype to java
+	Map<String, Class<?>>	xsdTypes = new HashMap<String, Class<?>>(); // xsdtype to java
 	Map<String, EDataType> eTypes = new HashMap<String, EDataType>(); // xsdtype to ecore
 
 	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
@@ -38,7 +39,7 @@ public class ECoreGenerator extends SchemaGenerator {
 
 	ArrayList<EReference> notInverted = new ArrayList<EReference>();
 
-	public ECoreGenerator(OntModel profileModel, OntModel backgroundModel,
+	public EcoreGenerator(OntModel profileModel, OntModel backgroundModel,
 			String namespace, String profileNamespace, boolean preserveNamespaces, boolean inverses,
 			boolean addRootClass) {
 		super(profileModel, backgroundModel, preserveNamespaces, inverses);
@@ -73,12 +74,41 @@ public class ECoreGenerator extends SchemaGenerator {
 		// TODO: Need a nice option pane to set whether we do this or not
 		result.setNsURI(this.namespace);
 
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", "java.lang.String");
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", "double");
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", "int");
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#int", "int");
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", "boolean");
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", "java.util.Date");
+		/* These were manually created, entries below are from JS3-31 with exception of Date in
+		 * place of GregorianCalendar
+		 
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", java.lang.String.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", double.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", int.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#int", int.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", boolean.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", java.util.Date.class);
+		*/
+		
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", java.lang.String.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", java.math.BigInteger.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#int", int.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#long", 	long.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#short", short.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#decimal", java.math.BigDecimal.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", float.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#double", double.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", boolean.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#byte", byte.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#QName", javax.xml.namespace.QName.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", java.util.Date.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#base64Binary", byte[].class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#hexBinary", byte[].class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#unsignedInt", long.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#unsignedShort", int.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#unsignedByte", short.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#time", java.util.Date.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#date", java.util.Date.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#g", java.util.Date.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#anySimpleType", java.lang.Object.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#duration", javax.xml.datatype.Duration.class);
+		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#NOTATION", javax.xml.namespace.QName.class);
+
 
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#string", corePackage.getEString());
 		this.eTypes.put("http://www.w3.org/2001/XMLSchema#float", corePackage.getEFloat());
@@ -103,10 +133,10 @@ public class ECoreGenerator extends SchemaGenerator {
 		/* Create root Element class from which all other classes derive. */
 		EClass element = coreFactory.createEClass();
 		if (addRootClass) {
-			element.setName(ECoreGenerator.ELEMENT_CLASS_NAME);
+			element.setName(EcoreGenerator.ELEMENT_CLASS_NAME);
 			element.setAbstract(true);
 			EAttribute uri = coreFactory.createEAttribute();
-			uri.setName(ECoreGenerator.ELEMENT_CLASS_IDENTIFIER);
+			uri.setName(EcoreGenerator.ELEMENT_CLASS_IDENTIFIER);
 			uri.setEType(corePackage.getEString());
 			uri.setID(true);
 			element.getEStructuralFeatures().add(uri);
@@ -197,7 +227,8 @@ public class ECoreGenerator extends SchemaGenerator {
 		dt.getEAnnotations().add(profileAnnotation);
 
 		if (xsdTypes.containsKey(xsdtype)) {
-			dt.setInstanceTypeName(xsdTypes.get(xsdtype));
+			dt.setInstanceTypeName(xsdTypes.get(xsdtype).toString());
+			dt.setInstanceClass(xsdTypes.get(xsdtype));
 		} else {
 			log("Data type [" + xsdtype + "] not found.");
 			dt.setInstanceClass(Object.class);

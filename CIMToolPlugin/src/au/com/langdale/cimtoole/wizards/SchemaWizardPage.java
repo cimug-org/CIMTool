@@ -14,12 +14,17 @@ import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.RadioButton;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.cimtoole.registries.ModelParser;
+import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 import au.com.langdale.ui.binding.RadioTextBinding;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.binding.Validators;
@@ -35,13 +40,13 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 		super("schema");
 		this.expectNewProject = expectNewProject;
 	}
-	
+
 	public SchemaWizardPage() {
 		this(false);
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static final String[] sources = {"*.xmi", "*.owl", "*.eap", "*.ecore"};
+	private static final String[] sources = {"*.xmi", "*.owl", "*.eap"};
 
 	private IFile file;
 	boolean importing;
@@ -49,7 +54,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private TextBinding source = new TextBinding(Validators.OPTIONAL_EXTANT_FILE);
 	private LocalFileBinding filename = new LocalFileBinding(sources, false);
 	private RadioTextBinding namespace = new RadioTextBinding(Validators.NAMESPACE, NAMESPACE);
-	
+
 	private String[] presets = new String[] {
 			"cim12", "http://iec.ch/TC57/2007/CIM-schema-cim12#",
 			"cim13", "http://iec.ch/TC57/2008/CIM-schema-cim13#",
@@ -59,11 +64,11 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 	private ProjectBinding projects = new ProjectBinding();
 	private IProject newProject;
-	
+
 	public void setSelected(IStructuredSelection selection) {
 		projects.setSelected(selection);
 	}
-	
+
 	public void setNewProject(IProject newProject) {
 		this.newProject = newProject;
 	}
@@ -71,7 +76,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	public IFile getFile() {
 		return file;
 	}
-	
+
 	public String getNamespace() {
 		return namespace.getText();
 	}
@@ -79,26 +84,41 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	public String getPathname() {
 		return source.getText();
 	}
-	
+
 	@Override
 	protected Content createContent() {
 		return new Content() {
 
 			@Override
 			protected Template define() {
+				String[] sources = SchemaWizardPage.sources;
+				String[] extended = ModelParserRegistry.INSTANCE.getExtensions();
+				if (extended.length>0){
+					Set<String> extExtra = new TreeSet<String>();
+					for (String s : extended) extExtra.add(s);
+					for (String s : sources) extExtra.remove(s);
+					if (extExtra.size()>0){
+						String[] combined = new String[sources.length+extExtra.size()];
+						System.arraycopy(sources, 0, combined, 0, sources.length);
+						int i = sources.length;
+						for (String s : extExtra)
+							combined[i++] = "*."+s;
+						sources = combined;
+					}
+				}
 				return Grid(
-					Group(FileField("source", "File to import:", sources)),
-					Group(
-						RadioButton("cim12", "CIM 12 (2007)"), 
-						RadioButton("cim13", "CIM 13 (2008)"),
-						RadioButton("cim14", "CIM 14 (2009)"),
-						RadioButton("preset", "Preference*")),
-					Group(Label("Namespace URI:"), Field("namespace")),
-					Group(Label("Project")), 
-					expectNewProject? null :Group(CheckboxTableViewer("projects")),
-					Group(Label("Schema name:"), Field("filename")),
-					Group(CheckBox("replace", "Replace existing schema.")),
-					Group(Label("* Set this under Windows > Preferences > CIMTool"))
+						Group(FileField("source", "File to import:", sources)),
+						Group(
+								RadioButton("cim12", "CIM 12 (2007)"), 
+								RadioButton("cim13", "CIM 13 (2008)"),
+								RadioButton("cim14", "CIM 14 (2009)"),
+								RadioButton("preset", "Preference*")),
+								Group(Label("Namespace URI:"), Field("namespace")),
+								Group(Label("Project")), 
+								expectNewProject? null :Group(CheckboxTableViewer("projects")),
+										Group(Label("Schema name:"), Field("filename")),
+										Group(CheckBox("replace", "Replace existing schema.")),
+										Group(Label("* Set this under Windows > Preferences > CIMTool"))
 				);
 			}
 
@@ -117,18 +137,18 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					if(expectNewProject)
 						return null;
 					else
-						return "A schema XMI, OWL, EAP or Ecore file is required";
-				
+						return "A schema XMI, OWL, EAP or other valid schema file is required";
+
 				IProject project = expectNewProject? newProject: projects.getProject();
 				file = filename.getFile(Info.getSchemaFolder(project));
 				if( file == null )
 					return "A project resource name is required";
-				
+
 				boolean exists = file.exists();
 				getButton("replace").setEnabled(exists);
 				if( exists && ! getButton("replace").getSelection())
 					return "A schema named " + filename.getText() + " already exists. " +
-							"Check option to replace.";
+					"Check option to replace.";
 
 				if( source.getText().endsWith(".eap")) {
 					String check = Info.checkValidEAP(new File(source.getText()));

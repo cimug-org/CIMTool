@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="au.com.langdale.cimtoole.model_parser">
+      <parser
+            class="com.cimphony.cimtoole.ecore.EcoreExtractor"
+            fileExt="ecore"
+            id="com.cimphony.cimtoole.ecore_parser"
+            name="Ecore Parser">
+      </parser>
+   </extension>
+
+
+   <extension
+         point="au.com.langdale.cimtoole.profile_buildlet">
+      <buildlet
+            class="com.cimphony.cimtoole.buildlet.EcoreBuildlet"
+            id="com.cimphony.cimtoole.ecore_buildlet"
+            name="Ecore Buildlet">
+      </buildlet>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="au.com.langdale.cimtoole"
+            class="com.cimphony.cimtoole.wizards.ExportEcore"
+            icon="icons/package-ecore.png"
+            id="com.cimphony.cimtoole.wizards.ExportEcore"
+            name="Export merged schema as Ecore">
+      </wizard>
+      <category
+            id="au.com.langdale.cimtoole"
+            name="CIMTool">
+      </category>
+   </extension>
+   
+   
+   </plugin>

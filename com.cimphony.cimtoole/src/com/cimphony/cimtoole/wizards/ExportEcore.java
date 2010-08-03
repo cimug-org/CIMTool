@@ -1,4 +1,4 @@
-package au.com.langdale.cimtoole.wizards;
+package com.cimphony.cimtoole.wizards;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -17,10 +17,13 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
+import com.cimphony.cimtoole.buildlet.EcoreSchemaBuildlet;
+import com.cimphony.cimtoole.ecore.EcoreTask;
+
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.builder.EcoreSchemaBuildlet;
-import au.com.langdale.cimtoole.project.EcoreTask;
 import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.cimtoole.wizards.SchemaExportPage;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.util.Jobs;
 

@@ -1,4 +1,4 @@
-package au.com.langdale.cimtoole.builder;
+package com.cimphony.cimtoole.buildlet;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -18,8 +18,10 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import com.cimphony.cimtoole.ecore.EcoreTask;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.project.EcoreTask;
+import au.com.langdale.cimtoole.builder.Buildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.kena.OntModel;
 
@@ -49,6 +51,7 @@ public class EcoreSchemaBuildlet extends Buildlet {
 
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected Collection getOutputs(IResource file) throws CoreException {
 		if( Info.isSchema(file)) {

@@ -1,4 +1,4 @@
-package au.com.langdale.xmi;
+package com.cimphony.cimtoole.ecore;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,16 +28,19 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Factory.Descriptor;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.registries.ModelParser;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.xmi.UML;
+import au.com.langdale.xmi.XMIModel;
 
+import com.cimphony.cimtoole.CimphonyCIMToolPlugin;
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-public class ECoreExtractor extends XMIModel {
+public class EcoreExtractor extends XMIModel implements ModelParser{
 
 	public class InvalidEDataTypeException extends Exception{
 		private static final long serialVersionUID = -2616865485691314837L;
@@ -59,16 +62,11 @@ public class ECoreExtractor extends XMIModel {
 	protected Map<EClassifier, OntResource> classMap;
 	protected Set<EReference> processedAssociations;
 
-	private ECoreExtractor(){
+	public EcoreExtractor(){
 		model = ModelFactory.createMem();
 		packageMap = new HashMap<EPackage, OntResource>();
 		classMap = new HashMap<EClassifier, OntResource>();
 		processedAssociations = new HashSet<EReference>();
-	}
-
-	public ECoreExtractor(IFile file){
-		this();
-		this.file = file;
 	}
 
 	/**
@@ -83,13 +81,14 @@ public class ECoreExtractor extends XMIModel {
 	}
 
 	public void run() throws IOException, CoreException{
+		if (file == null) throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "No input file set"));
 		if (!file.getFileExtension().equals("ecore"))
 			return;
 		Resource res = ((Descriptor)Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().get("ecore")).createFactory()
 		.createResource(URI.createFileURI(file.getFullPath().toString()));
 		res.load(file.getContents(), Collections.EMPTY_MAP);
-		if (res.getContents().size()==0) throw new CoreException(new Status(IStatus.ERROR, CIMToolPlugin.PLUGIN_ID, "ECore Resource is empty"));
-		if (!(res.getContents().get(0) instanceof EPackage)) throw new CoreException(new Status(IStatus.ERROR, CIMToolPlugin.PLUGIN_ID, "File contains no EPackages"));
+		if (res.getContents().size()==0) throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "ECore Resource is empty"));
+		if (!(res.getContents().get(0) instanceof EPackage)) throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "File contains no EPackages"));
 
 		EPackage root = (EPackage)res.getContents().get(0);
 		try{
@@ -107,7 +106,7 @@ public class ECoreExtractor extends XMIModel {
 
 	protected void processEPackage(EPackage p) throws CoreException{
 		System.out.println("Starting processing of "+p.getName()+" Package");
-		OntResource op = createIndividual(ECoreExtractor.getXUID(p), p.getName(), UML.Package);
+		OntResource op = createIndividual(EcoreExtractor.getXUID(p), p.getName(), UML.Package);
 		annotate(p, op);
 		packageMap.put(p, op);
 		OntResource parent = packageMap.get(p.getESuperPackage());
@@ -121,7 +120,7 @@ public class ECoreExtractor extends XMIModel {
 	}
 
 	protected void processEClassifier(EClassifier c) throws CoreException{
-		OntResource oc = createClass(ECoreExtractor.getXUID(c), c.getName());
+		OntResource oc = createClass(EcoreExtractor.getXUID(c), c.getName());
 		annotate(c, oc);
 		classMap.put(c, oc);
 		OntResource op = packageMap.get(c.getEPackage());
@@ -131,7 +130,7 @@ public class ECoreExtractor extends XMIModel {
 			oc.addProperty(UML.hasStereotype, UML.enumeration);
 			EEnum ee = (EEnum)c;
 			for (EEnumLiteral lit: ee.getELiterals()){
-				createIndividual(ECoreExtractor.getXUID(lit), lit.getLiteral(), oc);
+				createIndividual(EcoreExtractor.getXUID(lit), lit.getLiteral(), oc);
 			}
 		}else if (c instanceof EClass){
 			EClass ec = (EClass)c;
@@ -143,7 +142,7 @@ public class ECoreExtractor extends XMIModel {
 			try{
 				oc.addProperty(OWL.sameAs, getXSDType((EDataType)c));
 			}catch(InvalidEDataTypeException ex){
-				throw new CoreException(new Status(IStatus.ERROR, CIMToolPlugin.PLUGIN_ID, "Invalid EDataType in Ecore - no XSD Mapping", ex));
+				throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "Invalid EDataType in Ecore - no XSD Mapping", ex));
 			}
 		}else{
 			System.err.println("EClassifier of type "+c.getClass().getName());			
@@ -192,7 +191,7 @@ public class ECoreExtractor extends XMIModel {
 			for (EStructuralFeature f: ((EClass) c).getEStructuralFeatures()){
 		
 				if (f instanceof EAttribute){
-					OntResource subject = createAttributeProperty(ECoreExtractor.getXUID(f), f.getName());
+					OntResource subject = createAttributeProperty(EcoreExtractor.getXUID(f), f.getName());
 					subject.addDomain(oc);
 					annotate(f, subject);
 					FrontsNode type = classMap.get(f.getEType());
@@ -200,7 +199,7 @@ public class ECoreExtractor extends XMIModel {
 						try {
 							type = getXSDType((EDataType)f.getEType());
 						} catch (InvalidEDataTypeException ex) {
-							throw new CoreException(new Status(IStatus.ERROR, CIMToolPlugin.PLUGIN_ID, "Invalid EDataType in Ecore - no XSD Mapping", ex));
+							throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "Invalid EDataType in Ecore - no XSD Mapping", ex));
 						}
 					}
 					if (type != null)
@@ -228,7 +227,7 @@ public class ECoreExtractor extends XMIModel {
 
 	protected Role extractProperty(EReference ref, OntResource destin, boolean aggregate, boolean sideA) {
 		Role role = new Role();
-		role.property = createObjectProperty(ECoreExtractor.getXUID(ref), sideA, ref.getName());
+		role.property = createObjectProperty(EcoreExtractor.getXUID(ref), sideA, ref.getName());
 		role.range = destin;
 		role.aggregate = aggregate;
 		role.upper = ref.getUpperBound();
@@ -243,5 +242,10 @@ public class ECoreExtractor extends XMIModel {
 				o.addComment(el.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel").getDetails().get("documentation"), LANG);
 			}
 		}
+	}
+
+	@Override
+	public void setFile(IFile file) {
+		this.file = file;
 	}
 }

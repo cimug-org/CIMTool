@@ -18,20 +18,16 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 import org.xml.sax.SAXException;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
 import au.com.langdale.jena.OntModelProvider;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.profiles.ECoreGenerator;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.OWLGenerator;
 import au.com.langdale.profiles.ProfileModel;
@@ -300,45 +296,6 @@ public class ProfileBuildlets extends Task {
 		}
 	}
 	
-	/**
-     * Buildlet for ECore profile.
-     */
-    public static class ECoreBuildlet extends ProfileBuildlet {
-
-        protected ECoreBuildlet() {
-            super("ecore");
-        }
-
-        @Override
-        protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
-            IFile file = getRelated(result, "owl");
-            boolean preserveNS = getPreferenceOption(PRESERVE_NAMESPACES);
-            String namespace = preserveNS? getSchemaNamespace(file): getProperty(file, PROFILE_NAMESPACE);
-            ECoreGenerator generator = getGenerator(getProfileModel(file), getBackgroundModel(file), namespace, getProperty(file, PROFILE_NAMESPACE), preserveNS);
-            generator.run();
-            // Use file name for top level package name.
-            generator.getResult().setName(result.getName().split("\\.")[0]);
-            System.out.println("Generated ECore model: " + result.getName());
-            ResourceSet metaResourceSet = new ResourceSetImpl();
-            // Register XML Factory implementation to handle .ecore files
-            metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-                "ecore", new  XMLResourceFactoryImpl());
-            // Create empty resource with the given URI
-            org.eclipse.emf.ecore.resource.Resource metaResource =
-                metaResourceSet.createResource(URI.createURI(result.getFullPath().toString()));
-            metaResource.getContents().add(generator.getResult());
-            try {
-                metaResource.save(null);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        protected ECoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, String profileNamespace, boolean preserveNS) throws CoreException {
-            return new ECoreGenerator(profileModel, backgroundModel, namespace, profileNamespace, preserveNS, true, true);
-        }
-    }
-	
 	public static BooleanModel[] getAvailable(OntModelProvider context) {
 		ProfileBuildlet[] buildlets = getAvailable();
 		BooleanModel[] flags = new BooleanModel[buildlets.length];
@@ -350,7 +307,7 @@ public class ProfileBuildlets extends Task {
 	 * @return: a list of all profile buildlets.
 	 */
 	private static ProfileBuildlet[] getAvailable() {
-		return new ProfileBuildlet[] {
+		ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] {
 				
 				new XSDBuildlet(),
 				new TransformBuildlet(null, "xml"),
@@ -363,8 +320,17 @@ public class ProfileBuildlets extends Task {
 				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true),
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true),
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-				new CopyBuildlet("TURTLE", "ttl"),
-				new ECoreBuildlet()
+				new CopyBuildlet("TURTLE", "ttl")
 			};
+		ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();
+		if (registered.length>0){
+			ProfileBuildlet[] combined = new ProfileBuildlet[defaultBuildlets.length+registered.length];
+			System.arraycopy(defaultBuildlets, 0, combined, 0, defaultBuildlets.length);
+			System.arraycopy(registered, 0, combined, defaultBuildlets.length, registered.length);
+			return combined;
+		}else
+			return defaultBuildlets;
+			
+
 	}
 }

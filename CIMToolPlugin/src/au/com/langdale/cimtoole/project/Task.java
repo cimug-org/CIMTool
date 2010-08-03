@@ -25,11 +25,15 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
+import au.com.langdale.cimtoole.registries.ModelParser;
+import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.kena.Composition;
@@ -44,7 +48,6 @@ import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.workspace.ResourceOutputStream;
 import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAPExtractor;
-import au.com.langdale.xmi.ECoreExtractor;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
 
@@ -188,10 +191,24 @@ public class Task extends Info {
 		}
 		else if( ext.equals("eap"))
 			return parseEAP(file);
-		else if (ext.equals("ecore"))
-			return parseEcore(file);
 		else {
-			return parseOWL(file);
+			if (ModelParserRegistry.INSTANCE.hasParserForExtension(ext)){
+				ModelParser[] parsers = ModelParserRegistry.INSTANCE.getParsersForExtension(ext);
+				/* For now we'll just pick the first one so we don't start adding too much UI stuff... */
+				ModelParser parser = parsers[0];
+				parser.setFile(file);
+				try {
+					parser.run();
+				} catch (IOException e) {
+					throw new CoreException(
+							new Status(
+									IStatus.ERROR,
+									CIMToolPlugin.PLUGIN_ID, e.getMessage(), e));
+				}
+				return interpretSchema(parser.getModel(), file);
+				
+			}else
+				return parseOWL(file);
 		}
 	}
 
@@ -509,15 +526,5 @@ public class Task extends Info {
 				profileModel.setNsPrefix("cim", backOnt.getURI() + "#");
 			}
 		}
-	}
-	
-	private static OntModel parseEcore(IFile file) throws CoreException {
-		ECoreExtractor extractor = new ECoreExtractor(file);
-		try {
-			extractor.run();
-		} catch (Exception e) {
-			throw error("Can't parse model file " + file.getName(), e);
-		}
-		return interpretSchema(extractor.getModel(), file);
 	}
 }

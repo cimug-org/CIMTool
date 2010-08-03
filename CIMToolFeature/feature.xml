@@ -59,20 +59,21 @@ info@healthmarketscience redistributed under the LGPL version 2.1.
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.ui.forms" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.emf.ecore"/>
-      <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.eclipse.emf" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.forms" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="au.com.langdale.cimutil" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="au.com.langdale.rcputil" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="au.com.langdale.cimtoole" version="1.8.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -107,5 +108,12 @@ info@healthmarketscience redistributed under the LGPL version 2.1.
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="com.cimphony.cimtoole"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
