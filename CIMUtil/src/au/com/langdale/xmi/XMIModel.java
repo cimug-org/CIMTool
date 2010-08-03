@@ -367,11 +367,12 @@ public class XMIModel {
 	 * Description of an association role.
 	 *
 	 */
-	protected class Role {
-	    OntResource range;
-	    OntResource property;
-	    int lower =-1, upper=-1;
-		boolean composite, aggregate;
+	public class Role {
+		public OntResource range;
+		public  OntResource property;
+		public int lower =-1, upper=-1;
+		public boolean composite;
+		public boolean aggregate;
 		
 		/**
 		 * Interpret this association role in the context of its mate.
