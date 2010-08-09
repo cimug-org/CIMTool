@@ -62,7 +62,7 @@ public class ModelParserRegistryImpl implements ModelParserRegistry {
 	}
 
 	public String[] getExtensions() {
-		return parsers.keySet().toArray(new String[parsers.keySet().size()]);
+		return parsersForExtension.keySet().toArray(new String[parsers.keySet().size()]);
 	}
 
 

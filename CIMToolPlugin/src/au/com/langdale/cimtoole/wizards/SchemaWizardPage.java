@@ -43,16 +43,17 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 	public SchemaWizardPage() {
 		this(false);
+		filename = new LocalFileBinding(getExtSources(), false);
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static final String[] sources = {"*.xmi", "*.owl", "*.eap"};
+	private static String[] sources = {"*.xmi", "*.owl", "*.eap"};
 
 	private IFile file;
 	boolean importing;
 
 	private TextBinding source = new TextBinding(Validators.OPTIONAL_EXTANT_FILE);
-	private LocalFileBinding filename = new LocalFileBinding(sources, false);
+	private LocalFileBinding filename;
 	private RadioTextBinding namespace = new RadioTextBinding(Validators.NAMESPACE, NAMESPACE);
 
 	private String[] presets = new String[] {
@@ -91,21 +92,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 			@Override
 			protected Template define() {
-				String[] sources = SchemaWizardPage.sources;
-				String[] extended = ModelParserRegistry.INSTANCE.getExtensions();
-				if (extended.length>0){
-					Set<String> extExtra = new TreeSet<String>();
-					for (String s : extended) extExtra.add(s);
-					for (String s : sources) extExtra.remove(s);
-					if (extExtra.size()>0){
-						String[] combined = new String[sources.length+extExtra.size()];
-						System.arraycopy(sources, 0, combined, 0, sources.length);
-						int i = sources.length;
-						for (String s : extExtra)
-							combined[i++] = "*."+s;
-						sources = combined;
-					}
-				}
+				String[] sources = getExtSources();
 				return Grid(
 						Group(FileField("source", "File to import:", sources)),
 						Group(
@@ -158,5 +145,24 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 				return null;
 			}
 		};
+	}
+	
+	private String[] getExtSources(){
+		String[] sources = SchemaWizardPage.sources;
+		String[] extended = ModelParserRegistry.INSTANCE.getExtensions();
+		if (extended.length>0){
+			Set<String> extExtra = new TreeSet<String>();
+			for (String s : extended) extExtra.add(s);
+			for (String s : sources) extExtra.remove(s);
+			if (extExtra.size()>0){
+				String[] combined = new String[sources.length+extExtra.size()];
+				System.arraycopy(sources, 0, combined, 0, sources.length);
+				int i = sources.length;
+				for (String s : extExtra)
+					combined[i++] = "*."+s;
+				sources = combined;
+			}
+		}
+		return sources;
 	}
 }
