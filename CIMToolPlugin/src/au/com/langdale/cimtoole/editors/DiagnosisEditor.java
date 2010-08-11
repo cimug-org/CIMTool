@@ -68,7 +68,7 @@ public class DiagnosisEditor extends ModelEditor {
 				@Override
 				public void refresh() {
 					Node node = getNode();
-					getForm().setImage(IconCache.get(node));
+					getForm().setImage(IconCache.getIcons().get(node));
 
 					if( node  instanceof ModelNode) {
 						OntResource subject = ((ModelNode)node).getBase();

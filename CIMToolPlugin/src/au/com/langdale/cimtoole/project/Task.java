@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -37,6 +39,7 @@ import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.RepairMan;
@@ -48,6 +51,8 @@ import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
 
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Utility tasks for CIMTool plugin.  Tasks are instances of <code>IWorkspaceRunnable</code>
@@ -465,23 +470,40 @@ public class Task extends Info {
 		return fixupProfile(model, backgroundModel, defaultName, namespace);
 	}
 	
-	private static OntModel fixupProfile(OntModel model, OntModel backgroundModel, String defaultName, String namespace) {
+	private static OntModel fixupProfile(OntModel model, OntModel backgroundModel, String defaultName, String defaultNamespace) {
 		OntResource header = model.getValidOntology();
 		if( header != null ) 
 			return model;
 		
 		model = Composition.copy(model);
 		
-		// remove any old style header
-		OntResource old = MESSAGE.profile.inModel(model);
-		String envname = old.getLabel();
-		String comment = old.getComment();
-		old.remove();
-
-		if( envname == null)
-			envname = defaultName;
+		String namespace = defaultNamespace;
+		String label = defaultName;
+		String comment = null;
 		
-		initProfile(model, backgroundModel, namespace, envname, comment);
+		// harvest and remove old style, mal-formed or repeated headers
+                Iterator it = model.listSubjectsWithProperty(RDF.type, OWL2.Ontology).toSet().iterator();
+                while(it.hasNext()) {
+                    OntResource ont = (OntResource) it.next();
+                    String candLabel = ont.getLabel();
+                    if( candLabel != null && ! candLabel.equals(defaultName))
+                        label = candLabel;
+                    String candComment = ont.getComment();
+                    if( candComment != null && candComment.length() > 0)
+                        comment = candComment;
+                    
+                    if( ont.isURIResource()) { 
+                        String uri = ont.getURI();
+                        if(! uri.contains("#") || uri.endsWith("#"))
+                          namespace = uri;
+                    }
+                    ont.remove();
+                }
+		
+		// remove any untyped, old style header
+		MESSAGE.profile.inModel(model).remove();
+		
+		initProfile(model, backgroundModel, namespace, label, comment);
 		return model;
 	}
 

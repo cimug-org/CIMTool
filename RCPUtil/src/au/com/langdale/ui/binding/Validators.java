@@ -5,19 +5,61 @@
 package au.com.langdale.ui.binding;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * A set of validators to use in bindings.
  */
 public class Validators {
 	
-	public static final String NAMESPACE_REGEX = "[A-Za-z]+:.*#";
-	public static final String NCNAME_REGEX = "[A-Za-z_][A-Za-z0-9-_.]*";
+	public static final Pattern NAMESPACE_REGEX = Pattern.compile("[A-Za-z]+:.*#");
+	public static final Pattern NCNAME_REGEX = Pattern.compile("[A-Za-z_][A-Za-z0-9-_.]*");
 
 	public static final Validator NONE = new Validator() {
 		@Override
 		public String validate(String value) {
 			return null;
+		}
+	};
+	
+	public static final Validator DOUBLE = new Validator() {
+		@Override
+		public String validate(String value) {
+			try {
+			  Double.valueOf(value);
+			  return null;
+			}
+			catch( NumberFormatException ex) {
+			   return ex.getMessage();
+			}
+		}
+	};
+	
+	public static final Validator INTEGER = new Validator() {
+		@Override
+		public String validate(String value) {
+			try {
+			  Integer.valueOf(value);
+			  return null;
+			}
+			catch( NumberFormatException ex) {
+			   return ex.getMessage();
+			}
+		}
+	};
+	
+	public static final Validator NATURAL = new Validator() {
+		@Override
+		public String validate(String value) {
+			try {
+			  if( Integer.valueOf(value) < 0 )
+				  return "value may not be negative";
+			  else
+			      return null;
+			}
+			catch( NumberFormatException ex) {
+			   return ex.getMessage();
+			}
 		}
 	};
 	
@@ -105,7 +147,7 @@ public class Validators {
 		public String validate(String value) {
 			if( value.length() == 0 )
 				return "A name is required";
-			if( !value.matches(NCNAME_REGEX))
+			if( ! NCNAME_REGEX.matcher(value).matches())
 				return "A valid XML element name is required";
 			return null;
 		}
@@ -116,7 +158,7 @@ public class Validators {
 		public String validate(String value) {
 			if( value.length() == 0 )
 				return "A symbolic namespace URI is required";
-			if( !value.matches(NAMESPACE_REGEX))
+			if( ! NAMESPACE_REGEX.matcher(value).matches())
 				return "The namespace must begin with a scheme such as 'http:' and end with a '#'";
 			return null;
 		}

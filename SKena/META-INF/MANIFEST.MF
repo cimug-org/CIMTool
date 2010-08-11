@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SKena
+Bundle-SymbolicName: au.com.langdale.skena
+Bundle-Version: 1.1.0.qualifier
+Bundle-Vendor: Langdale Consultants
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: scala.library,
+ au.com.langdale.kena;visibility:=reexport
+Export-Package: au.com.langdale.skena,
+ au.com.langdale.skena.data,
+ au.com.langdale.skena.serializer,
+ au.com.langdale.skena.vocabulary

@@ -155,7 +155,7 @@ public class ModelStructureCreator implements IStructureCreator {
 		}
 
 		public Image getImage() {
-			return IconCache.get(node);
+			return IconCache.getIcons().get(node);
 		}
 
 		public String getName() {

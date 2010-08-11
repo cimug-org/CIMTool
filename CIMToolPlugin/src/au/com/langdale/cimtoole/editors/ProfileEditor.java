@@ -170,7 +170,7 @@ public class ProfileEditor extends ModelEditor {
 		
 	}
 	
-	private IAction searchAction = new Action("Search Profile", ImageDescriptor.createFromImage(IconCache.get("prosearch"))) {
+	private IAction searchAction = new Action("Search Profile", ImageDescriptor.createFromImage(IconCache.getIcons().get("prosearch"))) {
 		@Override
 		public void run() {
 			if(isLoaded()) {

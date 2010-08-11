@@ -13,9 +13,8 @@ import au.com.langdale.ui.plumbing.Binding;
  */
 public class TextBinding implements Binding, TextModel, AnyModel {
 	
-	protected String value = "";
-	private Assembly plumbing;
-	private Validator validator = Validators.NONE;
+	private String value;
+	private Validator validator;
 	private Text control;
 	private AnyModel parent;
 	private String lastSuggestion = "";
@@ -28,16 +27,27 @@ public class TextBinding implements Binding, TextModel, AnyModel {
 	public TextBinding(Validator validator) {
 		this(validator, "");
 	}
+	
+	public TextBinding() {
+		this(Validators.NONE);
+	}
 
 	public void bind(String name, Assembly plumbing, AnyModel parent) {
-		this.plumbing = plumbing;
 		this.parent = parent;
+		bindAfter(name, plumbing, parent);
+	}
+
+	public void bindAfter(String name, Assembly plumbing, Object parent) {
 		control = (Text) plumbing.getControl(name);
 		plumbing.addBinding(this, parent);
 	}
 	
 	public void bind(String name, Assembly plumbing) {
 		bind(name, plumbing, null);
+	}
+	
+	public void setEnabled(boolean enabled) {
+		control.setEnabled(enabled);
 	}
 
 	private void applySuggestion() {
@@ -88,8 +98,6 @@ public class TextBinding implements Binding, TextModel, AnyModel {
 
 	public void setText(String value) {
 		this.value = value != null? value.trim(): "";
-		if( plumbing != null)
-			plumbing.doRefresh();
 	}
 
 	public Object getValue() {

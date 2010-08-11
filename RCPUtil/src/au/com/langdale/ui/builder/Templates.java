@@ -89,7 +89,7 @@ public class Templates {
 			Button widget;
 			if(image != null) {
 				widget = assembly.getToolkit().createButton(parent, null, style);
-				widget.setImage(IconCache.get(image));
+				widget.setImage(IconCache.getIcons().get(image));
 				widget.setToolTipText(text);
 			}
 			else {
@@ -219,7 +219,7 @@ public class Templates {
 
 		public Control realise(Composite parent, Assembly assembly) {
 			Label widget = assembly.getToolkit().createLabel(parent, null, style);
-			widget.setImage(IconCache.get(image));
+			widget.setImage(IconCache.getIcons().get(image));
 			register(widget, assembly);
 			return widget;
 		}
@@ -573,7 +573,7 @@ public class Templates {
 			if(title != null)
 				form.setText(title);
 			if(image != null)
-				form.setImage(IconCache.get(image));
+				form.setImage(IconCache.getIcons().get(image));
 			Composite body = form.getBody();
 			body.setLayout(new FillLayout());
 			part.realise(body, assembly);

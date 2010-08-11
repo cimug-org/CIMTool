@@ -15,8 +15,11 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.8.2 </h2><p>The release corrects the following defect in 1.8.1:</p><ul><li><p>Handling attributes (ie datatype properties) caused spurious validation errors and 
-incorrect types in generated XML schema.  </p></li></ul><h2>Release 1.8.1 </h2><p>This release incorporates changes to make CIMTool compatible with commonly used ontology editors.
+          <div id="content"><h2>Release 1.8.3 </h2><ul><li><p>correction: improved backwards compatibility with version 1.7 for profile (.owl) files.  
+A profile can be round-tripped from 1.7 to 1.8.2 and back repeatedly.  In 1.8.2
+this caused errors in the profile editor.</p></li><li><p>enhancement: basic validation for the new standard headers in CIM/XML documents. 
+This reduces the number of spurious validation errors.</p></li></ul><h2>Release 1.8.2 </h2><p>The release corrects the following defect in 1.8.1:</p><ul><li><p>correction: a defect in handling of attributes (datatype properties) caused 
+spurious validation errors and incorrectly generated XML schema.  </p></li></ul><h2>Release 1.8.1 </h2><p>This release incorporates changes to make CIMTool compatible with commonly used ontology editors.
 It has been tested with Protege 4 and Top Braid 3.2.</p><ul><li><p>enhancement: namespaces for OWL files are not longer stored as properties in the CIMTool project
 they are embedded in the files as part of the ontology header.  This change affects the user 
 interface for profile properties as well as several wizards and the Detail tab of the profile

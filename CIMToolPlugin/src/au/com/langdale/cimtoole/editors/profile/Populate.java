@@ -305,7 +305,7 @@ public class Populate extends FurnishedEditor {
 			@Override
 			public void refresh() {
 				Node node = master.getNode();
-				getForm().setImage(IconCache.get(node));
+				getForm().setImage(IconCache.getIcons().get(node));
 				getForm().setText(master.getComment());
 				
 				if (node instanceof CatalogNode) {
