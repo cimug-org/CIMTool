@@ -167,9 +167,10 @@ p.package { position: absolute; right: 10px; top: 0px}
 
 	<xsl:template match="a:SuperType" mode="inherited">
 		<xsl:apply-templates select="//a:ComplexType[@name=current()/@name]" mode="inherited"/>
+		<xsl:apply-templates select="//a:Root[@name=current()/@name]" mode="inherited"/>
 	</xsl:template>
 	
-	<xsl:template match="a:ComplexType" mode="inherited">
+	<xsl:template match="a:ComplexType|a:Root" mode="inherited">
 		<table>
 		  <xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" mode="inherited"/>
 		</table>
