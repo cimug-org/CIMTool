@@ -121,7 +121,7 @@ public class Hierarchy extends FurnishedEditor {
 
 			@Override
 			public void refresh() {
-				getForm().setImage(IconCache.get(master.getNode()));
+				getForm().setImage(IconCache.getIcons().get(master.getNode()));
 				getForm().setText(master.getComment());
 			}
 			

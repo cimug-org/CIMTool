@@ -1,7 +1,8 @@
 @prefix scaf: <http://langdale.com.au/2007/rule-scafold#>.
 @prefix uml: <http://langdale.com.au/2005/UML#>.
 @prefix split: <http://langdale.com.au/2007/SplitModel#> .
- 
+@prefix md: <http://iec.ch/2010/schema/CIM_model_description#> .
+
 # ---- schema entailments ----
 
 [ (?D rdfs:subClassOf ?C) (?C rdfs:subClassOf ?B) ->
@@ -61,16 +62,42 @@
 
 [-> [(split:document rdf:type owl:Thing) <-]]
 
+# --- axioms for (basic) header validation hard coded ---
+
+[-> [(md:FullModel rdf:type owl:Class) <-]]
+
+[-> [(md:Description rdf:type owl:Class) <-]]
+
+[-> [(md:Description.name rdf:type rdf:Property) <-]]
+
+[-> [(md:Description.uri rdf:type rdf:Property) <-]]
+
+[-> [(md:Description.version rdf:type rdf:Property) <-]]
+
+[-> [(md:Model.Creator rdf:type rdf:Property) <-]]
+
+[-> [(md:Model.DependentOn rdf:type rdf:Property) <-]]
+
+[-> [(md:Model.DependentOn rdfs:range owl:Thing) <-]]
+
+[-> [(md:Model.ModelingAuthoritySet rdf:type rdf:Property) <-]]
+
+[-> [(md:Model.Profile rdf:type rdf:Property) <-]]
+
+[-> [(md:Model.Version rdf:type rdf:Property) <-]]
+
+[-> [(md:Model.created rdf:type rdf:Property) <-]]
+
 # ---- validation rules ---- 
 
 [ -> [ problem( "Undefined property" ?P "for" ?x ) 
-		<- (?x ?P *) notAxiom(?P rdf:type rdf:Property)]]
+                <- (?x ?P *) notAxiom(?P rdf:type rdf:Property)]]
 
 [ -> [ problem( "Untyped subject of" ?P "is" ?x ) 
 		<- (?x ?P *) notAny(?x rdf:type *)]]
 
 [ -> [ problem( "Untyped object of" ?P "is" ?y ) 
-		<- (* ?P ?y) notLiteral(?y) notSame(?P rdf:type) notAny(?y rdf:type *)]]
+		<- (* ?P ?y) notLiteral(?y) notSame(?P rdf:type) notAxiom(?P rdfs:range owl:Thing) notAny(?y rdf:type *)]]
 
 [ -> [ problem( "Undefined class" ?C "for" ?x ) 
 		<- (?x rdf:type ?C) notAxiom(?C rdf:type owl:Class)]]

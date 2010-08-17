@@ -18,10 +18,10 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.impl.LiteralLabel;
+import com.hp.hpl.jena.graph.impl.LiteralLabelFactory;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.vocabulary.DC_11;
-import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -35,7 +35,7 @@ public class OntModel {
         .setNsPrefix( "rdfs", RDFS.getURI() )
         .setNsPrefix( "rdf", RDF.getURI() )
         .setNsPrefix( "dc", DC_11.getURI() )
-        .setNsPrefix( "owl", OWL.getURI() )
+        .setNsPrefix( "owl", OWL2.getURI() )
         .setNsPrefix( "xsd", XSD.getURI() )
         .setNsPrefix( "uml", "http://langdale.com.au/2005/UML#")
         .setNsPrefix( "msg", "http://langdale.com.au/2005/Message#")
@@ -70,10 +70,10 @@ public class OntModel {
 	}
 	
 	public OntResource getValidOntology() {
-		ResIterator it = listSubjectsWithProperty(RDF.type, OWL.Ontology);
+		ResIterator it = listSubjectsWithProperty(RDF.type, OWL2.Ontology);
 		if( it.hasNext()) {
 			OntResource ont = it.nextResource();
-			if( ! it.hasNext() && ! ont.getURI().contains("#"))
+			if( ! it.hasNext() && ont.isURIResource() && ! ont.getURI().contains("#"))
 				return ont;
 		}
 		return null;
@@ -144,19 +144,19 @@ public class OntModel {
 	}
 	
 	public ResIterator listObjectProperties() {
-		return listIndividuals(OWL.ObjectProperty);
+		return listIndividuals(OWL2.ObjectProperty);
 	}
 	
 	public ResIterator listDatatypeProperties() {
-		return listIndividuals(OWL.DatatypeProperty);
+		return listIndividuals(OWL2.DatatypeProperty);
 	}
 	
 	public ResIterator listAnnotationProperties() {
-		return listIndividuals(OWL.AnnotationProperty);
+		return listIndividuals(OWL2.AnnotationProperty);
 	}
 		
 	public ResIterator listNamedClasses() {
-		return new Wrapper( this, new NamedSubjects(graph.find(Node.ANY, RDF.type.asNode(), OWL.Class.asNode())));
+		return new Wrapper( this, new NamedSubjects(graph.find(Node.ANY, RDF.type.asNode(), OWL2.Class.asNode())));
 	}
 	
 	public boolean contains(FrontsNode subject, FrontsNode prop, FrontsNode value) {
@@ -230,46 +230,46 @@ public class OntModel {
 	}
 	
 	public OntResource createAllValuesFromRestriction(String uri, FrontsNode prop, FrontsNode type) {
-		OntResource result = createIndividual(uri, OWL.Restriction);
-		result.addProperty(OWL.onProperty, prop);
-		result.addProperty(OWL.allValuesFrom, type);
+		OntResource result = createIndividual(uri, OWL2.Restriction);
+		result.addProperty(OWL2.onProperty, prop);
+		result.addProperty(OWL2.allValuesFrom, type);
 		return result;
 	}
 	
 	public OntResource createSomeValuesFromRestriction(String uri, FrontsNode prop, FrontsNode type) {
-		OntResource result = createIndividual(uri, OWL.Restriction);
-		result.addProperty(OWL.onProperty, prop);
-		result.addProperty(OWL.someValuesFrom, type);
+		OntResource result = createIndividual(uri, OWL2.Restriction);
+		result.addProperty(OWL2.onProperty, prop);
+		result.addProperty(OWL2.someValuesFrom, type);
 		return result;
 	}
 	
 	public OntResource createCardinalityRestriction(String uri, FrontsNode prop, int card) {
-		OntResource result = createIndividual(uri, OWL.Restriction);
-		result.addProperty(OWL.onProperty, prop);
-		result.addProperty(OWL.cardinality, card);
+		OntResource result = createIndividual(uri, OWL2.Restriction);
+		result.addProperty(OWL2.onProperty, prop);
+		result.addProperty(OWL2.cardinality, card);
 		return result;
 	}
 	
 	public OntResource createMaxCardinalityRestriction(String uri, FrontsNode prop, int card) {
-		OntResource result = createIndividual(uri, OWL.Restriction);
-		result.addProperty(OWL.onProperty, prop);
-		result.addProperty(OWL.maxCardinality, card);
+		OntResource result = createIndividual(uri, OWL2.Restriction);
+		result.addProperty(OWL2.onProperty, prop);
+		result.addProperty(OWL2.maxCardinality, card);
 		return result;
 	}
 	
 	public OntResource createMinCardinalityRestriction(String uri, FrontsNode prop, int card) {
-		OntResource result = createIndividual(uri, OWL.Restriction);
-		result.addProperty(OWL.onProperty, prop);
-		result.addProperty(OWL.minCardinality, card);
+		OntResource result = createIndividual(uri, OWL2.Restriction);
+		result.addProperty(OWL2.onProperty, prop);
+		result.addProperty(OWL2.minCardinality, card);
 		return result;
 	}
 
 	public OntResource createClass(String uri) {
-		return createIndividual(uri, OWL.Class);
+		return createIndividual(uri, OWL2.Class);
 	}
 
 	public OntResource createClass() {
-		return createIndividual(OWL.Class);
+		return createIndividual(OWL2.Class);
 	}
 	
 	public OntResource createOntProperty(String uri) {
@@ -277,15 +277,15 @@ public class OntModel {
 	}
 	
 	public OntResource createObjectProperty(String uri) {
-		return createIndividual(uri, OWL.ObjectProperty);
+		return createIndividual(uri, OWL2.ObjectProperty);
 	}
 	
 	public OntResource createDatatypeProperty(String uri) {
-		return createIndividual(uri, OWL.DatatypeProperty);
+		return createIndividual(uri, OWL2.DatatypeProperty);
 	}
 	
 	public OntResource createAnnotationProperty(String uri) {
-		return createIndividual(uri, OWL.AnnotationProperty);
+		return createIndividual(uri, OWL2.AnnotationProperty);
 	}
 	
 	public void add(OntModel other) {
@@ -313,7 +313,7 @@ public class OntModel {
 	}
 
 	public void add(FrontsNode subject, FrontsNode prop, int value) {
-		graph.add(Triple.create(subject.asNode(), prop.asNode(), Node.createLiteral(new LiteralLabel(new Integer(value)))));
+		graph.add(Triple.create(subject.asNode(), prop.asNode(), Node.createLiteral(LiteralLabelFactory.create(new Integer(value)))));
 	}
 	
 	public void remove(FrontsNode subject, FrontsNode prop, Node value) {

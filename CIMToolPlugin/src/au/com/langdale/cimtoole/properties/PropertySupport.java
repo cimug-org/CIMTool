@@ -156,7 +156,7 @@ public class PropertySupport implements IAdapterFactory {
 		new Descriptor("Type", "Type of definition") {
 			@Override
 			public Object getValueFrom(Node node) {
-				return IconCache.getName( node.getIconClass());
+				return IconCache.getIcons().getName( node.getIconClass());
 			}
 		},
 		new Descriptor("URI", "Full URI of defintion") {

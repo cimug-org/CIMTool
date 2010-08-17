@@ -64,7 +64,7 @@ public class InfoModelEditor extends ModelEditor {
 				
 				@Override
 				public void refresh() {
-					getForm().setImage(IconCache.get(getNode()));
+					getForm().setImage(IconCache.getIcons().get(getNode()));
 					getForm().setText(getComment());
 					
 					OntResource subject = getSubject();

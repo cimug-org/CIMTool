@@ -113,7 +113,7 @@ public class RepairEditor extends ModelEditor {
 					
 					if( node  instanceof ModelNode) {
 						OntResource subject = node.getBase();
-						getForm().setImage(IconCache.get("key", 32));
+						getForm().setImage(IconCache.getIcons().get("key", 32));
 						getForm().setText(DiagnosisModel.label(subject));
 						showStackLayer("problems");
 //						setTextValue("uri", subject.isAnon()? "": subject.getURI());
@@ -130,7 +130,7 @@ public class RepairEditor extends ModelEditor {
 						getForm().layout(true, true);
 					}
 					else {
-						getForm().setImage(IconCache.get("general", 32));
+						getForm().setImage(IconCache.getIcons().get("general", 32));
 						getForm().setText(getFile().getName());
 						showStackLayer("summary");
 //						setTextValue("uri", "");

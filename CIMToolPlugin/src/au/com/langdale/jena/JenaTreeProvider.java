@@ -33,7 +33,7 @@ public class JenaTreeProvider implements ITreeContentProvider {
 	private static class LabelAdapter extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
-			return IconCache.get(element);
+			return IconCache.getIcons().get(element);
 		}
 		
 		@Override

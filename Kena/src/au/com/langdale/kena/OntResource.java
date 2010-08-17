@@ -15,7 +15,7 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
@@ -111,23 +111,23 @@ public class OntResource extends Resource  {
 	}
 	
 	public boolean isClass() {
-		return hasRDFType(OWL.Class) || hasRDFType(OWL.Restriction);
+		return hasRDFType(OWL2.Class) || hasRDFType(OWL2.Restriction);
 	}
 	
 	public boolean isProperty() {
 		return hasRDFType(RDF.Property) 
-			|| hasRDFType(OWL.ObjectProperty)
-			|| hasRDFType(OWL.DatatypeProperty)
-			|| hasRDFType(OWL.AnnotationProperty)
-			|| hasRDFType(OWL.OntologyProperty);
+			|| hasRDFType(OWL2.ObjectProperty)
+			|| hasRDFType(OWL2.DatatypeProperty)
+			|| hasRDFType(OWL2.AnnotationProperty)
+			|| hasRDFType(OWL2.OntologyProperty);
 	}
 	
 	public boolean isObjectProperty() {
-		return hasRDFType(OWL.ObjectProperty);
+		return hasRDFType(OWL2.ObjectProperty);
 	}
 	
 	public boolean isDatatypeProperty() {
-		return hasRDFType(OWL.DatatypeProperty);
+		return hasRDFType(OWL2.DatatypeProperty);
 	}
 	
 	public boolean isDatatype() {
@@ -135,59 +135,59 @@ public class OntResource extends Resource  {
 	}
 	
 	public boolean isFunctionalProperty() {
-		return hasRDFType(OWL.FunctionalProperty);
+		return hasRDFType(OWL2.FunctionalProperty);
 	}
 	
 	public boolean isInverseFunctionalProperty() {
-		return hasRDFType(OWL.InverseFunctionalProperty);
+		return hasRDFType(OWL2.InverseFunctionalProperty);
 	}
 	
 	public boolean isRestriction() {
-		return hasRDFType(OWL.Restriction);
+		return hasRDFType(OWL2.Restriction);
 	}
 	
 	public boolean isAllValuesFromRestriction() {
-		return hasProperty(OWL.allValuesFrom);
+		return hasProperty(OWL2.allValuesFrom);
 	}
 	
 	public boolean isSomeValuesFromRestriction() {
-		return hasProperty(OWL.someValuesFrom);
+		return hasProperty(OWL2.someValuesFrom);
 	}
 	
 	public boolean isCardinalityRestriction() {
-		return hasProperty(OWL.cardinality);
+		return hasProperty(OWL2.cardinality);
 	}
 	
 	public boolean isMaxCardinalityRestriction() {
-		return hasProperty(OWL.maxCardinality);
+		return hasProperty(OWL2.maxCardinality);
 	}
 	
 	public boolean isMinCardinalityRestriction() {
-		return hasProperty(OWL.minCardinality);
+		return hasProperty(OWL2.minCardinality);
 	}
 	
 	public OntResource getOnProperty() {
-		return getResource(OWL.onProperty);
+		return getResource(OWL2.onProperty);
 	}
 	
 	public OntResource getSomeValuesFrom() {
-		return getResource(OWL.someValuesFrom);
+		return getResource(OWL2.someValuesFrom);
 	}
 	
 	public OntResource getAllValuesFrom() {
-		return getResource(OWL.allValuesFrom);
+		return getResource(OWL2.allValuesFrom);
 	}
 	
 	public int getCardinality() {
-		return getInteger(OWL.cardinality).intValue();
+		return getInteger(OWL2.cardinality).intValue();
 	}
 	
 	public int getMaxCardinality() {
-		return getInteger(OWL.maxCardinality).intValue();
+		return getInteger(OWL2.maxCardinality).intValue();
 	}
 	
 	public int getMinCardinality() {
-		return getInteger(OWL.minCardinality).intValue();
+		return getInteger(OWL2.minCardinality).intValue();
 	}
 	
 	public OntResource getIsDefinedBy() {
@@ -195,11 +195,11 @@ public class OntResource extends Resource  {
 	}
 	
 	public OntResource getInverseOf() {
-		return getResource(OWL.inverseOf);
+		return getResource(OWL2.inverseOf);
 	}
 	
 	public OntResource getInverse() {
-		return getSubject(OWL.inverseOf);
+		return getSubject(OWL2.inverseOf);
 	}
 		
 	public void addProperty(FrontsNode prop, Node value) {
@@ -339,11 +339,11 @@ public class OntResource extends Resource  {
 	}
 	
 	public OntResource getSameAs() {
-		return getResource(OWL.sameAs);
+		return getResource(OWL2.sameAs);
 	}
 	
 	public OntResource getEquivalentClass() {
-		return getResource(OWL.equivalentClass);
+		return getResource(OWL2.equivalentClass);
 	}
 
 	public void addRange(FrontsNode value) {
@@ -363,11 +363,11 @@ public class OntResource extends Resource  {
 	}
 	
 	public void addInverseOf(FrontsNode value) {
-		model.add(this, OWL.inverseOf, value);
+		model.add(this, OWL2.inverseOf, value);
 	}
 	
 	public void setOnProperty(FrontsNode prop) {
-		setProperty(OWL.onProperty, prop);
+		setProperty(OWL2.onProperty, prop);
 	}
 	
 	public void addRDFType(FrontsNode type) {
@@ -375,15 +375,15 @@ public class OntResource extends Resource  {
 	}
 	
 	public void convertToFunctionalProperty() {
-		addRDFType(OWL.FunctionalProperty);
+		addRDFType(OWL2.FunctionalProperty);
 	}
 	
 	public void convertToInverseFunctionalProperty() {
-		addRDFType(OWL.InverseFunctionalProperty);
+		addRDFType(OWL2.InverseFunctionalProperty);
 	}
 	
 	public void convertToDatatypeProperty() {
-		addRDFType(OWL.DatatypeProperty);
+		addRDFType(OWL2.DatatypeProperty);
 	}
 	
 	public void removeSubClass(FrontsNode value) {
@@ -562,14 +562,22 @@ public class OntResource extends Resource  {
 	}
 
 	public boolean isEnumeratedClass() {
-		return hasProperty(OWL.oneOf);
+		return hasProperty(OWL2.oneOf);
 	}
 	
 	public OntResource getOneOf() {
-		return getResource(OWL.oneOf);
+		return getResource(OWL2.oneOf);
 	}
 	
 	public void setOneOf(OntResource list) {
-		setProperty(OWL.oneOf, list);
+		setProperty(OWL2.oneOf, list);
+	}
+
+	public OntResource getWithRestrictions() {
+		return getResource(OWL2.withRestrictions);
+	}
+
+	public void setWithRestrictions(OntResource list) {
+		setProperty(OWL2.withRestrictions, list);
 	}
 }

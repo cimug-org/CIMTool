@@ -182,9 +182,9 @@ public class Assembly extends Plumbing {
 	public Control setIconForObject(String name, Object value) {
 		Control widget = getControl(name);
 		if( widget instanceof Button )
-			((Button)widget).setImage(IconCache.get(value, 32));
+			((Button)widget).setImage(IconCache.getIcons().get(value, 32));
 		else if( widget instanceof Label)
-			((Label)widget).setImage(IconCache.get(value, 32));
+			((Label)widget).setImage(IconCache.getIcons().get(value, 32));
 		return widget;
 	}
 

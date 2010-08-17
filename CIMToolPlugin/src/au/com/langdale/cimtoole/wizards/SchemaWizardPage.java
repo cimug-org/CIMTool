@@ -59,7 +59,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private String[] presets = new String[] {
 			"cim12", "http://iec.ch/TC57/2007/CIM-schema-cim12#",
 			"cim13", "http://iec.ch/TC57/2008/CIM-schema-cim13#",
-			"cim14", "http://iec.ch/TC57/2009/CIM-schema-cim14#",
+                        "cim14", "http://iec.ch/TC57/2009/CIM-schema-cim14#",
+                        "cim15", "http://iec.ch/TC57/2010/CIM-schema-cim15#",
 			"preset", NAMESPACE
 	};
 
@@ -94,18 +95,19 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 			protected Template define() {
 				String[] sources = getExtSources();
 				return Grid(
-						Group(FileField("source", "File to import:", sources)),
-						Group(
-								RadioButton("cim12", "CIM 12 (2007)"), 
-								RadioButton("cim13", "CIM 13 (2008)"),
-								RadioButton("cim14", "CIM 14 (2009)"),
-								RadioButton("preset", "Preference*")),
-								Group(Label("Namespace URI:"), Field("namespace")),
-								Group(Label("Project")), 
-								expectNewProject? null :Group(CheckboxTableViewer("projects")),
-										Group(Label("Schema name:"), Field("filename")),
-										Group(CheckBox("replace", "Replace existing schema.")),
-										Group(Label("* Set this under Windows > Preferences > CIMTool"))
+					Group(FileField("source", "File to import:", sources)),
+					Group(
+						RadioButton("cim12", "CIM 12 (2007)"), 
+						RadioButton("cim13", "CIM 13 (2008)"),
+                                                RadioButton("cim14", "CIM 14 (2009)"),
+                                                RadioButton("cim15", "CIM 15 (2010)"),
+						RadioButton("preset", "Preference*")),
+					Group(Label("Namespace URI:"), Field("namespace")),
+					Group(Label("Project")), 
+					expectNewProject? null :Group(CheckboxTableViewer("projects")),
+					Group(Label("Schema name:"), Field("filename")),
+					Group(CheckBox("replace", "Replace existing schema.")),
+					Group(Label("* Set this under Windows > Preferences > CIMTool"))
 				);
 			}
 

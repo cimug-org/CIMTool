@@ -132,7 +132,7 @@ public class SearchWizard extends Wizard implements IWorkbenchWizard {
 	public class SubMatchLabel extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
-			return IconCache.get(element);
+			return IconCache.getIcons().get(element);
 		}
 
 		@Override

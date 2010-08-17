@@ -41,7 +41,7 @@ public class Detail extends FurnishedEditor {
 
 			@Override
 			public void refresh() {
-				getForm().setImage(IconCache.get(master.getNode()));
+				getForm().setImage(IconCache.getIcons().get(master.getNode()));
 				getForm().setText(master.getComment());
 
 				ElementNode enode = null;

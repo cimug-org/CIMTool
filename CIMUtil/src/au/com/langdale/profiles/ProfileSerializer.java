@@ -4,9 +4,6 @@
  */
 package au.com.langdale.profiles;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -186,20 +183,13 @@ public class ProfileSerializer extends AbstractReader {
 		
 		factory.setErrorListener(listener);
 	}
-	
-	/**
-	 * Generate a schema from the message definition 
-	 * and write it to the given file. 
-	 */
-	public void write( String filename) throws TransformerException, IOException {
-		write(new BufferedOutputStream( new FileOutputStream(filename)));
-	}
 
 	/**
 	 * Generate a schema from the message definition 
 	 * and write it to the given stream.
 	 */
-	public void write(OutputStream ostream) throws TransformerException, IOException {
+	@Override
+	public void write(OutputStream ostream) throws TransformerException {
 		Transformer[] tx; 
 		if( ! templates.isEmpty()) {
 			tx = new Transformer[templates.size()];
@@ -214,24 +204,20 @@ public class ProfileSerializer extends AbstractReader {
 		else {
 			tx = new Transformer[] { factory.newTransformer() };
 		}
+		
 		Result result = new StreamResult(ostream);
 		Source source = new SAXSource(this, new InputSource());
 		for( int ix = 0; ix < tx.length-1; ix++ ) {
 			DOMResult inter =  new DOMResult();
 			tx[0].transform(source, inter);
 			source = new DOMSource(inter.getNode());
-			
 		}
 		tx[tx.length-1].transform(source, result);
-		ostream.close();
 	}
 
-	@Override
-	protected void parse() throws SAXException, IOException {
-		output.startDocument();
-		emit(model.getRoot());
-		output.endDocument();
-	}
+        protected void emit() throws SAXException {
+            emit(model.getRoot());
+        }
 	
 	private void emit(Node node) throws SAXException {
 		if( node instanceof CatalogNode)
@@ -383,21 +369,6 @@ public class ProfileSerializer extends AbstractReader {
 		emit(node.getBaseProperty().getComment(null));
 		emitNote(node);
 	}
-//
-//	private SubTypeNode findSingleType(ElementNode node) {
-//		SubTypeNode result = null;
-//		Iterator it = node.iterator();
-//		if( it.hasNext()) {
-//			Node child = (Node) it.next();
-//			if( child instanceof SubTypeNode) {
-//				if( result == null)
-//					result = (SubTypeNode) child;
-//				else 
-//					return null;
-//			}
-//		}
-//		return result;
-//	}
 
 	private void emit(String comment) throws SAXException {
 		emit("Comment", comment);
@@ -498,6 +469,7 @@ public class ProfileSerializer extends AbstractReader {
 		
 		Element elem = new Element("EnumeratedValue");
 		elem.set("name", node.getName());
+                elem.set("baseResource", node.getBase().getURI());
 		emit(value.getComment(null));
 		elem.close();
 	}

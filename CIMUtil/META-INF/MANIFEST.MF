@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMUtil
 Bundle-SymbolicName: au.com.langdale.cimutil
-Bundle-Version: 1.8.2.qualifier
+Bundle-Version: 1.8.3.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: au.com.langdale.kena
 Bundle-ClassPath: cimutil.jar,
@@ -11,7 +11,6 @@ Bundle-ClassPath: cimutil.jar,
 Export-Package: au.com.langdale.cim,
  au.com.langdale.jena,
  au.com.langdale.profiles,
- au.com.langdale.sax,
  au.com.langdale.ui.util,
  au.com.langdale.util,
  au.com.langdale.validation,
