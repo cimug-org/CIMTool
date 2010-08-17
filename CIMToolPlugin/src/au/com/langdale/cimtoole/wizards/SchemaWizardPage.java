@@ -39,11 +39,11 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	public SchemaWizardPage(boolean expectNewProject) {
 		super("schema");
 		this.expectNewProject = expectNewProject;
+		filename = new LocalFileBinding(getExtSources(), false);
 	}
 
 	public SchemaWizardPage() {
 		this(false);
-		filename = new LocalFileBinding(getExtSources(), false);
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
