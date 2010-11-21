@@ -1,15 +1,22 @@
 package com.cimphony.cimtoole.buildlet;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
+import com.cimphony.cimtoole.CimphonyCIMToolPlugin;
 import com.cimphony.cimtoole.ecore.EcoreGenerator;
 
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
@@ -30,8 +37,9 @@ public class EcoreBuildlet extends ProfileBuildlet {
         EcoreGenerator generator = getGenerator(Task.getProfileModel(file), Task.getBackgroundModel(file), namespace, Task.getProperty(file, Task.PROFILE_NAMESPACE), preserveNS);
         generator.run();
         // Use file name for top level package name.
-        generator.getResult().setName(result.getName().split("\\.")[0]);
-        System.out.println("Generated ECore model: " + result.getName());
+        EPackage schema = generator.getResult();
+        if (schema.getName() == null)
+        	schema.setName(result.getName().split("\\.")[0]);
         ResourceSet metaResourceSet = new ResourceSetImpl();
         // Register XML Factory implementation to handle .ecore files
         metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
@@ -39,15 +47,21 @@ public class EcoreBuildlet extends ProfileBuildlet {
         // Create empty resource with the given URI
         org.eclipse.emf.ecore.resource.Resource metaResource =
             metaResourceSet.createResource(URI.createURI(result.getFullPath().toString()));
-        metaResource.getContents().add(generator.getResult());
+        metaResource.getContents().add(schema);
+        ByteArrayOutputStream cache = new ByteArrayOutputStream();
         try {
-            metaResource.save(null);
-        } catch (IOException e) {
-            e.printStackTrace();
+            metaResource.save(cache, Collections.EMPTY_MAP);
+        } catch (IOException ex) {
+        	throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "Error writing Cimphony Profile XML file", ex));
         }
+    	if (!result.exists())
+    		result.create(new ByteArrayInputStream(cache.toByteArray()), false, monitor);
+    	else
+    		result.setContents(new ByteArrayInputStream(cache.toByteArray()), false,true, monitor);
+        
     }
 
-    protected EcoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, String profileNamespace, boolean preserveNS) throws CoreException {
+    public static EcoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, String profileNamespace, boolean preserveNS) throws CoreException {
         return new EcoreGenerator(profileModel, backgroundModel, namespace, profileNamespace, preserveNS, true, true);
     }
 }

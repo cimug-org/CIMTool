@@ -36,15 +36,15 @@ import com.hp.hpl.jena.vocabulary.XSD;
  * TODO: this class has not been updated to handle OWL unions in the profile.
  */
 public abstract class SchemaGenerator extends ProfileUtility implements Runnable {
-	private OntModel model;
-	private OntModel profileModel;
-	private Catalog catalog;
-	private Set datatypes = new HashSet();
-	private Set packages = new HashSet();
-	private PropertyAccumulator props = new PropertyAccumulator();
-	private EnumAccumulator enums = new EnumAccumulator();
+	protected OntModel model;
+	protected OntModel profileModel;
+	protected Catalog catalog;
+	protected Set datatypes = new HashSet();
+	protected Set packages = new HashSet();
+	protected PropertyAccumulator props = new PropertyAccumulator();
+	protected EnumAccumulator enums = new EnumAccumulator();
 	
-	private List work = new LinkedList(); // unprocessed profiles
+	protected List work = new LinkedList(); // unprocessed profiles
 	private boolean withInverses;
 	private boolean preserveNamespaces;
 	private OntModel backgroundModel;
@@ -246,7 +246,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 			return base.getURI();
 	}
 
-	private void scanProfiles() {
+	protected void scanProfiles() {
 		Iterator it = ProfileClass.getProfileClasses(profileModel, model);
 		while( it.hasNext()) 
 			work.add(it.next());
@@ -266,7 +266,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	private boolean scanProperties(ProfileClass profile) {
+	protected boolean scanProperties(ProfileClass profile) {
 		Iterator it = profile.getProperties();
 		boolean some = it.hasNext();
 		
@@ -292,7 +292,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}		
 	}
 
-	private void scanDomainsAndRanges() {
+	protected void scanDomainsAndRanges() {
 		Iterator it = props.getGroups().iterator();
 		while( it.hasNext()) {
 			PropertyGroup group = (PropertyGroup) it.next();
@@ -303,7 +303,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	private void scanSpec(PropertySpec spec) {
+	protected void scanSpec(PropertySpec spec) {
 		catalog.add(spec.base_domain);
 		if( spec.base_range != null) {
 			catalog.add(spec.base_range);

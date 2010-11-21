@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Factory.Descriptor;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import au.com.langdale.cimtoole.registries.ModelParser;
@@ -36,8 +37,10 @@ import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIModel;
 
 import com.cimphony.cimtoole.CimphonyCIMToolPlugin;
+import com.cimphony.cimtoole.util.CIMToolEcoreUtil;
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 public class EcoreExtractor extends XMIModel implements ModelParser{
@@ -84,9 +87,16 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 		if (file == null) throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "No input file set"));
 		if (!file.getFileExtension().equals("ecore"))
 			return;
-		Resource res = ((Descriptor)Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().get("ecore")).createFactory()
-		.createResource(URI.createFileURI(file.getFullPath().toString()));
-		res.load(file.getContents(), Collections.EMPTY_MAP);
+		URI uri;
+		if (file.getLocation().isAbsolute()){
+			uri = URI.createFileURI(file.getLocation().toFile().getAbsolutePath());
+		}else{
+			uri = URI.createPlatformResourceURI(file.getLocation().toString(), true);
+		}
+		Resource res = new ResourceSetImpl().getResource(uri, true);
+		//Resource res = ((Descriptor)Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().get("ecore")).createFactory()
+		//.createResource(URI.createFileURI(file.getFullPath().toString()));
+		//res.load(file.getContents(), Collections.EMPTY_MAP);
 		if (res.getContents().size()==0) throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "ECore Resource is empty"));
 		if (!(res.getContents().get(0) instanceof EPackage)) throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "File contains no EPackages"));
 
@@ -105,7 +115,6 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 	}
 
 	protected void processEPackage(EPackage p) throws CoreException{
-		System.out.println("Starting processing of "+p.getName()+" Package");
 		OntResource op = createIndividual(EcoreExtractor.getXUID(p), p.getName(), UML.Package);
 		annotate(p, op);
 		packageMap.put(p, op);
@@ -141,6 +150,7 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 			oc.addProperty(UML.hasStereotype, UML.datatype);
 			try{
 				oc.addProperty(OWL.sameAs, getXSDType((EDataType)c));
+				oc.addProperty(OWL2.equivalentClass, getXSDType((EDataType)c));
 			}catch(InvalidEDataTypeException ex){
 				throw new CoreException(new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, "Invalid EDataType in Ecore - no XSD Mapping", ex));
 			}
@@ -160,6 +170,11 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 		 * 
 		 */
 		Class<?> ic = d.getInstanceClass();
+		
+		if (CIMToolEcoreUtil.getType(ic)!=null){
+			return CIMToolEcoreUtil.getType(ic);
+		}
+		/*
 		if (ic == String.class){
 			return XSD.xstring;
 		}else if (ic == double.class){
@@ -176,7 +191,11 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 			return XSD.xboolean;
 		}else if (ic == Date.class){
 			return XSD.dateTime;
+		}else if (ic == byte.class){
+			return XSD.base64Binary;
 		}
+		*/
+		System.err.println(d +" "+ic);
 		throw new InvalidEDataTypeException(d);
 
 	}

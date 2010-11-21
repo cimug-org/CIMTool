@@ -5,15 +5,48 @@ package com.cimphony.cimtoole.ecore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.emf.ecore.EcorePackage;
+
+import com.cimphony.cimtoole.util.CIMToolEcoreUtil;
 
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.profiles.ProfileClass;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.profiles.ProfileUtility.PropertySpec;
+import au.com.langdale.profiles.SchemaGenerator.TypeInfo;
 import au.com.langdale.profiles.SchemaGenerator;
+import au.com.langdale.xmi.UML;
 
 public class EcoreGenerator extends SchemaGenerator {
 
+	public class Index{
+		public Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
+		public Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
+		public Map<String, EAttribute> eAttributes = new HashMap<String, EAttribute>();
+		public Map<String, EReference> eReferences = new HashMap<String, EReference>();
+		public Map<String, EEnum> eEnums = new HashMap<String, EEnum>();
+		public Map<String, EDataType> eDataTypes = new HashMap<String, EDataType>();
+		public Map<String, EDataType> eTypes = new HashMap<String, EDataType>(); // xsdtype to ecore
+		public ArrayList<EReference> notInverted = new ArrayList<EReference>();
+		public EPackage root;
+	}
+	
 	private String namespace;
 	private boolean addRootClass;
 
@@ -27,23 +60,25 @@ public class EcoreGenerator extends SchemaGenerator {
 
 	EPackage result = coreFactory.createEPackage();
 
-	Map<String, Class<?>>	xsdTypes = new HashMap<String, Class<?>>(); // xsdtype to java
-	Map<String, EDataType> eTypes = new HashMap<String, EDataType>(); // xsdtype to ecore
 
-	Map<String, EPackage> ePackages = new HashMap<String, EPackage>(); 	// uri to EPackage
-	Map<String, EClass> eClasses = new HashMap<String, EClass>(); 	// uri to EClass
-	Map<String, EAttribute> eAttributes = new HashMap<String, EAttribute>();
-	Map<String, EReference> eReferences = new HashMap<String, EReference>();
-	Map<String, EEnum> eEnums = new HashMap<String, EEnum>();
-	Map<String, EDataType> eDataTypes = new HashMap<String, EDataType>();
-
-	ArrayList<EReference> notInverted = new ArrayList<EReference>();
-
+	protected Index index;
+	protected boolean merged;
+	
 	public EcoreGenerator(OntModel profileModel, OntModel backgroundModel,
 			String namespace, String profileNamespace, boolean preserveNamespaces, boolean inverses,
 			boolean addRootClass) {
+		this(profileModel, backgroundModel, namespace, profileNamespace, preserveNamespaces, inverses, addRootClass, false);
+	}
+	
+	public EcoreGenerator(OntModel profileModel, OntModel backgroundModel,
+			String namespace, String profileNamespace, boolean preserveNamespaces, boolean inverses,
+			boolean addRootClass, boolean merged) {
 		super(profileModel, backgroundModel, preserveNamespaces, inverses);
 
+		this.merged = merged;
+		index = new Index();
+		index.root = result;
+		
 		if (!namespace.equals(profileNamespace)){
 			EAnnotation pAnnotation = EcoreFactory.eINSTANCE.createEAnnotation();
 			pAnnotation.setSource(PROFILE_ANNOTATION);
@@ -67,7 +102,7 @@ public class EcoreGenerator extends SchemaGenerator {
 			}
 			this.namespace = namespace;
 		}
-		if (namespace!=null && profileNamespace!=null && !namespace.equals(preserveNamespaces))
+		if (namespace!=null && profileNamespace!=null && preserveNamespaces && !merged)
 			this.namespace = namespace+"?profile="+profileNamespace;
 		
 		result.setNsPrefix("cim");
@@ -77,51 +112,146 @@ public class EcoreGenerator extends SchemaGenerator {
 		/* These were manually created, entries below are from JS3-31 with exception of Date in
 		 * place of GregorianCalendar
 		 
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", java.lang.String.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", double.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", int.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#int", int.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", boolean.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", java.util.Date.class);
+		CIMToolEcoreUtil.XSD_TO_CLASS_MAP.put("http://www.w3.org/2001/XMLSchema#string", java.lang.String.class);
+		CIMToolEcoreUtil.XSD_TO_CLASS_MAP.put("http://www.w3.org/2001/XMLSchema#float", double.class);
+		CIMToolEcoreUtil.XSD_TO_CLASS_MAP.put("http://www.w3.org/2001/XMLSchema#integer", int.class);
+		CIMToolEcoreUtil.XSD_TO_CLASS_MAP.put("http://www.w3.org/2001/XMLSchema#int", int.class);
+		CIMToolEcoreUtil.XSD_TO_CLASS_MAP.put("http://www.w3.org/2001/XMLSchema#boolean", boolean.class);
+		CIMToolEcoreUtil.XSD_TO_CLASS_MAP.put("http://www.w3.org/2001/XMLSchema#dateTime", java.util.Date.class);
 		*/
-		
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#string", java.lang.String.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#integer", java.math.BigInteger.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#int", int.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#long", 	long.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#short", short.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#decimal", java.math.BigDecimal.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#float", float.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#double", double.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#boolean", boolean.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#byte", byte.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#QName", javax.xml.namespace.QName.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", java.util.Date.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#base64Binary", byte[].class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#hexBinary", byte[].class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#unsignedInt", long.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#unsignedShort", int.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#unsignedByte", short.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#time", java.util.Date.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#date", java.util.Date.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#g", java.util.Date.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#anySimpleType", java.lang.Object.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#duration", javax.xml.datatype.Duration.class);
-		this.xsdTypes.put("http://www.w3.org/2001/XMLSchema#NOTATION", javax.xml.namespace.QName.class);
 
-
-		this.eTypes.put("http://www.w3.org/2001/XMLSchema#string", corePackage.getEString());
-		this.eTypes.put("http://www.w3.org/2001/XMLSchema#float", corePackage.getEFloat());
-		this.eTypes.put("http://www.w3.org/2001/XMLSchema#integer", corePackage.getEInt());
-		this.eTypes.put("http://www.w3.org/2001/XMLSchema#int", corePackage.getEInt());
-		this.eTypes.put("http://www.w3.org/2001/XMLSchema#boolean", corePackage.getEBoolean());
-		this.eTypes.put("http://www.w3.org/2001/XMLSchema#dateTime", corePackage.getEDate());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#string", corePackage.getEString());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#integer", corePackage.getEInt());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#int", corePackage.getEInt());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#long", 	 corePackage.getELong());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#short",  corePackage.getEShort());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#decimal",  corePackage.getEBigDecimal());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#float",  corePackage.getEFloat());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#double",  corePackage.getEDouble());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#boolean",  corePackage.getEBoolean());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#byte",  corePackage.getEByte());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#QName",  corePackage.getEString());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#dateTime",  corePackage.getEDate());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#base64Binary",  corePackage.getEByteArray());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#hexBinary",  corePackage.getEByteArray());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#unsignedInt",  corePackage.getEInt());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#unsignedShort",  corePackage.getEShort());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#unsignedByte",  corePackage.getEByte());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#time",  corePackage.getEDate());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#date",  corePackage.getEDate());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#g",  corePackage.getEDate());
+		// index.eTypes.put("http://www.w3.org/2001/XMLSchema#anySimpleType",  corePackage.getED);
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#duration",  corePackage.getEDate());
+		index.eTypes.put("http://www.w3.org/2001/XMLSchema#NOTATION",  corePackage.getEString());
 	}
 
 	public EPackage getResult() {
 		return result;
 	}
 
+	@Override
+	protected void scanProfiles() {
+		if (!merged){
+			super.scanProfiles();
+			return;
+		}
+		Iterator it = getProfileClasses(profileModel, model, merged);
+		while( it.hasNext()) 
+			work.add(it.next());
+		
+		while( ! work.isEmpty()) {
+			ProfileClass profile = (ProfileClass) work.remove(0);
+			scanProperties(profile);
+			OntResource base = profile.getBaseClass();
+			if( base == null) {
+				log("No base for profile class", profile.getSubject());
+			}
+			else {
+				catalog.add(base, profile.getSubject());
+				if((profile.isEnumerated() || profile.isRestrictedEnum()) && ! profile.isUnion())
+					enums.add(base, profile.getIndividuals());
+			}
+		}
+	}
+	
+	@Override
+	protected boolean scanProperties(ProfileClass profile) {
+		if (!merged){
+			return super.scanProperties(profile);
+		}
+		ResIterator[] iterators = new ResIterator[]{
+				profileModel.listObjectProperties(),
+				profileModel.listDatatypeProperties(),
+		};
+		return scanForResource(profile.getBaseClass(), profile);
+		/*
+		boolean some = false;
+		for (ResIterator it : iterators){
+			some = some | it.hasNext();
+			while( it.hasNext()) {
+				OntResource next = (OntResource)it.next();
+				if (next.getDomain().equals(profile.getBaseClass())){
+					PropertyInfo info = profile.getPropertyInfo((OntResource)next);
+					ProfileClass range_profile = props.add( info );
+					if( range_profile != null)
+						work.add(range_profile);
+				}else{
+					// ŒSystem.out.println(next.toString() + next.getDomain());
+				}
+					
+			}
+		}
+		return some;
+		*/
+	}
+	
+	protected boolean scanForResource(OntResource res, ProfileClass profileClass){
+		ResIterator[] iterators = new ResIterator[]{
+				profileModel.listObjectProperties(),
+				profileModel.listDatatypeProperties()
+		};
+		boolean some = false;
+		for (ResIterator it : iterators){
+			some = some | it.hasNext();
+			while( it.hasNext()) {
+				OntResource next = (OntResource)it.next();
+				if (next.getDomain().equals(res)){
+					PropertyInfo info = profileClass.getPropertyInfo((OntResource)next);
+					ProfileClass range_profile = props.add( info );
+					if( range_profile != null)
+						work.add(range_profile);
+				}else{
+					// System.out.println(next.toString() + next.getDomain());
+				}
+					
+			}
+		}
+		return some;
+	}
+	
+	public static Iterator getProfileClasses(final OntModel profileModel, final OntModel fullModel, final boolean merged) {
+		return new Iterator() {
+			List classes = ProfileClass.getNamedProfiles(profileModel, fullModel);
+			int ix;
+			
+			public boolean hasNext() {
+				return ix < classes.size();
+			}
+
+			public Object next() {
+				OntResource clss = (OntResource)classes.get(ix++);
+				if (merged)
+					return new ProfileClass(clss, clss.getNameSpace(), clss);
+				else
+					return new ProfileClass(clss, clss.getNameSpace());
+			}
+
+			public void remove() {
+			}
+		};
+	}
+
+	
 	/*
 	 * Adds packages and classifiers without parent packages to the 'result' package.
 	 * Create an Element class from which all other classes derive.
@@ -129,50 +259,80 @@ public class EcoreGenerator extends SchemaGenerator {
 	@Override
 	public void run() {
 		super.run();
+		
+		Iterator nt = datatypes.iterator();
+		while( nt.hasNext()) {
+			OntResource type = (OntResource)nt.next();
+			EDataType dt = index.eDataTypes.get(type.getURI());
+			if (dt!= null && type.getIsDefinedBy() != null){
+				EPackage p = index.ePackages.get(type.getIsDefinedBy().getURI());
+				if (p!=null)
+					p.getEClassifiers().add(dt);
+			}
+		}		
+		
+		for (Iterator<EPackage> ix = index.ePackages.values().iterator(); ix.hasNext();) {
+			EPackage pkg = ix.next();
+			if ((pkg.getESuperPackage() == null || pkg.getESuperPackage() == result) && pkg.getESubpackages().size()==1){
+				result.getESubpackages().addAll(pkg.getESubpackages());
+				result.getEClassifiers().addAll(pkg.getEClassifiers());
+				result.getEAnnotations().addAll(pkg.getEAnnotations());
+				if (result.getName() == null)
+					result.setName(pkg.getName());
+				if (pkg.getESuperPackage() == result)
+					result.getESubpackages().remove(pkg);
+			}else if (pkg.getESuperPackage() == null && pkg.getESubpackages().size()>1){
+				result.getESubpackages().add(pkg);
+			}
+		}
 
+		
 		/* Create root Element class from which all other classes derive. */
 		EClass element = coreFactory.createEClass();
 		if (addRootClass) {
-			element.setName(EcoreGenerator.ELEMENT_CLASS_NAME);
+			if (result.getEClassifier(ELEMENT_CLASS_NAME)!=null && result.getEClassifier(ELEMENT_CLASS_NAME) instanceof EClass)
+				element = (EClass)result.getEClassifier(ELEMENT_CLASS_NAME);
+			else
+				element.setName(EcoreGenerator.ELEMENT_CLASS_NAME);
+			
 			element.setAbstract(true);
-			EAttribute uri = coreFactory.createEAttribute();
-			uri.setName(EcoreGenerator.ELEMENT_CLASS_IDENTIFIER);
-			uri.setEType(corePackage.getEString());
+			EAttribute uri;
+			if (element.getEStructuralFeature(ELEMENT_CLASS_IDENTIFIER) == null ||
+					!(element.getEStructuralFeature(ELEMENT_CLASS_IDENTIFIER) instanceof EAttribute)){
+				uri = coreFactory.createEAttribute();
+				uri.setName(EcoreGenerator.ELEMENT_CLASS_IDENTIFIER);
+				uri.setEType(corePackage.getEString());
+				element.getEStructuralFeatures().add(uri);
+			}else
+				uri = (EAttribute)element.getEStructuralFeature(ELEMENT_CLASS_IDENTIFIER);
 			uri.setID(true);
-			element.getEStructuralFeatures().add(uri);
 			result.getEClassifiers().add(element);
 
 		}
 
-		for (Iterator<EPackage> ix = ePackages.values().iterator(); ix.hasNext();) {
-			EPackage pkg = ix.next();
-			if (pkg.getESuperPackage() == null)
-				result.getESubpackages().add(pkg);
-		}
-
-		for (Iterator<EClass> ix = eClasses.values().iterator(); ix.hasNext();) {
+		for (Iterator<EClass> ix = index.eClasses.values().iterator(); ix.hasNext();) {
 			EClass klass = ix.next();
 			if (klass.getEPackage() == null)
 				result.getEClassifiers().add(klass);
 			/* Make all classes derive from Element. */
-			if (addRootClass && (klass.getESuperTypes().size() == 0)) {
+			if (addRootClass && (klass.getESuperTypes().size() == 0) && klass!=element) {
 				klass.getESuperTypes().add(element);
 			}
 		}
 
-		for (Iterator<EEnum> ix = eEnums.values().iterator(); ix.hasNext();) {
+		for (Iterator<EEnum> ix = index.eEnums.values().iterator(); ix.hasNext();) {
 			EEnum eEnum= ix.next();
 			if (eEnum.getEPackage() == null)
 				result.getEClassifiers().add(eEnum);
 		}
 
-		for (Iterator<EDataType> ix = eDataTypes.values().iterator(); ix.hasNext();) {
+		for (Iterator<EDataType> ix = index.eDataTypes.values().iterator(); ix.hasNext();) {
 			EDataType dt = ix.next();
 			if (dt.getEPackage() == null)
 				result.getEClassifiers().add(dt);
 		}
 
-		for (Iterator<EReference> ix = notInverted.iterator(); ix.hasNext();) {
+		for (Iterator<EReference> ix = index.notInverted.iterator(); ix.hasNext();) {
 			EReference ref = ix.next();
 			log("Non-inverted reference: " + ref.getName());
 		}
@@ -180,8 +340,10 @@ public class EcoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitPackage(String uri) {
-		EPackage pkg = coreFactory.createEPackage();
-		ePackages.put(uri, pkg);
+		if (!uri.equals(UML.global_package)){
+			EPackage pkg = coreFactory.createEPackage();
+			index.ePackages.put(uri, pkg);
+		}
 	}
 
 	@Override
@@ -189,25 +351,25 @@ public class EcoreGenerator extends SchemaGenerator {
 		EClass klass = coreFactory.createEClass();
 		// Assume abstract unless 'concrete' stereotype emitted.
 		klass.setAbstract(true);
-		eClasses.put(uri, klass);
+		index.eClasses.put(uri, klass);
 	}
 
 	@Override
 	protected void emitDefinedBy(String uri, String container) {
-		if (ePackages.containsKey(container)) {
-			EPackage parent = ePackages.get(container);
+		if (index.ePackages.containsKey(container)) {
+			EPackage parent = index.ePackages.get(container);
 
-			if (ePackages.containsKey(uri)) {
-				EPackage child = ePackages.get(uri);
+			if (index.ePackages.containsKey(uri)) {
+				EPackage child = index.ePackages.get(uri);
 				parent.getESubpackages().add(child);
-			} else if (eClasses.containsKey(uri)) {
-				EClass child = eClasses.get(uri);
+			} else if (index.eClasses.containsKey(uri)) {
+				EClass child = index.eClasses.get(uri);
 				parent.getEClassifiers().add(child);
-			} else if (eDataTypes.containsKey(uri)) {
-				EDataType child = eDataTypes.get(uri);
+			} else if (index.eDataTypes.containsKey(uri)) {
+				EDataType child = index.eDataTypes.get(uri);
 				parent.getEClassifiers().add(child);
-			} else if (eEnums.containsKey(uri)) {
-				EEnum child = eEnums.get(uri);
+			} else if (index.eEnums.containsKey(uri)) {
+				EEnum child = index.eEnums.get(uri);
 				parent.getEClassifiers().add(child);
 			} else {
 				log("Problem location contained [" + container + "] element [" + uri + "].");
@@ -226,16 +388,16 @@ public class EcoreGenerator extends SchemaGenerator {
 		profileAnnotation.getDetails().put("baseType", xsdtype);
 		dt.getEAnnotations().add(profileAnnotation);
 
-		if (xsdTypes.containsKey(xsdtype)) {
-			dt.setInstanceTypeName(xsdTypes.get(xsdtype).toString());
-			dt.setInstanceClass(xsdTypes.get(xsdtype));
+		if (CIMToolEcoreUtil.getTypeClass(xsdtype)!=null) {
+			dt.setInstanceTypeName(CIMToolEcoreUtil.getTypeClass(xsdtype).toString());
+			dt.setInstanceClass(CIMToolEcoreUtil.getTypeClass(xsdtype));
 		} else {
 			log("Data type [" + xsdtype + "] not found.");
 			dt.setInstanceClass(Object.class);
 			
 		}
 
-		eDataTypes.put(uri, dt);
+		index.eDataTypes.put(uri, dt);
 	}
 
 	@Override
@@ -243,11 +405,11 @@ public class EcoreGenerator extends SchemaGenerator {
 			String type, String xsdtype, boolean required) {
 		EAttribute attr = coreFactory.createEAttribute();
 
-		if (eDataTypes.containsKey(type)) {
-			EDataType dt = eDataTypes.get(type);
+		if (index.eDataTypes.containsKey(type)) {
+			EDataType dt = index.eDataTypes.get(type);
 			attr.setEType(dt);
-		} else if (eTypes.containsKey(xsdtype)) {
-			attr.setEType(eTypes.get(xsdtype));
+		} else if (index.eTypes.containsKey(xsdtype)) {
+			attr.setEType(index.eTypes.get(xsdtype));
 		} else {
 			log("No EType [" + xsdtype + "] found for " + uri + ".");
 		}
@@ -256,14 +418,14 @@ public class EcoreGenerator extends SchemaGenerator {
 			attr.setUpperBound(1);
 		attr.setLowerBound(1);
 
-		if (eClasses.containsKey(domain)) {
-			EClass klass = eClasses.get(domain);
+		if (index.eClasses.containsKey(domain)) {
+			EClass klass = index.eClasses.get(domain);
 			klass.getEStructuralFeatures().add(attr);
 		} else {
 			log("Problem locating class [" + uri + "] for attribute [" + type + "].");
 		}
 
-		eAttributes.put(uri, attr);
+		index.eAttributes.put(uri, attr);
 	}
 
 	/*
@@ -281,13 +443,13 @@ public class EcoreGenerator extends SchemaGenerator {
 	 */
 	@Override
 	protected void emitStereotype(String uri, String stereo) {
-		if (eClasses.containsKey(uri)) {
-			EClass klass = eClasses.get(uri);
+		if (index.eClasses.containsKey(uri)) {
+			EClass klass = index.eClasses.get(uri);
 			if (stereo == "http://langdale.com.au/2005/UML#concrete") {
 				klass.setAbstract(false);
 			}
 		} else {
-			//			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
+			log("Problem locating stereotype [" + stereo + "] class [" + uri + "].");
 		}
 	}
 
@@ -299,11 +461,11 @@ public class EcoreGenerator extends SchemaGenerator {
 	 */
 	@Override
 	protected void emitInstance(String uri, String base, String type) {
-		if (eClasses.containsKey(type)) {
-			EClass klass = eClasses.get(type);
+		if (index.eClasses.containsKey(type)) {
+			EClass klass = index.eClasses.get(type);
 			EAttribute attr = coreFactory.createEAttribute();
 			klass.getEStructuralFeatures().add(attr);
-			eAttributes.put(uri, attr);
+			index.eAttributes.put(uri, attr);
 		} else {
 			log("Problem locating class [" + type + "] for instance [" + uri + "]");
 		}
@@ -312,8 +474,8 @@ public class EcoreGenerator extends SchemaGenerator {
 	@Override
 	protected void emitBaseStereotype(String uri, String stereo) {
 		// Convert classes with enumeration base sterotypes to EEnums.
-		if ((stereo == "http://langdale.com.au/2005/UML#enumeration") && eClasses.containsKey(uri)) {
-			EClass klass = eClasses.get(uri);
+		if ((stereo == "http://langdale.com.au/2005/UML#enumeration") && index.eClasses.containsKey(uri)) {
+			EClass klass = index.eClasses.get(uri);
 
 			EEnum eEnum = coreFactory.createEEnum();
 			eEnum.setName(klass.getName());
@@ -327,15 +489,15 @@ public class EcoreGenerator extends SchemaGenerator {
 				literal.setName(attr.getName());
 				literal.setValue(j);
 				eEnum.getELiterals().add(literal);
-				eAttributes.remove(uri + "." + attr.getName());
+				index.eAttributes.remove(uri + "." + attr.getName());
 				j++;
 			}
 
-			eEnums.put(uri, eEnum); // Substitute the class with the enumeration.
-			eClasses.remove(uri);
+			index.eEnums.put(uri, eEnum); // Substitute the class with the enumeration.
+			index.eClasses.remove(uri);
 
-		} else if ((stereo == "http://langdale.com.au/2005/UML#compositeOf") && eReferences.containsKey(uri)) {
-			//			EReference ref = eReferences.get(uri);
+		} else if ((stereo == "http://langdale.com.au/2005/UML#compositeOf") && index.eReferences.containsKey(uri)) {
+			//			EReference ref = index.eReferences.get(uri);
 			//			ref.setContainment(true);
 		}
 	}
@@ -344,12 +506,12 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitObjectProperty(String uri, String base, String domain,
 			String range, boolean required, boolean functional) {
 
-		if (eClasses.containsKey(domain) && eClasses.containsKey(range)) {
+		if (index.eClasses.containsKey(domain) && index.eClasses.containsKey(range)) {
 			EReference ref = coreFactory.createEReference();
-			EClass klass = eClasses.get(domain);
+			EClass klass = index.eClasses.get(domain);
 			klass.getEStructuralFeatures().add(ref);
 
-			EClass referenced = eClasses.get(range);
+			EClass referenced = index.eClasses.get(range);
 			ref.setEType(referenced);
 
 			if (required == true)
@@ -358,19 +520,19 @@ public class EcoreGenerator extends SchemaGenerator {
 			if (functional == false)
 				ref.setUpperBound(-1);
 
-			eReferences.put(uri, ref);
-		} else if (eClasses.containsKey(domain) && eEnums.containsKey(range)) {
+			index.eReferences.put(uri, ref);
+		} else if (index.eClasses.containsKey(domain) && index.eEnums.containsKey(range)) {
 			EAttribute attr = coreFactory.createEAttribute();
-			EClass klass = eClasses.get(domain);
+			EClass klass = index.eClasses.get(domain);
 			klass.getEStructuralFeatures().add(attr);
 
-			EEnum eEnum = eEnums.get(range);
+			EEnum eEnum = index.eEnums.get(range);
 			attr.setEType(eEnum);
 
 			if (required == true)
 				attr.setLowerBound(1);
 
-			eAttributes.put(uri, attr);
+			index.eAttributes.put(uri, attr);
 		} else {
 			log("Problem locating classes [" + domain + ", " + range + "] for reference [" + uri + "].");
 		}
@@ -378,15 +540,15 @@ public class EcoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitInverse(String uri, String iuri) {
-		if (eReferences.containsKey(uri) && eReferences.containsKey(iuri)) {
-			eReferences.get(uri).setEOpposite(eReferences.get(iuri));
-			eReferences.get(iuri).setEOpposite(eReferences.get(uri));
-			notInverted.remove(eReferences.get(uri));
-			notInverted.remove(eReferences.get(iuri));
-		} else if (eReferences.containsKey(uri)) {
-			notInverted.add(eReferences.get(uri));
-		} else if (eReferences.containsKey(iuri)) {
-			notInverted.add(eReferences.get(iuri));
+		if (index.eReferences.containsKey(uri) && index.eReferences.containsKey(iuri)) {
+			index.eReferences.get(uri).setEOpposite(index.eReferences.get(iuri));
+			index.eReferences.get(iuri).setEOpposite(index.eReferences.get(uri));
+			index.notInverted.remove(index.eReferences.get(uri));
+			index.notInverted.remove(index.eReferences.get(iuri));
+		} else if (index.eReferences.containsKey(uri)) {
+			index.notInverted.add(index.eReferences.get(uri));
+		} else if (index.eReferences.containsKey(iuri)) {
+			index.notInverted.add(index.eReferences.get(iuri));
 		} else {
 			log("Problem inverting " + uri + " and " + iuri + ".");
 		}
@@ -394,19 +556,19 @@ public class EcoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitRestriction(String uri, String domain, String range) {
-		// ignore
+		// Do nothing
 	}
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,
 			boolean functional) {
-		// ignore
+		//Do nothing
 	}
 
 	@Override
 	protected void emitSuperClass(String subClass, String superClass) {
-		if (eClasses.containsKey(subClass) && eClasses.containsKey(superClass)) {
-			eClasses.get(subClass).getESuperTypes().add(eClasses.get(superClass));
+		if (index.eClasses.containsKey(subClass) && index.eClasses.containsKey(superClass)) {
+			index.eClasses.get(subClass).getESuperTypes().add(index.eClasses.get(superClass));
 		} else {
 			log("Error setting super type [" + superClass + "] for " + subClass + ".");
 		}
@@ -416,21 +578,21 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitLabel(String uri, String label) {
 		ENamedElement named = null;
 
-		if (ePackages.containsKey(uri)) {
-			named = ePackages.get(uri);
+		if (index.ePackages.containsKey(uri)) {
+			named = index.ePackages.get(uri);
 			EPackage pkg = (EPackage)named;
 			pkg.setNsURI(namespace+"#"+label);
 			pkg.setNsPrefix("cim"+label);
-		} else if (eClasses.containsKey(uri)) {
-			named = eClasses.get(uri);
-		} else if (eAttributes.containsKey(uri)) {
-			named = eAttributes.get(uri);
-		} else if (eReferences.containsKey(uri)) {
-			named = eReferences.get(uri);
-		} else if (eEnums.containsKey(uri)) {
-			named = eEnums.get(uri);
-		} else if (eDataTypes.containsKey(uri)) {
-			named = eDataTypes.get(uri);
+		} else if (index.eClasses.containsKey(uri)) {
+			named = index.eClasses.get(uri);
+		} else if (index.eAttributes.containsKey(uri)) {
+			named = index.eAttributes.get(uri);
+		} else if (index.eReferences.containsKey(uri)) {
+			named = index.eReferences.get(uri);
+		} else if (index.eEnums.containsKey(uri)) {
+			named = index.eEnums.get(uri);
+		} else if (index.eDataTypes.containsKey(uri)) {
+			named = index.eDataTypes.get(uri);
 		} else {
 			log("Problem applying [" + uri +"] label: " + label);
 		}
@@ -443,18 +605,18 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitComment(String uri, String baseComment, String profileComment) {
 		EModelElement annotated = null;
 
-		if (ePackages.containsKey(uri)) {
-			annotated = ePackages.get(uri);
-		} else if (eClasses.containsKey(uri)) {
-			annotated = eClasses.get(uri);
-		} else if (eAttributes.containsKey(uri)) {
-			annotated = eAttributes.get(uri);
-		} else if (eReferences.containsKey(uri)) {
-			annotated = eReferences.get(uri);
-		} else if (eDataTypes.containsKey(uri)) {
-			annotated = eDataTypes.get(uri);
-		} else if (eEnums.containsKey(uri)) {
-			annotated = eEnums.get(uri);
+		if (index.ePackages.containsKey(uri)) {
+			annotated = index.ePackages.get(uri);
+		} else if (index.eClasses.containsKey(uri)) {
+			annotated = index.eClasses.get(uri);
+		} else if (index.eAttributes.containsKey(uri)) {
+			annotated = index.eAttributes.get(uri);
+		} else if (index.eReferences.containsKey(uri)) {
+			annotated = index.eReferences.get(uri);
+		} else if (index.eDataTypes.containsKey(uri)) {
+			annotated = index.eDataTypes.get(uri);
+		} else if (index.eEnums.containsKey(uri)) {
+			annotated = index.eEnums.get(uri);
 		} else {
 			log("Problem locating annotated element [" + uri + "].");
 		}
@@ -503,6 +665,9 @@ public class EcoreGenerator extends SchemaGenerator {
 	@Override
 	protected void emitImport(String uri) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	public Index getIndex(){
+		return index;
 	}
 }

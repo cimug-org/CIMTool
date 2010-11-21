@@ -18,4 +18,8 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.5.0",
 Import-Package: au.com.langdale.kena,
  com.hp.hpl.jena.graph,
  com.hp.hpl.jena.vocabulary
-Export-Package: com.cimphony.cimtoole.ecore
+Export-Package: com.cimphony.cimtoole,
+ com.cimphony.cimtoole.buildlet,
+ com.cimphony.cimtoole.ecore,
+ com.cimphony.cimtoole.util,
+ com.cimphony.cimtoole.wizards
