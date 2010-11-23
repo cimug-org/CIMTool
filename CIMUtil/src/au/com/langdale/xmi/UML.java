@@ -35,6 +35,7 @@ public class UML {
 	public final static Resource primitive = ResourceFactory.createResource(NS + "primitive");	
 	public final static Resource base = ResourceFactory.createResource(NS + "base");	
 	public final static Resource datatype = ResourceFactory.createResource(NS + "datatype");
+	public final static Resource cimdatatype = ResourceFactory.createResource(NS + "cimdatatype");
 	public final static Resource enumeration = ResourceFactory.createResource(NS + "enumeration");
 	public final static Resource union = ResourceFactory.createResource(NS + "union");
 	public final static Resource extendedBy = ResourceFactory.createResource(NS + "extendedby");
@@ -100,6 +101,7 @@ public class UML {
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
 		model.createIndividual(datatype.getURI(), Stereotype).addLabel("Datatype", null);
+		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
 		model.createIndividual(attribute.getURI(), Stereotype).addLabel("Attribute", null);
 		model.createIndividual(xmlelement.getURI(), Stereotype).addLabel("XML Element", null);
 		model.createIndividual(xmlattribute.getURI(), Stereotype).addLabel("XML Attribute", null);		

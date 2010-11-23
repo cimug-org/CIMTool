@@ -122,6 +122,10 @@ public class CIMInterpreter extends UMLInterpreter {
 		while( ht.hasNext()) {
 			applyPrimitiveStereotype(ht.nextResource(), true);
 		}
+		ResIterator ct = model.listSubjectsBuffered(UML.hasStereotype, UML.cimdatatype);
+		while( ct.hasNext()) {
+			applyPrimitiveStereotype(ct.nextResource(), true);
+		}
 		ResIterator it = model.listSubjectsBuffered(UML.hasStereotype, UML.primitive);
 		while( it.hasNext()) {
 			applyPrimitiveStereotype(it.nextResource(), true); // in future, change to false
@@ -203,6 +207,7 @@ public class CIMInterpreter extends UMLInterpreter {
 		
 		// some UML models have inconsistent stereotypes
 		model.remove(clss, UML.hasStereotype, UML.datatype);
+		model.remove(clss, UML.hasStereotype, UML.cimdatatype);
 		model.remove(clss, UML.hasStereotype, UML.base);
 		model.remove(clss, UML.hasStereotype, UML.primitive);
 		

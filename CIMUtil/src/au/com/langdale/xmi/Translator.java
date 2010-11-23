@@ -8,10 +8,11 @@ import java.util.Iterator;
 
 import org.apache.xerces.util.XMLChar;
 
-import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
+
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -233,6 +234,7 @@ public class Translator implements Runnable {
 
 			if (r.hasProperty(RDF.type, OWL.Class)) {
 				if ((r.hasProperty(UML.hasStereotype, UML.datatype) ||
+						r.hasProperty(UML.hasStereotype, UML.cimdatatype) ||
 						r.hasProperty(UML.hasStereotype, UML.primitive)) &&
 						    ! r.hasProperty(UML.hasStereotype, UML.enumeration)) {
 					FrontsNode x = selectXSDType(l);
