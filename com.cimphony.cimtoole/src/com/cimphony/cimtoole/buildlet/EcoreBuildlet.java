@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 import com.cimphony.cimtoole.CimphonyCIMToolPlugin;
 import com.cimphony.cimtoole.ecore.EcoreGenerator;
+import com.cimphony.cimtoole.ecore.EcoreGenerator.Index;
 
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.project.Task;
@@ -42,12 +44,14 @@ public class EcoreBuildlet extends ProfileBuildlet {
         	schema.setName(result.getName().split("\\.")[0]);
         ResourceSet metaResourceSet = new ResourceSetImpl();
         // Register XML Factory implementation to handle .ecore files
-        metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-            "ecore", new  XMLResourceFactoryImpl());
+        /*metaResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+            "ecore", new  XMLResourceFactoryImpl())
+            */;
         // Create empty resource with the given URI
         org.eclipse.emf.ecore.resource.Resource metaResource =
             metaResourceSet.createResource(URI.createURI(result.getFullPath().toString()));
         metaResource.getContents().add(schema);
+        
         ByteArrayOutputStream cache = new ByteArrayOutputStream();
         try {
             metaResource.save(cache, Collections.EMPTY_MAP);

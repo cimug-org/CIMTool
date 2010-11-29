@@ -271,22 +271,6 @@ public class EcoreGenerator extends SchemaGenerator {
 			}
 		}		
 		
-		for (Iterator<EPackage> ix = index.ePackages.values().iterator(); ix.hasNext();) {
-			EPackage pkg = ix.next();
-			if ((pkg.getESuperPackage() == null || pkg.getESuperPackage() == result) && pkg.getESubpackages().size()==1){
-				result.getESubpackages().addAll(pkg.getESubpackages());
-				result.getEClassifiers().addAll(pkg.getEClassifiers());
-				result.getEAnnotations().addAll(pkg.getEAnnotations());
-				if (result.getName() == null)
-					result.setName(pkg.getName());
-				if (pkg.getESuperPackage() == result)
-					result.getESubpackages().remove(pkg);
-			}else if (pkg.getESuperPackage() == null && pkg.getESubpackages().size()>1){
-				result.getESubpackages().add(pkg);
-			}
-		}
-
-		
 		/* Create root Element class from which all other classes derive. */
 		EClass element = coreFactory.createEClass();
 		if (addRootClass) {
@@ -332,6 +316,26 @@ public class EcoreGenerator extends SchemaGenerator {
 				result.getEClassifiers().add(dt);
 		}
 
+		for (Iterator<EPackage> ix = index.ePackages.values().iterator(); ix.hasNext();) {
+			EPackage pkg = ix.next();
+			if (pkg.getESuperPackage() == null){
+				result.getESubpackages().add(pkg);
+			}
+		}
+		
+		for (Iterator<EPackage> ix = index.ePackages.values().iterator(); ix.hasNext();) {
+			EPackage pkg = ix.next();			
+			if (pkg.getESuperPackage() == result && result.getESubpackages().size()==1 && pkg.getESubpackages().size()==1){
+				result.getESubpackages().addAll(pkg.getESubpackages());
+				result.getEClassifiers().addAll(pkg.getEClassifiers());
+				result.getEAnnotations().addAll(pkg.getEAnnotations());
+				if (result.getName() == null)
+					result.setName(pkg.getName());
+				result.getESubpackages().remove(pkg);
+			}
+		}
+
+		
 		for (Iterator<EReference> ix = index.notInverted.iterator(); ix.hasNext();) {
 			EReference ref = ix.next();
 			log("Non-inverted reference: " + ref.getName());
@@ -350,8 +354,9 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitClass(String uri, String base) {
 		EClass klass = coreFactory.createEClass();
 		// Assume abstract unless 'concrete' stereotype emitted.
-		klass.setAbstract(true);
-		index.eClasses.put(uri, klass);
+		if (!merged)
+			klass.setAbstract(true);
+		EClass previous = index.eClasses.put(uri, klass);
 	}
 
 	@Override

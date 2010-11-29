@@ -98,6 +98,9 @@ public class ExportEcore extends Wizard implements IExportWizard {
 				EcoreGenerator gen = new EcoreGenerator(schema, schema, namespace, namespace, true, true, true, true);
 				gen.run();
 				EPackage ecoreModel = gen.getResult();
+		        if (ecoreModel.getName() == null)
+		        	ecoreModel.setName(project.getName().split("\\.")[0]);
+				
 				URI fileURI = URI.createFileURI(pathname);
 				Resource ecore = new ResourceSetImpl().createResource(fileURI);
 				ecore.getContents().add(ecoreModel);
