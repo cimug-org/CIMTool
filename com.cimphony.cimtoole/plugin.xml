@@ -9,6 +9,12 @@
             id="com.cimphony.cimtoole.ecore_parser"
             name="Ecore Parser">
       </parser>
+      <parser
+            class="com.cimphony.cimtoole.ecore.EcoreRegistryExtractor"
+            fileExt="ecore-registry"
+            id="com.cimphony.cimtoole.ecore_registry_parser"
+            name="Ecore Registry Parser">
+      </parser>
    </extension>
 
 
@@ -30,11 +36,26 @@
             id="com.cimphony.cimtoole.wizards.ExportEcore"
             name="Export merged schema as Ecore">
       </wizard>
-      <category
-            id="au.com.langdale.cimtoole"
-            name="CIMTool">
-      </category>
+   </extension>
+      <extension
+         point="org.eclipse.ui.importWizards">
+         <wizard
+            category="au.com.langdale.cimtoole"
+            class="com.cimphony.cimtoole.wizards.ImportRegistrySchema"
+            icon="icons/package-ecore.png"
+            id="com.cimphony.cimtoole.wizards.ImportRegistrySchema"
+            name="Import Schema from Registry">
+      </wizard>
    </extension>
    
-   
+      <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="au.com.langdale.cimtoole.editors.InfoModelEditor"
+            extensions="ecore, ecore-registry"
+            icon="icons/package-ecore.png"
+            id="au.com.langdale.cimtoole.editors.InfoModelEditorEcore"
+            name="Model Browser">
+      </editor>
+   </extension>
    </plugin>

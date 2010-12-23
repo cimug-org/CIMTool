@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,7 +37,7 @@ public class EcoreBuildlet extends ProfileBuildlet {
         IFile file = Task.getRelated(result, "owl");
         boolean preserveNS = Task.getPreferenceOption(Task.PRESERVE_NAMESPACES);
         String namespace = preserveNS? Task.getSchemaNamespace(file): Task.getProperty(file, Task.PROFILE_NAMESPACE);
-        EcoreGenerator generator = getGenerator(Task.getProfileModel(file), Task.getBackgroundModel(file), namespace, Task.getProperty(file, Task.PROFILE_NAMESPACE), preserveNS);
+        EcoreGenerator generator = getGenerator(Task.getProfileModel(file), Task.getBackgroundModel(file), namespace, Task.getProperty(file, Task.PROFILE_NAMESPACE), preserveNS, result.getProject());
         generator.run();
         // Use file name for top level package name.
         EPackage schema = generator.getResult();
@@ -65,7 +66,7 @@ public class EcoreBuildlet extends ProfileBuildlet {
         
     }
 
-    public static EcoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, String profileNamespace, boolean preserveNS) throws CoreException {
-        return new EcoreGenerator(profileModel, backgroundModel, namespace, profileNamespace, preserveNS, true, true);
+    public static EcoreGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, String namespace, String profileNamespace, boolean preserveNS, IProject project) throws CoreException {
+        return new EcoreGenerator(profileModel, backgroundModel, namespace, profileNamespace, preserveNS, true, true, project);
     }
 }

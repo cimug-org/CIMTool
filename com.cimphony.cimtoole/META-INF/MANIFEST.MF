@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.5.0",
  au.com.langdale.kena,
  org.eclipse.ui,
  org.eclipse.emf.ecore.xmi;bundle-version="2.5.0",
- au.com.langdale.cimtoole;bundle-version="1.8.2"
+ au.com.langdale.cimtoole;bundle-version="1.8.2",
+ org.eclipse.ui.forms;bundle-version="3.5.0"
 Import-Package: au.com.langdale.kena,
  com.hp.hpl.jena.graph,
  com.hp.hpl.jena.vocabulary

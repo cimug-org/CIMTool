@@ -1,10 +1,13 @@
 package com.cimphony.cimtoole.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.omg.CORBA.INITIALIZE;
 
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -15,6 +18,7 @@ public class CIMToolEcoreUtil {
 	private static Map<Resource, Class<?>> XSD_TO_CLASS_MAP = new HashMap<Resource, Class<?>>();
 	private static Map<String, Class<?>> XSD_URI_TO_CLASS_MAP = new HashMap<String, Class<?>>();
 	private static Map<Class<?>, Resource> CLASS_TO_XSD_MAP = new HashMap<Class<?>, Resource>();
+	private static Map<String, EDataType> XSD_URI_TO_EDATATYPE_MAP = new HashMap<String, EDataType>();
 	private static boolean INITIALISED = false;
 	
 	private static void init(){
@@ -52,6 +56,34 @@ public class CIMToolEcoreUtil {
 				CLASS_TO_XSD_MAP.put(XSD_TO_CLASS_MAP.get(k), k);
 			}
 		}
+		
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#string", EcorePackage.eINSTANCE.getEString());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#integer", EcorePackage.eINSTANCE.getEInt());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#int", EcorePackage.eINSTANCE.getEInt());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#long", 	 EcorePackage.eINSTANCE.getELong());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#short",  EcorePackage.eINSTANCE.getEShort());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#decimal",  EcorePackage.eINSTANCE.getEBigDecimal());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#float",  EcorePackage.eINSTANCE.getEFloat());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#double",  EcorePackage.eINSTANCE.getEDouble());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#boolean",  EcorePackage.eINSTANCE.getEBoolean());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#byte",  EcorePackage.eINSTANCE.getEByte());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#QName",  EcorePackage.eINSTANCE.getEString());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#dateTime",  EcorePackage.eINSTANCE.getEDate());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#base64Binary",  EcorePackage.eINSTANCE.getEByteArray());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#hexBinary",  EcorePackage.eINSTANCE.getEByteArray());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#unsignedInt",  EcorePackage.eINSTANCE.getEInt());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#unsignedShort",  EcorePackage.eINSTANCE.getEShort());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#unsignedByte",  EcorePackage.eINSTANCE.getEByte());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#time",  EcorePackage.eINSTANCE.getEDate());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#date",  EcorePackage.eINSTANCE.getEDate());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#g",  EcorePackage.eINSTANCE.getEDate());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#duration",  EcorePackage.eINSTANCE.getEDate());
+		XSD_URI_TO_EDATATYPE_MAP.put("http://www.w3.org/2001/XMLSchema#NOTATION",  EcorePackage.eINSTANCE.getEString());
+	}
+	
+	public static Map<String, EDataType> getEDataTypeMap(){
+		if (!INITIALISED) init();
+		return Collections.unmodifiableMap(XSD_URI_TO_EDATATYPE_MAP);
 	}
 	
 	public static Class<?> getTypeClass(Resource type){

@@ -190,7 +190,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="au.com.langdale.cimtoole.editors.InfoModelEditor"
-            extensions="xmi,simple-owl,merged-owl,eap,ecore"
+            extensions="xmi,simple-owl,merged-owl,eap"
             icon="icons/package.png"
             id="au.com.langdale.cimtoole.editors.InfoModelEditor"
             name="Model Browser">
