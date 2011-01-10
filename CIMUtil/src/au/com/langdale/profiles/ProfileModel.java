@@ -7,17 +7,22 @@ package au.com.langdale.profiles;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.reasoner.InfGraph;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.inference.LOG;
 import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.UMLTreeModel.PackageNode;
+import au.com.langdale.jena.UMLTreeModel.SubClassNode;
+import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
@@ -32,6 +37,11 @@ public class ProfileModel extends JenaTreeModelBase {
 	
 	private String namespace = "http://example.com/NoName#";
 	private OntModel profileModel, backgroundModel;
+	private Refactory refactory;
+	
+	public Refactory getRefactory() {
+		return refactory;
+	}
 
 	public String getNamespace() {
 		return namespace;
@@ -58,8 +68,11 @@ public class ProfileModel extends JenaTreeModelBase {
 	}
 	
 	private void initModels() {
-		if( profileModel != null && backgroundModel != null)
-			super.setOntModel(Composition.merge(profileModel, backgroundModel));
+		if( profileModel != null && backgroundModel != null) {
+			OntModel fullModel = Composition.merge(profileModel, backgroundModel);
+			super.setOntModel(fullModel);
+			refactory = new Refactory(profileModel, fullModel);
+		}
 	}
 	
 	@Override
@@ -129,6 +142,10 @@ public class ProfileModel extends JenaTreeModelBase {
 	}
 
 	public abstract class SortedNode extends ModelNode {
+		
+		public ProfileModel getProfileModel() {
+			return ProfileModel.this;
+		}
 
 		@Override
 		protected String collation() {
@@ -142,6 +159,52 @@ public class ProfileModel extends JenaTreeModelBase {
 		
 		public void setComment(String text) {
 			getSubject().setComment(text, null);
+		}
+		
+		protected abstract void create(Node node);
+
+		protected void createAnon(Node node) {
+			create(node);
+		}
+		
+		protected void createDeep(Node node) {
+			create(node);
+		}
+
+		protected abstract void destroy();
+
+		public void profileRemove(Node node) {
+			if( node instanceof SortedNode ) {
+				SortedNode target = (SortedNode) node;
+				target.destroy();
+				InfGraph ig = (InfGraph) getSubject().getOntModel().getGraph();
+				ig.rebind();
+				structureChanged();
+			}
+		}
+		
+
+		public void profileAddAll(Collection args) {
+			for (Iterator it = args.iterator(); it.hasNext();)
+				create((Node) it.next());
+			structureChanged();
+		}
+
+		public void profileAddAllDeep(Collection args) {
+			for (Iterator it = args.iterator(); it.hasNext();)
+				createDeep((Node) it.next());
+			getRoot().structureChanged();
+		}
+		
+		public void profileAddAnon(Node node) {
+			createAnon(node);
+			structureChanged();
+		}
+
+		public Collection profileExpandArgs(Node node) {
+			Collection args = new ArrayList();
+		    ProfileModel.buildArguments(args, node);
+			return args;
 		}
 	}
 	
@@ -169,32 +232,34 @@ public class ProfileModel extends JenaTreeModelBase {
 		/**
 		 * Create a new envelope class with the given URI. 
 		 */
-		public OntResource create(String uri) {
+		public OntResource profileAddEnvelope(String uri) {
 			OntResource child = getOntModel().createClass(uri);
 			child.addSuperClass(MESSAGE.Message);
 			return child;
+		}
+		
+		@Override
+		protected void destroy() {
+			// can't destroy this node
+			
 		}
 
 		/**
 		 * Create a new named class derived from the given class.
 		 */
 		@Override
-		public OntResource create(OntResource base) {
-			if( ! base.isClass())
-				return null;
-			
-			String uri = getNamespace() + base.getLocalName();
-			OntResource probe = getOntModel().createResource(uri);
-			
-			int ix = 1;
-			while( probe.isClass()) {
-				probe = getOntModel().createResource(uri + ix);
-				ix++;
+		protected void create(Node node) {
+			OntResource base = node.getSubject();
+			if( base.isClass())
+				getRefactory().createProfileClass(base);
+		}
+		
+		@Override
+		protected void createDeep(Node node) {
+			OntResource base = node.getSubject();
+			if( base.isClass()) {
+				getRefactory().createCompleteProfile(base, true);
 			}
-			
-			OntResource child = getOntModel().createClass(probe.getURI());
-			child.addSuperClass(base);
-			return child;
 		}
 
 		@Override
@@ -237,12 +302,12 @@ public class ProfileModel extends JenaTreeModelBase {
 		 *
 		 */
 		@Override
-		public void destroy() {
+		protected void destroy() {
 			
 			// destroy dependent nodes
 			Iterator it = iterator();
 			while(it.hasNext()) {
-				Node node = (Node) it.next();
+				SortedNode node = (SortedNode) it.next();
 				node.destroy();
 			}
 			
@@ -308,14 +373,12 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		/**
 		 * A subordinate element in a message.
-		 * 
-		 *
 		 */
 		public class ElementNode extends ProfileNode implements Cardinality {
 			/**
 			 * A union member
 			 */
-			public class SubTypeNode extends NaturalNode {
+			public class SubTypeNode extends GeneralTypeNode {
 			
 				public SubTypeNode(ProfileClass profile) {
 					super(profile);
@@ -327,8 +390,8 @@ public class ProfileModel extends JenaTreeModelBase {
 				}
 			
 				@Override
-				public void destroy() {
-					ElementNode.this.destroy(this);
+				protected void destroy() {
+					ElementNode.this.getProfile().removeUnionMember(getSubject());
 					if( profile.getSubject().isAnon())
 						super.destroy();
 				}
@@ -467,34 +530,46 @@ public class ProfileModel extends JenaTreeModelBase {
 					add( new SubTypeNode((ProfileClass) jt.next()));
 				}
 			}
+			public Collection profileExpandArgs(Node node) {
+				return Collections.singletonList(node);
+			}
 			
 			@Override
-			public OntResource create(OntResource base) {
+			protected void create(Node node) {
+				OntResource base = node.getSubject();
 				if( base.isClass() && ! isDatatype()) {
-					OntResource child = profile.createUnionMember(base, true);
-					return child;
-				} else 
-					return null;
+					OntResource member = getRefactory().findOrCreateNamedProfile(base);
+					profile.addUnionMember(member);
+				}
 			}
 			
-			protected void destroy(SubTypeNode child) {
-				profile.removeUnionMember(child.getSubject());
-			}
-
 			@Override
-			public void destroy() {
+			protected void createAnon(Node node) {
+				OntResource base = node.getSubject();
+				if( base.isClass() && ! isDatatype()) {
+					profile.createUnionMember(base);
+				}
+			}
+			
+			@Override
+			protected void destroy() {
 				super.destroy();
-				NaturalNode.this.destroy(this);
+				NaturalNode.this.getProfile().remove(getBase());
 			}
 		}
 
 		/**
 		 * A supertype of a root element or other supertype in a message
 		 */
-		public class SuperTypeNode extends NaturalNode {
+		public class SuperTypeNode extends GeneralTypeNode {
 		
 			public SuperTypeNode(ProfileClass profile) {
 				super(profile);
+			}
+			
+			@Override
+			public Class getIconClass() {
+				return SuperTypeNode.class;
 			}
 			
 			@Override
@@ -503,8 +578,8 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 		
 			@Override
-			public void destroy() {
-				NaturalNode.this.destroy(this);
+			protected void destroy() {
+				NaturalNode.this.getProfile().removeSuperClass(getSubject());
 			}
 		}
 
@@ -536,18 +611,23 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 		
 			@Override
-			public void destroy() {
-				NaturalNode.this.destroy(this);
+			protected void destroy() {
+				NaturalNode.this.getProfile().removeIndividual(getSubject());
 			}
 			
 			@Override
 			public void setName(String name) {
-				// TODO: to be implemented
+				// can't change the name
 			}
 			
 			@Override
 			public void setComment(String name) {
-				// TODO: to be implemented
+				// can't comment
+			}
+			
+			@Override
+			protected void create(Node node) {
+				// can't add children
 			}
 		}
 
@@ -559,24 +639,25 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * Create a child element in the underlying ontology.
 		 */
 		@Override
-		public OntResource create(OntResource base) {
+		protected void create(Node node) {
+			OntResource base = node.getSubject();
 			if( base.isProperty()) {
-				OntResource child = profile.createAllValuesFrom(base, true);
-				return child;
+				profile.createAllValuesFrom(base, true);
 			}
 			else if( base.hasRDFType(profile.getBaseClass())) {
 				profile.addIndividual(base);
-				return base;
 			}
-			else {
-				return null;
+		}
+		
+		@Override
+		protected void createDeep(Node node) {
+			OntResource prop = node.getSubject();
+			if( prop.isProperty()) {
+				profile.createAllValuesFrom(prop, true);
+				getRefactory().createDefaultRange(profile, prop);
 			}
 		}
 
-		protected void destroy(ElementNode child) {
-			profile.remove(child.getBase());
-		}
-		
 		@Override
 		protected void populate() {
 			populateProps();
@@ -615,21 +696,10 @@ public class ProfileModel extends JenaTreeModelBase {
 				add(node);
 			}
 		}
-
-		protected void destroy(EnumValueNode child) {
-			profile.removeIndividual(child.getSubject());
-		}
-		
-		protected void destroy(SuperTypeNode child) {
-			profile.removeSuperClass(child.getSubject());
-		}
 	}
 	
-	/**
-	 * A root element in a message
-	 */
-	public class TypeNode extends NaturalNode implements Cardinality {
-		public TypeNode(ProfileClass profile) {
+	public abstract class GeneralTypeNode extends NaturalNode implements Cardinality {
+		public GeneralTypeNode(ProfileClass profile) {
 			super(profile);
 		}
 
@@ -641,6 +711,8 @@ public class ProfileModel extends JenaTreeModelBase {
 				return CompoundElementNode.class;
 			else if(hasStereotype(UML.enumeration))
 				return EnumElementNode.class;
+			else if( profile.getSubject().isAnon())
+				return AnonTypeNode.class;
 			else
 				return TypeNode.class;
 		}
@@ -681,6 +753,21 @@ public class ProfileModel extends JenaTreeModelBase {
 	}
 	
 	/**
+	 * A root element in a message
+	 */
+	public class TypeNode extends GeneralTypeNode {
+		public TypeNode(ProfileClass profile) {
+			super(profile);
+		}
+		
+		@Override
+		protected void destroy() {
+			getRefactory().remove(getSubject());
+			super.destroy();
+		}
+	}
+	
+	/**
 	 * The root node of a message.
 	 */
 	public class EnvelopeNode extends ProfileNode {
@@ -699,9 +786,9 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 
 			@Override
-			public void destroy() {
+			protected void destroy() {
 				super.destroy();
-				EnvelopeNode.this.destroy(this);
+				EnvelopeNode.this.getProfile().remove(MESSAGE.about, this.getProfile().getSubject());
 			}
 		}
 		
@@ -727,23 +814,12 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 		
 		@Override
-		public OntResource create(OntResource type) {
+		protected void create(Node node) {
+			OntResource type = node.getSubject();
 			if( ! type.isClass())
-				return null;
+				return;
 			OntResource prop = profileModel.createOntProperty(MESSAGE.about.getURI());
-			OntResource child = profile.createSomeValuesFrom(prop, type);
-			return child;
-		}
-		/**
-		 * Remove child message element associated with the given class.
-		 */
-		protected void destroy(MessageNode child) {
-			profile.remove(MESSAGE.about, child.getProfile().getSubject());
-		}
-
-		@Override
-		public void destroy() {
-			super.destroy();
+			profile.createSomeValuesFrom(prop, type);
 		}
 	}
 	
@@ -772,10 +848,15 @@ public class ProfileModel extends JenaTreeModelBase {
 	public interface CompoundElementNode {}
 	
 	/**
-	 * A marker class returned for compound type nodes; 
+	 * A marker class returned for enumerated property nodes; 
 	 *
 	 */
 	public interface EnumElementNode {}
+	
+	/**
+	 * A marker class returned for anonymous types.
+	 */
+	public interface AnonTypeNode {}
 	
 	/**
 	 * The root should be a subclass of the generic Message class.
@@ -791,6 +872,21 @@ public class ProfileModel extends JenaTreeModelBase {
 		return new TypeNode(new ProfileClass(root, namespace));
 	}
 	
+	private static void buildArguments(Collection args, Node node) {
+	
+		if((node instanceof SubClassNode) 
+				|| (node instanceof SuperClassNode)
+				|| (node instanceof PackageNode)) {
+	
+			Iterator it = node.iterator();
+			while (it.hasNext()) 
+				buildArguments(args, (Node) it.next());
+	
+		}
+		else
+			args.add(node);
+	}
+
 	public static String cardString(int card) {
 		return cardString(card, "n");
 	}
@@ -807,6 +903,5 @@ public class ProfileModel extends JenaTreeModelBase {
 			throw new NumberFormatException();
 		return card;
 	}
-
 
 }

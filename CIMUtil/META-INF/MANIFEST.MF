@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMUtil
 Bundle-SymbolicName: au.com.langdale.cimutil
-Bundle-Version: 1.8.3.qualifier
+Bundle-Version: 1.9.2.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: au.com.langdale.kena
 Bundle-ClassPath: cimutil.jar,
- lib/jackcess-1.1.19.jar,
- lib/poi-3.0.1-FINAL-20070705.jar
+ lib/poi-3.0.1-FINAL-20070705.jar,
+ lib/jackcess-1.2.2.jar,
+ lib/commons-logging-1.1.1.jar
 Export-Package: au.com.langdale.cim,
  au.com.langdale.jena,
  au.com.langdale.profiles,
@@ -36,3 +37,4 @@ Export-Package: au.com.langdale.cim,
  org.apache.poi.poifs.property,
  org.apache.poi.poifs.storage,
  org.apache.poi.util
+Bundle-Vendor: Langdale Consultants

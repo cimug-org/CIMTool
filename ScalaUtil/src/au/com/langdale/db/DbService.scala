@@ -7,19 +7,18 @@ import actors.Operation._
 import scala.actors.OutputChannel
 import java.sql.{Connection,SQLException}
 import db.ConnectionHolder._
-import db.DBA.LIVE
 
 trait DbService extends Server {
   val broadcast: OutputChannel[Any]
   val key: String
   
-  private def withConnection(op: Operation)( imp: Connection => Unit): Nothing = {
+  private def withConnection(op: Operation, ws: String)( imp: Connection => Unit): Nothing = {
     val client = sender
     
-    broadcast ! Take(key, LIVE)
+    broadcast ! Take(key, ws)
     
     react {
-      case Give(`key`, LIVE, c) =>
+      case Give(`key`, `ws`, c) =>
         try {
           imp(c)
         }
@@ -36,20 +35,20 @@ trait DbService extends Server {
     }
   }
   
-  def performWithConnection(op: Operation)( imp: Connection => Unit) = {
+  def performWithConnection(op: Operation, ws: String)( imp: Connection => Unit) = {
     val client = sender
     
-    withConnection(op) { c =>
+    withConnection(op, ws) { c =>
       imp(c)
       client ! Success(op)
       broadcast ! Notify(op)
     }
   }
   
-  def queryWithConnection[R](op: Operation)( imp: Connection => R) = {
+  def queryWithConnection[R](op: Operation, ws: String)( imp: Connection => R) = {
     val client = sender
     
-    withConnection(op) { c =>
+    withConnection(op, ws) { c =>
       client ! Result[R](op, imp(c))
     }
   }

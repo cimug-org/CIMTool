@@ -26,6 +26,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = CIMToolPlugin.getDefault().getPreferenceStore();
 		store.setDefault(Info.INSTANCE_NAMESPACE.getLocalName(), "http://iec.ch/TC57/2007/network#");
 		store.setDefault(Info.PROFILE_NAMESPACE.getLocalName(), "http://iec.ch/TC57/2007/profile#");
+		store.setDefault(Info.MAPPING_NAMESPACE.getLocalName(), "http://langdale.com.au/2010/schema-mapping#");
+		store.setDefault(Info.MAPPING_LABEL.getLocalName(), "Mappings");
 		store.setDefault(Info.SCHEMA_NAMESPACE.getLocalName(), CIM.NS);
 		store.setDefault(Info.PROFILE_ENVELOPE.getLocalName(), "Profile");
 		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);

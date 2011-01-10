@@ -138,6 +138,7 @@ object SQLQuoter {
   val AND = SQL("AND")  
   val OR = SQL("OR")
   val LIKE = SQL("LIKE")
+  val NOT = SQL("NOT")
   val EQ = SQL( "=" )
   val P = SQL("?")
   val LEFT = SQL("LEFT")

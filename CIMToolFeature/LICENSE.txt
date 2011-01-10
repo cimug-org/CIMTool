@@ -1,4 +1,4 @@
-This software is Copyright 2005,2006,2007,2008 Langdale Consultants 
+This software is Copyright 2005-2011 Langdale Consultants 
 except where otherwise stated. 
 
 Langdale Consultants can be contacted at: http://www.langdale.com.au

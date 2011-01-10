@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -132,6 +133,21 @@ public class Assembly extends Plumbing {
 	}
 
 	/**
+	 * Set the given checkbox tree or table viewer to multiple selection mode if
+	 * state is true otherwise to single selection mode.
+	 */
+	public void setCheckMultiple(ICheckable viewer, boolean state) {
+		if( state) {
+			viewer.removeCheckStateListener(singleCheckedListener);
+			viewer.addCheckStateListener(checkStateListener);
+		}
+		else{
+			viewer.removeCheckStateListener(checkStateListener);
+			viewer.addCheckStateListener(singleCheckedListener);
+		}
+	}
+
+	/**
 	 * Get a widget from the realised hierarchy of the indicated type and given name. 
 	 */
 	public Text getText(String name) {
@@ -224,7 +240,7 @@ public class Assembly extends Plumbing {
 			
 			book.getParent().layout(true, true);
 		}
-		else if( parent != null) {
+		if( parent != null) {
 			showStackLayer(parent);
 		}
 	}
@@ -406,27 +422,23 @@ public class Assembly extends Plumbing {
 		}
 	};
 	
-	public final ICheckStateListener singleCheckedTableListener = new ICheckStateListener() {
+	private final ICheckStateListener singleCheckedListener = new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			if( event.getChecked()) {
-				CheckboxTableViewer source = (CheckboxTableViewer) event.getCheckable();
-				source.setCheckedElements(new Object[] {event.getElement()});
+				ICheckable checkable = event.getCheckable();
+				if( checkable instanceof CheckboxTreeViewer) {
+					CheckboxTreeViewer source = (CheckboxTreeViewer) checkable;
+					source.setCheckedElements(new Object[] {event.getElement()});
+				}
+				else if( checkable instanceof CheckboxTableViewer ) {
+					CheckboxTableViewer source = (CheckboxTableViewer) event.getCheckable();
+					source.setCheckedElements(new Object[] {event.getElement()});
+				}
 			}
 			fireWidgetEvent();
 		}
 	};
 	
-	public final ICheckStateListener singleCheckedTreeListener = new ICheckStateListener() {
-		public void checkStateChanged(CheckStateChangedEvent event) {
-			if( event.getChecked()) {
-				CheckboxTreeViewer source = (CheckboxTreeViewer) event.getCheckable();
-				source.setCheckedElements(new Object[] {event.getElement()});
-			}
-			fireWidgetEvent();
-		}
-	};
-	
-
 
 	/**
 	 * Create a form toolkit that uses default dialog background colour.

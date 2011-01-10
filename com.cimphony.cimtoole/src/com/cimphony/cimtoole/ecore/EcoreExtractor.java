@@ -119,6 +119,15 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 		annotate(p, op);
 		packageMap.put(p, op);
 		OntResource parent = packageMap.get(p.getESuperPackage());
+		
+		String ns = p.getNsURI();
+		if( ns != null && ! ns.isEmpty()) {
+			if( ! ns.contains("#")) {
+				ns = ns + "#";
+			}
+			op.addProperty(UML.baseuri, ns);
+		}
+
 		op.addIsDefinedBy(parent == null? UML.global_package: parent);
 		for (EPackage sp: p.getESubpackages()){
 			processEPackage(sp);

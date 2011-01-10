@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CIMToolEnvironment
+Bundle-SymbolicName: au.com.langdale.cimtool.product;singleton:=true
+Bundle-Version: 1.9.1.qualifier
+Bundle-Vendor: Langdale Consultants

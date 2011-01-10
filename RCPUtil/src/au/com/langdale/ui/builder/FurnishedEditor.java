@@ -93,8 +93,12 @@ public abstract class FurnishedEditor extends EditorPart implements Observer, IC
 	}
 	
 	protected abstract class Content extends Assembly {
+		public Content(FormToolkit toolkit, boolean trackDirtyState) {
+			super(toolkit, trackDirtyState? FurnishedEditor.this: null, true);
+		}
+		
 		public Content(FormToolkit toolkit) {
-			super(toolkit, FurnishedEditor.this, true);
+			this(toolkit, true);
 		}
 		
 		protected abstract Template define();

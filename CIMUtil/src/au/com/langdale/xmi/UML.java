@@ -100,6 +100,7 @@ public class UML {
 		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension Class", null);
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
+		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
 		model.createIndividual(datatype.getURI(), Stereotype).addLabel("Datatype", null);
 		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
 		model.createIndividual(attribute.getURI(), Stereotype).addLabel("Attribute", null);

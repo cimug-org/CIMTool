@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="CIMTool" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.9.2.qualifier" useFeatures="false" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="about.png"/>
+      <text>
+         CIMTool is an open source tool that supports the Common Information Model (CIM) standards used in the electric power industry.  It is potentially useful for other semantic applications too.
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-consoleLog</programArgs>
+      <vmArgs>-Xms40m -Xmx2G</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="icon-16.png" i32="icon-32.png" i48="icon-48.png" i64="icon-64.png"/>
+
+   <splash
+      location="au.com.langdale.cimtool.product"
+      startupProgressRect="0,300,500,20"
+      startupMessageRect="0,300,500,20"
+      startupForegroundColor="FFFFFF" />
+   <launcher name="CIMTool">
+      <linux icon="icon.xmp"/>
+      <solaris/>
+      <win useIco="false">
+         <bmp
+            winSmallHigh="icon-16.bmp"
+            winSmallLow="icon-16-8.bmp"
+            winMediumHigh="icon-32.bmp"
+            winMediumLow="icon-32-8.bmp"
+            winLargeHigh="icon-48.bmp"
+            winLargeLow="icon-48-8.bmp"/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <license>
+        <url>http://wiki.cimtool.org</url>
+        <text>
+   This software is Copyright 2005-2011 Langdale Consultants 
+except where otherwise stated. 
+
+Langdale Consultants can be contacted at: http://www.langdale.com.au
+
+You can redistribute this software and/or modify it under 
+the terms of the GNU Lesser General Public License version 2.1
+as published by the Free Software Foundation.
+
+This software is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+
+See the GNU Lesser General Public License for more details.
+         </text>
+   </license>
+
+   <plugins>
+      <plugin id="au.com.langdale.cimtool.product"/>
+      <plugin id="au.com.langdale.cimtoole"/>
+      <plugin id="au.com.langdale.cimtoole.help"/>
+      <plugin id="au.com.langdale.cimutil"/>
+      <plugin id="au.com.langdale.kena"/>
+      <plugin id="au.com.langdale.rcputil"/>
+      <plugin id="com.cimphony.cimtoole"/>
+      <plugin id="com.ibm.icu"/>
+      <plugin id="javax.servlet"/>
+      <plugin id="javax.xml"/>
+      <plugin id="org.apache.lucene"/>
+      <plugin id="org.apache.lucene.analysis"/>
+      <plugin id="org.apache.xerces"/>
+      <plugin id="org.apache.xml.resolver"/>
+      <plugin id="org.apache.xml.serializer"/>
+      <plugin id="org.eclipse.compare"/>
+      <plugin id="org.eclipse.compare.core"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.databinding.observable"/>
+      <plugin id="org.eclipse.core.databinding.property"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.externaltools"/>
+      <plugin id="org.eclipse.core.filebuffers"/>
+      <plugin id="org.eclipse.core.filesystem"/>
+      <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.hpux.ia64_32" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.linux.ppc" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.solaris.sparc" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.net"/>
+      <plugin id="org.eclipse.core.net.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.net.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.core.resources.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.core.variables"/>
+      <plugin id="org.eclipse.debug.core"/>
+      <plugin id="org.eclipse.debug.ui"/>
+      <plugin id="org.eclipse.draw2d"/>
+      <plugin id="org.eclipse.ecf"/>
+      <plugin id="org.eclipse.ecf.filetransfer"/>
+      <plugin id="org.eclipse.ecf.identity"/>
+      <plugin id="org.eclipse.ecf.provider.filetransfer"/>
+      <plugin id="org.eclipse.ecf.provider.filetransfer.ssl" fragment="true"/>
+      <plugin id="org.eclipse.ecf.ssl" fragment="true"/>
+      <plugin id="org.eclipse.emf"/>
+      <plugin id="org.eclipse.emf.codegen"/>
+      <plugin id="org.eclipse.emf.codegen.ecore"/>
+      <plugin id="org.eclipse.emf.common"/>
+      <plugin id="org.eclipse.emf.common.ui"/>
+      <plugin id="org.eclipse.emf.converter"/>
+      <plugin id="org.eclipse.emf.doc"/>
+      <plugin id="org.eclipse.emf.ecore"/>
+      <plugin id="org.eclipse.emf.ecore.edit"/>
+      <plugin id="org.eclipse.emf.ecore.editor"/>
+      <plugin id="org.eclipse.emf.ecore.xmi"/>
+      <plugin id="org.eclipse.emf.edit"/>
+      <plugin id="org.eclipse.emf.edit.ui"/>
+      <plugin id="org.eclipse.emf.exporter"/>
+      <plugin id="org.eclipse.emf.importer"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.p2.core"/>
+      <plugin id="org.eclipse.equinox.p2.engine"/>
+      <plugin id="org.eclipse.equinox.p2.metadata"/>
+      <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
+      <plugin id="org.eclipse.equinox.p2.repository"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.equinox.security"/>
+      <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
+      <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.equinox.weaving.hook" fragment="true"/>
+      <plugin id="org.eclipse.gef"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.help.appserver"/>
+      <plugin id="org.eclipse.help.base"/>
+      <plugin id="org.eclipse.help.ui"/>
+      <plugin id="org.eclipse.help.webapp"/>
+      <plugin id="org.eclipse.jdt.compiler.apt" fragment="true"/>
+      <plugin id="org.eclipse.jdt.compiler.tool" fragment="true"/>
+      <plugin id="org.eclipse.jdt.core"/>
+      <plugin id="org.eclipse.jdt.debug"/>
+      <plugin id="org.eclipse.jdt.launching"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.jface.text"/>
+      <plugin id="org.eclipse.ltk.core.refactoring"/>
+      <plugin id="org.eclipse.ltk.ui.refactoring"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.osgi.util"/>
+      <plugin id="org.eclipse.platform"/>
+      <plugin id="org.eclipse.platform.doc.user"/>
+      <plugin id="org.eclipse.search"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
+      <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
+      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.ppc" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.solaris.sparc" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.solaris.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.motif.aix.ppc" fragment="true"/>
+      <plugin id="org.eclipse.swt.motif.hpux.ia64_32" fragment="true"/>
+      <plugin id="org.eclipse.swt.motif.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.motif.solaris.sparc" fragment="true"/>
+      <plugin id="org.eclipse.swt.photon.qnx.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.team.core"/>
+      <plugin id="org.eclipse.team.ui"/>
+      <plugin id="org.eclipse.text"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.browser"/>
+      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
+      <plugin id="org.eclipse.ui.cheatsheets"/>
+      <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
+      <plugin id="org.eclipse.ui.console"/>
+      <plugin id="org.eclipse.ui.editors"/>
+      <plugin id="org.eclipse.ui.forms"/>
+      <plugin id="org.eclipse.ui.ide"/>
+      <plugin id="org.eclipse.ui.ide.application"/>
+      <plugin id="org.eclipse.ui.intro"/>
+      <plugin id="org.eclipse.ui.navigator"/>
+      <plugin id="org.eclipse.ui.navigator.resources"/>
+      <plugin id="org.eclipse.ui.views"/>
+      <plugin id="org.eclipse.ui.views.properties.tabbed"/>
+      <plugin id="org.eclipse.ui.win32" fragment="true"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.eclipse.ui.workbench.texteditor"/>
+      <plugin id="org.eclipse.update.configurator"/>
+      <plugin id="org.eclipse.update.core"/>
+      <plugin id="org.eclipse.update.core.linux" fragment="true"/>
+      <plugin id="org.eclipse.update.core.win32" fragment="true"/>
+      <plugin id="org.eclipse.update.ui"/>
+      <plugin id="org.eclipse.wst.common.core"/>
+      <plugin id="org.eclipse.wst.common.environment"/>
+      <plugin id="org.eclipse.wst.common.frameworks"/>
+      <plugin id="org.eclipse.wst.common.frameworks.ui"/>
+      <plugin id="org.eclipse.wst.common.project.facet.core"/>
+      <plugin id="org.eclipse.wst.common.ui"/>
+      <plugin id="org.eclipse.wst.common.uriresolver"/>
+      <plugin id="org.eclipse.wst.dtd.core"/>
+      <plugin id="org.eclipse.wst.dtd.ui"/>
+      <plugin id="org.eclipse.wst.sse.core"/>
+      <plugin id="org.eclipse.wst.sse.ui"/>
+      <plugin id="org.eclipse.wst.validation"/>
+      <plugin id="org.eclipse.wst.validation.ui"/>
+      <plugin id="org.eclipse.wst.xml.core"/>
+      <plugin id="org.eclipse.wst.xml.ui"/>
+      <plugin id="org.eclipse.wst.xmleditor.doc.user"/>
+      <plugin id="org.eclipse.wst.xsd.core"/>
+      <plugin id="org.eclipse.wst.xsd.ui"/>
+      <plugin id="org.eclipse.wst.xsdeditor.doc.user"/>
+      <plugin id="org.eclipse.xsd"/>
+      <plugin id="org.eclipse.xsd.edit"/>
+      <plugin id="org.mortbay.jetty.server"/>
+      <plugin id="org.mortbay.jetty.util"/>
+   </plugins>
+
+   <features>
+      <feature id="au.com.langdale.cimtoole.feature" version="1.9.1.qualifier"/>
+      <feature id="org.eclipse.emf" version="2.6.1.v20100914-1218"/>
+      <feature id="org.eclipse.emf.codegen" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.codegen.ecore" version="2.6.1.v20100914-1218"/>
+      <feature id="org.eclipse.emf.codegen.ecore.ui" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.codegen.ui" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.common" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.common.ui" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.databinding" version="1.2.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.databinding.edit" version="1.2.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.ecore" version="2.6.1.v20100914-1218"/>
+      <feature id="org.eclipse.emf.ecore.edit" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.ecore.editor" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.edit" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.edit.ui" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.mapping" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.mapping.ecore" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.mapping.ecore.editor" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.mapping.ui" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.equinox.p2.user.ui" version="2.0.1.r361_v20100903-897HFZFFZRuSD2LMtVxyz0Vr"/>
+      <feature id="org.eclipse.help" version="1.2.0.v20100427-7e7jEQFEp4jsWcboLU9l93"/>
+      <feature id="org.eclipse.platform" version="3.6.1.r361_v20100909-9gF78GrkFqw7GrsZnvz0JWNTeb6fue6896L"/>
+      <feature id="org.eclipse.rcp" version="3.6.1.r361_v20100827-9OArFLdFjY-ThSQXmKvKz0_T"/>
+      <feature id="org.eclipse.wst.common_core.feature"/>
+      <feature id="org.eclipse.wst.common_ui.feature"/>
+      <feature id="org.eclipse.wst.xml_core.feature"/>
+      <feature id="org.eclipse.wst.xml_ui.feature"/>
+      <feature id="org.eclipse.wst.xml_userdoc.feature"/>
+      <feature id="org.eclipse.emf.converter" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.emf.doc" version="2.6.0.v20100914-1218"/>
+   </features>
+
+
+</product>

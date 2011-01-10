@@ -35,7 +35,6 @@ import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.ProfileModel;
-import au.com.langdale.profiles.Refactory;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.ui.util.WizardLauncher;
 
@@ -43,17 +42,16 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class ProfileEditor extends ModelEditor {
 	private ProfileModel tree;
-	private Refactory refactory;
 	private OntModel backgroundModel, rawBackgroundModel, diagnosticModel, profileModel;
 	private boolean hasDiagnostics;
 	
 	@Override
 	protected void createPages() {
 		addPage(new Populate("Add/Remove", this));
-		addPage(new Hierarchy("Hierarchy", this));
-		addPage(new Detail("Detail", this));
+		addPage(new Hierarchy("Restriction", this));
+		addPage(new Detail("Description", this));
 		addPage( new Stereotype("Stereotypes", this));
-		addPage(new Summary("Summary", this));
+		addPage(new Summary("Profile Summary", this));
 	}
 
 	@Override
@@ -118,7 +116,6 @@ public class ProfileEditor extends ModelEditor {
 		
 		tree.setOntModel(profileModel);
 		tree.setBackgroundModel(backgroundModel);
-		refactory = new Refactory(profileModel, backgroundModel);
 		searchAction.setEnabled(true);
 		doRefresh();
 	}
@@ -153,10 +150,6 @@ public class ProfileEditor extends ModelEditor {
 		resetModels();
 	}
 
-	public Refactory getRefactory() {
-		return refactory;
-	}
-	
 	public String getNamespace() {
 		if( tree != null)
 			return tree.getNamespace();
@@ -191,9 +184,7 @@ public class ProfileEditor extends ModelEditor {
 		}
 
 		public void previewTarget(Node node) {
-			ModelOutliner outline = getOutline();
-			if( outline != null) 
-				outline.drillTo(node.getPath(true));
+			getOutline().drillTo(node.getPath(true));
 		}
 
 		public Node findNode(Resource target) {

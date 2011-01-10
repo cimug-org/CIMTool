@@ -125,20 +125,6 @@ public class TreeModelBase {
 		}
 		
 		/**
-		 * Create a child node 
-		 */
-		public OntResource create(OntResource subject)  {
-			throw new UnsupportedOperationException();
-		}
-		
-		/**
-		 * Destroy this node 
-		 */
-		public void destroy()  {
-			throw new UnsupportedOperationException();
-		}
-		
-		/**
 		 * Iterate the children of this node.
 		 */
 		public Iterator iterator() {

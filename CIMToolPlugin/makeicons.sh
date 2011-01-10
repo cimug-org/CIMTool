@@ -9,8 +9,8 @@ die() {
 }
 
 convert() {
-	inkscape  --export-area-canvas  --file=$1 --export-png=$2.png --export-height=16 --export-width=16
-	inkscape  --export-area-canvas  --file=$1 --export-png=$2-32.png --export-height=32 --export-width=32
+	inkscape  --export-area-page  --file=$1 --export-png=$2.png --export-height=16 --export-width=16
+	inkscape  --export-area-page  --file=$1 --export-png=$2-32.png --export-height=32 --export-width=32
 #	inkscape  --export-area-canvas  --file=$1 --export-png=$2-64.png --export-height=64 --export-width=64
 }
 

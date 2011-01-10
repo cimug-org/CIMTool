@@ -40,6 +40,22 @@ public class FilteredContentProvider implements ITreeContentProvider  {
 		 */
 		public boolean prune(Object value);
 	}
+	
+	public static final Filter passAll = new Filter() {
+
+		public boolean allow(Object value) {
+			return true;
+		}
+
+		public boolean flatten(Object value) {
+			return false;
+		}
+
+		public boolean prune(Object value) {
+			return false;
+		}
+		
+	};
 
 	private ITreeContentProvider delegate;
 	private Filter filter;
@@ -52,6 +68,14 @@ public class FilteredContentProvider implements ITreeContentProvider  {
 	public FilteredContentProvider(Filter filter, ITreeContentProvider delegate) {
 		this.filter = filter;
 		this.delegate = delegate;
+	}
+	
+	public Filter getFilter() {
+		return filter;
+	}
+	
+	public void setFilter(Filter filter) {
+		this.filter = filter;
 	}
 	
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

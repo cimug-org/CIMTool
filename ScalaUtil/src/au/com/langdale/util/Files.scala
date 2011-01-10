@@ -42,7 +42,7 @@ object Files {
     def /(n: String) = new File(f, n)
     def copyTo( g: File) {copy(f,g)}
     def open = Source.fromFile(f)
-    def lines = open.getLines("\r\n")
+    def lines = open.getLines
     def out = new PrintStream( new BufferedOutputStream ( new FileOutputStream(f)))
   }
   

@@ -5,7 +5,7 @@ Bundle-SymbolicName: au.com.langdale.skena
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Langdale Consultants
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: scala.library,
+Require-Bundle: org.scala-ide.scala.library,
  au.com.langdale.kena;visibility:=reexport
 Export-Package: au.com.langdale.skena,
  au.com.langdale.skena.data,

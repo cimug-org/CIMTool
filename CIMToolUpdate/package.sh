@@ -13,8 +13,8 @@ fi
 REPO=$PWD
 ASSEMBLY=$PWD/"Assembly"
 ARCHIVE=$PWD/CIMToolUpdate.zip
-JRE="/home/adv/distfiles/sun-jre-v6-win32.zip"
-PLATFORM="/home/adv/distfiles/eclipse-platform-3.5-win32.zip"
+#JRE="/home/adv/distfiles/sun-jre-v6-win32.zip"
+PLATFORM="/home/adv/distfiles/eclipse-platform-3.6.1-win32-x86_64.zip"
 ECLIPSE="/home/adv/share/eclipse/eclipse"
 PACKAGE=$PWD/${1:-CIMTool-Eclipse.zip}
 
@@ -24,7 +24,7 @@ make_package() {
 rm -rf $ASSEMBLY $PACKAGE
 mkdir $ASSEMBLY
 unzip -q $PLATFORM -d $ASSEMBLY
-unzip -q $JRE -d $ASSEMBLY/eclipse
+#unzip -q $JRE -d $ASSEMBLY/eclipse
 
 patch $ASSEMBLY/eclipse/eclipse.ini << EOF
 --- Assembly/eclipse/eclipse.ini        2009-06-12 08:33:48.000000000 +1000

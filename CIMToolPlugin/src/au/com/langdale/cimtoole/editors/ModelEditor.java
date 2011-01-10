@@ -24,6 +24,7 @@ import au.com.langdale.cimtoole.project.Cache.CacheListener;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.JenaTreeProvider;
 import au.com.langdale.jena.OntModelProvider;
+import au.com.langdale.jena.TreeModelBase.Empty;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
@@ -49,18 +50,18 @@ public abstract class ModelEditor extends FurnishedMultiEditor implements CacheL
 	private ModelOutliner outline;
 	
 	protected ModelOutliner getOutline() {
+		if( outline == null) {
+			outline = new ModelOutliner(this);
+		}
 		return outline;
 	}
 
 	@Override
 	public Object getAdapter(Class adapter) {
-		if (IContentOutlinePage.class.equals(adapter)) {
-			if( outline == null) {
-				outline = new ModelOutliner(this);
-			}
-			return outline;
-		}
-		return super.getAdapter(adapter);
+		if (IContentOutlinePage.class.equals(adapter))
+			return getOutline();
+		else 
+		   return super.getAdapter(adapter);
 	}
 
 	private IDoubleClickListener drill = new IDoubleClickListener() {
@@ -103,8 +104,11 @@ public abstract class ModelEditor extends FurnishedMultiEditor implements CacheL
 		
 		guard = true;
 		try {
-			if( outline != null && outline.getSelection().isEmpty())
-				outline.setSelection(new TreeSelection(new TreePath(new Object[] {getTree().getRoot()})));
+			if( outline != null && outline.getSelection().isEmpty()) {
+				TreePath root = new TreePath(new Object[] {getTree().getRoot()});
+				outline.setSelection(new TreeSelection(root));
+				outline.getTreeViewer().setExpandedState( root, true );
+			}
 			
 			super.doRefresh();
 		}
@@ -141,16 +145,24 @@ public abstract class ModelEditor extends FurnishedMultiEditor implements CacheL
 		return ((IFileEditorInput)getEditorInput()).getFile();
 	}
 
+	private Node previous;	
+
 	public Node getNode() {
 		if( outline != null ) {
 			ISelection selection = outline.getSelection();
 			if( ! selection.isEmpty() && selection instanceof IStructuredSelection) {
 				IStructuredSelection structured = (IStructuredSelection) selection;
 				Object raw = structured.getFirstElement();
-				if( raw instanceof Node)
-					return (Node)raw;
+				if( raw instanceof Node && ! (raw instanceof Empty)) {
+					previous = (Node) raw;
+					return previous;
+				}
 			}
 		}
+		
+		if( previous != null)
+			return previous;
+		
 		return getTree().getRoot();
 	}
 

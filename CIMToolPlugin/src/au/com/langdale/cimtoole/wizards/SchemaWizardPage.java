@@ -99,8 +99,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					Group(
 						RadioButton("cim12", "CIM 12 (2007)"), 
 						RadioButton("cim13", "CIM 13 (2008)"),
-                                                RadioButton("cim14", "CIM 14 (2009)"),
-                                                RadioButton("cim15", "CIM 15 (2010)"),
+                        RadioButton("cim14", "CIM 14 (2009)"),
+                        RadioButton("cim15", "CIM 15 (2010)"),
 						RadioButton("preset", "Preference*")),
 					Group(Label("Namespace URI:"), Field("namespace")),
 					Group(Label("Project")), 

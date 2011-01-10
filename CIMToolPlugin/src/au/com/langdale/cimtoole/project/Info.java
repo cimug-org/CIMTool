@@ -41,6 +41,9 @@ public class Info {
 	public static final QualifiedName PROFILE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_namespace");
 	public static final QualifiedName PROFILE_ENVELOPE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_envelope");
 
+	public static final QualifiedName MAPPING_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_namespace");
+	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
+
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
 
 	public static boolean isProfile(IResource resource) {
@@ -129,6 +132,8 @@ public class Info {
 		ext.equals("diagnostic")|| 
 		ext.equals("cimtool-settings") || 
 		ext.equals("repair") ||
+		ext.equals("mapping-ttl") ||
+		ext.equals("mapping-owl") ||
 		ModelParserRegistry.INSTANCE.hasParserForExtension(ext);
 	}
 

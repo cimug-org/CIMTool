@@ -316,7 +316,7 @@ public class Task extends Info {
 		String syntax;
 		if(ext.equals("n3"))
 			syntax = "N3";
-		else if(ext.equals("diagnostic") || ext.equals("cimtool-settings"))
+		else if(ext.equals("diagnostic") || ext.equals("cimtool-settings") || ext.equals("mapping-ttl"))
 			syntax = "TURTLE";
 		else if(ext.equals("owl") || ext.equals("repair"))
 			syntax = IO.RDF_XML_WITH_NODEIDS;
@@ -365,6 +365,15 @@ public class Task extends Info {
 					throw error("can't write to " + pathname);
 				}
 				writeOntology(output, schema, "RDF/XML", monitor);
+			}
+		};
+	}
+	
+	public static IWorkspaceRunnable saveMappings(final IFile file, final OntModel model) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				writeMappings(file, model, monitor);
+				
 			}
 		};
 	}
@@ -528,16 +537,7 @@ public class Task extends Info {
 	}
 
 	public static void initProfile(OntModel profileModel, OntModel backgroundModel, String namespace, String envname, String comment) {
-		// add standard ontology header
-		if( ! namespace.endsWith("#"))
-			namespace += "#";
-		String uri = namespace.substring(0, namespace.length()-1);
-		OntResource header = profileModel.createResource(uri);
-		header.addRDFType(OWL.Ontology);
-		header.addLabel(envname, null);
-		if( comment != null)
-			header.addComment(comment, null);
-		profileModel.setNsPrefix("", namespace);
+		OntResource header = initOntology(profileModel, namespace, envname,	comment);
 		
 		
 		// add the import to the CIM
@@ -548,5 +548,38 @@ public class Task extends Info {
 				profileModel.setNsPrefix("cim", backOnt.getURI() + "#");
 			}
 		}
+	}
+
+	protected static OntResource initOntology(OntModel model, String namespace,	String label, String comment) {
+		// add standard ontology header
+		if( ! namespace.endsWith("#"))
+			namespace += "#";
+		String uri = namespace.substring(0, namespace.length()-1);
+		OntResource header = model.createResource(uri);
+		header.addRDFType(OWL.Ontology);
+		header.addLabel(label, null);
+		if( comment != null)
+			header.addComment(comment, null);
+		model.setNsPrefix("", namespace);
+		return header;
+	}
+
+	public static IWorkspaceRunnable createMappings(final IFile file, final String namespace, final String envname) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				OntModel model = ModelFactory.createMem();
+				initOntology(model, namespace, envname, null);
+				monitor.worked(1);
+				writeMappings(file, model, monitor);
+				monitor.worked(1);
+			}
+		};
+	}
+
+	protected static void writeMappings(final IFile file, final OntModel model,
+			IProgressMonitor monitor) throws CoreException {
+		String ext = file.getFileExtension();
+		String format = ext != null && ext.equals("mapping-ttl")? "TURTLE": "RDF/XML";
+		writeOntology(file, model, format, monitor);
 	}
 }

@@ -14,6 +14,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import au.com.langdale.cimtoole.editors.ProfileEditor;
+import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.Remapper;
@@ -86,15 +87,17 @@ public class RefactorWizard extends Wizard  {
 				monitor.worked(1);
 			}
 			else if( refs.isTrue()) {
-				Refactory refactory = new Refactory(profileModel, projectModel);
-				refactory.setByReference();
+				createRefactory().setByReference();
 				monitor.worked(1);
 			}
 			if( concrete.isTrue()) {
-				Refactory refactory = new Refactory(profileModel, projectModel);
-				refactory.setConcrete();
+				createRefactory().setConcrete();
 				monitor.worked(1);
 			}
+		}
+
+		private Refactory createRefactory() {
+			return new Refactory(profileModel, Composition.merge(profileModel, projectModel));
 		}
 
 		public void updateProfileModel() {

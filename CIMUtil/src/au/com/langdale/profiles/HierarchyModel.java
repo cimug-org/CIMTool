@@ -15,7 +15,12 @@ import au.com.langdale.xmi.UML;
 
 public class HierarchyModel extends JenaTreeModelBase {
 
+	private boolean subClasses;
 	private Refactory refactory;
+	
+	public HierarchyModel(boolean subClasses) {
+		this.subClasses = subClasses;
+	}
 
 	public void setRefactory(Refactory refactory) {
 		this.refactory = refactory;
@@ -29,15 +34,55 @@ public class HierarchyModel extends JenaTreeModelBase {
 
 	@Override
 	protected Node classify(OntResource root) {
-		return new SubjectNode( new ProfileClass(root, refactory.getNamespace()));
+		return new SubjectNode( root );
+	}
+		
+	public interface RootElementNode {}
+	public interface TypeNode {}
+	
+	public class SubjectNode extends ModelNode {
+
+		private OntResource subject;
+
+		public SubjectNode(OntResource root) {
+			subject = root;
+		}
+
+		@Override
+		protected void populate() {
+			Collection related = refactory.findRelatedProfiles(subject, subClasses, false);
+			for (Iterator it = related.iterator(); it.hasNext();) {
+				OntResource clss = (OntResource) it.next();
+				add( new NestedNode( new ProfileClass(clss, refactory.getNamespace())));
+			}
+		}
+
+		@Override
+		public OntResource getSubject() {
+			return subject;
+		}
+
+		@Override
+		public boolean getErrorIndicator() {
+			return false;
+		}
 	}
 	
-	private abstract class HierarchyNode extends ModelNode {
+	public class NestedNode extends ModelNode {
 
 		protected ProfileClass profile;
 
-		public HierarchyNode(ProfileClass profile) {
+		public NestedNode(ProfileClass profile) {
 			this.profile = profile;
+		}
+
+		@Override
+		protected void populate() {
+			Iterator it = subClasses? profile.getSubClasses(): profile.getSuperClasses();
+			while (it.hasNext()) {
+				OntResource clss = (OntResource) it.next();
+				add( new NestedNode( new ProfileClass(clss, profile.getNamespace())));
+			}
 		}
 
 		@Override
@@ -49,7 +94,7 @@ public class HierarchyModel extends JenaTreeModelBase {
 		public OntResource getSubject() {
 			return profile.getSubject();
 		}
-		
+
 		@Override
 		public OntResource getBase() {
 			return profile.getBaseClass();
@@ -58,41 +103,6 @@ public class HierarchyModel extends JenaTreeModelBase {
 		@Override
 		public boolean getErrorIndicator() {
 			return false;
-		}
-	}
-	
-	public interface RootElementNode {}
-	public interface TypeNode {}
-	
-	public class SubjectNode extends HierarchyNode {
-
-		public SubjectNode(ProfileClass profile) {
-			super(profile);
-		}
-
-		@Override
-		protected void populate() {
-			Collection related = refactory.findRelatedProfiles(profile.getBaseClass(), false, false);
-			for (Iterator it = related.iterator(); it.hasNext();) {
-				OntResource clss = (OntResource) it.next();
-				add( new NestedNode( new ProfileClass(clss, refactory.getNamespace())));
-			}
-		}
-	}
-	
-	public class NestedNode extends HierarchyNode {
-
-		public NestedNode(ProfileClass profile) {
-			super(profile);
-		}
-
-		@Override
-		protected void populate() {
-			Iterator it = profile.getSuperClasses();
-			while (it.hasNext()) {
-				OntResource clss = (OntResource) it.next();
-				add( new NestedNode( new ProfileClass(clss, profile.getNamespace())));
-			}
 		}
 	}
 }

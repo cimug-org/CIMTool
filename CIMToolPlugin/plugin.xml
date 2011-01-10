@@ -3,7 +3,6 @@
 <plugin>
    <extension-point id="au.com.langdale.cimtoole.profile_buildlet" name="CIMTool Profile Buildlets" schema="schema/profile_buildlet.exsd"/>
    <extension-point id="au.com.langdale.cimtoole.model_parser" name="CIMTool Model Parsers" schema="schema/model_parser.exsd"/>
-   <extension-point id="au.com.langdale.cimtoole.model_parser" name="CIMTool Model Parsers" schema="schema/au.com.langdale.cimtoole.model_parser.exsd"/>
 
    <extension
          id="CIMBuilder"
@@ -75,37 +74,6 @@
       <persistent
             value="true">
       </persistent>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            name="Sample Category"
-            id="au.com.langdale.cimtoole.commands.category">
-      </category>
-      <command
-            name="Sample Command"
-            categoryId="au.com.langdale.cimtoole.commands.category"
-            id="au.com.langdale.cimtoole.commands.sampleCommand">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            commandId="au.com.langdale.cimtoole.commands.sampleCommand"
-            class="au.com.langdale.cimtoole.handlers.SampleHandler">
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="au.com.langdale.cimtoole.commands.sampleCommand"
-            contextId="org.eclipse.ui.contexts.window"
-            sequence="M1+6"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </key>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
@@ -216,6 +184,13 @@
             id="au.com.langdale.cimtoole.editors.RepairEditor"
             name="Profile Repair Editor">
       </editor>
+      <editor
+            class="au.com.langdale.cimtoole.editors.MappingEditor"
+            extensions="mapping-ttl,mapping-owl"
+            icon="icons/equiv.png"
+            id="au.com.langdale.cimtoole.editors.MappingEditor"
+            name="Mapping Editor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -265,6 +240,13 @@
             icon="icons/rules.png"
             id="au.com.langdale.cimtoole.wizards.NewIncRuleset"
             name="CIMTool Incremental Validation Rules">
+      </wizard>
+      <wizard
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.NewMappings"
+            icon="icons/equiv.png"
+            id="au.com.langdale.cimtoole.wizards.NewMappings"
+            name="CIMTool Mappings">
       </wizard>
    </extension>
    <extension

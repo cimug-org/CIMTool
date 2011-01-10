@@ -18,8 +18,8 @@ public abstract class  JenaTreeBinding implements Binding {
 	
 	private TreeViewer viewer;
 	private final JenaTreeModelBase tree;
-	private ITreeContentProvider provider, unfiltered;
-	private Filter filter;
+	private JenaTreeProvider unfiltered;
+	private FilteredContentProvider filtered;
 	/**
 	 * Initialise with a TreeModel that determines how the resource hierarchy will
 	 * be extracted from an RDF graph.
@@ -27,34 +27,22 @@ public abstract class  JenaTreeBinding implements Binding {
 	 */
 	public JenaTreeBinding(JenaTreeModelBase tree) {
 		this.tree = tree;
-		provider = unfiltered = new JenaTreeProvider(true);
+		unfiltered = new JenaTreeProvider(true);
+		filtered = new FilteredContentProvider(FilteredContentProvider.passAll, unfiltered);
 	}
 	/**
 	 * @param visible: true if the root node should be displayed, 
 	 * false if the root node's children should be displayed at the first level.
 	 */
 	public void setRootVisible(boolean visible) {
-		unfiltered = new JenaTreeProvider(visible);
-		resetProvider();
+		unfiltered.setShowRoot(visible);
 	}
 	
 	/**
 	 * @param filter: filter the displayed hierarchy by the given rule.
 	 */
 	protected void setFilter(Filter filter) {
-		if( this.filter != filter ) {
-			this.filter = filter;
-			resetProvider();
-		}
-	}
-
-	private void resetProvider() {
-		if( filter != null)
-			provider = new FilteredContentProvider(filter, unfiltered);
-		else
-			provider = unfiltered;
-		if( viewer != null)
-			viewer.setContentProvider(provider);
+		filtered.setFilter(filter == null? FilteredContentProvider.passAll: filter);
 	}
 	/**
 	 * Bind to a TreeViewer.
@@ -67,7 +55,7 @@ public abstract class  JenaTreeBinding implements Binding {
 	
 	protected void bind(String name, Assembly plumbing, Object after) {
 		viewer = (TreeViewer) plumbing.getViewer(name);
-		viewer.setContentProvider(provider);
+		viewer.setContentProvider(filtered);
 		viewer.setInput(tree);
 		plumbing.addBinding(this, after);
 	}
@@ -77,7 +65,7 @@ public abstract class  JenaTreeBinding implements Binding {
 	}
 
 	protected ITreeContentProvider getProvider() {
-		return provider;
+		return filtered;
 	}
 
 	protected TreeViewer getViewer() {

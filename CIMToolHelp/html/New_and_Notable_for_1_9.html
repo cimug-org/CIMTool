@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" >
+<html xmlns="http://www.w3.org/1999/xhtml">
+      <head>
+        <title>New and Notable for 1.9</title>
+        <link href="graphic.css" type="text/css" rel="stylesheet" />
+        <link href="favicon.ico" type="image/x-icon" rel="icon" />
+        <link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />  
+            
+      </head>
+      <body>
+        
+        <div id="banner">
+          <img src="illust-composite.png" id="illust" />
+          <img src="logo-composite.png" id="logo" />
+          <h1>New and Notable for 1.9</h1>
+        </div>
+        <div id="main">
+          <div id="content"><p>CIMTool 1.9 introduces some major new functionality.  The changes and their motivation are described in the blurb below.</p><h2>Generalised Profile Editing</h2><p>The original idea behind CIMTool was to create profiles by &quot;cherry picking&quot; from the CIM.  However more and more profiling concepts were requested and implemented over time.  </p><p>For example, CIMTool lets you abridge the CIM inheritance hierarchy, narrow CIM classes to any possible union of their subclasses and create anonymous profile types and multiple profiles of the same CIM class.</p><p>The new profile editor aims to fill in the gaps between some of these possibilities and at the same time make the definition process easier to understand.   </p><p>First, the &quot;Add/Remove&quot; page of the editor has been simplified to focus on cherry-picking.  More advanced restriction definitions have been combined on a new &quot;Restriction&quot; page.</p><p>Association profiling has been clarified and generalised.  You can now pick the exact type of each association from among the profile types.  (The old editor did not handle a situation where there was more than one possible profile type and would create a new anonymous type if there was none.)</p><p>This change has deep implications: It makes multiple profiles of the same CIM class more useful and reduces the need for anonymous classes in profiles.  A separate button for creating anonymous types ensures you don't create these by mistake in future. </p><p>By the way, there is also a &quot;pick everything&quot; button that brings whole packages or classes into the profile including attributes and associations.</p><h2>Schema Mapping and Extension</h2><h3>Discussion</h3><p>Managing extensions to the CIM and mapping the CIM to an existing schema is difficult.  We have seen a number of techniques over time. For example CIMTool supports a special &quot;extension&quot; stereotype on extension classes and associations.  </p><p>The existing techniques are not completely satisfactory. You may be able to bring all the schemas concerned into a single UML model. But that creates format conversion, version control and traceability problems. </p><p>A better technique is to model the mappings and extensions separately from the  primary schemas and allow CIMTool to merge them all.  But again, the mapping schemas are difficult to maintain in UML.  Typically, 'stub' classes must be defined in the mapping schema to represent mapped classes in the primary schemas. </p><p>These techniques are also difficult  because they may involve a tedious workflow between tools, manual namespace management, or manual model merging and demerging.</p><h3>CIMTool Solution</h3><p>This release of CIMTool adds a specialised editor for schema mapping and extension. Under the covers, it uses on an ontology definition language, OWL, which is well suited to the mapping problem.    This allows complete separation of mapping definitions from the primary schemas.</p><p>It works this way: a CIMTool project can contain a heterogeneous mixture of primary schemas and mapping definitions.  These are merged into a virtual, global schema that becomes the basis of profile definition.  </p><p>The mapping editor also sees the global schema and is able to present the mapping candidates to the user in a unified view.  The user can cherry-pick from this view and does not have to define stub classes or manually merge models.  <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Namespaces.html" class="internal">Namespaces</a> are managed automatically.</p><p>In this first release three kinds of mapping are supported between primary classes:</p><ul><li>Equivalence</li><li>Subclass/Superclass</li><li>Functional (single valued) Association</li></ul><p>Future releases will include other types of mapping and will allow mappings between pairs of associations and pairs of attributes in addition to pairs of classes.</p><p>Mappings are stored as standard OWL XML files (that is, in the same format as CIMTool profiles). </p><h2>Ecore Models</h2><p>This release includes  ecore model support contributed by Alan McMorran and Richard Lincoln. (This is already available from Alan.)  Ecore is a system for creating, representing and manipulating models including UML models.</p><p>This and the new schema mapping capabilities it make it possible to combine ecore models with CIM schemas imported from Enterprise Architect in a single project.  </p><p>The ecore models, the mapping definitions, the profiles and the generated XML artifacts can all be manipulated within the eclipse environment.</p><br gap="big" /></div>
+          
+          <div id="menu"><ul>
+    
+    </ul></div>
+        </div>  
+        <div id="footer"></div>
+          
+      </body>
+    </html>

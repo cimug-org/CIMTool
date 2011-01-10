@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Button;
@@ -24,6 +26,8 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeBinding;
+import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.TreeModelBase.Empty;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase.Node;
@@ -48,7 +52,32 @@ import au.com.langdale.xmi.UML;
 
 public class PopulateBinding  {
 
-	public static class LeftBinding extends JenaTreeBinding {
+	public static abstract class PickerBinding extends JenaTreeBinding {
+
+		public PickerBinding(JenaTreeModelBase tree) {
+			super(tree);
+		}
+		
+		public void listenTo( PickerBinding other) {
+			other.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+				
+				public void selectionChanged(SelectionChangedEvent event) {
+					if(!event.getSelection().isEmpty())
+						getViewer().setSelection(null);
+					
+				}
+			});
+		}
+		
+		protected ProfileEditor master;
+		
+		Node getNode() {
+			return master.getNode();
+		}
+		
+	}
+	
+	public static class LeftBinding extends PickerBinding {
 
 		private class DepthOne implements Filter {
 
@@ -83,18 +112,19 @@ public class PopulateBinding  {
 			setFilter(new DepthOne());
 		}
 
-		ProfileEditor master;
 		private OntResource subject;
 		private OntResource parent;
 
 		public void bind(String name, Assembly plumbing, ProfileEditor master ) {
 			this.master = master;
 			super.bind(name, plumbing);
+			master.listenToDoubleClicks(getViewer());
+			master.listenToSelection(getViewer());
 		}
 
 		public void refresh() {
 
-			Node node = master.getNode();
+			Node node = getNode();
 			subject = node.getSubject();
 			
 			ProfileModel tree = (ProfileModel)getTree();
@@ -125,7 +155,7 @@ public class PopulateBinding  {
 		}	
 	}
 
-	public static class RightBinding extends JenaTreeBinding implements Searchable {
+	public static class RightBinding extends PickerBinding implements Searchable {
 		
 		private abstract class BasicFilter implements Filter {
 			
@@ -199,7 +229,6 @@ public class PopulateBinding  {
 			super(new UMLTreeModel());
 		}
 		
-		ProfileEditor master;
 		protected Set excluded;
 		protected Button showDups, showSuper, showSub;
 
@@ -209,11 +238,12 @@ public class PopulateBinding  {
 			showSuper = (Button) plumbing.getControl(supers);
 			showSub = (Button) plumbing.getControl(subs);
 			super.bind(name, plumbing);
+			master.listenToSelection(getViewer());
 		}
 
 		public void refresh() {
 
-			Node node = master.getNode();
+			Node node = getNode();
 			Resource offer;
 			Filter filter;
 
@@ -248,12 +278,12 @@ public class PopulateBinding  {
 				}
 			}
 
-			TreePath[] elements = getViewer().getExpandedTreePaths();
+//			TreePath[] elements = getViewer().getExpandedTreePaths();
 			getTree().setRootResource((OntResource)null);
 			getTree().setOntModel(master.getProjectModel());
 			setFilter(filter);
 			getTree().setRootResource(offer);
-			getViewer().setExpandedTreePaths(elements);
+//			getViewer().setExpandedTreePaths(elements);
 		}
 		
 		public OntModel getOntModel() {

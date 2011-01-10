@@ -7,6 +7,7 @@ package au.com.langdale.xmi;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.Resource;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
@@ -118,29 +119,24 @@ public class CIMInterpreter extends UMLInterpreter {
 		while( jt.hasNext()) {
 			applyEnumerationStereotype(jt.nextResource());
 		}
-		ResIterator ht = model.listSubjectsBuffered(UML.hasStereotype, UML.datatype);
-		while( ht.hasNext()) {
-			applyPrimitiveStereotype(ht.nextResource(), true);
-		}
-		ResIterator ct = model.listSubjectsBuffered(UML.hasStereotype, UML.cimdatatype);
-		while( ct.hasNext()) {
-			applyPrimitiveStereotype(ct.nextResource(), true);
-		}
-		ResIterator it = model.listSubjectsBuffered(UML.hasStereotype, UML.primitive);
-		while( it.hasNext()) {
-			applyPrimitiveStereotype(it.nextResource(), true); // in future, change to false
-		}
-		ResIterator gt = model.listSubjectsBuffered(UML.hasStereotype, UML.base);
-		while( gt.hasNext()) {
-			applyPrimitiveStereotype(gt.nextResource(), true); // in future, change to false
-		}
-		ResIterator kt = model.listSubjectsBuffered(UML.hasStereotype, UML.union);
-		while( kt.hasNext()) {
-			applyPrimitiveStereotype(kt.nextResource(), false);
-		}
+
+		applyPrimitiveStereotype(UML.cimdatatype, true);
+		applyPrimitiveStereotype(UML.datatype, true);
+		applyPrimitiveStereotype(UML.primitive, true); // in future, change to false
+		applyPrimitiveStereotype(UML.base, true); // in future, change to false
+		applyPrimitiveStereotype(UML.union, false);
+
+
 		ResIterator lt = model.listSubjectsBuffered(UML.hasStereotype, UML.extendedBy);
 		while( lt.hasNext()) {
 			convertAssocToSubClassOf(lt.nextResource());
+		}
+	}
+
+	private void applyPrimitiveStereotype(Resource stereo, boolean interpret_value) {
+		ResIterator gt = model.listSubjectsBuffered(UML.hasStereotype, stereo);
+		while( gt.hasNext()) {
+			applyPrimitiveStereotype(gt.nextResource(), interpret_value);
 		}
 	}
 	

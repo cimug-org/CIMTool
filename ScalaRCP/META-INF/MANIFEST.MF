@@ -10,6 +10,6 @@ Require-Bundle: au.com.langdale.rcputil;bundle-version="1.0.0",
  org.eclipse.ui.forms,
  org.eclipse.jface.text,
  org.eclipse.core.runtime,
- scala.library,
- org.eclipse.help
+ org.eclipse.help,
+ org.scala-ide.scala.library
 Export-Package: au.com.langdale.eclipse

@@ -61,7 +61,7 @@ public abstract class FurnishedWizardPage extends WizardPage implements Observer
 		if( next instanceof FurnishedWizardPage) {
 			Content nextContent = ((FurnishedWizardPage)next).getContent();
 			if( nextContent != null)
-				nextContent.fireValidate();
+				nextContent.doRefresh();
 		}
 	}
 	

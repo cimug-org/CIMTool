@@ -62,11 +62,11 @@ public class ProfileClass {
 		ResIterator it = clss.listSuperClasses(true);
 		while( it.hasNext()) {
 			OntResource node = it.nextResource();
-			if( ! node.isClass() && ! node.isDatatype() && ! node.equals(MESSAGE.Reference)) {
-				System.out.println("Superclass not typed:");
-				System.out.println(node.describe());
-				
-			}
+//			if( ! node.isClass() && ! node.isDatatype() && ! node.equals(MESSAGE.Reference)) {
+//				System.out.println("Superclass not typed:");
+//				System.out.println(node.describe());
+//				
+//			}
 			if( node.isClass() && ! node.equals(MESSAGE.Reference)) {
 				if(node.isRestriction()) {
 					OntResource prop = node.getOnProperty();
@@ -88,10 +88,10 @@ public class ProfileClass {
 	}
 
 	private void analyseBaseClass() {
-		if( OWL.Thing.equals(baseClass) && ! clss.isDatatype()) {
-			System.out.println("Profile with no schema class:");
-			System.out.println( clss.describe());
-		}
+//		if( OWL.Thing.equals(baseClass) && ! clss.isDatatype()) {
+//			System.out.println("Profile with no schema class:");
+//			System.out.println( clss.describe());
+//		}
 		enumeratedBase = baseClass.hasProperty(UML.hasStereotype, UML.enumeration);
 	}
 	
@@ -356,6 +356,17 @@ public class ProfileClass {
 		else
 			return classes.iterator();
 	}
+	
+	public Iterator getSubClasses() {
+		Set subClasses = new HashSet();
+		ResIterator it = clss.listSubClasses(true);
+		while( it.hasNext()) {
+			OntResource node = it.nextResource();
+			if( node.isClass() && ! node.isAnon())
+				subClasses.add(node);
+		}
+		return subClasses.iterator();
+	}
 
 	public PropertyInfo getPropertyInfo(OntResource prop) {
 
@@ -548,25 +559,13 @@ public class ProfileClass {
 	
 	/**
 	 * Broaden this class by making it a union of its 
-	 * present definition and a new profile of the given
+	 * present definition and a new anonymous profile of the given
 	 * base class.   
 	 * 
 	 * @return the new profile class
 	 */
-	public OntResource createUnionMember(OntResource base, boolean named) {
-		OntResource member;
-		
-		if(named) {
-			member = model.createResource(namespace + base.getLocalName());
-			if( member.isClass()) {
-				if( member.hasSuperClass(base)) { 
-					addUnionMember(member);
-					return member;
-				}
-			}
-		}
-
-		member = model.createClass();
+	public OntResource createUnionMember(OntResource base) {
+		OntResource member = model.createClass();
 		member.addSuperClass(base);
 		member.addLabel(base.getLocalName(), null);
 		addUnionMember(member);

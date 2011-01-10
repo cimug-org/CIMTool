@@ -35,6 +35,7 @@ import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 public class ImportModel extends Wizard implements IImportWizard {
 	private String pathname = "";
 	private String suggestion = "";
+	private String filename = "";
 	private IResource destin;
 	private String namespace;
 	private IFolder instances;
@@ -115,6 +116,7 @@ public class ImportModel extends Wizard implements IImportWizard {
 
 			return new Content() {
 
+
 				@Override
 				protected Template define() {
 					return Grid(
@@ -124,22 +126,26 @@ public class ImportModel extends Wizard implements IImportWizard {
 					);
 				}
 				
+				public void refresh() {
+ 				    // display size
+				    File source = new File(pathname);
+				    long length = source.length();
+				    getLabel("size").setText("Size of source is " + Long.toString(length) + " bytes.");
+					
+				    if( (filename.equals(suggestion)) && pathname.length() > 0) {
+					Path path = new Path(pathname);
+					suggestion = path.removeFileExtension().lastSegment().replaceAll("[^0-9a-zA-Z._-]", "");
+					filename = suggestion;
+					setTextValue("filename", filename);
+				    }
+				}
+				
+				public void update() {
+				    filename = getText("filename").getText();
+				}
+				
 				@Override
 				public String validate() {
-					// display size
-					File source = new File(pathname);
-					long length = source.length();
-					getLabel("size").setText("Size of source is " + Long.toString(length) + " bytes.");
-					
-					// setup the destination resource
-					String filename = getText("filename").getText();
-					if( (filename.equals(suggestion)) && pathname.length() > 0) {
-						Path path = new Path(pathname);
-						suggestion = path.removeFileExtension().lastSegment().replaceAll("[^0-9a-zA-Z._-]", "");
-						filename = suggestion;
-						setTextValue("filename", filename);
-					}
-					
 					if(filename.length() == 0)
 						return "A name is required for the imported model.";
 					

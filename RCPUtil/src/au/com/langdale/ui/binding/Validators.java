@@ -147,9 +147,18 @@ public class Validators {
 		public String validate(String value) {
 			if( value.length() == 0 )
 				return "A name is required";
-			if( ! NCNAME_REGEX.matcher(value).matches())
+			else
+				return NCNAME_OPT.validate(value);
+		}
+	};
+
+	public static final Validator NCNAME_OPT = new Validator() {
+		@Override
+		public String validate(String value) {
+			if( value.length() > 0 && ! NCNAME_REGEX.matcher(value).matches())
 				return "A valid XML element name is required";
-			return null;
+			else
+			   return null;
 		}
 	};
 	

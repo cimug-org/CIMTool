@@ -210,7 +210,7 @@ public class EAPExtractor extends XMIModel {
 		}
 		
 		boolean hasClassifier() {
-			return fields.get("Classifier") != null;
+			return getClassifier() != 0;
 		}
 
 		String getXUID() {
@@ -219,7 +219,7 @@ public class EAPExtractor extends XMIModel {
 		}
 		
 		String getName() {
-			return fields.get("Name").toString();
+			return getString("Name");
 		}
 		
 		String getObjectType() {

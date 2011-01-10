@@ -15,7 +15,14 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.8.3 </h2><ul><li><p>correction: improved backwards compatibility with version 1.7 for profile (.owl) files.  
+          <div id="content"><h2>Release 1.9.2 </h2><p>This is one of a series of beta testing releases.  
+See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>enhancement: tree views in the user interface retain their state
+accross refreshes including save profile and navigation away from
+a node and back again.  This makes it easier to keep your place in 
+the model during profile building.</p></li><li><p>Updated Ecore functionality to enable registered EPackages to be used for the base schema.  
+Updates to the Ecore generation to ensure profiled Ecore matches the package hierarchy 
+of the base if the base is also Ecore.  Removed unused legacy merged schema generation</p></li></ul><h2>Release 1.9.1 </h2><p>This is a beta testing release to trial a number of major changes.  
+See the blurb,  New and Notable for 1.9. In summary:</p><ul><li><p>Generalised profile editing.</p></li><li><p>Schema mapping and extension editor.</p></li><li><p>Ecore model support.</p></li></ul><h2>Release 1.8.3 </h2><ul><li><p>correction: improved backwards compatibility with version 1.7 for profile (.owl) files.  
 A profile can be round-tripped from 1.7 to 1.8.2 and back repeatedly.  In 1.8.2
 this caused errors in the profile editor.</p></li><li><p>enhancement: basic validation for the new standard headers in CIM/XML documents. 
 This reduces the number of spurious validation errors.</p></li></ul><h2>Release 1.8.2 </h2><p>The release corrects the following defect in 1.8.1:</p><ul><li><p>correction: a defect in handling of attributes (datatype properties) caused 

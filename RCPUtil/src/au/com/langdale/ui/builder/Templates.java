@@ -337,10 +337,7 @@ public class Templates {
 			Tree tree = assembly.getToolkit().createTree(parent, style|SWT.CHECK);
 			CheckboxTreeViewer viewer = containers? new ContainerCheckedTreeViewer(tree): new CheckboxTreeViewer(tree);
 			register(viewer, assembly);
-			if( (style&SWT.MULTI) != 0)
-				viewer.addCheckStateListener(assembly.checkStateListener);
-			else
-				viewer.addCheckStateListener(assembly.singleCheckedTreeListener);
+			assembly.setCheckMultiple(viewer, (style&SWT.MULTI) != 0);
 			return tree;
 		}
 	}
@@ -355,10 +352,7 @@ public class Templates {
 			Table table = assembly.getToolkit().createTable(parent, style|SWT.CHECK);
 			CheckboxTableViewer viewer = new CheckboxTableViewer(table);
 			register(viewer, assembly);
-			if( (style&SWT.MULTI) != 0)
-				viewer.addCheckStateListener(assembly.checkStateListener);
-			else
-				viewer.addCheckStateListener(assembly.singleCheckedTableListener);
+			assembly.setCheckMultiple(viewer, (style&SWT.MULTI) != 0);
 			viewer.setContentProvider(new DefaultContentProvider());
 			return table;
 		}
@@ -694,6 +688,30 @@ public class Templates {
 		return new GridTemplate(new GroupTemplate[] {Group(a), Group(b), Group(c), Group(d), Group(e), Group(f)}); 
 	}
 	
+	public static Template Span(Template a) {
+		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] {a})}); 
+	}
+	
+	public static Template Span(Template a, Template b) {
+		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] {a, b})}); 
+	}
+	
+	public static Template Span(Template a, Template b, Template c) {
+		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] {a, b, c})}); 
+	}
+	
+	public static Template Span(Template a, Template b, Template c, Template d) {
+		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] {a, b, c, d})}); 
+	}
+	
+	public static Template Span(Template a, Template b, Template c, Template d, Template e) {
+		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] {a, b, c, d, e})}); 
+	}
+	
+	public static Template Span(Template a, Template b, Template c, Template d, Template e, Template f) {
+		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] {a, b, c, d, e, f})}); 
+	}
+	
 	public static Template Field(String name) {
 		return new TextTemplate(SWT.SINGLE, name, "", 0);
 	}
@@ -801,6 +819,10 @@ public class Templates {
 	
 	public static Template RadioButton(String name, String text) {
 		return new CheckBoxTemplate(SWT.RADIO, name, text, null);
+	}
+	
+	public static Template RadioButton(String name, String text, Object image) {
+		return new CheckBoxTemplate(SWT.RADIO, name, text, image);
 	}
 	
 	public static Template PushButton(String name, String text) {

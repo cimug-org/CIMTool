@@ -107,7 +107,7 @@ public class ProfileUtility {
 			Iterator it = subclass? subject.listSubClasses(false): subject.listSuperClasses(false);
 			while (it.hasNext()) {
 				OntResource related = (OntResource) it.next();
-				if( related.isClass() && !related.equals(base)) {
+				if( related.isClass() && (subclass || !related.equals(base))) {
 					
 					// consider the profiles of each relative 
 					Collection cands = find(related);

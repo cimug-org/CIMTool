@@ -73,6 +73,16 @@ public abstract class FurnishedMultiEditor extends MultiPageEditorPart  implemen
 		}
 	}
 	
+	public void setActivePageByName(String name) {
+		for(int ix = 0; ix < getPageCount(); ix++) {
+			if(getPageText(ix).equalsIgnoreCase(name)) {
+				setActivePage(ix);
+				return;
+			}
+		}
+		
+	}
+	
 	public void doRefresh() {
 		int ix = getActivePage();
 		if( ix >= 0 ) {

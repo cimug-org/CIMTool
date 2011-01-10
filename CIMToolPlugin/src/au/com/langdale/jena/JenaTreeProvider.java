@@ -4,9 +4,11 @@
  */
 package au.com.langdale.jena;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IElementComparer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -17,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 
 import au.com.langdale.ui.util.IconCache;
 
+import au.com.langdale.jena.TreeModelBase.Empty;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.TreeModelBase.NodeListener;
 import au.com.langdale.kena.OntResource;
@@ -62,9 +65,52 @@ public class JenaTreeProvider implements ITreeContentProvider {
 			return valueOf(element).hashCode();
 		}
 	}
-	
+	private static class TreeState {
+		
+		private TreePath[] expanded;
+		private ISelection selected;
+		
+		public TreeState(TreeViewer viewer) {
+			expanded = viewer.getExpandedTreePaths();
+			selected = viewer.getSelection();
+
+		}
+		
+		public void applyTo( TreeViewer viewer) {
+			viewer.setExpandedTreePaths(expanded);
+			viewer.setSelection(selected);
+			
+		}
+		
+		@Override
+		public String toString() {
+			StringBuffer result = new StringBuffer();
+			result.append("TreeState:\n");
+			for( int i = 0; i < expanded.length; i++) {
+				result.append(" ");
+				result.append(expanded[i].getLastSegment().toString());
+				result.append("\n");
+			}
+			result.append("Selection:\n  ");
+			result.append(selected.toString());
+			result.append("\n");
+			return result.toString();
+		}
+	}
+
 	private static class RefreshAdapter implements NodeListener {
 		private TreeViewer viewer;
+		private HashMap states = new HashMap();
+		private Class currentRootType = Empty.class;
+		
+		
+		private Class getRootType(TreeViewer viewer) {
+			Object input = viewer.getInput();
+			if( input instanceof TreeModelBase) 
+				return ((TreeModelBase)input).getRoot().getClass();
+			else
+				return input.getClass();
+		}
 		
 		public RefreshAdapter(TreeViewer viewer) {
 			this.viewer = viewer;
@@ -75,12 +121,30 @@ public class JenaTreeProvider implements ITreeContentProvider {
 		}
 		
 		public void nodeStructureChanged(Node node) {
-			TreePath[] elements = viewer.getExpandedTreePaths();
+			saveState();
+			
 			if(node.getParent() == null)
 				viewer.refresh();
 			else
 				viewer.refresh(node);
-			viewer.setExpandedTreePaths(elements);
+			currentRootType = getRootType(viewer);
+			
+			restoreState();
+		}
+
+		private void saveState() {
+			TreeState state = new TreeState(viewer);
+//			System.out.println("Save: " + currentRootType + "\n" + state);
+			states.put(currentRootType, state);
+		}
+
+		private void restoreState() {
+			TreeState state = (TreeState) states.get(currentRootType);
+//			System.out.println("Restore: " + currentRootType);
+			if( state != null) {
+//				System.out.println(state);
+				state.applyTo(viewer);
+			}
 		}
 	}
 	
@@ -88,9 +152,17 @@ public class JenaTreeProvider implements ITreeContentProvider {
 		this.showRoot = showRoot;
 	}
 
+	public boolean isShowRoot() {
+		return showRoot;
+	}
+
+	public void setShowRoot(boolean showRoot) {
+		this.showRoot = showRoot;
+	}
+
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		dispose();
-		if( newInput instanceof TreeModelBase) {
+		if( newInput instanceof TreeModelBase ) {
 			tree = (TreeModelBase) newInput;
 			if( viewer instanceof TreeViewer) 
 				tree.setNodeListener(new RefreshAdapter((TreeViewer) viewer));

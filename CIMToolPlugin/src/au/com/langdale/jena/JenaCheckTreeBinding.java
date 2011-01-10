@@ -41,7 +41,7 @@ public abstract class  JenaCheckTreeBinding extends JenaTreeBinding {
 		fillChecks(getTree().getRoot());
 	}
 
-	private void fillChecks(Node node) {
+	protected void fillChecks(Node node) {
 		getCheckViewer().setChecked(node, toBeChecked(node));
 		Object[] children = getProvider().getChildren(node);
 		for (int ix = 0; ix < children.length; ix++) {

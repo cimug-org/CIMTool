@@ -14,12 +14,12 @@ import java.util.Set;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
-import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * Add or remove a profile class from the profile class hierarchy with side effects.
@@ -29,12 +29,10 @@ public class Refactory extends ProfileUtility {
 	private ProfileMap map;
 	private String namespace;
 	private OntModel profileModel;
-	private OntModel backgroundModel;
 	
-	public Refactory(OntModel profileModel, OntModel backgroundModel) {
+	public Refactory(OntModel profileModel, OntModel fullModel) {
 		this.profileModel = profileModel;
-		this.backgroundModel = backgroundModel;
-		this.model = Composition.merge(profileModel, backgroundModel);
+		this.model = fullModel;
 		this.namespace = profileModel.getValidOntology().getURI() + "#";
 	}
 	
@@ -48,10 +46,9 @@ public class Refactory extends ProfileUtility {
 	
 	public void refresh() {
 		map = null;
-		this.model = Composition.merge(profileModel, backgroundModel);
 	}
 	
-	public void add(OntResource clss, OntResource base, boolean link) {
+	private void add(OntResource clss, OntResource base, boolean link) {
 
 		if( map != null) 
 			map.add(base, clss);
@@ -209,64 +206,14 @@ public class Refactory extends ProfileUtility {
 		return result;
 	}
 
-	@Deprecated 
-	private void convertXX(ProfileClass profile, boolean named) {
-		if( ! profile.getSubject().isAnon()) 
-			return;
-		
-		boolean hasNamed = hasNamedSuperXX(profile);
-		
-		if( !hasNamed && named)
-			convertToNamedXX(profile);
-		else if(hasNamed && !named)
-			convertToUnnamedXX(profile);
-	}
-
-	@Deprecated 
-	private boolean hasNamedSuperXX(ProfileClass profile) {
-		return profile.getSuperClasses().hasNext();
-//		Iterator it = profile.getSuperClasses();
-//		while (it.hasNext()) {
-//			OntResource parent = (OntResource) it.next();
-//			if( parent.hasSuperClass(profile.getBaseClass())) 
-//				return true;
-//		}
-//		return false;
-	}
-
-	@Deprecated 
-	private void convertToNamedXX(ProfileClass profile) {
-
-		//PropertyAccumulator props = new PropertyAccumulator();
-		//removeProps(profile, props);
-		//removeSupers(profile);
-		
-		OntResource parent = findOrCreateNamedProfile(profile.getBaseClass());
-		profile.getSubject().addSuperClass(parent);
-//		allocateProperties(parent, props);
-//		allocateProperties(props);
-	}
-
-	@Deprecated 
-	private void convertToUnnamedXX(ProfileClass profile) {
-		removeSupersXX(profile);
-	}
-
 	public OntResource findOrCreateNamedProfile(OntResource base) {
 		OntResource clss = findNamedProfile(base);
 		if( clss == null ) {
-			clss = model.createClass(namespace + base.getLocalName());
+			clss = getModel().createClass(getNamespace() + base.getLocalName());
 			clss.addSuperClass(base);
 			add(clss, base, true);
 		}
 		return clss;
-	}
-	
-	@Deprecated 
-	private OntResource findBaseClassXX(OntResource clss) {
-		if( map == null)
-			buildMap();
-		return map.getBase(clss);
 	}
 
 	private OntResource findNamedProfile(OntResource base) {
@@ -281,21 +228,48 @@ public class Refactory extends ProfileUtility {
 			buildMap();
 		return map.findRelatedProfiles(base, subclass, unique);
 	}
-	
-	@Deprecated 
-	private Collection findProfilesXX(OntResource base) {
-		if( map == null)
-			buildMap();
-		return map.find(base);
+
+	public OntResource createProfileClass(OntResource base) {
+		String uri = getNamespace() + base.getLocalName();
+		OntResource probe = getModel().createResource(uri);
+		
+		int ix = 1;
+		while( probe.isClass()) {
+			probe = getModel().createResource(uri + ix);
+			ix++;
+		}
+		
+		OntResource child = getModel().createClass(probe.getURI());
+		child.addSuperClass(base);
+		add(child, base, ix == 1);
+		return child;
 	}
 
-	@Deprecated 
-	private void removeSupersXX(ProfileClass profile) {
-		Iterator it = profile.getSuperClasses();
-		while (it.hasNext()) {
-			OntResource parent = (OntResource) it.next();
-			//profile.removeSuperClass(parent);
-			profile.getSubject().removeSuperClass(parent);
+	public void createDefaultRange(ProfileClass prof, OntResource prop) {
+		OntResource range = prop.getRange();
+		if(range != null && range.isClass() && ! range.isDatatype()) {
+			OntResource child = findOrCreateNamedProfile(range);
+			prof.getPropertyInfo(prop).createProfileClass().addUnionMember(child);
 		}
+	}
+
+	public void createAllProperties(ProfileClass profile, boolean required) {
+		ResIterator it = getModel().listSubjectsWithProperty(RDFS.domain, profile.getBaseClass());
+		while( it.hasNext()) {
+			OntResource prop = it.nextResource();
+			if( prop.isFunctionalProperty()) {
+				profile.createAllValuesFrom(prop, required);
+				createDefaultRange(profile, prop);
+			}
+		}
+	}
+	
+	public void createCompleteProfile(OntResource base, boolean required) {
+		createAllProperties(createProfileClass(base), required);
+		
+	}
+
+	public void createAllProperties(OntResource clss, boolean required) {
+		createAllProperties(new ProfileClass(clss, getNamespace()), required);
 	}
 }
