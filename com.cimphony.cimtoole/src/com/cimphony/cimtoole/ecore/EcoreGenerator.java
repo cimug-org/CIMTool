@@ -461,7 +461,7 @@ public class EcoreGenerator extends SchemaGenerator {
 	protected void emitStereotype(String uri, String stereo) {
 		if (index.eClasses.containsKey(uri)) {
 			EClass klass = index.eClasses.get(uri);
-			if (stereo == "http://langdale.com.au/2005/UML#concrete") {
+			if (stereo.equals("http://langdale.com.au/2005/UML#concrete")) {
 				klass.setAbstract(false);
 			}
 		} else {
