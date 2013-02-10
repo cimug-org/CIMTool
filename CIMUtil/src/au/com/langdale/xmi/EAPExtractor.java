@@ -14,30 +14,28 @@ import com.healthmarketscience.jackcess.Table;
 
 public class EAPExtractor extends XMIModel {
 
+	private File file;
 	private Database db;
 	private IDList packageIDs = new IDList(100);
 	private IDList objectIDs = new IDList(2000);
 	
 
-	public EAPExtractor(File file) throws IOException {
-		try {
-			db = Database.open(file, true);
-		}
-		catch( IOException e) {
-			if( e.getMessage().startsWith("Unsupported version"))
-				;
-		}
+	public EAPExtractor(File file) {
+		this.file = file;
 	}
 	
 	public void run() throws IOException {
-		if( db == null )
-			return;
-		
-		gatherPackageIDs();
-		extractPackages();
-		extractClasses();
-		extractAssociations();
-		extractAttributes();
+		db = Database.open(file, true);
+		try {
+			gatherPackageIDs();
+			extractPackages();
+			extractClasses();
+			extractAssociations();
+			extractAttributes();
+		}
+		finally {
+			db.close();
+		}
 	}
 
 	private void gatherPackageIDs() throws IOException {
