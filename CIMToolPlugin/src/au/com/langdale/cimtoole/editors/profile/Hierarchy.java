@@ -103,17 +103,34 @@ public class Hierarchy extends FurnishedEditor {
 		
 		@Override
 		protected void fetchChecks() {
-			for (Iterator it = findRelated().iterator(); it.hasNext();) {
-				OntResource clss = (OntResource) it.next();
-				removeRelated(clss);
-			}
+			preFetchChecks();
 			super.fetchChecks();
+			postFetchChecks();
+		}
+		
+		private Set new_related;
+
+		private void preFetchChecks() {
+			new_related = new HashSet();
 		}
 
 		@Override
 		protected void hasBeenChecked(Node node) {
-			OntResource related = node.getSubject();
-			addRelated(related);
+			new_related.add(node.getSubject());
+		}
+		
+		private void postFetchChecks() {
+			related = findRelated();
+			for (Iterator it = related.iterator(); it.hasNext();) {
+				OntResource clss = (OntResource) it.next();
+				if( ! new_related.contains(clss))
+					removeRelated(clss);
+			}
+			for (Iterator it = new_related.iterator(); it.hasNext();) {
+				OntResource clss = (OntResource) it.next();
+				if( ! related.contains(clss))
+					addRelated(clss);
+			}
 		}
 	}
 	

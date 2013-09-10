@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
         <title>Notes about the intersection of UML, XMI and OWL</title>
-        <link href="graphic.css" type="text/css" rel="stylesheet" />
-        <link href="favicon.ico" type="image/x-icon" rel="icon" />
-        <link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />  
+        <link type="text/css" rel="stylesheet" href="graphic.css" />
+        <link type="image/x-icon" rel="icon" href="favicon.ico" />
+        <link type="image/x-icon" rel="shortcut icon" href="favicon.ico" />  
             
       </head>
       <body>
@@ -19,7 +19,7 @@
           
     
 <p>
-As you know, <a href="http://en.wikipedia.org/wiki/Unified_Modeling_Language" class="external">UML</a> is the Unified Modelling Language, <a href="http://en.wikipedia.org/wiki/XMI" class="external">XMI</a> is XML Metadata Interchange language and <a href="http://en.wikipedia.org/wiki/Web_Ontology_Language" class="external">OWL</a> is Web Ontology Language.  
+As you know, <a class="external" href="http://en.wikipedia.org/wiki/Unified_Modeling_Language">UML</a> is the Unified Modelling Language, <a class="external" href="http://en.wikipedia.org/wiki/XMI">XMI</a> is XML Metadata Interchange language and <a class="external" href="http://en.wikipedia.org/wiki/Web_Ontology_Language">OWL</a> is Web Ontology Language.  
 </p>
 <p>
 CIMTool translates XMI to OWL by first extracting UML information, then creating analogous OWL definitions.  This works because we are only concerned with the class diagrams in UML and then only with their structure, not their visual layout. 
@@ -36,7 +36,7 @@ In programming, a class is a sort of template for a family of objects.  In data 
 <h2 id="HowCIMToolReadsXMI">How CIMTool Reads XMI</h2>
 <p>
 With great difficulty!   The reason is best summed up in this 
-<a href="http://www.uml-forum.com/FAQ.htm#Why_cant_I_easily_interchange_UML_models" class="external">quote from the UML Forum FAQ</a>:
+<a class="external" href="http://www.uml-forum.com/FAQ.htm#Why_cant_I_easily_interchange_UML_models">quote from the UML Forum FAQ</a>:
 </p>
 <blockquote><p>
 While the XML (XML Metadata Interchange) standard purports to facilitate the interchange of UML models, it has been largely ineffective in practice.There are at least two technical reasons for this. First and foremost, XMI attempts to solve a technical problem far more difficult than exchanging UML models; it attempts to provide a mechanism for facilitating the exchange of any language defined by the OMG's Metamodel Object Facility. Secondly, the UML 2.x Diagram Interchange specification lacks sufficient detail to facilitate reliable interchange of UML 2.x notations between modeling tools. Since UML is a visual modeling language, this shortcoming is a showstopper for many modelers who don't want to redraw their diagrams....
@@ -94,7 +94,7 @@ and aggregation.)
 <p>Note that the association symbols towards the bottom of the table take precedence when more than one applies.</p>
 <p>
 Sometimes the analogy between UML and OWL is strained. A unidirectional association in UML is not necessarily single-valued, but we have used the unidirectional symbol for OWL functional properties.  The symbol somehow seems appropriate.  </p>
-<p>There is nothing in OWL corresponding to the UML concepts of aggregation and composition. These concepts are somewhat qualitatively defined in UML references. See, for example, <a href="http://en.wikipedia.org/wiki/Class_diagram#Association" class="external">the Wikipedia entry describing aggregation and composition</a>. We choose to represent these qualities in OWL with the custom annotations described above.
+<p>There is nothing in OWL corresponding to the UML concepts of aggregation and composition. These concepts are somewhat qualitatively defined in UML references. See, for example, <a class="external" href="http://en.wikipedia.org/wiki/Class_diagram#Association">the Wikipedia entry describing aggregation and composition</a>. We choose to represent these qualities in OWL with the custom annotations described above.
 </p>
 
    

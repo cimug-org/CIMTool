@@ -14,7 +14,6 @@ import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.RadioButton;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,7 +22,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import au.com.langdale.cimtoole.project.Info;
-import au.com.langdale.cimtoole.registries.ModelParser;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 import au.com.langdale.ui.binding.RadioTextBinding;
 import au.com.langdale.ui.binding.TextBinding;
@@ -47,7 +45,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static String[] sources = {"*.xmi", "*.owl", "*.eap"};
+	private static String[] sources = {"*.eap", "*.xmi", "*.owl"};
 
 	private IFile file;
 	boolean importing;
@@ -57,10 +55,10 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private RadioTextBinding namespace = new RadioTextBinding(Validators.NAMESPACE, NAMESPACE);
 
 	private String[] presets = new String[] {
-			"cim12", "http://iec.ch/TC57/2007/CIM-schema-cim12#",
 			"cim13", "http://iec.ch/TC57/2008/CIM-schema-cim13#",
-                        "cim14", "http://iec.ch/TC57/2009/CIM-schema-cim14#",
-                        "cim15", "http://iec.ch/TC57/2010/CIM-schema-cim15#",
+            "cim14", "http://iec.ch/TC57/2009/CIM-schema-cim14#",
+            "cim15", "http://iec.ch/TC57/2010/CIM-schema-cim15#",
+            "cim16", "http://iec.ch/TC57/2012/CIM-schema-cim16#",
 			"preset", NAMESPACE
 	};
 
@@ -97,10 +95,10 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 				return Grid(
 					Group(FileField("source", "File to import:", sources)),
 					Group(
-						RadioButton("cim12", "CIM 12 (2007)"), 
 						RadioButton("cim13", "CIM 13 (2008)"),
                         RadioButton("cim14", "CIM 14 (2009)"),
                         RadioButton("cim15", "CIM 15 (2010)"),
+                        RadioButton("cim16", "CIM 16 (2012)"),
 						RadioButton("preset", "Preference*")),
 					Group(Label("Namespace URI:"), Field("namespace")),
 					Group(Label("Project")), 

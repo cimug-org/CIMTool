@@ -306,8 +306,8 @@ public class Info {
 			Database.open(source, true).close();
 			return null;
 		}
-		catch (IOException e) {
-			return "The EAP file appears to be in Jet3 format. It must be converted to Jet4.";
+		catch (Exception e) {
+			return "The EAP file appears to be incompatible with CIMTool.";
 		}
 	}
 }

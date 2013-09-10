@@ -104,6 +104,7 @@ object Oracle {
   def extractSpec( key: String, settings: Settings ): Option[OracleCommonSpec] = {
     try {
       val method = settings.get(key, "connection")
+      println("connection: " + key + " " + method)
       
       if(method.equalsIgnoreCase("tns")) {
         import OracleTNSSpec._
@@ -119,7 +120,9 @@ object Oracle {
         None
     }
     catch {
-      case _:NoSuchElementException => None
+      case e :NoSuchElementException =>
+        println(e)
+        None
     }
   } 
   

@@ -351,10 +351,8 @@ public class Translator implements Runnable {
 			return XSD.dateTime;
 		else if( l.equalsIgnoreCase("absolutedatetime"))
 			return XSD.dateTime;
-		else if( l.equalsIgnoreCase("absolutetime"))
-			return XSD.time;
-		else if( l.equalsIgnoreCase("absolutedate"))
-			return XSD.date;
+		else if( l.equalsIgnoreCase("duration"))
+			return XSD.duration;
 		else
 			return null;
 	}
