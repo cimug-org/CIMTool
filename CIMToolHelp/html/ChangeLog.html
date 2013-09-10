@@ -15,7 +15,15 @@
           <h1>CIMTool Change Log </h1>
         </div>
         <div id="main">
-          <div id="content"><h2>Release 1.9.2 </h2><p>This is one of a series of beta testing releases.  
+          <div id="content"><h2>Release 1.9.4 </h2><p>This is one of a series of beta testing releases.  
+See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>Hard coded translation of CIM datatypes AbsoluteDate and AbsoluteTime to xs:date and xs:time.  This is to get around a (hopefully temporary) problem in the CIM where these identifiers were used instead of the XSD ones.</p></li></ul><h2>Release 1.9.3 </h2><p>This is one of a series of beta testing releases.  
+See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>enhancement: profile repair and remapping to the CIM will ignore
+case when searching for a CIM term if an exact match can't be found.</p></li><li><p>Java SE 1.6 is now the minimum requirement for the JVM</p></li><li><p>correction: a bug interpreting .eap files caused namespaces to
+be incorrectly assigned in some cases.</p></li><li><p>enhancement: recognise ontology headers in annotations files. 
+The given namespace overrides the default namespace for their
+schema (or CIM).  This also triggers an improved package URI 
+generation scheme.</p></li><li><p>correction: change the heap memory maximum to 1GB (from 2GB) 
+allowing the product version of CIMTool to run on more systems.</p></li><li><p>enhancement: cosmetic changes to startup.</p></li><li><p>enhancement: added schema mapping wizard to 'new' menu.</p></li></ul><h2>Release 1.9.2 </h2><p>This is one of a series of beta testing releases.  
 See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>enhancement: tree views in the user interface retain their state
 accross refreshes including save profile and navigation away from
 a node and back again.  This makes it easier to keep your place in 

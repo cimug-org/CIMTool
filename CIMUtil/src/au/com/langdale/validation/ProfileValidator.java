@@ -31,8 +31,8 @@ import com.hp.hpl.jena.reasoner.transitiveReasoner.TransitiveReasoner;
 public class ProfileValidator {
 	
 	private OntModel log, target, reference;
-	private static List rules;
-	private static Map functors;
+	private List rules;
+	private Map functors;
 
 	/**
 	 * Construct validator from models.

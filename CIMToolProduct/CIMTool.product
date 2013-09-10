@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.9.2.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="CIMTool" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.9.3.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="about.png"/>
@@ -15,7 +15,7 @@
 
    <launcherArgs>
       <programArgs>-consoleLog</programArgs>
-      <vmArgs>-Xms40m -Xmx2G</vmArgs>
+      <vmArgs>-Xms40m -Xmx1G</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -24,8 +24,8 @@
    <splash
       location="au.com.langdale.cimtool.product"
       startupProgressRect="0,300,500,20"
-      startupMessageRect="0,300,500,20"
-      startupForegroundColor="FFFFFF" />
+      startupMessageRect="50,260,400,20"
+      startupForegroundColor="000000" />
    <launcher name="CIMTool">
       <linux icon="icon.xmp"/>
       <solaris/>

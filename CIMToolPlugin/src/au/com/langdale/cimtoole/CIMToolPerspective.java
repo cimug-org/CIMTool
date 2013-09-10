@@ -34,6 +34,7 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewXSDRules");
 		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewHTMLRules");
 		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewRuleset");
+		layout.addNewWizardShortcut("au.com.langdale.cimtoole.wizards.NewMappings");
 		
 		layout.addActionSet("au.com.langdale.cimtoole.CIMToolActions");
 		layout.addPerspectiveShortcut("au.com.langdale.cimtoole.CIMToolBrowsingPerspective");

@@ -330,20 +330,9 @@ public class StandardFunctorActions extends Reporting {
 	}
 	
 	public static class Similar implements FunctorActions {
+		Graph currentAxioms;
+		NSMapper mapper;
 		
-		WeakReference contextCheck;
-		Set spaces;
-		
-		private boolean contextChange(Object context) {
-			if( contextCheck == null || context != contextCheck.get()) {
-				if(contextCheck != null) 
-					contextCheck.clear();
-				contextCheck = new WeakReference(context);
-				return true;
-			}
-			return false;
-		}
-
 		public void apply(Node[] nodes, Graph model, Graph axioms, RuleState state) {
 			check(false, HEAD);
 		}
@@ -354,15 +343,13 @@ public class StandardFunctorActions extends Reporting {
 			Node subject = nodes[1];
 			Node variable = nodes[2];
 			
-			if(contextChange(axioms))
-				spaces = NSMapper.extractNamespaces(ModelFactory.createMem(axioms));
+			if(axioms != currentAxioms) {
+				mapper = new NSMapper(ModelFactory.createMem(axioms));
+				currentAxioms = axioms;
+			}
 			
 			if(subject.isURI()) {
-				Resource result = NSMapper.resourceWithLocalName(
-						subject.getLocalName(), 
-						ResourceFactory.createResource(type), 
-						spaces, 
-						ModelFactory.createMem(axioms));
+				Resource result = mapper.map( subject.getLocalName(), ResourceFactory.createResource(type));
 				if(result != null) {
 					state.bind(variable, result.asNode());
 					state.dispatch();
@@ -373,7 +360,6 @@ public class StandardFunctorActions extends Reporting {
 			else
 				state.cancel();
 		}
-		
 	}
 	
 	public static class Debug implements FunctorActions {

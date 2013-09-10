@@ -30,6 +30,7 @@ public class Translator implements Runnable {
 	private OntModel model;
 	private OntModel result;
 	private String defaultNamespace;
+	private boolean extraDecoration;
 	private boolean uniqueNamespaces;
 	
 	/**
@@ -39,8 +40,15 @@ public class Translator implements Runnable {
 	 */
 	public Translator(OntModel model, String namespace, boolean usePackageNames ) {
 		this.model = model;
-		defaultNamespace = namespace;
-		uniqueNamespaces = usePackageNames;
+		OntResource ont = model.getValidOntology();
+		if( ont != null ) {
+			defaultNamespace = ont.getURI() + "#";
+			uniqueNamespaces = true;
+		} else {
+            defaultNamespace = namespace;
+		    uniqueNamespaces = usePackageNames;
+		    extraDecoration = true;
+		}
 	}
 	
 	/**
@@ -150,23 +158,26 @@ public class Translator implements Runnable {
 				return annotationResource(l);
 			}
 			
-			else if( r.hasProperty(RDF.type, UML.Package)) 
-				// all packages are in the default namespace
-				if( uniqueNamespaces)
-					return result.createResource(stripHash(defaultNamespace) + pathName(r) + "#Package_" + l);
+			else if( r.hasProperty(RDF.type, UML.Package)) { 
+				// there are three strategies evolved over time to assign package URI's 
+				if( uniqueNamespaces ) {
+					if( extraDecoration )
+						return result.createResource(stripHash(defaultNamespace) + "/Global" + pathName(r) + "#Package_" + l);
+					else
+						return result.createResource(stripHash(defaultNamespace) + prefixPath(r) + "#" + l);
+				}
 				else
 					return result.createResource(defaultNamespace + "Package_" + l);
-				
+			}
 			else
 				return r;
 		}
 	};
 	
 	public static String stripHash(String uri) {
-		if( uri.endsWith("#")) 
-			return uri.substring(0, uri.length()-1);
-		else
-			return uri;
+		while( uri.endsWith("#") || uri.endsWith("/")) 
+			uri = uri.substring(0, uri.length()-1);
+		return uri;
 	}
 
 	public static boolean powercc = true;;
@@ -194,14 +205,7 @@ public class Translator implements Runnable {
 	}
 	
 	private static String pathName(OntResource r) {
-		OntResource ps = r.getResource(RDFS.isDefinedBy);
-		String prefix;
-		if( ps != null ) {
-			prefix = pathName(ps);
-		}
-		else {
-			prefix = "";
-		}
+		String prefix = prefixPath(r);
 		String ls = r.getString(RDFS.label);
 		if (ls == null)
 			return prefix;
@@ -212,6 +216,16 @@ public class Translator implements Runnable {
 		
 		return prefix + "/" + l;
 		
+	}
+
+	private static String prefixPath(OntResource r) {
+		OntResource ps = r.getResource(RDFS.isDefinedBy);
+		if( ps != null && ! ps.equals(UML.global_package)) {
+			return pathName(ps);
+		}
+		else {
+			return "";
+		}
 	}
 
 	
@@ -337,6 +351,10 @@ public class Translator implements Runnable {
 			return XSD.dateTime;
 		else if( l.equalsIgnoreCase("absolutedatetime"))
 			return XSD.dateTime;
+		else if( l.equalsIgnoreCase("absolutetime"))
+			return XSD.time;
+		else if( l.equalsIgnoreCase("absolutedate"))
+			return XSD.date;
 		else
 			return null;
 	}
@@ -381,12 +399,14 @@ public class Translator implements Runnable {
 
 		OntResource p = r.getResource(RDFS.isDefinedBy);
 		if( p != null ) {
-			OntResource q = p;
-			b = q.getString(UML.baseuri);
+			b = p.getString(UML.baseuri);
 			if( b != null )
 				return b;
 			if( uniqueNamespaces )
-				return q.getNameSpace();
+				if( extraDecoration )
+					return p.getNameSpace();
+				else
+					return stripHash(p.getNameSpace()) + "/" + p.getLocalName() + "#";
 		}
 
 		return defaultNamespace;
