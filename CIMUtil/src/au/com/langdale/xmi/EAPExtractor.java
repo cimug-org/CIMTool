@@ -305,16 +305,18 @@ public class EAPExtractor extends XMIModel {
 		}
 
 		public void putID(int index, OntResource id) {
-			while( index > size()) {
+			while( index >= size()) {
 				add(null);
 			}
-			add(index, id);
+			set(index, id);
 		}
 		
 		public OntResource getID(int index) {
-			if( index >= size() ) 
+			if( index >= size() ) {
 				return null;
-			return (OntResource) get(index);
+			}
+			OntResource res = (OntResource) get(index);
+			return res;
 		}
 	}
 }
