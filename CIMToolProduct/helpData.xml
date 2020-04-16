@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<extensions>
-	<tocOrder>
-		<toc id="/au.com.langdale,cimtoole.help/toc.xml"/>
-		<toc id="/org.eclipse.platform.doc.user/toc.xml"/>
-	</tocOrder>
-</extensions>
