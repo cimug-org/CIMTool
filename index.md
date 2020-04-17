@@ -1,7 +1,4 @@
-# CIMTool
-
-
-## CIMTool Change Log
+## CIMTool Release Log
 
 ### Release 1.9.7 [09-Dec-2013]
 **correction:** .eap files are closed after parsing and can now be deleted from a project.
