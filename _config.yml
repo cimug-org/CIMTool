@@ -1,7 +1,7 @@
 theme: jekyll-theme-minimal
-title: CIMug Open Source Projects
-description: CIMug
-logo: CIM_users_group.png
+title: CIMTool
+description: CIMTool Eclipse platform for the Common Information Model (CIM)
+logo: /assets/img/logo.png
 # show_downloads: ["true" or "false" to indicate whether to provide a download URL]
 show_downloads: true
 # google_analytics: [Your Google Analytics tracking ID]

@@ -1,3 +1,6 @@
+# CIMTool
+
+
 ## CIMTool Change Log
 
 ### Release 1.9.7 [09-Dec-2013]
@@ -18,7 +21,7 @@ This is one of a series of beta testing releases. See the blurb, New and Notable
 - Map primitive 'duration' to xs:duration. (Note: we already map decimal, date, time, dateTime to XSD types of the same name.)
 - Mappings of AbsoluteDate and AbsoluteTime removed. (Can't remove other oddball mappings such as AbsoluteDateTime because that would affect legacy schema generation.)
 
-### Release 1.9.4 [10-Sep-2013]
+### Release 1.9.4
 This release was not generally made available pending resolution of CIM data and time type issues.
 
 This is one of a series of beta testing releases. See the blurb, New and Notable for 1.9. This release adds:
@@ -74,7 +77,7 @@ This release incorporates changes to make CIMTool compatible with commonly used 
 
 **enhancement:** the ontology header is now compliant and includes the profile description, label, and (implicitly) namespace. the .owl header includes an import for the merged information schema.
 
-enchancement: CIM datatypes are now modeled using equivalentClass axioms. Anonymous classes in their profile are linked by equivalentClass or subClass to their respective information model classes.
+**enhancement:** CIM datatypes are now modeled using equivalentClass axioms. Anonymous classes in their profile are linked by equivalentClass or subClass to their respective information model classes.
 
 ### Release 1.7.3
 **correction:** profile validation rules for the case where a member of a child class is lifted into a parent caused spurious diagnostics. This affected the EndDeviceAssett profile in the IEC 61968 part 9 profiles.
@@ -253,7 +256,7 @@ accept 'units' as well as 'unit' for the units attribute of a datatype
 
 **correction:** the baseuri tag was not recognised in some XMI files.
 
-corrections: various regressions introduced in the 1.4.1 development release.
+**corrections:** various regressions introduced in the 1.4.1 development release.
 
 ### Development Release 1.4.1 [21-Jan-2009]
 First release with internal changes to the ontology API needed for future features.
