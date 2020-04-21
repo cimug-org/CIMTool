@@ -2,10 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole; singleton:=true
-Bundle-Version: 1.9.7.qualifier
+Bundle-Version: 1.9.8.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: cimtoole.jar,
- lib/commons-logging-1.1.1.jar
+ lib/commons-logging-1.1.1.jar,
+ lib/config-1.2.1.jar,
+ custom-xslt-builders/
 Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin
 Bundle-Vendor: Langdale Consultants
 Require-Bundle: au.com.langdale.cimutil,

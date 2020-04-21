@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.xml.sax.SAXException;
 
+import com.hp.hpl.jena.vocabulary.RDF;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
@@ -37,8 +40,6 @@ import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.workspace.ResourceOutputStream;
 
-import com.hp.hpl.jena.vocabulary.RDF;
-
 /**
  * A series of <code>Buildlet</code>s for building profile artifacts.
  */
@@ -46,8 +47,8 @@ public class ProfileBuildlets extends Task {
 	/**
 	 * Buildlet for a profile artifact.
 	 * 
-	 * Each type of profile buildlet is characterised by a specific file type
-	 * and a flag in the profile that enables it.
+	 * Each type of profile buildlet is characterised by a specific file type and a
+	 * flag in the profile that enables it.
 	 */
 	public abstract static class ProfileBuildlet extends Buildlet {
 		private String ext;
@@ -59,8 +60,7 @@ public class ProfileBuildlets extends Task {
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if (isProfile(file))
-				return Collections
-						.singletonList(getRelated(file, getFileType()));
+				return Collections.singletonList(getRelated(file, getFileType()));
 			else
 				return Collections.EMPTY_LIST;
 		}
@@ -81,7 +81,7 @@ public class ProfileBuildlets extends Task {
 
 				@Override
 				public String toString() {
-					return "Builder for " + getFileType();
+					return "Builder for " + getDisplayFileType();
 				}
 			};
 		}
@@ -92,6 +92,13 @@ public class ProfileBuildlets extends Task {
 
 		public String getFileType() {
 			return ext;
+		}
+
+		/**
+		 * We want what is displayed to be overridable.
+		 */
+		public String getDisplayFileType() {
+			return getFileType();
 		}
 
 		public boolean isFlagged(IFile file) throws CoreException {
@@ -112,8 +119,7 @@ public class ProfileBuildlets extends Task {
 		}
 
 		@Override
-		public void run(IFile result, boolean cleanup, IProgressMonitor monitor)
-				throws CoreException {
+		public void run(IFile result, boolean cleanup, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			if (cleanup || !file.exists() || !isFlagged(file))
 				clean(result, monitor);
@@ -134,8 +140,7 @@ public class ProfileBuildlets extends Task {
 		}
 
 		@Override
-		protected void build(IFile result, IProgressMonitor monitor)
-				throws CoreException {
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			OntModel model = getProfileModel(file);
 			writeOntology(result, model, format, monitor);
@@ -148,29 +153,33 @@ public class ProfileBuildlets extends Task {
 	 */
 	public static class TransformBuildlet extends ProfileBuildlet {
 		private String style;
+		private String display;
 
 		public TransformBuildlet(String style, String ext) {
 			super(ext);
 			this.style = style;
+			this.display = ext; // display defaults to the ext for this constructor.
+		}
+
+		public TransformBuildlet(String style, String ext, String display) {
+			super(ext);
+			this.style = style;
+			this.display = (display != null ? display : ext);
 		}
 
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
-			if (isProfile(file) || isRuleSet(file, style + "-xslt")
-					&& isProfile(getRelated(file, "owl")))
-				return Collections
-						.singletonList(getRelated(file, getFileType()));
+			if (isProfile(file) || isRuleSet(file, style + "-xslt") && isProfile(getRelated(file, "owl")))
+				return Collections.singletonList(getRelated(file, getFileType()));
 			else
 				return Collections.EMPTY_LIST;
 		}
 
-		protected void setupPostProcessors(ProfileSerializer serializer)
-				throws TransformerConfigurationException {
+		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
 		}
 
 		@Override
-		protected void build(IFile result, IProgressMonitor monitor)
-				throws CoreException {
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			ProfileModel tree = getMessageModel(file);
 			ProfileSerializer serializer = new ProfileSerializer(tree);
@@ -182,10 +191,8 @@ public class ProfileBuildlets extends Task {
 
 				IFile local = getRelated(result, style + "-xslt");
 				if (local.exists()) {
-					serializer.setErrorHandler(CIMBuilder
-							.createErrorHandler(local));
-					serializer.setStyleSheet(local.getContents(),
-							ProfileSerializer.XSDGEN);
+					serializer.setErrorHandler(CIMBuilder.createErrorHandler(local));
+					serializer.setStyleSheet(local.getContents(), ProfileSerializer.XSDGEN);
 				} else {
 					serializer.setStyleSheet(style);
 				}
@@ -197,7 +204,7 @@ public class ProfileBuildlets extends Task {
 			}
 
 			try {
-				ResourceOutputStream ostream = new ResourceOutputStream(result,	monitor, false, true);
+				ResourceOutputStream ostream = new ResourceOutputStream(result, monitor, false, true);
 				serializer.write(ostream);
 				ostream.close();
 			} catch (TransformerException e) {
@@ -205,6 +212,10 @@ public class ProfileBuildlets extends Task {
 			} catch (IOException e) {
 				error("error writing output", e);
 			}
+		}
+
+		public String getDisplayFileType() {
+			return this.display;
 		}
 	}
 
@@ -222,12 +233,18 @@ public class ProfileBuildlets extends Task {
 			super(style, "xsd");
 		}
 
+		public XSDBuildlet(String style, String ext) {
+			super(style, ext);
+		}
+
+		public XSDBuildlet(String style, String ext, String display) {
+			super(style, ext, display);
+		}
+
 		@Override
-		protected void build(IFile result, IProgressMonitor monitor)
-				throws CoreException {
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			super.build(result, monitor);
-			SchemaFactory parser = SchemaFactory
-					.newInstance("http://www.w3.org/2001/XMLSchema");
+			SchemaFactory parser = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 			parser.setErrorHandler(CIMBuilder.createErrorHandler(result));
 			Source source = new StreamSource(result.getContents());
 			try {
@@ -247,11 +264,36 @@ public class ProfileBuildlets extends Task {
 			super(style, ext);
 		}
 
+		public TextBuildlet(String style, String ext, String display) {
+			super(style, ext, display);
+		}
+
 		@Override
-		protected void setupPostProcessors(ProfileSerializer serializer)
-				throws TransformerConfigurationException {
+		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
 			serializer.addStyleSheet("indent");
 		}
+	}
+
+	/**
+	 * Buildlet for JSON schema artifacts. Note that though this is essentially a
+	 * duplicate of the TextBuildlet we've created it as its own subtype as we most
+	 * likely will add validation of the generated schema.
+	 */
+	public static class JSONSchemaBuildlet extends TransformBuildlet {
+
+		public JSONSchemaBuildlet(String style, String ext) {
+			super(style, ext);
+		}
+
+		public JSONSchemaBuildlet(String style, String ext, String display) {
+			super(style, ext, display);
+		}
+
+		@Override
+		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
+			serializer.addStyleSheet("indent");
+		}
+
 	}
 
 	/**
@@ -262,35 +304,29 @@ public class ProfileBuildlets extends Task {
 		private String lang;
 		protected boolean withInverses;
 
-		protected RDFSBasedBuildlet(String lang, String fileType,
-				boolean withInverses) {
+		protected RDFSBasedBuildlet(String lang, String fileType, boolean withInverses) {
 			super(fileType);
 			this.lang = lang;
 			this.withInverses = withInverses;
 		}
 
 		@Override
-		protected void build(IFile result, IProgressMonitor monitor)
-				throws CoreException {
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			boolean preserveNS = getPreferenceOption(PRESERVE_NAMESPACES);
 
 			OntModel profileModel = getProfileModel(file);
 			OntModel backgroundModel = getBackgroundModel(file);
-			RDFSBasedGenerator generator = getGenerator(profileModel,
-					backgroundModel, preserveNS);
+			RDFSBasedGenerator generator = getGenerator(profileModel, backgroundModel, preserveNS);
 			generator.run();
 			OntModel resultModel = generator.getResult();
-			System.out
-					.println("Generated ontology size: " + resultModel.size());
+			System.out.println("Generated ontology size: " + resultModel.size());
 
-			Task.write(resultModel, generator.getOntURI(), true, result, lang,
-					monitor);
+			Task.write(resultModel, generator.getOntURI(), true, result, lang, monitor);
 			result.setDerived(true);
 		}
 
-		protected abstract RDFSBasedGenerator getGenerator(
-				OntModel profileModel, OntModel backgroundModel,
+		protected abstract RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel,
 				boolean preserveNS) throws CoreException;
 	}
 
@@ -298,17 +334,14 @@ public class ProfileBuildlets extends Task {
 	 * Buildlet for the simple OWL representation of the profile.
 	 */
 	public static class SimpleOWLBuildlet extends RDFSBasedBuildlet {
-		public SimpleOWLBuildlet(String lang, String fileType,
-				boolean withInverses) {
+		public SimpleOWLBuildlet(String lang, String fileType, boolean withInverses) {
 			super(lang, fileType, withInverses);
 		}
 
 		@Override
-		protected RDFSBasedGenerator getGenerator(OntModel profileModel,
-				OntModel backgroundModel, boolean preserveNS)
+		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNS)
 				throws CoreException {
-			return new OWLGenerator(profileModel, backgroundModel, preserveNS,
-					withInverses);
+			return new OWLGenerator(profileModel, backgroundModel, preserveNS, withInverses);
 		}
 	}
 
@@ -316,17 +349,14 @@ public class ProfileBuildlets extends Task {
 	 * Buildlet for a profile in the original IEC RDFS language.
 	 */
 	public static class LegacyRDFSBuildlet extends RDFSBasedBuildlet {
-		public LegacyRDFSBuildlet(String lang, String fileType,
-				boolean withInverses) {
+		public LegacyRDFSBuildlet(String lang, String fileType, boolean withInverses) {
 			super(lang, fileType, withInverses);
 		}
 
 		@Override
-		protected RDFSBasedGenerator getGenerator(OntModel profileModel,
-				OntModel backgroundModel, boolean preserveNS)
+		protected RDFSBasedGenerator getGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNS)
 				throws CoreException {
-			return new RDFSGenerator(profileModel, backgroundModel, preserveNS,
-					withInverses);
+			return new RDFSGenerator(profileModel, backgroundModel, preserveNS, withInverses);
 		}
 	}
 
@@ -342,30 +372,37 @@ public class ProfileBuildlets extends Task {
 	 * @return: a list of all profile buildlets.
 	 */
 	private static ProfileBuildlet[] getAvailable() {
-		ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] {
-				new XSDBuildlet(),
-				new TransformBuildlet(null, "xml"),
-				new TransformBuildlet("html", "html"),
-				new TextBuildlet("sql", "sql"),
-				new TextBuildlet("scala", "scala"),
-				new TextBuildlet("jpa", "java"),
-				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false),
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false),
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false),
-				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented",
-						true),
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented",
-						true),
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true),
-				new CopyBuildlet("TURTLE", "ttl")
-			};
+		ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] { //
+				new XSDBuildlet(), //
+				new TransformBuildlet(null, "xml"), //
+				new TransformBuildlet("html", "html"), //
+				new TransformBuildlet("word", "word.html"), //
+				new TextBuildlet("sql", "sql"), //
+				//new JSONSchemaBuildlet("schema-json-draft-07", "draft-07.schema.json", "json-schema-draft-07"), //
+				// new JSONSchemaBuildlet("schema-json-draft-08", "draft-08.schema.json",
+				// "json-schema-draft-08"), //
+				// new JSONSchemaBuildlet("faker-extensions-json-draft-07",
+				// "draft-07.faker.schema.json", "faker-json-schema-draft-07"), //
+				// new JSONSchemaBuildlet("faker-extensions-json-draft-08",
+				// "draft-08.faker.schema.json", "faker-json-schema-draft-08"), //
+				new TextBuildlet("scala", "scala"), //
+				new TextBuildlet("jpa", "java"), //
+				new TextBuildlet("jsonschema2pojo", "java", "json-schema-2-pojo"), //
+				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
+				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
+				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //
+				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true), //
+				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true), //
+				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true), //
+				new CopyBuildlet("TURTLE", "ttl") //
+		};
 		ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();
-		if (registered.length>0){
-			ProfileBuildlet[] combined = new ProfileBuildlet[defaultBuildlets.length+registered.length];
+		if (registered.length > 0) {
+			ProfileBuildlet[] combined = new ProfileBuildlet[defaultBuildlets.length + registered.length];
 			System.arraycopy(defaultBuildlets, 0, combined, 0, defaultBuildlets.length);
 			System.arraycopy(registered, 0, combined, defaultBuildlets.length, registered.length);
 			return combined;
-		}else
+		} else
 			return defaultBuildlets;
 	}
 }

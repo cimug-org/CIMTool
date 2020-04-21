@@ -149,7 +149,7 @@ p.package { position: absolute; right: 10px; top: 0px}
 		<!--  generates a property -->
 		<tr>
 	        <th><p class="name" id="{../@name}.{@name}"><xsl:value-of select="@name"/></p></th>
-	        <td><p class="cardinality"><xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></p></td>
+	        <td><p class="cardinality"><xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'"><item>*</item></xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></p></td>
 	        <td class="type"><p class="type"><a href="#{@type}"><xsl:value-of select="@type"/></a></p></td>
 	        <td> <xsl:apply-templates mode="annotate" /> </td>
         </tr>
