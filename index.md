@@ -3,7 +3,6 @@
 ### Release 1.9.8-RC1
 new feature: Beta release of support for the new IEC 62361-104 standard for JSON schema profiles.  This release does not include the variant of namespace support that will be included in the published standard.  That is planned for RC2.
 
-
 ### Release 1.9.7 [09-Dec-2013]
 correction: .eap files are closed after parsing and can now be deleted from a project.
 
