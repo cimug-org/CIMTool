@@ -1,6 +1,6 @@
 ## CIMTool Release Log
 
-### Release 1.9.8-RC1 [Available 23-Apr-2020]
+### Release 1.9.8-RC1 [Available 24-Apr-2020]
 new feature: Beta release of support for the new IEC 62361-104 standard for JSON schema profiles.  This release does not include the variant of namespace support that will be included in the published standard.  That is planned for RC2.
 
 enhancement: CIMTool supports a variety of different types of builders that generate profile artifacts. Examples include XSD schemas, JPA Java source code, RDBMS DDL scripts, RDFS profiles, etc.  The ability to create custom profile builders has been available via CIMTool Eclipse plugin extension points, but such an approach requires an understanding of Eclipse plugin development.  Internally, CIMTool supports a category of builders based on XSLT transforms.  This release exposes this functionality by providing a configuration-based approach to adding custom XSLT transform-based builders that will automatically appear within CIMTool's "Profile Summary" tab. This enhancement allows tools such as Altova's XMLSpy to be used to create and test XSLT 1.0 transforms and utilize them in CIMTool.
