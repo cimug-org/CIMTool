@@ -5,7 +5,7 @@ new feature: Beta release of support for the new IEC 62361-104 standard for JSON
 
 enhancement: CIMTool supports a variety of different types of builders that generate profile artifacts. Examples include XSD schemas, JPA Java source code, RDBMS DDL scripts, RDFS profiles, etc.  The ability to create custom profile builders has been available via CIMTool Eclipse plugin extension points, but such an approach requires an understanding of Eclipse plugin development.  Internally, CIMTool supports a category of builders based on XSLT transforms.  This release exposes this functionality by providing a configuration-based approach to adding custom XSLT transform-based builders that will automatically appear within CIMTool's "Profile Summary" tab. This enhancement allows tools such as Altova's XMLSpy to be used to create and test XSLT 1.0 transforms and utilize them in CIMTool.
 
-CIMug's goal of this enhancement is to create a GitHub repository of custom XSLT transforms contributed by the community and, in turn, beneficial to the CIM community at large.
+CIMug's goal for this enhancement is to create a GitHub repository of custom XSLT transforms contributed by the community and, in turn, beneficial to the CIM community at large.
 
 ### Release 1.9.7 [09-Dec-2013]
 correction: .eap files are closed after parsing and can now be deleted from a project.
