@@ -114,6 +114,16 @@
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.ImportTransformBuilder"
+            icon="icons/xsd.png"
+            id="au.com.langdale.cimtoole.wizards.ImportTransformBuilder"
+            name="Import XSLT Transform Builder">
+      	<description>
+            A wizard for importing profile builders based on XSLT transforms.
+		</description>
+      </wizard>
+      <wizard
+            category="au.com.langdale.cimtoole"
             class="au.com.langdale.cimtoole.wizards.ImportXSDRules"
             icon="icons/xsd.png"
             id="au.com.langdale.cimtoole.wizards.ImportXSDRules"
@@ -363,6 +373,14 @@
                label="Import Schema"
                toolbarPath="cimtool"
                tooltip="Import a schema in XMI format.">
+         </action>
+         <action
+               class="au.com.langdale.cimtoole.actions.ImportTransformBuilderAction"
+               icon="icons/xsd.png"
+               id="au.com.langdale.cimtoole.actions.ImportTransformBuilderAction"
+               label="Import XSLT Transform Builder"
+               toolbarPath="cimtool"
+               tooltip="Import an XSLT transform builder.">
          </action>
       </actionSet>
    </extension>

@@ -6,6 +6,7 @@ package au.com.langdale.cimtoole.builder;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -13,11 +14,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import au.com.langdale.kena.OntModel;
-
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.kena.OntModel;
 /**
  * A Buildlet to serialize the merged schema for a project as an RDF/XML document. 
  */

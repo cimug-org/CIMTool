@@ -4,6 +4,7 @@
  */
 package au.com.langdale.cimtoole.builder;
 
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,13 +26,10 @@ import org.xml.sax.SAXParseException;
 
 import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONSchemaBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
 
@@ -54,18 +52,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 		Buildlet[] defaultBuildlets = new Buildlet[] { //
 				new SchemaBuildlet(), //
 				new ProfileChecker(), //
-				new XSDBuildlet(), //
 				new TransformBuildlet(null, "xml"), //
-				new TransformBuildlet("html", "html"), //
-				new TransformBuildlet("word", "word.html"), //
-				new TextBuildlet("sql", "sql"), //
-				//new JSONSchemaBuildlet("schema-json-draft-07", "draft-07.schema.json", "json-schema-draft-07"), //
-				//new JSONSchemaBuildlet("schema-json-draft-08", "draft-08.schema.json", "json-schema-draft-08"), //
-				//new JSONSchemaBuildlet("faker-extensions-json-draft-07", "draft-07.faker.schema.json", "faker-json-schema-draft-07"), //
-				//new JSONSchemaBuildlet("faker-extensions-json-draft-08", "draft-08.faker.schema.json", "faker-json-schema-draft-08"), //
-				new TextBuildlet("jpa", "java"), //
-				new TextBuildlet("jsonschema2pojo", "java", "json-schema-2-pojo"), //
-				new TextBuildlet("scala", "scala"), //
 				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
 				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
 				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //
@@ -76,7 +63,6 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				new ValidationBuildlet(), //
 				new SplitValidationBuildlet(), //
 				new IncrementalValidationBuildlet(), //
-
 		};
 
 		ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();

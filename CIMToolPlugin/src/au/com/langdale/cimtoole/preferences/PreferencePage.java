@@ -4,12 +4,15 @@
  */
 package au.com.langdale.cimtoole.preferences;
 
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.FurnishedPropertyPage;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.Template;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class PreferencePage extends FurnishedPropertyPage {
 

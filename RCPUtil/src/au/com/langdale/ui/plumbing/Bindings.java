@@ -52,7 +52,8 @@ public class Bindings implements Binding {
 		try {
 			Iterator it = stable.get().iterator();
 			while(it.hasNext()) {
-				((Binding)it.next()).refresh();
+				Binding binding = ((Binding)it.next());
+				binding.refresh();
 			}
 		}
 		finally {
@@ -65,7 +66,8 @@ public class Bindings implements Binding {
 		try {
 			Iterator it = stable.get().iterator();
 			while(it.hasNext()) {
-				((Binding)it.next()).update();
+				Binding binding = ((Binding)it.next());
+				binding.update();
 			}
 		}
 		finally {

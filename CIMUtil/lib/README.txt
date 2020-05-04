@@ -1,0 +1,1 @@
+The Saxon-HE XSLT implementation has a single dependency on jline-2.9.jar.  This jar may be removed if Saxon is not needed.

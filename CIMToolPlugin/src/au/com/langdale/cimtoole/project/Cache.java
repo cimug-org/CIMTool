@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.QualifiedName;
 
+import com.hp.hpl.jena.graph.compose.MultiUnion;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.util.Jobs;
-
-import com.hp.hpl.jena.graph.compose.MultiUnion;
 /**
  * A cache of ontology models. 
  */

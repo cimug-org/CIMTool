@@ -17,21 +17,20 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import com.hp.hpl.jena.shared.JenaException;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
 import au.com.langdale.util.Logger;
 import au.com.langdale.util.Profiler;
 import au.com.langdale.util.Profiler.TimeSpan;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 import au.com.langdale.workspace.ResourceOutputStream;
-
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.ModelFactory;
-
-import com.hp.hpl.jena.shared.JenaException;
 /**
  * Buildlet to generate diagnostics for a CIM/XML instance. 
  * Separate subclasses handle direct validation of (small) CIM/XML

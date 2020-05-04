@@ -10,8 +10,8 @@ import java.io.InputStream;
 import org.eclipse.core.resources.IResource;
 
 import au.com.langdale.cimtoole.project.Info;
-import au.com.langdale.inference.StandardFunctorActions;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.inference.StandardFunctorActions;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.validation.SplitValidator;
 import au.com.langdale.validation.ValidatorUtil;

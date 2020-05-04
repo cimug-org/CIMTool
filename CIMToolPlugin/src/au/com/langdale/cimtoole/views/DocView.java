@@ -6,8 +6,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
+import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Resource;

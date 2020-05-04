@@ -9,7 +9,9 @@ Bundle-ClassPath: cimutil.jar,
  lib/poi-3.0.1-FINAL-20070705.jar,
  lib/jackcess-1.2.9.jar,
  lib/commons-logging-1.1.1.jar,
- lib/commons-lang-2.6.jar
+ lib/commons-lang-2.6.jar,
+ lib/Saxon-HE-10.0.jar,
+ lib/jline-2.9.jar
 Export-Package: au.com.langdale.cim,
  au.com.langdale.jena,
  au.com.langdale.profiles,

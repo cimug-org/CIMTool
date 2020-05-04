@@ -29,10 +29,6 @@
                value="50,260,400,20">
          </property>
          <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-         <property
                name="appName"
                value="CIMTool">
          </property>

@@ -1,11 +1,14 @@
 package au.com.langdale.cimtoole.test;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
@@ -14,8 +17,10 @@ import au.com.langdale.splitmodel.SplitReader;
 
 public class ProjectTest extends WorkspaceTest {
 
+	public static final String SAMPLES_ZIP = "CIMToolTestFiles.zip";
 	public static final String SAMPLES_FOLDER = "CIMToolTestFiles";
 	public static final String SAMPLE_SCHEMA = "cim11v09combined.xmi";
+	public static final String SAMPLE_CUSTOM_BUILDER = "junit-test.xsl";
 	public static final String SAMPLE_PROFILE = "cpsm2007.owl";
 	public static final String SAMPLE_RULES = "profile.rules";
 	public static final String SAMPLE_HTML_RULES = "profile.html-xslt";
@@ -34,7 +39,7 @@ public class ProjectTest extends WorkspaceTest {
 	protected IFolder model;
 	protected IFolder increment;
 	protected AsyncModel reader;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -43,62 +48,66 @@ public class ProjectTest extends WorkspaceTest {
 		profile = Info.getProfileFolder(project).getFile(SAMPLE_PROFILE);
 		model = Info.getInstanceFolder(project).getFolder(MODEL_NAME);
 		increment = Info.getIncrementalFolder(project).getFolder(INCREMENT_NAME);
+		setUpTestData();
 	}
-	
+
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		tearDownTestData();
+	}
+
 	protected void createReader() throws IOException {
 		reader = new SplitReader(model.getLocation().toOSString());
 	}
-	
-	protected String getSamplesFolder() {
-		return workspace.getRoot().getLocation()
-				.removeLastSegments(1).append(SAMPLES_FOLDER)
-				.addTrailingSeparator().toOSString();
+
+	protected void setUpTestData() {
+		// We create an InputStream from the ZIP file resource loaded from the classpath...
+		InputStream is = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(SAMPLES_FOLDER + "/" + SAMPLES_ZIP);
+		unzip(is, getSamplesFolder());
 	}
-	
+
+	protected void tearDownTestData() {
+		File samplesFolder = new File(getSamplesFolder());
+		samplesFolder.delete();
+	}
+
+	protected String getSamplesFolder() {
+		IPath rootPath = workspace.getRoot().getLocation();
+		IPath samplesFolder = rootPath.removeLastSegments(1).append(SAMPLES_FOLDER);
+		String osString = samplesFolder.addTrailingSeparator().toOSString();
+		return osString;
+	}
+
 	protected String getSmallCasesFolder() {
-		return workspace.getRoot().getLocation()
-				.removeLastSegments(1)
-				.append(SAMPLES_FOLDER)
-				.append(SMALL_CASES)
+		return workspace.getRoot().getLocation().removeLastSegments(1).append(SAMPLES_FOLDER).append(SMALL_CASES)
 				.addTrailingSeparator().toOSString();
 	}
 
-	protected void setupSchema() throws CoreException  {
-		IWorkspaceRunnable task = Task.importSchema(
-				schema, 
-				getSamplesFolder() + SAMPLE_SCHEMA, 
-				SCHEMA_NS);
+	protected void setupSchema() throws CoreException {
+		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + SAMPLE_SCHEMA, SCHEMA_NS);
 		task.run(monitor);
 	}
-	
+
 	protected void setupProfile() throws CoreException {
 		setupProfile(getSamplesFolder() + SAMPLE_PROFILE);
-		
 	}
 
 	protected void setupProfile(final String path) throws CoreException {
-		IWorkspaceRunnable task = Task.importProfile(
-				profile, 
-				path);
+		IWorkspaceRunnable task = Task.importProfile(profile, path);
 		task.run(monitor);
 	}
 
 	protected IFile getRelated(String ext) {
-		return project.getFile(
-				profile.getProjectRelativePath()
-				.removeFileExtension()
-				.addFileExtension(ext));
+		return project.getFile(profile.getProjectRelativePath().removeFileExtension().addFileExtension(ext));
 	}
 
 	protected IFile getModelRelated(String ext) {
-		return project.getFile(
-				model.getProjectRelativePath()
-				.addFileExtension(ext));
+		return project.getFile(model.getProjectRelativePath().addFileExtension(ext));
 	}
 
 	protected IFile getIncrementRelated(String ext) {
-		return project.getFile(
-				increment.getProjectRelativePath()
-				.addFileExtension(ext));
+		return project.getFile(increment.getProjectRelativePath().addFileExtension(ext));
 	}
 }

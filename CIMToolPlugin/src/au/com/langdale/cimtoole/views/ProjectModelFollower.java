@@ -3,9 +3,9 @@ package au.com.langdale.cimtoole.views;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
+import au.com.langdale.cimtoole.project.Cache.CacheListener;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.ModelMinder;
-import au.com.langdale.cimtoole.project.Cache.CacheListener;
 import au.com.langdale.kena.OntModel;
 
 public abstract class ProjectModelFollower extends SelectionFollower implements CacheListener {

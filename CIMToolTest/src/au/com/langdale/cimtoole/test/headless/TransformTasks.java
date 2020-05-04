@@ -12,7 +12,7 @@ import au.com.langdale.kena.OntModel;
 
 public class TransformTasks extends ProjectTest {
 
-	public static final XSDBuildlet xsdBuildlet = new XSDBuildlet();
+	public static final XSDBuildlet xsdBuildlet = new XSDBuildlet("xsd", "xsd");
 
 	@Override
 	protected void setUp() throws Exception {

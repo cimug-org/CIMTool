@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMToolTest Plug-in
 Bundle-SymbolicName: CIMToolTest
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1.qualifier
 Require-Bundle: au.com.langdale.cimtoole,
  au.com.langdale.kena,
  au.com.langdale.rcputil,

@@ -5,6 +5,10 @@
 package au.com.langdale.cimtoole.builder;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -23,9 +27,9 @@ import org.xml.sax.SAXException;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.cimtoole.registries.ProfileBuildletConfigUtils;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
 import au.com.langdale.jena.OntModelProvider;
 import au.com.langdale.kena.OntModel;
@@ -44,6 +48,9 @@ import au.com.langdale.workspace.ResourceOutputStream;
  * A series of <code>Buildlet</code>s for building profile artifacts.
  */
 public class ProfileBuildlets extends Task {
+
+	private static ProfileBuildlet[] availableBuildlets;
+
 	/**
 	 * Buildlet for a profile artifact.
 	 * 
@@ -51,6 +58,7 @@ public class ProfileBuildlets extends Task {
 	 * flag in the profile that enables it.
 	 */
 	public abstract static class ProfileBuildlet extends Buildlet {
+
 		private String ext;
 
 		protected ProfileBuildlet(String fileType) {
@@ -60,7 +68,7 @@ public class ProfileBuildlets extends Task {
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if (isProfile(file))
-				return Collections.singletonList(getRelated(file, getFileType()));
+				return Collections.singletonList(getRelated(file, getFileExt()));
 			else
 				return Collections.EMPTY_LIST;
 		}
@@ -81,24 +89,30 @@ public class ProfileBuildlets extends Task {
 
 				@Override
 				public String toString() {
-					return "Builder for " + getDisplayFileType();
+					return "Builder for " + getDisplayDescription();
 				}
 			};
 		}
 
 		public Resource getIdentifier() {
-			return ResourceFactory.createResource(NS + getFileType());
+			return ResourceFactory.createResource(NS + getFileExt());
 		}
 
-		public String getFileType() {
+		public String getFileExt() {
 			return ext;
 		}
 
 		/**
-		 * We want what is displayed to be overridable.
+		 * We want what is displayed in the 'Profile Summary' tab's builder list box to
+		 * be overridable. This default implementation should not be changed for the
+		 * purposes of backwards compatability. However, it may be overridden for
+		 * subtypes of ProfileBuildlet.
 		 */
-		public String getDisplayFileType() {
-			return getFileType();
+		public String getDisplayDescription() {
+			StringBuffer descr = new StringBuffer();
+			descr.append(getFileExt());
+			descr.append("  (.").append(getFileExt()).append(")");
+			return descr.toString();
 		}
 
 		public boolean isFlagged(IFile file) throws CoreException {
@@ -126,6 +140,7 @@ public class ProfileBuildlets extends Task {
 			else
 				build(result, monitor);
 		}
+
 	}
 
 	/**
@@ -149,28 +164,32 @@ public class ProfileBuildlets extends Task {
 	}
 
 	/**
-	 * Buildlet for a profile artifact that is the product of an XSLT transform.
+	 * A type of buildlet for generating artifacts that are produced by an XSLT
+	 * transform. The class may further be subclassed to provide additional
+	 * functionality based on the types of output produced (e.g. an XSD schema, a
+	 * JSON schema, etc.) or it may be used as is.
 	 */
 	public static class TransformBuildlet extends ProfileBuildlet {
+
 		private String style;
-		private String display;
+		private ZonedDateTime datetime;
 
 		public TransformBuildlet(String style, String ext) {
 			super(ext);
 			this.style = style;
-			this.display = ext; // display defaults to the ext for this constructor.
+			this.datetime = ZonedDateTime.now(ZoneId.of("Z"));
 		}
-
-		public TransformBuildlet(String style, String ext, String display) {
+		
+		public TransformBuildlet(String style, String ext, ZonedDateTime datetime) {
 			super(ext);
 			this.style = style;
-			this.display = (display != null ? display : ext);
+			this.datetime = (datetime == null ? ZonedDateTime.now(ZoneId.of("Z")) : datetime.withZoneSameInstant(ZoneId.of("Z")));
 		}
 
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if (isProfile(file) || isRuleSet(file, style + "-xslt") && isProfile(getRelated(file, "owl")))
-				return Collections.singletonList(getRelated(file, getFileType()));
+				return Collections.singletonList(getRelated(file, getFileExt()));
 			else
 				return Collections.EMPTY_LIST;
 		}
@@ -194,7 +213,23 @@ public class ProfileBuildlets extends Task {
 					serializer.setErrorHandler(CIMBuilder.createErrorHandler(local));
 					serializer.setStyleSheet(local.getContents(), ProfileSerializer.XSDGEN);
 				} else {
-					serializer.setStyleSheet(style);
+					InputStream is = null;
+					try {
+						// We attempt to first load in any custom XSLT transform builders. If is == null
+						// it means none is available at which point we "fallback" to an alternate call
+						// to the setStyleSheet method...
+						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
+						if (is != null) {
+							serializer.setStyleSheet(is, ProfileSerializer.XSDGEN);
+						} else {
+							serializer.setStyleSheet(style);
+						}
+					} catch (Exception e) {
+						// Exception thrown so we attempt to perform a call to setStyleSheet(style)
+						// which will attempt to load and set an XSL file packaged within the CIMUtil
+						// bundled jar.
+						serializer.setStyleSheet(style);
+					}
 				}
 
 				setupPostProcessors(serializer);
@@ -214,9 +249,57 @@ public class ProfileBuildlets extends Task {
 			}
 		}
 
-		public String getDisplayFileType() {
-			return this.display;
+		public String getStyle() {
+			return style;
 		}
+
+		/**
+		 * We override the getDisplayDescription() method as we have a slightly
+		 * different way to derive the description for TransformBuildlets.
+		 */
+		public String getDisplayDescription() {
+			StringBuffer descr = new StringBuffer();
+
+			descr.append(getStyle() != null ? getStyle() : getFileExt());
+			descr.append("  (.").append(getFileExt()).append(")");
+
+			return descr.toString();
+		}
+
+		@Override
+		public String toString() {
+			return "Builder for " + getDisplayDescription();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((style == null) ? 0 : style.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			TransformBuildlet other = (TransformBuildlet) obj;
+			if (style == null) {
+				if (other.style != null)
+					return false;
+			} else if (!style.equals(other.style))
+				return false;
+			return true;
+		}
+
+		public ZonedDateTime getDateTimeCreated() {
+			return this.datetime;
+		}
+		
 	}
 
 	/**
@@ -225,20 +308,13 @@ public class ProfileBuildlets extends Task {
 	 * The basic XSLT transform is followed by XML Schema validation.
 	 */
 	public static class XSDBuildlet extends TransformBuildlet {
-		public XSDBuildlet() {
-			this("xsd");
-		}
-
-		public XSDBuildlet(String style) {
-			super(style, "xsd");
-		}
 
 		public XSDBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-
-		public XSDBuildlet(String style, String ext, String display) {
-			super(style, ext, display);
+		
+		public XSDBuildlet(String style, String ext, ZonedDateTime datetime) {
+			super(style, ext, datetime);
 		}
 
 		@Override
@@ -263,9 +339,9 @@ public class ProfileBuildlets extends Task {
 		public TextBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-
-		public TextBuildlet(String style, String ext, String display) {
-			super(style, ext, display);
+		
+		public TextBuildlet(String style, String ext, ZonedDateTime datetime) {
+			super(style, ext, datetime);
 		}
 
 		@Override
@@ -276,17 +352,17 @@ public class ProfileBuildlets extends Task {
 
 	/**
 	 * Buildlet for JSON schema artifacts. Note that though this is essentially a
-	 * duplicate of the TextBuildlet we've created it as its own subtype as we most
-	 * likely will add validation of the generated schema.
+	 * duplicate of the TextBuildlet we've created it as its own subtype as we may
+	 * add additional validation of the generated JSON schema.
 	 */
 	public static class JSONSchemaBuildlet extends TransformBuildlet {
 
 		public JSONSchemaBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-
-		public JSONSchemaBuildlet(String style, String ext, String display) {
-			super(style, ext, display);
+		
+		public JSONSchemaBuildlet(String style, String ext, ZonedDateTime datetime) {
+			super(style, ext, datetime);
 		}
 
 		@Override
@@ -360,11 +436,17 @@ public class ProfileBuildlets extends Task {
 		}
 	}
 
+	public static void resetAvailable() {
+		availableBuildlets = null;
+	}
+
 	public static BooleanModel[] getAvailable(OntModelProvider context) {
 		ProfileBuildlet[] buildlets = getAvailable();
+
 		BooleanModel[] flags = new BooleanModel[buildlets.length];
 		for (int ix = 0; ix < buildlets.length; ix++)
 			flags[ix] = buildlets[ix].getFlag(context);
+
 		return flags;
 	}
 
@@ -372,37 +454,31 @@ public class ProfileBuildlets extends Task {
 	 * @return: a list of all profile buildlets.
 	 */
 	private static ProfileBuildlet[] getAvailable() {
-		ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] { //
-				new XSDBuildlet(), //
-				new TransformBuildlet(null, "xml"), //
-				new TransformBuildlet("html", "html"), //
-				new TransformBuildlet("word", "word.html"), //
-				new TextBuildlet("sql", "sql"), //
-				//new JSONSchemaBuildlet("schema-json-draft-07", "draft-07.schema.json", "json-schema-draft-07"), //
-				// new JSONSchemaBuildlet("schema-json-draft-08", "draft-08.schema.json",
-				// "json-schema-draft-08"), //
-				// new JSONSchemaBuildlet("faker-extensions-json-draft-07",
-				// "draft-07.faker.schema.json", "faker-json-schema-draft-07"), //
-				// new JSONSchemaBuildlet("faker-extensions-json-draft-08",
-				// "draft-08.faker.schema.json", "faker-json-schema-draft-08"), //
-				new TextBuildlet("scala", "scala"), //
-				new TextBuildlet("jpa", "java"), //
-				new TextBuildlet("jsonschema2pojo", "java", "json-schema-2-pojo"), //
-				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //
-				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true), //
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true), //
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true), //
-				new CopyBuildlet("TURTLE", "ttl") //
-		};
-		ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();
-		if (registered.length > 0) {
-			ProfileBuildlet[] combined = new ProfileBuildlet[defaultBuildlets.length + registered.length];
-			System.arraycopy(defaultBuildlets, 0, combined, 0, defaultBuildlets.length);
-			System.arraycopy(registered, 0, combined, defaultBuildlets.length, registered.length);
-			return combined;
-		} else
-			return defaultBuildlets;
+		if (availableBuildlets == null) {
+
+			ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] { //
+					new TransformBuildlet(null, "xml"), //
+					new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
+					new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
+					new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //
+					new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true), //
+					new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true), //
+					new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true), //
+					new CopyBuildlet("TURTLE", "ttl") //
+			};
+
+			ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();
+
+			if (registered.length > 0) {
+				ProfileBuildlet[] combined = new ProfileBuildlet[defaultBuildlets.length + registered.length];
+				System.arraycopy(defaultBuildlets, 0, combined, 0, defaultBuildlets.length);
+				System.arraycopy(registered, 0, combined, defaultBuildlets.length, registered.length);
+				availableBuildlets = combined;
+			} else
+				availableBuildlets = defaultBuildlets;
+
+		}
+
+		return availableBuildlets;
 	}
 }
