@@ -10,7 +10,6 @@ import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.RadioButton;
 import static au.com.langdale.ui.builder.Templates.ReadOnlyComboViewer;
 
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Button;
 
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONSchemaBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -245,7 +244,7 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 			TransformType transformType = (TransformType) type.getValue();
 			switch (transformType) {
 			case JSON:
-				buildlet = new JSONSchemaBuildlet(getBuilderKey(), ext.getText(),
+				buildlet = new JSONBuildlet(getBuilderKey(), ext.getText(),
 						currentSelection.getDateTimeCreated());
 				break;
 			case TEXT:

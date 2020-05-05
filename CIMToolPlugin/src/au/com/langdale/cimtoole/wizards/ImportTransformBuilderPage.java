@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONSchemaBuildlet;
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -238,7 +238,7 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 			TransformType transformType = (TransformType) type.getValue();
 			switch (transformType) {
 			case JSON:
-				buildlet = new JSONSchemaBuildlet(getBuilderKey(), ext.getText());
+				buildlet = new JSONBuildlet(getBuilderKey(), ext.getText());
 				break;
 			case TEXT:
 				buildlet = new TextBuildlet(getBuilderKey(), ext.getText());

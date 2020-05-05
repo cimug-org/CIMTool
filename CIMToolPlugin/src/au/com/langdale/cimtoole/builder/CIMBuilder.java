@@ -1,10 +1,9 @@
 /*
- * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
- * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants. Langdale
+ * Consultants can be contacted at: http://www.langdale.com.au
  */
 package au.com.langdale.cimtoole.builder;
 
-import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -78,10 +77,10 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Utility to add a problem marker to a file.
 	 * 
-	 * @param file:       the file to be marked
-	 * @param message:    the text describing the problem
-	 * @param lineNumber: the line to be marked.
-	 * @param severity:   the severity code (see <code>IMarker</code>).
+	 * @param file the file to be marked
+	 * @param message the text describing the problem
+	 * @param lineNumber the line to be marked.
+	 * @param severity the severity code (see <code>IMarker</code>).
 	 * @throws CoreException
 	 */
 	public static void addMarker(IFile file, String message, int lineNumber, int severity) throws CoreException {
@@ -94,9 +93,9 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Utility to add a problem marker to a file.
 	 * 
-	 * @param file:     the file to be marked
-	 * @param message:  the text describing the problem
-	 * @param severity: the severity code (see <code>IMarker</code>).
+	 * @param file the file to be marked
+	 * @param message the text describing the problem
+	 * @param severity the severity code (see <code>IMarker</code>).
 	 * @throws CoreException
 	 */
 	public static IMarker addMarker(IFile file, String message, int severity) throws CoreException {
@@ -109,8 +108,8 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Create a SAX error handler that converts each error into a marker.
 	 * 
-	 * @param result: the file to which the markers will be attached
-	 * @return: the SAX error handler
+	 * @param result the file to which the markers will be attached
+	 * @return the SAX error handler
 	 * @throws CoreException
 	 */
 	public static ErrorHandler createErrorHandler(final IFile result) throws CoreException {
@@ -141,8 +140,8 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Utility to add a problem marker with ERROR severity to a file.
 	 * 
-	 * @param file:    the file to be marked
-	 * @param message: the text describing the problem
+	 * @param file the file to be marked
+	 * @param message the text describing the problem
 	 * @throws CoreException
 	 */
 	public static IMarker addMarker(IFile file, String message) throws CoreException {
@@ -152,7 +151,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Utility to remove all CIMTool markers from a file.
 	 * 
-	 * @param file: the file
+	 * @param file the file
 	 * @throws CoreException
 	 */
 	public static void removeMarkers(IFile file) throws CoreException {
@@ -204,10 +203,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				while (outputs.hasNext()) {
 					IFile output = (IFile) outputs.next();
 					if (work.remove(output) != null)
-						System.out.println("CIMBuilder: push down in build order: " + output.getName()); // push output
-																											// down in
-																											// the build
-																											// order
+						System.out.println("CIMBuilder: push down in build order: " + output.getName());
 					else
 						System.out.println("CIMBuilder: adding to build: " + output.getName());
 					work.put(output, buildlet);

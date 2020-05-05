@@ -1,14 +1,11 @@
 /*
- * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
- * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants. Langdale
+ * Consultants can be contacted at: http://www.langdale.com.au
  */
 package au.com.langdale.cimtoole.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -22,9 +19,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.xml.sax.SAXException;
-
-import com.hp.hpl.jena.vocabulary.RDF;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
@@ -44,6 +41,8 @@ import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.workspace.ResourceOutputStream;
 
+import com.hp.hpl.jena.vocabulary.RDF;
+
 /**
  * A series of <code>Buildlet</code>s for building profile artifacts.
  */
@@ -54,8 +53,8 @@ public class ProfileBuildlets extends Task {
 	/**
 	 * Buildlet for a profile artifact.
 	 * 
-	 * Each type of profile buildlet is characterised by a specific file type and a
-	 * flag in the profile that enables it.
+	 * Each type of profile buildlet is characterised by a specific file type
+	 * and a flag in the profile that enables it.
 	 */
 	public abstract static class ProfileBuildlet extends Buildlet {
 
@@ -103,10 +102,10 @@ public class ProfileBuildlets extends Task {
 		}
 
 		/**
-		 * We want what is displayed in the 'Profile Summary' tab's builder list box to
-		 * be overridable. This default implementation should not be changed for the
-		 * purposes of backwards compatability. However, it may be overridden for
-		 * subtypes of ProfileBuildlet.
+		 * We want what is displayed in the 'Profile Summary' tab's builder list
+		 * box to be overridable. This default implementation should not be
+		 * changed for the purposes of backwards compatability. However, it may
+		 * be overridden for subtypes of ProfileBuildlet.
 		 */
 		public String getDisplayDescription() {
 			StringBuffer descr = new StringBuffer();
@@ -166,24 +165,24 @@ public class ProfileBuildlets extends Task {
 	/**
 	 * A type of buildlet for generating artifacts that are produced by an XSLT
 	 * transform. The class may further be subclassed to provide additional
-	 * functionality based on the types of output produced (e.g. an XSD schema, a
-	 * JSON schema, etc.) or it may be used as is.
+	 * functionality based on the types of output produced (e.g. an XSD schema,
+	 * a JSON schema, etc.) or it may be used as is.
 	 */
 	public static class TransformBuildlet extends ProfileBuildlet {
 
 		private String style;
-		private ZonedDateTime datetime;
+		private DateTime datetime;
 
 		public TransformBuildlet(String style, String ext) {
 			super(ext);
 			this.style = style;
-			this.datetime = ZonedDateTime.now(ZoneId.of("Z"));
+			this.datetime = DateTime.now(DateTimeZone.UTC);
 		}
-		
-		public TransformBuildlet(String style, String ext, ZonedDateTime datetime) {
+
+		public TransformBuildlet(String style, String ext, DateTime datetime) {
 			super(ext);
 			this.style = style;
-			this.datetime = (datetime == null ? ZonedDateTime.now(ZoneId.of("Z")) : datetime.withZoneSameInstant(ZoneId.of("Z")));
+			this.datetime = (datetime == null ? DateTime.now(DateTimeZone.UTC) : datetime);
 		}
 
 		@Override
@@ -215,8 +214,10 @@ public class ProfileBuildlets extends Task {
 				} else {
 					InputStream is = null;
 					try {
-						// We attempt to first load in any custom XSLT transform builders. If is == null
-						// it means none is available at which point we "fallback" to an alternate call
+						// We attempt to first load in any custom XSLT transform
+						// builders. If is == null
+						// it means none is available at which point we
+						// "fallback" to an alternate call
 						// to the setStyleSheet method...
 						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 						if (is != null) {
@@ -225,8 +226,10 @@ public class ProfileBuildlets extends Task {
 							serializer.setStyleSheet(style);
 						}
 					} catch (Exception e) {
-						// Exception thrown so we attempt to perform a call to setStyleSheet(style)
-						// which will attempt to load and set an XSL file packaged within the CIMUtil
+						// Exception thrown so we attempt to perform a call to
+						// setStyleSheet(style)
+						// which will attempt to load and set an XSL file
+						// packaged within the CIMUtil
 						// bundled jar.
 						serializer.setStyleSheet(style);
 					}
@@ -296,10 +299,10 @@ public class ProfileBuildlets extends Task {
 			return true;
 		}
 
-		public ZonedDateTime getDateTimeCreated() {
+		public DateTime getDateTimeCreated() {
 			return this.datetime;
 		}
-		
+
 	}
 
 	/**
@@ -312,8 +315,8 @@ public class ProfileBuildlets extends Task {
 		public XSDBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-		
-		public XSDBuildlet(String style, String ext, ZonedDateTime datetime) {
+
+		public XSDBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
 		}
 
@@ -339,8 +342,8 @@ public class ProfileBuildlets extends Task {
 		public TextBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-		
-		public TextBuildlet(String style, String ext, ZonedDateTime datetime) {
+
+		public TextBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
 		}
 
@@ -351,17 +354,17 @@ public class ProfileBuildlets extends Task {
 	}
 
 	/**
-	 * Buildlet for JSON schema artifacts. Note that though this is essentially a
-	 * duplicate of the TextBuildlet we've created it as its own subtype as we may
-	 * add additional validation of the generated JSON schema.
+	 * Buildlet for JSON schema artifacts. Note that though this is essentially
+	 * a duplicate of the TextBuildlet we've created it as its own subtype as we
+	 * may add additional validation of the generated JSON schema.
 	 */
-	public static class JSONSchemaBuildlet extends TransformBuildlet {
+	public static class JSONBuildlet extends TransformBuildlet {
 
-		public JSONSchemaBuildlet(String style, String ext) {
+		public JSONBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-		
-		public JSONSchemaBuildlet(String style, String ext, ZonedDateTime datetime) {
+
+		public JSONBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
 		}
 
@@ -457,7 +460,7 @@ public class ProfileBuildlets extends Task {
 		if (availableBuildlets == null) {
 
 			ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] { //
-					new TransformBuildlet(null, "xml"), //
+			new TransformBuildlet(null, "xml"), //
 					new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
 					new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
 					new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //

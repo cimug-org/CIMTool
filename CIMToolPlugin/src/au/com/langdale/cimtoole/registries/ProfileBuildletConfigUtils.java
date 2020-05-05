@@ -5,13 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,24 +20,20 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.joda.time.DateTime;
 import org.osgi.framework.Bundle;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigParseOptions;
-import com.typesafe.config.ConfigSyntax;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueFactory;
-import com.typesafe.config.parser.ConfigDocument;
-import com.typesafe.config.parser.ConfigDocumentFactory;
-
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONSchemaBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
+import au.com.langdale.cimtoole.registries.config.JodaDateTimeDeserializer;
+import au.com.langdale.cimtoole.registries.config.JodaDateTimeSerializer;
+import au.com.langdale.cimtoole.registries.config.TransformBuildletDeserializer;
+import au.com.langdale.cimtoole.registries.config.TransformBuildletSerializer;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Utility class to handle specific functionality centered around the
@@ -48,10 +41,14 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
  */
 public final class ProfileBuildletConfigUtils {
 
-	private static final String KEY_BUILDERS = "builders";
-	private static final String KEY_DATETIME = "datetime";
-	private static final String KEY_TYPE = "type";
-	private static final String KEY_EXT = "ext";
+	private static Type typeOfHashMap = new TypeToken<Map<String, TransformBuildlet>>() {
+	}.getType();
+
+	private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new JodaDateTimeDeserializer())
+			.registerTypeAdapter(DateTime.class, new JodaDateTimeSerializer())
+			.registerTypeAdapter(TransformBuildlet.class, new TransformBuildletDeserializer<TransformBuildlet>())
+			.registerTypeAdapter(TransformBuildlet.class, new TransformBuildletSerializer<TransformBuildlet>())
+			.setPrettyPrinting().create();
 
 	private static final String XSL = ".xsl";
 
@@ -101,25 +98,19 @@ public final class ProfileBuildletConfigUtils {
 						}
 
 						if (dataAreaBuilderConfigFile.exists()) {
-							Config buildersConfig = ConfigFactory.parseFile(dataAreaBuilderConfigFile);
 
-							// Retrieve all existing custom builder configuration entries under the
-							// "builders" key...
-							List<? extends ConfigObject> builders = buildersConfig.getObjectList(KEY_BUILDERS);
+							String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+							Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
-							// Loop through each builder contained within the .builders (i.e.
-							// builders.conf) file...
-							for (ConfigObject builder : builders) {
+							for (TransformBuildlet builder : builders.values()) {
 
-								String builderKey = builder.keySet().iterator().next();
-								String xslFileName = builderKey + XSL;
+								String xslFileName = builder.getStyle() + XSL;
 
 								URL xslUrl = cimtooleBundle.getEntry(CONFIG_DIR + "/" + xslFileName);
 								URL xslFileUrl = FileLocator.toFileURL(xslUrl);
-								//
 								File dataAreaXslFile = new File(dataAreaDir, xslFileName);
 								dataAreaXslFile.createNewFile();
-								//
+
 								is = null;
 								try {
 									is = xslFileUrl.openStream();
@@ -139,8 +130,7 @@ public final class ProfileBuildletConfigUtils {
 				}
 			}
 		} catch (Exception e) {
-			// We log the exception, fail gracefully and proceed...
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new RuntimeException(e);
 		}
 	}
@@ -164,7 +154,7 @@ public final class ProfileBuildletConfigUtils {
 						}
 					}
 				} catch (CoreException e) {
-					e.printStackTrace();
+					e.printStackTrace(System.err);
 				}
 			}
 		}
@@ -211,7 +201,9 @@ public final class ProfileBuildletConfigUtils {
 				}
 			}
 		} catch (IOException e) {
-			// Do nothing. Return is = null;
+			e.printStackTrace(System.err);
+			throw new RuntimeException("Unable to create an input stream for the XSLT transform file: " + builderKey
+					+ ".xsl", e);
 		}
 
 		return is;
@@ -234,56 +226,13 @@ public final class ProfileBuildletConfigUtils {
 					initCustomBuildersConfiguration();
 
 				if (dataAreaBuilderConfigFile.exists()) {
-
-					Config buildersConfig = ConfigFactory.parseFile(dataAreaBuilderConfigFile);
-
-					// Retrieve all existing custom builder configuration entries under the
-					// "builders" key...
-					List<? extends ConfigObject> builders = buildersConfig.getObjectList(KEY_BUILDERS);
-
-					// Loop through each builder contained within the builders.conf file
-					for (ConfigObject builder : builders) {
-
-						String builderKey = builder.keySet().iterator().next();
-						ConfigObject configObject = (ConfigObject) builder.get(builderKey);
-
-						// Obtain the datetime of TransformBuildlet to be created...
-						String datetimeValue = (String) configObject.get(KEY_DATETIME).unwrapped();
-						ZonedDateTime datetime = ZonedDateTime.parse(datetimeValue);
-						
-						// Obtain the type of TransformBuildlet to be created...
-						String builderType = (String) configObject.get(KEY_TYPE).unwrapped();
-						TransformType type = TransformType.valueOf(builderType);
-
-						// Obtain the extension of the file that will be generated by the builder...
-						String ext = (String) configObject.get(KEY_EXT).unwrapped();
-
-						TransformBuildlet buildlet = null;
-						try {
-							switch (type) {
-							case JSON:
-								buildlet = new JSONSchemaBuildlet(builderKey, ext, datetime);
-								break;
-							case TEXT:
-								buildlet = new TextBuildlet(builderKey, ext, datetime);
-								break;
-							case XSD:
-								buildlet = new XSDBuildlet(builderKey, ext, datetime);
-								break;
-							case TRANSFORM:
-								buildlet = new TransformBuildlet(builderKey, ext, datetime);
-								break;
-							}
-							customBuildlets.put(builderKey, buildlet);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
+					String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+					customBuildlets = gson.fromJson(json, typeOfHashMap);
 				}
 			}
 		} catch (Exception e) {
-			// We log the exception, fail gracefully and proceed...
-			e.printStackTrace();
+			e.printStackTrace(System.err);
+			throw new RuntimeException("Unable to load the XSLT transform builders configuration.", e);
 		}
 
 		return customBuildlets;
@@ -302,36 +251,22 @@ public final class ProfileBuildletConfigUtils {
 
 				File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 
-				// We ensure that the configuration location is initialized. It most cases it
+				// We ensure that the configuration location is initialized. It
+				// most cases it
 				// will have already been created.
 				if (!dataAreaBuilderConfigFile.exists())
 					initCustomBuildersConfiguration();
 
 				if (dataAreaBuilderConfigFile.exists()) {
-					ConfigDocument buildersConfigDocument = ConfigDocumentFactory.parseFile(dataAreaBuilderConfigFile);
 
-					Config buildersConfig = ConfigFactory.parseFile(dataAreaBuilderConfigFile);
+					String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+					Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
-					// Retrieve all existing custom builder configuration entries under the
-					// "builders" key...
-					List<? extends ConfigObject> builders = buildersConfig.getObjectList(KEY_BUILDERS);
-
-					List<ConfigObject> list = new ArrayList<ConfigObject>();
-
-					// Add the existing builder config entries to the list...
-					for (ConfigObject builder : builders) {
-						// This logic excludes the builder from the new list to be resaved...
-						if (!builderKey.equals(builder.keySet().iterator().next())) {
-							list.add(builder);
-						}
-					}
-
-					ConfigDocument newConfigDocument = buildersConfigDocument.withValue(KEY_BUILDERS,
-							ConfigValueFactory.fromIterable(list));
+					builders.remove(builderKey);
 
 					InputStream is = null;
 					try {
-						is = new ByteArrayInputStream(newConfigDocument.render().getBytes());
+						is = new ByteArrayInputStream(gson.toJson(builders).getBytes());
 						Files.copy(is, dataAreaBuilderConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 						successful = true;
@@ -352,7 +287,7 @@ public final class ProfileBuildletConfigUtils {
 			}
 		} catch (Exception e) {
 			// We log the exception, fail gracefully and proceed...
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new RuntimeException("Unable to delete the custom XSLT builder: " + builderKey + ".xsl", e);
 		}
 
@@ -383,54 +318,12 @@ public final class ProfileBuildletConfigUtils {
 
 				if (dataAreaBuilderConfigFile.exists()) {
 
-					boolean isExistingBuildlet = false;
+					String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+					Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
-					ConfigDocument originalConfigDocument = ConfigDocumentFactory.parseFile(dataAreaBuilderConfigFile,
-							ConfigParseOptions.defaults().setSyntax(ConfigSyntax.CONF));
+					boolean isExistingBuildlet = builders.containsKey(buildlet.getStyle());
 
-					String builderKey = buildlet.getStyle();
-
-					TransformType type = TransformType.toTransformType(buildlet);
-
-					ConfigDocument newConfigDocument = null;
-
-					Config buildersConfig = ConfigFactory.parseFile(dataAreaBuilderConfigFile);
-
-					// Retrieve all existing custom builder configuration entries under the
-					// "builders" key...
-					List<? extends ConfigObject> builders = buildersConfig.getObjectList(KEY_BUILDERS);
-
-					// Create a map to config objects
-					Map<String, ConfigValue> values = new HashMap<String, ConfigValue>();
-
-					values.put(KEY_DATETIME, ConfigValueFactory.fromAnyRef(buildlet.getDateTimeCreated().toString()));
-					values.put(KEY_TYPE, ConfigValueFactory.fromAnyRef(type.name()));
-					values.put(KEY_EXT, ConfigValueFactory.fromAnyRef(buildlet.getFileExt()));
-
-					ConfigValue configValues = ConfigValueFactory.fromAnyRef(ConfigValueFactory.fromAnyRef(values));
-
-					Map<String, ConfigValue> builderConfigEntry = new HashMap<String, ConfigValue>();
-					builderConfigEntry.put(builderKey, configValues);
-					ConfigObject configObject = ConfigValueFactory.fromMap(builderConfigEntry);
-
-					List<ConfigObject> list = new ArrayList<ConfigObject>();
-
-					// Add the existing builder config entries to the list...unless we find a
-					// builderKey matching the one to be added. In that case with "overwrite" it by
-					// NOT add the existing entry to the new list...
-					for (ConfigObject co : builders) {
-						if (!builderKey.equals(co.keySet().iterator().next())) {
-							list.add(co);
-						} else {
-							isExistingBuildlet = true;
-						}
-					}
-
-					// Add the new builder config entries to the list...
-					list.add(configObject);
-
-					newConfigDocument = originalConfigDocument.withValue(KEY_BUILDERS,
-							ConfigValueFactory.fromIterable(list));
+					builders.put(buildlet.getStyle(), buildlet);
 
 					if ((!isExistingBuildlet && xslFile == null) || (xslFile != null && !xslFile.exists())) {
 						throw new IllegalArgumentException((xslFile == null ? "No XSLT file was provided."
@@ -457,7 +350,7 @@ public final class ProfileBuildletConfigUtils {
 
 					InputStream is = null;
 					try {
-						is = new ByteArrayInputStream(newConfigDocument.render().getBytes());
+						is = new ByteArrayInputStream(gson.toJson(builders).getBytes());
 						Files.copy(is, dataAreaBuilderConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 					} finally {
 						if (is != null) {

@@ -6,8 +6,10 @@ Bundle-Version: 1.9.8.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: cimtoole.jar,
  lib/commons-logging-1.1.1.jar,
- lib/config-1.4.0.jar,
- builders/
+ builders/,
+ lib/joda-time-2.10.6.jar,
+ lib/gson-2.8.6.jar,
+ .
 Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin
 Bundle-Vendor: Langdale Consultants
 Require-Bundle: au.com.langdale.cimutil,
