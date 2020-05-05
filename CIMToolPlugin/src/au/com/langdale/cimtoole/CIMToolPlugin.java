@@ -1,6 +1,6 @@
 /*
- * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
- * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants. Langdale
+ * Consultants can be contacted at: http://www.langdale.com.au
  */
 package au.com.langdale.cimtoole;
 
@@ -12,16 +12,15 @@ import org.osgi.framework.BundleContext;
 
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Settings;
-import au.com.langdale.profiles.PluginIdentifier;
 import au.com.langdale.ui.util.GeneralIconCache;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.ui.util.NodeTraits;
 
 /**
- * The activator class for the CIMTool plugin. It manages the lifetime of the
- * model cache.
+ * The activator class for the CIMTool plugin. It manages the lifetime of the model
+ * cache.
  */
-public class CIMToolPlugin extends AbstractUIPlugin implements PluginIdentifier {
+public class CIMToolPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "au.com.langdale.cimtoole";
@@ -91,7 +90,7 @@ public class CIMToolPlugin extends AbstractUIPlugin implements PluginIdentifier 
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static CIMToolPlugin getDefault() {
@@ -101,7 +100,7 @@ public class CIMToolPlugin extends AbstractUIPlugin implements PluginIdentifier 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in relative
 	 * path
-	 *
+	 * 
 	 * @param path the path
 	 * @return the image descriptor
 	 */
@@ -117,9 +116,4 @@ public class CIMToolPlugin extends AbstractUIPlugin implements PluginIdentifier 
 		return settings;
 	}
 
-	@Override
-	public String getPluginID() {
-		return PLUGIN_ID;
-	}
-	
 }
