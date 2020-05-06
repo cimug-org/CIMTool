@@ -36,16 +36,16 @@ The host location as referenced for this example would look like the following a
 The installation of this plugin is performed manually using the steps as outlined. Be sure that your instance of Eclipse is **shut down** before performing the installation.
 
 ###### Step 1:
-Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://github.com/CIMug-org/CIMTool/blob/gh-pages/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.zip) and extract the contents of the ZIP file to a local directory.  Note that a single ```org.eclipse.emf_2.6.0.v20110606-0949.jar``` file is contained in the archive.
+Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://github.com/CIMug-org/CIMTool/blob/gh-pages/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.jar) and temporarily copy it to a local directory.
 
 
 ###### Step 2:
-Take the extracted plugin and drop it into the ```\dropins``` directory located under your newly installed eclipse instance.  The screenshot below illustrates the location of this folder.
+Locate the ```\dropins``` directory as illustrated in the screenshot below and drop the plugin jar into it.
 
 <img src="/assets/img/install-plugins-dropins-folder.png"  border="1px" style="max-width:100%"/></a>
 
 ###### Step 3:
-Last, launch your instance of Eclipse and verify that the plugin was properly installed.  It should appear within the Plug-ins tab.
+Last, launch Eclipse and verify that the plug-in was properly installed.  It should appear within the Plug-ins tab as shown.
 
 <img src="/assets/img/confirm-emf-2.6.0-plugin-installed.png"  border="1px" style="max-width:100%"/></a>
 
