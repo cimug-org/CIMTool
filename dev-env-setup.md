@@ -36,7 +36,7 @@ The host location as referenced for this example would look like the following a
 The installation of this plugin is performed manually using the steps as outlined. Be sure that your instance of Eclipse is **shut down** before performing the installation.
 
 ###### Step 1:
-Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://cimug-org.github.io/CIMTool/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.zip) and extract the contents of the ZIP file to a local directory.  Note that a single ```org.eclipse.emf_2.6.0.v20110606-0949.jar``` file is contained in the archive.
+Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://github.com/CIMug-org/CIMTool/blob/gh-pages/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.zip) and extract the contents of the ZIP file to a local directory.  Note that a single ```org.eclipse.emf_2.6.0.v20110606-0949.jar``` file is contained in the archive.
 
 
 ###### Step 2:
