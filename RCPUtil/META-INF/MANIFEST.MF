@@ -9,27 +9,34 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.workbench;bundle-version="3.5.0",
  org.eclipse.ui.forms;bundle-version="3.4.0",
  org.eclipse.core.resources;bundle-version="3.5.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: au.com.langdale.ui.binding;
-  uses:="au.com.langdale.ui.plumbing,
-   au.com.langdale.ui.builder,
-   org.eclipse.jface.viewers,
-   au.com.langdale.validation",
+Export-Package: au.com.langdale.ui.binding;uses:="au.com.langdale.ui.builder,org.eclipse.jface.viewers,au.com.langdale.ui.plumbing",
  au.com.langdale.ui.builder;
-  uses:="org.eclipse.jface.wizard,
+  uses:="org.eclipse.ui.forms.widgets,
+   org.eclipse.jface.viewers,
+   org.eclipse.swt.events,
    org.eclipse.jface.layout,
-   org.eclipse.core.runtime,
-   org.eclipse.jface.resource,
    au.com.langdale.ui.plumbing,
    org.eclipse.ui,
-   org.eclipse.swt.events,
-   org.eclipse.swt.custom,
    org.eclipse.ui.part,
-   org.eclipse.ui.forms.widgets,
-   org.eclipse.jface.viewers,
+   org.eclipse.swt.custom,
+   org.eclipse.ui.forms.events,
+   org.eclipse.jface.wizard,
+   org.eclipse.jface.resource,
+   org.eclipse.core.runtime,
    org.eclipse.swt.widgets",
  au.com.langdale.ui.plumbing,
- au.com.langdale.ui.util;uses:="org.eclipse.jface.viewers,org.eclipse.swt.graphics,org.osgi.framework",
- au.com.langdale.util
+ au.com.langdale.ui.util;
+  uses:="org.eclipse.jface.viewers,
+   org.eclipse.swt.graphics,
+   org.osgi.framework,
+   org.eclipse.jface.action,
+   org.eclipse.jface.resource,
+   org.eclipse.ui",
+ au.com.langdale.util;
+  uses:="org.eclipse.jface.operation,
+   org.eclipse.core.resources,
+   org.eclipse.swt.widgets,
+   org.eclipse.core.runtime.jobs"
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.9.7.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="CIMTool" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.9.8.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="about.png"/>

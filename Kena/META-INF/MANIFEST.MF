@@ -4,7 +4,7 @@ Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
 Bundle-Version: 3.2.2.qualifier
 Bundle-Vendor: Langdale Consultants
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: kena.jar,
  lib/arq-2.8.4.jar,
  lib/icu4j-3.4.4.jar,

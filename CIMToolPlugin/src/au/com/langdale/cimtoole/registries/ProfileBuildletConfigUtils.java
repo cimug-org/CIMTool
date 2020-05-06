@@ -3,15 +3,15 @@ package au.com.langdale.cimtoole.registries;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,8 +36,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Utility class to handle specific functionality centered around the
- * configuration of profile buildlets of various types.
+ * Utility class to handle specific functionality centered around the configuration
+ * of profile buildlets of various types.
  */
 public final class ProfileBuildletConfigUtils {
 
@@ -86,7 +86,7 @@ public final class ProfileBuildletConfigUtils {
 
 						try {
 							is = buildersConfFileURL.openStream();
-							Files.copy(is, dataAreaBuilderConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
 						} finally {
 							if (is != null) {
 								try {
@@ -99,7 +99,8 @@ public final class ProfileBuildletConfigUtils {
 
 						if (dataAreaBuilderConfigFile.exists()) {
 
-							String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+							String json = new String(
+									IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
 							Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
 							for (TransformBuildlet builder : builders.values()) {
@@ -114,7 +115,7 @@ public final class ProfileBuildletConfigUtils {
 								is = null;
 								try {
 									is = xslFileUrl.openStream();
-									Files.copy(is, dataAreaXslFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+									IOUtils.copy(is, new FileOutputStream(dataAreaXslFile));
 								} finally {
 									if (is != null) {
 										try {
@@ -226,7 +227,7 @@ public final class ProfileBuildletConfigUtils {
 					initCustomBuildersConfiguration();
 
 				if (dataAreaBuilderConfigFile.exists()) {
-					String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+					String json = new String(IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
 					customBuildlets = gson.fromJson(json, typeOfHashMap);
 				}
 			}
@@ -259,7 +260,7 @@ public final class ProfileBuildletConfigUtils {
 
 				if (dataAreaBuilderConfigFile.exists()) {
 
-					String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+					String json = new String(IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
 					Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
 					builders.remove(builderKey);
@@ -267,7 +268,7 @@ public final class ProfileBuildletConfigUtils {
 					InputStream is = null;
 					try {
 						is = new ByteArrayInputStream(gson.toJson(builders).getBytes());
-						Files.copy(is, dataAreaBuilderConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
 
 						successful = true;
 
@@ -318,7 +319,7 @@ public final class ProfileBuildletConfigUtils {
 
 				if (dataAreaBuilderConfigFile.exists()) {
 
-					String json = new String(Files.readAllBytes(dataAreaBuilderConfigFile.toPath()));
+					String json = new String(IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
 					Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
 					boolean isExistingBuildlet = builders.containsKey(buildlet.getStyle());
@@ -335,7 +336,7 @@ public final class ProfileBuildletConfigUtils {
 							try {
 								is = new FileInputStream(xslFile);
 								File destinationXslFile = new File(dataAreaDir, xslFile.getName());
-								Files.copy(is, destinationXslFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+								IOUtils.copy(is, new FileOutputStream(destinationXslFile));
 							} finally {
 								if (is != null) {
 									try {
@@ -351,7 +352,7 @@ public final class ProfileBuildletConfigUtils {
 					InputStream is = null;
 					try {
 						is = new ByteArrayInputStream(gson.toJson(builders).getBytes());
-						Files.copy(is, dataAreaBuilderConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
 					} finally {
 						if (is != null) {
 							try {
