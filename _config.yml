@@ -6,3 +6,4 @@ logo: /assets/img/logo.png
 show_downloads: true
 # google_analytics: [Your Google Analytics tracking ID]
 cimtool_windows_zip_url: https://github.com/CIMug-org/CIMTool/releases/download/1.10.0.RC1/CIMTool-1.10.0.RC1-win32.win32.x86_64.zip
+cimtool_releases_url: https://github.com/CIMug-org/CIMTool/releases

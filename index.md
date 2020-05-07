@@ -1,6 +1,7 @@
 ## CIMTool Release Log
 
 ### Release 1.10.0.RC1 [06-May-2020]
+
 This is the first release candidate for CIMTool 1.10.0
 
 Feature: The RC1 release introduces support for the new IEC 62361-104 draft standard for JSON schema profiles. This RC does not include the variant of namespace support that will be included in the published standard. That is planned for RC2.
