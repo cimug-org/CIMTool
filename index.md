@@ -1,13 +1,13 @@
 ## CIMTool Release Log
 
-### Release 1.9.8.RC1 [Available 06-May-2020]
-new feature: RC1 release of support for the new IEC 62361-104 standard for JSON schema profiles.  This release does not include the variant of namespace support that will be included in the published standard.  That is planned for RC2.
+### Release 1.10.0.RC1 [06-May-2020]
+This is the first release candidate for CIMTool 1.10.0
 
-enhancement: CIMTool supports a variety of different types of builders that generate profile artifacts. Examples include XSD schemas, JPA Java source code, RDBMS DDL scripts, RDFS profiles, etc.  The ability to create custom profile builders has been available via CIMTool Eclipse plugin extension points, but such an approach requires an understanding of Eclipse plugin development.  Internally, CIMTool supports a category of builders based on XSLT transforms.  This release exposes this functionality by providing a configuration-based approach to adding custom XSLT transform-based builders that will automatically appear within CIMTool's "Profile Summary" tab. This enhancement allows tools such as Altova's XMLSpy to be used to create and test XSLT 1.0 transforms and utilize them in CIMTool.
+Feature: The RC1 release introduces support for the new IEC 62361-104 draft standard for JSON schema profiles. This RC does not include the variant of namespace support that will be included in the published standard. That is planned for RC2.
 
-CIMug's goal for this enhancement is to create a GitHub repository of custom XSLT transforms contributed by the community and, in turn, beneficial to the CIM community at large.
+Enhancement: CIMTool supports a variety of different types of builders that generate profile artifacts. Examples include XSD schemas, JPA Java source code, RDBMS DDL scripts, RDFS profiles, etc. The ability to create custom profile builders has been available via CIMTool Eclipse plugin extension points, but such an approach requires an understanding of Eclipse plugin development. Internally, CIMTool supports a category of builders based on XSLT transforms. This release exposes this functionality by providing a configuration-based approach to adding custom XSLT transform-based builders that will automatically appear within CIMTool's "Profile Summary" tab. This enhancement allows for the use of tools such as Altova's XMLSpy to create and test XSLT 1.0 transforms and then import and manage them in CIMTool.
 
-upgrade: The XSLT engine has been upgraded in this RC1 candidate to now support XSLT 2.0.  Support for XSLT 3.0 may be shipped with the final release of 1.9.8 time permitting.
+CIMug's goal for this enhancement is to create a repository of custom XSLT transforms contributed by the community and, in turn, beneficial to the CIM community at large.
 
 ### Release 1.9.7 [09-Dec-2013]
 correction: .eap files are closed after parsing and can now be deleted from a project.
