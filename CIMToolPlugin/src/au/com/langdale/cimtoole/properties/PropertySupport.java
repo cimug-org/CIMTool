@@ -7,10 +7,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import au.com.langdale.kena.OntResource;
-
-import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
+import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.ui.util.IconCache;
 

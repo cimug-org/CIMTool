@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.vocabulary.RDF;
+
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
-
-import com.hp.hpl.jena.graph.FrontsNode;
 import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.ui.binding.BooleanModel;
-
-import com.hp.hpl.jena.vocabulary.RDF;
 /**
  * A set of BooleanModel's that reflect the contents of an ontology model.
  */

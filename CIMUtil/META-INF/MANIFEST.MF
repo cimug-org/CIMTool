@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMUtil
 Bundle-SymbolicName: au.com.langdale.cimutil
-Bundle-Version: 1.9.7.qualifier
+Bundle-Version: 1.10.0.RC1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: au.com.langdale.kena
 Bundle-ClassPath: cimutil.jar,
@@ -17,6 +17,20 @@ Export-Package: au.com.langdale.cim,
  au.com.langdale.validation,
  au.com.langdale.xmi,
  com.healthmarketscience.jackcess,
+ com.healthmarketscience.jackcess.complex,
+ com.healthmarketscience.jackcess.query,
+ com.healthmarketscience.jackcess.scsu,
+ org.apache.commons.lang,
+ org.apache.commons.lang.builder,
+ org.apache.commons.lang.enums,
+ org.apache.commons.lang.exception,
+ org.apache.commons.lang.math,
+ org.apache.commons.lang.mutable,
+ org.apache.commons.lang.reflect,
+ org.apache.commons.lang.text,
+ org.apache.commons.lang.time,
+ org.apache.commons.logging,
+ org.apache.commons.logging.impl,
  org.apache.poi.ddf,
  org.apache.poi.dev,
  org.apache.poi.hpsf,

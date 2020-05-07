@@ -21,6 +21,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -176,12 +177,20 @@ public class Assembly extends Plumbing {
 			setText((Button) widget, value);
 		return widget;
 	}
+
+	/**
+	 * Add a VerifyListener to a text field.
+	 * @return 
+	 */
+	public void addVerifyListener(String name, VerifyListener listener) {
+			getText(name).addVerifyListener(listener);
+	}
 	
 	/**
 	 * Add a listener to a button.
 	 * @return 
 	 */
-	public void addListener( String name, SelectionListener listener) {
+	public void addListener(String name, SelectionListener listener) {
 		getButton(name).addSelectionListener(listener);
 	}
 	

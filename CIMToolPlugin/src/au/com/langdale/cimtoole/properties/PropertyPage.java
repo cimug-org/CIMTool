@@ -4,6 +4,10 @@
  */
 package au.com.langdale.cimtoole.properties;
 
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -15,7 +19,6 @@ import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.util.Jobs;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class PropertyPage extends FurnishedPropertyPage {
 

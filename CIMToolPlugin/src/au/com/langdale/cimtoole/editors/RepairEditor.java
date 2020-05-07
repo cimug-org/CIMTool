@@ -12,8 +12,8 @@ import static au.com.langdale.ui.builder.Templates.DisplayField;
 import static au.com.langdale.ui.builder.Templates.Form;
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
-import static au.com.langdale.ui.builder.Templates.Stack;
 import static au.com.langdale.ui.builder.Templates.Image;
+import static au.com.langdale.ui.builder.Templates.Stack;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -35,9 +35,9 @@ import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.validation.DiagnosisModel;
-import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.DiagnosisModel.DetailNode;
 import au.com.langdale.validation.DiagnosisModel.RepairNode;
+import au.com.langdale.validation.RepairMan;
 
 public class RepairEditor extends ModelEditor {
 

@@ -1,0 +1,10 @@
+{
+	"builders": [
+		{ 
+			"junit-test": {
+				"type": "JSON",
+				"ext": "junit-ext"
+			}
+		}
+	]
+}

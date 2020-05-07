@@ -9,4 +9,9 @@ public interface ProfileBuildletRegistry {
 	public static ProfileBuildletRegistry INSTANCE = new ProfileBuildletRegistryImpl();
 	
 	public ProfileBuildlet[] getBuildlets();
+	
+	public ProfileBuildlet[] getExtensionBuildlets();
+	
+	public ProfileBuildlet[] getCustomBuildlets();
+	
 }
