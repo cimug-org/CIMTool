@@ -15,17 +15,14 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-public class TransformBuildletDeserializer<T extends TransformBuildlet>
-		implements JsonDeserializer<T> {
+public class TransformBuildletDeserializer<T extends TransformBuildlet> implements JsonDeserializer<T> {
 
 	@Override
-	public T deserialize(JsonElement json, Type type,
-			JsonDeserializationContext context) throws JsonParseException {
+	public T deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
 
 		String style = json.getAsJsonObject().get("style").getAsString();
 		String typeValue = json.getAsJsonObject().get("type").getAsString();
-		DateTime datetime = DateTime.parse(json.getAsJsonObject()
-				.get("datetime").getAsString());
+		DateTime datetime = DateTime.parse(json.getAsJsonObject().get("datetime").getAsString());
 		String ext = json.getAsJsonObject().get("ext").getAsString();
 
 		TransformBuildlet buildlet = null;
@@ -42,6 +39,8 @@ public class TransformBuildletDeserializer<T extends TransformBuildlet>
 		case TRANSFORM:
 			buildlet = new TransformBuildlet(style, ext, datetime);
 			break;
+		default:
+			throw new RuntimeException("Error while deserializing transform builders configuration data for XSL file: " + style + ".xsl");
 		}
 
 		return (T) buildlet;

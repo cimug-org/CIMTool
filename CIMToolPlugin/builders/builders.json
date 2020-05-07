@@ -1,37 +1,44 @@
 {
     "html": {
-        "datetime": "2020-05-01T00:00:00Z",
         "type": "TRANSFORM",
+        "style": "html",
+        "datetime": "2020-05-01T00:00:00Z",
         "ext": "html"
     },
     "jpa": {
+		"type": "TEXT",
+        "style": "jpa",
         "datetime": "2020-05-01T00:00:00Z",
-        "type": "TEXT",
         "ext": "java"
     },
     "scala": {
-        "datetime": "2020-05-01T00:00:00Z",
         "type": "TEXT",
+        "style": "scala",
+        "datetime": "2020-05-01T00:00:00Z",
         "ext": "scala"
     },
     "sql": {
-        "datetime": "2020-05-01T00:00:00Z",
         "type": "TEXT",
+        "style": "sql",
+        "datetime": "2020-05-01T00:00:00Z",
         "ext": "sql"
     },
     "xsd": {
-        "datetime": "2020-05-01T00:00:00Z",
         "type": "XSD",
+        "style": "xsd",
+        "datetime": "2020-05-01T00:00:00Z",
         "ext": "xsd"
     },
     "json-schema-draft-07": {
+		"type": "JSON",
+		"style": "json-schema-draft-07",
         "datetime": "2020-05-01T00:00:00Z",
-        "type": "JSON",
         "ext": "draft-07.schema.json"
     },
     "json-schema-draft-07-lite": {
+		"type": "JSON",
+		"style": "json-schema-draft-07-lite",
         "datetime": "2020-05-01T00:00:00Z",
-        "type": "JSON",
         "ext": "draft-07.lite.schema.json"
     }
 }

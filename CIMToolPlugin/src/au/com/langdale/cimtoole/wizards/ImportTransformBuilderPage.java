@@ -203,6 +203,9 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 						getButton("replace").setEnabled(false);
 						//
 						currentSelection = buildlet;
+					} else {
+						getButton("replace").setSelection(false);
+						getButton("replace").setEnabled(false);
 					}
 				}
 			}

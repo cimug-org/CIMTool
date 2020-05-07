@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -211,7 +212,7 @@ public final class ProfileBuildletConfigUtils {
 	}
 
 	public static Map<String, TransformBuildlet> getTransformBuildlets() {
-		Map<String, TransformBuildlet> customBuildlets = new TreeMap<String, TransformBuildlet>();
+		Map<String, TransformBuildlet> customBuildlets = new HashMap<String, TransformBuildlet>();
 
 		try {
 			if (Platform.isRunning()) {
@@ -267,7 +268,8 @@ public final class ProfileBuildletConfigUtils {
 
 					InputStream is = null;
 					try {
-						is = new ByteArrayInputStream(gson.toJson(builders).getBytes());
+						String newJson = gson.toJson(builders, typeOfHashMap);
+						is = new ByteArrayInputStream(newJson.getBytes());
 						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
 
 						successful = true;
@@ -351,7 +353,8 @@ public final class ProfileBuildletConfigUtils {
 
 					InputStream is = null;
 					try {
-						is = new ByteArrayInputStream(gson.toJson(builders).getBytes());
+						String newJson = gson.toJson(builders, typeOfHashMap);
+						is = new ByteArrayInputStream(newJson.getBytes());
 						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
 					} finally {
 						if (is != null) {

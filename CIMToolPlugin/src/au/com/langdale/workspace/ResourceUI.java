@@ -1,12 +1,12 @@
 /*
- * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
- * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants. Langdale
+ * Consultants can be contacted at: http://www.langdale.com.au
  */
 package au.com.langdale.workspace;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -75,7 +75,8 @@ public class ResourceUI {
 
 		@Override
 		protected Object getInput() {
-			List result = Arrays.asList(ProfileBuildletConfigUtils.getTransformBuildlets());
+			Map<String, TransformBuildlet> buildlets = ProfileBuildletConfigUtils.getTransformBuildlets();
+			List<TransformBuildlet> result = new ArrayList<TransformBuildlet>(buildlets.values());
 			if (result.size() > 0)
 				return result;
 			return new ArrayList<TransformBuildlet>();

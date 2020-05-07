@@ -1,11 +1,11 @@
 package au.com.langdale.cimtoole.test.headless;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -59,7 +59,7 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 			if (dataAreaBuilderConfigFile.exists()) {
 				dataAreaBuilderConfigFile.delete();
 			}
-			
+
 			File dataAreaXslConfigFile = new File(dataAreaDir, JUNIT_TEST_XSL_FILE);
 			if (dataAreaXslConfigFile.exists()) {
 				dataAreaXslConfigFile.delete();
@@ -73,7 +73,7 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 	}
 
 	public final void testGetCustomBuilders() throws Exception {
-		
+
 		ProfileBuildletConfigUtils.getTransformBuildlets();
 
 		assertTrue("The " + CONFIG_FILE + " config file was not initialized", dataAreaBuilderConfigFile.exists());
@@ -84,9 +84,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 	public final void testRemoveCustomBuilderConfigEntry() throws Exception {
 
 		String builderKey = JUNIT_TEST_XSL_FILE.substring(0, JUNIT_TEST_XSL_FILE.indexOf("."));
-		
+
 		initializeJUnitBuildersConfiguration();
-		
+
 		Location configLocation = Platform.getConfigurationLocation();
 		URL dataArea = configLocation.getDataArea(CIMToolPlugin.PLUGIN_ID);
 		File dataAreaDir = new File(dataArea.getPath());
@@ -94,7 +94,7 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 
 		File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 		File dataAreaXslFile = new File(dataAreaDir, JUNIT_TEST_XSL_FILE);
-		
+
 		// Simply ensure that test initialization was successful...
 		assertTrue(dataAreaBuilderConfigFile.exists());
 		assertTrue(dataAreaXslFile.exists());
@@ -102,18 +102,16 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 		// Now delete the configuration entry...
 		ProfileBuildletConfigUtils.deleteTransformBuilderConfigEntry(builderKey);
 
-		assertTrue("Builder " + builderKey + " was not deleted",
-				!ProfileBuildletConfigUtils.hasBuildlet(builderKey));
-		assertTrue("XSLT file " + JUNIT_TEST_XSL_FILE + " was not deleted",
-				!dataAreaXslFile.exists());
+		assertTrue("Builder " + builderKey + " was not deleted", !ProfileBuildletConfigUtils.hasBuildlet(builderKey));
+		assertTrue("XSLT file " + JUNIT_TEST_XSL_FILE + " was not deleted", !dataAreaXslFile.exists());
 	}
-	
+
 	public final void testAddCustomBuilderConfigEntry() throws Exception {
 
 		String builderKey = JUNIT_TEST2_XSL_FILE.substring(0, JUNIT_TEST2_XSL_FILE.indexOf("."));
-		
+
 		initializeJUnitBuildersConfiguration();
-		
+
 		Location configLocation = Platform.getConfigurationLocation();
 		URL dataArea = configLocation.getDataArea(CIMToolPlugin.PLUGIN_ID);
 		File dataAreaDir = new File(dataArea.getPath());
@@ -122,22 +120,20 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 		File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 		File dataAreaXslFile = new File(dataAreaDir, JUNIT_TEST_XSL_FILE);
 		File dataAreaXslFile2 = new File(dataAreaDir, JUNIT_TEST2_XSL_FILE);
-		
+
 		// Simply ensure that test initialization was successful...
 		assertTrue(dataAreaBuilderConfigFile.exists());
 		assertTrue(dataAreaXslFile.exists());
 		assertTrue(!dataAreaXslFile2.exists());
-		
+
 		// Now delete the configuration entry...
 		TransformBuildlet buildlet = new TransformBuildlet(builderKey, "junit-ext2");
-		
+
 		File xslFile2 = new File(CONFIG_DIR + "/" + JUNIT_TEST2_XSL_FILE);
 		ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile2);
 
-		assertTrue("Builder " + builderKey + " was not added",
-				ProfileBuildletConfigUtils.hasBuildlet(builderKey));
-		assertTrue("XSLT file " + JUNIT_TEST2_XSL_FILE + " was not added",
-				dataAreaXslFile2.exists());
+		assertTrue("Builder " + builderKey + " was not added", ProfileBuildletConfigUtils.hasBuildlet(builderKey));
+		assertTrue("XSLT file " + JUNIT_TEST2_XSL_FILE + " was not added", dataAreaXslFile2.exists());
 	}
 
 	private void initializeJUnitBuildersConfiguration() {
@@ -166,7 +162,7 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 					try {
 						is = Thread.currentThread().getContextClassLoader()
 								.getResourceAsStream(CONFIG_DIR + "/" + CONFIG_DEFAULTS_FILE);
-						Files.copy(is, dataAreaBuilderConfigFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
 					} finally {
 						if (is != null) {
 							try {
@@ -185,7 +181,7 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 						try {
 							is = Thread.currentThread().getContextClassLoader()
 									.getResourceAsStream(CONFIG_DIR + "/" + JUNIT_TEST_XSL_FILE);
-							Files.copy(is, dataAreaXslFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+							IOUtils.copy(is, new FileOutputStream(dataAreaXslFile));
 						} finally {
 							if (is != null) {
 								try {
