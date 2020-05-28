@@ -13,13 +13,16 @@ Though the CIMTool plug-ins themselves are configured and compiled for a later v
 ###### Step 3:
 The installation process for the Eclipse environment is straightforward in that it involves simply extracting the [eclipse-rcp-indigo-SR2-win32-x86_64.zip](https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-rcp-indigo-SR2-win32-x86_64.zip) archive downloaded in step 1.  It should be noted that depending on where you choose to extract the archive that on Windows the process may fail due to path names being too long.  If this occurs it is suggested you create a temp directory off of the root of one of your local drives (e.g. ```C:\temp-indigo```) and extract the ZIP archive into that folder.  The shorter base path should prevent "path too long" errors while extracting the archive.  A folder called ```\eclipse``` will be created under the selected extract directory and will contain your eclipse environment.  Feel free to relocate this new folder to a location on the file system where you prefer to host your Eclipse plug-ins development environment.
 
-Note at this stage you may want to create a shortcut to the ```eclipse.exe``` located within the extracted ```eclipse``` directory at the location you selected on the file system.  In the example screen shot below this location is ```C:\eclipse-committers-3.7```.  Though not fully visible in the screen shot the **Target** field contains:
+Let's presume that in this working example that the default JRE/JDK on this Windows system is a newer version of Java (e.g. Java 12). If attempt is made to launch the development environment directly via selecting the ```eclipse.exe``` executable directly the following dialog is displayed:
+
+<img src="/assets/img/install-java-error-0.png"  border="1px" style="max-width:100%"/></a>
+
+At this stage, creating a shortcut to the ```eclipse.exe``` located in the extracted ```\eclipse``` directory may be desirble.  Note below that in the example screen shot of the shortcut that the extract location is ```C:\eclipse-committers-3.7```.  Though not fully visible in the **Target** text field contains:
 
 ```
 C:\eclipse-committers-3.7.2\eclipse.exe -vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"
 ```
-
-In this example the default JRE/JDK on the Windows system is a newer version of Java.  Consequently, the JVM for launching the Eclipse PDE 3.7.2 environment is explicitly specified via the ```-vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"``` command line option.
+Here, the JVM for launching the Eclipse PDE 3.7.2 environment is explicitly specified using the ```-vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"``` command line option to a specific Java 1.5 JDK (or JRE).
 
 <img src="/assets/img/install-eclipse-shortcut-1.png"  border="1px" style="max-width:100%"/></a>
 
