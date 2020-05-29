@@ -13,9 +13,6 @@ CIMug's goal for this enhancement is to create a repository of custom XSLT trans
 ### Release 1.9.7 [09-Dec-2013]
 correction: .eap files are closed after parsing and can now be deleted from a project.
 
-### Release 1.9.7 [09-Dec-2013]
-correction: .eap files are closed after parsing and can now be deleted from a project.
-
 ### Release 1.9.6 [10-Sep-2013]
 enhancement: platform updated to eclipse Indigo.
 
