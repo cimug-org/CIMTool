@@ -25,7 +25,7 @@ At this stage creating a shortcut to the ```eclipse.exe``` that explicitly speci
  <img src="/assets/img/install-eclipse-shortcut-0.png"  border="1px" style="max-width:75%"/>
 
 
- * Next, right mouse click on the new shortcut and select ```Properties```.  In the **Target** text field shown below specify a launch configuration consistent with your system's installation.  The field below (though not fully visible) contains a launch configuration illustrating the use of the ```-vm``` option to specify the JRE/JDK Eclipse should use at startup (e.g. ```-vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"```).:
+ * Next, right mouse click on the new shortcut and select ```Properties```.  In the **Target** text field shown below specify a launch configuration consistent with your system's installation.  The field below (though not fully visible) contains an example launch configuration illustrating the use of the ```-vm``` option to specify the JRE/JDK Eclipse should use at startup (e.g. ```-vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"```).:
  ```
  C:\eclipse-committers-3.7.2\eclipse.exe -vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"
  ```
