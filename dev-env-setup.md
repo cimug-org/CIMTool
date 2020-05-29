@@ -20,7 +20,7 @@ Presume that for this working example the default JRE/JDK on the Windows system 
 
 At this stage creating a shortcut to the ```eclipse.exe``` that explicitly specifies the JRE/JDK to be used will resolve the issue:  
 
- * Create a shortcut by right mouse clicking on the ```eclipse.exe``` executable and selecting ```Create shortcut```:
+ * Create the shortcut by performing a right mouse click on the ```eclipse.exe``` executable and selecting ```Create shortcut```:
 
  <img src="/assets/img/install-eclipse-shortcut-0.png"  border="1px" style="max-width:75%"/>
 
