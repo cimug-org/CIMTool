@@ -12,10 +12,8 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.PlatformUI;
 
-
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache.CacheListener;
-
 import au.com.langdale.kena.OntModel;
 /**
  * An adjunct to the model cache to manage cache notifications 

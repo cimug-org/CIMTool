@@ -5,7 +5,6 @@
 package au.com.langdale.cimtoole.project;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -16,14 +15,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 
+import com.healthmarketscience.jackcess.Database;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.registries.ModelParser;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 
-import com.healthmarketscience.jackcess.Database;
 /**
- * A set of utilities that define the file locations, file types,  
- * properties and preferences used in a CIMTool project. 
+ * A set of utilities that define the file locations, file types, properties and
+ * preferences used in a CIMTool project.
  */
 public class Info {
 
@@ -31,17 +30,24 @@ public class Info {
 	public static final QualifiedName PROFILE_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_path");
 	public static final QualifiedName BASE_MODEL_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "base_model_path");
 	public static final QualifiedName SCHEMA_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "schema_namespace");
-	public static final QualifiedName INSTANCE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "instance_namespace");
-	public static final QualifiedName MERGED_SCHEMA_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "merged_schema_path");
-	public static final QualifiedName PRESERVE_NAMESPACES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "preserve_namespaces");
-	public static final QualifiedName USE_PACKAGE_NAMES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "user_package_names");
-	public static final QualifiedName PROBLEM_PER_SUBJECT = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "problem_per_subject");
+	public static final QualifiedName INSTANCE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"instance_namespace");
+	public static final QualifiedName MERGED_SCHEMA_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"merged_schema_path");
+	public static final QualifiedName PRESERVE_NAMESPACES = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"preserve_namespaces");
+	public static final QualifiedName USE_PACKAGE_NAMES = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"user_package_names");
+	public static final QualifiedName PROBLEM_PER_SUBJECT = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"problem_per_subject");
 
 	// these are preferences only: use as file properties is deprecated
-	public static final QualifiedName PROFILE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_namespace");
+	public static final QualifiedName PROFILE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"profile_namespace");
 	public static final QualifiedName PROFILE_ENVELOPE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_envelope");
 
-	public static final QualifiedName MAPPING_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_namespace");
+	public static final QualifiedName MAPPING_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
+			"mapping_namespace");
 	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
 
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
@@ -59,7 +65,8 @@ public class Info {
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi", "eap") || isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
+		return isFile(resource, "Schema", "owl", "xmi", "eap")
+				|| isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
 	}
 
 	public static boolean isSchemaFolder(IResource resource) {
@@ -88,7 +95,7 @@ public class Info {
 
 	private static boolean isFile(IResource resource, String location, String... types) {
 		boolean hasExt = false;
-		for (String t: types)
+		for (String t : types)
 			hasExt = hasExt | hasExt(resource, t);
 		return isFile(resource, location) && hasExt;
 	}
@@ -107,49 +114,37 @@ public class Info {
 		IPath path = resource.getProjectRelativePath();
 		return (resource instanceof IFolder) && path.segmentCount() == 2 && path.segment(0).equals(location);
 	}
+
 	/*
-	public static boolean isXMI(IFile file) {
-		String ext = file.getFileExtension();
-		if( ext == null)
-			return false;
-		ext = ext.toLowerCase();
-		return ext.equals("xmi");
-	}
+	 * public static boolean isXMI(IFile file) { String ext =
+	 * file.getFileExtension(); if( ext == null) return false; ext =
+	 * ext.toLowerCase(); return ext.equals("xmi"); }
 	 */
 	public static boolean isParseable(IFile file) {
 		String ext = file.getFileExtension();
-		if( ext == null)
+		if (ext == null)
 			return false;
 		ext = ext.toLowerCase();
 
-		return 
-		ext.equals("xmi") || 
-		ext.equals("eap") ||
-		ext.equals("owl") || 
-		ext.equals("n3") || 
-		ext.equals("simple-owl") || 
-		ext.equals("merged-owl") || 
-		ext.equals("diagnostic")|| 
-		ext.equals("cimtool-settings") || 
-		ext.equals("repair") ||
-		ext.equals("mapping-ttl") ||
-		ext.equals("mapping-owl") ||
-		ModelParserRegistry.INSTANCE.hasParserForExtension(ext);
+		return ext.equals("xmi") || ext.equals("eap") || ext.equals("owl") || ext.equals("n3")
+				|| ext.equals("simple-owl") || ext.equals("merged-owl") || ext.equals("diagnostic")
+				|| ext.equals("cimtool-settings") || ext.equals("repair") || ext.equals("mapping-ttl")
+				|| ext.equals("mapping-owl") || ModelParserRegistry.INSTANCE.hasParserForExtension(ext);
 	}
 
 	public static IFile findMasterFor(IFile file) {
 		String ext = file.getFileExtension();
-		if( ext != null &&  ext.equalsIgnoreCase("annotation")) {
+		if (ext != null && ext.equalsIgnoreCase("annotation")) {
 			IFile master = getRelated(file, "xmi");
-			if( master.exists())
+			if (master.exists())
 				return master;
 
-			master = getRelated( file, "eap");
-			if( master.exists())
+			master = getRelated(file, "eap");
+			if (master.exists())
 				return master;
-			for (String s : ModelParserRegistry.INSTANCE.getExtensions()){
-				master = getRelated( file, s);
-				if( master.exists())
+			for (String s : ModelParserRegistry.INSTANCE.getExtensions()) {
+				master = getRelated(file, s);
+				if (master.exists())
 					return master;
 			}
 		}
@@ -162,39 +157,53 @@ public class Info {
 	}
 
 	public static IFile getRelated(IResource file, String ext) {
-		IPath path = file.getFullPath().removeFileExtension().addFileExtension(ext);
+		// NOTE: Given that Eclipse's implementation of IResource always attempts to
+		// locate the last index of the "." when removing a file extension we perform a
+		// recursive call to ensure that an extension is no longer at the end.
+		IPath path = removeFileExtension(file.getFullPath()).addFileExtension(ext);
 		return file.getWorkspace().getRoot().getFile(path);
 	}
 
+	/**
+	 * Private method to recursively remove all "extensions" up through to the final
+	 * "."
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private static IPath removeFileExtension(IPath path) {
+		return (path.getFileExtension() != null ? removeFileExtension(path.removeFileExtension()) : path);
+	}
+
 	public static IFolder getSchemaFolder(IProject project) {
-		return project != null? project.getFolder("Schema"): null;
+		return project != null ? project.getFolder("Schema") : null;
 	}
 
 	public static IFolder getProfileFolder(IProject project) {
-		return project != null? project.getFolder("Profiles"): null;
+		return project != null ? project.getFolder("Profiles") : null;
 	}
 
 	public static IFolder getInstanceFolder(IProject project) {
-		return project != null? project.getFolder("Instances"): null;
+		return project != null ? project.getFolder("Instances") : null;
 	}
 
 	public static IFolder getIncrementalFolder(IProject project) {
-		return project != null? project.getFolder("Incremental"): null;
+		return project != null ? project.getFolder("Incremental") : null;
 	}
 
 	public static IFile getSettings(IProject project) {
-		return project != null? project.getFile("." + SETTINGS_EXTENSION): null;
+		return project != null ? project.getFile("." + SETTINGS_EXTENSION) : null;
 	}
 
 	public static IResource getInstanceFor(IResource result) {
 		IResource instance = getRelated(result, "ttl");
-		if( !instance.exists())
+		if (!instance.exists())
 			instance = getRelated(result, "rdf");
-		if( !instance.exists())
+		if (!instance.exists())
 			instance = getRelated(result, "xml");
-		if( !instance.exists())
+		if (!instance.exists())
 			instance = getRelatedFolder(result);
-		if( ! instance.exists()) {
+		if (!instance.exists()) {
 			instance = null;
 		}
 		return instance;
@@ -203,15 +212,15 @@ public class Info {
 
 	public static IFile getProfileFor(IResource resource) throws CoreException {
 		IResource instance = getBaseModelFor(resource);
-		if( instance != null)
+		if (instance != null)
 			resource = instance;
 
 		String path = getProperty(resource, Info.PROFILE_PATH);
-		if( path.length() == 0)
+		if (path.length() == 0)
 			return null;
 
 		IFile profile = getProfileFolder(resource.getProject()).getFile(path);
-		if( ! profile.exists())
+		if (!profile.exists())
 			return null;
 
 		return profile;
@@ -219,21 +228,21 @@ public class Info {
 
 	public static IFile getRulesFor(IResource resource) throws CoreException {
 		IFile profile = getProfileFor(resource);
-		if(profile == null)
+		if (profile == null)
 			return null;
 
 		String type;
-		if( isInstance(resource))
+		if (isInstance(resource))
 			type = "simple-rules";
-		else if( isSplitInstance(resource))
+		else if (isSplitInstance(resource))
 			type = "split-rules";
-		else if( isIncremental(resource))
+		else if (isIncremental(resource))
 			type = "inc-rules";
 		else
 			return null;
 
 		IFile rules = getRelated(profile, type);
-		if( ! rules.exists())
+		if (!rules.exists())
 			return null;
 
 		return rules;
@@ -241,11 +250,11 @@ public class Info {
 
 	public static IResource getBaseModelFor(IResource resource) throws CoreException {
 		String path = getProperty(resource, Info.BASE_MODEL_PATH);
-		if( path.length() == 0)
+		if (path.length() == 0)
 			return null;
 
 		IFolder instance = getInstanceFolder(resource.getProject()).getFolder(path);
-		if( ! instance.exists())
+		if (!instance.exists())
 			return null;
 
 		return instance;
@@ -253,15 +262,14 @@ public class Info {
 
 	public static String getProperty(IResource resource, QualifiedName symbol) throws CoreException {
 		String value;
-		if( resource.exists()) {
+		if (resource.exists()) {
 			Settings settings = CIMToolPlugin.getSettings();
 			value = settings.getSetting(resource, symbol);
-			if(value == null) {
+			if (value == null) {
 				value = getPreference(symbol);
 				settings.putSetting(resource, symbol, value);
 			}
-		}
-		else {
+		} else {
 			value = getPreference(symbol);
 		}
 		return value;
@@ -281,14 +289,14 @@ public class Info {
 
 	public static String getSchemaNamespace(IResource resource) throws CoreException {
 		IResource[] schemas = getSchemaFolder(resource.getProject()).members();
-		for(int ix = 0; ix < schemas.length; ix++) {
+		for (int ix = 0; ix < schemas.length; ix++) {
 			IResource schema = schemas[ix];
-			if( isSchema(schema)) {
+			if (isSchema(schema)) {
 				Settings settings = CIMToolPlugin.getSettings();
 				String ns = settings.getSetting(schema, SCHEMA_NAMESPACE);
-				if(ns != null)
+				if (ns != null)
 					return ns;
-			}				
+			}
 		}
 		return getPreference(SCHEMA_NAMESPACE);
 	}
@@ -305,8 +313,7 @@ public class Info {
 		try {
 			Database.open(source, true).close();
 			return null;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return "The EAP file appears to be incompatible with CIMTool.";
 		}
 	}

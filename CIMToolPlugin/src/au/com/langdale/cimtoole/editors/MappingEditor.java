@@ -1,5 +1,6 @@
 package au.com.langdale.cimtoole.editors;
 
+import static au.com.langdale.jena.TreeModelBase.label;
 import static au.com.langdale.ui.builder.Templates.Field;
 import static au.com.langdale.ui.builder.Templates.Form;
 import static au.com.langdale.ui.builder.Templates.Grid;
@@ -9,7 +10,6 @@ import static au.com.langdale.ui.builder.Templates.PushButton;
 import static au.com.langdale.ui.builder.Templates.RadioButton;
 import static au.com.langdale.ui.builder.Templates.Row;
 import static au.com.langdale.ui.builder.Templates.TreeViewer;
-import static au.com.langdale.jena.TreeModelBase.label;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -24,6 +24,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
@@ -52,8 +54,6 @@ import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.ui.util.WizardLauncher;
 import au.com.langdale.xmi.UML;
-
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class MappingEditor extends ModelEditor {
 

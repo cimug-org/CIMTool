@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.util.NSMapper;
 import au.com.langdale.util.Jobs;
+import au.com.langdale.util.NSMapper;
 
 public class NSChecker implements IWorkspaceRunnable {
 	private IProject lastProject, project;

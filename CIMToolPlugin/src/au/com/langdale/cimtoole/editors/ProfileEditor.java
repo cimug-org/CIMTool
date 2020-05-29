@@ -17,6 +17,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+import com.hp.hpl.jena.vocabulary.RDFS;
+
 import au.com.langdale.cimtoole.editors.profile.Detail;
 import au.com.langdale.cimtoole.editors.profile.Hierarchy;
 import au.com.langdale.cimtoole.editors.profile.Populate;
@@ -37,8 +39,6 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.ui.util.WizardLauncher;
-
-import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class ProfileEditor extends ModelEditor {
 	private ProfileModel tree;

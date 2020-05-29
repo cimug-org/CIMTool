@@ -19,8 +19,8 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-import au.com.langdale.cimtoole.project.ModelMinder;
 import au.com.langdale.cimtoole.project.Cache.CacheListener;
+import au.com.langdale.cimtoole.project.ModelMinder;
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.JenaTreeProvider;
 import au.com.langdale.jena.OntModelProvider;

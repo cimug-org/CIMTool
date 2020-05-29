@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="CIMTool">
+            name="CIMTool 1.10.0.RC1">
          <property
                name="windowImages"
                value="icon-16.png,icon-32.png,icon-48.png,icon-64.png">
@@ -29,12 +29,8 @@
                value="50,260,400,20">
          </property>
          <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-         <property
                name="appName"
-               value="CIMTool">
+               value="CIMTool 1.10.0.RC1">
          </property>
          <property
                name="startupForegroundColor"

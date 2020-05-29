@@ -4,17 +4,22 @@
  */
 package au.com.langdale.cimtoole.editors;
 
+import static au.com.langdale.ui.builder.Templates.DisplayArea;
+import static au.com.langdale.ui.builder.Templates.DisplayField;
+import static au.com.langdale.ui.builder.Templates.Form;
+import static au.com.langdale.ui.builder.Templates.Grid;
+import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.Label;
+
 import org.eclipse.core.resources.IResource;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.xmi.UML;
-
-import au.com.langdale.kena.OntResource;
-import static au.com.langdale.ui.builder.Templates.*;
 
 public class InfoModelEditor extends ModelEditor {
 	private JenaTreeModelBase tree;
