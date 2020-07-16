@@ -189,7 +189,7 @@ If errors/problems do exist as illustrated in the second screenshot then continu
 ###### Step 9:
 A common error upon auto-import of the projects is the lack of a JDK/JRE matching that configured for the CIMTool plugin projects (currently a JDK/JRE level 1.6 is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. Note that in the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK/JRE is selected from those installed on the local file system.
 
-> Note that a wide variety of versions of the **OpenJDK** starting with Java 6 can be download from the [Azul download site](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk).  The Zulu build of **OpenJDK Java 6** is located [here](https://www.azul.com/downloads/zulu-community/?version=java-6-lts&architecture=x86-64-bit&package=jdk).
+> Note that a wide variety of versions of the **OpenJDK** starting with Java 6 can be download from the [Azul download site](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk).  The ```.msi``` installer for 64-bit Windows of the Zulu build of **OpenJDK Java 6** is located [here](https://cdn.azul.com/zulu/bin/zulu6.22.0.3-jdk6.0.119-win_x64.msi).
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
