@@ -201,7 +201,7 @@ A common error upon auto-import of the projects is the lack of a JDK/JRE matchin
 
   <img src="/assets/img/egit-clone-repo-12.png"  border="1px" style="max-width:100%"/>
 
-- At this stage either all errors will have been removed from the projects.  However, depending on whether cloning to a new workspace or not a final set of error related to the Scala libraries may be present as shown in the next screenshot.  If that is the case then perform **Step 10** to resolve any Scala-related errors.
+- At this stage either all errors will have been removed from the projects or a reduced set may remain with the observation that they are commonly related to the Scala libraries as shown in the next screenshot.  If that is the case then proceeding to **Step 10** to resolve these Scala-related errors should be performed.
 
   <img src="/assets/img/egit-clone-repo-13.png"  border="1px" style="max-width:100%"/>
 
