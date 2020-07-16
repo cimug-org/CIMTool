@@ -124,11 +124,11 @@ If all was successful a final dialog is displayed asking if you want to restart 
 
 ## Part 3:  Clone and Import of the CIMTool Project  
 
-> The final steps needed to complete the setup of the CIMTool Eclipse Development Environment is to clone an appropriate development branch of the CIMTool codebase from the [CIMTool GitHub Repo](https://github.com/CIMug-org/CIMTool).  There are two general approaches with how the a branch can be cloned and, in turn, be references from within the development environment.  Both methods are outlined below and the pros/cons described herein.
+> The final steps needed to complete the setup of the CIMTool Eclipse Development Environment is to clone an appropriate development branch of the CIMTool codebase from the [CIMTool GitHub Repo](https://github.com/CIMug-org/CIMTool).  There are two general approaches to clone a branch for use in Eclipse with the second being the one outlined in the steps that follow:
+- Utilizing external tooling such as GitHub Desktop, TortoiseGit, Git Bash, Git GUI, etc. a clone is performed to a local directory.  In this scenario the projects in that directory are subsequently imported into an  workspace.
+- Alternatively, Eclipse's pre-bundled **EGit** plugin can be used to directly clone and automatically import the CIMTool projects in Eclipse.
 
-##### Approach # 1: Cloning a CIMTool Branch Using the Eclipse EGit Plugin
-
-The cloning steps describe for this approach are executed from within the Eclipse Development Environment using the Eclipse **EGit** plugin which will automatically be installed as part of the Indigo Eclipse Plugin Development Environment.  The clone can be performed against a new or existing Eclipse workspace.
+##### Cloning a CIMTool Branch Using the Eclipse EGit Plugin
 
 ###### Step 1:
 
