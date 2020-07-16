@@ -132,19 +132,17 @@ If all was successful a final dialog is displayed asking if you want to restart 
 
 ###### Step 1:
 
-Start out by opening the EGit Perspective in Eclipse as shown in the next two screenshots.
+- Start out by opening the **EGit** Perspective in Eclipse.
 
-Presume that for this working example the default JRE/JDK on the Windows system is a newer version of Java (e.g. Java 11). If an attempt is made to launch the development environment directly via the ```eclipse.exe``` executable the system default JRE/JDK is used and a dialog similar to the following will be displayed:
+  <img src="/assets/img/egit-clone-repo-1.png"  border="1px" style="max-width:75%"/>
 
-<img src="/assets/img/egit-clone-repo-1.png"  border="1px" style="max-width:75%"/>
+- Then select the **"Git Repository Exploring"** Perspective...
 
-Then select the **"Git Repository Exploring"** Perspective...
-
-<img src="/assets/img/egit-clone-repo-2.png"  border="1px" style="max-width:50%"/>
+  <img src="/assets/img/egit-clone-repo-2.png"  border="1px" style="max-width:50%"/>
 
 ###### Step 2:
 
-Next select the **"Clone a Git repository"** option as shown.
+Select the **"Clone a Git repository"** option as shown.
 
 <img src="/assets/img/egit-clone-repo-3.png"  border="1px" style="max-width:100%"/>
 
@@ -177,7 +175,9 @@ Finally, be sure on this wizard page to check the **"Import all existing project
 
 
 ###### Step 8:
-Upon completion of the cloning and import projects process switch to the **"Plug-in Development"** perspective.  If there are no errors/problems to address then the Projects listed should appear similar to the next screenshot and the "Problems" tab indicate no errors.  However, if errors/problems do exist as illustrated in the second screenshot then continue on with **Step 9** and onward of this cloning procedure.
+After completion of the cloning and auto-import of the CIMTool projects switch to the **"Plug-in Development"** perspective.  If there are no errors/problems to address then the Projects listed should appear similar to the next screenshot and the **"Problems"** tab indicate no errors.  
+
+If errors/problems do exist as illustrated in the second screenshot then continue on with **Step 9 & 10** of this procedure.
 
 - Successful import
 <img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
@@ -187,7 +187,7 @@ Upon completion of the cloning and import projects process switch to the **"Plug
 
 
 ###### Step 9:
-A common error upon auto-import of the projects is the lack of a JDK matching that of the projects (currently a JDK level of 1.6 is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. Note that in the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK is select from those installed on a local file system.
+A common error upon auto-import of the projects is the lack of a JDK matching that configured for the CIMTool plugin projects (currently a JDK level 1.6 is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. Note that in the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK is select from those installed on a local file system.
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
@@ -207,8 +207,8 @@ A common error upon auto-import of the projects is the lack of a JDK matching th
 
 
 ###### Step 10:
-Scala-related errors at this stage usually indicate that the steps outlined earlier under the **Installation of the ScalaIDE 3.0.0 Plugin** section in the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either may not have been applied yet or may need to be performed once again if the earlier steps were not accurately followed.  
+Scala-related errors at this stage usually indicate that the steps outlined earlier under the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.  
 
-Once the steps have been applied the final result should appear as in this final screenshot.
+Once the steps have been applied the final result should appear as shwon in this final screenshot:
 
 <img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
