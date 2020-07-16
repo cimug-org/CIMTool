@@ -186,9 +186,13 @@ If errors/problems do exist as illustrated in the second screenshot then continu
 
 
 ###### Step 9:
-A common error after auto-import of the projects is the lack of a JDK/JRE matching that configured for the CIMTool plugin projects (currently a Java 6 JDK/JRE is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. In the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK/JRE is selected from those installed on the local file system. Such errors will always be present when importing CIMTool projects into a new Eclipse workspace.  If importing into an existing workspace that previously had Java 6 added as an **Installed JDK/JRE** then these errors will not appear in the projects.
+A common error after auto-import of the projects is the lack of a JDK/JRE matching that configured for the CIMTool plugin projects (currently a Java 6 JDK/JRE is needed).  
 
 > Note that a wide variety of versions of the **OpenJDK** starting with Java 6 can be download from the [Azul download site](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk).  The ```.msi``` installer for 64-bit Windows of the Zulu build of **OpenJDK Java 6** is located [here](https://cdn.azul.com/zulu/bin/zulu6.22.0.3-jdk6.0.119-win_x64.msi).
+
+Such errors will always be present when importing CIMTool projects into a new Eclipse workspace.  If importing into an existing workspace that previously had Java 6 added as an **Installed JDK/JRE** then these errors will not appear in the projects.
+
+If it is necessarily to add the JDK/JRE perform the steps that follow to selected from those installed on the local file system.  These steps assume that you already have an existing **Java 6** JDK/JRE installed or have downloaded and installed it from the link previously provided above.  Once installed the remaining errors should be resolved after performing a "clean all projects" in Eclipse. 
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
