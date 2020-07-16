@@ -209,6 +209,6 @@ A common error upon auto-import of the projects is the lack of a JDK matching th
 ###### Step 10:
 Scala-related errors at this stage usually indicate that the steps outlined earlier under the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.  
 
-Once the steps have been applied the final result should appear as shwon in this final screenshot:
+Once the steps have been applied the final result should appear as shown:
 
 <img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
