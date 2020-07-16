@@ -187,7 +187,7 @@ If errors/problems do exist as illustrated in the second screenshot then continu
 
 
 ###### Step 9:
-A common error upon auto-import of the projects is the lack of a JDK matching that configured for the CIMTool plugin projects (currently a JDK level 1.6 is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. Note that in the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK is select from those installed on a local file system.
+A common error upon auto-import of the projects is the lack of a JDK matching that configured for the CIMTool plugin projects (currently a JDK level 1.6 is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. Note that in the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK is selected from those installed on the local file system.
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
