@@ -189,6 +189,8 @@ If errors/problems do exist as illustrated in the second screenshot then continu
 ###### Step 9:
 A common error upon auto-import of the projects is the lack of a JDK/JRE matching that configured for the CIMTool plugin projects (currently a JDK/JRE level 1.6 is needed).  A proper JDK/JRE must be added to the listed of **"Installed JREs"** if the required one is not present.  Once installed most of the errors will be resolved after performing a "clean all projects" in Eclipse. Note that in the example screenshot only a JDK 1.5.x is installed and the steps that follow show how a JDK/JRE is selected from those installed on the local file system.
 
+> Note that a wide variety of versions of the **OpenJDK** starting with Java 6 can be download from the [Azul download site](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk).  The Zulu build of **OpenJDK Java 6** is located [here](https://www.azul.com/downloads/zulu-community/?version=java-6-lts&architecture=x86-64-bit&package=jdk).
+
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
   <img src="/assets/img/egit-clone-repo-10.png"  border="1px" style="max-width:100%"/>
@@ -205,7 +207,7 @@ A common error upon auto-import of the projects is the lack of a JDK/JRE matchin
 
   <img src="/assets/img/egit-clone-repo-13.png"  border="1px" style="max-width:100%"/>
 
-- Scala-related errors at this stage usually indicate that the steps outlined in the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed. 
+- Scala-related errors at this stage usually indicate that the steps outlined in the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.
 
   Once the steps have been (re)applied the remaining errors should be resolved.
 
