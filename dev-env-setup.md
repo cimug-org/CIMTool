@@ -197,7 +197,7 @@ A common error upon auto-import of the projects is the lack of a JDK matching th
 
   <img src="/assets/img/egit-clone-repo-11.png"  border="1px" style="max-width:100%"/>
 
-- Next, select the **"Directory..."** button and choose a JRE home directory on the file system corresponding to the version of the JRE desired.  Note that once selected the other fields in the dialog will auto-populate.  Just click the **"Finish"** button to add the JRE.  Once finished execute a "Clean all projects" from within Eclipse.
+- Next, select the **"Directory..."** button and choose a JDK or JRE home directory on the file system corresponding to the version of the JRE desired.  Note that once selected the other fields in the dialog will auto-populate.  Just click the **"Finish"** button to add the JRE.  Once finished execute a "Clean all projects" from within Eclipse.
 
   <img src="/assets/img/egit-clone-repo-12.png"  border="1px" style="max-width:100%"/>
 
