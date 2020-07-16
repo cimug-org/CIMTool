@@ -201,14 +201,12 @@ A common error upon auto-import of the projects is the lack of a JDK/JRE matchin
 
   <img src="/assets/img/egit-clone-repo-12.png"  border="1px" style="max-width:100%"/>
 
-- At this stage either all errors will have been removed from the projects or a reduced set may remain with the observation that they are commonly related to the Scala libraries as shown in the next screenshot.  If that is the case then proceeding to **Step 10** to resolve these Scala-related errors should be performed.
+- Verify whether or not all errors have been removed from the projects or if a reduced set remains.  If errors remain an observation has been that they are commonly related to the Scala libraries as shown in the next screenshot.  
 
   <img src="/assets/img/egit-clone-repo-13.png"  border="1px" style="max-width:100%"/>
 
+- Scala-related errors at this stage usually indicate that the steps outlined in the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed. 
 
-###### Step 10:
-Scala-related errors at this stage usually indicate that the steps outlined earlier under the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.  
+  Once the steps have been (re)applied the remaining errors should be resolved.
 
-Once the steps have been applied the final result should appear as shown:
-
-<img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
+  <img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
