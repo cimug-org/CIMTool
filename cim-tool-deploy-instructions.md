@@ -2,7 +2,7 @@
 
 ## Packaging & Deploying CIMTool as an Eclipse Product
 
-> When taking into consideration the packaging and deployment of **CIMTool** it is important to highlight that the set of **CIMTool** plugins is not distributed from a plugins update site as with other Eclipse plugins.  Rather, **CIMTool** is packaged and deployed as an **Eclipse Product**. The steps outlined in this set of instructions offer guidance as to the packaging and deployment process.  Note that the steps outlined
+> When taking into consideration the packaging and deployment of **CIMTool** it is important to highlight that the set of **CIMTool** plugins is not distributed from a plugins update site as with other Eclipse plugins.  Rather, **CIMTool** is packaged and deployed as an **Eclipse Product**. The steps outlined in this set of instructions offer guidance as to the packaging and deployment process.
 
 ###### Step 1:
 
