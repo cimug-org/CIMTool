@@ -44,7 +44,7 @@ The configuration settings highlighted in the next screenshot are for exporting 
 ```CIMTool-<release-version>-<os>.<os-variant>.<architecture>.zip```
 
 
-The **x64** architecture is a backwards-compatible extension of **x86**. It provides a legacy 32-bit mode, which is identical to **x86**, and a new 64-bit mode.  The term **"x64"** has included both **AMD 64** and **Intel 64**. The instruction sets are close to identical. As of today, CIMTool for the **x86** architecture is no longer being supported for new releases.
+The **x64** architecture is a backwards-compatible extension of **x86**. It provides a legacy 32-bit mode, which is identical to **x86**, and a new 64-bit mode.  The term **"x64"** has included both **AMD 64** and **Intel 64**. The instruction sets are close to identical. As of today, the **x86** architecture is no longer being supported for new releases of CIMTool.
 
 
 OS | Example Archive Name | Comments
