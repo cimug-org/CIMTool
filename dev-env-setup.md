@@ -32,11 +32,11 @@ At this stage creating a shortcut to the ```eclipse.exe``` that explicitly speci
 
  <img src="/assets/img/install-eclipse-shortcut-1.png"  border="1px" style="max-width:100%"/>
 
-## Part 2:  Install Additional Plugin Dependencies
+## Part 2:  Install/Update Additional Plugin Dependencies
 
-> There are two additional plugin dependencies needed by CIMTool that are not pre-packaged with this packaged instance of the Eclipse 3.7.2 Plugin Development Environment.  These dependencies must be installed prior to importing the CIMTool project in Part 3 of these instructions.
+> There are two additional plugin dependencies needed by CIMTool that are not pre-packaged with this packaged instance of the Eclipse 3.7.2 Plugin Development Environment.  These dependencies must be installed prior to importing the CIMTool project in Part 3 of these instructions.  In addition, an update of the **EGit** plugin bundled with Eclipse is required if using **EGit** rather than external Git tooling to manage code changes in Git.
 
-### Installation of the Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin
+### Install:  Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin
 
 The installation of this plugin is performed manually using the steps as outlined. Be sure that your instance of Eclipse is **shut down** before performing the installation.
 
@@ -54,7 +54,7 @@ Last, launch Eclipse and verify that the plug-in was properly installed.  It sho
 
 <img src="/assets/img/confirm-emf-2.6.0-plugin-installed.png"  border="1px" style="max-width:100%"/></a>
 
-### Installation of the ScalaIDE 3.0.0 Plugin
+### Install: ScalaIDE 3.0.0 Plugin
 
 An older version of the Scala-IDE plugin (located at the [ScalaIDE for Eclipse Archive site](http://scala-ide.org/download/prev-stable.html)). The installation steps are:
 
@@ -76,25 +76,25 @@ Download the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scal
 ###### Step 2:
 Next launch Eclipse and select the "**Install New Software...**" menu option as shown in the screenshot.
 
-<img src="/assets/img/install-scala-ide-plugin-0.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-scala-ide-plugin-0.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 3:
 In the **Install** wizard dialog that is launched click "**Add...**" to launch the **Add Repository** dialog.
 
-<img src="/assets/img/install-scala-ide-plugin-1.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-scala-ide-plugin-1.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 4:
 In the **Add Repository** dialog click "**Local...**" button:
 
-<img src="/assets/img/install-scala-ide-plugin-2a.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-scala-ide-plugin-2a.png"  border="1px" style="max-width:100%"/>
 
 Using the file chooser navigate to the location  where the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip) archive was extracted to and select the ```\site``` directory and click "**OK**".
 
-<img src="/assets/img/install-scala-ide-plugin-2b.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-scala-ide-plugin-2b.png"  border="1px" style="max-width:100%"/>
 
 Finally, enter a name for this new local plugin repository in the **Name** field.  Note that the **Location** field should now reference the ```\site``` directory you just selected (i.e. the "root" of the file structure described in **step 1**):
 
-<img src="/assets/img/install-scala-ide-plugin-2c.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-scala-ide-plugin-2c.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 5:
 Next, select the check boxes as shown in the **details** sections of the screen shot below.  Once selected click the "**Select All**" button and then "**Next**" to proceed to the next page of the installation wizard.
@@ -119,15 +119,79 @@ A security warning will be displayed.  Just click "**OK**" to continue.
 ###### Step 9:
 If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "**Restart Now**" button and allow your instance of Eclipse to restart.
 
-<img src="/assets/img/install-scala-ide-plugin-7.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-scala-ide-plugin-7.png"  border="1px" style="max-width:100%"/>
+
+### Update: Eclipse EGit Plugin
+
+The 3.7.2 (Indigo) version of Eclipse outlined within these instructions is bundled with an older version of the **EGit** plugin.  In view of this it is recommended that either a newer version of **EGit** be installed or that external Git tooling such as Git Desktop, TortoiseGit, or Git Bash be used for source code management.
+
+From the Eclipse Foundation wiki site the EGit version support matrix outlines the following as the latest possible version of **EGit** support within Eclipse 3.7.2 (See:  [what versions of Eclipse does EGit target](https://wiki.eclipse.org/EGit/FAQ#What_versions_of_Eclipse_does_EGit_target.3F)):
+
+EGit|Contained in release train|Supported Version of Eclipse
+----------------------|------------------------|-----------------
+2.3.1.201302201838-r	| 3.8.2/4.2.2 (Juno SR2) |	Eclipse 3.7.2+ (Indigo) (except EGit Import Support feature, which is optional)
+
+
+Then from the [Where can I find older releases of EGit?](https://wiki.eclipse.org/EGit/FAQ#Where_can_I_find_older_releases_of_EGit.3F) section of the wiki we locate the **p2 repository URL** to be used during update:
+
+Release Version|Release Date|p2 repository URL|browse p2 repository|download p2 repository
+----------------------|------------------------|------------------------|------------------------|------------------------
+2.3.1.201302201838-r|2013-03-01|[https://archive.eclipse.org/egit/updates-2.3](https://archive.eclipse.org/egit/updates-2.3)|[updates-2.3](https://www.eclipse.org/downloads/download.php?file=/egit/updates-2.3/&r=1)|[2.3.1.201302201838-r](https://www.eclipse.org/downloads/download.php?file=/egit/updates-2.3/org.eclipse.egit.repository-2.3.1.201302201838-r.zip)
+
+#### Steps to Install the EGit Plugin Update
+
+###### Step 1:
+Again navigate to the **"Install New Software..."** menu option as shown.
+
+<img src="/assets/img/install-scala-ide-plugin-0.png"  border="1px" style="max-width:100%"/>
+
+###### Step 2:
+In the **Install** wizard dialog that is launched click "**Add...**" to launch the **Add Repository** dialog.
+
+<img src="/assets/img/update-egit-plugin-1.png"  border="1px" style="max-width:100%"/>
+
+###### Step 3:
+In the **Add Repository** dialog simply add the description and the **p2 repository URL** (previously located) into the fields as shown and select the **OK** button.
+
+<img src="/assets/img/update-egit-plugin-2.png"  border="1px" style="max-width:100%"/>
+
+###### Step 4:
+Next, select the check boxes as shown in the screenshot.  Once selected click the  **Next** button to proceed to the next page of the installation wizard.
+
+<img src="/assets/img/update-egit-plugin-3.png"  border="1px" style="max-width:75%"/>
+
+###### Step 5:
+Continue by clicking **Next** to accept the items to be installed.
+
+<img src="/assets/img/update-egit-plugin-4.png"  border="1px" style="max-width:75%"/>
+
+###### Step 6:
+On the **Review Licenses** page select the "I accept the terms of the license agreements" radio button and click the **Finish** button.
+
+<img src="/assets/img/update-egit-plugin-5.png"  border="1px" style="max-width:75%"/>
+
+###### Step 7:
+If a security warning is displayed.  Just click **OK** to continue.
+
+<img src="/assets/img/install-scala-ide-plugin-6.png"  border="1px" style="max-width:100%"/>
+
+###### Step 8:
+If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "**Restart Now**" button and allow your instance of Eclipse to restart.
+
+<img src="/assets/img/install-scala-ide-plugin-7.png"  border="1px" style="max-width:100%"/>
+
+
+###### NOTE
+>On rare occasion, it has been observed that during installation of the EGit plugin update that at **Steps 6** or **Step 7** an error may occur indicating that Eclipse was unable to download specific jar artifacts as part of the installation.  If this occurs simply shutdown and restart Eclipse and perform the installation steps once again.  This typically will resolve any issues.  
+
 
 ## Part 3:  Clone and Import of the CIMTool Project  
 
 > The final steps needed to complete the setup of the CIMTool Eclipse Development Environment is to clone an appropriate development branch of the CIMTool codebase from the [CIMTool GitHub Repo](https://github.com/CIMug-org/CIMTool).  There are two general approaches to clone a branch for use in Eclipse with the second being the one outlined in the steps that follow:
-- Utilizing external tooling such as GitHub Desktop, TortoiseGit, Git Bash, Git GUI, etc. a clone is performed to a local directory.  In this scenario the projects in that directory are subsequently imported into an  workspace.
+- Utilizing external tooling such as GitHub Desktop, TortoiseGit, Git Bash, Git GUI, etc. a clone is performed to a local directory.  In this scenario the projects in that directory are subsequently imported into an Eclipse workspace.
 - Alternatively, Eclipse's pre-bundled **EGit** plugin can be used to directly clone and automatically import the CIMTool projects in Eclipse.
 
-##### Cloning a CIMTool Branch Using the Eclipse EGit Plugin
+#### Cloning a CIMTool Branch Using the Eclipse EGit Plugin
 
 ###### Step 1:
 
@@ -135,7 +199,7 @@ If all was successful a final dialog is displayed asking if you want to restart 
 
   <img src="/assets/img/egit-clone-repo-1.png"  border="1px" style="max-width:75%"/>
 
-- Then select the **"Git Repository Exploring"** Perspective...
+- Then select the **"Git Repository Exploring"** Perspective.
 
   <img src="/assets/img/egit-clone-repo-2.png"  border="1px" style="max-width:50%"/>
 
@@ -146,12 +210,12 @@ Select the **"Clone a Git repository"** option as shown.
 <img src="/assets/img/egit-clone-repo-3.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 3:
-Depending on your local Git installation you may or may not be shown the **"Check Home Directory"** dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous **Step 2** or you can simply click the OK button and accept the default Git repository location.
+Depending on your local Git installation you may or may not be shown the **"Check Home Directory"** dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous **Step 2** or you can simply check the **"Do not show again"** eheckbox and lick the OK button to accept the default Git repository location.
 
 <img src="/assets/img/egit-clone-repo-4.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 4:
-Next, navigate back to the CIMug-org GitHub Open Source Site and copy the URL of the CIMTool repository to the clipboard as shown in the screenshot below.  Note that this will be used in the **"Clone Git Repository"** dialog.
+Next, in a browser locate the CIMug-org GitHub Open Source Site and copy the URL of the CIMTool repository to the clipboard as shown in the screenshot below.  Note that this will then be used in the **"Clone Git Repository"** dialog.
 
 <img src="/assets/img/egit-clone-repo-5.png"  border="1px" style="max-width:100%"/>
 
@@ -161,7 +225,9 @@ Paste the copied URL into the **URI** field as shown next.  Doing so will then a
 <img src="/assets/img/egit-clone-repo-6.png"  border="1px" style="max-width:75%"/>
 
 ###### Step 6:
-The next page of the **"Clone Git Repository** dialog wizard will be displayed asking for you to select the branches to clone from the remote repository.  You can choose to select any number or even all branches that you may be interested in and click **Next**.  Note in this example screenshot all are selected but that commonly is not necessary.
+The next page of the **"Clone Git Repository"** dialog wizard will be displayed asking for you to select the branches to clone from the remote repository.  You can choose to select any number or even all branches that you may be interested in and click **Next**.  In this example screenshot all are selected.  
+
+> It should be noted that if you select all branches they will be made available to you later in **EGit** should you desire to switch to another development branch .  It is important to keep in mind that if you decide to switch to a different branch in **EGit** that any code changes in the branch on your local file system will be lost unless they are first stashed/shelved **before** switching to another branch. Stashed changes can later be reapplied when switching back to the original branch on your local file system. See [EGit Stash Support](https://wiki.eclipse.org/EGit/New_and_Noteworthy/2.0#Stash_Support) introduced in 2.0 of the plugin.  To utilize this functionality the **EGit** plugin update must be installed as outlined under the **Part 2: Install Additional Plugin Dependencies** section these instructions.
 
 <img src="/assets/img/egit-clone-repo-7.png"  border="1px" style="max-width:75%"/>
 
@@ -192,7 +258,7 @@ A common error after auto-import of the projects is the lack of a JDK/JRE matchi
 
 Such errors will always be present when importing CIMTool projects into a new Eclipse workspace.  If importing into an existing workspace that previously had Java 6 added as an **Installed JDK/JRE** then these errors will not appear in the projects.
 
-If it is necessarily to add the JDK/JRE perform the steps that follow to selected from those installed on the local file system.  These steps assume that you already have an existing **Java 6** JDK/JRE installed or have downloaded and installed it from the link previously provided above.  Once installed the remaining errors should be resolved after performing a "clean all projects" in Eclipse. 
+If it is necessarily to add the JDK/JRE, perform the steps that follow to select a JDK/JRE from those installed on the local file system.  These steps assume that you already have an existing **Java 6** JDK/JRE installed or have downloaded and installed it from the link previously provided above.  Once installed and the Java 6 JDK/JRE selected here the remaining errors should be resolved after performing a "clean all projects" in Eclipse.
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
@@ -212,6 +278,6 @@ If it is necessarily to add the JDK/JRE perform the steps that follow to selecte
 
 - Scala-related errors at this stage usually indicate that the steps outlined in the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.
 
-  Once the steps have been (re)applied the remaining errors should be resolved.
+  Once the steps have been (re)applied the remaining errors should then be resolved:
 
   <img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
