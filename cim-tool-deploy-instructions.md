@@ -2,9 +2,7 @@
 
 ## Packaging & Deploying CIMTool as an Eclipse Product
 
-> When taking into consideration the packaging and deployment of CIMTool it is important to highlight that the set of CIMTool plugins is not distributed from a plugins update site as with other Eclipse plugins.  Rather, CIMTool is packaged and deployed as an **Eclipse Product**. The steps outlined in this set of instructions offer guidance as to the packaging and deployment process.  Note that the steps outlined
-
-A special edition of the Eclipse development environment is required to develop CIMTool.  This environment is known as the [Eclipse for RCP and RAP Developers](https://www.eclipse.org/downloads/packages/release/indigo/sr2/eclipse-rcp-and-rap-developers) package (the newer 4.x PDE package is referred to as the Eclipse Committers package).  Since CIMTool is currently built on the older Eclipse 3.x SWT plug-ins platform this older version is required.  The following steps describe how to locate, install and setup this package:
+> When taking into consideration the packaging and deployment of **CIMTool** it is important to highlight that the set of **CIMTool** plugins is not distributed from a plugins update site as with other Eclipse plugins.  Rather, **CIMTool** is packaged and deployed as an **Eclipse Product**. The steps outlined in this set of instructions offer guidance as to the packaging and deployment process.  Note that the steps outlined
 
 ###### Step 1:
 
