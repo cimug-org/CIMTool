@@ -2,7 +2,7 @@
 
 ## Part 1:  Eclipse Installation
 
-> A special edition of the Eclipse plugin development environment (PDE) is required to develop CIMTool.  This environment is known as the [Eclipse for RCP and RAP Developers](https://www.eclipse.org/downloads/packages/release/indigo/sr2/eclipse-rcp-and-rap-developers) package (the newer 4.x PDE package is referred to as the Eclipse Committers package).  Since CIMTool is currently built on the older Eclipse 3.x SWT plug-ins platform this older version is required.  The following steps describe how to locate, install and setup this package:
+> A special edition of the Eclipse plugins development environment (PDE) is required to develop CIMTool.  This environment is known as the [Eclipse for RCP and RAP Developers](https://www.eclipse.org/downloads/packages/release/indigo/sr2/eclipse-rcp-and-rap-developers) package (the newer 4.x PDE package is referred to as the Eclipse Committers package).  Since CIMTool is currently built on the older Eclipse 3.x SWT plug-ins platform this older version is required.  The following steps describe how to locate, install and setup this package:
 
 ###### Step 1:
 The Windows 64-bit version of Eclipse PDE 3.7.2 (Indigo) can be downloaded at [eclipse-rcp-indigo-SR2-win32-x86_64.zip](https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-rcp-indigo-SR2-win32-x86_64.zip). (Note that versions for Mac and Linux are also available at [Eclipse for RCP and RAP Developers](https://www.eclipse.org/downloads/packages/release/indigo/sr2/eclipse-rcp-and-rap-developers) but the instructions that follow are for Windows only.)
