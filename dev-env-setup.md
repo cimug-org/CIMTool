@@ -47,12 +47,12 @@ Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://github.com/CIMug-org/CIMT
 ###### Step 2:
 Locate the ```\dropins``` directory as illustrated in the screenshot below and drop the plugin jar into it.
 
-<img src="/assets/img/install-plugins-dropins-folder.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/install-plugins-dropins-folder.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 3:
 Last, launch Eclipse and verify that the plug-in was properly installed.  It should appear within the Plug-ins tab as shown.
 
-<img src="/assets/img/confirm-emf-2.6.0-plugin-installed.png"  border="1px" style="max-width:100%"/></a>
+<img src="/assets/img/confirm-emf-2.6.0-plugin-installed.png"  border="1px" style="max-width:100%"/>
 
 ### Install: ScalaIDE 3.0.0 Plugin
 
