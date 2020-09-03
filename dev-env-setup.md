@@ -210,7 +210,7 @@ Select the **"Clone a Git repository"** option as shown.
 <img src="/assets/img/egit-clone-repo-3.png"  border="1px" style="max-width:100%"/>
 
 ###### Step 3:
-Depending on your local Git installation you may or may not be shown the **"Check Home Directory"** dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous **Step 2** or you can simply check the **"Do not show again"** eheckbox and lick the OK button to accept the default Git repository location.
+Depending on your local Git installation you may or may not be shown the **"Check Home Directory"** dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous **Step 2** or you can simply check the **"Do not show again"** checkbox and click the OK button to accept the default Git repository location.
 
 <img src="/assets/img/egit-clone-repo-4.png"  border="1px" style="max-width:100%"/>
 
@@ -258,7 +258,7 @@ A common error after auto-import of the projects is the lack of a JDK/JRE matchi
 
 Such errors will always be present when importing CIMTool projects into a new Eclipse workspace.  If importing into an existing workspace that previously had Java 6 added as an **Installed JDK/JRE** then these errors will not appear in the projects.
 
-If it is necessarily to add the JDK/JRE, perform the steps that follow to select a JDK/JRE from those installed on the local file system.  These steps assume that you already have an existing **Java 6** JDK/JRE installed or have downloaded and installed it from the link previously provided above.  Once installed and the Java 6 JDK/JRE selected here the remaining errors should be resolved after performing a "clean all projects" in Eclipse.
+If it is necessary to add the JDK/JRE, perform the steps that follow to select a JDK/JRE from those installed on the local file system.  These steps assume that you already have an existing **Java 6** JDK/JRE installed or have downloaded and installed it from the link previously provided above.  Once installed and the Java 6 JDK/JRE selected here the remaining errors should be resolved after performing a "clean all projects" in Eclipse.
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
