@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+    <extensionContent id="DTP_overviewExtension"
+        name="DTP Overview"
+        style="css/overview.css"
+        path="overview/@">
+        <group id="DTP_overview_group"
+            label="Data Tools Platform"
+            style-id="content-group">
+            <text style-id="group-description">
+                The Data Tools Platform project provides extensible frameworks and
+                exemplary tools, enabling a diverse set of plug-in offerings
+                specific to particular data-centric technologies and supported by
+                the DTP ecosystem.
+            </text>
+            <link label="DTP project"
+                style-id="content-link"
+                url="http://org.eclipse.ui.intro/openBrowser?url=http://www.eclipse.org/datatools/"
+                id="DTP_overviewLink1">
+                <text>Learn more about the Eclipse Data Tools Platform project</text>
+            </link>
+            <link label="DTP documentation"
+                style-id="content-link"
+                url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.datatools.common.doc.user/doc/html/asc1229700378416.html"
+                id="DTP_overviewLink2">
+                <text>Learn how to use the Data Tools Platform features and tools</text>
+            </link>
+            <anchor id="DTP_overviewAdditions"/>
+        </group>
+   </extensionContent>
+</introContent>

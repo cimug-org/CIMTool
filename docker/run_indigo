@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec /opt/eclipse/eclipse -configuration /workspace/docker/indigo/.eclipse

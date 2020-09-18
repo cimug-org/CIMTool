@@ -1,0 +1,328 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Built-By: hudsonbuild
+Bundle-SymbolicName: org.eclipse.mylyn.help.ui;singleton:=true
+Require-Bundle: org.eclipse.core.runtime,org.eclipse.ui;resolution:=op
+ tional,org.eclipse.ui.forms;resolution:=optional,org.eclipse.mylyn.ta
+ sks.core;bundle-version="[3.0.0,4.0.0)";resolution:=optional,org.ecli
+ pse.mylyn.tasks.ui;bundle-version="[3.0.0,4.0.0)";resolution:=optiona
+ l,org.eclipse.mylyn.commons.ui;bundle-version="[3.0.0,4.0.0)";resolut
+ ion:=optional,org.apache.ant;bundle-version="1.7.0";resolution:=optio
+ nal
+Bundle-Version: 3.6.1.v20110830-0100
+Build-Jdk: 1.6.0_21
+Bundle-Vendor: %Bundle-Vendor
+Bundle-ActivationPolicy: lazy
+Bundle-Name: %Bundle-Name
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Bundle-ManifestVersion: 2
+
+Name: images/next.gif
+SHA1-Digest: lmLlDPE2WjVohevt+GNU13MFL5w=
+
+Name: Mylyn-FAQ-toc.xml
+SHA1-Digest: lgZgWyeuni/ig/Uj5bPiXFSRVGc=
+
+Name: Mylyn/User_Guide/images/Generic-web-repository-settings.gif
+SHA1-Digest: yjFGeCPaheaAfYjP4KY9vcCcD6w=
+
+Name: Mylyn/FAQ/Updating-This-Document.html
+SHA1-Digest: 53dZyAq/manvnVtyF0hhAm4cl60=
+
+Name: Mylyn/FAQ/Task-List.html
+SHA1-Digest: TpnfqbcQE/lKNwGDKPU3tN0OmA0=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-UI-Legend.png
+SHA1-Digest: GrM/KXKREF29hivCzabaltAQc3k=
+
+Name: Mylyn/FAQ/Bugzilla-Connector.html
+SHA1-Digest: amosYYvbuYv4tMxQX8MkCHKaIZQ=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Focused-Editor.png
+SHA1-Digest: zI09en3rEZ3EorSYVAv2Yq+oS1U=
+
+Name: Mylyn/User_Guide/Task-Repository-Connectors.html
+SHA1-Digest: XkL5akaMQfJqNj3PznyT2e/lFRM=
+
+Name: images/topiclabel/ov_legend48.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: Mylyn/User_Guide/Task-Editor.html
+SHA1-Digest: p1k0Tne0eAIrz1d7XVVDAPPEw0M=
+
+Name: Mylyn/FAQ/Java-Development.html
+SHA1-Digest: 9aNmtPSEkBaiwqs8xq0zhBnya8k=
+
+Name: intro/css/overview.properties
+SHA1-Digest: t67rjuwo1fkv6+UJRDvnkKXyZHg=
+
+Name: Mylyn/FAQ/Misc.html
+SHA1-Digest: fj2F6PQ9n3la0Nn1y3MikBqoVas=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Local-Task1.png
+SHA1-Digest: W+2iZCt4XVOq9g6br9cj/osgHLk=
+
+Name: Mylyn/FAQ/images/Mylar-spell-checking-preference.gif
+SHA1-Digest: pKaauL2yAO7SUMJZnaoQc36k0wU=
+
+Name: Mylyn/FAQ/WikiText.html
+SHA1-Digest: +BKvie6dv5l9vO/+FScNYKdIT+M=
+
+Name: Mylyn/User_Guide/User-Guide.html
+SHA1-Digest: 7UzUOew60Oify4IAZaV4qUtDVS4=
+
+Name: Mylyn/User_Guide/Task-Repositories.html
+SHA1-Digest: jt6IVaaLFaxR8aIkZsIINIwqt4w=
+
+Name: Mylyn/FAQ/FAQ.html
+SHA1-Digest: REBihZoD2+Yp4mNuUh9dHuuAGrw=
+
+Name: images/mylyn-overview-small.gif
+SHA1-Digest: ue+8KqF2t8x5GCscg/x3pqKVHfU=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Weekly-Progress.pn
+ g
+SHA1-Digest: KU8f/BfBqDu7aSTPrhgqUz0Rh2s=
+
+Name: Mylyn/User_Guide/Shortcuts.html
+SHA1-Digest: LkD7+qM+XdEWBJFvPo7HJCeuakU=
+
+Name: Mylyn/FAQ/Task-Focused-UI.html
+SHA1-Digest: fB09+L+g9hcdo6WqIbxBRqQQXQo=
+
+Name: META-INF/maven/org.eclipse.mylyn/org.eclipse.mylyn.help.ui/pom.x
+ ml
+SHA1-Digest: Dsckw2ly033RW1T4Cf6d6Qd0nO8=
+
+Name: images/mylyn-overview.gif
+SHA1-Digest: SRqOw7Ia391z7Ec/lM/AGIaUUfE=
+
+Name: intro/overviewExtensionContent.xml
+SHA1-Digest: YmS8gNfYatWGvlh3pb9kQqUgRsw=
+
+Name: images/prev.gif
+SHA1-Digest: qx89HZcOfCNP8URrsbXsnJSbNro=
+
+Name: cheatsheets/Query.xml
+SHA1-Digest: egZn1fiSCqLh3nO19Now6NSUv/0=
+
+Name: Mylyn/FAQ/images/Mylar-tasklist-weblink-editor.gif
+SHA1-Digest: iiTD6wki4/PS4YLDjEk1N4AnT44=
+
+Name: cheatsheets/TaskFocus.xml
+SHA1-Digest: ipFEjDJvHDojO7Uba6GK1VBuecA=
+
+Name: Mylyn/FAQ/Integration-with-other-tools.html
+SHA1-Digest: XALo6d7RXQ3eucFmsug/WKzB/HE=
+
+Name: Mylyn/FAQ/JIRA-Connector.html
+SHA1-Digest: bugb6fMrtRjhUGg/CnRKa60yPjM=
+
+Name: icons/etool16/icons-legend.gif
+SHA1-Digest: xgG8zmMfgeE+2E8rvJGx/AxISDc=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-Editor-Top.pn
+ g
+SHA1-Digest: ZY5niwgcsHO833O04Yzzw3ST8A8=
+
+Name: Mylyn/FAQ/images/Mylar-java-filtering-declarations.gif
+SHA1-Digest: UV9ZEHdtUJCGVJxjxE2sGKIiRsU=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Presenta
+ tion-Select-Scheduled.png
+SHA1-Digest: u7VV1E2kcawhJdRyT20gekcm96U=
+
+Name: images/topiclabel/wn_mylyn48_hov.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: about.html
+SHA1-Digest: tbAP97WduhuCJ+f5zkndJKMe6vc=
+
+Name: toc.xml
+SHA1-Digest: vwLNqtfA1RS4u45UMNnPKsGHYaU=
+
+Name: intro/css/whatsnew.css
+SHA1-Digest: LsVlLU4gfS86v0iiT3opIMaYGKQ=
+
+Name: intro/tutorialsExtensionContent.xml
+SHA1-Digest: SbAwjhMhiCoLNR3zbbvmD6V7+BU=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-Editor-Bottom
+ .png
+SHA1-Digest: 5h3KyVITSK82PhObX63P2iU3nlk=
+
+Name: images/topiclabel/tu_task48_hov.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: images/topiclabel/ov_mylyn48_hov.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Planning-Tab.png
+SHA1-Digest: SyI9UBOYfcGFxEuCvpwZZ/9jhi0=
+
+Name: intro/css/tutorials.css
+SHA1-Digest: E5S778Ia7T5T6REswuJiO+NJw7c=
+
+Name: Mylyn/FAQ/Task-Repositories.html
+SHA1-Digest: QWnGZ5kO/DN+M3TksTez69dIQWM=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Tooltip.
+ png
+SHA1-Digest: 9bkjTcKDlClDNG1jBdKf6QpoTDM=
+
+Name: book.css
+SHA1-Digest: qyqo08qhBVXvXfrKHLwEBq2gzjg=
+
+Name: intro/css/whatsnew.properties
+SHA1-Digest: EOSpjp49pKccSgrPNMbSNjJqW30=
+
+Name: Mylyn/FAQ/images/Mylyn-content-assist-timeout.gif
+SHA1-Digest: 3RfGAYeev94rpmD7KJu1oFpEt+0=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Add-Task-Repositor
+ y.png
+SHA1-Digest: JuBDn/nw6ze6wzk9/1rLbty8ndM=
+
+Name: Mylyn/FAQ/Trac-Connector.html
+SHA1-Digest: e6DxYA9bAKOU3oo//QLvn1bC8VA=
+
+Name: Mylyn/User_Guide/Updating-This-Document.html
+SHA1-Digest: LDej3gTWnfVrhWLxdEruf67J62M=
+
+Name: Mylyn/FAQ/Web-Templates-Connector.html
+SHA1-Digest: bOnTsu9mf57aU4kUe6c3qkH21Eo=
+
+Name: Mylyn/FAQ/Installation.html
+SHA1-Digest: gLmOMJa/QP87SBUVMg5BljJbMQY=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Change-Sets.png
+SHA1-Digest: 5VwT5G7JO6mr8WFRu05pYvYsyfI=
+
+Name: Mylyn/FAQ/Context-and-Timing-data.html
+SHA1-Digest: 6+H/g3lFK6KcqtE5npLSQx7gJS4=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Category-Progress.
+ png
+SHA1-Digest: o0SFknup4Ltw9dlp1kHiKgYZepw=
+
+Name: images/topiclabel/ov_legend48_hov.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-New-Task1.png
+SHA1-Digest: nm1BvK2xeSIIHe5PsEJg1mhp5Rg=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: 09gN05tobgS/MdtqyTNQhOhB73M=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Presenta
+ tion-Select-Categorized.png
+SHA1-Digest: i/yZ2ltohQQy8/dwKS7PgiZkwqg=
+
+Name: primary-toc.xml
+SHA1-Digest: /HbVvvph6wnKi2ZGnOoYbaYrnMA=
+
+Name: Mylyn/FAQ/Team-Support.html
+SHA1-Digest: yAW79Nvwl2pUkMC+zl4rDYWEx2g=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Open-Task.png
+SHA1-Digest: pBDX7qf4E6DPXEMzjW7ZWCd8BgQ=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-New-Query-Combined
+ .png
+SHA1-Digest: q8iVAZoVh8xszC4YvPP1bI2h9RE=
+
+Name: Mylyn/User_Guide/Team-Support.html
+SHA1-Digest: TyK7vdKv4xPlBeGdSG6HTt0JosY=
+
+Name: META-INF/maven/org.eclipse.mylyn/org.eclipse.mylyn.help.ui/pom.p
+ roperties
+SHA1-Digest: hB2bwNFmnfxAltSVZ5HEtP4Wy+4=
+
+Name: Mylyn/FAQ/images/Mylar-content-assist-prefs.gif
+SHA1-Digest: H2bC27qv8++eooWVQpkoRJmXunA=
+
+Name: Mylyn-User-Guide-toc.xml
+SHA1-Digest: 2Vvk++gfb1MdZJOPeAYjbf+4KnM=
+
+Name: images/topiclabel/tu_query48.gif
+SHA1-Digest: dL85MVnDGcEo5T5nJcVlAire2zQ=
+
+Name: Mylyn/FAQ/images/Tasklist-filter.png
+SHA1-Digest: c7Uu2epg47viPbSPxIPFNvK7JAM=
+
+Name: intro/css/tutorials.properties
+SHA1-Digest: i9o8tAELMsZfacF/ZLL/K5+0UAU=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Error-Log.png
+SHA1-Digest: svvi8W7/axh5Qj3D7lDpBvfvqeI=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Add-To-Context.png
+SHA1-Digest: sBKQMRRWJLK3ay9A+FIoLVpLZLE=
+
+Name: images/topiclabel/tu_query48_hov.gif
+SHA1-Digest: dL85MVnDGcEo5T5nJcVlAire2zQ=
+
+Name: Mylyn/User_Guide/Preferences.html
+SHA1-Digest: 7hShAGzNmOxEeNdJZkkUOoAlmfE=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Repository-Task1.png
+SHA1-Digest: Bp+ktaFGskawmTOTkam0cmXJa+I=
+
+Name: plugin.properties
+SHA1-Digest: 85LvuPlU9lWNZ6j3GfLXg2bgfMw=
+
+Name: Mylyn/FAQ/images/AuthenticationTroubleshooting2.png
+SHA1-Digest: HdFLn0sL+k/evdU+lJdsXAgpAQw=
+
+Name: Mylyn/User_Guide/Task-Focused-Interface.html
+SHA1-Digest: SQYiIfwCpPRd8KRGnnEbxQQ4OuE=
+
+Name: Mylyn/FAQ/Task-Editor.html
+SHA1-Digest: e9OBvxURFLQGU39LwwsI6OKSTm0=
+
+Name: intro/whatsnewExtensionContent.xml
+SHA1-Digest: nWnJXvdhzG5FFcnIYV3OxyUS6bQ=
+
+Name: images/topiclabel/wn_mylyn48.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: plugin.xml
+SHA1-Digest: 6QE8kywU1T/1XIOSER1oHt34Fmk=
+
+Name: intro/css/overview.css
+SHA1-Digest: KZ3L+DNZoAHCuJ2QoWmR3TyuOq0=
+
+Name: .empty
+SHA1-Digest: 2jmj7l5rSw0yVb/vlWAYkK/YBwk=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Task-List-Categori
+ zed1.png
+SHA1-Digest: YCAwyu7Aw8AgU7SrtugJvwG86Js=
+
+Name: Mylyn/FAQ/images/Mylyn-project-repository-association.gif
+SHA1-Digest: RCa5HGEbG3CIdR+RN477dok9tc8=
+
+Name: Mylyn/FAQ/images/Mylar-resource-exclusion.gif
+SHA1-Digest: opruREt9+LrK2S2jrMLnzsXkgvE=
+
+Name: Mylyn/FAQ/images/Mylar-eclipse-manage-configuration.gif
+SHA1-Digest: rMK/FapnPP886HlLJ8M4gBvjs/8=
+
+Name: images/topiclabel/ov_mylyn48.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: images/topiclabel/tu_task48.gif
+SHA1-Digest: CvXk3TRXwrcIYZy0JlhAysu5mbs=
+
+Name: images/home.gif
+SHA1-Digest: 6ZkfXx5mGrHfp+Vr+YCQGGUsRIQ=
+
+Name: Mylyn/User_Guide/images/Feature-Guide-3.0-Package-Explorer-Focus
+ ed.png
+SHA1-Digest: rgXZQk+gOPeSoW8gP/qXBrYRnaY=
+
+Name: Mylyn/User_Guide/images/Feature-Reference-3.0-Context-Tab.png
+SHA1-Digest: NQx75XToRzf+jOStBIFL7JU3678=
+

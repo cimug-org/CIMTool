@@ -23,7 +23,7 @@ trait TemplateBuilder {
   private def child( ns: Seq[Node]) = ns flatMap { n => prepare(n)} first
   
   private def prepare(node: Node): Option[Template] = node match {
-    case <grid>{ ns @  _* }</grid>      => Some(Grid(ns flatMap {n => group(n)} toArray))
+    case <grid>{ ns @  _* }</grid>      => Some(Grid(ns.flatMap (n => group(n)).toArray :_*))
     case <stack>{ ns @  _* }</stack>    => Some(Stack(children(ns)))
     case <row>{ ns @  _* }</row>        => Some(Row(children(ns)))
     case <focus>{ ns @ _* }</focus>     => Some(Mark("focus", child(ns)))                                     
