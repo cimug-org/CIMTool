@@ -1,0 +1,589 @@
+Manifest-Version: 1.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Built-By: hudsonbuild
+Bundle-SymbolicName: org.eclipse.epp.mpc.ui;singleton:=true
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",org.ec
+ lipse.epp.mpc.core;bundle-version="1.0.0",org.eclipse.ui;bundle-versi
+ on="3.6.0",org.eclipse.equinox.p2.ui.discovery;bundle-version="[1.0.0
+ ,1.1.0)",org.eclipse.equinox.p2.discovery;bundle-version="[1.0.0,1.1.
+ 0)",org.eclipse.ui.intro;resolution:=optional,org.eclipse.ui.intro.un
+ iversal;resolution:=optional,org.eclipse.equinox.p2.repository;bundle
+ -version="2.0.0",org.eclipse.equinox.p2.core;bundle-version="1.0.4",o
+ rg.eclipse.equinox.p2.ui;bundle-version="1.0.4",org.eclipse.equinox.p
+ 2.metadata;bundle-version="1.0.0",org.eclipse.equinox.p2.operations,o
+ rg.eclipse.equinox.p2.repository;bundle-version="1.0.0",org.eclipse.e
+ quinox.p2.engine
+Bundle-Activator: org.eclipse.epp.internal.mpc.ui.MarketplaceClientUiP
+ lugin
+Export-Package: org.eclipse.epp.internal.mpc.ui;x-internal:=true,org.e
+ clipse.epp.internal.mpc.ui.actions;x-internal:=true,org.eclipse.epp.i
+ nternal.mpc.ui.catalog;x-internal:=true,org.eclipse.epp.internal.mpc.
+ ui.commands;x-internal:=true,org.eclipse.epp.internal.mpc.ui.operatio
+ ns;x-internal:=true,org.eclipse.epp.internal.mpc.ui.util;x-internal:=
+ true,org.eclipse.epp.internal.mpc.ui.wizards;x-internal:=true,org.ecl
+ ipse.epp.mpc.ui
+Bundle-Version: 1.1.1.I20110907-0947
+Build-Jdk: 1.6.0_21
+Bundle-Vendor: %Bundle-Vendor
+Bundle-ActivationPolicy: lazy
+Bundle-Name: %Bundle-Name
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalogSource
+ .class
+SHA1-Digest: 8/F0Y+8CCxe/fx/TVswfyFhb6UQ=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$7.class
+SHA1-Digest: Puvx9QLGdB7ib0MwzwJWnXdcLvc=
+
+Name: about.ini
+SHA1-Digest: ryGAUI4KpiDrjX2nr0dVTgoqt94=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/Messages.class
+SHA1-Digest: 5ibDkAEzEtySa9rmflG3o1mTMzA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$2.class
+SHA1-Digest: /wqWGQf2RaRb1LgP+fBxTdexSqY=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip$4.class
+SHA1-Digest: PDRVOhJHZZkbgN4R2txVra29Tco=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/SelectionModel$FeatureEn
+ try.class
+SHA1-Digest: xfnhMN41NV11SxPhiRQh7CrDNKA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CatalogToolTip.class
+SHA1-Digest: iAvs2g7pMUDqjsWrIzgd+phU5lk=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/SelectionModelStateSeria
+ lizer.class
+SHA1-Digest: ZjU/f6Hpvmfssu2B7lQLdeMT/WA=
+
+Name: org/eclipse/epp/internal/mpc/ui/actions/WelcomeIntroAction.class
+SHA1-Digest: chbVvIeqmUrAUCW3mmjAXwBRMfw=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceCatalogConfig
+ uration.class
+SHA1-Digest: Wp2IEA/6vofD5zvUuozREpceO48=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage$3.class
+SHA1-Digest: 6jWmIt28gEg4k1h69+q0cWwhato=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$4.cla
+ ss
+SHA1-Digest: +udVDW96FyUBIgtvVgyvaXBYp00=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/AbstractProvisioningO
+ peration.class
+SHA1-Digest: mv2r00u2lDOCOdglFhZ/oDKIRB0=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/InstallProfile.class
+SHA1-Digest: /yjbbr7wBPIqZ4jr5rJG5i0jfCE=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewer$2.clas
+ s
+SHA1-Digest: Dvg8QnjHuGnBTtUZpm4BBhquZOg=
+
+Name: intro/css/overview.properties
+SHA1-Digest: +F/x4YY2w82A7XitRlv7bfC+jK8=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ComboTagFilter$1.class
+SHA1-Digest: McFt/kl5MK2MU1TglBOqGGqFbzQ=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$8.cla
+ ss
+SHA1-Digest: sbU/SlTE+R9rMVjhtNPZz44tqAk=
+
+Name: META-INF/maven/org.eclipse.epp.mpc/org.eclipse.epp.mpc.ui/pom.pr
+ operties
+SHA1-Digest: w8hFmz4nIn0975NDm4kbDK9QmsM=
+
+Name: org/eclipse/epp/mpc/ui/CatalogDescriptor.class
+SHA1-Digest: h3MXHxDZpAO7b47Mp+s4zvs2iVE=
+
+Name: META-INF/maven/org.eclipse.epp.mpc/org.eclipse.epp.mpc.ui/pom.xm
+ l
+SHA1-Digest: nbByMj2Wik/pZ8ZXkLXhq2j23OY=
+
+Name: intro/css/default.css
+SHA1-Digest: Y2JW5yWGbr1Pz3evkiKpCDNYmog=
+
+Name: org/eclipse/epp/internal/mpc/ui/CatalogRegistry.class
+SHA1-Digest: PgXVcdON6B3rOGojHlyFE25aRFs=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ShareSolutionLink$1.clas
+ s
+SHA1-Digest: f7FSUUR/31I1dWPyK/CBivtQMUg=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$1.class
+SHA1-Digest: Bv1aJFZuspMeFzypg04lfZli7ao=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceWizard$1.clas
+ s
+SHA1-Digest: ygaaVsAqBeVhj1QGcEk87fALAVo=
+
+Name: org/eclipse/epp/internal/mpc/ui/MarketplaceClientUiPlugin.class
+SHA1-Digest: lwaViYMD9FmJS/gpOsdeQz1zru4=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ProvisioningJobListener.
+ class
+SHA1-Digest: b73h+jnGJUOsj2dUREIQpzd3yiE=
+
+Name: org/eclipse/epp/mpc/ui/MarketplaceClient.class
+SHA1-Digest: o1LIzV1f5QPz8J18gxvsHxOGdSo=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CatalogSwitcher$1.class
+SHA1-Digest: J+p/UZy+/EoUzwpcEQ54iYGLwkQ=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewerSorter.
+ class
+SHA1-Digest: im7Go+AHIWBfkdbK/Zn6SBbPPW8=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CheckboxTagFilter.class
+SHA1-Digest: aX7AifGU0lcJLWKhlXY/7dFxYts=
+
+Name: org/eclipse/epp/internal/mpc/ui/commands/MarketplaceWizardComman
+ d$1.class
+SHA1-Digest: AhZqSjxkalAEeOB8eoDuaEGQF5I=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceDiscoveryStra
+ tegy$2.class
+SHA1-Digest: 5R3olAVcLGeFAqPO3YvzifXuF4k=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$4.class
+SHA1-Digest: LxP58K/xlOUDE3+uoxaTY755rpc=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip$1.class
+SHA1-Digest: JAfqhIkwXTTjb7OuaBbO+gBYinU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$8.class
+SHA1-Digest: 5F53Icp4rwmmTxgG3L7pgk7Af4I=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceBrowserIntegr
+ ation.class
+SHA1-Digest: aY3Gpg0/DO5VgYAS5Mxi7CW4eyg=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/SelectionModel.class
+SHA1-Digest: 5ootj/Wiavt4iMu0jqDeyHbd2gs=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog.class
+SHA1-Digest: KU9381m70VHbk7RUsG/H7gVn0hU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$3.class
+SHA1-Digest: 4dchjl+zxoUPcBeBuRhtVshxPNg=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip$5.class
+SHA1-Digest: vyncjrp9wqOOccXPF6QXrrpBiPM=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/messages.properties
+SHA1-Digest: cGzDhdcojSjLwXG/G9ju8N6sKk8=
+
+Name: org/eclipse/epp/internal/mpc/ui/Messages.class
+SHA1-Digest: NLht7UHOIl9+CfTqV9ffOti38iI=
+
+Name: icons/iu_obj.gif
+SHA1-Digest: hQ7JVOSknV6FDn2D3W2ORWa3jNA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceUrlHandler.cl
+ ass
+SHA1-Digest: FvKVYX+l8WLOhqvlhqvDrvD47H4=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$1.cla
+ ss
+SHA1-Digest: ZcY23c2iR4bprLnJPr6D2gq5uGs=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage$4.class
+SHA1-Digest: A/NcqPI/eqSPd3MC8epGr3uJUOY=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$5.cla
+ ss
+SHA1-Digest: 5qPNEKduIV8ksk7RG9Zz96HrGwA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewer$3.clas
+ s
+SHA1-Digest: KXv8LbUBYWTOKSpFeE9/TW7FxwY=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceDropAdapter.c
+ lass
+SHA1-Digest: xO+RDEZaw4ca+KgCb3Q8jvQh9uU=
+
+Name: org/eclipse/epp/internal/mpc/ui/MarketplaceClientUi.class
+SHA1-Digest: 9vmw52LcoSDjssCGAcqgauQGyoI=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ShareSolutionLink.class
+SHA1-Digest: Edifrrl+KW/Y0aPG0SxNtc1uAgw=
+
+Name: org/eclipse/epp/internal/mpc/ui/CatalogExtensionPointReader.clas
+ s
+SHA1-Digest: 8PXTrEHiC5bX/Cfu2n4bW4tbiBs=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceWizard.class
+SHA1-Digest: eoK9HZsBdSE8nsg38SYyUEfkRsI=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/FeatureDescriptor.cla
+ ss
+SHA1-Digest: vxrkU8vYnlUl4pbG7Uxicdrnj3c=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ItemButtonController$But
+ tonState.class
+SHA1-Digest: egU1xLoq8bQlMYsRfO5PR2BV5zE=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePatternFilter
+ .class
+SHA1-Digest: lyN308hieYY7SZGYJrJ5/AuawG8=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CatalogSwitcher.class
+SHA1-Digest: YLETh5gC7mmHvp7HQDJnOFxb6+g=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ItemButtonController.cla
+ ss
+SHA1-Digest: M4oiBsReahbPc605SIA6yXK6T60=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceDropAdapter$1
+ .class
+SHA1-Digest: byPkYbS+APtCVUaB8igIGKkRb80=
+
+Name: about.html
+SHA1-Digest: tbAP97WduhuCJ+f5zkndJKMe6vc=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ShareSolutionLink$2.clas
+ s
+SHA1-Digest: n26fhSUEiLOlsm9+qUAFEMNmXlg=
+
+Name: icons/noiconprovided.png
+SHA1-Digest: X6RNpf8mU77SwEB4+rklPa8vKcY=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$2.class
+SHA1-Digest: I8wSGjV75qszUzVQy1AX04w7kQY=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceDiscoveryStra
+ tegy.class
+SHA1-Digest: yboZBf1AYmgCLhf6e4cgYqtKB5I=
+
+Name: icons/marketplace32.png
+SHA1-Digest: eCk/A3/COXL3S6qAVDOSrlsqmLw=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceWizard$2.clas
+ s
+SHA1-Digest: /Ql6IHAoeljGvuM3ZEiVnBzYoVU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/Operation.class
+SHA1-Digest: Wjx0C16dNEiPlv0wrb4anJOwOaU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CatalogSwitcher$2.class
+SHA1-Digest: 57FvfAlgwCA1MOiCiN6cCMZOQQc=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ItemButtonController$1.c
+ lass
+SHA1-Digest: slEh3re1NjEnTd68ZTjiPR0qMro=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip.class
+SHA1-Digest: vZ323Qr8VcyawMnRoOPZCyPNqUw=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/messages.properties
+SHA1-Digest: fBHduRI0t8+L/s2BCuu+iOdiTAw=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge.class
+SHA1-Digest: JIubpXDBBK3huCAj06DRtFZ/8Vk=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$LabelProvider.class
+SHA1-Digest: 53Am0UXYqYLfDzEMtxqNZKg+Esg=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/BrowseCatalogItem$1.clas
+ s
+SHA1-Digest: x1c/4j3uPSksjEPbQGQ/z6UBEx8=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$1.class
+SHA1-Digest: LJs5Q3MVB8C0ULp0hzAmtzLM7Do=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ProvisioningJobListener$
+ 1.class
+SHA1-Digest: +mKUmENNDXnRXPA3ZVbp1XYMM5M=
+
+Name: org/eclipse/epp/internal/mpc/ui/commands/MarketplaceWizardComman
+ d$2.class
+SHA1-Digest: TsHxqMzRcQYzMQQ5+OBPN+26aig=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/IMarketplaceWebBrowser.c
+ lass
+SHA1-Digest: rB/FCTC7kwIrYLFydnxiR8xRvHo=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$5.class
+SHA1-Digest: z7HKg/zv5mstrMUFNyYUDVrm6bw=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$9.class
+SHA1-Digest: 3YOEhsPULzFPCZiSbNKzPmtHNJg=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/AbstractResourceRunnable
+ .class
+SHA1-Digest: XcKP+TMFVjbhlyHMvIfCm2uMzDU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip$2.class
+SHA1-Digest: tSfG94I7B/yKdu9WuN13ASE+TcM=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$4.class
+SHA1-Digest: 1dwkUEH32pCVZ3D/ZjSmS6TpnnI=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip$6.class
+SHA1-Digest: mgdvvugbJbhsIhh5kHz4OJqGfRE=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ProvisioningJobListener$
+ 1$1.class
+SHA1-Digest: xkANrdQPMvaBZvi3nDajRMDqku0=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$Disco
+ veryOperation.class
+SHA1-Digest: FUUbgs9DH/1EYSYpqVcCVIMjXgY=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCategory$Cont
+ ents.class
+SHA1-Digest: EJSGyWD/xG6fH0eXRvelaNSx+CA=
+
+Name: org/eclipse/epp/internal/mpc/ui/actions/messages.properties
+SHA1-Digest: 5hg3A7aHmAKUY+PuHm6BiyjFcxg=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$2.cla
+ ss
+SHA1-Digest: K7MbG0c/qP+7MWRvEg53Ai4vh2w=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage$1.class
+SHA1-Digest: HWyjzP5guAJ/eBLQ1XCuLSxd4B8=
+
+Name: icons/iu_update_obj.gif
+SHA1-Digest: yVURlJmqRmhZYuUFK1z9cmDEvXM=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/ResourceProvider.class
+SHA1-Digest: lgxrfq4i1NC7qC3x2umdAjwq9m0=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceInfo.class
+SHA1-Digest: ZIdZMsgtzremtrlbJFOF0HgKGUk=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$6.cla
+ ss
+SHA1-Digest: asUlDCmiFF8KmZnJSL3x/qqKDgI=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$ProfileChangeOperationFactory.class
+SHA1-Digest: kUAAZ+ZfHOYjQW/vgJLUU8+XofE=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage$5.class
+SHA1-Digest: 6IBEhib/I6CzbSLR6G/U8URHTV8=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$ResolutionStrategy.class
+SHA1-Digest: iW/iz6nkjcEftkHQc+iF1sCa6Z8=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewer$Conten
+ tType.class
+SHA1-Digest: DpGDBZnQzluGpWZVTsWFut+gzYw=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$OperationType.class
+SHA1-Digest: 1AgnVeEiuGLK0KgsiCcz2x9R8Qc=
+
+Name: org/eclipse/epp/internal/mpc/ui/messages.properties
+SHA1-Digest: QKEQpvB8UDwEwGhg/V5RK0pyEgI=
+
+Name: org/eclipse/epp/internal/mpc/ui/actions/Messages.class
+SHA1-Digest: HYZP4y8LvDWdfVX/BAq+2YRhMxc=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer.class
+SHA1-Digest: bTibmW+0k048ThMboVqKXZX5HgU=
+
+Name: org/eclipse/epp/internal/mpc/ui/util/messages.properties
+SHA1-Digest: HVHNGV8kxq19FVJpcOGoriR86xM=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewer$Market
+ placeCatalogContentProvider.class
+SHA1-Digest: nnMSt+gap9yB0k++vkYk9CyN+t8=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: 09gN05tobgS/MdtqyTNQhOhB73M=
+
+Name: org/eclipse/epp/internal/mpc/ui/commands/messages.properties
+SHA1-Digest: ZAq9Mu2ZnCReH3i0q/vCANJEwQ0=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/messages.properties
+SHA1-Digest: LBM52OpnvcXc85BZRSk08Quw+Ls=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceDropAdapter$2
+ .class
+SHA1-Digest: 44Atqxqjrwjzmk4hZDK/FAZLW/A=
+
+Name: org/eclipse/epp/internal/mpc/ui/util/Messages.class
+SHA1-Digest: ojqhFiWdW/N84zjxX2vxqtcId7Y=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ShareSolutionLink$3.clas
+ s
+SHA1-Digest: nvna7mGaxj5zzTa/TeRqnbGiW0Q=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$3.class
+SHA1-Digest: SYjc8gIYrwlfIQWG4krmyhIyDLo=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/BrowseCatalogItem.class
+SHA1-Digest: LJEVkVJfJIYcfNd8tjGV9x7qQ7I=
+
+Name: org/eclipse/epp/internal/mpc/ui/commands/MarketplaceWizardComman
+ d.class
+SHA1-Digest: Rc6fGCg8GUv61HF0ZircJepag3g=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceFilter.class
+SHA1-Digest: GN1OL3C7gA8aqPgvjCn2SpFwcUg=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceWizard$3.clas
+ s
+SHA1-Digest: 6ulMHF2RUDRlIvYYBHjz39uFZgU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CatalogSwitcher$3.class
+SHA1-Digest: O+RJERPayHZkR5o2c+zsGIr+upA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ItemButtonController$2.c
+ lass
+SHA1-Digest: 1j6nGq2D9tRoPqedDcPyHfjcw3A=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$2.class
+SHA1-Digest: ABfI50WLrjiobHJZhX0gHATyNkc=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$ContentProvider.class
+SHA1-Digest: PDPak2cE2Go3qUIUa3P5YqfNO0M=
+
+Name: org/eclipse/epp/internal/mpc/ui/commands/MarketplaceWizardComman
+ d$3.class
+SHA1-Digest: 5IlxGZrJD3dQ99dRfzNAGPAaVHU=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ResolveFeatureNamesOp
+ eration.class
+SHA1-Digest: qZokbyJqEhaqBTVFpkRR0d8ZPac=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$6.class
+SHA1-Digest: EM1ZmgNrKqlEUheIT3lo6a07TLk=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CatalogSwitcher$3$1.clas
+ s
+SHA1-Digest: tZvbbAjrkMm7Ab94w5QKfrLLjCs=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/Messages.class
+SHA1-Digest: 1O61sC/BAnBbOUST57YeKYr0GDU=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/OverviewToolTip$3.class
+SHA1-Digest: C3gRq1ZbAMYFN1RHMAW/Z1+o1zA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$1.class
+SHA1-Digest: hCZ8blUgYvP47TDZNF7MYiHrKmI=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage.class
+SHA1-Digest: DqbH1fZXStbnNNwpGmqeXPwntIw=
+
+Name: intro/default.xml
+SHA1-Digest: dwIQPEveztB+O5c16r76hCugm2M=
+
+Name: OSGI-INF/l10n/bundle.properties
+SHA1-Digest: Nxulu6rvmfSkAws6qFPAiRVWiR4=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/CheckboxTagFilter$1.clas
+ s
+SHA1-Digest: d1oyz2AsjRFhfpO5dXOqXpuby7I=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewer.class
+SHA1-Digest: NsHLdEFJsd0XLwGAargtkvyh7ow=
+
+Name: icons/noiconprovided32.png
+SHA1-Digest: uVVidDfXc+OwONDzxbnLxCYbbqA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/ComboTagFilter.class
+SHA1-Digest: Q5yt3R8MttkFVrvd3ziF+Yz6AiY=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/AbstractResourceRunnable
+ $1.class
+SHA1-Digest: YCormVnhlLdXYqbdK+w0pwQgOLA=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/Messages.class
+SHA1-Digest: gKI25aydN7qpFSpm5XR0/rLihRI=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage$2.class
+SHA1-Digest: NyGVtVnbINHh3llTQxVptoa3Y4o=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$3.cla
+ ss
+SHA1-Digest: GIPObo+bu91psbsrvEB8E/FGMyg=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/FeatureSelectionWizardPa
+ ge$4$1.class
+SHA1-Digest: r5ooBeekXeeH3kWhtQoQimkuhgE=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceNodeCatalogIt
+ em.class
+SHA1-Digest: 2tNPyUIYNe8Xthf0Dhwwuwoweq4=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceViewer$1.clas
+ s
+SHA1-Digest: o+MKw5mrMrlEBQgUIGkdSjkko4g=
+
+Name: intro/css/marketplace.png
+SHA1-Digest: qqdTvsK8+pLcWUr3Y7D38cnORLE=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCatalog$7.cla
+ ss
+SHA1-Digest: dQ4GO91LBZ3CZNTpDKOy4WMETps=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplacePage$6.class
+SHA1-Digest: g5UQ1iXYfkCYZRn2Sh5wIpZUju8=
+
+Name: plugin.xml
+SHA1-Digest: NyF2t7CyqnFvbzUd24ziW1rXZxg=
+
+Name: org/eclipse/epp/internal/mpc/ui/util/Util.class
+SHA1-Digest: Gk4EhZKlsEV33nULmmNi2JKXplU=
+
+Name: org/eclipse/epp/internal/mpc/ui/util/ConcurrentTaskManager.class
+SHA1-Digest: 5ZzeHBu8ntbH/zeiCnd1Hy8oZXU=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceCategory.clas
+ s
+SHA1-Digest: oTyZ3jAmVHxdzWVBrj74NCsmX5s=
+
+Name: org/eclipse/epp/internal/mpc/ui/commands/Messages.class
+SHA1-Digest: AB0ehVi3C0gzmRjRORtmPa4hZeo=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceUrlHandler$So
+ lutionInstallationInfo.class
+SHA1-Digest: vgUa+YLxCfa+R10F1dgcHfc2u6c=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem.class
+SHA1-Digest: onM071NwhLacE1tSmAgEBLNsEOA=
+
+Name: org/eclipse/epp/internal/mpc/ui/operations/ProfileChangeOperatio
+ nComputer$4.class
+SHA1-Digest: S72RQV2ep1EIBliuBMoKj4GRCmI=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/MarketplaceWizard$4.clas
+ s
+SHA1-Digest: WOwE27w+YozqX2RsVk6i+ssvUDs=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/SelectionModel$CatalogIt
+ emEntry.class
+SHA1-Digest: T4IyEAWxNmtRaAYe4R/JlSFO+hw=
+
+Name: org/eclipse/epp/internal/mpc/ui/catalog/MarketplaceDiscoveryStra
+ tegy$1.class
+SHA1-Digest: OMqU7ubYJRvFuwRNLKvNpQLlB/Q=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/AbstractTagFilter.class
+SHA1-Digest: wKocyZwwEEODpUafU+iJLw5Xv+8=
+
+Name: org/eclipse/epp/internal/mpc/ui/wizards/DiscoveryItem$3.class
+SHA1-Digest: cpQly4aJGwW5kpXhpKGJaAFOlLk=
+

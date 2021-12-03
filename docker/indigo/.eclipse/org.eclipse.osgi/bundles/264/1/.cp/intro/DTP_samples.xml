@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- not used for DTP 1.0 but here as a placeholder for future use -->
+<introContent>
+    <extensionContent id="DTP_samplesExtension"
+        name="DTP Samples"
+        style="css/samples.css"
+        path="samples/@">
+        <group id="DTP_samples_group"
+            label="Data Tools Platform"
+            style-id="content-group">
+            <text style-id="group-description">
+                The following samples show you how to use Data Tools Platform.
+            </text>
+            <link label="DTP sample #1"
+                style-id="content-link"
+                url="http://www.eclipse.org/datatools/"
+                id="DTP_samplesLink1">
+                <text>Shows how to use Data Tools Platform.</text>
+            </link>
+            <anchor id="DTP_samplesAdditions"/>
+        </group>
+   </extensionContent>
+</introContent>

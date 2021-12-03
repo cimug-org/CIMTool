@@ -1,0 +1,17 @@
+#!/bin/bash
+
+case $(docker inspect -f {{.State.Running}} cimtool_indigo) in
+"true" )
+;;
+"false" )
+docker start cimtool_indigo
+;;
+*)
+docker run --tty --interactive --name cimtool_indigo \
+           --env DISPLAY=$DISPLAY \
+           --volume /tmp/.X11-unix:/tmp/.X11-unix \
+           --volume "`pwd`":/workspace \
+           cimtool/eclipse-docker:indigo
+;;
+esac
+

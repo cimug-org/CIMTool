@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+    <extensionContent id="DTP_whatsnewExtension"
+        name="DTP What's New"
+        style="css/whatsnew.css"
+		path="whatsnew/@" >
+        <group id="DTP_whatsnew_group"
+			label="Data Tools Platform"
+            style-id="content-group">
+            <link label="Data Tools Platform"
+                style-id="content-link"
+                url="http://www.eclipse.org/datatools/"
+                id="DTP_whatsnewLink">
+                <text>Find out about significant changes made to Data Tools Platform frameworks and tools</text>
+            </link>
+            <anchor id="DTP_whatsnewAdditions"/>
+        </group>
+   </extensionContent>
+</introContent>
