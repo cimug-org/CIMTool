@@ -9,7 +9,7 @@
 
 ## Installation & Setup
 
-For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://github.com/CIMug-org/CIMTool/blob/gh-pages/dev-env-setup.md).
+For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://github.com/CIMug-org/CIMTool/blob/gh-pages/cimtool-installation-and-setup.md).
 
 ## CIMTool Development
 
