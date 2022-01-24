@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<repository name='/opt/eclipse/.eclipseextension' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
+  <properties size='3'>
+    <property name='p2.timestamp' value='1600440612848'/>
+    <property name='org.eclipse.update.site.policy' value='USER-EXCLUDE'/>
+    <property name='org.eclipse.update.site.list' value=''/>
+  </properties>
+  <mappings size='3'>
+    <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
+    <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
+    <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
+  </mappings>
+  <artifacts size='1'>
+    <artifact classifier='osgi.bundle' id='org.eclipse.emf' version='2.6.0.v20110606-0949'>
+      <properties size='2'>
+        <property name='artifact.size' value='10178'/>
+        <property name='download.size' value='10178'/>
+      </properties>
+      <repositoryProperties size='2'>
+        <property name='artifact.reference' value='file:/opt/eclipse/plugins/org.eclipse.emf_2.6.0.v20110606-0949.jar'/>
+        <property name='file.name' value='/opt/eclipse/plugins/org.eclipse.emf_2.6.0.v20110606-0949.jar'/>
+      </repositoryProperties>
+    </artifact>
+  </artifacts>
+</repository>

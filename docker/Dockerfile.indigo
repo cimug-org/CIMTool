@@ -1,0 +1,44 @@
+FROM openjdk:6-jre
+
+# install X-Windows support
+# because Wheezy is so old there is no longer the update repo, and the package repo has moved:
+RUN echo "deb http://archive.debian.org/debian wheezy main" > /etc/apt/sources.list
+# updates to Wheezy have bumped the package versions past the dev packages,
+# so remove conflicting packages and install old dev package versions:
+RUN apt-get update && \
+    apt-get remove --assume-yes libx11-6 libxi6 libxrender1 libxtst6 libgdk-pixbuf2.0-common && \
+    apt-get install --assume-yes libx11-6 libx11-dev libx11-doc libxi-dev libxext-dev libxrender1 libxrender-dev libxtst6 libxtst-dev libgtk2.0-0 libcanberra-gtk0 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-0 libgdk-pixbuf2.0-common libcanberra-gtk-module && \
+    apt-get clean && \
+    rm --recursive --force /var/lib/apt/lists/* && \
+    rm --recursive --force /tmp/*
+
+# install Eclipse
+RUN wget http://archive.eclipse.org/technology/epp/downloads/release/indigo/SR2/eclipse-reporting-indigo-SR2-linux-gtk-x86_64.tar.gz --output-document=/tmp/eclipse.tar.gz --quiet && \
+    echo 'Installing eclipse' && \
+    tar --extract --gunzip --file=/tmp/eclipse.tar.gz --directory=/opt && \
+    rm /tmp/eclipse.tar.gz
+ADD docker/run_indigo /usr/local/bin/eclipse
+RUN chmod +x /usr/local/bin/eclipse
+
+# install Eclipse EMF (Core) 2.6.0 Plugin
+RUN wget https://github.com/CIMug-org/CIMTool/raw/gh-pages/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.jar --output-document=/opt/eclipse/plugins/org.eclipse.emf_2.6.0.v20110606-0949.jar --quiet
+
+# install Scala IDE
+RUN wget http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip --output-document=/tmp/update-site.zip --quiet && \
+    unzip /tmp/update-site.zip -d /opt && \
+    rm /tmp/update-site.zip
+
+# set up developer user
+RUN mkdir --parents /home/developer && \
+    echo "developer:x:1000:1000:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:1000:" >> /etc/group && \
+    mkdir --parents /etc/sudoers.d && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer && \
+    chown developer:developer --recursive /home/developer && \
+    chown developer:developer --recursive /opt/eclipse
+
+USER developer
+ENV HOME /home/developer
+WORKDIR /home/developer
+CMD /usr/local/bin/eclipse
