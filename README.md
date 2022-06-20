@@ -19,6 +19,10 @@ Instructions on packaging and deployment of **CIMTool** as an **Eclipse Product*
 
 Note that these instructions are purely for those interested in participating in the development of **CIMTool**.  They do not describe standard use of the tool for profile creation.
 
+## CIMTool Google Group
+
+  To join the CIMTool Google Group register [here](https://groups.google.com/g/cimtool).
+
 ## License
 
   Distributed under the LGPL-2.1 license. See [LICENSE](LICENSE) for more information.
