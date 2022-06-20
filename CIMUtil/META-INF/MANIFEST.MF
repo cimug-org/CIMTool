@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMUtil
 Bundle-SymbolicName: au.com.langdale.cimutil
-Bundle-Version: 1.10.0.RC1
+Bundle-Version: 1.10.0.RC2
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: au.com.langdale.kena
 Bundle-ClassPath: cimutil.jar,

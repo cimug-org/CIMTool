@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
-Bundle-Version: 3.2.2.qualifier
+Bundle-Version: 3.2.3.qualifier
 Bundle-Vendor: Langdale Consultants
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: kena.jar,
  lib/arq-2.8.4.jar,
- lib/icu4j-3.4.4.jar,
+ lib/icu4j-71.1.jar,
  lib/iri-0.8-sources.jar,
  lib/iri-0.8.jar,
  lib/jena-2.6.3-tests.jar,
