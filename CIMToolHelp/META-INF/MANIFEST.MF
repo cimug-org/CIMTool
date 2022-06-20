@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMTool Help Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole.help;singleton:=true
-Bundle-Version: 1.10.0.RC1
+Bundle-Version: 1.10.0.RC2
 Bundle-ClassPath: CIMToolHelp
 Bundle-Vendor: Langdale Consultants
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
