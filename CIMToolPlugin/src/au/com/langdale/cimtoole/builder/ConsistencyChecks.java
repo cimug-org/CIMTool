@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.IO;
+import au.com.langdale.kena.Syntax;
 import au.com.langdale.validation.ProfileValidator;
 
 public class ConsistencyChecks extends Task {
@@ -38,7 +39,7 @@ public class ConsistencyChecks extends Task {
 			}
 			
 			if( checker.hasErrors()) {
-				write(checker.getLog(), null, false, result, IO.RDF_XML_WITH_NODEIDS, monitor);
+				write(checker.getLog(), null, false, result, Syntax.RDF_XML_WITH_NODEIDS.toFormat(), monitor);
 				result.setDerived(true);				
 				CIMBuilder.addMarker(file, "Profile " + file.getName() + " has consistency errors with respect to its schema");
 			}

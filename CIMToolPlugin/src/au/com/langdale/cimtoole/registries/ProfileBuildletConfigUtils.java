@@ -60,7 +60,7 @@ public final class ProfileBuildletConfigUtils {
 	private ProfileBuildletConfigUtils() {
 	}
 
-	private static void initCustomBuildersConfiguration() {
+	private static void initBuildersConfiguration() {
 		try {
 			if (Platform.isRunning()) {
 				Location configLocation = Platform.getConfigurationLocation();
@@ -68,6 +68,8 @@ public final class ProfileBuildletConfigUtils {
 
 				File dataAreaDir = new File(dataArea.getPath());
 				dataAreaDir = new File(dataAreaDir.getPath(), CONFIG_DIR);
+				if (!dataAreaDir.exists())
+					dataAreaDir.mkdirs();
 
 				File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 
@@ -77,53 +79,48 @@ public final class ProfileBuildletConfigUtils {
 					URL buildersConfURL = cimtooleBundle.getEntry(CONFIG_DIR + "/" + CONFIG_DEFAULTS_FILE);
 					URL buildersConfFileURL = FileLocator.toFileURL(buildersConfURL);
 
-					if (!dataAreaDir.exists())
-						dataAreaDir.mkdirs();
+					dataAreaBuilderConfigFile.createNewFile();
 
-					if (dataAreaDir.exists() && !dataAreaBuilderConfigFile.exists()) {
-						dataAreaBuilderConfigFile.createNewFile();
+					InputStream is = null;
 
-						InputStream is = null;
-
-						try {
-							is = buildersConfFileURL.openStream();
-							IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
-						} finally {
-							if (is != null) {
-								try {
-									is.close();
-								} catch (Exception e) {
-									// Do nothing
-								}
+					try {
+						is = buildersConfFileURL.openStream();
+						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
+					} finally {
+						if (is != null) {
+							try {
+								is.close();
+							} catch (Exception e) {
+								// Do nothing
 							}
 						}
+					}
 
-						if (dataAreaBuilderConfigFile.exists()) {
+					if (dataAreaBuilderConfigFile.exists()) {
 
-							String json = new String(
-									IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
-							Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
+						String json = new String(
+								IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
+						Map<String, TransformBuildlet> builders = gson.fromJson(json, typeOfHashMap);
 
-							for (TransformBuildlet builder : builders.values()) {
+						for (TransformBuildlet builder : builders.values()) {
 
-								String xslFileName = builder.getStyle() + XSL;
+							String xslFileName = builder.getStyle() + XSL;
 
-								URL xslUrl = cimtooleBundle.getEntry(CONFIG_DIR + "/" + xslFileName);
-								URL xslFileUrl = FileLocator.toFileURL(xslUrl);
-								File dataAreaXslFile = new File(dataAreaDir, xslFileName);
-								dataAreaXslFile.createNewFile();
+							URL xslUrl = cimtooleBundle.getEntry(CONFIG_DIR + "/" + xslFileName);
+							URL xslFileUrl = FileLocator.toFileURL(xslUrl);
+							File dataAreaXslFile = new File(dataAreaDir, xslFileName);
+							dataAreaXslFile.createNewFile();
 
-								is = null;
-								try {
-									is = xslFileUrl.openStream();
-									IOUtils.copy(is, new FileOutputStream(dataAreaXslFile));
-								} finally {
-									if (is != null) {
-										try {
-											is.close();
-										} catch (Exception e) {
-											// Do nothing
-										}
+							is = null;
+							try {
+								is = xslFileUrl.openStream();
+								IOUtils.copy(is, new FileOutputStream(dataAreaXslFile));
+							} finally {
+								if (is != null) {
+									try {
+										is.close();
+									} catch (Exception e) {
+										// Do nothing
 									}
 								}
 							}
@@ -194,7 +191,7 @@ public final class ProfileBuildletConfigUtils {
 				File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 
 				if (!dataAreaBuilderConfigFile.exists())
-					initCustomBuildersConfiguration();
+					initBuildersConfiguration();
 
 				File xslFile = new File(dataAreaDir, builderKey + ".xsl");
 
@@ -225,7 +222,7 @@ public final class ProfileBuildletConfigUtils {
 				File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 
 				if (!dataAreaBuilderConfigFile.exists())
-					initCustomBuildersConfiguration();
+					initBuildersConfiguration();
 
 				if (dataAreaBuilderConfigFile.exists()) {
 					String json = new String(IOUtils.toByteArray(new FileInputStream(dataAreaBuilderConfigFile)));
@@ -257,7 +254,7 @@ public final class ProfileBuildletConfigUtils {
 				// most cases it
 				// will have already been created.
 				if (!dataAreaBuilderConfigFile.exists())
-					initCustomBuildersConfiguration();
+					initBuildersConfiguration();
 
 				if (dataAreaBuilderConfigFile.exists()) {
 
@@ -317,7 +314,7 @@ public final class ProfileBuildletConfigUtils {
 				File dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 
 				if (!dataAreaBuilderConfigFile.exists())
-					initCustomBuildersConfiguration();
+					initBuildersConfiguration();
 
 				if (dataAreaBuilderConfigFile.exists()) {
 

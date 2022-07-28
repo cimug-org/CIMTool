@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="145.8244"
    height="144.63728"
    id="svg2014"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    version="1.0"
-   sodipodi:docbase="C:\Documents and Settings\Molumen\Desktop"
    sodipodi:docname="detail.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2016">
     <inkscape:perspective
@@ -71,15 +71,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="83.65569"
-     inkscape:cy="83.45924"
+     inkscape:cx="83.571429"
+     inkscape:cy="83.214286"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      inkscape:window-width="853"
      inkscape:window-height="763"
      inkscape:window-x="602"
      inkscape:window-y="18"
-     showgrid="false" />
+     showgrid="false"
+     inkscape:pagecheckerboard="0"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata2019">
     <rdf:RDF>
@@ -98,7 +100,6 @@
             <dc:title>Lumen Design Studio</dc:title>
           </cc:Agent>
         </dc:contributor>
-        <dc:title>square error warning button</dc:title>
         <dc:description>error warning icon</dc:description>
         <dc:subject>
           <rdf:Bag>

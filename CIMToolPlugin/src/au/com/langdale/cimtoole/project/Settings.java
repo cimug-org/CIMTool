@@ -119,7 +119,6 @@ public class Settings extends Task {
 		if( store == null ) {
 			IFile settings = getSettings(project);
 			if( settings.exists()) {
-
 				System.out.println("Loading settings for " + project.getName());
 				store = Task.parse(settings);
 				project.setSessionProperty(SETTINGS, store);

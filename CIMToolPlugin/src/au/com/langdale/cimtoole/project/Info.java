@@ -5,7 +5,14 @@
 package au.com.langdale.cimtoole.project;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -19,6 +26,7 @@ import com.healthmarketscience.jackcess.Database;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
+import au.com.langdale.util.Jobs;
 
 /**
  * A set of utilities that define the file locations, file types, properties and
@@ -26,6 +34,8 @@ import au.com.langdale.cimtoole.registries.ModelParserRegistry;
  */
 public class Info {
 
+	private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
+	
 	// properties and preferences
 	public static final QualifiedName PROFILE_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_path");
 	public static final QualifiedName BASE_MODEL_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "base_model_path");
@@ -51,7 +61,9 @@ public class Info {
 	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
 
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
-
+	public static final String COPYRIGHT_MULTI_LINE_EXTENSION = "copyright-multi-line";
+	public static final String COPYRIGHT_SINGLE_LINE_EXTENSION = "copyright-single-line";
+	
 	public static boolean isProfile(IResource resource) {
 		return isFile(resource, "Profiles", "owl", "n3");
 	}
@@ -193,6 +205,120 @@ public class Info {
 
 	public static IFile getSettings(IProject project) {
 		return project != null ? project.getFile("." + SETTINGS_EXTENSION) : null;
+	}
+	
+	public static IFile getMultiLineCopyrightFile(IProject project) {
+		IFile file = (project != null ? project.getFile("." + COPYRIGHT_MULTI_LINE_EXTENSION) : null);
+		return file;
+	}
+	
+	/**
+	 * Method that retrieves the multiline copyright header template for the specified 
+	 * project and populates it with the current year.
+	 */
+	public static String getMultiLineCopyrightText(IProject project) throws CoreException {
+		String currentYear = YEAR_FORMAT.format(new Date());
+		String copyright = getMultiLineCopyrightTemplate(project);
+		copyright = copyright.replace("${year}", currentYear).replace("${YEAR}", currentYear);
+		return copyright;
+	}
+	
+	/**
+	 * Method that retrieves the multiline copyright header template.
+	 */
+	public static String getMultiLineCopyrightTemplate(IProject project) throws CoreException {
+		String copyright = "";
+		
+		if (project != null) {
+			IFile copyrightFile = getMultiLineCopyrightFile(project);
+			
+			/** 
+			 * The following addresses the scenario where the project 
+			 * workspace may be out of sync with the file system.
+			 * If a copyright header file does not exist for the project
+			 * we need to load and add the default copyright header to it.
+			 * This small section of code is purely for backwards compatibility
+			 * for older projects that were created before the new copyright 
+			 * feature was added.
+			 */		
+			copyrightFile.refreshLocal(IResource.DEPTH_ZERO, null);
+			if (!copyrightFile.exists()) {
+				Jobs.runWait(Task.saveDefaultMultiLineCopyrightTemplate(project), project);
+			}
+
+			if (copyrightFile.exists()) {
+				try {
+					InputStream source = copyrightFile.getContents();
+					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+				} catch (IOException e) {
+					// We currently do nothing on error. This should typically not occur...
+				}
+			}
+			
+			if ("".equals(copyright.trim())) {
+				if ((copyright.contains("\r") || copyright.contains("\n"))) 
+					copyright = "";
+			}
+		}
+		
+		return copyright;
+	}
+	
+	public static IFile getSingleLineCopyrightFile(IProject project) {
+		IFile file = (project != null ? project.getFile("." + COPYRIGHT_SINGLE_LINE_EXTENSION) : null);
+		return file;
+	}
+	
+	/**
+	 * Method that retrieves the single-line copyright header template and populates it
+	 * with the current year.
+	 */
+	public static String getSingleLineCopyrightText(IProject project) throws CoreException {
+		String currentYear = YEAR_FORMAT.format(new Date());
+		String copyright = getSingleLineCopyrightTemplate(project);
+		copyright = copyright.replace("${year}", currentYear).replace("${YEAR}", currentYear);
+		return copyright;
+	}
+	
+	/**
+	 * Method that retrieves the single-line copyright header template.
+	 */
+	public static String getSingleLineCopyrightTemplate(IProject project) throws CoreException {
+		String copyright = "";
+		
+		if (project != null) {			
+			IFile copyrightFile = getSingleLineCopyrightFile(project);
+		
+			/** 
+			 * The following addresses the scenario where the project 
+			 * workspace may be out of sync with the file system.
+			 * If a copyright header file does not exist for the project
+			 * we need to load and add the default copyright header to it.
+			 * This small section of code is purely for backwards compatibility
+			 * for older projects that were created before the new copyright 
+			 * feature was added.
+			 */		
+			copyrightFile.refreshLocal(IResource.DEPTH_ZERO, null);
+			if (!copyrightFile.exists()) {
+				Jobs.runWait(Task.saveDefaultSingleLineCopyrightTemplate(project), project);
+			}
+	
+			if (copyrightFile.exists()) {
+				try {
+					InputStream source = copyrightFile.getContents();
+					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+				} catch (IOException e) {
+					// We currently do nothing on error. This should typically not occur...
+				}
+			}
+			
+			if ("".equals(copyright.trim())) {
+				if ((copyright.contains("\r") || copyright.contains("\n"))) 
+					copyright = "";
+			}
+		}
+		
+		return copyright;
 	}
 
 	public static IResource getInstanceFor(IResource result) {

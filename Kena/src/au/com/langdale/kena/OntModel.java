@@ -39,8 +39,7 @@ public class OntModel {
         .setNsPrefix( "xsd", XSD.getURI() )
         .setNsPrefix( "uml", "http://langdale.com.au/2005/UML#")
         .setNsPrefix( "msg", "http://langdale.com.au/2005/Message#")
-        .lock()
-        ;
+        .lock();
 
 	private final Graph graph;
 	private PrefixMapping prefixes = Standard;

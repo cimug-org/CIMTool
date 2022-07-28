@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="48pt"
    height="48pt"
    id="svg1236"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
-   sodipodi:docbase="/home/projects/CIMTool-workspace/CIMToolPlugin/graphics"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="subclass.svg"
    inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/subclass.gif"
    inkscape:export-xdpi="72.000000"
    inkscape:export-ydpi="72.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   sodipodi:modified="true">
+   sodipodi:modified="true"
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3">
     <linearGradient
@@ -64,19 +65,31 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8"
-     inkscape:cx="24"
+     inkscape:cx="24.0625"
      inkscape:cy="23.875"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
-     gridspacingy="1.0000000pt"
-     gridspacingx="1.0000000pt"
-     gridoriginy="0.0000000pt"
-     gridoriginx="0.0000000pt"
-     inkscape:window-width="749"
+     inkscape:window-width="756"
      inkscape:window-height="614"
      inkscape:window-x="695"
-     inkscape:window-y="0" />
+     inkscape:window-y="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       id="GridFromPre046Settings"
+       type="xygrid"
+       originx="0"
+       originy="0"
+       spacingx="1.3333333"
+       spacingy="1.3333333"
+       color="#3f3fff"
+       empcolor="#3f3fff"
+       opacity="0.15"
+       empopacity="0.38"
+       empspacing="5" />
+  </sodipodi:namedview>
   <metadata
      id="metadata4">
     <rdf:RDF>

@@ -31,6 +31,7 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
+import au.com.langdale.kena.Syntax;
 
 /**
  * The builder for CIMTool projects.
@@ -52,13 +53,13 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				new SchemaBuildlet(), //
 				new ProfileChecker(), //
 				new TransformBuildlet(null, "xml"), //
-				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //
-				new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true), //
-				new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true), //
-				new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true), //
-				new CopyBuildlet("TURTLE", "ttl"), //
+				new SimpleOWLBuildlet(Syntax.RDF_XML.toFormat(), "simple-flat-owl", false), //
+				new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
+				new LegacyRDFSBuildlet(Syntax.RDF_XML.toFormat(), "legacy-rdfs", false), //
+				new SimpleOWLBuildlet(Syntax.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
+				new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
+				new LegacyRDFSBuildlet(Syntax.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), //
+				new CopyBuildlet(Syntax.TURTLE.toFormat(), "ttl"), //
 				new ValidationBuildlet(), //
 				new SplitValidationBuildlet(), //
 				new IncrementalValidationBuildlet(), //

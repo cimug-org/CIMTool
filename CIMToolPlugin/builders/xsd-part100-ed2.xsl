@@ -1,45 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:a="http://langdale.com.au/2005/Message#" xmlns:sawsdl="http://www.w3.org/ns/sawsdl">
-	<xsl:output indent="yes"/>
-    <xsl:param name="date" />
-    <xsl:param name="year">
-        <xsl:choose>
-            <xsl:when test="$date">
-                <xsl:value-of select="substring-before($date,'-')"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>2022</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>    
-    </xsl:param>
+<xsl:stylesheet exclude-result-prefixes="a" version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:a="http://langdale.com.au/2005/Message#" xmlns:sawsdl="http://www.w3.org/ns/sawsdl">
+    <xsl:output xmlns:xalan="http://xml.apache.org/xslt" method="xml" omit-xml-declaration="no" indent="yes" xalan:indent-amount="4" />
+    <xsl:param name="copyright" />
 	<xsl:param name="version"/>
 	<xsl:param name="baseURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
+	<!-- The following <xsl:text> element is our newline representation where needed. -->
+    <xsl:param name="newline"><xsl:text>
+</xsl:text></xsl:param>
 	<xsl:template match="a:Catalog">
+		<xsl:value-of select="$newline"/>
 		<!-- the top level template generates the xml schema element -->
 		<xs:schema xmlns:part100="http://iec.ch/TC57/2021/schema/message" targetNamespace="{$baseURI}" elementFormDefault="qualified" attributeFormDefault="unqualified">
 			<!-- copy through namespace declaration needed to reference local types -->
 			<xsl:for-each select="namespace::*">
-				<xsl:copy/>
+				<xsl:if test="not(contains(., 'langdale.com.au'))">
+					<xsl:copy/>
+				</xsl:if>
 			</xsl:for-each>
-			<xs:annotation>
-				<xs:documentation xml:lang="en">
-					Copyright <xsl:value-of select="$year"/> UCAIug
-
-					Licensed under the Apache License, Version 2.0 (the "License");
-					you may not use this file except in compliance with the License.
-					You may obtain a copy of the License at
-
-					https://www.apache.org/licenses/LICENSE-2.0
-
-					Unless required by applicable law or agreed to in writing, software
-					distributed under the License is distributed on an "AS IS" BASIS,
-					WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-					
-					See the License for the specific language governing permissions and
-					limitations under the License.
-				</xs:documentation>
-			</xs:annotation>
+			<xsl:value-of select="$newline"/>
+			<xsl:if test="$copyright and $copyright != ''">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+					<xsl:value-of select="$copyright" disable-output-escaping="yes"/>				
+					</xs:documentation>
+				</xs:annotation>
+			</xsl:if>
 			<xsl:call-template name="annotate"/>
 			<!-- if the message declares root elements put them in an envelope -->
 			<xsl:if test="a:Root">

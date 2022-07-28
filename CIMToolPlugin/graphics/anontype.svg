@@ -2,25 +2,25 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="48pt"
    height="48pt"
    id="svg1061"
    sodipodi:version="0.32"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="type.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="anontype.svg"
    inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/class.gif"
    inkscape:export-xdpi="72.000000"
    inkscape:export-ydpi="72.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   version="1.1">
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3">
     <linearGradient
@@ -64,7 +64,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="8"
      inkscape:cx="4.0625"
-     inkscape:cy="22.760788"
+     inkscape:cy="22.8125"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -73,14 +73,16 @@
      inkscape:window-x="362"
      inkscape:window-y="0"
      inkscape:grid-points="true"
-     inkscape:window-maximized="0">
+     inkscape:window-maximized="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt">
     <inkscape:grid
        id="GridFromPre046Settings"
        type="xygrid"
-       originx="0px"
-       originy="0.0000000pt"
-       spacingx="1.0000000pt"
-       spacingy="1.0000000pt"
+       originx="0"
+       originy="0"
+       spacingx="1.4222222"
+       spacingy="1.4222222"
        color="#0000ff"
        empcolor="#0000ff"
        opacity="0.2"
@@ -95,7 +97,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

@@ -2,21 +2,28 @@ package au.com.langdale.util;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.IProgressConstants2;
 
 public class Jobs {
-	
+    
 	/**
 	 * Run this operation in the background using the Job system.
 	 */
@@ -80,4 +87,43 @@ public class Jobs {
 		}
 		return result;
 	}
+
+	public static void cleanBuildProject(final IProject project) {
+		Job cleanJob = new Job("Cleaning and building project '" + project.getName() + "'") {
+
+			@Override
+            public boolean belongsTo(Object family) {
+                return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
+            }
+			
+			public final IStatus run(IProgressMonitor monitor) {
+				IWorkspace  workspace = (IWorkspace) ResourcesPlugin.getWorkspace();
+				try {
+					// First perform the clean
+	                try {
+	                    monitor.beginTask("Cleaning and building project '" + project.getName() + "'", 1);
+	                    project.build(IncrementalProjectBuilder.CLEAN_BUILD, new SubProgressMonitor(monitor, 1));
+	                } finally {
+	                    monitor.done();
+	                }
+	                // Then a build on the project
+					workspace.build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.INCREMENTAL_BUILD, false, new SubProgressMonitor(monitor, 10000));
+					if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
+					monitor.done();
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
+				} catch (CoreException e) {
+					return e.getStatus();
+                }
+				return Status.OK_STATUS;
+			}
+		};
+        cleanJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory()
+                .buildRule());
+        cleanJob.setUser(false);
+        cleanJob.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
+        cleanJob.schedule();
+    }
 }

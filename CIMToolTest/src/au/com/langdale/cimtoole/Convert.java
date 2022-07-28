@@ -6,6 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import au.com.langdale.kena.IO;
+import au.com.langdale.kena.Syntax;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -23,8 +26,8 @@ public class Convert {
 		
 		String input = args[0];
 		String output = args[1];
-		String inputLang = args.length > 2? args[2] : "TTL";
-		String outputLang = args.length > 3? args[3] : "RDF/XML";
+		String inputLang = args.length > 2? args[2] : Syntax.TTL.toFormat();
+		String outputLang = args.length > 3? args[3] : Syntax.RDF_XML.toFormat();
 		String base = args.length > 4? args[4] : "http://langdale.com.au/2008/network#";
 		
 		Model model = ModelFactory.createDefaultModel();

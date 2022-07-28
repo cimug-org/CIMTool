@@ -25,6 +25,7 @@ public class ProjectTest extends WorkspaceTest {
 	public static final String SAMPLE_RULES = "profile.rules";
 	public static final String SAMPLE_HTML_RULES = "profile.html-xslt";
 	public static final String SAMPLE_XSD_RULES = "profile.xsd-xslt";
+	public static final String SAMPLE_COPYRIGHT = "profile.txt";
 	public static final String ALT_XSD_RULES = "alternative.xsd-xslt";
 	public static final String SCHEMA_NS = "http://iec.ch/TC57/2007/CIM-schema-cim12#";
 	public static final String PROFILE_NS = "http://example.com/profile#";

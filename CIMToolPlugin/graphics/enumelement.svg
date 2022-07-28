@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="48pt"
    height="48pt"
    id="svg1136"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
-   sodipodi:docbase="/home/projects/CIMTool/CIMToolPlugin/graphics"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="enumelement.svg"
    inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/enum.gif"
    inkscape:export-xdpi="72.000000"
    inkscape:export-ydpi="72.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   sodipodi:modified="true">
+   sodipodi:modified="true"
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3">
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 30 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="60 : 30 : 1"
-       inkscape:persp3d-origin="30 : 20 : 1"
+       inkscape:vp_x="0 : 32 : 1"
+       inkscape:vp_y="0 : 1066.6667 : 0"
+       inkscape:vp_z="64 : 32 : 1"
+       inkscape:persp3d-origin="32 : 21.333333 : 1"
        id="perspective21" />
     <linearGradient
        id="linearGradient1701">
@@ -60,22 +61,25 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="8"
-     inkscape:cx="37.7125"
-     inkscape:cy="24"
+     inkscape:cx="37.8125"
+     inkscape:cy="23.9375"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:window-width="1116"
      inkscape:window-height="763"
-     inkscape:window-x="1610"
-     inkscape:window-y="155">
+     inkscape:window-x="1920"
+     inkscape:window-y="155"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt"
+     inkscape:window-maximized="0">
     <inkscape:grid
        id="GridFromPre046Settings"
        type="xygrid"
-       originx="0px"
-       originy="0.0000000pt"
-       spacingx="1.0000000pt"
-       spacingy="1.0000000pt"
+       originx="0"
+       originy="0"
+       spacingx="1.4222222"
+       spacingy="1.4222222"
        color="#0000ff"
        empcolor="#0000ff"
        opacity="0.2"
@@ -116,18 +120,19 @@
        transform="translate(2.031250,1.875000)" />
     <text
        xml:space="preserve"
-       style="font-size:8.0000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1.0000000;stroke:none;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:Bitstream Vera Sans;text-anchor:start;writing-mode:lr"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="21.40625"
        y="20.78125"
        id="text1155"
-       transform="translate(2.136711,4.296900e-2)"><tspan
+       transform="translate(2.136711,0.042969)"><tspan
          sodipodi:role="line"
          id="tspan1156"
          x="21.40625"
-         y="20.78125">one</tspan></text>
+         y="20.78125"
+         style="font-size:8px;line-height:1.25">one</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:8.0000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1.0000000;stroke:none;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:Bitstream Vera Sans;text-anchor:start;writing-mode:lr"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="21.71875"
        y="31.09375"
        id="text1158"
@@ -135,10 +140,11 @@
          sodipodi:role="line"
          id="tspan1159"
          x="21.71875"
-         y="31.09375">two</tspan></text>
+         y="31.09375"
+         style="font-size:8px;line-height:1.25">two</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:8.0000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1.0000000;stroke:none;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:Bitstream Vera Sans;text-anchor:start;writing-mode:lr"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="22.34375"
        y="39.84375"
        id="text1161"
@@ -146,7 +152,8 @@
          sodipodi:role="line"
          id="tspan1162"
          x="22.34375"
-         y="39.84375">three</tspan></text>
+         y="39.84375"
+         style="font-size:8px;line-height:1.25">three</tspan></text>
     <path
        sodipodi:type="arc"
        style="color:#000000;fill:#75507b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none;visibility:visible;display:block"

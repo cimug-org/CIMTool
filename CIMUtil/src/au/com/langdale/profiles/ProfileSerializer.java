@@ -67,6 +67,8 @@ public class ProfileSerializer extends AbstractReader {
 	private JenaTreeModelBase model;
 	private String baseURI = "";
 	private String version = "";
+	private String copyrightMultiLine = "";
+	private String copyrightSingleLine = "";
 	private ArrayList templates = new ArrayList(); 
 	TransformerFactory factory = TransformerFactory.newInstance();
 	private final String xsd = XSD.anyURI.getNameSpace();
@@ -96,6 +98,40 @@ public class ProfileSerializer extends AbstractReader {
 	}
 	
 	/**
+	 * A single-line copyright notification including a year. It will be passed as 
+	 * an attribute named "coyright-single-line" to the serializer therefore making it 
+	 * available to a profile builder for use as the copyright notice within the generated 
+	 * schema if the schema builder desires a single lined copyright as opposed to a 
+	 * multi-line copyright.
+	 */
+	public String getCopyrightSingleLine() {
+		return copyrightSingleLine;
+	}
+
+	/**
+	 * Set the single line copyright notice (see above).
+	 */
+	public void setCopyrightSingleLine(String copyrightSingleLine) {
+		this.copyrightSingleLine = copyrightSingleLine;
+	}
+	
+	/**
+	 * A multi-line copyright notification including a year. It will be passed as 
+	 * an attribute named "coyright" to the serializer therefore making it available
+	 * to a profile builder for use as the copyright notice within the generated schema.
+	 */
+	public String getCopyrightMultiLine() {
+		return copyrightMultiLine;
+	}
+
+	/**
+	 * Set the base URI (see above).
+	 */
+	public void setCopyrightMultiLine(String copyright) {
+		this.copyrightMultiLine = copyright;
+	}
+	
+	/**
 	 * Install a stylesheet to transform the abstract message definition to a schema. 
 	 */
 	public void setStyleSheet(InputStream s, String base) throws TransformerConfigurationException {
@@ -113,19 +149,30 @@ public class ProfileSerializer extends AbstractReader {
 	
 	/**
 	 * Install a stylesheet from the standard set. Use null for no stylesheet.
+	 * 
+	 * When the name is null it indicates that no stylesheets are to be applied. 
+	 * In this scenario the output of a call to the ProfileSerializer's write() 
+	 * method will simply be the output of the CIMTool's internal message model 
+	 * as a formatted XML document. Therefore, any existing templates are "cleared"
+	 * and will apply only the "indent-xml.xsl" stylesheet to format the XML when 
+	 * written. This stylesheet is for internal purposes only.
 	 */
 	public void setStyleSheet(String name) throws TransformerConfigurationException {
-		if( name == null)
+		if( name == null) {
 			templates.clear();
-		else
+			setStyleSheet(getClass().getResourceAsStream("indent-xml.xsl"), XSDGEN);
+		}
+		else {
 			setStyleSheet(getClass().getResourceAsStream(name + ".xsl"), XSDGEN);
+		}
 	}
 
 	/**
 	 * Install a stylesheet to apply after any previously installed stylesheets. 
 	 */
 	public void addStyleSheet(String name) throws TransformerConfigurationException {
-		addStyleSheet(getClass().getResourceAsStream(name + ".xsl"), "");
+		if (name != null)
+			addStyleSheet(getClass().getResourceAsStream(name + ".xsl"), "");
 	}
 	
 	/**
@@ -198,6 +245,8 @@ public class ProfileSerializer extends AbstractReader {
 			  ti.setParameter("baseURI", baseURI);
 			  ti.setParameter("version", version);
 			  ti.setParameter("envelope", model.getRoot().getName());
+			  ti.setParameter("copyright", copyrightMultiLine);
+			  ti.setParameter("copyright-single-line", copyrightSingleLine);
 			  tx[ix] = ti;
 			}
 		}
@@ -351,7 +400,7 @@ public class ProfileSerializer extends AbstractReader {
 			}
 			else {
 				elem = new Element("Choice");
-				emit(node, elem);
+				emitChoice(node, elem);
 				emitChildren(node);
 			}
 			
@@ -366,6 +415,35 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
 		
+		emit(node.getBaseProperty().getComment(null));
+		emitNote(node);
+	}
+	
+	private void emitChoice(ElementNode node, Element elem) throws SAXException {
+		elem.set("name", node.getName());
+		elem.set("baseProperty", node.getBaseProperty().getURI());
+		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
+		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
+		//
+		// We obtain the topmost class in the hierarchy via the call to node.getBaseClass().
+		// We then loop through all of the child nodes of the choice and locate the one that
+		// matches the base class associated with the Choice property. This is the one we must
+		// use when generating the 'inheritanceBaseClass' and 'inheritanceBaseType' attributes 
+		// for the Choice. These two attributes indicate the URI of the topmost base class in
+		// the hierarchy and the name of that class as specified in the context of the profile
+		// defined.
+		//
+		OntResource baseClass = node.getBaseClass();
+		Iterator it = node.iterator();
+		while(it.hasNext()) {
+			Node childNode = (Node) it.next();
+			if (childNode.getBase().equals(baseClass)) {
+				elem.set("inheritanceBaseClass", childNode.getSubject().getURI());
+				elem.set("inheritanceBaseType", childNode.getName());
+				break;
+			}
+		}
+
 		emit(node.getBaseProperty().getComment(null));
 		emitNote(node);
 	}
