@@ -7,9 +7,6 @@ import java.util.Collections;
 
 import org.eclipse.core.runtime.CoreException;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDFS;
-
 import au.com.langdale.cimtoole.test.ProjectTest;
 import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
@@ -18,7 +15,11 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
+import au.com.langdale.kena.Syntax;
 import au.com.langdale.workspace.ResourceOutputStream;
+
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KenaTests extends ProjectTest {
 	public final String NS = "http://example.com/example#";
@@ -36,7 +37,7 @@ public class KenaTests extends ProjectTest {
 	
 	public final void testReadRDFXML() throws CoreException, FileNotFoundException {
 		OntModel model = ModelFactory.createMem();
-		IO.read(model, new FileInputStream(getSamplesFolder() + SAMPLE_PROFILE), NS, "RDF/XML");
+		IO.read(model, new FileInputStream(getSamplesFolder() + SAMPLE_PROFILE), NS, Syntax.RDF_XML.toFormat());
 		assertTrue("read some statements", model.size() > 0);
 	}
 	
@@ -45,12 +46,12 @@ public class KenaTests extends ProjectTest {
 
 		model.add(eg("s"), eg("p"), "v");
 		ResourceOutputStream contents = new ResourceOutputStream(profile, monitor, true, true);
-		IO.write(model, contents, NS, "RDF/XML", Collections.EMPTY_MAP);
+		IO.write(model, contents, NS, Syntax.RDF_XML.toFormat(), Collections.EMPTY_MAP);
 		contents.close();
 		assertTrue("file was written", profile.exists());
 		
 		model = ModelFactory.createMem();
-		IO.read(model, profile.getContents(), NS, "RDF/XML");
+		IO.read(model, profile.getContents(), NS, Syntax.RDF_XML.toFormat());
 		assertTrue("read some statements", model.size() > 0);
 		assertTrue("statement remembered", model.contains(eg("s"), eg("p"), "v"));
 		
@@ -58,7 +59,7 @@ public class KenaTests extends ProjectTest {
 	
 	public final void testOntResource() throws CoreException, FileNotFoundException {
 		OntModel model = ModelFactory.createMem();
-		IO.read(model, new FileInputStream(getSamplesFolder() + SAMPLE_PROFILE), NS, "RDF/XML");
+		IO.read(model, new FileInputStream(getSamplesFolder() + SAMPLE_PROFILE), NS, Syntax.RDF_XML.toFormat());
 		assertTrue("read some statements", model.size() > 0);
 		
 		int count = 0;

@@ -2,9 +2,9 @@
 
 ## Latest Release
 
--   1.10.0.RC2  
+-   1.10.0.RC3  
 
-    - The latest release is available at [CIMTool-1.10.0.RC2](https://github.com/CIMug-org/CIMTool/releases/tag/1.10.0.RC2) and is delivered as a ZIP file.
+    - The latest release is available at [CIMTool-1.10.0.RC3](https://github.com/CIMug-org/CIMTool/releases/tag/1.10.0.RC3) and is delivered as a ZIP file.
     - Information on features and fixes for the release can be found [here](https://cimug-org.github.io/CIMTool/).
 
 ## Installation & Setup

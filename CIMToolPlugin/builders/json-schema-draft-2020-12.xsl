@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:a="http://langdale.com.au/2005/Message#" xmlns:sawsdl="http://www.w3.org/ns/sawsdl" xmlns="http://langdale.com.au/2009/Indent">
 	<xsl:output indent="yes" encoding="utf-8"/>
-    <xsl:param name="date" />
-    <xsl:param name="year">
-        <xsl:choose>
-            <xsl:when test="$date">
-                <xsl:value-of select="substring-before($date,'-')"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>2022</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>    
-    </xsl:param>
+    <xsl:param name="copyright-single-line" />
 	<xsl:param name="version"/>
 	<xsl:param name="baseURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
@@ -516,7 +506,9 @@
 		<!-- the top level template -->
 		<document>
 			<list begin="{{" indent="     " delim="," end="}}">
-				<item>"$comment": "Copyright <xsl:value-of select="$year"/> UCAIug SPDX-License-Identifier: Apache-2.0"</item>
+				<xsl:if test="$copyright-single-line and $copyright-single-line != ''">
+					<item>"$comment": "<xsl:value-of select="$copyright-single-line" disable-output-escaping="yes"/>"</item>			
+				</xsl:if>
 				<item>"$id": "<xsl:value-of select="substring-before($baseURI, $envelope)"/><xsl:value-of select="$envelope"/>.schema.json"</item>
 				<item>"$schema": "<xsl:value-of select="$schema_draft_version"/>"</item>
 				<item>"title": "<xsl:value-of select="$envelope"/>"</item>

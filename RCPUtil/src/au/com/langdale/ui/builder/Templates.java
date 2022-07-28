@@ -804,6 +804,10 @@ public class Templates {
 	public static Template DisplayArea(String name) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY, name, "", 0);
 	}
+	
+	public static Template DisplayArea(String name, boolean scroll) {
+		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name, "", 0);
+	}
 
 	public static Template DisplayArea(String name, int lines) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY, name, "", lines);

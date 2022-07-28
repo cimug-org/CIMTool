@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
+import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.registries.ProfileBuildletConfigUtils;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
@@ -32,6 +33,7 @@ import au.com.langdale.jena.OntModelProvider;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
+import au.com.langdale.kena.Syntax;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.OWLGenerator;
 import au.com.langdale.profiles.ProfileModel;
@@ -203,6 +205,10 @@ public class ProfileBuildlets extends Task {
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
 				serializer.setBaseURI(tree.getNamespace());
+				
+				// Set available copyright headers for use during profile generation.
+				serializer.setCopyrightMultiLine(Info.getMultiLineCopyrightText(file.getProject()));
+				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
 				// TODO: make this better
 				serializer.setVersion("Beta");
@@ -214,11 +220,12 @@ public class ProfileBuildlets extends Task {
 				} else {
 					InputStream is = null;
 					try {
-						// We attempt to first load in any custom XSLT transform
-						// builders. If is == null
-						// it means none is available at which point we
-						// "fallback" to an alternate call
-						// to the setStyleSheet method...
+						/**
+						 * We attempt to first load in any custom XSLT transform
+						 * builders. If is == null it means none are available at 
+						 * which point we "fallback" to an alternate invocation to
+						 * setStyleSheet(style) method.
+						 */
 						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 						if (is != null) {
 							serializer.setStyleSheet(is, ProfileSerializer.XSDGEN);
@@ -226,11 +233,11 @@ public class ProfileBuildlets extends Task {
 							serializer.setStyleSheet(style);
 						}
 					} catch (Exception e) {
-						// Exception thrown so we attempt to perform a call to
-						// setStyleSheet(style)
-						// which will attempt to load and set an XSL file
-						// packaged within the CIMUtil
-						// bundled jar.
+						/**
+						 * Exception thrown so we attempt to perform a call to
+						 * setStyleSheet(style) which will attempt to load and set 
+						 * an XSL file packaged within the CIMUtil bundled jar.
+						 */
 						serializer.setStyleSheet(style);
 					}
 				}
@@ -439,7 +446,7 @@ public class ProfileBuildlets extends Task {
 		}
 	}
 
-	public static void resetAvailable() {
+	public static void reload() {
 		availableBuildlets = null;
 	}
 
@@ -461,13 +468,13 @@ public class ProfileBuildlets extends Task {
 
 			ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] { //
 			new TransformBuildlet(null, "xml"), //
-					new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl", false), //
-					new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl", false), //
-					new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs", false), //
-					new SimpleOWLBuildlet("RDF/XML", "simple-flat-owl-augmented", true), //
-					new SimpleOWLBuildlet("RDF/XML-ABBREV", "simple-owl-augmented", true), //
-					new LegacyRDFSBuildlet("RDF/XML", "legacy-rdfs-augmented", true), //
-					new CopyBuildlet("TURTLE", "ttl") //
+					new SimpleOWLBuildlet(Syntax.RDF_XML.toFormat(), "simple-flat-owl", false), //
+					new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
+					new LegacyRDFSBuildlet(Syntax.RDF_XML.toFormat(), "legacy-rdfs", false), //
+					new SimpleOWLBuildlet(Syntax.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
+					new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
+					new LegacyRDFSBuildlet(Syntax.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), //
+					new CopyBuildlet(Syntax.TURTLE.toFormat(), "ttl") //
 			};
 
 			ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();

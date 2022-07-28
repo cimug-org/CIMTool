@@ -12,6 +12,7 @@ import au.com.langdale.inference.SimpleReasoner;
 import au.com.langdale.inference.ValidationBuiltins;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.Syntax;
 
 import au.com.langdale.util.Logger;
 import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
@@ -37,9 +38,9 @@ public class ModelValidator extends ValidatorUtil implements ValidatorProtocol {
 	}
 	
 	public OntModel run(String source, String base, String namespace, Logger errors) throws IOException {
-		String lang = "RDF/XML";
+		String lang = Syntax.RDF_XML.toFormat();
 		if( source.endsWith(".ttl"))
-			lang = "TURTLE";
+			lang = Syntax.TURTLE.toFormat();
 		InputStream input = new FileInputStream(source);
 		Model data = ModelFactory.createDefaultModel();
 		RDFReader reader = data.getReader(lang);

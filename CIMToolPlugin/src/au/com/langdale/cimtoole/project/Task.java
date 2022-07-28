@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -26,13 +27,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.OWL2;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.osgi.framework.Bundle;
 
 import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
@@ -50,6 +50,7 @@ import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Syntax;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.RepairMan;
@@ -59,6 +60,10 @@ import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAPExtractor;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
+
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Utility tasks for CIMTool plugin. Tasks are instances of
@@ -114,7 +119,11 @@ public class Task extends Info {
 				getProfileFolder(project).create(false, true, monitor);
 				getInstanceFolder(project).create(false, true, monitor);
 				getIncrementalFolder(project).create(false, true, monitor);
+				//
 				saveSettings(project, ModelFactory.createMem()).run(monitor);
+				saveDefaultMultiLineCopyrightTemplate(project).run(monitor);
+				saveDefaultSingleLineCopyrightTemplate(project).run(monitor);
+				//
 				monitor.worked(1);
 			}
 		};
@@ -166,11 +175,11 @@ public class Task extends Info {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile);
 				/**
-				 * Given that we've imported a new buildlet, we need to reset the "cached"
+				 * Given that we've imported a new buildlet, we need to reload the "cached"
 				 * available profile buildlets. This will allow the new buildlet to appear in
 				 * the "Profile Summary" tab.
 				 */
-				ProfileBuildlets.resetAvailable();
+				ProfileBuildlets.reload();
 			}
 		};
 	}
@@ -184,6 +193,26 @@ public class Task extends Info {
 				model = fixupProfile(model, getBackgroundModel(file), defaultName, namespace);
 				writeProfile(file, model, monitor);
 				putProperty(file, PROFILE_NAMESPACE, namespace);
+			}
+		};
+	}
+	
+	public static IWorkspaceRunnable importMultiLineCopyright(final IFile file, final String pathname) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IProject project = file.getProject();
+				IFile file = Info.getMultiLineCopyrightFile(project);
+				importFile(file, pathname, monitor);
+			}
+		};
+	}
+	
+	public static IWorkspaceRunnable importSingleLineCopyright(final IFile file, final String pathname) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IProject project = file.getProject();
+				IFile file = Info.getSingleLineCopyrightFile(project);
+				importFile(file, pathname, monitor);
 			}
 		};
 	}
@@ -296,7 +325,7 @@ public class Task extends Info {
 		OntModel annote;
 		if (auxfile.exists()) {
 			annote = ModelFactory.createMem();
-			IO.read(annote, auxfile.getContents(), base, "TURTLE");
+			IO.read(annote, auxfile.getContents(), base, Syntax.TURTLE.toFormat());
 		} else
 			annote = null;
 		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES));
@@ -330,13 +359,13 @@ public class Task extends Info {
 		OntModel model = ModelFactory.createMem();
 		String syntax;
 		if (ext.equals("n3"))
-			syntax = "N3";
+			syntax = Syntax.N3.toFormat();
 		else if (ext.equals("diagnostic") || ext.equals("cimtool-settings") || ext.equals("mapping-ttl"))
-			syntax = "TURTLE";
+			syntax = Syntax.TURTLE.toFormat();
 		else if (ext.equals("owl") || ext.equals("repair"))
-			syntax = IO.RDF_XML_WITH_NODEIDS;
+			syntax = Syntax.RDF_XML_WITH_NODEIDS.toFormat();
 		else
-			syntax = "RDF/XML";
+			syntax = Syntax.RDF_XML.toFormat();
 		IO.read(model, contents, base, syntax);
 		return model;
 	}
@@ -344,14 +373,19 @@ public class Task extends Info {
 	public static void write(OntModel model, String namespace, boolean xmlbase, IFile file, String format,
 			IProgressMonitor monitor) throws CoreException {
 		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
-		write(model, namespace, xmlbase, format, stream);
+		write(model, namespace, xmlbase, format, stream, Info.getMultiLineCopyrightText(file.getProject()));
 	}
 
 	public static void write(OntModel model, String namespace, boolean xmlbase, String format, OutputStream stream)
 			throws CoreException {
+		write(model,  namespace,  xmlbase,  format,  stream, null);
+	}
+	
+	public static void write(OntModel model, String namespace, boolean xmlbase, String format, OutputStream stream, String copyright)
+			throws CoreException {
 		try {
 			HashMap style = new HashMap();
-			if (format != null && format.equals("RDF/XML-ABBREV"))
+			if (format != null && format.equals(Syntax.RDF_XML_ABBREV.toFormat()))
 				style.put("prettyTypes", PrettyTypes.PRETTY_TYPES);
 			if (namespace != null) {
 				if (namespace.endsWith("#"))
@@ -361,7 +395,13 @@ public class Task extends Info {
 				style.put("relativeURIs", "same-document");
 			}
 			style.put("showXmlDeclaration", "true");
-			IO.write(model, stream, namespace, format, style);
+			
+			if ((copyright != null && !"".equals(copyright.trim())) && (Syntax.RDF_XML.toFormat().equals(format) || Syntax.RDF_XML_ABBREV.toFormat().equals(format))) {
+				IO.write(model, stream, namespace, format, style, copyright);
+			} else {
+				IO.write(model, stream, namespace, format, style);
+			}
+
 			stream.close();
 		} catch (IOException e) {
 			throw error("can't write model to stream", e);
@@ -379,7 +419,7 @@ public class Task extends Info {
 				} catch (IOException ex) {
 					throw error("can't write to " + pathname);
 				}
-				writeOntology(output, schema, "RDF/XML", monitor);
+				writeOntology(output, schema, Syntax.RDF_XML.toFormat(), monitor);
 			}
 		};
 	}
@@ -419,7 +459,25 @@ public class Task extends Info {
 		model.setNsPrefix("project", CIMToolPlugin.PROJECT_NS);
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				write(model, CIMToolPlugin.PROJECT_NS, true, getSettings(project), "TURTLE", monitor);
+				write(model, CIMToolPlugin.PROJECT_NS, true, getSettings(project), Syntax.TURTLE.toFormat(), monitor);
+			}
+		};
+	}
+	
+	public static IWorkspaceRunnable saveDefaultMultiLineCopyrightTemplate(final IProject project) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFile file = Info.getMultiLineCopyrightFile(project);
+				importFileFromBundle(file, "builders/default-copyright-template-multi-line.txt", monitor);
+			}
+		};
+	}
+	
+	public static IWorkspaceRunnable saveDefaultSingleLineCopyrightTemplate(final IProject project) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFile file = Info.getSingleLineCopyrightFile(project);
+				importFileFromBundle(file, "builders/default-copyright-template-single-line.txt", monitor);
 			}
 		};
 	}
@@ -443,10 +501,17 @@ public class Task extends Info {
 			}
 		};
 	}
-
+	
 	private static void importFile(final IFile file, final String pathname, IProgressMonitor monitor)
 			throws CoreException {
 		InputStream source = openExternalFile(pathname, monitor);
+		writeFile(file, source, monitor);
+		monitor.worked(1);
+	}
+	
+	private static void importFileFromBundle(final IFile file, final String pathWithinBundle, IProgressMonitor monitor)
+			throws CoreException {
+		InputStream source = openBundledFile(pathWithinBundle, monitor);
 		writeFile(file, source, monitor);
 		monitor.worked(1);
 	}
@@ -461,6 +526,21 @@ public class Task extends Info {
 		monitor.worked(1);
 		return source;
 	}
+	
+	private static InputStream openBundledFile(final String pathWithinBundle, IProgressMonitor monitor) throws CoreException {
+		// Below attempts to load a file located within a bundle shipped as part of the CIMTool product. 
+		InputStream source;
+		try {
+			Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
+			URL url = cimtooleBundle.getEntry(pathWithinBundle);
+			URL fileUrl = FileLocator.toFileURL(url);
+			source = fileUrl.openStream();
+		} catch (IOException e) {
+			throw error("can't load file from within CIMTool bundle:  " + pathWithinBundle, e);
+		}
+		monitor.worked(1);
+		return source;
+	}
 
 	private static void writeFile(final IFile file, InputStream source, IProgressMonitor monitor) throws CoreException {
 		if (file.exists())
@@ -470,7 +550,7 @@ public class Task extends Info {
 	}
 
 	public static void writeProfile(IFile file, OntModel model, IProgressMonitor monitor) throws CoreException {
-		writeOntology(file, model, IO.RDF_XML_WITH_NODEIDS, monitor);
+		writeOntology(file, model, Syntax.RDF_XML_WITH_NODEIDS.toFormat(), monitor);
 	}
 
 	public static void writeOntology(IFile file, OntModel model, String format, IProgressMonitor monitor)
@@ -597,7 +677,7 @@ public class Task extends Info {
 	protected static void writeMappings(final IFile file, final OntModel model, IProgressMonitor monitor)
 			throws CoreException {
 		String ext = file.getFileExtension();
-		String format = ext != null && ext.equals("mapping-ttl") ? "TURTLE" : "RDF/XML";
+		String format = ext != null && ext.equals("mapping-ttl") ? Syntax.TURTLE.toFormat() : Syntax.RDF_XML.toFormat();
 		writeOntology(file, model, format, monitor);
 	}
 }

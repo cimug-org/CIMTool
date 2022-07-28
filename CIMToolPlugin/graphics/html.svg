@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="64"
    height="64"
    id="svg1095"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
-   sodipodi:docbase="/home/projects/CIMTool/CIMToolPlugin/graphics"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="html.svg"
    inkscape:export-filename="/home/projects/CIMTool/src/au/com/langdale/cim/uispec/datatype.gif"
    inkscape:export-xdpi="72.000000"
    inkscape:export-ydpi="72.000000"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.0"
-   sodipodi:modified="true">
+   sodipodi:modified="true"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3">
     <linearGradient
@@ -222,22 +222,33 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="7.5"
-     inkscape:cx="29.584635"
-     inkscape:cy="35.333333"
+     inkscape:cx="29.666667"
+     inkscape:cy="35.266667"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
-     gridspacingy="1.0000000pt"
-     gridspacingx="1.0000000pt"
-     gridoriginy="0.0000000pt"
-     gridoriginx="0.0000000pt"
      inkscape:window-width="1112"
      inkscape:window-height="669"
      inkscape:window-x="0"
-     inkscape:window-y="350"
+     inkscape:window-y="332"
      showguides="true"
      width="64px"
-     height="64px" />
+     height="64px"
+     inkscape:pagecheckerboard="0"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       id="GridFromPre046Settings"
+       type="xygrid"
+       originx="0"
+       originy="0"
+       spacingx="1.25"
+       spacingy="1.25"
+       color="#3f3fff"
+       empcolor="#3f3fff"
+       opacity="0.15"
+       empopacity="0.38"
+       empspacing="5" />
+  </sodipodi:namedview>
   <metadata
      id="metadata4">
     <rdf:RDF>
@@ -262,14 +273,14 @@
        y="5.5398598" />
     <text
        xml:space="preserve"
-       style="font-size:41.34978485px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr;text-anchor:middle;fill:#556b2f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Dustismo"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:Dustismo;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#556b2f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="32.575424"
        y="45.41647"
-       id="text8012"
-       sodipodi:linespacing="100%"><tspan
+       id="text8012"><tspan
          sodipodi:role="line"
          id="tspan8130"
-         x="32.575423"
-         y="45.41647">&lt;H&gt;</tspan></text>
+         x="32.575424"
+         y="45.41647"
+         style="font-size:41.3498px;line-height:1">&lt;H&gt;</tspan></text>
   </g>
 </svg>

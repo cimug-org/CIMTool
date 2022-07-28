@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    height="128"
    width="128"
    id="svg3815"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    version="1.0"
    sodipodi:docname="search.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3817">
     <linearGradient
@@ -55,7 +56,11 @@
     </linearGradient>
     <filter
        id="filter4141"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       x="-0.032691474"
+       y="-0.040053613"
+       width="1.0653829"
+       height="1.0801072">
       <feGaussianBlur
          id="feGaussianBlur4143"
          stdDeviation="1.0889941"
@@ -253,7 +258,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:cx="48.344261"
+     inkscape:cx="48.403361"
      inkscape:cy="64"
      inkscape:zoom="3.71875"
      inkscape:document-units="px"
@@ -262,7 +267,9 @@
      inkscape:window-width="1013"
      inkscape:window-height="664"
      inkscape:window-x="110"
-     inkscape:window-y="145" />
+     inkscape:window-y="145"
+     inkscape:pagecheckerboard="0"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata3820">
     <rdf:RDF>

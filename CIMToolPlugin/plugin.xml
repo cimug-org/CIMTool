@@ -95,7 +95,7 @@
             id="au.com.langdale.cimtoole.wizards.ImportSpreadsheet"
             name="Import Spreadsheet as Profile">
          <description>
-            The wizard will glean a list of classes and properties from a spreadsheet and construct a profile from them.
+            A wizard that will glean a list of classes and properties from a spreadsheet and construct a profile from them.
          </description>
       </wizard>
       <wizard
@@ -114,12 +114,32 @@
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.ImportMultiLineCopyrightTemplate"
+            icon="icons/copyright.png"
+            id="au.com.langdale.cimtoole.wizards.ImportMultiLineCopyrightTemplate"
+            name="Import Copyright Template (multiline)">
+      	<description>
+            A wizard for importing a multiline copyright template to be used in relevant profiles for a given project.
+		</description>
+      </wizard>      
+      <wizard
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.ImportSingleLineCopyrightTemplate"
+            icon="icons/copyright.png"
+            id="au.com.langdale.cimtoole.wizards.ImportSingleLineCopyrightTemplate"
+            name="Import Copyright Template (single-line)">
+      	<description>
+            A wizard for importing a single-line copyright template to be used in relevant profiles for a given project.
+		</description>
+      </wizard>
+      <wizard
+            category="au.com.langdale.cimtoole"
             class="au.com.langdale.cimtoole.wizards.ImportTransformBuilder"
             icon="icons/xsd.png"
             id="au.com.langdale.cimtoole.wizards.ImportTransformBuilder"
             name="Import XSLT Transform Builder">
       	<description>
-            A wizard for importing profile builders based on XSLT transforms.
+            A wizard for importing custom profile builders based on XSLT transforms.
 		</description>
       </wizard>
       <wizard

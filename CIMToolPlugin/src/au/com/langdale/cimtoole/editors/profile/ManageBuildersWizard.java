@@ -49,7 +49,7 @@ public class ManageBuildersWizard extends Wizard {
 				 * Given that we've imported a new buildlet, we need to reset the "cached"
 				 * available profile buildlets.
 				 */
-				ProfileBuildlets.resetAvailable();
+				ProfileBuildlets.reload();
 			}
 		};
 	}
@@ -62,7 +62,7 @@ public class ManageBuildersWizard extends Wizard {
 				 * Given that we've imported a new buildlet, we need to reset the "cached"
 				 * available profile buildlets.
 				 */
-				ProfileBuildlets.resetAvailable();
+				ProfileBuildlets.reload();
 			}
 		};
 	}
