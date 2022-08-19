@@ -445,7 +445,7 @@
                id="au.com.langdale.cimtoole.actions.SearchAction"
                label="Search"
                toolbarPath="cimtool"
-               tooltip="Seach the project model for a class or property.">
+               tooltip="Search the project model for a class or property.">
          </action>
          <action
                class="au.com.langdale.cimtoole.actions.JumpAction"
