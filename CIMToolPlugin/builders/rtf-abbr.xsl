@@ -5,12 +5,13 @@
 	xmlns="http://www.w3.org/1999/xhtml" 
 	xmlns:a="http://langdale.com.au/2005/Message#">	
 <xsl:output indent="no" method="text" encoding="ASCII"/>
+<xsl:param name="baseURI"/>
 <xsl:param name="envelope">Profile</xsl:param>
 <xsl:variable name="apos">'</xsl:variable>
 <xsl:template match="a:Catalog">{\rtf1\ansi\ansicpg1252\deff0\deflang1033\deflangfe1033\fs20{\fonttbl{\f0\fswiss\fprq2\fcharset0 Arial;}{\f1\fswiss\fprq2\fcharset0{\*\fname Arial;}Arial CE;}
 {\f23\froman\fcharset0\fprq2{\*\panose 02020603050405020304}Arial;}}{\colortbl;\red0\green0\blue238;}
 \pard\plain \sb120\qj\fs20\lang1033
-{\par\b\fs28<xsl:value-of select="$envelope"/> Profile \par}Profile namespace: http://iec.ch/TC57/2022/EndDeviceConfig# 
+{\par\b\fs28<xsl:value-of select="$envelope"/> Profile \par}Profile namespace:  <xsl:value-of select="$baseURI" /> 
 \par\pard\plain \sb120\qj\fs20\lang1033 
 <xsl:if test="count(/.//a:ComplexType) > 0">
 {\par\b\fs28 Concrete Classes \par}
