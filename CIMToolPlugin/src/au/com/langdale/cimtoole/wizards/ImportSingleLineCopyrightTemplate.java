@@ -14,7 +14,7 @@ import au.com.langdale.util.Jobs;
 
 public class ImportSingleLineCopyrightTemplate extends Wizard implements IImportWizard {
 	
-	private ImportSingleLineCopyrightTemplatePage main = new ImportSingleLineCopyrightTemplatePage();
+	private ImportSingleLineCopyrightTemplatePage main = new ImportSingleLineCopyrightTemplatePage(false);
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Import Copyright Template (single-line)"); 

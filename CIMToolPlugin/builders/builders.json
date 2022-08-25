@@ -46,5 +46,11 @@
 		"style": "json-schema-draft-2020-12",
         "datetime": "2022-06-01T00:00:00Z",
         "ext": "draft-2020-12.schema.json"
+    },
+    "rtf": {
+        "type": "TRANSFORM",
+        "style": "profile-doc-rtf",
+        "datetime": "2022-08-01T00:00:00Z",
+        "ext": "profile.rtf"
     }
 }

@@ -33,19 +33,18 @@ import org.xml.sax.SAXParseException;
 
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
-import au.com.langdale.profiles.ProfileModel.CatalogNode;
-import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
-import au.com.langdale.profiles.ProfileModel.TypeNode;
-import au.com.langdale.profiles.ProfileModel.EnvelopeNode.MessageNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
-import au.com.langdale.sax.AbstractReader;
-import au.com.langdale.xmi.UML;
-
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
+import au.com.langdale.profiles.ProfileModel.CatalogNode;
+import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
+import au.com.langdale.profiles.ProfileModel.EnvelopeNode.MessageNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
+import au.com.langdale.profiles.ProfileModel.TypeNode;
+import au.com.langdale.sax.AbstractReader;
+import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.vocabulary.XSD;
 

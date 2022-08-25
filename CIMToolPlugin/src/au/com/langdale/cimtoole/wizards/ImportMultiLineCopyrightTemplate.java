@@ -14,7 +14,7 @@ import au.com.langdale.util.Jobs;
 
 public class ImportMultiLineCopyrightTemplate extends Wizard implements IImportWizard {
 	
-	private ImportMultiLineCopyrightTemplatePage main = new ImportMultiLineCopyrightTemplatePage();
+	private ImportMultiLineCopyrightTemplatePage main = new ImportMultiLineCopyrightTemplatePage(false);
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Import Copyright Template (multiline)"); 
