@@ -33,7 +33,7 @@ import au.com.langdale.jena.OntModelProvider;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.kena.Syntax;
+import au.com.langdale.kena.Format;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.OWLGenerator;
 import au.com.langdale.profiles.ProfileModel;
@@ -468,13 +468,13 @@ public class ProfileBuildlets extends Task {
 
 			ProfileBuildlet[] defaultBuildlets = new ProfileBuildlet[] { //
 			new TransformBuildlet(null, "xml"), //
-					new SimpleOWLBuildlet(Syntax.RDF_XML.toFormat(), "simple-flat-owl", false), //
-					new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
-					new LegacyRDFSBuildlet(Syntax.RDF_XML.toFormat(), "legacy-rdfs", false), //
-					new SimpleOWLBuildlet(Syntax.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
-					new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
-					new LegacyRDFSBuildlet(Syntax.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), //
-					new CopyBuildlet(Syntax.TURTLE.toFormat(), "ttl") //
+					new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl", false), //
+					new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
+					new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), //
+					new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
+					new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
+					new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), //
+					new CopyBuildlet(Format.TURTLE.toFormat(), "ttl") //
 			};
 
 			ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();

@@ -11,18 +11,37 @@ import org.eclipse.core.runtime.CoreException;
 import au.com.langdale.cimtoole.project.Info;
 
 public class ImportSingleLineCopyrightTemplatePage extends ImportCopyrightTemplatePage {
-
+	
 	public ImportSingleLineCopyrightTemplatePage() {
-		super();
+		super(false);
+	}
+	
+	public ImportSingleLineCopyrightTemplatePage(boolean expectNewProject) {
+		super(expectNewProject);
+	}
+	
+	public ImportSingleLineCopyrightTemplatePage(String pageName, boolean expectNewProject) {
+		super(pageName, expectNewProject);
 	}
 
 	public IFile getFile() {
-		return Info.getSingleLineCopyrightFile(projects.getProject());
+		return Info.getSingleLineCopyrightFile((expectNewProject ? newProject : projects.getProject()));
 	}
 
 	@Override
 	public String getCopyrightType() {
 		return "single-line";
+	}
+	
+	@Override
+	public String getDefaultCopyrightTemplate() {
+		String defaultCopyrightTemplate = "";
+		try {
+			defaultCopyrightTemplate = Info.getDefaultSingleLineCopyrightTemplate();
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return defaultCopyrightTemplate;
 	}
 
 	@Override

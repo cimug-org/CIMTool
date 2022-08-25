@@ -417,7 +417,7 @@ public class Templates {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-
+	
 	private static class FileFieldTemplate extends SubjectTemplate {
 		private String[] extensions;
 
@@ -426,6 +426,11 @@ public class Templates {
 			extensions = exts;
 		}
 
+		protected void register(Control widget, Assembly assembly) {
+			if (name != null)
+				assembly.putControl(name, widget);
+		}
+		
 		public Control realise(Composite parent, Assembly assembly) {
 			Composite area = new Composite(parent, SWT.NONE);
 			FileFieldEditor editor = new FileFieldEditor(name, text, area);

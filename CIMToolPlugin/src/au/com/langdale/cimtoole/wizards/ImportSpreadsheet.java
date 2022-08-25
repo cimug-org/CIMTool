@@ -60,7 +60,7 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 				@Override
 				protected Template define() {
 					return Grid(
-						Group(FileField("source", "Spreadsheet file:", "*.xls")),
+						Group(FileField("source", "Spreadsheet file:", new String[]{"*.xls", "*.xlsx"})),
 						Group(Label("Profiles Found in Spreadsheet")),
 						Group(CheckboxTableViewer("profiles"))
 					);

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -18,9 +19,12 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.Bundle;
 
 import com.healthmarketscience.jackcess.Database;
 
@@ -212,6 +216,107 @@ public class Info {
 		return file;
 	}
 	
+	private static InputStream openBundledFile(final String pathWithinBundle) throws CoreException {
+		// Below attempts to load a file located within a bundle shipped as part of the CIMTool product. 
+		InputStream source;
+		try {
+			Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
+			URL url = cimtooleBundle.getEntry(pathWithinBundle);
+			URL fileUrl = FileLocator.toFileURL(url);
+			source = fileUrl.openStream();
+		} catch (IOException e) {
+			throw error("can't load file from within CIMTool bundle:  " + pathWithinBundle, e);
+		}
+		return source;
+	}
+
+	/**
+	 * Method that retrieves the multiline copyright header template.
+	 */
+	public static String getDefaultEmptyCopyrightTemplate() throws CoreException {
+		String copyright = "";
+		
+		InputStream source = null;
+		try {
+			source = openBundledFile("builders/default-copyright-template-empty.txt");
+			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+		} catch (IOException e) {
+			// We currently do nothing on error. This should typically not occur...
+		} finally {
+			if (source != null) {
+				try {
+					source.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		
+		if ("".equals(copyright.trim())) {
+			if ((copyright.contains("\r") || copyright.contains("\n"))) 
+				copyright = "";
+		}
+		
+		return copyright;
+	}
+	
+	/**
+	 * Method that retrieves the multiline copyright header template.
+	 */
+	public static String getDefaultMultiLineCopyrightTemplate() throws CoreException {
+		String copyright = "";
+		
+		InputStream source = null;
+		try {
+			source = openBundledFile("builders/default-copyright-template-multi-line.txt");
+			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+		} catch (IOException e) {
+			// We currently do nothing on error. This should typically not occur...
+		} finally {
+			if (source != null) {
+				try {
+					source.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		
+		if ("".equals(copyright.trim())) {
+			if ((copyright.contains("\r") || copyright.contains("\n"))) 
+				copyright = "";
+		}
+		
+		return copyright;
+	}
+	
+	/**
+	 * Method that retrieves the single-line copyright header template.
+	 */
+	public static String getDefaultSingleLineCopyrightTemplate() throws CoreException {
+		String copyright = "";
+		
+		InputStream source = null;
+		try {
+			source = openBundledFile("builders/default-copyright-template-single-line.txt");
+			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+		} catch (IOException e) {
+			// We currently do nothing on error. This should typically not occur...
+		} finally {
+			if (source != null) {
+				try {
+					source.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		
+		if ("".equals(copyright.trim())) {
+			if ((copyright.contains("\r") || copyright.contains("\n"))) 
+				copyright = "";
+		}
+		
+		return copyright;
+	}
+	
 	/**
 	 * Method that retrieves the multiline copyright header template for the specified 
 	 * project and populates it with the current year.
@@ -247,11 +352,19 @@ public class Info {
 			}
 
 			if (copyrightFile.exists()) {
+				InputStream source = null;
 				try {
-					InputStream source = copyrightFile.getContents();
+					source = copyrightFile.getContents();
 					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
 				} catch (IOException e) {
 					// We currently do nothing on error. This should typically not occur...
+				} finally {
+					if (source != null) {
+						try {
+							source.close();
+						} catch (IOException e) {
+						}
+					}
 				}
 			}
 			
@@ -304,11 +417,19 @@ public class Info {
 			}
 	
 			if (copyrightFile.exists()) {
+				InputStream source = null;
 				try {
-					InputStream source = copyrightFile.getContents();
+					source = copyrightFile.getContents();
 					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
 				} catch (IOException e) {
 					// We currently do nothing on error. This should typically not occur...
+				}finally {
+					if (source != null) {
+						try {
+							source.close();
+						} catch (IOException e) {
+						}
+					}
 				}
 			}
 			
