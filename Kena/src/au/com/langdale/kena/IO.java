@@ -22,7 +22,7 @@ import com.hp.hpl.jena.util.FileUtils;
 public class IO {
 
 	public static void read(OntModel model, InputStream contents, String namespace,	String syntax) {
-		if( syntax.equals(Syntax.RDF_XML_WITH_NODEIDS.toFormat())){
+		if( syntax.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())){
 			RDFParser parser = new RDFParser(contents, null, namespace, new GraphInjector(model.getGraph()), null, false);
 			parser.run();
 		}
@@ -36,8 +36,8 @@ public class IO {
 		
 		RDFWriter writer;
 		
-		if( syntax.equals(Syntax.RDF_XML_WITH_NODEIDS.toFormat())) {
-			writer = stage.getWriter(Syntax.RDF_XML.toFormat());
+		if( syntax.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
+			writer = stage.getWriter(Format.RDF_XML.toFormat());
 			writer.setProperty("longid", Boolean.TRUE);
 		}
 		else 
@@ -52,7 +52,7 @@ public class IO {
 		writer.write(stage, contents, namespace);
 	}
 	
-	public static void write(OntModel model, OutputStream contents, String namespace, String syntax, Map style, String copyright) {
+	public static void write(OntModel model, OutputStream contents, String namespace, String format, Map style, String copyright) {
 		
 		/**
 		 *  Given that a copyright has been provided this method handles the showXmlDeclaration style
@@ -69,12 +69,12 @@ public class IO {
 		stage.setNsPrefixes(model.getNsPrefixMap());
 		
 		RDFWriter writer;
-		if( syntax.equals(Syntax.RDF_XML_WITH_NODEIDS.toFormat())) {
-			writer = stage.getWriter(Syntax.RDF_XML.toFormat());
+		if( format.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
+			writer = stage.getWriter(Format.RDF_XML.toFormat());
 			writer.setProperty("longid", Boolean.TRUE);
 		}
 		else 
-			writer = stage.getWriter(syntax);
+			writer = stage.getWriter(format);
 		
 		if( style != null ) {
 			for (Iterator it = style.keySet().iterator(); it.hasNext();) {
@@ -87,7 +87,7 @@ public class IO {
 		PrintWriter pw = (out instanceof PrintWriter ? (PrintWriter) out : new PrintWriter( out ));
 		
 		// For an RDFWRiter we only included the copyright for XML-based output...
-		if (showXmlDeclaration && (Syntax.RDF_XML.toFormat().equals(syntax) || Syntax.RDF_XML_ABBREV.toFormat().equals(syntax))) {
+		if (showXmlDeclaration && Format.isXML(format)) {
 			StringBuffer declaration = new StringBuffer();
 			declaration.append("<?xml version=" + "\"1.0\"" + "?>").append("\n");
 			
@@ -105,9 +105,9 @@ public class IO {
 		
 		writer.write(stage, pw, namespace);
 	}
-	
+
 	public static void print(OntModel model) {
-		write(model, System.out, null, Syntax.TURTLE.toFormat(), null);
+		write(model, System.out, null, Format.TURTLE.toFormat(), null);
 	}
 
 	public static class GraphInjector implements Injector {

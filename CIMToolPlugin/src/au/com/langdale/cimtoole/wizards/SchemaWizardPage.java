@@ -57,7 +57,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private String[] presets = new String[] {
             "cim15", "http://iec.ch/TC57/2013/CIM-schema-cim15#",
             "cim16", "http://iec.ch/TC57/2016/CIM-schema-cim16#",
-			"cim17", "http://iec.ch/TC57/2020/CIM-schema-cim17#",
+			"cim17", "http://iec.ch/TC57/2022/CIM-schema-cim17#",
             "cim18", "http://iec.ch/TC57/CIM100#",
 			"preset", NAMESPACE
 	};
