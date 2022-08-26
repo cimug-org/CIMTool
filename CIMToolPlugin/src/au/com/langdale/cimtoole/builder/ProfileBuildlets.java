@@ -105,9 +105,9 @@ public class ProfileBuildlets extends Task {
 
 		/**
 		 * We want what is displayed in the 'Profile Summary' tab's builder list
-		 * box to be overridable. This default implementation should not be
-		 * changed for the purposes of backwards compatability. However, it may
-		 * be overridden for subtypes of ProfileBuildlet.
+		 * box to be overridable. For the purposes of backwards compatability this 
+		 * default implementation should not be changed. However, it may be overridden 
+		 * for any subtypes of the ProfileBuildlet class.
 		 */
 		public String getDisplayDescription() {
 			StringBuffer descr = new StringBuffer();

@@ -151,7 +151,7 @@ public abstract class ImportCopyrightTemplatePage extends FurnishedWizardPage {
 							Group(Label("")), //
 							Group(RadioButton(Option.NO_TEMPLATE.name(), "Do not include " + getCopyrightType() + " copyrights in generated profiles and artifacts for this project")), //
 							Group(RadioButton(Option.DEFAULT_TEMPLATE.name(), "Use the default UCAIug Apache 2.0 " + getCopyrightType() + " copyright template")), //
-							Group(RadioButton(Option.IMPORT_TEMPLATE.name(), "Select a custom " + getCopyrightType() + " copyright template file to import")), //
+							Group(RadioButton(Option.IMPORT_TEMPLATE.name(), "Select a custom " + getCopyrightType() + " copyright template file to import for this project")), //
 							Group(Label("")), //				
 							Group(Label("copyright-label", "Contents of Selected Copyright Template ("
 									+ getCopyrightType() + ")")),
