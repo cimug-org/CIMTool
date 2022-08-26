@@ -18,7 +18,7 @@ import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.Syntax;
+import au.com.langdale.kena.Format;
 /**
  * A Buildlet to serialize the merged schema for a project as an RDF/XML document. 
  */
@@ -29,7 +29,7 @@ public class SchemaBuildlet extends Buildlet {
 		IProject project = result.getProject();
 		IFolder folder = Info.getSchemaFolder(project);
 		OntModel schema = CIMToolPlugin.getCache().getMergedOntologyWait(folder);
-		Task.writeOntology(result, schema, Syntax.RDF_XML.toFormat(), monitor);
+		Task.writeOntology(result, schema, Format.RDF_XML.toFormat(), monitor);
 	}
 	
 	@Override

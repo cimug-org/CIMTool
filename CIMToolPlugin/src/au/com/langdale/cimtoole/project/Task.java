@@ -50,7 +50,7 @@ import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.Syntax;
+import au.com.langdale.kena.Format;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.RepairMan;
@@ -207,6 +207,14 @@ public class Task extends Info {
 		};
 	}
 	
+	public static IWorkspaceRunnable importInputStreamToFile(final IFile file, final InputStream inputStream) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				importFile(file, inputStream, monitor);
+			}
+		};
+	}
+	
 	public static IWorkspaceRunnable importSingleLineCopyright(final IFile file, final String pathname) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -325,7 +333,7 @@ public class Task extends Info {
 		OntModel annote;
 		if (auxfile.exists()) {
 			annote = ModelFactory.createMem();
-			IO.read(annote, auxfile.getContents(), base, Syntax.TURTLE.toFormat());
+			IO.read(annote, auxfile.getContents(), base, Format.TURTLE.toFormat());
 		} else
 			annote = null;
 		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES));
@@ -359,13 +367,13 @@ public class Task extends Info {
 		OntModel model = ModelFactory.createMem();
 		String syntax;
 		if (ext.equals("n3"))
-			syntax = Syntax.N3.toFormat();
+			syntax = Format.N3.toFormat();
 		else if (ext.equals("diagnostic") || ext.equals("cimtool-settings") || ext.equals("mapping-ttl"))
-			syntax = Syntax.TURTLE.toFormat();
+			syntax = Format.TURTLE.toFormat();
 		else if (ext.equals("owl") || ext.equals("repair"))
-			syntax = Syntax.RDF_XML_WITH_NODEIDS.toFormat();
+			syntax = Format.RDF_XML_WITH_NODEIDS.toFormat();
 		else
-			syntax = Syntax.RDF_XML.toFormat();
+			syntax = Format.RDF_XML.toFormat();
 		IO.read(model, contents, base, syntax);
 		return model;
 	}
@@ -385,7 +393,7 @@ public class Task extends Info {
 			throws CoreException {
 		try {
 			HashMap style = new HashMap();
-			if (format != null && format.equals(Syntax.RDF_XML_ABBREV.toFormat()))
+			if (format != null && format.equals(Format.RDF_XML_ABBREV.toFormat()))
 				style.put("prettyTypes", PrettyTypes.PRETTY_TYPES);
 			if (namespace != null) {
 				if (namespace.endsWith("#"))
@@ -396,7 +404,7 @@ public class Task extends Info {
 			}
 			style.put("showXmlDeclaration", "true");
 			
-			if ((copyright != null && !"".equals(copyright.trim())) && (Syntax.RDF_XML.toFormat().equals(format) || Syntax.RDF_XML_ABBREV.toFormat().equals(format))) {
+			if ((copyright != null && !"".equals(copyright.trim())) && Format.isXML(format)) {
 				IO.write(model, stream, namespace, format, style, copyright);
 			} else {
 				IO.write(model, stream, namespace, format, style);
@@ -419,7 +427,7 @@ public class Task extends Info {
 				} catch (IOException ex) {
 					throw error("can't write to " + pathname);
 				}
-				writeOntology(output, schema, Syntax.RDF_XML.toFormat(), monitor);
+				writeOntology(output, schema, Format.RDF_XML.toFormat(), monitor);
 			}
 		};
 	}
@@ -459,7 +467,7 @@ public class Task extends Info {
 		model.setNsPrefix("project", CIMToolPlugin.PROJECT_NS);
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				write(model, CIMToolPlugin.PROJECT_NS, true, getSettings(project), Syntax.TURTLE.toFormat(), monitor);
+				write(model, CIMToolPlugin.PROJECT_NS, true, getSettings(project), Format.TURTLE.toFormat(), monitor);
 			}
 		};
 	}
@@ -468,7 +476,7 @@ public class Task extends Info {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IFile file = Info.getMultiLineCopyrightFile(project);
-				importFileFromBundle(file, "builders/default-copyright-template-multi-line.txt", monitor);
+				importFileFromBundle(file, "builders/default-copyright-template-empty.txt", monitor);
 			}
 		};
 	}
@@ -477,7 +485,7 @@ public class Task extends Info {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IFile file = Info.getSingleLineCopyrightFile(project);
-				importFileFromBundle(file, "builders/default-copyright-template-single-line.txt", monitor);
+				importFileFromBundle(file, "builders/default-copyright-template-empty.txt", monitor);
 			}
 		};
 	}
@@ -509,11 +517,23 @@ public class Task extends Info {
 		monitor.worked(1);
 	}
 	
+	private static void importFile(final IFile file, final InputStream source, IProgressMonitor monitor)
+			throws CoreException {
+		writeFile(file, source, monitor);
+		monitor.worked(1);
+	}
+	
 	private static void importFileFromBundle(final IFile file, final String pathWithinBundle, IProgressMonitor monitor)
 			throws CoreException {
 		InputStream source = openBundledFile(pathWithinBundle, monitor);
 		writeFile(file, source, monitor);
 		monitor.worked(1);
+	}
+	
+	public static InputStream inputStreamFromBundle(final String pathWithinBundle, IProgressMonitor monitor) throws CoreException {
+		InputStream source = openBundledFile(pathWithinBundle, monitor);
+		monitor.worked(1);
+		return source;
 	}
 
 	private static InputStream openExternalFile(final String pathname, IProgressMonitor monitor) throws CoreException {
@@ -550,13 +570,19 @@ public class Task extends Info {
 	}
 
 	public static void writeProfile(IFile file, OntModel model, IProgressMonitor monitor) throws CoreException {
-		writeOntology(file, model, Syntax.RDF_XML_WITH_NODEIDS.toFormat(), monitor);
+		writeOntology(file, model, Format.RDF_XML_WITH_NODEIDS.toFormat(), Info.getMultiLineCopyrightText(file.getProject()), monitor);
 	}
 
 	public static void writeOntology(IFile file, OntModel model, String format, IProgressMonitor monitor)
 			throws CoreException {
 		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
 		writeOntology(stream, model, format, monitor);
+	}
+	
+	public static void writeOntology(IFile file, OntModel model, String format, String copyright, IProgressMonitor monitor)
+			throws CoreException {
+		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
+		writeOntology(stream, model, format, copyright, monitor);
 	}
 
 	public static void writeOntology(OutputStream stream, OntModel model, String format, IProgressMonitor monitor)
@@ -569,7 +595,18 @@ public class Task extends Info {
 		} else
 			namespace = null;
 		write(model, namespace, true, format, stream);
-
+	}
+	
+	public static void writeOntology(OutputStream stream, OntModel model, String format, String copyright, IProgressMonitor monitor)
+			throws CoreException {
+		OntResource ont = model.getValidOntology();
+		String namespace;
+		if (ont != null) {
+			namespace = ont.getURI() + "#";
+			model.setNsPrefix("", namespace);
+		} else
+			namespace = null;
+		write(model, namespace, true, format, stream, copyright);
 	}
 
 	public static OntModel getBackgroundModel(IFile file) throws CoreException {
@@ -677,7 +714,7 @@ public class Task extends Info {
 	protected static void writeMappings(final IFile file, final OntModel model, IProgressMonitor monitor)
 			throws CoreException {
 		String ext = file.getFileExtension();
-		String format = ext != null && ext.equals("mapping-ttl") ? Syntax.TURTLE.toFormat() : Syntax.RDF_XML.toFormat();
+		String format = ext != null && ext.equals("mapping-ttl") ? Format.TURTLE.toFormat() : Format.RDF_XML.toFormat();
 		writeOntology(file, model, format, monitor);
 	}
 }

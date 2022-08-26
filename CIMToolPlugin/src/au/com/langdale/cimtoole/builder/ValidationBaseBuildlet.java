@@ -26,7 +26,7 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.Syntax;
+import au.com.langdale.kena.Format;
 import au.com.langdale.util.Logger;
 import au.com.langdale.util.Profiler;
 import au.com.langdale.util.Profiler.TimeSpan;
@@ -69,7 +69,7 @@ public abstract class ValidationBaseBuildlet extends Buildlet {
 		IResource base = Info.getBaseModelFor(instance);
 
 		if( ! schema.exists()) {
-			SimpleOWLBuildlet subordinate = new SimpleOWLBuildlet(Syntax.RDF_XML_ABBREV.toFormat(), "simple-owl", false);
+			SimpleOWLBuildlet subordinate = new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl", false);
 			subordinate.build(schema, monitor);
 			if( ! schema.exists())
 				return;

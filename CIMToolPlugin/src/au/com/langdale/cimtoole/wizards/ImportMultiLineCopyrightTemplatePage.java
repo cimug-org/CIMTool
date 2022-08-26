@@ -11,19 +11,39 @@ import org.eclipse.core.runtime.CoreException;
 import au.com.langdale.cimtoole.project.Info;
 
 public class ImportMultiLineCopyrightTemplatePage extends ImportCopyrightTemplatePage {
-
+	
 	public ImportMultiLineCopyrightTemplatePage() {
-		super();
+		super(false);
+	}
+	
+	public ImportMultiLineCopyrightTemplatePage(boolean expectNewProject) {
+		super(expectNewProject);
+	}
+	
+	public ImportMultiLineCopyrightTemplatePage(String pageName, boolean expectNewProject) {
+		super(pageName, expectNewProject);
 	}
 
 	public IFile getFile() {
-		return Info.getMultiLineCopyrightFile(projects.getProject());
+		IFile file = Info.getMultiLineCopyrightFile((expectNewProject ? newProject : projects.getProject()));
+		return file;
 	}
 
 	public String getCopyrightType() {
 		return "multiline";
 	}
 
+	@Override
+	public String getDefaultCopyrightTemplate() {
+		String defaultCopyrightTemplate = "";
+		try {
+			defaultCopyrightTemplate = Info.getDefaultMultiLineCopyrightTemplate();
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return defaultCopyrightTemplate;
+	}
+	
 	@Override
 	public String getCurrentCopyrightTemplate(IProject project) {
 		String copyrightText = "";
