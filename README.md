@@ -26,7 +26,7 @@ Note that these instructions are purely for those interested in participating in
 
 ## The CIMTool Wiki
 
-  The original [CIMTool wiki](https://wiki.cimtool.org/), though not currently actively maintained with new content, is a great resource for information. The [download](https://wiki.cimtool.org/Download.html) page hosts releases <= 1.9.7 of **CIMTool** and the [how to](https://wiki.cimtool.org/CIMTool_Topics.html) provides a wealth of articles on topics that may be of interest.
+  The original [wiki](https://wiki.cimtool.org/), though not currently actively maintained with new content, is a great resource for information. The [download](https://wiki.cimtool.org/Download.html) page hosts releases <= 1.9.7 of **CIMTool** and the [CIMTool Topics](https://wiki.cimtool.org/CIMTool_Topics.html) page provides a wealth of articles on topics that may be of interest.
   
 ## CIMTool Google Group
 
