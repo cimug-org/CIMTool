@@ -23,10 +23,14 @@ Instructions on packaging and deployment of **CIMTool** as an **Eclipse Product*
 
 Note that these instructions are purely for those interested in participating in the development of **CIMTool**.  They do not describe standard use of the tool for profile creation.
 
+## The CIMTool Wiki
+
+  The original [CIMTool wiki](https://wiki.cimtool.org/), though not actively maintained with new content, is a great resource for information. The [download](https://wiki.cimtool.org/Download.html) page hosts releases <= 1.9.7 and the [CIMTool Topics](https://wiki.cimtool.org/CIMTool_Topics.html) page provides a wealth of articles on topics that may be of interest.
+  
 ## CIMTool Google Group
 
   To join the CIMTool Google Group register [here](https://groups.google.com/g/cimtool).
-
+  
 ## License
 
   Distributed under the LGPL-2.1 license. See [LICENSE](LICENSE) for more information.
