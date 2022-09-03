@@ -6,9 +6,9 @@
 
 ## Latest Release
 
--   1.10.0
+-   1.10.1
 
-    - The latest release is available at [CIMTool-1.10.0](https://github.com/CIMug-org/CIMTool/releases/tag/1.10.0) and is delivered as a ZIP file.
+    - The latest release is available at [CIMTool-1.10.1](https://github.com/CIMug-org/CIMTool/releases/tag/1.10.1) and is delivered as a ZIP file.
     - Information on features and fixes for the release can be found [here](https://cimug-org.github.io/CIMTool/).
 
 ## Installation & Setup
@@ -26,11 +26,11 @@ Note that these instructions are purely for those interested in participating in
 ## The CIMTool Wiki
 
   The original [CIMTool wiki](https://wiki.cimtool.org/), though not actively maintained with new content, is a great resource for information. The [download](https://wiki.cimtool.org/Download.html) page hosts releases <= 1.9.7 and the [CIMTool Topics](https://wiki.cimtool.org/CIMTool_Topics.html) page provides a wealth of articles on topics that may be of interest.
-  
+
 ## CIMTool Google Group
 
   To join the CIMTool Google Group register [here](https://groups.google.com/g/cimtool).
-  
+
 ## License
 
   Distributed under the LGPL-2.1 license. See [LICENSE](LICENSE) for more information.
