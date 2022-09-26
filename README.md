@@ -12,7 +12,11 @@
 
   To join the CIMTool Google Group register [here](https://groups.google.com/g/cimtool).
 
-  ## CIMTool Development
+## CIMTool-Builders-Library Repository
+
+  Once you get acquainted with **CIMTool** visit it's CIMTool-Builders-Library companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
+  
+## CIMTool Development
 
   For developers interested in contributing to the **CIMTool** Project detailed instructions on installing and setting up an Eclipse 3.7 (Indigo) Plug-ins Development Environment can be found at [CIMTool Development Environment Setup](https://github.com/CIMug-org/CIMTool/blob/gh-pages/dev-env-setup.md)
 
