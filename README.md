@@ -8,9 +8,9 @@
 
   The original [CIMTool wiki](https://wiki.cimtool.org/), though not actively maintained with new content, is a great resource for information. The [download](https://wiki.cimtool.org/Download.html) page hosts releases <= 1.9.7 and the [CIMTool Topics](https://wiki.cimtool.org/CIMTool_Topics.html) page provides a wealth of articles on topics that may be of interest.
 
-## CIMTool Google Group
+## CIMTool Discussion Forums
 
-  To join the CIMTool Google Group register [here](https://groups.google.com/g/cimtool).
+  The are two avenues for discussion for **CIMTool**.  Though not as active as it once was you can join the CIMTool Google Group by registering [here](https://groups.google.com/g/cimtool). Alternatively, you can post direct to the new [discussions](https://github.com/CIMug-org/CIMTool/discussions) section of this repository.
 
 ## CIMTool-Builders-Library Repository
 
