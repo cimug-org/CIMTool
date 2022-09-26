@@ -14,7 +14,7 @@
 
 ## CIMTool-Builders-Library Repository
 
-  Once you get acquainted with **CIMTool** visit it's [CIMTool-Builders-Library](https://github.com/CIMug-org/CIMTool-Builders-Library) companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
+  Once you get acquainted with **CIMTool** visit the [CIMTool-Builders-Library](https://github.com/CIMug-org/CIMTool-Builders-Library) companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
   
 ## CIMTool Development
 
