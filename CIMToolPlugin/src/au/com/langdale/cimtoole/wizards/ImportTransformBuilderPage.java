@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -152,8 +151,8 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 				} else {
 					if (isFileExtAlreadyInUse(getBuilderKey(), ext.getText())) {
 						return String.format(
-								"Extension '%s' is already in use by a builder.  Either change the extension or add a prefix (e.g. draft-07.json)",
-								ext.getText());
+								"Extension '%s' is already in use by a builder.  Either change the extension or add a prefix (e.g. 'custom.%s')",
+								ext.getText(), ext.getText());
 					}
 				}
 
@@ -240,9 +239,6 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 		try {
 			TransformType transformType = (TransformType) type.getValue();
 			switch (transformType) {
-			case JSON:
-				buildlet = new JSONBuildlet(getBuilderKey(), ext.getText());
-				break;
 			case TEXT:
 				buildlet = new TextBuildlet(getBuilderKey(), ext.getText());
 				break;

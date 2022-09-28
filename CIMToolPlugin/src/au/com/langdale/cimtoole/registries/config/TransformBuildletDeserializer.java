@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 
 import org.joda.time.DateTime;
 
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -27,9 +26,6 @@ public class TransformBuildletDeserializer<T extends TransformBuildlet> implemen
 
 		TransformBuildlet buildlet = null;
 		switch (TransformType.valueOf(typeValue)) {
-		case JSON:
-			buildlet = new JSONBuildlet(style, ext, datetime);
-			break;
 		case TEXT:
 			buildlet = new TextBuildlet(style, ext, datetime);
 			break;
