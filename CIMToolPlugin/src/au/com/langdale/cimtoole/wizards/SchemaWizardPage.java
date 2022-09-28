@@ -55,8 +55,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private RadioTextBinding namespace = new RadioTextBinding(Validators.NAMESPACE, NAMESPACE);
 
 	private String[] presets = new String[] {
-            "cim15", "http://iec.ch/TC57/2013/CIM-schema-cim15#",
-            "cim16", "http://iec.ch/TC57/2016/CIM-schema-cim16#",
+            "cim15", "http://iec.ch/TC57/2010/CIM-schema-cim15#",
+            "cim16", "http://iec.ch/TC57/2012/CIM-schema-cim16#",
 			"cim17", "http://iec.ch/TC57/CIM100#",
             "cim18", "http://iec.ch/TC57/CIM101#",
 			"preset", NAMESPACE
@@ -95,10 +95,10 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 				return Grid(
 					Group(FileField("source", "File to import:", sources)),
 					Group(
-						RadioButton("cim15", "CIM 15 (2013)"),
-                        RadioButton("cim16", "CIM 16 (2016)"),
-                        RadioButton("cim17", "CIM 17 (2021)"),
-                        RadioButton("cim18", "CIM 18"),
+						RadioButton("cim15", "CIM 15 (2010)"),
+                        RadioButton("cim16", "CIM 16 (2012)"),
+                        RadioButton("cim17", "CIM 17 (CIM100)"),
+                        RadioButton("cim18", "CIM 18 (CIM101)"),
 						RadioButton("preset", "Preference*")),
 					Group(Label("Namespace URI:"), Field("namespace")),
 					Group(Label("Project")), 
