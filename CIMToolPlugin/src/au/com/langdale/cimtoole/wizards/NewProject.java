@@ -33,31 +33,24 @@ public class NewProject extends Wizard implements INewWizard {
 				return false;
 			
 			schema.setNewProject(main.getProjectHandle());
-			multiline.setNewProject(main.getProjectHandle());
-			singleline.setNewProject(main.getProjectHandle());
+			copyrightTemplates.setNewProject(main.getProjectHandle());
 			return true;
 		}
 	};
 	
 	private SchemaWizardPage schema = new SchemaWizardPage(true); 
 
-	private ImportMultiLineCopyrightTemplatePage multiline = new ImportMultiLineCopyrightTemplatePage("multiline", true); 
-	
-	private ImportSingleLineCopyrightTemplatePage singleline = new ImportSingleLineCopyrightTemplatePage("singleline", true); 
+	private ImportCopyrightTemplatesPage copyrightTemplates = new ImportCopyrightTemplatesPage("copyright-templates", true); 
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		main.setTitle("New CIMTool Project");
 		main.setDescription("Create and configure a new CIMTool project and import a copy of the CIM.");
 		//
-		multiline.setTitle("Project Copyright Template Configuration (multiline)");
-		multiline.setDescription("Choose a multiline copyright configuration option for the project.");
-		multiline.setSources(new String[]{"*.copyright-multi-line", "*.txt"});
-		//multiline.setSelected(selection);
-		//
-		singleline.setTitle("Project Copyright Template Configuration (single-line)");
-		singleline.setDescription("Choose a single-line copyright configuration option for the project.");
-		singleline.setSources(new String[]{"*.copyright-single-line", "*.txt" });
-		//singleline.setSelected(selection);
+		copyrightTemplates.setTitle("Project Copyright Templates Configuration");
+		copyrightTemplates.setDescription("Choose a copyright configuration option for the project.");
+		copyrightTemplates.setMultiLineCopyrightSources(new String[]{"*.copyright-multi-line", "*.txt"});
+		copyrightTemplates.setSingleLineCopyrightSources(new String[]{"*.copyright-single-line", "*.txt"});
+		//copyrightTemplates.setSelected(selection);
 		//
 		schema.setTitle("Import Initial Schema");
 		schema.setDescription("Import an XMI or OWL base schema.");
@@ -66,8 +59,7 @@ public class NewProject extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		addPage(main);
-		addPage(multiline);
-		addPage(singleline);
+		addPage(copyrightTemplates);
 		addPage(schema);
 	}
 
@@ -75,14 +67,14 @@ public class NewProject extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		IWorkspaceRunnable job =  Task.createProject(main.getProjectHandle(), main.useDefaults()? null: main.getLocationURI());
 		
-		String multilineCopyright = multiline.getCopyrightTemplateTextForSelectedOption();
+		String multilineCopyright = copyrightTemplates.getMultiLineCopyrightTemplateTextForSelectedOption();
 		InputStream multilineInputStream = new ByteArrayInputStream(multilineCopyright.getBytes());
-		IFile multilineCopyrightTemplateFile = multiline.getFile();
+		IFile multilineCopyrightTemplateFile = copyrightTemplates.getMultiLineCopyrightFile();
 		job = Task.chain(job, Task.importInputStreamToFile(multilineCopyrightTemplateFile, multilineInputStream));
 		
-		String singleLineCopyright = singleline.getCopyrightTemplateTextForSelectedOption();
+		String singleLineCopyright = copyrightTemplates.getSingleLineCopyrightTemplateTextForSelectedOption();
 		InputStream singleLineInputStream = new ByteArrayInputStream(singleLineCopyright.getBytes());
-		IFile singleLineCopyrightTemplateFile = singleline.getFile();
+		IFile singleLineCopyrightTemplateFile = copyrightTemplates.getSingleLineCopyrightFile();
 		job = Task.chain(job, Task.importInputStreamToFile(singleLineCopyrightTemplateFile, singleLineInputStream));
 		
 		String pathname = schema.getPathname();

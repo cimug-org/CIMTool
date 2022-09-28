@@ -114,24 +114,14 @@
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
-            class="au.com.langdale.cimtoole.wizards.ImportMultiLineCopyrightTemplate"
+            class="au.com.langdale.cimtoole.wizards.ImportCopyrightTemplates"
             icon="icons/copyright.png"
-            id="au.com.langdale.cimtoole.wizards.ImportMultiLineCopyrightTemplate"
-            name="Import Copyright Template (multiline)">
+            id="au.com.langdale.cimtoole.wizards.ImportCopyrightTemplates"
+            name="Import Copyright Templates">
       	<description>
-            A wizard for importing a multiline copyright template to be used in relevant profiles for a given project.
+            A wizard for importing copyright templates to be used in relevant profiles for a given project.
 		</description>
       </wizard>      
-      <wizard
-            category="au.com.langdale.cimtoole"
-            class="au.com.langdale.cimtoole.wizards.ImportSingleLineCopyrightTemplate"
-            icon="icons/copyright.png"
-            id="au.com.langdale.cimtoole.wizards.ImportSingleLineCopyrightTemplate"
-            name="Import Copyright Template (single-line)">
-      	<description>
-            A wizard for importing a single-line copyright template to be used in relevant profiles for a given project.
-		</description>
-      </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
             class="au.com.langdale.cimtoole.wizards.ImportTransformBuilder"

@@ -361,28 +361,6 @@ public class ProfileBuildlets extends Task {
 	}
 
 	/**
-	 * Buildlet for JSON schema artifacts. Note that though this is essentially
-	 * a duplicate of the TextBuildlet we've created it as its own subtype as we
-	 * may add additional validation of the generated JSON schema.
-	 */
-	public static class JSONBuildlet extends TransformBuildlet {
-
-		public JSONBuildlet(String style, String ext) {
-			super(style, ext);
-		}
-
-		public JSONBuildlet(String style, String ext, DateTime datetime) {
-			super(style, ext, datetime);
-		}
-
-		@Override
-		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
-			serializer.addStyleSheet("indent");
-		}
-
-	}
-
-	/**
 	 * Buildlet for profile artifacts that are related to the simplified RDFS
 	 * representation.
 	 */

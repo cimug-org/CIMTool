@@ -15,7 +15,7 @@
 ## CIMTool-Builders-Library Repository
 
   Once you get acquainted with **CIMTool** visit the [CIMTool-Builders-Library](https://github.com/CIMug-org/CIMTool-Builders-Library) companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
-  
+
 ## CIMTool Development
 
   For developers interested in contributing to the **CIMTool** Project detailed instructions on installing and setting up an Eclipse 3.7 (Indigo) Plug-ins Development Environment can be found at [CIMTool Development Environment Setup](https://github.com/CIMug-org/CIMTool/blob/gh-pages/dev-env-setup.md)
@@ -26,9 +26,9 @@
 
 ## Latest Release
 
-  -   1.10.1
+  -   1.11.0
 
-      - The latest release is available at [CIMTool-1.10.1](https://github.com/CIMug-org/CIMTool/releases/tag/1.10.1) and is delivered as a ZIP file.
+      - The latest release is available at [CIMTool-1.11.0](https://github.com/CIMug-org/CIMTool/releases/tag/1.11.0) and is delivered as a ZIP file.
       - Information on features and fixes for the release can be found [here](https://cimug-org.github.io/CIMTool/).
 
 ## Installation & Setup

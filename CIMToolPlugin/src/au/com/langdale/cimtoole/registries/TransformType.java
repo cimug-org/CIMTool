@@ -1,6 +1,5 @@
 package au.com.langdale.cimtoole.registries;
 
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.JSONBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
@@ -12,12 +11,10 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
  * configured in the .builders configuration file.
  */
 public enum TransformType {
-	JSON, TEXT, XSD, TRANSFORM;
+	TEXT, XSD, TRANSFORM;
 
 	public static TransformType toTransformType(ProfileBuildlet buildlet) {
-		if (buildlet instanceof JSONBuildlet) {
-			return JSON;
-		} else if (buildlet instanceof TextBuildlet) {
+		if (buildlet instanceof TextBuildlet) {
 			return TEXT;
 		} else if (buildlet instanceof XSDBuildlet) {
 			return XSD;
