@@ -28,7 +28,7 @@
 
   -   1.11.0
 
-      - The latest release is available at [CIMTool-1.11.0](https://github.com/CIMug-org/CIMTool/releases/tag/1.11.0) and is delivered as a ZIP file. All releases are also made available [here](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) at CIMug's tools download site.
+      - The latest release is available here on GitHub at [CIMTool-1.11.0](https://github.com/CIMug-org/CIMTool/releases/tag/1.11.0) and is delivered as a ZIP file. Releases are also made available at CIMug's [tools download site](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D).
       - Information on features and fixes for the release can be found [here](https://cimug-org.github.io/CIMTool/).
 
 ## Installation & Setup
