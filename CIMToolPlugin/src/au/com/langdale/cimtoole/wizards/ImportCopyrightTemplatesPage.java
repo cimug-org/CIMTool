@@ -245,15 +245,17 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 				Template template = null;
 				if (expectNewProject) {
 					template = Grid(
-							Group(Label("Multiline file to import:")), //
+							Group(Label("   Multiline file to import:")), //
 							Group(FileField("multi-line-source", "", multiLineCopyrightSources)),
-							Group(Label("Single-line file to import:")), //
+							Group(Label("   Single-line file to import:")), //
 							Group(FileField("single-line-source", "", singleLineCopyrightSources)),
 							Group(Label("")), //
 							Group(RadioButton(Option.NO_TEMPLATE.name(), "Do not include copyrights in generated profiles and artifacts for this project")), //
 							Group(RadioButton(Option.DEFAULT_TEMPLATE.name(), "Use the default UCAIug Apache 2.0 copyright templates")), //
-							Group(RadioButton(Option.IMPORT_TEMPLATE.name(), "Select custom copyright template files to import for this project")), //
-							Group(Label("")), //				
+							Group(RadioButton(Option.IMPORT_TEMPLATE.name(), "Select custom copyright template files to import for this project")), //	
+							Group(Label("")), //
+							Group(Label("* Valid extensions for custom copyright templates include:   *.copyright-multi-line, *.copyright-single-line and *.txt")), //
+							Group(Label("")), //							
 							Group(Label("multi-line-copyright-label", "Contents of Selected Copyright Template (multiline)"), Label("single-line-copyright-label", "Contents of Selected Copyright Template (single-line)")),
 							Group(DisplayArea("multi-line-copyright", true), DisplayArea("single-line-copyright", true)));					
 				} else {
@@ -261,11 +263,12 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 							Group(Label("Project")),
 							Group(CheckboxTableViewer("projects")),
 							Group(Label("")), //
-							Group(Label("* To have no copyrights applied to generated profiles and artifacts simply import copyright template files that are empty.")), //	
+							Group(Label("To have no copyrights applied to generated profiles and artifacts simply import copyright templates that are empty.")), //	
+							Group(Label("Valid extensions for copyright templates include:   *.copyright-multi-line, *.copyright-single-line and *.txt")), //	
 							Group(Label("")), //
-							Group(Label("Multiline file to import:")), //
+							Group(Label("   Multiline file to import:")), //
 							Group(FileField("multi-line-source", "", multiLineCopyrightSources)),
-							Group(Label("Single-line file to import:")), //
+							Group(Label("   Single-line file to import:")), //
 							Group(FileField("single-line-source", "", singleLineCopyrightSources)),
 							Group(Label("")), //
 							Group(Label("multi-line-copyright-label", "Currently Assigned Copyright Template (multiline)"), Label("single-line-copyright-label", "Currently Assigned Copyright Template (single-line)")),
