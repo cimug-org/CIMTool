@@ -40,7 +40,7 @@ An EAP file is actually a Microsoft Jet 3.5 database, and an EAPX file is a Micr
 
 To import an EAPX (Jet4) file into a CIMTool project, use the **CIMTool** Schema Import wizard and select a file type of either ```.eap``` or ```.eapx``` when browsing for the file. You must close the project in EA before importing it to CIMTool.
 
-> Note that as of the EA 16.x release, ```.eap``` and ```.eapx``` files are not longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x. 
+> Note that as of the EA 16.x release, ```.eap``` and ```.eapx``` files are no longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x. 
 
 ## CIMTool-Builders-Library Repository
 
