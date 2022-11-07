@@ -14,7 +14,9 @@
   
 ## Using CIMTool with Enterprise Architect
 
-Current versions of the CIM are maintained with the Sparx Systems UML design tool, [Enterprise Architect (EA)](https://sparxsystems.com/). Creating a profile requires that the CIM be imported from EA into **CIMTool**.
+Both past and current releases of the CIM Enterprise Architect (EA) project files used for the purposes of CIMTool are made publicly available for download from the UCAIug (CIM Users Group).  Current releases can be found at [Current CIM Model Drafts](https://cimug.ucaiug.org/CIM%20Model%20Releases/Forms/AllItems.aspx).  Older releases are available at [Past CIM Model Releases](https://cimug.ucaiug.org/CIM%20Releases/Forms/AllItems.aspx).  Generally, access to CIM EA project files does not require a UCAIug account. For content restricted to registered users you may create a UCAIug [registered account](https://cimug.ucaiug.org/pages/Join.aspx) for free.
+
+Current versions of the CIM are maintained with the Sparx Systems UML design tool, [Enterprise Architect (EA)](https://sparxsystems.com/). Creating a profile requires that the CIM be imported from EA into **CIMTool**. 
 
 ### Using XMI
 
