@@ -42,6 +42,18 @@ To import an EAPX (Jet4) file into a CIMTool project, use the **CIMTool** Schema
 
 > Note that as of the EA 16.x release, ```.eap``` and ```.eapx``` files are no longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x. 
 
+## CIMTool Profiling Tutorial
+
+The following PDF resource is publicly available on the UCAIug website and provides a detailed tutorial on how to use CIMTool to create and edit profiles based on the Common Information Model: [CIM & CIMTool Tutorial](https://cimug.ucaiug.org/CIMGroups/CIMInterop/IEEE%20Tutorial/CIM%20Tutorial%20Master%20Slide%20Deck-2013.pdf?Mobile=1&Source=%2FCIMGroups%2FCIMInterop%2F%5Flayouts%2F15%2Fmobile%2Fviewa%2Easpx%3FList%3D19ff6048%2De79f%2D46d7%2D8825%2Ddd1416ad3397%26View%3D022235bd%2D8a45%2D4bc7%2D98fc%2D9145d38d1795%26wdFCCState%3D1)
+
+Sections that may be of particular value include:
+
+* Tutorial Section I - Modeling a Substation pp. 4 - 25 General overview of substation modeling.
+* Tutorial Section VI - Information Modeling: pp. 121 - 157
+* Tutorial Section XII - CIMTool pp. 270 - 357 Provides an overview of CIMTool features and how to use it for profiling. Note that the references to the download sites are now dated. The new GitHub site should be used as indicated earlier. (pp. 293-295 highlights how to import a schema into CIMTool)
+
+Note that some content is dated such as pp. 278-279 where JDK/JRE 1.5 is recommended as well as the references to the "latest version" and CIMTool download site. New versions are now available here. Also pp. 291-292 on how to export a schema from EA is dated as new releases of EA have new screens and navigation paths. Most of the content is still relevant.
+
 ## CIMTool-Builders-Library Repository
 
   Once you get acquainted with **CIMTool** visit the [CIMTool-Builders-Library](https://github.com/CIMug-org/CIMTool-Builders-Library) companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
