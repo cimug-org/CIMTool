@@ -49,7 +49,7 @@ The [CIMTool Tutorial](CIMTool_Tutorial.pdf) PDF provides a detailed overview on
 Note that some content is dated:
 * pp. 9-10: The information on this slide id dates.  See [CIMTool Installation & Setup](https://github.com/CIMug-org/CIMTool/blob/gh-pages/cimtool-installation-and-setup.md) for the latest information.
 * pp. 22-23: The EA screenshots are from a much older release.
-* p. 55: CIMTool's output options are greatly expanded.
+* p. 55: CIMTool's output options have been greatly expanded.
 * p. 56: CIMTool also generates MS Word compatible RTF documents.
 * p. 86: This GitHub repository is now the official site for CIMTool development.
 
