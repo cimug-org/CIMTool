@@ -20,7 +20,7 @@ Current versions of the CIM are maintained with the Sparx Systems UML design too
 
 ### Using XMI
 
-The standard way is to export the CIM as as an XMI file (i.e. a schema) and to do this from within EA. The exported XMI file can then be imported into **CIMTool**. The following export options within Enterprise Architect will export the version of XMI that can be imported into **CIMTool**:
+The standard way is to export the CIM as an XMI file (i.e. a schema) and to do this from within EA. The exported XMI file can then be imported into **CIMTool**. The following export options within Enterprise Architect will export the version of XMI that can be imported into **CIMTool**:
 
 * XMI Type = UML 1.4 (XMI1.2)
 * Unisys/Rose Format = checked
