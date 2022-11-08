@@ -44,15 +44,16 @@ To import an EAPX (Jet4) file into a CIMTool project, use the **CIMTool** Schema
 
 ## CIMTool Profiling Tutorial
 
-The following PDF resource is publicly available on the UCAIug website and provides a detailed tutorial on how to use CIMTool to create and edit profiles based on the Common Information Model: [CIM & CIMTool Tutorial](https://cimug.ucaiug.org/CIMGroups/CIMInterop/IEEE%20Tutorial/CIM%20Tutorial%20Master%20Slide%20Deck-2013.pdf?Mobile=1&Source=%2FCIMGroups%2FCIMInterop%2F%5Flayouts%2F15%2Fmobile%2Fviewa%2Easpx%3FList%3D19ff6048%2De79f%2D46d7%2D8825%2Ddd1416ad3397%26View%3D022235bd%2D8a45%2D4bc7%2D98fc%2D9145d38d1795%26wdFCCState%3D1)
+The [CIMTool Tutorial](CIMTool_Tutorial.pdf) PDF provides a detailed overview on how to use CIMTool to create and edit profiles based on the Common Information Model. It also highlights many of CIMTool's core features. The PDF is an extract from a publicly available resource on the UCAIug website ([here](https://cimug.ucaiug.org/CIMGroups/CIMInterop/IEEE%20Tutorial/CIM%20Tutorial%20Master%20Slide%20Deck-2013.pdf?Mobile=1&Source=%2FCIMGroups%2FCIMInterop%2F%5Flayouts%2F15%2Fmobile%2Fviewa%2Easpx%3FList%3D19ff6048%2De79f%2D46d7%2D8825%2Ddd1416ad3397%26View%3D022235bd%2D8a45%2D4bc7%2D98fc%2D9145d38d1795%26wdFCCState%3D1)) 
 
-Sections that may be of value include:
+Note that some content is dated such as:
+* pp. 9 - 10 where JDK/JRE 1.5 is recommended as well as the references to the "latest version" of **CIMTool** and the location to download it. New versions are now available here.
+* pp. 22 - 23 on how to export a schema from EA is dated as new releases of EA have new screens and navigation paths. 
+* p. 55 - CIMTool's output options are greatly expanded as of today
+* p. 56 - CIMTool now generates MS Word compatible RTF documents
+* p. 86 - This GitHub repository is now the official site for CIMTool development.
 
-* Tutorial Section I - Modeling a Substation pp. 4 - 25 General overview of substation modeling.
-* Tutorial Section VI - Information Modeling: pp. 121 - 157
-* Tutorial Section XII - CIMTool pp. 270 - 357 Provides an overview of CIMTool features and how to use it for profiling.
-
-Note that some content is dated such as pp. 278 - 279 where JDK/JRE 1.5 is recommended as well as the references to the "latest version" of **CIMTool** and the location to download it. New versions are now available here. Also pp. 291 - 292 on how to export a schema from EA is dated as new releases of EA have new screens and navigation paths. Most other content is still relevant.
+The remaining content is relevant.
 
 ## CIMTool-Builders-Library Repository
 
