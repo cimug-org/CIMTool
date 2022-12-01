@@ -40,7 +40,9 @@ To import an `.eap` or `.eapx`file into a CIMTool project, use the **CIMTool** S
 
 > Note that as of the EA 16.x release, `.eap` and `.eapx` files are no longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x. 
 
-There are pros and cons depending on the format selected. The following table highlights the various tradeoffs of utilizing one format over another:
+### File Format Considerations
+
+The following table highlights the various tradeoffs of utilizing one format over another:
 
 Format | Description | Pros | Cons
 ----- | -----| -----| -----
