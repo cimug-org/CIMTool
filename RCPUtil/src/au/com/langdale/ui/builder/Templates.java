@@ -418,6 +418,24 @@ public class Templates {
 		}
 	}
 	
+	private static class MyFileFieldEditor extends FileFieldEditor {
+		private Button button;
+		
+		public MyFileFieldEditor(String name, String text, Composite area) {
+			super(name, text, area);
+		}
+
+		protected Button getChangeControl(Composite parent) {
+			if (button == null)
+				button = super.getChangeControl(parent);
+			return button;
+		}
+
+		public Button getButton() {
+			return button;
+		}
+	}
+	
 	private static class FileFieldTemplate extends SubjectTemplate {
 		private String[] extensions;
 
@@ -427,18 +445,28 @@ public class Templates {
 		}
 
 		protected void register(Control widget, Assembly assembly) {
-			if (name != null)
-				assembly.putControl(name, widget);
+			if (name != null) {
+				if (widget instanceof Button) {
+					assembly.putControl(name + "-button", widget);
+				} else {
+					assembly.putControl(name, widget);
+				}
+			}
 		}
 		
 		public Control realise(Composite parent, Assembly assembly) {
 			Composite area = new Composite(parent, SWT.NONE);
-			FileFieldEditor editor = new FileFieldEditor(name, text, area);
+			
+			MyFileFieldEditor editor = new MyFileFieldEditor(name, text, area);
+			
 			editor.setFileExtensions(extensions);
 
 			Text field = editor.getTextControl(area);
 			field.addModifyListener(assembly.modifyListener);
 			register(field, assembly);
+			
+			Button button = editor.getButton();
+			register(button, assembly);
 
 			return area;
 		}
@@ -816,6 +844,10 @@ public class Templates {
 
 	public static Template DisplayArea(String name, int lines) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY, name, "", lines);
+	}
+	
+	public static Template DisplayArea(String name, int lines, boolean scroll) {
+		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name, "", lines);
 	}
 
 	public static Template Label(String text) {

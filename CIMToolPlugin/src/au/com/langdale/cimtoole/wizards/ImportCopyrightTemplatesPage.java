@@ -40,10 +40,11 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 
 	protected ProjectBinding projects = new ProjectBinding();
 	protected final boolean expectNewProject;
+	protected IProject currentSelectedProject;
 	protected IProject newProject;
 	
 	public enum Option {
-		NO_TEMPLATE, DEFAULT_TEMPLATE, IMPORT_TEMPLATE
+		NONE_SELECTED, NO_TEMPLATE, DEFAULT_TEMPLATE, IMPORT_TEMPLATE
 	}
 	
 	public String getMultiLineCopyrightTemplateTextForSelectedOption() {
@@ -118,6 +119,7 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 	
 	public void setNewProject(IProject newProject) {
 		this.newProject = newProject;
+		this.currentSelectedProject = newProject;
 	}
 
 	public void setSelected(IStructuredSelection selection) {
@@ -245,34 +247,30 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 				Template template = null;
 				if (expectNewProject) {
 					template = Grid(
-							Group(Label("   Multiline file to import:")), //
-							Group(FileField("multi-line-source", "", multiLineCopyrightSources)),
-							Group(Label("   Single-line file to import:")), //
-							Group(FileField("single-line-source", "", singleLineCopyrightSources)),
+							Group(Grid(Group(RadioButton(Option.NO_TEMPLATE.name(), "Do not include copyrights"), RadioButton(Option.DEFAULT_TEMPLATE.name(), "Use default UCAIug copyrights"), RadioButton(Option.IMPORT_TEMPLATE.name(), "Select custom copyrights")))), //
+							Group(FileField("multi-line-source", "Multiline file to import:   ", multiLineCopyrightSources)), //
+							Group(FileField("single-line-source", "Single-line file to import:", singleLineCopyrightSources)), //
+							Group(Label("* Valid extensions for custom copyright templates include:   *.txt, *.copyright-multi-line and *.copyright-single-line")), //
+							Group(Label("")), //									
+							Group(Label("multi-line-copyright-label", "Contents of Selected Copyright Template (multiline)")),
+							Group(DisplayArea("multi-line-copyright", 5, true)),
 							Group(Label("")), //
-							Group(RadioButton(Option.NO_TEMPLATE.name(), "Do not include copyrights in generated profiles and artifacts for this project")), //
-							Group(RadioButton(Option.DEFAULT_TEMPLATE.name(), "Use the default UCAIug Apache 2.0 copyright templates")), //
-							Group(RadioButton(Option.IMPORT_TEMPLATE.name(), "Select custom copyright template files to import for this project")), //	
-							Group(Label("")), //
-							Group(Label("* Valid extensions for custom copyright templates include:   *.copyright-multi-line, *.copyright-single-line and *.txt")), //
-							Group(Label("")), //							
-							Group(Label("multi-line-copyright-label", "Contents of Selected Copyright Template (multiline)"), Label("single-line-copyright-label", "Contents of Selected Copyright Template (single-line)")),
-							Group(DisplayArea("multi-line-copyright", true), DisplayArea("single-line-copyright", true)));					
+							Group(Label("single-line-copyright-label", "Contents of Selected Copyright Template (single-line)")),
+							Group(DisplayArea("single-line-copyright", 5, true)));	
 				} else {
 					template = Grid(
 							Group(Label("Project")),
 							Group(CheckboxTableViewer("projects")),
+							Group(Grid(Group(RadioButton(Option.NO_TEMPLATE.name(), "Do not include copyrights"), RadioButton(Option.DEFAULT_TEMPLATE.name(), "Use default UCAIug copyrights"), RadioButton(Option.IMPORT_TEMPLATE.name(), "Select custom copyrights")))), //
+							Group(FileField("multi-line-source", "Multiline file to import:   ", multiLineCopyrightSources)), //
+							Group(FileField("single-line-source", "Single-line file to import:", singleLineCopyrightSources)), //
+							Group(Label("* Valid extensions for custom copyright templates include:   *.txt, *.copyright-multi-line and *.copyright-single-line")), //
+							Group(Label("")), //	
+							Group(Label("multi-line-copyright-label", "Contents of Selected Copyright Template (multiline)")),
+							Group(DisplayArea("multi-line-copyright", 5, true)),
 							Group(Label("")), //
-							Group(Label("To have no copyrights applied to generated profiles and artifacts simply import copyright templates that are empty.")), //	
-							Group(Label("Valid extensions for copyright templates include:   *.copyright-multi-line, *.copyright-single-line and *.txt")), //	
-							Group(Label("")), //
-							Group(Label("   Multiline file to import:")), //
-							Group(FileField("multi-line-source", "", multiLineCopyrightSources)),
-							Group(Label("   Single-line file to import:")), //
-							Group(FileField("single-line-source", "", singleLineCopyrightSources)),
-							Group(Label("")), //
-							Group(Label("multi-line-copyright-label", "Currently Assigned Copyright Template (multiline)"), Label("single-line-copyright-label", "Currently Assigned Copyright Template (single-line)")),
-							Group(DisplayArea("multi-line-copyright", true), DisplayArea("single-line-copyright", true)));
+							Group(Label("single-line-copyright-label", "Contents of Selected Copyright Template (single-line)")),
+							Group(DisplayArea("single-line-copyright", 5, true)));	
 				}
 				return template;
 			}
@@ -286,47 +284,16 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 			
 			@Override
 			public String validate() {
-				if (expectNewProject) {
-					if (getButton(Option.IMPORT_TEMPLATE.name()).getSelection()) {
-						multiLineCopyrightPathname = getText("multi-line-source").getText().trim();
-						if (multiLineCopyrightPathname.length() == 0)
-							return "A file containing a multiline copyright header template must be chosen for import.";
-										
-						File multiLineCopyrightsource = new File(multiLineCopyrightPathname);
-						if (!multiLineCopyrightsource.canRead())
-							return "The chosen mulitline file cannot be read.";
-						
-						singleLineCopyrightPathname = getText("single-line-source").getText().trim();
-						if (singleLineCopyrightPathname.length() == 0)
-							return "A file containing a single-line copyright header template must be chosen for import.";
-									
-						File singleLineCopyrightsource = new File(singleLineCopyrightPathname);
-						if (!singleLineCopyrightsource.canRead())
-							return "The chosen single-line file cannot be read.";
-						
-						IProject project = newProject;
-						if (project != null) {
-							String message = validateMultiLineCopyrightFileContents(multiLineCopyrightPathname);
-							if (message != null)
-								return message;
-							
-							message = validateSingleLineCopyrightFileContents(singleLineCopyrightPathname);
-							if (message != null)
-								return message;
-							
-							message = validateCopyrightFilesForConsistency(multiLineCopyrightPathname, singleLineCopyrightPathname);
-							if (message != null)
-								return message;
-						}
-					}
-				} else {
+				IProject project = (expectNewProject ? newProject : projects.getProject());
+				
+				if (getButton(Option.IMPORT_TEMPLATE.name()).getSelection()) {
 					multiLineCopyrightPathname = getText("multi-line-source").getText().trim();
 					if (multiLineCopyrightPathname.length() == 0)
 						return "A file containing a multiline copyright header template must be chosen for import.";
 									
 					File multiLineCopyrightsource = new File(multiLineCopyrightPathname);
 					if (!multiLineCopyrightsource.canRead())
-						return "The chosen mulitline file cannot be read.";
+						return "The chosen multiline file cannot be read.";
 					
 					singleLineCopyrightPathname = getText("single-line-source").getText().trim();
 					if (singleLineCopyrightPathname.length() == 0)
@@ -336,7 +303,6 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 					if (!singleLineCopyrightsource.canRead())
 						return "The chosen single-line file cannot be read.";
 					
-					IProject project = projects.getProject();
 					if (project != null) {
 						String message = validateMultiLineCopyrightFileContents(multiLineCopyrightPathname);
 						if (message != null)
@@ -350,91 +316,133 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 						if (message != null)
 							return message;
 					}
+				} else if (!getButton(Option.NO_TEMPLATE.name()).getSelection() && !getButton(Option.DEFAULT_TEMPLATE.name()).getSelection()) {
+					return "Choose a copyright configuration option for the project.";
 				}
-
+				
 				return null;
 			}
 			
 			@Override
 			public void refresh() {
-				if (expectNewProject) {
+				IProject project = (expectNewProject ? newProject : projects.getProject());
+				boolean projectChanged = (currentSelectedProject != project);
+				
+				String currentMultiLineCopyright = getCurrentMultiLineCopyrightTemplate((!expectNewProject ? projects.getProject() : null));
+				String currentSingleLineCopyright = getCurrentSingleLineCopyrightTemplate((!expectNewProject ? projects.getProject() : null));
+				String defaultMultiLineCopyright = getDefaultMultiLineCopyrightTemplate();
+				String defaultSingleLineCopyright = getDefaultSingleLineCopyrightTemplate();
+				
+				Option selection = Option.NONE_SELECTED;
+				
+				if (expectNewProject || !projectChanged) {
 					if (getButton(Option.DEFAULT_TEMPLATE.name()).getSelection()) {
+						selection = Option.DEFAULT_TEMPLATE;
+					} else if (getButton(Option.IMPORT_TEMPLATE.name()).getSelection()) {
+						selection = Option.IMPORT_TEMPLATE;
+					} else if (getButton(Option.NO_TEMPLATE.name()).getSelection()) {
+						selection = Option.NO_TEMPLATE;
+					}
+				} else {
+					currentSelectedProject = project;
+					if (currentMultiLineCopyright != null && !"".equals(currentMultiLineCopyright)) {
+						if (defaultMultiLineCopyright.equals(currentMultiLineCopyright)) {
+							selection = Option.DEFAULT_TEMPLATE;
+						} else {
+							selection = Option.IMPORT_TEMPLATE;
+						}
+					} else {
+						selection = Option.NO_TEMPLATE;
+					}
+					getButton(Option.NO_TEMPLATE.name()).setSelection(selection == Option.NO_TEMPLATE);
+					getButton(Option.DEFAULT_TEMPLATE.name()).setSelection(selection == Option.DEFAULT_TEMPLATE);
+					getButton(Option.IMPORT_TEMPLATE.name()).setSelection(selection == Option.IMPORT_TEMPLATE);
+					
+				}
+				
+				initSelection(selection, currentMultiLineCopyright, defaultMultiLineCopyright, currentSingleLineCopyright, defaultSingleLineCopyright);
+			}
+			
+			private void initSelection(Option selection, String currentMultiLineCopyright, String defaultMultiLineCopyright, String currentSingleLineCopyright, String defaultSingleLineCopyright) {
+				switch (selection) {
+					case DEFAULT_TEMPLATE:
 						if (getControl("multi-line-source").isEnabled()) {
 							getControl("multi-line-source").setEnabled(false);
+							getControl("multi-line-source-button").setEnabled(false);
 						}
 						setTextValue("multi-line-source", null);
-						setTextValue("multi-line-copyright", getDefaultMultiLineCopyrightTemplate());
+						setTextValue("multi-line-copyright-label", "Currently Assigned Copyright Template (multiline)");
+						setTextValue("multi-line-copyright", defaultMultiLineCopyright);
 						//
 						if (getControl("single-line-source").isEnabled()) {
 							getControl("single-line-source").setEnabled(false);
+							getControl("single-line-source-button").setEnabled(false);
 						}
 						setTextValue("single-line-source", null);
-						setTextValue("single-line-copyright", getDefaultSingleLineCopyrightTemplate());
-					} else if (getButton(Option.IMPORT_TEMPLATE.name()).getSelection()) {
+						setTextValue("single-line-copyright-label", "Currently Assigned Copyright Template (single-line)");
+						setTextValue("single-line-copyright", defaultSingleLineCopyright);
+						break;
+					case IMPORT_TEMPLATE:
 						if (!getControl("multi-line-source").isEnabled()) {
 							getControl("multi-line-source").setEnabled(true);
+							getControl("multi-line-source-button").setEnabled(true);
 						}
 						String pathname = getText("multi-line-source").getText().trim();
 						if ((pathname != null) && (pathname.length() != 0) && new File(pathname).canRead()) {
+							setTextValue("multi-line-copyright-label", "Contents of Selected Multiline Copyright Template");
 							setTextValue("multi-line-copyright", getFileContents(pathname));
 						} else {
-							setTextValue("multi-line-copyright", getCurrentMultiLineCopyrightTemplate(projects.getProject()));
+							setTextValue("multi-line-copyright-label", "Currently Assigned Copyright Template (multiline)");
+							setTextValue("multi-line-copyright", currentMultiLineCopyright);
 						}
 						//
 						if (!getControl("single-line-source").isEnabled()) {
 							getControl("single-line-source").setEnabled(true);
+							getControl("single-line-source-button").setEnabled(true);
 						}
 						pathname = getText("single-line-source").getText().trim();
 						if ((pathname != null) && (pathname.length() != 0) && new File(pathname).canRead()) {
+							setTextValue("single-line-copyright-label", "Contents of Selected Single-line Copyright Template");
 							setTextValue("single-line-copyright", getFileContents(pathname));
 						} else {
-							setTextValue("single-line-copyright", getCurrentSingleLineCopyrightTemplate(projects.getProject()));
+							setTextValue("single-line-copyright-label", "Currently Assigned Copyright Template (single-line)");
+							setTextValue("single-line-copyright", currentSingleLineCopyright);
 						}
-					} else if (getButton(Option.NO_TEMPLATE.name()).getSelection()) {
+						break;
+					case NO_TEMPLATE:
 						if (getControl("multi-line-source").isEnabled()) {
 							getControl("multi-line-source").setEnabled(false);
+							getControl("multi-line-source-button").setEnabled(false);
 						}
 						setTextValue("multi-line-source", null);
-						setTextValue("multi-line-copyright", null);
-						//
-						if (getControl("single-line-source").isEnabled()) {
-							getControl("single-line-source").setEnabled(false);
-						}
-						setTextValue("single-line-source", null);
-						setTextValue("single-line-copyright", null);
-					} else {
-						getButton(Option.NO_TEMPLATE.name()).setSelection(true);
-						if (getControl("multi-line-source").isEnabled()) {
-							getControl("multi-line-source").setEnabled(false);
-						}
-						setTextValue("multi-line-source", null);
-						setTextValue("multi-line-copyright", null);
-						//
-						getButton(Option.NO_TEMPLATE.name()).setSelection(true);
-						if (getControl("single-line-source").isEnabled()) {
-							getControl("single-line-source").setEnabled(false);
-						}
-						setTextValue("single-line-source", null);
-						setTextValue("signle-line-copyright", null);
-					}
-				} else {
-					String pathname = getText("multi-line-source").getText().trim();
-					if ((pathname != null) && (pathname.length() != 0) && new File(pathname).canRead()) {
-						setTextValue("multi-line-copyright-label", "Contents of Selected Multiline Copyright Template");
-						setTextValue("multi-line-copyright", getFileContents(pathname));
-					} else {
 						setTextValue("multi-line-copyright-label", "Currently Assigned Copyright Template (multiline)");
-						setTextValue("multi-line-copyright", getCurrentMultiLineCopyrightTemplate(projects.getProject()));
-					}
-					//
-					pathname = getText("single-line-source").getText().trim();
-					if ((pathname != null) && (pathname.length() != 0) && new File(pathname).canRead()) {
-						setTextValue("single-line-copyright-label", "Contents of Selected Single-line Copyright Template");
-						setTextValue("single-line-copyright", getFileContents(pathname));
-					} else {
+						setTextValue("multi-line-copyright", null);
+						//
+						if (getControl("single-line-source").isEnabled()) {
+							getControl("single-line-source").setEnabled(false);
+							getControl("single-line-source-button").setEnabled(false);
+						}
+						setTextValue("single-line-source", null);
 						setTextValue("single-line-copyright-label", "Currently Assigned Copyright Template (single-line)");
-						setTextValue("single-line-copyright", getCurrentSingleLineCopyrightTemplate(projects.getProject()));
-					}
+						setTextValue("single-line-copyright", null);
+						break;
+					case NONE_SELECTED:
+						if (getControl("multi-line-source").isEnabled()) {
+							getControl("multi-line-source").setEnabled(false);
+							getControl("multi-line-source-button").setEnabled(false);
+						}
+						setTextValue("multi-line-source", null);
+						setTextValue("multi-line-copyright-label", "Currently Assigned Copyright Template (multiline)");
+						setTextValue("multi-line-copyright", defaultMultiLineCopyright);
+						//
+						if (getControl("single-line-source").isEnabled()) {
+							getControl("single-line-source").setEnabled(false);
+							getControl("single-line-source-button").setEnabled(false);
+						}
+						setTextValue("single-line-source", null);
+						setTextValue("single-line-copyright-label", "Currently Assigned Copyright Template (single-line)");
+						setTextValue("single-line-copyright", defaultSingleLineCopyright);
+						break;
 				}
 			}
 		};
