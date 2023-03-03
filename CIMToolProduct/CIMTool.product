@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 1.11.0" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.11.0" useFeatures="false" includeLaunchers="true">
+<product name="CIMTool 1.11.1" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.11.1" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="about.png"/>
@@ -41,13 +41,14 @@ used in the electric power industry.  It is potentially useful for other semanti
       </win>
    </launcher>
 
+
    <vm>
    </vm>
 
    <license>
         <url>http://wiki.cimtool.org</url>
         <text>
-   This software is Copyright 2005-2013 Langdale Consultants 
+   This software is Copyright 2005-2023 Langdale Consultants 
 except where otherwise stated. 
 
 Langdale Consultants can be contacted at: http://www.langdale.com.au

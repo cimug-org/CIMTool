@@ -11,12 +11,12 @@
 ## CIMTool Discussion Forums
 
   The are two avenues for discussion for **CIMTool**.  Though not as active as it once was you can join the CIMTool Google Group by registering [here](https://groups.google.com/g/cimtool). Alternatively, you can post direct to the new [discussions](https://github.com/CIMug-org/CIMTool/discussions) section of this repository.
-  
+
 ## Using CIMTool with Enterprise Architect
 
 Both past and current releases of the CIM Enterprise Architect (EA) project files used for the purposes of CIMTool are made publicly available for download from the UCAIug (CIM Users Group).  Current releases can be found at [Current CIM Model Drafts](https://cimug.ucaiug.org/CIM%20Model%20Releases/Forms/AllItems.aspx).  Older releases are available at [Past CIM Model Releases](https://cimug.ucaiug.org/CIM%20Releases/Forms/AllItems.aspx).  Generally, access to CIM EA project files does not require a UCAIug account. For content restricted to registered users you may create a UCAIug [registered account](https://cimug.ucaiug.org/pages/Join.aspx) for free.
 
-Current versions of the CIM are maintained with the Sparx Systems UML design tool, [Enterprise Architect (EA)](https://sparxsystems.com/). Creating a profile requires that the CIM first be imported into **CIMTool**. The CIM can be imported in one of two possible formats as outlined next. 
+Current versions of the CIM are maintained with the Sparx Systems UML design tool, [Enterprise Architect (EA)](https://sparxsystems.com/). Creating a profile requires that the CIM first be imported into **CIMTool**. The CIM can be imported in one of two possible formats as outlined next.
 
 ### Using XMI
 
@@ -24,11 +24,11 @@ The standard way is to export the CIM as an XMI file (i.e. a schema) and to do t
 
 * XMI Type = UML 1.4 (XMI1.2)
 * Unisys/Rose Format = checked
-* Export diagrams = unchecked 
+* Export diagrams = unchecked
 * stylesheet = blank
 * Format XMI Output = checked
 * Write log file = checked
-* Generate Diagram Images = unchecked 
+* Generate Diagram Images = unchecked
 
 ![image](https://user-images.githubusercontent.com/63370413/200277774-aa0c18cb-2250-4798-802d-ce506231fdd8.png)
 
@@ -38,7 +38,7 @@ Exporting XMI can be slow. An alternative is to directly import an Enterprise Ar
 
 To import an `.eap` or `.eapx`file into a CIMTool project, use the **CIMTool** Schema Import wizard and select a file type of either `.eap` or `.eapx` respectively when browsing for the file. You must close the project in EA before importing it to CIMTool.
 
-> Note that as of the EA 16.x release, `.eap` and `.eapx` files are no longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x. 
+> Note that as of the EA 16.x release, `.eap` and `.eapx` files are no longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x.
 
 ### File Format Considerations
 
@@ -47,8 +47,8 @@ The following table highlights the various tradeoffs of utilizing one format ove
 Format | Description | Pros | Cons
 ----- | -----| -----| -----
 `.eap` / `.eapx`| Native EA project files. Standard in EA 15.x releases and earlier the internal format is based on the MS Access. Specifically, `.eap` files are based on Jet3.5 engine and `.eapx` on Jet4.0 (see [Access Database Engine History](https://en.wikipedia.org/wiki/Access_Database_Engine)) with both stored as binaries. <br/><br/>The `.eapx` file format is still supported in EA 16.x but requires special runtimes to be installed. Support for `.eap` files in 16.x has been discontinued. | Both file formats can be imported directly into **CIMTool** without the overhead of having to export as an `.xmi` file. <br/><br/>Multi-language support via unicode is available with an `.eapx` file. | If hosting a CIMTool project on Github it is not recommended that an EA project file format be used (see: [About large files on GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) and [Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/configuring-git-large-file-storage)). Instead the `.xmi` file format is recommended. <br/><br/>The `.eap` file format do not support [unicode](https://unicode.org/standard/WhatIsUnicode.html) and therefore is not ideal for profiles derived from CIM classes or attributes with descriptions and/or notes containing non-ASCII characters. <br/><br/>NOTE: To convert an `.eap` file to an `.eapx` format see [Use Languages Other Than English](https://sparxsystems.com/enterprise_architect_user_guide/15.0/team_support/check_in_languages_other_than_.html) which has the link to the [EABase JET4](https://sparxsystems.com/bin/EABase_JET4.zip) file that can be used for this purpose. Visit the [Project Data Transfers](https://sparxsystems.com/enterprise_architect_user_guide/15.0/model_publishing/performadatatransfer.html) page for further information on this process. If choosing to migrate to Jet4 then EA must also be configured to use Jet4. Refer to the [General Options](https://sparxsystems.com/enterprise_architect_user_guide/15.0/user_interface/generalsettings.html) page for details.
-`.qea` / `.qeax` | Native EA project files. Introduced in EA 16.x the internal format of these files is based on the [SQLLite](https://www.sqlite.org/) open source database and is stored as binaries. Both file types support basic replication with the `.qeax` extension indicating that file sharing is enabled. A `.qeax` file can simply be renamed back to `.qea` to disable file sharing. | _These formats are not yet supported in **CIMTool**._ <br/><br/> These native project file formats will be able to be imported directly into **CIMTool** without the overhead of having to export an `.xmi` file.| | If hosting a CIMTool project on Github the use of one of these project files is not recommended (see: [About large files on GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) and [Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/configuring-git-large-file-storage)). Instead an `.xmi` file should be utilized. 
-`.xmi` | `.xmi` | Exporting the CIM as an `.xmi` schema file has added flexibility not available when using a native EA project file.  Specifically, a subset of the CIM can be exported by simply selecting a specific package for export. This approach can be used to reduce the size of the schema file in a **CIMTool** project. Given that profiles are commonly defined for a particular domain (e.g. Transmission, Distribution, Market-related profiles) just a subset of the CIM can be exported and used within **CIMTool**. This is more suitable when hosting a **CIMTool** project in Github. <br/><br/> **CIMTool** supports the ability to import multiple `.xmi` schema files and for a user to assign a distinct namespace to each. This is useful when defining and exporting custom extensions as a separate `.xmi` file that coexists alongside an `.xmi` for the CIM model. | Exporting `.xmi` files can be time consuming and therefore inconvenient if quick iterative changes are needed to the CIM with a reimport into a **CIMTool** project. In this scenario it is suggested to use one of the native EA project files. The direct use of a project file eliminates the roundtrip time needed for the "make changes to the UML, export to XMI, import XMI into CIMTool" cycle. 
+`.qea` / `.qeax` | Native EA project files. Introduced in EA 16.x the internal format of these files is based on the [SQLLite](https://www.sqlite.org/) open source database and is stored as binaries. Both file types support basic replication with the `.qeax` extension indicating that file sharing is enabled. A `.qeax` file can simply be renamed back to `.qea` to disable file sharing. | _These formats are not yet supported in **CIMTool**._ <br/><br/> These native project file formats will be able to be imported directly into **CIMTool** without the overhead of having to export an `.xmi` file.| | If hosting a CIMTool project on Github the use of one of these project files is not recommended (see: [About large files on GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) and [Git LFS](https://docs.github.com/en/repositories/working-with-files/managing-large-files/configuring-git-large-file-storage)). Instead an `.xmi` file should be utilized.
+`.xmi` | `.xmi` | Exporting the CIM as an `.xmi` schema file has added flexibility not available when using a native EA project file.  Specifically, a subset of the CIM can be exported by simply selecting a specific package for export. This approach can be used to reduce the size of the schema file in a **CIMTool** project. Given that profiles are commonly defined for a particular domain (e.g. Transmission, Distribution, Market-related profiles) just a subset of the CIM can be exported and used within **CIMTool**. This is more suitable when hosting a **CIMTool** project in Github. <br/><br/> **CIMTool** supports the ability to import multiple `.xmi` schema files and for a user to assign a distinct namespace to each. This is useful when defining and exporting custom extensions as a separate `.xmi` file that coexists alongside an `.xmi` for the CIM model. | Exporting `.xmi` files can be time consuming and therefore inconvenient if quick iterative changes are needed to the CIM with a reimport into a **CIMTool** project. In this scenario it is suggested to use one of the native EA project files. The direct use of a project file eliminates the roundtrip time needed for the "make changes to the UML, export to XMI, import XMI into CIMTool" cycle.
 
 ## CIMTool Profiling Tutorial
 
@@ -75,9 +75,9 @@ Note that some content is dated:
 
 ## Latest Release
 
-  -   1.11.0
+  -   1.11.1
 
-      - The latest release is available here on GitHub at [CIMTool-1.11.0](https://github.com/CIMug-org/CIMTool/releases/tag/1.11.0) and is delivered as a ZIP file. Releases are also made available in the CIMug [tools download folder](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) on the UCAIug website.
+      - The latest release is available here on GitHub at [CIMTool-1.11.1](https://github.com/CIMug-org/CIMTool/releases/tag/1.11.1) and is delivered as a ZIP file. Releases are also made available in the CIMug [tools download folder](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) on the UCAIug website.
       - Information on features and fixes for the release can be found [here](https://cimug-org.github.io/CIMTool/).
 
 ## Installation & Setup
