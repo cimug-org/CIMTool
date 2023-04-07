@@ -1,0 +1,65 @@
+# Import a Schema (e.g. CIM UML)
+Before building a Contextual Profile in **CIMTool** you first need to import a version of the CIM UML. The CIM UML is typically imported when creating a new **CIMTool** project. However, you can also add custom UML to supplement an existing CIM UML schema or do a full replace of the CIM UML, as in the case of a new CIM version.
+
+## Obtain the CIM UML
+Working Group 13 (WG13) and Working Group 14 (WG14) are groups under Technical Commitee 57 that publish CIM UML versions. These are published to the [CIM Users Group](https://cimug.ucaiug.org/) website in [Enterprise Architect](https://sparxsystems.com/) Project file (`.eap`) format.
+
+![Enterprise Architect with CIM UML](../images/EnterpriseArchitectCIMUML.png "Enterprise Architect showing CIM UML")
+
+You can download the current version of CIM UML Enterprise Architect (`.eap`) files from CIM Users Group website [here](https://cimug.ucaiug.org/CIM%20Model%20Releases/Forms/AllItems.aspx). The page looks like this.
+
+![CIM Users Group UML Documents Repository](../images/CIMugUMLDocumentsRepository.png "CIM Users Group UML Documents Repository")
+
+!!! note
+
+    You must have a CIM Users Group account to access to previous versions of the CIM UML. Use the CIM Users Group [Join form](https://cimug.ucaiug.org/pages/Join.aspx) to get an account. Note that there both paid and free levels. The free account does give access to previous versions of the CIM UML.
+
+## Import via `.xmi`
+Unfortunately, Enterprise Architect Project files (`.eap`) can't be easily imported directly into **CIMTool**. To them in **CIMTool**, most users will find it is easiest to convert from `.eap` to XML Metadata Interchange (XMI) fil (`.xmi`).
+
+Enterprise Architect has an "Export" feature to export to `.xmi` format. To use this, open the desired CIM UML version of the `.eap` file (e.g. `iec61970cim17v38_iec61968cim13v13_iec62325cim03v17a.eap`) in Enterprise Architect. Then select the top level package.
+
+!!! note
+
+    Note that you can't export to `.xmi` with Enterprise Architect Lite version, only with the full (paid) version of Enterprise Architect.
+
+In the top ribbon, select the Publish tab, then click Export-XML
+
+![Export to XMI](../images/EAExportToXMI.png "Export to XMI")
+
+Use the following export options
+
+  * Select XMI 1.1
+  * Select a Filename (save location and name) for the XMI file. Using a name that matches the `.eap` is helpful (e.g. `iec61970cim17v38_iec61968cim13v13_iec62325cim03v17a.xmi`)
+
+Then click the Export button
+
+![Export to XMI](../images/EAExportToXMIOptions.png "Export to XMI")
+
+!!! note
+
+    You
+
+To import the `.xmi` file, in **CIMTool** open the projects you'd like to add the CIM UML to and Select File -> Import. In the Import dialog, expand CIMTool folder and select Import Schema.
+
+![Select Import Schema](../images/ImportSchema.png "Import Schema")
+
+Browse to find the XMI file you exported from Enterprise Architect previously then select the checkboxes next to the project(s) for which you'd like to import the UML. Don’t edit the Namespace.
+
+![Import Schema Dialog](../images/ImportSchemaDialog.png "Import Schema Dailog")
+
+Once imported the CIM UML will be stored in the **Schema** folder of the project.
+
+There is typically one schema per project, although there are cases where there may be more than one (e.g. if you have custom extensions or multiple CIM UML versions for a single Contextual Profile).
+
+## Using the `.eap` File Directly
+An alternative to exporting from Enterprise Architect as an XMI file is to directly import the Enterprise Architect Project (`.eap`) file into **CIMTool**. This eliminates the need to export anything from Enterprise Architect before importing to **CIMTool**.
+
+Some preparation is required to make this work.
+
+The Enterprise Architect project must be converted from Microsoft Access Jet3 format to Jet4 format. The conversion can be done using Microsoft Access and is only required once.
+
+Enterprise Architect must be configured to use Jet4. Go to Tools | Options | General | Use Jet 4.0 to do this.
+Full instructions are found in [Sparx Systems deployment manual, section 7](http://www.sparxsystems.com.au/downloads/whitepapers/EA_Deployment.pdf).
+
+To import an Enterprise Architect project (Jet4) file into a **CIMTool** project, use the Schema Import wizard as usual but select a file type of `.eap` when browsing for the file. You must close the project in Enterprise Architect before importing to **CIMTool**.
