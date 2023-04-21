@@ -1,0 +1,30 @@
+site_name: CIMTool
+repo_url: https://github.com/CIMug-org/CIMTool
+theme:
+  name: material
+extra_css:
+  - stylesheets/extra.css
+markdown_extensions:
+  - admonition
+  - tables
+nav:
+  - 'index.md'
+  - 'core-concepts.md'
+  - 'getting-started.md'
+  - 'How To':
+    - 'how-to/create-a-project.md'
+    - 'how-to/navigate-workspace.md'
+    - 'how-to/import-cim-uml.md'
+    - 'how-to/create-a-profile.md'
+    - 'how-to/edit-a-profile.md'
+    - 'how-to/browsing-the-CIM-UML.md'
+    - 'how-to/exchange-a-project.md'
+    - 'how-to/search-schemas-profiles.md'
+    - 'how-to/generate-database-schema.md'
+    - 'how-to/profile-maintenance.md'
+    - 'how-to/comparing-profiles-schemas.md'
+    - 'how-to/associations-anonymous-classes.md'
+  - 'Further Learning':
+    - 'further-learning/uml-xmi-owl.md'
+    - 'further-learning/cim.md'
+    - 'further-learning/protege-and-topbraid.md'
