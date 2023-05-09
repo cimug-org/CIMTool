@@ -5,9 +5,7 @@ Before using **CIMTool** it is helpful to understand some vocabulary so that you
 
     If you're brand new to the Common Information Model (CIM), a great starting point is [EPRI's CIM Primer](https://www.epri.com/research/products/000000003002006001).
 
-The CIM is an information model for electric power generation, transmission, and distribution modeling that has been officially 
-adopted by the [International Electrotechnical Commission (IEC)](https://www.iec.ch/). It is designed to be used in power system
-planning, operation, and maintenance software and IT systems that support:
+The CIM is an information model copyrighted by the UCAIug (i.e. CIM Users Group) and licensed under the Apache 2.0 open source license.  It is represented in [UML](https://en.wikipedia.org/wiki/Unified_Modeling_Language) and includes modeling spanning electric power generation, transmission, and distribution domains.  It has been officially adopted by the [International Electrotechnical Commission (IEC)](https://www.iec.ch/) and is designed to be used in power system planning, operation, and maintenance software and IT systems that support:
 
   * [SCADA (Supervisory Control And Data Acquisition)](https://en.wikipedia.org/wiki/SCADA)
   * [EMS (Energy Management Systems)](https://en.wikipedia.org/wiki/Energy_management_system)
@@ -17,7 +15,7 @@ planning, operation, and maintenance software and IT systems that support:
   * Market trading
   * Teleprotection
 
-One of the essential artifacts produced by IEC [Technical Committee 57](https://www.iec.ch/dyn/www/f?p=103:7:0::::FSP_ORG_ID,FSP_LANG_ID:1273,25) is a Unified Modeling Language (UML) schema for the CIM. The UML schema is canonical ontology and defines all classes, fields, and relationships between classes. 
+An essential artifact is the Unified Modeling Language (UML) schema for the CIM. The UML schema is a canonical ontology and defines all the classes, fields, and relationships between classes. 
 
 ![CIMUMLEnerpriseArchitect.png](./images/CIMUMLEnerpriseArchitect.png "CIM UML shown in Enterprise Architect")
 
