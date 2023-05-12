@@ -2,11 +2,14 @@ site_name: CIMTool
 repo_url: https://github.com/CIMug-org/CIMTool
 theme:
   name: material
+  features:
+    - content.code.copy
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
   - admonition
   - tables
+  - pymdownx.details
 nav:
   - 'index.md'
   - 'core-concepts.md'
@@ -29,3 +32,6 @@ nav:
     - 'further-learning/cim.md'
     - 'further-learning/protege-and-topbraid.md'
   - 'release-notes.md'
+  - 'Developers':
+    - 'developers/dev-env-setup.md'
+    - 'developers/package-deploy.md'
