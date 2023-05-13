@@ -1,5 +1,5 @@
 # Development Environment Setup
-If you are looking to enhance or fix a defect in **CIMTool** itself, these instructions help you get setup with a development environment to work on **CIMTool** as a developer. Users of **CIMTool** generally don't need to be concerned with these details.
+If you are looking to make an enhancement or fix a defect in **CIMTool** itself, these instructions help you get setup with a development environment to work on **CIMTool** as a developer. Users of **CIMTool** generally don't need to be concerned with these details.
 
 ## Part 1:  Eclipse Installation
 The following steps describe how to locate, install and setup Eclipse plug-ins development environment (PDE).
@@ -48,12 +48,12 @@ Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://github.com/cimug-org/CIMT
 ##### Step 2:
 Locate the ```\dropins``` directory as illustrated in the screenshot below and drop the plugin jar into it.
 
-<img src="/assets/img/install-plugins-dropins-folder.png"  border="1px" style="max-width:100%"/>
+![install-plugins-dropins-folder.png](../images/install-plugins-dropins-folder.png "dropins Folder")
 
 ##### Step 3:
 Last, launch Eclipse and verify that the plug-in was properly installed.  It should appear within the Plug-ins tab as shown.
 
-<img src="/assets/img/confirm-emf-2.6.0-plugin-installed.png"  border="1px" style="max-width:100%"/>
+![confirm-emf-2.6.0-plugin-installed.png](../images/confirm-emf-2.6.0-plugin-installed.png "Confirm EMF Plugin Installed")
 
 ### Install: ScalaIDE 3.0.0 Plugin
 
@@ -77,50 +77,50 @@ Download the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scal
 ##### Step 2:
 Next launch Eclipse and select the "**Install New Software...**" menu option as shown in the screenshot.
 
-<img src="/assets/img/install-scala-ide-plugin-0.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-0.png](../images/install-scala-ide-plugin-0.png "Install Scala IDE Plugin")
 
 ##### Step 3:
 In the **Install** wizard dialog that is launched click "**Add...**" to launch the **Add Repository** dialog.
 
-<img src="/assets/img/install-scala-ide-plugin-1.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-1.png](../images/install-scala-ide-plugin-1.png "Install Scala IDE Plugin")
 
 ##### Step 4:
 In the **Add Repository** dialog click "**Local...**" button:
 
-<img src="/assets/img/install-scala-ide-plugin-2a.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-2a.png](../images/install-scala-ide-plugin-2a.png "Install Scala IDE Plugin")
 
 Using the file chooser navigate to the location  where the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip) archive was extracted to and select the ```\site``` directory and click "**OK**".
 
-<img src="/assets/img/install-scala-ide-plugin-2b.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-2b.png](../images/install-scala-ide-plugin-2b.png "Install Scala IDE Plugin")
 
 Finally, enter a name for this new local plugin repository in the **Name** field.  Note that the **Location** field should now reference the ```\site``` directory you just selected (i.e. the "root" of the file structure described in **step 1**):
 
-<img src="/assets/img/install-scala-ide-plugin-2c.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-2c.png](../images/install-scala-ide-plugin-2c.png "Install Scala IDE Plugin")
 
 ##### Step 5:
 Next, select the check boxes as shown in the **details** sections of the screen shot below.  Once selected click the "**Select All**" button and then "**Next**" to proceed to the next page of the installation wizard.
 
-<img src="/assets/img/install-scala-ide-plugin-3.png"  border="1px" style="max-width:100%"/></a>
+![install-scala-ide-plugin-3.png](../images/install-scala-ide-plugin-3.png "Install Scala IDE Plugin")
 
 ##### Step 6:
 Continue by clicking "**Next**" to accept the items to be installed.
 
-<img src="/assets/img/install-scala-ide-plugin-4.png"  border="1px" style="max-width:100%"/></a>
+![install-scala-ide-plugin-4.png](../images/install-scala-ide-plugin-4.png "Install Scala IDE Plugin")
 
 ##### Step 7:
 On the **Review Licenses** page select the "I accept the terms of the license agreements" radio button and click the "**Finish**" button.
 
-<img src="/assets/img/install-scala-ide-plugin-5.png"  border="1px" style="max-width:100%"/></a>
+![install-scala-ide-plugin-5.png](../images/install-scala-ide-plugin-5.png "Install Scala IDE Plugin")
 
 ##### Step 8:
 A security warning will be displayed.  Just click "**OK**" to continue.
 
-<img src="/assets/img/install-scala-ide-plugin-6.png"  border="1px" style="max-width:100%"/></a>
+![install-scala-ide-plugin-6.png](../images/install-scala-ide-plugin-6.png "Install Scala IDE Plugin")
 
 ##### Step 9:
 If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "**Restart Now**" button and allow your instance of Eclipse to restart.
 
-<img src="/assets/img/install-scala-ide-plugin-7.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-7.png](../images/install-scala-ide-plugin-7.png "Install Scala IDE Plugin")
 
 ### Update: Eclipse EGit Plugin
 
@@ -144,42 +144,42 @@ Release Version|Release Date|p2 repository URL|browse p2 repository|download p2 
 ##### Step 1:
 Again navigate to the **"Install New Software..."** menu option as shown.
 
-<img src="/assets/img/install-scala-ide-plugin-0.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-0.png](../images/install-scala-ide-plugin-0.png "Install Scala IDE Plugin")
 
 ##### Step 2:
 In the **Install** wizard dialog that is launched click "**Add...**" to launch the **Add Repository** dialog.
 
-<img src="/assets/img/update-egit-plugin-1.png"  border="1px" style="max-width:100%"/>
+![update-egit-plugin-1.png](../images/update-egit-plugin-1.png "Update EGit Plugin")
 
 ##### Step 3:
 In the **Add Repository** dialog simply add the description and the **p2 repository URL** (previously located) into the fields as shown and select the **OK** button.
 
-<img src="/assets/img/update-egit-plugin-2.png"  border="1px" style="max-width:100%"/>
+![update-egit-plugin-2.png](../images/update-egit-plugin-2.png "Update EGit Plugin")
 
 ##### Step 4:
 Next, select the check boxes as shown in the screenshot.  Once selected click the  **Next** button to proceed to the next page of the installation wizard.
 
-<img src="/assets/img/update-egit-plugin-3.png"  border="1px" style="max-width:75%"/>
+![update-egit-plugin-3.png](../images/update-egit-plugin-3.png "Update EGit Plugin")
 
 ##### Step 5:
 Continue by clicking **Next** to accept the items to be installed.
 
-<img src="/assets/img/update-egit-plugin-4.png"  border="1px" style="max-width:75%"/>
+![update-egit-plugin-4.png](../images/update-egit-plugin-4.png "Update EGit Plugin")
 
 ##### Step 6:
 On the **Review Licenses** page select the "I accept the terms of the license agreements" radio button and click the **Finish** button.
 
-<img src="/assets/img/update-egit-plugin-5.png"  border="1px" style="max-width:75%"/>
+![update-egit-plugin-5.png](../images/update-egit-plugin-5.png "Update EGit Plugin")
 
 ##### Step 7:
 If a security warning is displayed.  Just click **OK** to continue.
 
-<img src="/assets/img/install-scala-ide-plugin-6.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-6.png](../images/install-scala-ide-plugin-6.png "Install Scala IDE Plugin")
 
 ##### Step 8:
 If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "**Restart Now**" button and allow your instance of Eclipse to restart.
 
-<img src="/assets/img/install-scala-ide-plugin-7.png"  border="1px" style="max-width:100%"/>
+![install-scala-ide-plugin-7.png](../images/install-scala-ide-plugin-7.png "Install Scala IDE Plugin")
 
 
 !!! note
@@ -199,46 +199,46 @@ If all was successful a final dialog is displayed asking if you want to restart 
 
 - Start out by opening the **EGit** Perspective in Eclipse.
 
-  <img src="/assets/img/egit-clone-repo-1.png"  border="1px" style="max-width:75%"/>
+  ![egit-clone-repo-1.png](../images/egit-clone-repo-1.png "EGit Clone Repo")
 
 - Then select the **"Git Repository Exploring"** Perspective.
 
-  <img src="/assets/img/egit-clone-repo-2.png"  border="1px" style="max-width:50%"/>
+  ![egit-clone-repo-2.png](../images/egit-clone-repo-2.png "EGit Clone Repo")
 
 ##### Step 2:
 
 Select the **"Clone a Git repository"** option as shown.
 
-<img src="/assets/img/egit-clone-repo-3.png"  border="1px" style="max-width:100%"/>
+![egit-clone-repo-3.png](../images/egit-clone-repo-3.png "EGit Clone Repo")
 
 ##### Step 3:
 Depending on your local Git installation you may or may not be shown the **"Check Home Directory"** dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous **Step 2** or you can simply check the **"Do not show again"** checkbox and click the OK button to accept the default Git repository location.
 
-<img src="/assets/img/egit-clone-repo-4.png"  border="1px" style="max-width:100%"/>
+![egit-clone-repo-4.png](../images/egit-clone-repo-4.png "EGit Clone Repo")
 
 ##### Step 4:
 Next, in a browser locate the [CIMTool](https://github.com/cimug-org/CIMTool) GitHub Open Source Site and copy the URL of the CIMTool repository to the clipboard as shown in the screenshot below.  Note that this will then be used in the **"Clone Git Repository"** dialog.
 
-<img src="/assets/img/egit-clone-repo-5.png"  border="1px" style="max-width:100%"/>
+![egit-clone-repo-5.png](../images/egit-clone-repo-5.png "EGit Clone Repo")
 
 ##### Step 5:
 Paste the copied URL into the **URI** field as shown next.  Doing so will then auto-populate the **Host** and **Repository Path** fields on the wizard page.  At this point you must select the **Protocol** which can be either ```https``` or ```git``` depending on preference. Then click the **Next** button.
 
-<img src="/assets/img/egit-clone-repo-6.png"  border="1px" style="max-width:75%"/>
+![egit-clone-repo-6.png](../images/egit-clone-repo-6.png "EGit Clone Repo")
 
 ##### Step 6:
 The next page of the **"Clone Git Repository"** dialog wizard will be displayed asking for you to select the branches to clone from the remote repository.  You can choose to select any number or even all branches that you may be interested in and click **Next**.  In this example screenshot all are selected.  
 
 > It should be noted that if you select all branches they will be made available to you later in **EGit** should you desire to switch to another development branch .  It is important to keep in mind that if you decide to switch to a different branch in **EGit** that any code changes in the branch on your local file system will be lost unless they are first stashed/shelved **before** switching to another branch. Stashed changes can later be reapplied when switching back to the original branch on your local file system. See [EGit Stash Support](https://wiki.eclipse.org/EGit/New_and_Noteworthy/2.0#Stash_Support) introduced in 2.0 of the plugin.  To utilize this functionality the **EGit** plugin update must be installed as outlined under the **Part 2: Install Additional Plugin Dependencies** section these instructions.
 
-<img src="/assets/img/egit-clone-repo-7.png"  border="1px" style="max-width:75%"/>
+![egit-clone-repo-7.png](../images/egit-clone-repo-7.png "EGit Clone Repo")
 
 ##### Step 7:
 On the final page of the dialog wizard you should select from the **Initial branch** drop down the specific branch you want to clone.  In this example the "release-1.10.0.RC2" branch has been selected.  Note that the branch can be changed later to one of the other branches that was included in the checked list but for now choose .   
 
 Finally, be sure on this wizard page to check the **"Import all existing projects after clone finishes"** and click the **"Finish"** button.
 
-<img src="/assets/img/egit-clone-repo-8.png"  border="1px" style="max-width:100%"/>
+![egit-clone-repo-8.png](../images/egit-clone-repo-8.png "EGit Clone Repo")
 
 
 ##### Step 8:
@@ -247,10 +247,10 @@ After completion of the cloning and auto-import of the CIMTool projects switch t
 If errors/problems do exist as illustrated in the second screenshot then continue on with **Step 9 & 10** of this procedure.
 
 - Successful import
-<img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
+![egit-clone-repo-14.png](../images/egit-clone-repo-14.png "EGit Clone Repo")
 
 - Import with errors
-<img src="/assets/img/egit-clone-repo-9.png"  border="1px" style="max-width:100%"/>
+![egit-clone-repo-9.png](../images/egit-clone-repo-9.png "EGit Clone Repo")
 
 
 ##### Step 9:
@@ -264,22 +264,22 @@ If it is necessary to add the JDK/JRE, perform the steps that follow to select a
 
 - First, from the Eclipse **"Preferences"** dialog select the **Add** button.
 
-  <img src="/assets/img/egit-clone-repo-10.png"  border="1px" style="max-width:100%"/>
+  ![egit-clone-repo-10.png](../images/egit-clone-repo-10.png "EGit Clone Repo")
 
 - Next, select the **"Standard VM"** JRE Types and click the **"Next"** button.
 
-  <img src="/assets/img/egit-clone-repo-11.png"  border="1px" style="max-width:100%"/>
+  ![egit-clone-repo-11.png](../images/egit-clone-repo-11.png "EGit Clone Repo")
 
 - Next, select the **"Directory..."** button and choose a JDK/JRE home directory on the file system corresponding to the version of the JDK/JRE desired.  Note that once selected the other fields in the dialog will auto-populate.  Just click the **"Finish"** button to add the JDK/JRE.  Once finished execute a "Clean all projects" from within Eclipse.
 
-  <img src="/assets/img/egit-clone-repo-12.png"  border="1px" style="max-width:100%"/>
+  ![egit-clone-repo-12.png](../images/egit-clone-repo-12.png "EGit Clone Repo")
 
 - Verify whether or not all errors have been removed from the projects or if a reduced set remains.  If errors remain an observation has been that they are commonly related to the Scala libraries as shown in the next screenshot.  
 
-  <img src="/assets/img/egit-clone-repo-13.png"  border="1px" style="max-width:100%"/>
+  ![egit-clone-repo-13.png](../images/egit-clone-repo-13.png "EGit Clone Repo")
 
 - Scala-related errors at this stage usually indicate that the steps outlined in the **"Installation of the ScalaIDE 3.0.0 Plugin"** section within the **"Part 2: Install Additional Plugin Dependencies"** of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.
 
   Once the steps have been (re)applied the remaining errors should then be resolved:
 
-  <img src="/assets/img/egit-clone-repo-14.png"  border="1px" style="max-width:100%"/>
+  ![egit-clone-repo-14.png](../images/egit-clone-repo-14.png "EGit Clone Repo")
