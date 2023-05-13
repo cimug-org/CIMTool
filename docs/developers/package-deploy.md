@@ -1,9 +1,12 @@
 # Packaging & Deployment Guide
-These instructions are for developers and maintainers of **CIMTool** that need to package and distribute the binaries as an **Eclipse Product**. Users of **CIMTool** generally don't need to be concerned with these details.
+These instructions are for developers and maintainers of **CIMTool** that need to package and distribute the binaries as an **Eclipse Product**. Most users of **CIMTool** don't need to be concerned with these details.
+
+!!! note
+
+    It is important to highlight that the set of **CIMTool** plugins is not distributed from a plugins update site as with other Eclipse plugins.  Rather, **CIMTool** is packaged and deployed as an **Eclipse Product**.
+
 
 ## Packaging & Deploying CIMTool as an Eclipse Product
-
-> When taking into consideration the packaging and deployment of **CIMTool** it is important to highlight that the set of **CIMTool** plugins is not distributed from a plugins update site as with other Eclipse plugins.  Rather, **CIMTool** is packaged and deployed as an **Eclipse Product**. The steps outlined in this set of instructions offer guidance as to the packaging and deployment process.
 
 ### Step 1:
 
@@ -16,20 +19,24 @@ Industry standard semantic versioning rules must to applied when determining the
 From within Eclipse:
 
 * Select the **CIMToolProduct** project and right mouse click and select the **Export** menu option as shown.
-<img src="/assets/img/deploy-cim-tool-2a.png"  border="1px" style="max-width:100%"/>
+
+![deploy-cim-tool-2a.png](../images/deploy-cim-tool-2a.png "Deploy CIMTool")
 
 * Next, select the **Eclipse product** export type and click **Next**.
-<img src="/assets/img/deploy-cim-tool-2b.png"  border="1px" style="max-width:100%"/>
+
+![deploy-cim-tool-2b.png](../images/deploy-cim-tool-2b.png "Deploy CIMTool")
 
 ### Step 3:
 
 The **Export** dialog screen will appear.  An existing **Eclipse product** configuration file must be selected for export.
 
 * To select a configuration click the **"Browse..."** button.
-<img src="/assets/img/deploy-cim-tool-3a.png"  border="1px" style="max-width:100%"/>
+
+![deploy-cim-tool-3a.png](../images/deploy-cim-tool-3a.png "Deploy CIMTool")
 
 * Select the existing production configuration as shown then click the **OK** button.
-<img src="/assets/img/deploy-cim-tool-3b.png"  border="1px" style="max-width:100%"/>
+
+![deploy-cim-tool-2b.png](../images/deploy-cim-tool-3b.png "Deploy CIMTool")
 
 ### Step 4:
 
@@ -56,16 +63,16 @@ Mac OSX 64bit | CIMTool-1.11.1-macosx.cocoa.x86_64.zip|Mac OSX 64-bit
 
 Once the export settings have been entered click the **Finish** button.
 
-<img src="/assets/img/deploy-cim-tool-4.png"  border="1px" style="max-width:100%"/>
+![deploy-cim-tool-4.png](../images/deploy-cim-tool-4.png "Deploy CIMTool")
 
 ### Step 5:
 
 During export, the progress of the export will appear in the Eclipse status bar in the lower right hand corner.
 
-<img src="/assets/img/deploy-cim-tool-5.png"  border="1px" style="max-width:100%"/>
+![deploy-cim-tool-5.png](../images/deploy-cim-tool-5.png "Deploy CIMTool")
 
 ### Step 6:
 
 When completed the exported archive file is ready to be released. This should be done at the time release notes are created and dropping the ```*.zip``` archive onto the area in the release notes shown next.
 
-<img src="/assets/img/release-binaries.png"  border="1px" style="max-width:100%"/>
+![release-binaries.png](../images/release-binaries.png "Release Binaries")

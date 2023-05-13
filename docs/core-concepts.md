@@ -9,10 +9,10 @@ The CIM is an information model copyrighted by the UCAIug (i.e. CIM Users Group)
 
   * [SCADA (Supervisory Control And Data Acquisition)](https://en.wikipedia.org/wiki/SCADA)
   * [EMS (Energy Management Systems)](https://en.wikipedia.org/wiki/Energy_management_system)
-  * Outage Management
-  * Capacity expansion planning
+  * [Outage Management](https://en.wikipedia.org/wiki/Outage_management_system)
+  * [Capacity expansion planning](https://en.wikipedia.org/wiki/Generation_expansion_planning)
   * Distribution automation
-  * Market trading
+  * [Electricity market trading](https://en.wikipedia.org/wiki/Electricity_market)
   * Teleprotection
 
 An essential artifact is the Unified Modeling Language (UML) schema for the CIM. The UML schema is a canonical ontology and defines all the classes, fields, and relationships between classes. 
