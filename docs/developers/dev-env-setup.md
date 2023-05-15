@@ -17,7 +17,7 @@ Though the **CIMTool** plug-ins themselves are configured and compiled for a lat
 ### Step 3: Extract Eclipse PDE
 The installation process for the Eclipse environment is straightforward in that it involves simply extracting the [eclipse-rcp-indigo-SR2-win32-x86_64.zip](https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-rcp-indigo-SR2-win32-x86_64.zip) archive downloaded in Step 1.  It should be noted that depending on where you choose to extract the archive on Windows, the process may fail due to path names being too long. If this occurs it is suggested you create a temp directory off of the root of one of your local drives (e.g. `C:\temp-indigo`) and extract the ZIP archive into that folder. The shorter base path should prevent "path too long" errors while extracting the archive. A folder called `\eclipse` will be created under the selected extract directory and will contain your eclipse environment. Feel free to relocate this new folder to a location on the file system where you prefer to host your Eclipse plug-ins development environment.
 
-??? warning "Dealing with newer Java versions"
+??? tip "Dealing with newer Java versions"
 
     If an attempt is made to launch the development environment directly via the ```eclipse.exe``` executable, the system default JRE/JDK is used and if this is a newer version of Java (e.g. Java 11) you will see a dialog similar to the following:
 
@@ -32,25 +32,25 @@ The installation process for the Eclipse environment is straightforward in that 
       C:\eclipse-committers-3.7.2\eclipse.exe -vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"
       ```
 
-      ![CIMToolShortcutForAltJava.png](./images/CIMToolShortcutForAltJava.png "Eclipse Shortcut for specifying alternate Java version")
+      ![CIMToolShortcutForAltJava.png](../images/CIMToolShortcutForAltJava.png "Eclipse Shortcut for specifying alternate Java version")
 
 ## Part 2:  Install/Update Additional Plugin Dependencies
 There are two additional plugin dependencies needed by **CIMTool** that are not pre-packaged with the Eclipse 3.7.2 Plugin Development Environment. These dependencies must be installed prior to importing the **CIMTool** project in Part 3 of these instructions. In addition, an update of the **EGit** plugin bundled with Eclipse is required if using **EGit** rather than external Git tooling to manage code changes in Git.
 
-### Install:  Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin
+### Install: Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin
 
 The installation of this plugin is performed manually using the steps as outlined. Be sure that your instance of Eclipse is **shut down** before performing the installation.
 
-##### Step 1:
+##### Step 1: Download Eclipse EMF
 Download the [Eclipse EMF (Core) 2.6.0 Plugin](https://github.com/cimug-org/CIMTool/blob/gh-pages/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.jar) and temporarily copy it to a local directory.
 
 
-##### Step 2:
-Locate the ```\dropins``` directory as illustrated in the screenshot below and drop the plugin jar into it.
+##### Step 2: Locate `\dropins`
+Locate the `\dropins` directory as illustrated in the screenshot below and drop the plugin jar into it.
 
 ![install-plugins-dropins-folder.png](../images/install-plugins-dropins-folder.png "dropins Folder")
 
-##### Step 3:
+##### Step 3: Verify Installation
 Last, launch Eclipse and verify that the plug-in was properly installed.  It should appear within the Plug-ins tab as shown.
 
 ![confirm-emf-2.6.0-plugin-installed.png](../images/confirm-emf-2.6.0-plugin-installed.png "Confirm EMF Plugin Installed")
@@ -59,7 +59,7 @@ Last, launch Eclipse and verify that the plug-in was properly installed.  It sho
 
 An older version of the Scala-IDE plugin (located at the [ScalaIDE for Eclipse Archive site](http://scala-ide.org/download/prev-stable.html)). The installation steps are:
 
-##### Step 1:
+##### Step 1: Download Scala-IDE Plugin
 Download the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip) file and extract it to a local directory on your file system.  The directory structure after extraction should look like:
 
 
@@ -74,50 +74,50 @@ Download the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scal
         content.jar (this is the archive file that will be selected in a later step)
 
 
-##### Step 2:
+##### Step 2: Install in Eclipse
 Next launch Eclipse and select the "**Install New Software...**" menu option as shown in the screenshot.
 
 ![install-scala-ide-plugin-0.png](../images/install-scala-ide-plugin-0.png "Install Scala IDE Plugin")
 
-##### Step 3:
+##### Step 3: Add Repository Dialog
 In the **Install** wizard dialog that is launched click "**Add...**" to launch the **Add Repository** dialog.
 
 ![install-scala-ide-plugin-1.png](../images/install-scala-ide-plugin-1.png "Install Scala IDE Plugin")
 
-##### Step 4:
+##### Step 4: Select Local update-site.zip
 In the **Add Repository** dialog click "**Local...**" button:
 
 ![install-scala-ide-plugin-2a.png](../images/install-scala-ide-plugin-2a.png "Install Scala IDE Plugin")
 
-Using the file chooser navigate to the location  where the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip) archive was extracted to and select the ```\site``` directory and click "**OK**".
+Using the file chooser navigate to the location  where the [update-site.zip](http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip) archive was extracted to and select the `\site` directory and click "**OK**".
 
 ![install-scala-ide-plugin-2b.png](../images/install-scala-ide-plugin-2b.png "Install Scala IDE Plugin")
 
-Finally, enter a name for this new local plugin repository in the **Name** field.  Note that the **Location** field should now reference the ```\site``` directory you just selected (i.e. the "root" of the file structure described in **step 1**):
+Finally, enter a name for this new local plugin repository in the **Name** field.  Note that the **Location** field should now reference the `\site` directory you just selected (i.e. the "root" of the file structure described in **step 1**):
 
 ![install-scala-ide-plugin-2c.png](../images/install-scala-ide-plugin-2c.png "Install Scala IDE Plugin")
 
-##### Step 5:
-Next, select the check boxes as shown in the **details** sections of the screen shot below.  Once selected click the "**Select All**" button and then "**Next**" to proceed to the next page of the installation wizard.
+##### Step 5: Select Items to Install
+Next, select the check boxes as shown in the **details** sections of the screen shot below. Once selected click the "**Select All**" button and then "**Next**" to proceed to the next page of the installation wizard.
 
 ![install-scala-ide-plugin-3.png](../images/install-scala-ide-plugin-3.png "Install Scala IDE Plugin")
 
-##### Step 6:
+##### Step 6: Install Details
 Continue by clicking "**Next**" to accept the items to be installed.
 
 ![install-scala-ide-plugin-4.png](../images/install-scala-ide-plugin-4.png "Install Scala IDE Plugin")
 
-##### Step 7:
+##### Step 7: Accept License
 On the **Review Licenses** page select the "I accept the terms of the license agreements" radio button and click the "**Finish**" button.
 
 ![install-scala-ide-plugin-5.png](../images/install-scala-ide-plugin-5.png "Install Scala IDE Plugin")
 
-##### Step 8:
+##### Step 8: Accept Unsigned Content Warning
 A security warning will be displayed.  Just click "**OK**" to continue.
 
 ![install-scala-ide-plugin-6.png](../images/install-scala-ide-plugin-6.png "Install Scala IDE Plugin")
 
-##### Step 9:
+##### Step 9: Restart
 If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "**Restart Now**" button and allow your instance of Eclipse to restart.
 
 ![install-scala-ide-plugin-7.png](../images/install-scala-ide-plugin-7.png "Install Scala IDE Plugin")
@@ -141,42 +141,42 @@ Release Version|Release Date|p2 repository URL|browse p2 repository|download p2 
 
 #### Steps to Install the EGit Plugin Update
 
-##### Step 1:
+##### Step 1: Install New Software Menu
 Again navigate to the **"Install New Software..."** menu option as shown.
 
 ![install-scala-ide-plugin-0.png](../images/install-scala-ide-plugin-0.png "Install Scala IDE Plugin")
 
-##### Step 2:
+##### Step 2: Open Repository Dialog
 In the **Install** wizard dialog that is launched click "**Add...**" to launch the **Add Repository** dialog.
 
 ![update-egit-plugin-1.png](../images/update-egit-plugin-1.png "Update EGit Plugin")
 
-##### Step 3:
+##### Step 3: Add Respository
 In the **Add Repository** dialog simply add the description and the **p2 repository URL** (previously located) into the fields as shown and select the **OK** button.
 
 ![update-egit-plugin-2.png](../images/update-egit-plugin-2.png "Update EGit Plugin")
 
-##### Step 4:
-Next, select the check boxes as shown in the screenshot.  Once selected click the  **Next** button to proceed to the next page of the installation wizard.
+##### Step 4: Select Checkboxes
+Next, select the checkboxes as shown in the screenshot.  Once selected click the  **Next** button to proceed to the next page of the installation wizard.
 
 ![update-egit-plugin-3.png](../images/update-egit-plugin-3.png "Update EGit Plugin")
 
-##### Step 5:
+##### Step 5: Accept Install Items
 Continue by clicking **Next** to accept the items to be installed.
 
 ![update-egit-plugin-4.png](../images/update-egit-plugin-4.png "Update EGit Plugin")
 
-##### Step 6:
+##### Step 6: Accept License
 On the **Review Licenses** page select the "I accept the terms of the license agreements" radio button and click the **Finish** button.
 
 ![update-egit-plugin-5.png](../images/update-egit-plugin-5.png "Update EGit Plugin")
 
-##### Step 7:
+##### Step 7: Accept Unsigned Content Warning
 If a security warning is displayed.  Just click **OK** to continue.
 
 ![install-scala-ide-plugin-6.png](../images/install-scala-ide-plugin-6.png "Install Scala IDE Plugin")
 
-##### Step 8:
+##### Step 8: Restart
 If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "**Restart Now**" button and allow your instance of Eclipse to restart.
 
 ![install-scala-ide-plugin-7.png](../images/install-scala-ide-plugin-7.png "Install Scala IDE Plugin")
@@ -195,7 +195,7 @@ If all was successful a final dialog is displayed asking if you want to restart 
 
 #### Cloning a CIMTool Branch Using the Eclipse EGit Plugin
 
-##### Step 1:
+##### Step 1: Open EGit
 
 - Start out by opening the **EGit** Perspective in Eclipse.
 
@@ -205,35 +205,37 @@ If all was successful a final dialog is displayed asking if you want to restart 
 
   ![egit-clone-repo-2.png](../images/egit-clone-repo-2.png "EGit Clone Repo")
 
-##### Step 2:
+##### Step 2: Select Clone Option
 
 Select the **"Clone a Git repository"** option as shown.
 
 ![egit-clone-repo-3.png](../images/egit-clone-repo-3.png "EGit Clone Repo")
 
-##### Step 3:
+##### Step 3: Select Repository Location
 Depending on your local Git installation you may or may not be shown the **"Check Home Directory"** dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous **Step 2** or you can simply check the **"Do not show again"** checkbox and click the OK button to accept the default Git repository location.
 
 ![egit-clone-repo-4.png](../images/egit-clone-repo-4.png "EGit Clone Repo")
 
-##### Step 4:
+##### Step 4: Copy CIMTool URL
 Next, in a browser locate the [CIMTool](https://github.com/cimug-org/CIMTool) GitHub Open Source Site and copy the URL of the CIMTool repository to the clipboard as shown in the screenshot below.  Note that this will then be used in the **"Clone Git Repository"** dialog.
 
 ![egit-clone-repo-5.png](../images/egit-clone-repo-5.png "EGit Clone Repo")
 
-##### Step 5:
+##### Step 5: Paste CIMTool URL
 Paste the copied URL into the **URI** field as shown next.  Doing so will then auto-populate the **Host** and **Repository Path** fields on the wizard page.  At this point you must select the **Protocol** which can be either ```https``` or ```git``` depending on preference. Then click the **Next** button.
 
 ![egit-clone-repo-6.png](../images/egit-clone-repo-6.png "EGit Clone Repo")
 
-##### Step 6:
+##### Step 6: Select Branches
 The next page of the **"Clone Git Repository"** dialog wizard will be displayed asking for you to select the branches to clone from the remote repository.  You can choose to select any number or even all branches that you may be interested in and click **Next**.  In this example screenshot all are selected.  
 
-> It should be noted that if you select all branches they will be made available to you later in **EGit** should you desire to switch to another development branch .  It is important to keep in mind that if you decide to switch to a different branch in **EGit** that any code changes in the branch on your local file system will be lost unless they are first stashed/shelved **before** switching to another branch. Stashed changes can later be reapplied when switching back to the original branch on your local file system. See [EGit Stash Support](https://wiki.eclipse.org/EGit/New_and_Noteworthy/2.0#Stash_Support) introduced in 2.0 of the plugin.  To utilize this functionality the **EGit** plugin update must be installed as outlined under the **Part 2: Install Additional Plugin Dependencies** section these instructions.
+!!! note
+
+    It should be noted that if you select all branches they will be made available to you later in **EGit** should you desire to switch to another development branch .  It is important to keep in mind that if you decide to switch to a different branch in **EGit** that any code changes in the branch on your local file system will be lost unless they are first stashed/shelved **before** switching to another branch. Stashed changes can later be reapplied when switching back to the original branch on your local file system. See [EGit Stash Support](https://wiki.eclipse.org/EGit/New_and_Noteworthy/2.0#Stash_Support) introduced in 2.0 of the plugin.  To utilize this functionality the **EGit** plugin update must be installed as outlined under the **Part 2: Install Additional Plugin Dependencies** section these instructions.
 
 ![egit-clone-repo-7.png](../images/egit-clone-repo-7.png "EGit Clone Repo")
 
-##### Step 7:
+##### Step 7: Select Initial Branch
 On the final page of the dialog wizard you should select from the **Initial branch** drop down the specific branch you want to clone.  In this example the "release-1.10.0.RC2" branch has been selected.  Note that the branch can be changed later to one of the other branches that was included in the checked list but for now choose .   
 
 Finally, be sure on this wizard page to check the **"Import all existing projects after clone finishes"** and click the **"Finish"** button.
@@ -241,7 +243,7 @@ Finally, be sure on this wizard page to check the **"Import all existing project
 ![egit-clone-repo-8.png](../images/egit-clone-repo-8.png "EGit Clone Repo")
 
 
-##### Step 8:
+##### Step 8: Switch to "Plug-in Development"
 After completion of the cloning and auto-import of the CIMTool projects switch to the **"Plug-in Development"** perspective.  If there are no errors/problems to address then the Projects listed should appear similar to the next screenshot and the **"Problems"** tab indicate no errors.  
 
 If errors/problems do exist as illustrated in the second screenshot then continue on with **Step 9 & 10** of this procedure.
@@ -253,10 +255,12 @@ If errors/problems do exist as illustrated in the second screenshot then continu
 ![egit-clone-repo-9.png](../images/egit-clone-repo-9.png "EGit Clone Repo")
 
 
-##### Step 9:
+##### Step 9: Fix Any Auto-Import Errors
 A common error after auto-import of the projects is the lack of a JDK/JRE matching that configured for the CIMTool plugin projects (currently a Java 6 JDK/JRE is needed).  
 
-> Note that a wide variety of versions of the **OpenJDK** starting with Java 6 can be download from the [Azul download site](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk).  The ```.msi``` installer for 64-bit Windows of the Zulu build of **OpenJDK Java 6** is located [here](https://cdn.azul.com/zulu/bin/zulu6.22.0.3-jdk6.0.119-win_x64.msi).
+!!! note
+
+    Note that a wide variety of versions of the **OpenJDK** starting with Java 6 can be download from the [Azul download site](https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk).  The ```.msi``` installer for 64-bit Windows of the Zulu build of **OpenJDK Java 6** is located [here](https://cdn.azul.com/zulu/bin/zulu6.22.0.3-jdk6.0.119-win_x64.msi).
 
 Such errors will always be present when importing CIMTool projects into a new Eclipse workspace.  If importing into an existing workspace that previously had Java 6 added as an **Installed JDK/JRE** then these errors will not appear in the projects.
 

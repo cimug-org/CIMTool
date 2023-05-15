@@ -1,5 +1,5 @@
 # Welcome
-[**CIMTool**](https://github.com/CIMug-org/CIMTool) is an open source tool for working with the [IEC Common Information Model (CIM)](https://www.iec.ch/dyn/www/f?p=103:7:0::::FSP_ORG_ID,FSP_LANG_ID:1273,25) to produce design artifacts such as database schemas, message exchange syntax, source code classes, and reference documentation.
+[**CIMTool**](https://github.com/CIMug-org/CIMTool) is an open source tool for working with the [Common Information Model (CIM)](https://www.iec.ch/dyn/www/f?p=103:7:0::::FSP_ORG_ID,FSP_LANG_ID:1273,25) to produce design artifacts such as database schemas, message exchange syntax, source code classes, and reference documentation. CIM is a UML model used in the electric power generation, transmission, and distribution domains.
 
 ![CIMToolScreenshot.png](./images/CIMToolScreenshot.png "CIMTool")
 
