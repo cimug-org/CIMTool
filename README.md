@@ -55,7 +55,7 @@ Format | Description | Pros | Cons
 The [CIMTool Tutorial](CIMTool_Tutorial.pdf) PDF provides a detailed overview on how to use CIMTool to create and edit profiles based on the Common Information Model. Additionally, it highlights many of CIMTool's core features. The PDF is an extract from a publicly available resource on the UCAIug website ([here](https://cimug.ucaiug.org/CIMGroups/CIMInterop/IEEE%20Tutorial/CIM%20Tutorial%20Master%20Slide%20Deck-2013.pdf?Mobile=1&Source=%2FCIMGroups%2FCIMInterop%2F%5Flayouts%2F15%2Fmobile%2Fviewa%2Easpx%3FList%3D19ff6048%2De79f%2D46d7%2D8825%2Ddd1416ad3397%26View%3D022235bd%2D8a45%2D4bc7%2D98fc%2D9145d38d1795%26wdFCCState%3D1)).
 
 Note that some content is dated:
-* pp. 9-10: The information on this slide is no longer relevant.  See [CIMTool Installation & Setup](https://github.com/CIMug-org/CIMTool/blob/gh-pages/cimtool-installation-and-setup.md) for the latest information.
+* pp. 9-10: The information on this slide is no longer relevant.  See [CIMTool Installation & Setup](https://cimtool.ucaiug.io/getting-started/) for the latest information.
 * pp. 22-23: The EA screenshots are from a much older release.
 * p. 55: CIMTool's output options have been greatly expanded.
 * p. 56: CIMTool also generates MS Word compatible RTF documents.
@@ -67,9 +67,9 @@ Note that some content is dated:
 
 ## CIMTool Development
 
-  For developers interested in contributing to the **CIMTool** Project detailed instructions on installing and setting up an Eclipse 3.7 (Indigo) Plug-ins Development Environment can be found at [CIMTool Development Environment Setup](https://github.com/ucaiug/CIMTool/blob/gh-pages/dev-env-setup.md)
+  For developers interested in contributing to the **CIMTool** Project detailed instructions on installing and setting up an Eclipse 3.7 (Indigo) Plug-ins Development Environment can be found at [CIMTool Development Environment Setup](https://cimtool.ucaiug.io/developers/dev-env-setup/)
 
-  Instructions on packaging and deployment of **CIMTool** as an **Eclipse Product** can be  found at [CIMTool Packaging & Deployment Guide](https://github.com/ucaiug/CIMTool/blob/gh-pages/cimtool-deploy-instructions.md)
+  Instructions on packaging and deployment of **CIMTool** as an **Eclipse Product** can be  found at [CIMTool Packaging & Deployment Guide](https://cimtool.ucaiug.io/developers/package-deploy/)
 
   Note that these instructions are purely for those interested in participating in the development of **CIMTool**. They do not describe standard use of the tool for creating profiles.
 
@@ -82,7 +82,7 @@ Note that some content is dated:
 
 ## Installation & Setup
 
-For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://github.com/ucaiug/CIMTool/blob/gh-pages/cimtool-installation-and-setup.md).
+For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://cimtool.ucaiug.io/getting-started/).
 
 ## License
 
