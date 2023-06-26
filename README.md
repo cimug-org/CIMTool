@@ -4,10 +4,6 @@
 
 ![image](https://user-images.githubusercontent.com/63370413/186975970-e0afe4f1-1b09-4d61-b060-577b255db027.png)
 
-## The CIMTool Wiki
-
-  The original [CIMTool wiki](https://wiki.cimtool.org/), though not actively maintained with new content, is a great resource for information. The [download](https://wiki.cimtool.org/Download.html) page hosts releases <= 1.9.7 and the [CIMTool Topics](https://wiki.cimtool.org/CIMTool_Topics.html) page provides a wealth of articles on topics that may be of interest.
-
 ## CIMTool Discussion Forums
 
   The are two avenues for discussion for **CIMTool**.  Though not as active as it once was you can join the CIMTool Google Group by registering [here](https://groups.google.com/g/cimtool). Alternatively, you can post direct to the new [discussions](https://github.com/ucaiug/CIMTool/discussions) section of this repository.
