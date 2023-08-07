@@ -4,7 +4,6 @@ Bundle-Name: ScalaUtil
 Bundle-SymbolicName: au.com.langdale.scalautil
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.scala-ide.scala.library;bundle-version="2.9.0"
 Bundle-ClassPath: .,
  lib/ojdbc14_g.jar,
  lib/sdoapi.jar,
@@ -19,4 +18,4 @@ Export-Package: au.com.langdale,
  oracle.spatial.geometry,
  oracle.sql,
  org.slf4j
-Require-Bundle: org.scala-ide.scala.library
+Automatic-Module-Name: au.com.langdale.scalautil

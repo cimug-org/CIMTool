@@ -10,4 +10,5 @@ Require-Bundle: au.com.langdale.cimtoole,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.junit
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-20
+Automatic-Module-Name: CIMToolTest

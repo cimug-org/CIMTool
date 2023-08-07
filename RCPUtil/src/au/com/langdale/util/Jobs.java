@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -102,12 +102,12 @@ public class Jobs {
 					// First perform the clean
 	                try {
 	                    monitor.beginTask("Cleaning and building project '" + project.getName() + "'", 1);
-	                    project.build(IncrementalProjectBuilder.CLEAN_BUILD, new SubProgressMonitor(monitor, 1));
+	                    project.build(IncrementalProjectBuilder.CLEAN_BUILD, SubMonitor.convert(monitor, 1));
 	                } finally {
 	                    monitor.done();
 	                }
 	                // Then a build on the project
-					workspace.build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.INCREMENTAL_BUILD, false, new SubProgressMonitor(monitor, 10000));
+					workspace.build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.INCREMENTAL_BUILD, false, SubMonitor.convert(monitor, 10000));
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
