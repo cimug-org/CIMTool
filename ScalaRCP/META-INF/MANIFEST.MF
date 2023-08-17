@@ -3,13 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ScalaRCP
 Bundle-SymbolicName: au.com.langdale.scalarcp
 Bundle-Version: 1.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-20
 Require-Bundle: au.com.langdale.rcputil;bundle-version="1.0.0",
  au.com.langdale.scalautil;bundle-version="1.0.0",
  org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.jface.text,
  org.eclipse.core.runtime,
- org.eclipse.help,
- org.scala-ide.scala.library;bundle-version="2.9.0"
+ org.eclipse.help
 Export-Package: au.com.langdale.eclipse
+Automatic-Module-Name: au.com.langdale.scalarcp

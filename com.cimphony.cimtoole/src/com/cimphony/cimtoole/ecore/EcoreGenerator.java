@@ -491,7 +491,7 @@ public class EcoreGenerator extends SchemaGenerator {
 			EEnum eEnum = coreFactory.createEEnum();
 			eEnum.setName(klass.getName());
 
-			Integer j = new Integer(0);
+			Integer j = Integer.valueOf(0);
 
 			for (Iterator<EAttribute> ix = klass.getEAttributes().iterator(); ix.hasNext();) {
 				EAttribute attr = ix.next();
