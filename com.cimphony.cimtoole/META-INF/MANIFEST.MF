@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.5.0",
  org.eclipse.ui.forms;bundle-version="3.5.0"
 Import-Package: au.com.langdale.kena,
  com.hp.hpl.jena.graph,
- com.hp.hpl.jena.vocabulary
+ com.hp.hpl.jena.vocabulary,
+ javax.xml.namespace
 Export-Package: com.cimphony.cimtoole,
  com.cimphony.cimtoole.buildlet,
  com.cimphony.cimtoole.ecore,

@@ -35,7 +35,7 @@ public class CIMToolEcoreUtil {
 		XSD_TO_CLASS_MAP.put(XSD.xdouble, double.class);
 		XSD_TO_CLASS_MAP.put(XSD.xboolean, boolean.class);
 		XSD_TO_CLASS_MAP.put(XSD.xbyte, byte.class);
-		XSD_TO_CLASS_MAP.put(XSD.QName, javax.xml.namespace.QName.class);
+		XSD_TO_CLASS_MAP.put(XSD.QName, String.class);
 		XSD_TO_CLASS_MAP.put(XSD.dateTime, java.util.Date.class);
 		XSD_TO_CLASS_MAP.put(XSD.base64Binary, byte[].class);
 		XSD_TO_CLASS_MAP.put(XSD.hexBinary, byte[].class);
@@ -50,8 +50,8 @@ public class CIMToolEcoreUtil {
 		XSD_TO_CLASS_MAP.put(XSD.gYear, java.util.Date.class);
 		XSD_TO_CLASS_MAP.put(XSD.gYearMonth, java.util.Date.class);
 		XSD_TO_CLASS_MAP.put(XSD.anyURI, java.lang.Object.class);
-		XSD_TO_CLASS_MAP.put(XSD.duration, javax.xml.datatype.Duration.class);
-		XSD_TO_CLASS_MAP.put(XSD.NOTATION, javax.xml.namespace.QName.class);
+		//XSD_TO_CLASS_MAP.put(XSD.duration, javax.xml.datatype.Duration.class);
+		XSD_TO_CLASS_MAP.put(XSD.NOTATION, String.class);
 		
 		for (Resource k : XSD_TO_CLASS_MAP.keySet()){
 			XSD_URI_TO_CLASS_MAP.put(k.getURI(), XSD_TO_CLASS_MAP.get(k));

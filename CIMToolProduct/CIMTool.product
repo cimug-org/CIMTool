@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 1.11.1" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.11.1" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="CIMTool" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.0.0" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
-      <image path="about.png"/>
+      <image path="cimtool-about.png"/>
       <text>
          CIMTool is an open source tool that supports the Common Information Model (CIM) standards 
 used in the electric power industry.  It is potentially useful for other semantic applications too.
@@ -15,15 +15,13 @@ used in the electric power industry.  It is potentially useful for other semanti
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog
-      </programArgs>
       <vmArgs>-Xms40m -Xmx4G
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="icon-16.png" i32="icon-32.png" i48="icon-48.png" i64="icon-64.png"/>
+   <windowImages i16="icons/cimtool-v2_16x16.png" i32="icons/cimtool-v2_32x32.png" i48="icons/cimtool-v2_48x48.png" i64="icons/cimtool-v2_64x64.png" i128="icons/cimtool-v2_128x128.png" i256="icons/cimtool-v2_256x256.png"/>
 
    <splash
       location="au.com.langdale.cimtool.product"
@@ -31,19 +29,24 @@ used in the electric power industry.  It is potentially useful for other semanti
       startupMessageRect="50,260,400,20"
       startupForegroundColor="000000" />
    <launcher name="CIMTool">
-      <linux icon="icon.xmp"/>
-      <win useIco="false">
+      <linux icon="cimtool-v2.xpm"/>
+      <macosx icon="cimtool-v2.icns"/>
+      <win useIco="true">
+         <ico path="cimtool-v2.ico"/>
          <bmp
-            winSmallHigh="icon-16.bmp"
-            winSmallLow="icon-16-8.bmp"
-            winMediumHigh="icon-32.bmp"
-            winMediumLow="icon-32-8.bmp"
-            winLargeHigh="icon-48.bmp"
-            winLargeLow="icon-48-8.bmp"/>
+            winSmallHigh="cimtool-v2_16x16x32.bmp"
+            winSmallLow="cimtool-v2_16x16x08.bmp"
+            winMediumHigh="cimtool-v2_32x32x32.bmp"
+            winMediumLow="cimtool-v2_32x32x08.bmp"
+            winLargeHigh="cimtool-v2_48x48x32.bmp"
+            winLargeLow="cimtool-v2_48x48x08.bmp"
+            winExtraLargeHigh="cimtool-v2_256x256x32.bmp"/>
       </win>
    </launcher>
 
+
    <vm>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-20</windows>
    </vm>
 
    <license>
@@ -86,23 +89,20 @@ See the GNU Lesser General Public License for more details.
       <plugin id="javax.annotation"/>
       <plugin id="javax.el-api"/>
       <plugin id="javax.inject"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.servlet.jsp"/>
       <plugin id="javax.servlet.jsp-api"/>
       <plugin id="javax.xml"/>
       <plugin id="org.apache.batik.constants"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
       <plugin id="org.apache.batik.util"/>
-      <plugin id="org.apache.commons.el"/>
       <plugin id="org.apache.commons.io"/>
       <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.logging"/>
+      <plugin id="org.apache.felix.gogo.command"/>
+      <plugin id="org.apache.felix.gogo.runtime"/>
+      <plugin id="org.apache.felix.gogo.shell"/>
       <plugin id="org.apache.felix.scr"/>
-      <plugin id="org.apache.jasper"/>
       <plugin id="org.apache.jasper.glassfish"/>
-      <plugin id="org.apache.lucene"/>
-      <plugin id="org.apache.lucene.analysis"/>
       <plugin id="org.apache.lucene.analysis-common"/>
       <plugin id="org.apache.lucene.analysis-smartcn"/>
       <plugin id="org.apache.lucene.core"/>
@@ -110,6 +110,7 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.apache.xml.resolver"/>
       <plugin id="org.apache.xml.serializer"/>
       <plugin id="org.apache.xmlgraphics"/>
+      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -120,26 +121,14 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.hpux.ia64_32" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.solaris.sparc" fragment="true"/>
-      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
-      <plugin id="org.eclipse.core.net.linux.x86" fragment="true"/>
-      <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.net.win32" fragment="true"/>
-      <plugin id="org.eclipse.core.net.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
-      <plugin id="org.eclipse.core.resources.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.core.resources.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.core.variables"/>
       <plugin id="org.eclipse.debug.core"/>
       <plugin id="org.eclipse.debug.ui"/>
@@ -196,16 +185,15 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
-      <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
-      <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.gef"/>
       <plugin id="org.eclipse.help"/>
-      <plugin id="org.eclipse.help.appserver"/>
       <plugin id="org.eclipse.help.base"/>
       <plugin id="org.eclipse.help.ui"/>
       <plugin id="org.eclipse.help.webapp"/>
+      <plugin id="org.eclipse.jdt.annotation"/>
       <plugin id="org.eclipse.jdt.core.compiler.batch"/>
+      <plugin id="org.eclipse.jem.util"/>
       <plugin id="org.eclipse.jetty.http"/>
       <plugin id="org.eclipse.jetty.io"/>
       <plugin id="org.eclipse.jetty.jndi"/>
@@ -214,6 +202,7 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.jetty.server"/>
       <plugin id="org.eclipse.jetty.servlet"/>
       <plugin id="org.eclipse.jetty.util"/>
+      <plugin id="org.eclipse.jetty.util.ajax"/>
       <plugin id="org.eclipse.jetty.webapp"/>
       <plugin id="org.eclipse.jetty.xml"/>
       <plugin id="org.eclipse.jface"/>
@@ -221,41 +210,29 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.ltk.core.refactoring"/>
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
+      <plugin id="org.eclipse.nebula.cwt"/>
+      <plugin id="org.eclipse.nebula.widgets.cdatetime"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.osgi.util"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
-      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
-      <plugin id="org.eclipse.swt.cocoa.macosx" fragment="true"/>
-      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.aix.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.hpux.ia64_32" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.s390" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.s390x" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.solaris.sparc" fragment="true"/>
-      <plugin id="org.eclipse.swt.gtk.solaris.x86" fragment="true"/>
-      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.team.core"/>
       <plugin id="org.eclipse.team.ui"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.browser"/>
-      <plugin id="org.eclipse.ui.carbon" fragment="true"/>
-      <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.console"/>
       <plugin id="org.eclipse.ui.editors"/>
       <plugin id="org.eclipse.ui.forms"/>
+      <plugin id="org.eclipse.ui.genericeditor"/>
       <plugin id="org.eclipse.ui.ide"/>
       <plugin id="org.eclipse.ui.ide.application"/>
       <plugin id="org.eclipse.ui.navigator"/>
       <plugin id="org.eclipse.ui.navigator.resources"/>
+      <plugin id="org.eclipse.ui.themes"/>
       <plugin id="org.eclipse.ui.views"/>
       <plugin id="org.eclipse.ui.views.properties.tabbed"/>
       <plugin id="org.eclipse.ui.win32" fragment="true"/>
@@ -263,6 +240,8 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.urischeme"/>
       <plugin id="org.eclipse.wst.common.core"/>
+      <plugin id="org.eclipse.wst.common.emf"/>
+      <plugin id="org.eclipse.wst.common.emfworkbench.integration"/>
       <plugin id="org.eclipse.wst.common.environment"/>
       <plugin id="org.eclipse.wst.common.frameworks"/>
       <plugin id="org.eclipse.wst.common.frameworks.ui"/>
@@ -281,8 +260,8 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.wst.xsdeditor.doc.user"/>
       <plugin id="org.eclipse.xsd"/>
       <plugin id="org.eclipse.xsd.edit"/>
-      <plugin id="org.mortbay.jetty.server"/>
-      <plugin id="org.mortbay.jetty.util"/>
+      <plugin id="org.hamcrest.core"/>
+      <plugin id="org.junit"/>
       <plugin id="org.osgi.service.cm"/>
       <plugin id="org.osgi.service.component"/>
       <plugin id="org.osgi.service.device"/>
@@ -340,5 +319,15 @@ See the GNU Lesser General Public License for more details.
       <feature id="org.eclipse.emf.doc" version="2.6.0.v20100914-1218"/>
    </features>
 
+   <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="1" />
+   </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>
