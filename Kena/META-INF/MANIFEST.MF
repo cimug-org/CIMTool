@@ -143,7 +143,6 @@ Export-Package: au.com.langdale.inference,
  com.hp.hpl.jena.vocabulary.test,
  com.hp.hpl.jena.xmloutput,
  com.hp.hpl.jena.xmloutput.impl,
- javax.xml.namespace,
  org.apache.xerces.util
 Automatic-Module-Name: au.com.langdale.kena
 Import-Package: org.eclipse.core.runtime,
