@@ -3,6 +3,45 @@ This section contains CIMTool release notes and can be used for quick reference 
 as ones you can find on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
+### Release 1.12.0 [21-Feb-2024]
+
+CIMTool 1.12.0 is a minor release with some UI enhancements in usability and select defect fixes.
+
+Defect [Issue #26](https://github.com/cimug-org/CIMTool/issues/26):
+CIMTool's *.legacy-rdfs-augmented profile builder does not correctly generate the multiplicity of the secondary (i.e. inverse association) within the profile that it produces. This was discovered as part of the IEC 61970-452 pulblished profile whereby the multiplicity for the Terminal.TieFlow inverse association 0..2 should have been generated as 0..2 but instead was generated as 0..n.
+
+Defect [Issue #77](https://github.com/cimug-org/CIMTool/issues/77):
+This fix addresses a regression issue introduced in the 1.11.0 release of CIMTool. In that release the modifications to the XSLT builder for generating XSDs the CIMTool feature for allowing multiple profiles per class no longer properly generated two distinct ComplexType(s) in the XSD.
+
+Enhancement [Issue #78](https://github.com/cimug-org/CIMTool/issues/78):
+A new builder was introduced to bring CIMTool RDFS-based profiles into alignment with the latest agreed upon RDFS2020 extensions/changes.
+
+Defect [Issue #79](https://github.com/cimug-org/CIMTool/issues/79):
+CIMTool's Stereotypes tab and UI does not correctly display all stereotypes imported from XMI/EAP schemas.
+
+Enhancement [Issue #80](https://github.com/cimug-org/CIMTool/issues/80):
+CIMTool currently only supports the generation of the older RDFS profile format (e.g. *.legacy-rdfs & *.legacy-rdfs-augmented) and is not current with regard to the latest extensions/additions that were agreed upon and implemented within CimConteXtor and CimSyntaxGen tooling as the new "RDFS2020" profile format. A *.legacy-cimcontextor.rdfs RDFS is introduced here that produces a variant that is a cross between CIMTool's existing *.legacy-rdfs-augmented builder and the new *.rdfs-2020.rdfs builder associated with [Issue #78](https://github.com/cimug-org/CIMTool/issues/78).
+
+Enhancement [Issue #81](https://github.com/cimug-org/CIMTool/issues/81):
+CIMTool requires enhancements to support specifying when a top-level concrete class is to utilize an rdf:ID (local) or rdf:about (global) identifier within the profile. The introduction of the <<Description>> stereotype on a concrete class is used to flags this distinction in CimConteXtor. To represent the equivalent within CIMTool a new http://langdale.com.au/2005/UML#description stereotype has been introduced that can be assigned by an end user via one of the following methods:
+
+* The "Stereotypes" tab:
+![302474266-488eae4f-f495-474e-817a-de3e0b720465](https://github.com/cimug-org/CIMTool/assets/3385173/de317690-fb4d-4209-8ff2-8919f4047b5d)
+
+
+* The "Restrictions" tab:
+![302474342-2c1856d8-f3f5-4ecd-82e9-f7fd0d46b25b](https://github.com/cimug-org/CIMTool/assets/3385173/668ccaa7-5e9c-4e09-8568-e93b816ab412)
+
+
+Enhancement [Issue #82](https://github.com/cimug-org/CIMTool/issues/82):
+Currently, when the "Add" buttons are used to add selected class(s) or properties of a class to the profiles CIMTool defaults the cardinality on all member attributes to 1. Additionally, when selecting/adding a class to the profile that is intended to be concrete extra navigation to the "Restriction" tab is required to set it to "concrete". To provide enhanced usability and save time, the following updates have been made to the "Add/Remove" tab:
+
+* A new checkbox labeled: "Set selected classes to concrete when added to the profile" was introduced. When the checkbox is in the checked state then the group of selected classes added to the profile will automatically be set as "concrete" in the profile.
+* A new checkbox labeled: "Set selected properties to required when added to the profile" was introduced. When the checkbox is in the unchecked state then all attributes within a selected class or all attributes directly selected will default to a min cardinality of 0.
+
+![image](https://github.com/cimug-org/CIMTool/assets/3385173/18678b9d-9732-4370-b6a5-01ec8651bbbe)
+
+
 ### Release 1.11.1 [14-Feb-2023]
 
 CIMTool 1.11.1 is a minor release with some UI enhancements in usability and select defect fixes.
