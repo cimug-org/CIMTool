@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
+<?eclipse version="4.28"?>
 <plugin>
 
    <extension
@@ -7,10 +7,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="CIMTool 1.12.0">
+            name="CIMTool">
          <property
                name="windowImages"
-               value="icon-16.png,icon-32.png,icon-48.png,icon-64.png">
+               value="icons/cimtool-v2_16x16.png,icons/cimtool-v2_32x32.png,icons/cimtool-v2_48x48.png,icons/cimtool-v2_64x64.png,icons/cimtool-v2_128x128.png,icons/cimtool-v2_256x256.png">
          </property>
          <property
                name="aboutText"
@@ -18,7 +18,7 @@
          </property>
          <property
                name="aboutImage"
-               value="about.png">
+               value="cimtool-about.png">
          </property>
          <property
                name="startupProgressRect"
@@ -30,11 +30,15 @@
          </property>
          <property
                name="appName"
-               value="CIMTool 1.12.0">
+               value="CIMTool">
          </property>
          <property
                name="startupForegroundColor"
                value="000000">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
          </property>
       </product>
    </extension>

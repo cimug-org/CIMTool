@@ -81,7 +81,7 @@ public abstract class XMLReaderBase implements XMLReader {
         if (!features.containsKey(parm1)) {
             throw new SAXNotRecognizedException(parm1);
         }
-        features.put(parm1, new Boolean(parm2));
+        features.put(parm1, Boolean.valueOf(parm2));
     }
 
 

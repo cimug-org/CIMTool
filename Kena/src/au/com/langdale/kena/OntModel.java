@@ -312,7 +312,7 @@ public class OntModel {
 	}
 
 	public void add(FrontsNode subject, FrontsNode prop, int value) {
-		graph.add(Triple.create(subject.asNode(), prop.asNode(), Node.createLiteral(LiteralLabelFactory.create(new Integer(value)))));
+		graph.add(Triple.create(subject.asNode(), prop.asNode(), Node.createLiteral(LiteralLabelFactory.create(Integer.valueOf(value)))));
 	}
 	
 	public void remove(FrontsNode subject, FrontsNode prop, Node value) {

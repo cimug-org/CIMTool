@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
+Automatic-Module-Name: au.com.langdale.cimtoole.help
 Bundle-Name: CIMTool Help Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole.help;singleton:=true
 Bundle-Version: 1.12.0

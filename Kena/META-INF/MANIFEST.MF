@@ -4,7 +4,7 @@ Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
 Bundle-Version: 3.3.1.qualifier
 Bundle-Vendor: Langdale Consultants
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-20
 Bundle-ClassPath: kena.jar,
  lib/arq-2.8.4.jar,
  lib/icu4j-71.1.jar,
@@ -144,3 +144,6 @@ Export-Package: au.com.langdale.inference,
  com.hp.hpl.jena.xmloutput,
  com.hp.hpl.jena.xmloutput.impl,
  org.apache.xerces.util
+Automatic-Module-Name: au.com.langdale.kena
+Import-Package: org.eclipse.core.runtime,
+ org.eclipse.swt.graphics

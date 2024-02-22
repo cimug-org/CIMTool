@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: CIMUtil
 Bundle-SymbolicName: au.com.langdale.cimutil
 Bundle-Version: 1.12.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-20
 Require-Bundle: au.com.langdale.kena
 Bundle-ClassPath: cimutil.jar,
  lib/poi-3.0.1-FINAL-20070705.jar,
@@ -54,3 +54,4 @@ Export-Package: au.com.langdale.cim,
  org.apache.poi.poifs.storage,
  org.apache.poi.util
 Bundle-Vendor: Langdale Consultants
+Automatic-Module-Name: au.com.langdale.cimutil

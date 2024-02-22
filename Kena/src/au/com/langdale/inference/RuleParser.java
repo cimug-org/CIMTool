@@ -11,13 +11,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.TypeMapper;
@@ -61,10 +62,17 @@ public class RuleParser {
     private static InputStream openURL(String pathname) throws IOException,
 			MalformedURLException {
 		InputStream stream;
-		if( pathname.startsWith("/"))
+		if( pathname.startsWith("/")) {
 			stream = RuleParser.class.getResourceAsStream(pathname);
-		else 
-			stream = new URL(pathname).openStream();
+			
+		}
+		else {
+			Path path = Paths.get(pathname);
+			URI uri = path.toUri();
+			URL url = uri.toURL();
+			stream = url.openStream();
+			
+		}
 		
 		if( stream == null )
 			throw new IOException("resource could not be found:" + pathname);

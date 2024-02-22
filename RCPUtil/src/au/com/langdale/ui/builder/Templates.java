@@ -974,6 +974,10 @@ public class Templates {
 	public static Template Grid(GroupTemplate... groups) {
 		return new GridTemplate(groups);
 	}
+	
+	public static Template GridArray(GroupTemplate[] groups) {
+		return new GridTemplate(groups);
+	}
 
 	public static Template Grid(GroupTemplate a) {
 		return new GridTemplate(new GroupTemplate[] { a });

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
+<?eclipse version="4.28"?>
 <plugin>
    <extension-point id="au.com.langdale.cimtoole.profile_buildlet" name="CIMTool Profile Buildlets" schema="schema/profile_buildlet.exsd"/>
    <extension-point id="au.com.langdale.cimtoole.model_parser" name="CIMTool Model Parsers" schema="schema/model_parser.exsd"/>
@@ -497,6 +497,9 @@
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
    </extension>
 
 </plugin>
