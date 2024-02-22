@@ -220,7 +220,9 @@ public class Hierarchy extends FurnishedEditor {
 								Stack(
 									Span(
 										Label("class", "Restrict this class."),
-										CheckBox("concrete", "Make this class concrete")
+										Row(
+												CheckBox("concrete", "Make this class concrete"), 
+												CheckBox("description", "Set concrete class as descriptor"))
 									),
 									Span(
 										Label("prop", "Restrict this property."),	
@@ -296,7 +298,7 @@ public class Hierarchy extends FurnishedEditor {
 					else {
 					    showStackLayer("assoc");
 					}
-					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype());
+					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype() && !enode.isEnumerated());
 					refreshCardinality(enode);
 					
 				}
@@ -306,7 +308,9 @@ public class Hierarchy extends FurnishedEditor {
 						showStackLayer("class");
 						showStackLayer("bases");
 						boolean concrete = tnode.hasStereotype(UML.concrete);
+						boolean description = tnode.hasStereotype(UML.description);
 						setButtonValue("concrete", concrete).setEnabled(tnode.getSubject().isURIResource());
+						setButtonValue("description", description).setEnabled(concrete);
 						refreshCardinality(tnode);
 					}
 					else
@@ -330,11 +334,17 @@ public class Hierarchy extends FurnishedEditor {
 					if( ! selection ) {
 						tnode.setMinCardinality(0);
 						tnode.setMaxCardinality(Integer.MAX_VALUE);
+						// When the class is made abstract we auto de-select the description stereotype
+						// (i.e. an abstract class can not be declared as a descriptor).
+						tnode.setStereotype(UML.description, selection); 
+					} else {
+						boolean description = getButton("description").getSelection();
+						tnode.setStereotype(UML.description, description); 
 					}
 					tnode.setStereotype(UML.concrete, selection);
+					//
 					if( selection )
 						updateCardinality(tnode);
-						
 				}
 				node.structureChanged();
 			}
