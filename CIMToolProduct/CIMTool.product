@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 1.11.1" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.11.1" useFeatures="false" includeLaunchers="true">
+<product name="CIMTool 1.12.0" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="1.12.0" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="about.png"/>
@@ -40,7 +40,6 @@ used in the electric power industry.  It is potentially useful for other semanti
             winLargeLow="icon-48-8.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
