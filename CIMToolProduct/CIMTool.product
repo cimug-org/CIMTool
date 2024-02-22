@@ -44,7 +44,6 @@ used in the electric power industry.  It is potentially useful for other semanti
       </win>
    </launcher>
 
-
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-20</windows>
    </vm>
