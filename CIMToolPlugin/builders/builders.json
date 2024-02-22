@@ -52,5 +52,29 @@
         "style": "profile-doc-rtf",
         "datetime": "2022-08-01T00:00:00Z",
         "ext": "rtf"
+    },
+    "legacy-rdfs": {
+        "type": "TRANSFORM",
+        "style": "legacy-rdfs",
+        "datetime": "2024-01-29T00:00:00Z",
+        "ext": "legacy.rdfs"
+    },
+    "legacy-rdfs-augmented": {
+        "type": "TRANSFORM",
+        "style": "legacy-rdfs-augmented",
+        "datetime": "2024-01-29T00:00:00Z",
+        "ext": "legacy-augmented.rdfs"
+    },
+    "rdfs-augmented-cimcontextor": {
+        "type": "TRANSFORM",
+        "style": "rdfs-augmented-cimcontextor",
+        "datetime": "2024-01-29T00:00:00Z",
+        "ext": "augmented-cimcontextor.rdfs"
+    },
+    "rdfs-2020": {
+        "type": "TRANSFORM",
+        "style": "rdfs-2020",
+        "datetime": "2024-01-30T00:00:00Z",
+        "ext": "rdfs-2020.rdfs"
     }
 }

@@ -35,6 +35,7 @@ public class ProfileClass {
 	private OneToManyMap props;
 	private OntResource baseClass;
 	private Set classes;
+	private boolean compoundBase;
 	private boolean enumeratedBase;
 	private final OntResource defaultBase;
 	
@@ -92,7 +93,33 @@ public class ProfileClass {
 //			System.out.println("Profile with no schema class:");
 //			System.out.println( clss.describe());
 //		}
+		compoundBase = baseClass.hasProperty(UML.hasStereotype, UML.compound);
 		enumeratedBase = baseClass.hasProperty(UML.hasStereotype, UML.enumeration);
+		if (baseClass != null) {
+			if (enumeratedBase) {
+				if (baseClass.hasProperty(UML.hasStereotype)) {
+					ResIterator stereotypes = baseClass.listProperties(UML.hasStereotype);
+					while (stereotypes.hasNext()) {
+						OntResource stereo = stereotypes.nextResource();
+						if (!clss.hasProperty(UML.hasStereotype, stereo))
+							clss.addProperty(UML.hasStereotype, stereo);
+					}
+				}
+			} else {
+				ResIterator clazzes = baseClass.listSuperClasses(true);
+				while (clazzes.hasNext()) {
+					OntResource clazz = clazzes.nextResource();
+					if (clazz.hasProperty(UML.hasStereotype)) {
+						ResIterator stereotypes = clazz.listProperties(UML.hasStereotype);
+						while (stereotypes.hasNext()) {
+							OntResource stereo = stereotypes.nextResource();
+							if (!clss.hasProperty(UML.hasStereotype, stereo))
+								clss.addProperty(UML.hasStereotype, stereo);
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -264,6 +291,15 @@ public class ProfileClass {
 			label = prop.getLocalName();
 		child.addLabel(label, null);
 		
+		if (prop.hasProperty(UML.hasStereotype)) {
+			ResIterator stereotypes = prop.listProperties(UML.hasStereotype);
+			while (stereotypes.hasNext()) {
+				OntResource stereo = stereotypes.nextResource();
+				if (!child.hasProperty(UML.hasStereotype, stereo))
+					child.addProperty(UML.hasStereotype, stereo);
+			}
+		}
+		
 		OntResource res = model.createAllValuesFromRestriction(null, prop, child);
 		clss.addSuperClass(res);
 		props.put(prop, res);
@@ -393,6 +429,10 @@ public class ProfileClass {
 
 	public boolean isEnumerated() {
 		return enumeratedBase;
+	}
+	
+	public boolean isCompound() {
+		return compoundBase;
 	}
 	
 	public boolean isReference() {
