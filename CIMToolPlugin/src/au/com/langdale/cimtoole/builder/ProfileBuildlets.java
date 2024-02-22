@@ -4,6 +4,7 @@
  */
 package au.com.langdale.cimtoole.builder;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -205,6 +206,7 @@ public class ProfileBuildlets extends Task {
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
 				serializer.setBaseURI(tree.getNamespace());
+				serializer.setOntologyURI(tree.getOntologyNamespace());
 				
 				// Set available copyright headers for use during profile generation.
 				serializer.setCopyrightMultiLine(Info.getMultiLineCopyrightText(file.getProject()));
@@ -448,10 +450,10 @@ public class ProfileBuildlets extends Task {
 			new TransformBuildlet(null, "xml"), //
 					new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl", false), //
 					new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
-					new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), //
+					//new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), // Replaced by an XSLT equivalent
 					new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
 					new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
-					new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), //
+					//new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), // Replaced by an XSLT equivalent
 					new CopyBuildlet(Format.TURTLE.toFormat(), "ttl") //
 			};
 

@@ -25,7 +25,6 @@ import org.xml.sax.SAXParseException;
 
 import au.com.langdale.cimtoole.builder.ConsistencyChecks.ProfileChecker;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
-import au.com.langdale.cimtoole.builder.ProfileBuildlets.LegacyRDFSBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.SimpleOWLBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
@@ -55,10 +54,10 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				new TransformBuildlet(null, "xml"), //
 				new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl", false), //
 				new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
-				new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), //
+				//new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), // Replaced by an XSLT equivalent
 				new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
 				new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
-				new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), //
+				//new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), // Replaced by an XSLT equivalent
 				new CopyBuildlet(Format.TURTLE.toFormat(), "ttl"), //
 				new ValidationBuildlet(), //
 				new SplitValidationBuildlet(), //
