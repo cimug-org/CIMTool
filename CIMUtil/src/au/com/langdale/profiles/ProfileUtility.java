@@ -187,7 +187,7 @@ public class ProfileUtility {
 	 */
 	public static class PropertySpec {
 		public final OntResource prop;
-		public final boolean required, functional, reference;
+		public final boolean required, functional, reference, compound;
 		public final OntResource base_range, base_domain; // FIXME: base_range should be OntResource
 		public final String label, comment;
 
@@ -196,6 +196,7 @@ public class ProfileUtility {
 			required = info.isRequired();
 			functional = info.isFunctional();
 			reference = range_profile != null && range_profile.isReference();
+			compound = range_profile != null && range_profile.isCompound();
 
 			// repair domain and range
 			base_domain = selectType(prop.getDomain(), info.getDomainProfile().getBaseClass());
@@ -213,7 +214,7 @@ public class ProfileUtility {
 		
 		public PropertySpec(OntResource prop, OntResource domain, OntResource range) {
 			this.prop = prop;
-			required = reference = false;
+			required = reference = compound = false;
 			functional = prop.isFunctionalProperty() || prop.isDatatypeProperty();
 			base_domain = selectType(prop.getDomain(), domain);
 			base_range = selectType(prop.getRange(), range);
@@ -232,6 +233,7 @@ public class ProfileUtility {
 			functional = lhs.functional || rhs.functional;
 			reference = lhs.reference || rhs.reference;
 			required = lhs.required || rhs.required;
+			compound = lhs.compound || rhs.compound;
 			base_range = mergeRange(prop.getRange(), lhs.base_range, rhs.base_range);
 			
 			// take the profile label if both sides agree

@@ -51,14 +51,14 @@
 </xsl:template>
 	
 <xsl:template match="a:Message">
-{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:value-of select="@name"/>}{\fs24 {\*\bkmkend <xsl:value-of select="@name"/>}}<xsl:apply-templates mode="annotate-type" /><xsl:apply-templates />
+{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/>}{\fs24 {\*\bkmkend <xsl:value-of select="@name"/>}}<xsl:apply-templates mode="annotate-type" /><xsl:apply-templates />
 </xsl:template>
 
 <xsl:template match="a:Root">
-{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:value-of select="@name"/>}{\fs24 {\*\bkmkend <xsl:value-of select="@name"/>}}<xsl:call-template name="complex_type" />
+{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/>}{\fs24 {\*\bkmkend <xsl:value-of select="@name"/>}}<xsl:call-template name="type_definition" />
 </xsl:template>
-		
-<xsl:template name="complex_type"><xsl:apply-templates mode="annotate-type" />
+
+<xsl:template name="type_definition"><xsl:if test="a:SuperType">\par\fs20 Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy" /></xsl:if><xsl:apply-templates mode="annotate-type" />
 \par\pard\plain \sb120\qj\fs20\lang1033 
 <xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated">{\par\b\fs20 Native Members\par}
 \par
@@ -101,6 +101,10 @@
 </xsl:if>	
 </xsl:template>
 
+<xsl:template match="a:SuperType" mode="inheritance_hierarchy">{\field{\*\fldinst {\fs20 HYPERLINK  \\l "<xsl:value-of select="@name"/>"}}{\fldrslt {\fs20\ul\cf1 <xsl:value-of select="@name"/>}}}
+<xsl:variable name="supertype_name" select="@name"/><xsl:if test="/*/node()[@name = $supertype_name]/a:SuperType"> :: <xsl:apply-templates select="/*/node()[@name = $supertype_name]/a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
+</xsl:template>
+
 <xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain">
 {
 \trowd \trgaph70 
@@ -112,7 +116,7 @@
 \cellx4125
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
-{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/> \cell}
+{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'"><item>* </item></xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose> \cell}
 {\pard \intbl \sb120\sa120\fs16 {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="@type"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="@type"/>}}} \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:apply-templates mode="annotate-table-row" /> \cell}
@@ -131,7 +135,7 @@
 \cellx4125
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
-{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/> \cell}
+{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@xstype"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:apply-templates mode="annotate-table-row" /> \cell}
@@ -160,7 +164,7 @@
 \cellx4125
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
-{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/> \cell}
+{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="@type"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="@type"/>}}} \cell}
 {\pard \intbl \sb120\sa120\fs16 see {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="../@name"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="../@name"/>}}} \cell}
@@ -179,7 +183,7 @@
 \cellx4125
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
-{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/> \cell}
+{\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 <xsl:value-of select="@xstype"/> \cell}
 {\pard \intbl \sb120\sa120\fs16 see {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="../@name"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="../@name"/>}}} \cell}
@@ -188,7 +192,7 @@
 </xsl:template>
 
 <xsl:template match="a:ComplexType">
-{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:value-of select="@name"/>}{\fs32 {\*\bkmkend <xsl:value-of select="@name"/>}}<xsl:call-template name="complex_type" />
+{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:value-of select="@name"/>}{\fs32 {\*\bkmkend <xsl:value-of select="@name"/>}}<xsl:call-template name="type_definition" />
 </xsl:template>
 
 <xsl:template match="a:CompoundType">
@@ -255,6 +259,14 @@
 </xsl:template>
 
 <!-- Templates for annotations supporting complex types... -->
+<xsl:template match="a:Stereotype">
+<xsl:if test="contains(., '#description')"><xsl:value-of select="concat('(', @label, ') ')"/></xsl:if>
+</xsl:template>
+
+<xsl:template name="process-attribute-stereotypes">
+<xsl:if test="count(a:Stereotype[not(contains(., '#attribute')) and not(contains(., '#byreference'))]) > 0"> (<xsl:for-each select="a:Stereotype[not(contains(., '#attribute')) and not(contains(., '#byreference'))]"><xsl:value-of select="@label"/><xsl:if test="position()!=last()"><xsl:value-of select="', '"/></xsl:if></xsl:for-each>)</xsl:if>
+</xsl:template>
+
 <xsl:template match="a:Comment" mode="annotate-type">
 {\par\pard\plain \sb120\qj\fs20\lang1033 <xsl:call-template name="replace-non-ascii"><xsl:with-param name="text" select="." /></xsl:call-template>}
 </xsl:template>

@@ -721,7 +721,7 @@
 				<!--  SimpleType(s) only contain a dataType attribute representing modelReference -->
 				<item>"modelReference": "<xsl:value-of select="@dataType"/>"</item>
 			</xsl:when>
-			<xsl:when test="self::a:EnumeratedType|self::a:ComplexType|self::a:Root">
+			<xsl:when test="self::a:EnumeratedType|self::a:CompoundType|self::a:ComplexType|self::a:Root">
 				<!--  ComplexType(s) and Root(s) only contain a baseClass attribute representing modelReference -->
 				<item>"modelReference": "<xsl:value-of select="@baseClass"/>"</item>
 			</xsl:when>

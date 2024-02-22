@@ -44,6 +44,14 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 		public String getPackageName() {
 			return extractPackageName(getBase());
 		}
+		
+		/**
+		 * Provide a name for the package or document that contains this
+		 * definition.
+		 */
+		public OntResource getPackage() {
+			return extractPackage(getBase());
+		}
 
 	}
 	
@@ -58,6 +66,11 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 		else {
 			return "";
 		}
+	}
+	
+	private OntResource extractPackage(OntResource subject) {
+		OntResource defin = subject.getResource(RDFS.isDefinedBy);
+		return defin;
 	}
 
 	/**

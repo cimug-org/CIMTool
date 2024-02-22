@@ -53,13 +53,6 @@ Once imported the CIM UML will be stored in the **Schema** folder of the project
 There is typically one schema per project, although there are cases where there may be more than one (e.g. if you have custom extensions or multiple CIM UML versions for a single Contextual Profile).
 
 ## Using the `.eap` File Directly
-An alternative to exporting from Enterprise Architect as an XMI file is to directly import the Enterprise Architect Project (`.eap`) file into **CIMTool**. This eliminates the need to export anything from Enterprise Architect before importing to **CIMTool**.
+An alternative to exporting from Enterprise Architect as an XMI file is to directly import the Enterprise Architect Project (`.eap`) file into **CIMTool**. This eliminates the need to export anything from Enterprise Architect before importing to **CIMTool**. 
 
-Some preparation is required to make this work.
-
-The Enterprise Architect project must be converted from Microsoft Access Jet3 format to Jet4 format. The conversion can be done using Microsoft Access and is only required once.
-
-Enterprise Architect must be configured to use Jet4. Go to Tools | Options | General | Use Jet 4.0 to do this.
-Full instructions are found in [Sparx Systems deployment manual, section 7](http://www.sparxsystems.com.au/downloads/whitepapers/EA_Deployment.pdf).
-
-To import an Enterprise Architect project (Jet4) file into a **CIMTool** project, use the Schema Import wizard as usual but select a file type of `.eap` when browsing for the file. You must close the project in Enterprise Architect before importing to **CIMTool**.
+If you have hard requirement to support unicode in your UML model and are using an .eap project file rather than an .eapx file refer to the [README](https://github.com/CIMug-org/CIMTool) page for further information and links to the EA Sparx documentation on converting your project file to support unicode. Note that this is not necessary in most scenarios when utilizing a CIM EA project file.

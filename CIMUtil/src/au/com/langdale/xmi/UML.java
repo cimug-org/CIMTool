@@ -36,6 +36,7 @@ public class UML {
 	public final static Resource base = ResourceFactory.createResource(NS + "base");	
 	public final static Resource datatype = ResourceFactory.createResource(NS + "datatype");
 	public final static Resource cimdatatype = ResourceFactory.createResource(NS + "cimdatatype");
+	public final static Resource enumliteral = ResourceFactory.createResource(NS + "enum");
 	public final static Resource enumeration = ResourceFactory.createResource(NS + "enumeration");
 	public final static Resource union = ResourceFactory.createResource(NS + "union");
 	public final static Resource extendedBy = ResourceFactory.createResource(NS + "extendedby");
@@ -46,6 +47,7 @@ public class UML {
 	public final static Resource concrete = ResourceFactory.createResource(NS + "concrete");
 	public final static Resource compound = ResourceFactory.createResource(NS + "compound");
 	public final static Resource preserve = ResourceFactory.createResource(NS + "preserve");
+	public final static Resource description = ResourceFactory.createResource(NS + "description");
 	
 	// stereotype the two forms of aggregation, each in two directions
 	public final static Resource ofComposite = ResourceFactory.createResource(NS + "ofComposite");
@@ -95,6 +97,7 @@ public class UML {
 		
 		// well known stereotypes
 		model.createIndividual(enumeration.getURI(), Stereotype).addLabel("Enumeration", null);
+		model.createIndividual(enumliteral.getURI(), Stereotype).addLabel("enum", null);
 		model.createIndividual(union.getURI(), Stereotype).addLabel("Union", null);
 		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("Extended By", null);
 		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension Class", null);
@@ -102,18 +105,18 @@ public class UML {
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
 		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
 		model.createIndividual(datatype.getURI(), Stereotype).addLabel("Datatype", null);
-		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
 		model.createIndividual(attribute.getURI(), Stereotype).addLabel("Attribute", null);
 		model.createIndividual(xmlelement.getURI(), Stereotype).addLabel("XML Element", null);
 		model.createIndividual(xmlattribute.getURI(), Stereotype).addLabel("XML Attribute", null);		
 		model.createIndividual(byreference.getURI(), Stereotype).addLabel("By Reference", null);
 		model.createIndividual(concrete.getURI(), Stereotype).addLabel("Concrete", null);
-		model.createIndividual(compound.getURI(), Stereotype).addLabel("Compound Datatype", null);
+		model.createIndividual(compound.getURI(), Stereotype).addLabel("Compound", null);
 		model.createIndividual(preserve.getURI(), Stereotype).addLabel("Preserve", null);
 		model.createIndividual(ofComposite.getURI(), Stereotype).addLabel("Of Composite", null);
 		model.createIndividual(ofAggregate.getURI(), Stereotype).addLabel("Of Aggregate", null);
 		model.createIndividual(compositeOf.getURI(), Stereotype).addLabel("Composite Of", null);
 		model.createIndividual(aggregateOf.getURI(), Stereotype).addLabel("Aggregate Of", null);
+		model.createIndividual(description.getURI(), Stereotype).addLabel("Description", null);
 		
 		model.createAnnotationProperty(baseuri.getURI());
 		model.createAnnotationProperty(baseprefix.getURI());
