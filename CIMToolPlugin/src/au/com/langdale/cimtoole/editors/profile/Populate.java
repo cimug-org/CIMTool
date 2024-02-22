@@ -106,6 +106,11 @@ public class Populate extends FurnishedEditor {
 							Group( 
 								TreeViewer("left", true), 
 								TreeViewer("right", true)),
+							Group(
+								Row(
+									Span(ViewCheckBox("concrete", "Set selected classes to concrete when added to the profile")),
+									Span(ViewCheckBox("required", "Set selected attributes to required when added to the profile"))
+								)),
 							Group( 
 								Right(
 									Row(
@@ -168,27 +173,32 @@ public class Populate extends FurnishedEditor {
 			
 			private Picker allLeft = new Picker() {
 				protected void handle(Node node) {
+					boolean arePropertiesRequired = getButton("required").getSelection();
+					boolean isConcrete = getButton("concrete").getSelection();
 					SortedNode target = getProfileNode();
 					Collection args = target.profileExpandArgs(node);
 					if(args.size() < 50 || confirm(node.toString(), args.size())) {
-						target.profileAddAllDeep(args); 
+						target.profileAddAllDeep(args, isConcrete, arePropertiesRequired); 
 					}
 				}
 			};
 			
 			private Picker anonLeft = new Picker() {
 				protected void handle(Node node) {
+					boolean arePropertiesRequired = getButton("required").getSelection();
 					SortedNode target = getProfileNode();
-					target.profileAddAnon(node); 
+					target.profileAddAnon(node, false, arePropertiesRequired); 
 				}
 			};
 			
 			private Picker toLeft = new Picker() {
 				protected void handle(Node node) {
+					boolean arePropertiesRequired = getButton("required").getSelection();
+					boolean isConcrete = getButton("concrete").getSelection();
 					SortedNode target = getProfileNode();
 					Collection args = target.profileExpandArgs(node);
 					if(args.size() < 50 || confirm(node.toString(), args.size())) {
-						target.profileAddAll(args); 
+						target.profileAddAll(args, isConcrete, arePropertiesRequired); 
 					}
 				}
 			};

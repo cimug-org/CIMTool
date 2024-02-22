@@ -53,6 +53,10 @@ public class ProfileModel extends JenaTreeModelBase {
 		initModels();
 	}
 	
+	public String getOntologyNamespace() {
+		return (this.backgroundModel != null && this.backgroundModel.getValidOntology() != null ? this.backgroundModel.getValidOntology().getURI() : "");
+	}
+	
 	@Override
 	public void setOntModel(OntModel profileModel) {
 		super.setOntModel(null);
@@ -161,14 +165,15 @@ public class ProfileModel extends JenaTreeModelBase {
 			getSubject().setComment(text, null);
 		}
 		
-		protected abstract void create(Node node);
+		protected abstract void create(Node node, boolean isConcrete, boolean arePropertiesRequired);
 
-		protected void createAnon(Node node) {
-			create(node);
+		protected void createAnon(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+			// Anon classes are never concrete...
+			create(node, false, arePropertiesRequired);
 		}
 		
-		protected void createDeep(Node node) {
-			create(node);
+		protected void createDeep(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+			create(node, isConcrete, arePropertiesRequired);
 		}
 
 		protected abstract void destroy();
@@ -184,20 +189,20 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 		
 
-		public void profileAddAll(Collection args) {
+		public void profileAddAll(Collection args, boolean isConcrete, boolean arePropertiesRequired) {
 			for (Iterator it = args.iterator(); it.hasNext();)
-				create((Node) it.next());
+				create((Node) it.next(), isConcrete, arePropertiesRequired);
 			structureChanged();
 		}
 
-		public void profileAddAllDeep(Collection args) {
+		public void profileAddAllDeep(Collection args, boolean isConcrete, boolean arePropertiesRequired) {
 			for (Iterator it = args.iterator(); it.hasNext();)
-				createDeep((Node) it.next());
+				createDeep((Node) it.next(), isConcrete, arePropertiesRequired);
 			getRoot().structureChanged();
 		}
 		
-		public void profileAddAnon(Node node) {
-			createAnon(node);
+		public void profileAddAnon(Node node, boolean isConcrete, boolean isRequired) {
+			createAnon(node, false, isRequired);
 			structureChanged();
 		}
 
@@ -248,17 +253,17 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * Create a new named class derived from the given class.
 		 */
 		@Override
-		protected void create(Node node) {
+		protected void create(Node node, boolean isConcrete, boolean isRequired) {
 			OntResource base = node.getSubject();
 			if( base.isClass())
-				getRefactory().createProfileClass(base);
+				getRefactory().createProfileClass(base, isConcrete);
 		}
 		
 		@Override
-		protected void createDeep(Node node) {
+		protected void createDeep(Node node, boolean isConcrete, boolean isRequired) {
 			OntResource base = node.getSubject();
 			if( base.isClass()) {
-				getRefactory().createCompleteProfile(base, true);
+				getRefactory().createCompleteProfile(base, isConcrete, isRequired);
 			}
 		}
 
@@ -363,6 +368,10 @@ public class ProfileModel extends JenaTreeModelBase {
 		public boolean isEnumerated() {
 			return profile.isEnumerated();
 		}
+		
+		public boolean isCompound() {
+			return profile.isCompound();
+		}
 
 		public ProfileClass getProfile() {
 			return profile;
@@ -431,10 +440,10 @@ public class ProfileModel extends JenaTreeModelBase {
 			
 			@Override
 			public Class getIconClass() {
-				if( profile.isReference())
-					return ReferenceNode.class;
-				else if(prop.isDatatypeProperty())
+				if(prop.isDatatypeProperty())
 					return AttributeNode.class;
+				else if(profile.isReference())
+					return ReferenceNode.class;
 				else
 					return ElementNode.class;
 			}
@@ -535,7 +544,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 			
 			@Override
-			protected void create(Node node) {
+			protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
 				OntResource base = node.getSubject();
 				if( base.isClass() && ! isDatatype()) {
 					OntResource member = getRefactory().findOrCreateNamedProfile(base);
@@ -544,7 +553,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 			
 			@Override
-			protected void createAnon(Node node) {
+			protected void createAnon(Node node, boolean isConcrete, boolean arePropertiesRequired) {
 				OntResource base = node.getSubject();
 				if( base.isClass() && ! isDatatype()) {
 					profile.createUnionMember(base);
@@ -626,7 +635,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			}
 			
 			@Override
-			protected void create(Node node) {
+			protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
 				// can't add children
 			}
 		}
@@ -639,10 +648,10 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * Create a child element in the underlying ontology.
 		 */
 		@Override
-		protected void create(Node node) {
+		protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
 			OntResource base = node.getSubject();
 			if( base.isProperty()) {
-				profile.createAllValuesFrom(base, true);
+				profile.createAllValuesFrom(base, arePropertiesRequired);
 			}
 			else if( base.hasRDFType(profile.getBaseClass())) {
 				profile.addIndividual(base);
@@ -650,10 +659,10 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 		
 		@Override
-		protected void createDeep(Node node) {
+		protected void createDeep(Node node, boolean isConcrete, boolean arePropertiesRequired) {
 			OntResource prop = node.getSubject();
 			if( prop.isProperty()) {
-				profile.createAllValuesFrom(prop, true);
+				profile.createAllValuesFrom(prop, arePropertiesRequired);
 				getRefactory().createDefaultRange(profile, prop);
 			}
 		}
@@ -705,12 +714,14 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		@Override
 		public Class getIconClass() {
-			if(hasStereotype(UML.concrete))
-				return RootElementNode.class;
-			else if(hasStereotype(UML.compound))
+			if(hasStereotype(UML.compound))
 				return CompoundElementNode.class;
 			else if(hasStereotype(UML.enumeration))
 				return EnumElementNode.class;
+			else if(hasStereotype(UML.concrete) && hasStereotype(UML.description))
+				return DescriptorRootElementNode.class;
+			else if(hasStereotype(UML.concrete))
+				return RootElementNode.class;
 			else if( profile.getSubject().isAnon())
 				return AnonTypeNode.class;
 			else
@@ -814,7 +825,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 		
 		@Override
-		protected void create(Node node) {
+		protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
 			OntResource type = node.getSubject();
 			if( ! type.isClass())
 				return;
@@ -834,6 +845,12 @@ public class ProfileModel extends JenaTreeModelBase {
 	 *
 	 */
 	public interface ReferenceNode {}
+
+	/**
+	 * A marker class returned for concrete type nodes that also are marked as 'descriptors'; 
+	 *
+	 */
+	public interface DescriptorRootElementNode {}
 	
 	/**
 	 * A marker class returned for concrete type nodes; 

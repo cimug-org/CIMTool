@@ -211,6 +211,14 @@ public class Refactory extends ProfileUtility {
 		if( clss == null ) {
 			clss = getModel().createClass(getNamespace() + base.getLocalName());
 			clss.addSuperClass(base);
+			if (base.hasProperty(UML.hasStereotype)) {
+				ResIterator stereotypes = base.listProperties(UML.hasStereotype);
+				while (stereotypes.hasNext()) {
+					OntResource stereo = stereotypes.nextResource();
+					if (!clss.hasProperty(UML.hasStereotype, stereo))
+						clss.addProperty(UML.hasStereotype, stereo);
+				}
+			}
 			add(clss, base, true);
 		}
 		return clss;
@@ -229,7 +237,7 @@ public class Refactory extends ProfileUtility {
 		return map.findRelatedProfiles(base, subclass, unique);
 	}
 
-	public OntResource createProfileClass(OntResource base) {
+	public OntResource createProfileClass(OntResource base, boolean isConcrete) {
 		String uri = getNamespace() + base.getLocalName();
 		OntResource probe = getModel().createResource(uri);
 		
@@ -241,6 +249,9 @@ public class Refactory extends ProfileUtility {
 		
 		OntResource child = getModel().createClass(probe.getURI());
 		child.addSuperClass(base);
+		// Concrete stereotypes are applicable only to non-enumerated classes
+		if (isConcrete && !base.hasProperty(UML.hasStereotype, UML.enumeration))
+			child.addProperty(UML.hasStereotype, UML.concrete);
 		add(child, base, ix == 1);
 		return child;
 	}
@@ -253,23 +264,23 @@ public class Refactory extends ProfileUtility {
 		}
 	}
 
-	public void createAllProperties(ProfileClass profile, boolean required) {
+	public void createAllProperties(ProfileClass profile, boolean arePropertiesRequired) {
 		ResIterator it = getModel().listSubjectsWithProperty(RDFS.domain, profile.getBaseClass());
 		while( it.hasNext()) {
 			OntResource prop = it.nextResource();
 			if( prop.isFunctionalProperty()) {
-				profile.createAllValuesFrom(prop, required);
+				profile.createAllValuesFrom(prop, arePropertiesRequired);
 				createDefaultRange(profile, prop);
 			}
 		}
 	}
 	
-	public void createCompleteProfile(OntResource base, boolean required) {
-		createAllProperties(createProfileClass(base), required);
+	public void createCompleteProfile(OntResource base, boolean isConcrete, boolean arePropertiesRequired) {
+		createAllProperties(createProfileClass(base, isConcrete), arePropertiesRequired);
 		
 	}
 
-	public void createAllProperties(OntResource clss, boolean required) {
-		createAllProperties(new ProfileClass(clss, getNamespace()), required);
+	public void createAllProperties(OntResource clss, boolean arePropertiesRequired) {
+		createAllProperties(new ProfileClass(clss, getNamespace()), arePropertiesRequired);
 	}
 }
