@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMToolEnvironment
 Bundle-SymbolicName: au.com.langdale.cimtool.product;singleton:=true
-Bundle-Version: 1.12.0
+Bundle-Version: 2.0.0
 Bundle-ClassPath: CIMToolProduct
 Bundle-Vendor: Langdale Consultants
 Automatic-Module-Name: au.com.langdale.cimtool.product
