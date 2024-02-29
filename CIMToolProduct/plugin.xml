@@ -14,7 +14,7 @@
          </property>
          <property
                name="aboutText"
-               value="CIMTool is an open source tool that supports the Common Information Model (CIM) standards &#x0A;used in the electric power industry.  It is potentially useful for other semantic applications too.">
+               value="CIMTool is an open source tool that supports the Common Information Model (CIM) standards used in the electric power industry.  It is potentially useful for other semantic applications too.">
          </property>
          <property
                name="aboutImage"
