@@ -32,7 +32,7 @@ In summary, UML concepts are translated to OWL as follows:
   * A UML Tag translates to a similarly named OWL AnnotationProperty in the uml: namespace.
 
 ## CIMTool Iconography
-CIMTool presents the OWL model with UML-like icons. (These symbols changed in version 1.2.4 to better represent UML composition and aggregation.)
+CIMTool presents the OWL model with UML-like icons.
 
 | Icon                           | UML                                   | OWL                            | Note                                 |
 | ------------------------------ | ------------------------------------- | ------------------------------ | ------------------------------------ |
@@ -41,7 +41,7 @@ CIMTool presents the OWL model with UML-like icons. (These symbols changed in ve
 | ![Superclass](superclass.png)  | Generalizes                           | inverse subClassOf             | READ: *rhs* is a superclass of *lhs* |
 | ![Association](association.png)| Association                           | ObjectProperty                 | An unrestricted property.            |
 | ![Functional](functional.png)  | Unidirectional Association            | FunctionalProperty             | A single-valued property.            |
-| ![Inverse](inverse.png)        | Unidirectional Association (reversed) | InveserFunctionalProperty      | A property whose inverse is single-valued. |
+| ![Inverse](inverse.png)        | Unidirectional Association (reversed) | InverseFunctionalProperty      | A property whose inverse is single-valued. |
 | ![Aggregate](aggregate.png)    | Aggregation                           | ObjectProperty with annotation | A custom annotation property uml:hasStereotype with value uml:aggregateOf is attached to the property definition. |
 | ![Composite](composite.png)    | Composition                           | ObjectProperty with annotation | As above, but the annotation value is uml:compositeOf. |
 
