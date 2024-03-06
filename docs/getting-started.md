@@ -17,7 +17,7 @@ Once installed on your system you can execute `java -version` from a command pro
 
     ![cmdPromptJavaVersion.png](./images/cmdPromptJavaVersion.png "Check Java version using command prompt")
 
-    In this example, we see from the results that on this system the default JRE/JDK is a version of Java 20 (i.e. build 20.0.2+9). There may be other versions of Java installed on the system but we know from the output that it will be the Java 8 installation that will be used to execute **CIMTool** by default if we double click the installed executable located at `D:\CIMTool-2.0.0\CIMTool\CIMTool.exe` in our example.
+    In this example, we see from the results that on this system the default JRE/JDK is a version of Java 20 (i.e. build 20.0.2+9). There may be other versions of Java installed on the system but we know from the output that it will be the Java 20 installation that will be used to execute **CIMTool** by default if we double click the installed executable located at `D:\CIMTool-2.0.0\CIMTool\CIMTool.exe` in our example.
 
 ### Setting up Alternate JVM
 If the command line results indicate a different default Java version, then either a Windows shortcut or .bat script can be created so that an alternate (non-default) JVM can be used for launching **CIMTool**. These options can be configured in the following manner.
