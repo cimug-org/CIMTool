@@ -56,10 +56,10 @@ The **x64** architecture is a backwards-compatible extension of **x86**. It prov
 
 OS | Example Archive Name | Comments
 ------|------|-----------
-Windows 64-bit | CIMTool-1.11.1-win32.win32.x86_64.zip | For 64-bit Java (Windows 7, 8, 10, 11)
-Windows 32-bit | CIMTool-1.11.1-win32.win32.x86.zip | For 32-bit windows or 64 bit windows running 32 bit Java.
-Linux | CIMTool-1.11.1-linux.gtk.x86_64.zip |Linux 64-bit
-Mac OSX 64bit | CIMTool-1.11.1-macosx.cocoa.x86_64.zip|Mac OSX 64-bit
+Windows 64-bit | CIMTool-2.0.0win32.win32.x86_64.zip | For 64-bit Java (Windows 7, 8, 10, 11)
+Windows 32-bit | CIMTool-2.0.0win32.win32.x86.zip | For 32-bit windows or 64 bit windows running 32 bit Java.
+Linux | CIMTool-2.0.0linux.gtk.x86_64.zip |Linux 64-bit
+Mac OSX 64bit | CIMTool-2.0.0macosx.cocoa.x86_64.zip|Mac OSX 64-bit
 
 Once the export settings have been entered click the **Finish** button.
 

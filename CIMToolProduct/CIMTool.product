@@ -6,8 +6,7 @@
    <aboutInfo>
       <image path="cimtool-about.png"/>
       <text>
-         CIMTool is an open source tool that supports the Common Information Model (CIM) standards 
-used in the electric power industry.  It is potentially useful for other semantic applications too.
+         CIMTool is an open source tool that supports the Common Information Model (CIM) standards used in the electric power industry.  It is potentially useful for other semantic applications too.
       </text>
    </aboutInfo>
 
@@ -15,6 +14,8 @@ used in the electric power industry.  It is potentially useful for other semanti
    </configIni>
 
    <launcherArgs>
+      <!-- Uncomment this if we want the Windows command line console to be started on launch -->
+      <!-- <programArgs>-consoleLog</programArgs> -->
       <vmArgs>-Xms40m -Xmx4G
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
@@ -49,7 +50,7 @@ used in the electric power industry.  It is potentially useful for other semanti
    </vm>
 
    <license>
-        <url>http://wiki.cimtool.org</url>
+        <url>https://cimtool.ucaiug.io/</url>
         <text>
    This software is Copyright 2005-2023 Langdale Consultants 
 except where otherwise stated. 

@@ -1,14 +1,32 @@
 # Release Notes
 This section contains CIMTool release notes and can be used for quick reference of what has changed in each version. Note that these notes are the same
-as ones you can find on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
+as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
+
+
+### Release 2.0.0 [06-Mar-2024]
+
+CIMTool 2.0.0 is a major release and establishes a new 2.x release line for the next generation of features and functionality within CIMTool.
+
+Enhancement [Issue #91](https://github.com/cimug-org/CIMTool/issues/91):
+Migration of CIM Tool from the Eclipse 3.x to the Eclipse 4.x platform (e4) was done. This migration introduces no new functionality but instead addresses the need to re-baseline CIMTool to e4.  This new 2.x release line of CIMTool will serve as the basis for future functionality, enhancements, and roadmap planning.  Initial benefits of this release include:
+
+- CIMTool can now execute using the latest version of Java - i.e. Java 20 
+- UI rendering and responsiveness is much faster in the e4 platform when executing large profiling tasks
+- Much more significant heap space - 4GB max configured OOTB
+- Rebranding (i.e. new icons and splash screen have been introduced to reflect the new 2.0.0 release line)
+
+
+Defect [Issue #75](https://github.com/cimug-org/CIMTool/issues/75):
+This fix addresses a Java memory error when importing and display large ```.xmi``` files.
+
 
 ### Release 1.12.0 [21-Feb-2024]
 
 CIMTool 1.12.0 is a minor release with some UI enhancements in usability and select defect fixes.
 
 Defect [Issue #26](https://github.com/cimug-org/CIMTool/issues/26):
-CIMTool's *.legacy-rdfs-augmented profile builder does not correctly generate the multiplicity of the secondary (i.e. inverse association) within the profile that it produces. This was discovered as part of the IEC 61970-452 pulblished profile whereby the multiplicity for the Terminal.TieFlow inverse association 0..2 should have been generated as 0..2 but instead was generated as 0..n.
+CIMTool's *.legacy-rdfs-augmented profile builder does not correctly generate the multiplicity of the secondary (i.e. inverse association) within the profile that it produces. This was discovered as part of the IEC 61970-452 published profile whereby the multiplicity for the Terminal.TieFlow inverse association 0..2 should have been generated as 0..2 but instead was generated as 0..n.
 
 Defect [Issue #77](https://github.com/cimug-org/CIMTool/issues/77):
 This fix addresses a regression issue introduced in the 1.11.0 release of CIMTool. In that release the modifications to the XSLT builder for generating XSDs the CIMTool feature for allowing multiple profiles per class no longer properly generated two distinct ComplexType(s) in the XSD.
@@ -24,9 +42,9 @@ CIMTool currently only supports the generation of the older RDFS profile format 
 
 Enhancement [Issue #81](https://github.com/cimug-org/CIMTool/issues/81):
 CIMTool requires enhancements to support specifying when a top-level concrete class is to utilize an rdf:ID (local) or rdf:about (global) identifier within the profile. The introduction of the <<Description>> stereotype on a concrete class is used to flags this distinction in CimConteXtor. To represent the equivalent within CIMTool a new http://langdale.com.au/2005/UML#description stereotype has been introduced that can be assigned by an end user via one of the following methods:
-
+2.0.0
 * The "Stereotypes" tab:
-![302474266-488eae4f-f495-474e-817a-de3e0b720465](https://github.com/cimug-org/CIMTool/assets/3385173/de317690-fb4d-4209-8ff2-8919f4047b5d)
+![3024742.0.08eae4f-f495-474e-817a-de3e0b720465](https://github.com/cimug-org/CIMTool/assets/3385173/de317690-fb4d-4209-8ff2-8919f4047b5d)
 
 
 * The "Restrictions" tab:
