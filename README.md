@@ -56,7 +56,7 @@ For further details on how to use CIMTool to create and edit profiles based on t
 
 ## CIMTool Development
 
-  For developers interested in contributing to the **CIMTool** Project detailed instructions on installing and setting up an Eclipse 3.7 (Indigo) Plug-ins Development Environment can be found at [CIMTool Development Environment Setup](https://cimtool.ucaiug.io/developers/dev-env-setup/)
+  For developers interested in contributing to the **CIMTool** Project detailed instructions on installing and setting up an Eclipse Integrated Development Environment (IDE) can be found at [CIMTool Development Environment Setup](https://cimtool.ucaiug.io/developers/dev-env-setup/)
 
   Instructions on packaging and deployment of **CIMTool** as an **Eclipse Product** can be  found at [CIMTool Packaging & Deployment Guide](https://cimtool.ucaiug.io/developers/package-deploy/)
 
