@@ -8,7 +8,7 @@
 
   * Create Contextual Profiles from the CIM Unified Model Language (UML)
   * Generate schemas such as [Resource Description Framework Schema (RDF Schema)](https://www.w3.org/2001/sw/wiki/RDF) from a Contextual Profile
-  * Create their own custom builders and import them into CIMTool to generate alternate types of target output (e.g. Word docs, SQL DB scripts, Apache Avro schemas, source code such as Java, C#, Python, etc).  See the [CIMTool Builders Library Project](https://cimtool-builders.ucaiug.io/) for detailed instructions on how to create your own builder.
+  * Create their own custom builders and import them into CIMTool to generate alternate types of target output (e.g. Word docs, SQL DB scripts, Apache Avro schemas, source code such as Java, C#, Python, etc).  See the [CIMTool Builders Library](https://cimtool-builders.ucaiug.io/) for detailed instructions on how to create your own builder.
   * Validate Contextual Profile schemas
   * Validate data instances against a Contextual Profile schema
   * Validate incremental data instances against an instance and a Contextual Profile schema
