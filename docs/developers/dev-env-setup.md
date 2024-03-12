@@ -36,6 +36,8 @@ If you downloaded and installed a newer version of Java in the previous Step 2 t
 
 ## Part 2:  Clone and Import of the CIMTool Project  
 
-> The final steps needed to complete the setup of the CIMTool Eclipse IDE is to clone an appropriate development branch of the CIMTool codebase from the [CIMTool GitHub Repo](https://github.com/cimug-org/CIMTool). There are two general approaches to clone a branch for use in Eclipse with the second being the one outlined in the steps that follow:
-- Utilizing external tooling such as GitHub Desktop, TortoiseGit, Git Bash, Git GUI, etc. a clone is performed to a local directory.  In this scenario the projects in that directory are subsequently imported into your Eclipse workspace.
-- Alternatively, Eclipse's pre-bundled **Git** plugin can be configured within the preferences dialog and used to directly clone and automatically import the **CIMTool** projects in Eclipse.
+The final step needed to complete the setup of the CIMTool Eclipse IDE is to clone an appropriate development branch of the CIMTool codebase from the [CIMTool GitHub Repo](https://github.com/cimug-org/CIMTool). Your options include:
+
+- Use external GitHub tools such as [GitHub Desktop](https://desktop.github.com/), [TortoiseGit](https://tortoisegit.org/), [GIT for Windows](https://gitforwindows.org/), etc. (for a comprehensive list visit [here](https://git-scm.com/downloads/guis)). When using an external Git client you will perform a clone to a local directory on your file system and then import the projects from the directory into Eclipse.
+
+- Use Eclipse's pre-bundled **Git** plugin can be configured within the preferences dialog and used to clone and import the **CIMTool** projects from the [CIMTool GitHub Repo](https://github.com/cimug-org/CIMTool).
