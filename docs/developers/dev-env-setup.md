@@ -40,4 +40,4 @@ The final step needed to complete the setup of the CIMTool Eclipse IDE is to clo
 
 - Use external GitHub tools such as [GitHub Desktop](https://desktop.github.com/), [TortoiseGit](https://tortoisegit.org/), [GIT for Windows](https://gitforwindows.org/), etc. (for a comprehensive list visit [here](https://git-scm.com/downloads/guis)). When using an external Git client you will perform a clone to a local directory on your file system and then import the projects from the directory into Eclipse.
 
-- Use Eclipse's pre-bundled **Git** plugin can be configured within the preferences dialog and used to clone and import the **CIMTool** projects from the [CIMTool GitHub Repo](https://github.com/cimug-org/CIMTool).
+- Use Eclipse's pre-bundled **Git** plugin to clone and import the **CIMTool** projects directly from the [CIMTool GitHub Repo](https://github.com/cimug-org/CIMTool).  The plugin can be configured from within the preferences dialog im **CIMTool**.
