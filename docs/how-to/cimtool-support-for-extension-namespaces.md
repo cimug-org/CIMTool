@@ -38,7 +38,7 @@ The annotation file should be placed in the project's Schema folder where the XM
 
 The file can be edited with the eclipse text editor. (If an external text editor is used, the workspace must be manually refreshed afterwards.) 
 
-An example file to that can be used as a template is found here: 
+An example file that can be used as a template can be found here: 
 
 [example.annotation.txt](example.annotation.txt)
 

@@ -36,10 +36,6 @@ Then click the Export button
 
 ![Export to XMI](../images/EAExportToXMIOptions.png "Export to XMI")
 
-!!! note
-
-    You
-
 To import the `.xmi` file, in **CIMTool** open the projects you'd like to add the CIM UML to and Select File -> Import. In the Import dialog, expand CIMTool folder and select Import Schema.
 
 ![Select Import Schema](../images/ImportSchema.png "Import Schema")
