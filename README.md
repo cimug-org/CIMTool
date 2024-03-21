@@ -52,7 +52,7 @@ For further details on how to use CIMTool to create and edit profiles based on t
 
 ## CIMTool-Builders-Library Repository
 
-  Once you get acquainted with **CIMTool** visit the [CIMTool-Builders-Library](https://github.com/ucaiug/CIMTool-Builders-Library) companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
+  Once you get acquainted with **CIMTool** visit the [CIMTool Builders Library](https://cimtool-builders.ucaiug.io/) companion repository that provides information on building your own **CIMTool** builders using XSLT transforms.
 
 ## CIMTool Development
 

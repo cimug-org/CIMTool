@@ -38,11 +38,12 @@ Defect [Issue #79](https://github.com/cimug-org/CIMTool/issues/79):
 CIMTool's Stereotypes tab and UI does not correctly display all stereotypes imported from XMI/EAP schemas.
 
 Enhancement [Issue #80](https://github.com/cimug-org/CIMTool/issues/80):
-CIMTool currently only supports the generation of the older RDFS profile format (e.g. *.legacy-rdfs & *.legacy-rdfs-augmented) and is not current with regard to the latest extensions/additions that were agreed upon and implemented within CimConteXtor and CimSyntaxGen tooling as the new "RDFS2020" profile format. A *.legacy-cimcontextor.rdfs RDFS is introduced here that produces a variant that is a cross between CIMTool's existing *.legacy-rdfs-augmented builder and the new *.rdfs-2020.rdfs builder associated with [Issue #78](https://github.com/cimug-org/CIMTool/issues/78).
+CIMTool currently only supports the generation of the older RDFS profile format (e.g. ```*.legacy-rdfs``` & ```*.legacy-rdfs-augmented```) and is not current with regard to the latest extensions/additions that were agreed upon and implemented within **CimConteXtor** / **CimSyntaxGen** tooling as the new "RDFS2020" profile format. A ```*.legacy-cimcontextor.rdfs``` RDFS is introduced here that produces a variant that is a cross between CIMTool's existing ```*.legacy-rdfs-augmented``` builder and the new ```*.rdfs-2020.rdfs``` builder associated with [Issue #78](https://github.com/cimug-org/CIMTool/issues/78).
 
 Enhancement [Issue #81](https://github.com/cimug-org/CIMTool/issues/81):
-CIMTool requires enhancements to support specifying when a top-level concrete class is to utilize an rdf:ID (local) or rdf:about (global) identifier within the profile. The introduction of the <<Description>> stereotype on a concrete class is used to flags this distinction in CimConteXtor. To represent the equivalent within CIMTool a new http://langdale.com.au/2005/UML#description stereotype has been introduced that can be assigned by an end user via one of the following methods:
+**CIMTool** requires enhancements to support specifying when a top-level concrete class is to utilize an rdf:ID (local) or rdf:about (global) identifier within the profile. The introduction of the ```<<Description>>``` stereotype on a concrete class is used to flags this distinction in CimConteXtor. To represent the equivalent within CIMTool a new http://langdale.com.au/2005/UML#description stereotype has been introduced that can be assigned by an end user via one of the following methods:
 2.0.0
+
 * The "Stereotypes" tab:
 ![3024742.0.08eae4f-f495-474e-817a-de3e0b720465](https://github.com/cimug-org/CIMTool/assets/3385173/de317690-fb4d-4209-8ff2-8919f4047b5d)
 
