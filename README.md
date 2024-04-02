@@ -11,7 +11,7 @@
 
 ## CIMTool Discussion Forums
 
-The CIMTool [Google Group](https://groups.google.com/g/cimtool) is no longer actively monitored and at this point only around for archival purposes.  Please post all questions, suggestions, and/or comments directly to the new [CIMTool Discussions](https://github.com/ucaiug/CIMTool/discussions) board for this repository.
+The CIMTool [Google Group](https://groups.google.com/g/cimtool) is no longer actively monitored and has been retained only for archival purposes.  Please post all questions, suggestions, and/or comments directly to the new [CIMTool Discussions](https://github.com/ucaiug/CIMTool/discussions) board for this repository.
 
 ## Using CIMTool with Enterprise Architect
 
