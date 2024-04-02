@@ -4,8 +4,10 @@
 
 ![image](https://github.com/cimug-org/CIMTool/assets/63370413/c348d882-8a7b-48a0-a953-18d62960a3a6)
 
-## Key Project Supporters
-![image](project-supporter-logos.png)
+## Project Supporters
+
+[![image](docs/logos/project-supporter-osi-logo.png)](https://www.osii.com/)   [![image](docs/logos/project-supporter-statnett-logo.png)](https://www.statnett.no/en/)   [![image](docs/logos/project-supporter-ogs-logo.png)](https://www.opengrid.com/)
+
 
 ## CIMTool Discussion Forums
 
