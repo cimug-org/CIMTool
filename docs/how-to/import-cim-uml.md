@@ -39,7 +39,7 @@ You'll be presented with the next dialog.  Click the "Other Formats:" **Publish*
 When the "Publish Model Package" dialog appears use the following export options highlighted in the screenshot below:
 
 1. The "Package" field is used to specify which package in the model hierarchy you wish to be exported. Specifying the root "Model" package as shown in the screenshot is most common.  However, if for exmaple your profiling work is focused exclusively on classes located hierarchically within the Grid (i.e. formerly IEC61970) package then selecting that as your Package will limit the scope of the packages to be exported and reduce the size of the `.xmi` file.
-2. Under "General Options" be sure that only the "Format XML Output" check box is selected.
+2. Under "General Options" be sure that only the "Format XML Output" check box is selected. 
 3. For the "XML Type" selection, choose the "UML 1.4 (XMI 1.2)" option.
 4. In the "Filename" field, select or enter the filename you want (save to location and name) for the XMI file you are exporting. Using a name that matches the the name of your `.eap` file is recommended as it helps identifying the version of the model the XMI export was for (e.g. `iec61970cim17v40_iec61968cim13v13_iec62325cim03v17a.xmi`)
 
@@ -47,6 +47,10 @@ Finally, click the Export button.
 
 !!! note
 
+    A couple of noteworthy itmes.
+    
+    You may opt to check the "Export Diagrams" option if so desired. This will include in your exported `.xmi` the diagrams in the CIM. Doing so will increase the size of your `.xmi` file and will add no value for the purposes of `.xmi` within **CIMTool**. It can be useful later if you do not have the original `.eap` project file used to create your profiles. In such a scenario the `.xmi` can be re-imported into Enterprise Architect and the UML class diagrams retained in the model.
+    
     In the early years, CIM was maintained using IBM's [Rational Rose](https://en.wikipedia.org/wiki/IBM_Rational_Rose_XDE) UML modeling tools. In the late 2000s the CIM was migrated to Enterprise Architect and during that time XMI exchanges between the two products was necessary. As per EA's Model Exchange User Guide: "With XMI, model details can be exchanged between different UML tools and other tools that are capable of using XMI. Limited support for export to Rational Rose is provided using the Rose version of the XMI 1.1 specification, as implemented by Unisys for Rational products." If you encounter older **CIMTool** documentation indicating the need to check the "Unisys/Rose Format" checkbox for `xmi` exports from EA in the screenshot it should be ignored. As noted in EA's documentation, this checkbox is only related to XMI 1.1 specification while the latest recommended export settings as illustrated are based on "UML 1.4 (XMI 1.2)".
 
 ![Export to XMI](../images/EAExportToXMIOptionsDetail.png)
