@@ -28,7 +28,7 @@ In the end, a namespace is just an identifier whose allocation is controlled by 
 
 A profile is a subset of an information model defined such that:
 
-    An instance that conforms to the profile also conforms to the general information model.[^1] 
+An instance that conforms to the profile also conforms to the general information model.[^1] 
 
 The classes and properties in a profile are subsets, or restrictions, of those in the information model.
 
