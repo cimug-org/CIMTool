@@ -27,6 +27,7 @@ nav:
     - 'how-to/profile-maintenance.md'
     - 'how-to/comparing-profiles-schemas.md'
     - 'how-to/associations-anonymous-classes.md'
+    - 'how-to/namespaces-discussion.md'
     - 'how-to/cimtool-support-for-extension-namespaces.md'
   - 'Further Learning':
     - 'further-learning/uml-xmi-owl.md'
