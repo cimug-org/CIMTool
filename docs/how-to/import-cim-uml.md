@@ -20,7 +20,7 @@ Both past and current releases of these CIM EA project files are made publicly a
 
     Some content on the UCAIug site may be restricted to registered users. To access previous versions of the CIM UML you must be a CIM Users Group member. Use the CIM Users Group [join form](https://cimug.ucaiug.org/pages/Join.aspx) to register and create an account. Note that there are both paid and free levels of membership.
 
-## Exporting the CIM from Sparx EA via `.xmi`
+## Using an `.xmi` schema file in CIMTool
 
 Enterprise Architect has an "Export" feature to export to the `.xmi` format. To use this, open the desired CIM UML version of the `.eap` or `.eapx` file (e.g. `iec61970cim17v38_iec61968cim13v13_iec62325cim03v17a.eap`) in Enterprise Architect. 
 
@@ -63,7 +63,7 @@ Once imported the CIM UML will be stored in the **Schema** folder of the project
 
 There is typically one schema per project, although there are cases where there may be more than one (e.g. if you have custom extensions or multiple CIM UML versions for a single Contextual Profile).
 
-## Using the EAP File
+## Using an EA Project file in CIMTool
 
 Exporting XMI can be slow. An alternative is to directly import an Enterprise Architect project file (`.eap` or `.eapx`) into **CIMTool**. This eliminates the need to export anything from EA before importing to CIMTool.  
 
@@ -71,7 +71,7 @@ To import an `.eap` or `.eapx`file into a CIMTool project, use the **CIMTool** S
 
 > Note that as of the EA 16.x release, `.eap` and `.eapx` files are no longer supported. **CIMTool** does not currently support the new EA 16.x project file format and instead the XMI schema option should be utilized if using the new release. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in 16.x.
 
-### File Format Considerations
+## File Format Considerations
 
 The following table highlights the various tradeoffs of utilizing one format over another:
 
