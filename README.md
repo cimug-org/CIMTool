@@ -6,7 +6,7 @@
 
 ## Project Supporters
 
-[![image](docs/logos/project-supporter-osi-logo.png)](https://www.osii.com/)   [![image](docs/logos/project-supporter-statnett-logo.png)](https://www.statnett.no/en/)   [![image](docs/logos/project-supporter-ogs-logo.png)](https://www.opengrid.com/)
+[![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   [![image](docs/logos/project-supporter-statnett-logo.png)](https://www.statnett.no/en/)   [![image](docs/logos/project-supporter-ogs-logo.png)](https://www.opengrid.com/)
 
 
 ## CIMTool Discussion Forums
