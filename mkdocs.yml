@@ -7,6 +7,7 @@ theme:
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
+  - footnotes
   - admonition
   - tables
   - pymdownx.details
