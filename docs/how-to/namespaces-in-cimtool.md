@@ -1,6 +1,6 @@
 # Namespaces in CIMTool
 
-See also: [CIMTool Support for Extension Namespaces](how-to/cimtool-support-for-extension-namespaces)
+See also: [CIMTool Support for Extension Namespaces](cimtool-support-for-extension-namespaces)
 
 ## Background
 
