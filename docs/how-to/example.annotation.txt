@@ -22,5 +22,5 @@
 #					'uri'  is the namespace URI for classes and properties defined therein 
 #
  
-package:Extensions     uml:baseuri "http://www.ucaiug.org/CIM100/extensions/2023#" .
-package:Standard     uml:baseuri "http://www.ucaiug.org/CIM100/extensions/2023#" .
+package:Extensions     uml:baseuri "http://www.ucaiug.org/CIM100/extensions#" .
+package:Standard     uml:baseuri "http://www.ucaiug.org/CIM100/extensions#" .

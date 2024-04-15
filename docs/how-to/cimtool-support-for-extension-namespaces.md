@@ -1,6 +1,6 @@
 # CIMTool Support for Extension Namespaces
 
-**CIMTool** can support multiple extension namespaces in the information model and either of the profile namespace approaches discussed here: Namespaces#ProfilesandNamespaces
+**CIMTool** can support multiple extension namespaces in the information model and in either of the profile namespace approaches described here: [Profiles and Namespaces](namespaces-in-cimtool.md#profiles-and-namespaces)
 
 ## Information Model Namespaces
 
