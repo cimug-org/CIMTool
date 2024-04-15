@@ -2,6 +2,8 @@ site_name: CIMTool
 repo_url: https://github.com/CIMug-org/CIMTool
 theme:
   name: material
+  logo: logos/cimtool-v2_96x96.png
+  favicon: logos/cimtool-v2.ico
   features:
     - content.code.copy
 extra_css:

@@ -20,7 +20,7 @@ Then rebuild (or create) an OWL version of the CIM UML, delete the `schema.merge
 You may not want to recreate these classes in a large profile just so they appear properly in the ontology editor. Instead, if your profile is intended for CIM/XML (RDF) usage, you can reorganize it. First make a copy. Then, in the profile editor summary tab, click Reorganise and Remap > Reorganise per RDFS rules.
 
 ## Protege
-[Download](https://protege.stanford.edu/products.php#desktop-protege) Protege. You need version 4 or higher for use with **CIMTool**.
+[Download](https://protege.stanford.edu) Protege. You need version 4 or higher for use with **CIMTool**.
 
 Once installed and running you view an ontology by selecting "Open OWL Ontology" and navigating to the folder containing your **CIMTool** project. You can choose any OWL file (ie `.owl`,`.simple-owl` and friends, or `.merged-owl`).
 
