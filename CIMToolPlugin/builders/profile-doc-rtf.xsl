@@ -13,7 +13,7 @@
 \pard\plain \sb120\qj\fs20\lang1033
 {\par\b\fs28<xsl:value-of select="$envelope"/><xsl:if test="$envelope != 'Profile'"><text> Profile</text></xsl:if>\par}Profile namespace:  <xsl:value-of select="$baseURI" /> 
 \par\pard\plain \sb120\qj\fs20\lang1033 
-<xsl:if test="count(/.//a:ComplexType) > 0">
+<xsl:if test="(count(/.//a:Root) + count(/.//a:Message)) > 0">
 {\par\b\fs28 Concrete Classes \par}
 <xsl:apply-templates select="a:Root|a:Message">
 <xsl:sort select="@name"/>
@@ -27,17 +27,17 @@
 </xsl:apply-templates>
 </xsl:if>
 
-<xsl:if test="count(/.//a:EnumeratedType) > 0">
-{\par\b\fs28 Enumerations \par}
-<xsl:apply-templates select="a:EnumeratedType" >
-<xsl:sort select="@name"/>
-</xsl:apply-templates>
-</xsl:if>
-
 <xsl:if test="count(/.//a:CompoundType) > 0">
 {\par\b\fs28 Compound Types \par}
 <xsl:apply-templates select="a:CompoundType"  >
 	<xsl:sort select="@name"/>
+</xsl:apply-templates>
+</xsl:if>
+
+<xsl:if test="count(/.//a:EnumeratedType) > 0">
+{\par\b\fs28 Enumerations \par}
+<xsl:apply-templates select="a:EnumeratedType" >
+<xsl:sort select="@name"/>
 </xsl:apply-templates>
 </xsl:if>
 
