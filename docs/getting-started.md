@@ -38,7 +38,7 @@ C:\CIMTool-2.0.0\CIMTool\CIMTool.exe -vm "C:\Program Files\Zulu\zulu-20\bin\java
 ```
 
 ## Step 3 - Launch CIMTool
-Upon a successful launch of **CIMTool** the following dialog is presented. A default workspace (as shown by the example in the screenshot) will be used or you can create a your own by entering one.
+Upon a successful launch of **CIMTool** the following dialog is presented. A default workspace (as shown by the example in the screenshot) will be used or you can enter your own location and name for a workspace to be created.
 
 ![WorkspaceLauncher.png](./images/WorkspaceLauncher.png "CIMTool Workspace Launcher")
 
