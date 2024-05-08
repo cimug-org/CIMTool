@@ -329,7 +329,7 @@ public class Task extends Info {
 			else
 				base = file.getLocationURI().toString() + "#";
 		}
-		IFile auxfile = getRelated(file, "annotation");
+		IFile auxfile = getRelated(file, "annotation", false);
 		OntModel annote;
 		if (auxfile.exists()) {
 			annote = ModelFactory.createMem();

@@ -231,7 +231,11 @@ public class XMIModel {
 	 * Create or reference a stereotype by name.
 	 */
 	protected OntResource createStereotypeByName(String name) {
-       	return model.createIndividual(UML.NS + name.toLowerCase(), UML.Stereotype);
+		if (UML.stereotypes.containsKey(name.toLowerCase())) {
+			return model.createIndividual(UML.NS + name.toLowerCase(), UML.Stereotype);
+		} else {
+			return model.createIndividual(UML.NS + name, UML.Stereotype);
+		}
 	}
 	
 	/**

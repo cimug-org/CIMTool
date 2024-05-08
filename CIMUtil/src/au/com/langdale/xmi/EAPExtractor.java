@@ -114,11 +114,12 @@ public class EAPExtractor extends XMIModel {
 				}
 				if( row.hasDefault())
 					subject.addProperty(UML.hasInitialValue, row.getDefault());
+				if( row.hasStereotype())
+					subject.addProperty(UML.hasStereotype, createStereotypeByName(row.getStereotype()));
 			}
 			else
 				System.out.println("Could not find the domain of attribute " + row.getName() + ". Domain ID = " + row.getObjectID());
 		}
-		
 	}
 
 	private void extractAssociations() throws IOException {
@@ -140,7 +141,7 @@ public class EAPExtractor extends XMIModel {
 						roleb.mate(rolea);
 					}
 				}
-				
+
 			}
 		}
 	}

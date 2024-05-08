@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet exclude-result-prefixes="a" version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cims="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:a="http://langdale.com.au/2005/Message#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:uml="http://langdale.com.au/2005/UML#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+<xsl:stylesheet exclude-result-prefixes="a" version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cims="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:a="http://langdale.com.au/2005/Message#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:uml="http://langdale.com.au/2005/UML#" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsl:output xmlns:xalan="http://xml.apache.org/xslt" method="xml" omit-xml-declaration="no" indent="yes" xalan:indent-amount="4" />
     <xsl:param name="copyright" />
 	<xsl:param name="version"/>

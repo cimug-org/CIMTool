@@ -450,10 +450,10 @@ public class ProfileBuildlets extends Task {
 			new TransformBuildlet(null, "xml"), //
 					new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl", false), //
 					new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl", false), //
-					//new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), // Replaced by an XSLT equivalent
+					new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs", false), // Replaced by an XSLT equivalent
 					new SimpleOWLBuildlet(Format.RDF_XML.toFormat(), "simple-flat-owl-augmented", true), //
 					new SimpleOWLBuildlet(Format.RDF_XML_ABBREV.toFormat(), "simple-owl-augmented", true), //
-					//new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), // Replaced by an XSLT equivalent
+					new LegacyRDFSBuildlet(Format.RDF_XML.toFormat(), "legacy-rdfs-augmented", true), // Replaced by an XSLT equivalent
 					new CopyBuildlet(Format.TURTLE.toFormat(), "ttl") //
 			};
 

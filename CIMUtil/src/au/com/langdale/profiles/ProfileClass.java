@@ -106,8 +106,8 @@ public class ProfileClass {
 					}
 				}
 			} else {
-				ResIterator clazzes = baseClass.listSuperClasses(true);
-				while (clazzes.hasNext()) {
+				ResIterator clazzes = baseClass.listSuperClasses(false);
+				if (clazzes.hasNext()) {
 					OntResource clazz = clazzes.nextResource();
 					if (clazz.hasProperty(UML.hasStereotype)) {
 						ResIterator stereotypes = clazz.listProperties(UML.hasStereotype);

@@ -179,6 +179,17 @@ public class Info {
 		IPath path = removeFileExtension(file.getFullPath()).addFileExtension(ext);
 		return file.getWorkspace().getRoot().getFile(path);
 	}
+	
+	public static IFile getRelated(IResource file, String ext, boolean recursive) {
+		// This method allows for the specification of whether to make a recursive 
+		// call or not...  		
+		IPath path = null;
+		if (recursive)
+			path = removeFileExtension(file.getFullPath()).addFileExtension(ext);
+		else 
+			path = file.getFullPath().removeFileExtension().addFileExtension(ext);
+		return file.getWorkspace().getRoot().getFile(path);
+	}
 
 	/**
 	 * Private method to recursively remove all "extensions" up through to the final
