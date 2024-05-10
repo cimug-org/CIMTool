@@ -6,12 +6,16 @@ Bundle-Version: 2.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-20
 Require-Bundle: au.com.langdale.kena
 Bundle-ClassPath: cimutil.jar,
- lib/poi-3.0.1-FINAL-20070705.jar,
- lib/jackcess-1.2.9.jar,
- lib/commons-logging-1.1.1.jar,
  lib/commons-lang-2.6.jar,
  lib/saxon-he-10.8.jar,
- lib/xml-resolver-1.2.jar
+ lib/xml-resolver-1.2.jar,
+ lib/poi-3.9.jar,
+ lib/commons-logging-1.1.3.jar,
+ lib/slf4j-api-1.7.36.jar,
+ lib/sqlite-jdbc-3.45.2.0.jar,
+ lib/jackcess-2.2.3.jar,
+ lib/jaybird-5.0.4.java11.jar,
+ lib/jna-5.12.1.jar
 Export-Package: au.com.langdale.cim,
  au.com.langdale.jena,
  au.com.langdale.profiles,
@@ -21,7 +25,6 @@ Export-Package: au.com.langdale.cim,
  com.healthmarketscience.jackcess,
  com.healthmarketscience.jackcess.complex,
  com.healthmarketscience.jackcess.query,
- com.healthmarketscience.jackcess.scsu,
  org.apache.commons.lang,
  org.apache.commons.lang.builder,
  org.apache.commons.lang.enums,
@@ -43,7 +46,6 @@ Export-Package: au.com.langdale.cim,
  org.apache.poi.hssf.model,
  org.apache.poi.hssf.record,
  org.apache.poi.hssf.record.aggregates,
- org.apache.poi.hssf.record.formula,
  org.apache.poi.hssf.usermodel,
  org.apache.poi.hssf.util,
  org.apache.poi.poifs.common,
@@ -53,5 +55,5 @@ Export-Package: au.com.langdale.cim,
  org.apache.poi.poifs.property,
  org.apache.poi.poifs.storage,
  org.apache.poi.util
-Bundle-Vendor: Langdale Consultants
+Bundle-Vendor: UCAIug
 Automatic-Module-Name: au.com.langdale.cimutil

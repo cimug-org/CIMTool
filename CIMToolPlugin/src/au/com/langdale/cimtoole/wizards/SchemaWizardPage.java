@@ -45,7 +45,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static String[] sources = {"*.eap", "*.xmi", "*.owl"};
+	private static String[] sources = {"*.eap", "*.eapx", "*.qea", "*.qeax", "*.feap", "*.xmi", "*.owl"};
 
 	private IFile file;
 	boolean importing;
@@ -124,7 +124,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					if(expectNewProject)
 						return null;
 					else
-						return "A schema XMI, OWL, EAP or other valid schema file is required";
+						return "A schema XMI, OWL, EA Project or other valid schema file is required";
 
 				IProject project = expectNewProject? newProject: projects.getProject();
 				file = filename.getFile(Info.getSchemaFolder(project));
@@ -137,11 +137,12 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					return "A schema named " + filename.getText() + " already exists. " +
 					"Check option to replace.";
 
-				if( source.getText().endsWith(".eap")) {
-					String check = Info.checkValidEAP(new File(source.getText()));
-					if( check != null)
-						return check;
+				String check = null;
+				if( source.getText().endsWith(".eap") || source.getText().endsWith(".eapx")) {
+					check = Info.checkValidEAProject(new File(source.getText()));
 				}
+				if( check != null)
+					return check;
 				return null;
 			}
 		};
