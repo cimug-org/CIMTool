@@ -60,7 +60,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	 */
 	public CIMToolPlugin() {
 	}
-
+	
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -100,7 +100,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private void unzip(InputStream zipFileInputStream, String destDirectory) throws IOException {
 		File destDir = new File(destDirectory);
 		if (!destDir.exists()) {
@@ -121,7 +121,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 		}
 		zipIn.close();
 	}
-
+	
 	private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
 		byte[] bytesIn = new byte[4096];
@@ -161,13 +161,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 				return super.get(value, size);
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
+	
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
