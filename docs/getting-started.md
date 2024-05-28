@@ -6,7 +6,7 @@ Download the latest binary release of **CIMTool** [here](https://github.com/cimu
 
 !!! example
 
-    Extracting to `D:\CIMTool-2.0.0` folder on a Windows system would result in a new  `D:\CIMTool-2.0.0\CIMTool` folder containing **CIMTool** and it dependencies.  The launchable executable would be located at `D:\CIMTool-2.0.0\CIMTool\CIMTool.exe`
+    Extracting to `D:\CIMTool-2.0.1` folder on a Windows system would result in a new  `D:\CIMTool-2.0.1\CIMTool` folder containing **CIMTool** and it dependencies.  The launchable executable would be located at `D:\CIMTool-2.0.1\CIMTool\CIMTool.exe`
 
 ## Step 2 - Install Java
 Starting with **CIMTool** release 2.0.0 and later you no longer need to download and install a Java runtime environment. Instead, the appropriate release of Java now comes bundled in the ZIP archive. All that is needed is to extract the ZIP file and then launch the CIMTool executable (i.e. `CIMTool.exe`). This greatly simplifies the installation process and if installing such a release you may skip over this step and proceed on to Step 3 below.
@@ -22,7 +22,7 @@ Once installed on your system you can execute `java -version` from a command pro
 
     ![cmd-prompt-java-version-results.png](./images/cmdPromptJavaVersion.png "Check Java version using command prompt")
 
-    In this example, we see from the results that on this system the default JRE/JDK is a version of Java 8 (i.e. version 332). There may be other versions of Java installed on the system but we know from the output that it will be the Java 8 installation that will be used to execute **CIMTool** by default if we double click the installed executable located at `D:\CIMTool-1.11.1\CIMTool\CIMTool.exe` in our example.
+    In this example, we see from the results that on this system the default JRE/JDK is a version of Java 8 (i.e. version 332). There may be other versions of Java installed on the system but we know from the output that it will be the Java 8 installation that will be used to execute **CIMTool** by default if we double click the installed executable located at `D:\CIMTool-1.12.0\CIMTool\CIMTool.exe` in our example.
 
 ### Setting up Alternate JVM
 If the command line results indicate a different default Java version, then either a Windows shortcut or .bat script can be created so that an alternate (non-default) JVM can be used for launching **CIMTool**. These options can be configured in the following manner.
@@ -30,7 +30,7 @@ If the command line results indicate a different default Java version, then eith
 #### Option 1 - Windows Shortcut
 Locate the directory containing the Java 8 JRE/JDK release you installed on your system (a 64-bit installation of Zulu for example will typically be located in either `C:\Program Files\Zulu\zulu-8-jre\bin\java.exe` or `C:\Program Files\Zulu\zulu-8\bin\java.exe` depending on whether you've downloaded a JRE or JDK release).
 
-In Windows right-click on the **CIMTool.exe** and select the menu option for creating a shortcut. Right-click on the new shortcut and select the Properties menu option. In the dialog that comes up explicitly specify as a command line parameter a 64-bit JVM to use at launch time.  This change must be specified in the "Target:" field.  In this working example, the resulting entry in that field would be:  `D:\CIMTool-1.11.1\CIMTool.exe -vm "C:\Program Files\Zulu\zulu-8\bin\java.exe"`
+In Windows right-click on the **CIMTool.exe** and select the menu option for creating a shortcut. Right-click on the new shortcut and select the Properties menu option. In the dialog that comes up explicitly specify as a command line parameter a 64-bit JVM to use at launch time.  This change must be specified in the "Target:" field.  In this working example, the resulting entry in that field would be:  `D:\CIMTool-1.12.0\CIMTool.exe -vm "C:\Program Files\Zulu\zulu-8\bin\java.exe"`
 
 ![CIMToolShortcutForAltJava.png](./images/CIMToolShortcutForAltJava.png "Eclipse Shortcut for specifying alternate Java version")
 
@@ -39,7 +39,7 @@ An alternative approach is to create a `CIMTool.bat` script containing command l
 
 ```bat
 rem Launch CIMTool using a 64-bit Java JRE 8
-C:\CIMTool-1.11.1\CIMTool\CIMTool.exe -vm "C:\Program Files\Zulu\zulu-8\bin\java.exe"
+C:\CIMTool-1.12.0\CIMTool\CIMTool.exe -vm "C:\Program Files\Zulu\zulu-8\bin\java.exe"
 ```
 
 !!! bug
