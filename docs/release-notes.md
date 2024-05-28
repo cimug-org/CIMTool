@@ -3,6 +3,12 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
+### Release 2.0.1 [12-May-2024]
+
+CIMTool 2.0.1 is a patch release and should be utilized in place of CIMTool 2.0.0 until release 2.1.0 is finalized and made public.
+
+Defect Issue #115:
+During development of the CIMTool 2.1.0 release, issues in the generated output of the RDFS XSLT builders introduced in CIMTool 2.0.0 have been identified. Specifically, during the testing of the modeling of extensions for new .qea and .feap EA project files support. In the short term a 2.0.1 patch release must be issued that re-introduced the original builders until the fix is addressed in CIMTool 2.1.0.
 
 ### Release 2.0.0 [06-Mar-2024]
 
