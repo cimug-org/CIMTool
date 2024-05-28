@@ -53,18 +53,6 @@
         "datetime": "2022-08-01T00:00:00Z",
         "ext": "rtf"
     },
-    "legacy-rdfs": {
-        "type": "TRANSFORM",
-        "style": "legacy-rdfs",
-        "datetime": "2024-01-29T00:00:00Z",
-        "ext": "legacy.rdfs"
-    },
-    "legacy-rdfs-augmented": {
-        "type": "TRANSFORM",
-        "style": "legacy-rdfs-augmented",
-        "datetime": "2024-01-29T00:00:00Z",
-        "ext": "legacy-augmented.rdfs"
-    },
     "rdfs-augmented-cimcontextor": {
         "type": "TRANSFORM",
         "style": "rdfs-augmented-cimcontextor",
