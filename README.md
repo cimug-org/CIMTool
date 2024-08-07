@@ -19,7 +19,7 @@ For full details on how to use **CIMTool** with Enterprise Architect refer to th
 
 ## CIMTool Profiling Tutorial
 
-For further details on how to use CIMTool to create and edit profiles based on the CIM visit the How To section of [https://cimtool.ucaiug.io/](https://cimtool.ucaiug.io/).
+For further details on how to use CIMTool to create and edit profiles based on the CIM visit the "How To" section of [https://cimtool.ucaiug.io/](https://cimtool.ucaiug.io/).
 
 ## CIMTool-Builders-Library Repository
 
