@@ -64,5 +64,23 @@
         "style": "rdfs-2020",
         "datetime": "2024-01-30T00:00:00Z",
         "ext": "rdfs-2020.rdfs"
+    },
+    "linkml": {
+        "type": "TRANSFORM",
+        "style": "linkml",
+        "datetime": "2024-07-29T00:00:00Z",
+        "ext": "linkml.yaml"
+    },
+    "cimantic-graphs": {
+        "type": "TEXT",
+        "style": "cimantic-graphs",
+        "datetime": "2024-08-07T00:00:00Z",
+        "ext": "cimantic-graphs.py"
+    },
+    "cimantic-graphs-init": {
+        "type": "TEXT",
+        "style": "cimantic-graphs-init",
+        "datetime": "2024-08-07T00:00:00Z",
+        "ext": "__init__.py"
     }
 }
