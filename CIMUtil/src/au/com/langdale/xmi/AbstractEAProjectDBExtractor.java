@@ -398,14 +398,24 @@ public abstract class AbstractEAProjectDBExtractor extends AbstractEAProjectExtr
 						if (type.equals("Generalization")) {
 							source.addSuperClass(destin);
 						} else {
-							boolean sourceIsAggregate = rs.getInt(COL_SOURCE_IS_AGGREGATE) == 1;
-							boolean destIsAggregate = rs.getInt(COL_DEST_IS_AGGREGATE) == 1;
-							Role rolea = extractProperty(getXUID(rs), source, destin, rs.getString(COL_DEST_ROLE),
-									rs.getString(COL_DEST_ROLE_NOTE), rs.getString(COL_DEST_CARD), destIsAggregate,
+							Role rolea = extractProperty( //
+									getXUID(rs), //
+									source, //
+									destin, //
+									rs.getString(COL_DEST_ROLE), //
+									rs.getString(COL_DEST_ROLE_NOTE), //
+									rs.getString(COL_DEST_CARD), //
+									rs.getInt(COL_DEST_IS_AGGREGATE), //
 									true);
-							Role roleb = extractProperty(getXUID(rs), destin, source, rs.getString(COL_SOURCE_ROLE),
-									rs.getString(COL_SOURCE_ROLE_NOTE), rs.getString(COL_SOURCE_CARD),
-									sourceIsAggregate, false);
+							Role roleb = extractProperty( //
+									getXUID(rs), //
+									destin, //
+									source, //
+									rs.getString(COL_SOURCE_ROLE), //
+									rs.getString(COL_SOURCE_ROLE_NOTE), //
+									rs.getString(COL_SOURCE_CARD), //
+									rs.getInt(COL_SOURCE_IS_AGGREGATE), //
+									false);
 							rolea.mate(roleb);
 							roleb.mate(rolea);
 						}

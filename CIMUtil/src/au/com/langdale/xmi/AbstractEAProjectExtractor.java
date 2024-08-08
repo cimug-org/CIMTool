@@ -120,13 +120,26 @@ public abstract class AbstractEAProjectExtractor extends XMIModel implements EAP
 		}
 	}
 
-	protected Role extractProperty(String xuid, OntResource source, OntResource destin, String name, String note, String card, boolean aggregate, boolean sideA) {
+	protected Role extractProperty(String xuid, OntResource source, OntResource destin, String name, String note, String card, int aggregate, boolean sideA) {
 		Role role = new Role();
 		role.property = createObjectProperty(xuid, sideA, name);
 		annotate(role.property, note);
 		role.property.addIsDefinedBy(source.getIsDefinedBy()); // FIXME: the package of an association is not always that of the source class
 		role.range = destin;
-		role.aggregate = aggregate;
+		switch (aggregate) {
+			case 1: // Aggregate
+				role.aggregate = true;
+				role.composite = false;
+				break;
+			case 2: // Composite
+				role.aggregate = false;
+				role.composite = true;
+				break;
+			default:
+				role.aggregate = false;
+				role.composite = false;
+				break;
+		}
 		if( card.equals("1") || card.endsWith("..1"))
 			role.upper = 1;
 		if( card.equals("*") || card.startsWith("0.."))

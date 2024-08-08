@@ -170,17 +170,31 @@ public class EAPExtractor extends AbstractEAProjectExtractor {
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
 			String type = row.getConnectorType();
-			if (type.equals("Generalization") || type.equals("Association")) {
+			if (type.equals("Generalization") || type.equals("Association") || type.equals("Aggregation")) {
 				OntResource source = objectIDs.getID(row.getStartObjectID());
 				OntResource destin = objectIDs.getID(row.getEndObjectID());
 				if (source != null && destin != null) {
 					if (type.equals("Generalization")) {
 						source.addSuperClass(destin);
 					} else {
-						Role rolea = extractProperty(row.getXUID(), source, destin, row.getDestRole(),
-								row.getDestRoleNote(), row.getDestCard(), row.getDestIsAggregate(), true);
-						Role roleb = extractProperty(row.getXUID(), destin, source, row.getSourceRole(),
-								row.getSourceRoleNote(), row.getSourceCard(), row.getSourceIsAggregate(), false);
+						Role rolea = extractProperty( //
+								row.getXUID(), //
+								source, //
+								destin, //
+								row.getDestRole(), //
+								row.getDestRoleNote(), //
+								row.getDestCard(), //
+								row.getDestIsAggregate(), //
+								true);
+						Role roleb = extractProperty( //
+								row.getXUID(), //
+								destin, //
+								source, //
+								row.getSourceRole(), //
+								row.getSourceRoleNote(), //
+								row.getSourceCard(), //
+								row.getSourceIsAggregate(), //
+								false);
 						rolea.mate(roleb);
 						roleb.mate(rolea);
 					}
@@ -343,8 +357,8 @@ public class EAPExtractor extends AbstractEAProjectExtractor {
 			return getString("DestCard");
 		}
 
-		boolean getDestIsAggregate() {
-			return getInt("DestIsAggregate") == 1;
+		int getDestIsAggregate() {
+			return getInt("DestIsAggregate");
 		}
 
 		String getSourceRole() {
@@ -359,8 +373,8 @@ public class EAPExtractor extends AbstractEAProjectExtractor {
 			return getString("SourceCard");
 		}
 
-		boolean getSourceIsAggregate() {
-			return getInt("SourceIsAggregate") == 1;
+		int getSourceIsAggregate() {
+			return getInt("SourceIsAggregate");
 		}
 
 		public String getProperty() {
