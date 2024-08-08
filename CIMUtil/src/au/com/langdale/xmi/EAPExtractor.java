@@ -376,6 +376,11 @@ public class EAPExtractor extends AbstractEAProjectExtractor {
 		int getSourceIsAggregate() {
 			return getInt("SourceIsAggregate");
 		}
+		
+		int getInt( String name ) {
+			Object raw = fields.get(name);
+			return (raw instanceof Integer)? ((Integer)raw).intValue(): 0;
+		}
 
 		public String getProperty() {
 			return getString("Property");

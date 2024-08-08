@@ -391,7 +391,7 @@ public abstract class AbstractEAProjectDBExtractor extends AbstractEAProjectExtr
 			rs = statement.executeQuery("select * from t_connector");
 			while (rs.next()) {
 				String type = rs.getString(COL_CONNECTOR_TYPE);
-				if (type.equals("Generalization") || type.equals("Association")) {
+				if (type.equals("Generalization") || type.equals("Association") || type.equals("Aggregation")) {
 					OntResource source = objectIDs.getID(rs.getInt(COL_START_OBJECT_ID));
 					OntResource destin = objectIDs.getID(rs.getInt(COL_END_OBJECT_ID));
 					if (source != null && destin != null) {
@@ -427,7 +427,7 @@ public abstract class AbstractEAProjectDBExtractor extends AbstractEAProjectExtr
 						// connectors
 					}
 				}
-			}
+			} 
 		} catch (SQLException sqlException) {
 			throw new EAProjectExtractorException("Unable to import the EA project file:  " + file.getAbsolutePath(), sqlException);
 		} finally {

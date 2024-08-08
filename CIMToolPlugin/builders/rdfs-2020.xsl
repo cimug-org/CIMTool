@@ -152,7 +152,7 @@
 			</xsl:if>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:parseType="Literal"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
+			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
 			<rdfs:domain rdf:resource="#{substring-before(substring-after(@baseProperty, '#'), '.')}"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<rdfs:range rdf:resource="#{@type}"/>
@@ -202,7 +202,7 @@
 			</xsl:if>
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:parseType="Literal"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
+			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
 			<rdfs:domain rdf:resource="#{substring-before(substring-after(@baseProperty, '#'), '.')}"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<rdfs:range rdf:resource="#{@type}"/>
