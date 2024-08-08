@@ -130,7 +130,7 @@ public class UML {
 		model.createIndividual(enumliteral.getURI(), Stereotype).addLabel("enum", null);
 		model.createIndividual(union.getURI(), Stereotype).addLabel("Union", null);
 		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("Extended By", null);
-		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension Class", null);
+		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension", null);
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
 		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
