@@ -127,7 +127,6 @@ public class EAPExtractor extends XMIModel {
 		while( it.hasNext()) {
 			Row row = new Row(it.next());
 			String type = row.getConnectorType();
-			if( type.equals("Generalization") || type.equals("Association")) {
 			if (type.equals("Generalization") || type.equals("Association") || type.equals("Aggregation")) {
 				OntResource source = objectIDs.getID(row.getStartObjectID());
 				OntResource destin = objectIDs.getID(row.getEndObjectID());
@@ -139,6 +138,7 @@ public class EAPExtractor extends XMIModel {
 						Role rolea = extractProperty( //
 								row.getXUID(), //
 								source, //
+								destin, //
 								row.getDestRole(), //
 								row.getDestRoleNote(), //
 								row.getDestCard(), //
@@ -298,7 +298,6 @@ public class EAPExtractor extends XMIModel {
 		String getSourceCard() {
 			return getString("SourceCard");
 		}
-		boolean getSourceIsAggregate() {
 
 		int getSourceIsAggregate() {
 			return getInt("SourceIsAggregate");
