@@ -6,7 +6,7 @@ Download the latest binary release of **CIMTool** [here](https://github.com/cimu
 
 !!! example
 
-    Extracting to `D:\CIMTool-2.0.1` folder on a Windows system would result in a new  `D:\CIMTool-2.0.1\CIMTool` folder containing **CIMTool** and it dependencies.  The launchable executable would be located at `D:\CIMTool-2.0.1\CIMTool\CIMTool.exe`
+    Extracting to the `D:\` folder on a Windows system would result in a new  `D:\CIMTool-2.1.0` folder containing **CIMTool** and it dependencies.  The launchable executable would be located at `D:\CIMTool-2.1.0\CIMTool.exe`
 
 ## Step 2 - Install Java
 Starting with **CIMTool** release 2.0.0 and later you no longer need to download and install a Java runtime environment. Instead, the appropriate release of Java now comes bundled in the ZIP archive. All that is needed is to extract the ZIP file and then launch the CIMTool executable (i.e. `CIMTool.exe`). This greatly simplifies the installation process and if installing such a release you may skip over this step and proceed on to Step 3 below.
