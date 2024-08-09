@@ -3,6 +3,27 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
+### Release 2.1.0 [09-Aug-2024]
+
+CIMTool 2.1.0 is a minor release with some useful enhancements and an important defect fix.
+
+Enhancement [Issue #108](https://github.com/cimug-org/CIMTool/issues/108):
+CIMTool did not yet support the new .qea and .qeax (64-bit) EA project file format introduced in the 64-bit Sparx EA 16.x releases.  The new .qea and qeax file are now based on SQLite.
+
+Enhancement [Issue #114](https://github.com/cimug-org/CIMTool/issues/114):
+CIMTool did not yet support the .eapx and .feap (32-bit) EA project file formats available in the 32-bit Sparx EA 15.x releases. The .feap format is an embedded Firebird database that works across both EA 15.x 32-bit and EA 16.x 64-bit release of the product. This specific type of EA project file is the only only file format that can be shared between both 32-bit Sparx EA 15.x and 64-bit EA 16.x releases.  Note that this enhancements intersects the work identified in [Issue #114](https://github.com/cimug-org/CIMTool/issues/114).
+
+Enhancement [Issue #118](https://github.com/cimug-org/CIMTool/issues/118):
+This issues introduces a new builder to generate a [LinkML](https://linkml.io) representation of a CIMTool profile and is useful for a wide variety of downstream processing. The output from this builder can be leverage LinkML's core python toolchain which includes functionality like generators to convert schemas to other modeling languages and data converters and validators for working with data that conforms to LinkML (including RDF, JSON, and TSV). The following offer some useful background as to what LinkML is and how it can be leveraged: [LinkML FAQ](https://linkml.io/linkml/faq/modeling.html) and [LinkML Documentation](https://linkml.io/linkml/)
+
+Enhancement [Issue #133](https://github.com/cimug-org/CIMTool/issues/133):
+PNNL has contributed two new XSLT custom builders (see: [cimantic-graphs](https://cimtool-builders.ucaiug.io/custom-builders/cimantic-graphs/builder.html)) that generate python-based code for working with semantic graphs. These have been added as OOTB builders. Thanks to Alex Anderson for his contribution to the CIM community!
+
+Defect [Issue #131](https://github.com/cimug-org/CIMTool/issues/131):
+Aggregation relationships between classes were not appearing in the "Project Model" view in CIMTool (only associations and generalizations were visible). Thanks to Walter Concert for catching and reporting the issue.
+
+NOTE:  This release does not yet address the issues as reported in the 2.0.1 release notes.  Fixes for RDFS XSLT builders and custom extensions are currently targeted for the 2.2.0 release.
+
 ### Release 2.0.1 [12-May-2024]
 
 CIMTool 2.0.1 is a patch release and should be utilized in place of CIMTool 2.0.0 until release 2.1.0 is finalized and made public.
