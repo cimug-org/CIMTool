@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Automatic-Module-Name: au.com.langdale.cimtoole.help
 Bundle-Name: CIMTool Help Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole.help;singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.1.0
 Bundle-ClassPath: CIMToolHelp
 Bundle-Vendor: Langdale Consultants
 Bundle-RequiredExecutionEnvironment: JavaSE-20

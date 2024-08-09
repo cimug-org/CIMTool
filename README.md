@@ -35,9 +35,9 @@ For further details on how to use CIMTool to create and edit profiles based on t
 
 ## Latest Release
 
-  -   2.0.1
+  -   2.1.0
 
-      - The latest release is available here on GitHub at [CIMTool-2.0.1](https://github.com/ucaiug/CIMTool/releases) and is delivered as a ZIP file. Releases are also made available in the CIMug [tools download folder](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) on the UCAIug website.
+      - The latest release is available here on GitHub at [CIMTool-2.1.0](https://github.com/ucaiug/CIMTool/releases) and is delivered as a ZIP file. Releases are also made available in the CIMug [tools download folder](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) on the UCAIug website.
       - Information on features and fixes for the release can be found [here](https://cimtool.ucaiug.io/release-notes).
 
 ## Installation & Setup

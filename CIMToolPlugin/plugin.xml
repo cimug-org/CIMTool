@@ -178,9 +178,16 @@
          point="org.eclipse.ui.editors">
       <editor
             class="au.com.langdale.cimtoole.editors.InfoModelEditor"
-            extensions="xmi,simple-owl,merged-owl,eap"
+            extensions="xmi,simple-owl,merged-owl"
             icon="icons/package.png"
             id="au.com.langdale.cimtoole.editors.InfoModelEditor"
+            name="Model Browser">
+      </editor>
+      <editor
+            class="au.com.langdale.cimtoole.editors.InfoModelEditor"
+            extensions="eap,eapx,qea,qeax,feap"
+            icon="icons/ea-repository.png"
+            id="au.com.langdale.cimtoole.editors.EAInfoModelEditor"
             name="Model Browser">
       </editor>
       <editor

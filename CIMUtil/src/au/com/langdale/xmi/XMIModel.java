@@ -380,7 +380,7 @@ public class XMIModel {
 		
 		/**
 		 * Interpret this association role in the context of its mate.
-		 * Establish the OWL domain and rage.  Interpret the UML
+		 * Establish the OWL domain and range.  Interpret the UML
 		 * multiplicity as OWL functional and inverse functional
 		 * property types.
 		 */

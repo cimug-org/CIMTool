@@ -44,7 +44,7 @@ The **Export** dialog provides two destination options for exporting the **CIMTo
 
 The configuration settings highlighted in the next screenshot are for exporting as an archive. A couple of items to highlight:
 
-1. The **Root directory** field is required and specifies the name of the directory that will appear within the archive file and which will serve as the root directory when extracting. For the purposes of CIMTool the naming convention should be adhered to for each release:  ```CIMTool```
+1. The **Root directory** field is required and specifies the name of the directory that will appear within the archive file and which will serve as the root directory when extracting. For the purposes of CIMTool a naming convention that includes the semantic version should be matched to that for the release being deployed:  ```CIMTool-x.x.x``` (e.g. CIMTool-2.1.0)
 
 2. The **"Synchronize before exporting"** option should be checked.
 

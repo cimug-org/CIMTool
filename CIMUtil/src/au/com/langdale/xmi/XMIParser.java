@@ -19,10 +19,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import au.com.langdale.kena.OntResource;
-
 import com.hp.hpl.jena.graph.FrontsNode;
 
+import au.com.langdale.kena.OntResource;
 import au.com.langdale.sax.XMLElement;
 import au.com.langdale.sax.XMLInterpreter;
 import au.com.langdale.sax.XMLMode;
@@ -59,9 +58,9 @@ public class XMIParser extends XMIModel {
 				return new InputSource(new StringReader(""));
 			}});
 		
-		// kick off in global package mode - can vacumn up elements that 
-		// slip outside the Model element in some xmi dialects
-		reader.setContentHandler( new XMLInterpreter( new PackageMode() ));
+		// kick off in global package mode - can vacuum up elements that 
+		// slip outside the Model element in some XMI dialects
+		reader.setContentHandler(new XMLInterpreter(new PackageMode()));
 		reader.parse(source);
 	}
 
