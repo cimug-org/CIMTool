@@ -61,7 +61,7 @@ Exporting XMI can be slow. An alternative is to directly import an Enterprise Ar
 
 !!! tip
 
-    Beginning in release 16.x of Enterprise Architect `.eap` and `.eapx` files are only supported in the 32-bit version of EA 16.x. If using the 64-bit version of EA and using a release of **CIMTool** prior to 2.1.0 you will need to export your models as `.xmi` and import them into CIMTool to do your profiling. If using **CIMTool** 2.1.0 or later then EA 16.x 64-bit `.qea` or `.qeax` project files can be imported and used directly by **CIMTool**. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in EA 16.x.
+    Beginning in release 16.x of Enterprise Architect `.eap` and `.eapx` files are only supported in the 32-bit version of EA 16.x. If using the 64-bit EA 16.x or later and using a release of **CIMTool** prior to 2.1.0 you will need to export your models as `.xmi` and import them into CIMTool to do your profiling. If using **CIMTool** 2.1.0 or later then EA 16.x 64-bit `.qea` or `.qeax` project files can be imported and used directly by **CIMTool**. For further information refer to EA's [EAP/EAPX File to QEA File Format](https://sparxsystems.com/enterprise_architect_user_guide/16.0/model_exchange/transfereap.html) page for a better understanding of changes in EA 16.x.
 
 
 ### File Format Considerations
