@@ -8,10 +8,10 @@ GitHub being the version control system for CIMTool.
 CIMTool 2.1.0 is a minor release with some useful enhancements and an important defect fix.
 
 Enhancement [Issue #108](https://github.com/cimug-org/CIMTool/issues/108):
-CIMTool did not yet support the new .qea and .qeax (64-bit) EA project file format introduced in the 64-bit Sparx EA 16.x releases.  The new .qea and qeax file are now based on SQLite.
+**CIMTool** did not yet support the new .qea and .qeax (64-bit) EA project file format introduced in the 64-bit Sparx EA 16.x releases.  This enhancement allows these EA project file types to be imported directly as your CIM schema.
 
 Enhancement [Issue #114](https://github.com/cimug-org/CIMTool/issues/114):
-CIMTool did not yet support the .eapx and .feap (32-bit) EA project file formats available in the 32-bit Sparx EA 15.x releases. The .feap format is an embedded Firebird database that works across both EA 15.x 32-bit and EA 16.x 64-bit release of the product. This specific type of EA project file is the only only file format that can be shared between both 32-bit Sparx EA 15.x and 64-bit EA 16.x releases.  Note that this enhancements intersects the work identified in [Issue #108](https://github.com/cimug-org/CIMTool/issues/108).
+**CIMTool** did not yet support the .eapx and .feap (32-bit) EA project file formats available in the 32-bit Sparx EA 15.x releases. The .feap format is an embedded Firebird database that works across both EA 15.x 32-bit and EA 16.x 64-bit release of the product. This specific type of EA project file is the only file format that can be opened in both 32-bit Sparx EA 15.x and 64-bit EA 16.x releases without conversion.  Note that this enhancements intersects the work identified in [Issue #108](https://github.com/cimug-org/CIMTool/issues/108).
 
 Enhancement [Issue #118](https://github.com/cimug-org/CIMTool/issues/118):
 This issues introduces a new builder to generate a [LinkML](https://linkml.io) representation of a CIMTool profile and is useful for a wide variety of downstream processing. The output from this builder can be leverage LinkML's core python toolchain which includes functionality like generators to convert schemas to other modeling languages and data converters and validators for working with data that conforms to LinkML (including RDF, JSON, and TSV). The following offer some useful background as to what LinkML is and how it can be leveraged: [LinkML FAQ](https://linkml.io/linkml/faq/modeling.html) and [LinkML Documentation](https://linkml.io/linkml/)
