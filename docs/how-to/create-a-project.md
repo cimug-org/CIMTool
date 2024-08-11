@@ -7,17 +7,17 @@ In the dialog box that appears, give it a name (e.g. 'MyProject') then click 'Ne
 
 ![ProjectNameLocation.png](../images/ProjectNameLocation.png "Project Name and Location")
 
-In the next dialog box that appears. select whether or not you want to include copyrights within your auto-generated artifacts (e.g. XSD, RDFS, etc.). Here you can load your own custom copyright headers or use the default UCAIug Apache 2.0 copyright headers provided by CIMTool. 
+In the next dialog box that appears. select whether or not you want to include copyrights within your auto-generated artifacts (e.g. XSD, RDFS, etc.). Here you can load your own custom copyright headers or use the default UCAIug Apache 2.0 copyright headers provided by CIMTool. If you do not require copyrights you can simply select 'Do not include copyrights'.
 
 ![ProjectCopyrightTemplatesConfig.png](../images/ProjectCopyrightTemplatesConfig.png "Project Copyright Templates")
 
-If you do not require copyrights you can simply select 'Do not include copyrights'and click 'Next' or 'Finish' depending on if you will be specifying a CIM schema for your project at this time or not. It is suggested, but not required, to add your schema while creating your project by clicking 'Next'.
+Here we have specified a project without copyrights for now. Click 'Next' or 'Finish' depending on whether you will be specifying a CIM schema for your project at this time. It is suggested, but not required, to specify your schema while creating your project by clicking 'Next'.
 
 Note:  it is possible to add copyrights later to your project via 'File -> Import...'
 
 ![ProjectCopyrightTemplatesConfig2.png](../images/ProjectCopyrightTemplatesConfig2.png "Project Copyright Templates")
 
-Next in the Create New Project wizard you will be asked to specify an initial base schema. Click 'Browse...'.
+Next in the Create New Project wizard you will be asked to specify an initial base schema. Click 'Browse...'
 
 ![ImportInitialSchema.png](../images/ImportInitialSchema.png "Import Initial Schema")
 
