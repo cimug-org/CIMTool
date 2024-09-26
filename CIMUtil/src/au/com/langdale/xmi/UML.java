@@ -4,6 +4,9 @@
  */
 package au.com.langdale.xmi;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Property;
 import au.com.langdale.kena.Resource;
@@ -55,6 +58,33 @@ public class UML {
 	public final static Resource compositeOf = ResourceFactory.createResource(NS + "compositeOf");
 	public final static Resource aggregateOf = ResourceFactory.createResource(NS + "aggregateOf");
 	
+	public final static Map<String, Resource> stereotypes = new HashMap<String, Resource>();
+	
+	static {
+		// stereotypes we recognise
+		stereotypes.put(attribute.getLocalName(), attribute);
+		stereotypes.put(primitive.getLocalName(), primitive);
+		stereotypes.put(base.getLocalName(), base);
+		stereotypes.put(datatype.getLocalName(), datatype);
+		stereotypes.put(cimdatatype.getLocalName(), cimdatatype);
+		stereotypes.put(enumliteral.getLocalName(), enumliteral);
+		stereotypes.put(enumeration.getLocalName(), enumeration);
+		stereotypes.put(union.getLocalName(), union);
+		stereotypes.put(extendedBy.getLocalName(), extendedBy);
+		stereotypes.put(extension.getLocalName(), extension);
+		stereotypes.put(xmlelement.getLocalName(), xmlelement);
+		stereotypes.put(xmlattribute.getLocalName(), xmlattribute);
+		stereotypes.put(byreference.getLocalName(), byreference);
+		stereotypes.put(concrete.getLocalName(), concrete);
+		stereotypes.put(compound.getLocalName(), compound);
+		stereotypes.put(preserve.getLocalName(), preserve);
+		stereotypes.put(description.getLocalName(), description);
+		stereotypes.put(ofComposite.getLocalName(), ofComposite);
+		stereotypes.put(ofAggregate.getLocalName(), ofAggregate);
+		stereotypes.put(compositeOf.getLocalName(), compositeOf);
+		stereotypes.put(aggregateOf.getLocalName(), aggregateOf);
+	}
+	
 	// the stereotype of a model element
 	public final static Property hasStereotype = ResourceFactory.createProperty(NS + "hasStereotype");
 	
@@ -100,7 +130,7 @@ public class UML {
 		model.createIndividual(enumliteral.getURI(), Stereotype).addLabel("enum", null);
 		model.createIndividual(union.getURI(), Stereotype).addLabel("Union", null);
 		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("Extended By", null);
-		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension Class", null);
+		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension", null);
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
 		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);

@@ -18,9 +18,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -230,7 +230,7 @@ public class ImportCopyrightTemplatesPage extends FurnishedWizardPage {
 		InputStream source;
 		try {
 			source = new BufferedInputStream(new FileInputStream(pathname));
-			contents = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+			contents = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			//
 		}

@@ -231,7 +231,11 @@ public class XMIModel {
 	 * Create or reference a stereotype by name.
 	 */
 	protected OntResource createStereotypeByName(String name) {
-       	return model.createIndividual(UML.NS + name.toLowerCase(), UML.Stereotype);
+		if (UML.stereotypes.containsKey(name.toLowerCase())) {
+			return model.createIndividual(UML.NS + name.toLowerCase(), UML.Stereotype);
+		} else {
+			return model.createIndividual(UML.NS + name, UML.Stereotype);
+		}
 	}
 	
 	/**
@@ -376,7 +380,7 @@ public class XMIModel {
 		
 		/**
 		 * Interpret this association role in the context of its mate.
-		 * Establish the OWL domain and rage.  Interpret the UML
+		 * Establish the OWL domain and range.  Interpret the UML
 		 * multiplicity as OWL functional and inverse functional
 		 * property types.
 		 */

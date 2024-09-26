@@ -34,6 +34,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
+import com.hp.hpl.jena.vocabulary.RDF;
+
 import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
@@ -46,24 +50,22 @@ import au.com.langdale.cimtoole.registries.ProfileBuildletConfigUtils;
 import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.Format;
 import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.Format;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.workspace.ResourceOutputStream;
 import au.com.langdale.xmi.CIMInterpreter;
-import au.com.langdale.xmi.EAPExtractor;
+import au.com.langdale.xmi.EAProjectExtractor;
+import au.com.langdale.xmi.EAProjectExtractorException;
+import au.com.langdale.xmi.EAProjectExtractorFactory;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
-
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.OWL2;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * Utility tasks for CIMTool plugin. Tasks are instances of
@@ -248,8 +250,8 @@ public class Task extends Info {
 		String ext = file.getFileExtension().toLowerCase();
 		if (ext.equals("xmi")) {
 			return parseXMI(file);
-		} else if (ext.equals("eap"))
-			return parseEAP(file);
+		} else if (ext.equals("eap") || ext.equals("eapx") || ext.equals("qea") || ext.equals("qeax") || ext.equals("feap"))
+			return parseEAProject(file);
 		else {
 			if (ModelParserRegistry.INSTANCE.hasParserForExtension(ext)) {
 				ModelParser[] parsers = ModelParserRegistry.INSTANCE.getParsersForExtension(ext);
@@ -310,13 +312,13 @@ public class Task extends Info {
 		return interpretSchema(parser.getModel(), file);
 	}
 
-	private static OntModel parseEAP(IFile file) throws CoreException {
-		EAPExtractor extractor;
+	private static OntModel parseEAProject(IFile file) throws CoreException {
+		EAProjectExtractor extractor;
 		try {
-			extractor = new EAPExtractor(file.getLocation().toFile());
+			extractor = EAProjectExtractorFactory.createExtractor(file.getLocation().toFile());
 			extractor.run();
-		} catch (IOException e) {
-			throw error("can't access EA project", e);
+		} catch (EAProjectExtractorException e) {
+			throw error("Can't access EA project", e);
 		}
 		return interpretSchema(extractor.getModel(), file);
 	}
@@ -329,7 +331,7 @@ public class Task extends Info {
 			else
 				base = file.getLocationURI().toString() + "#";
 		}
-		IFile auxfile = getRelated(file, "annotation");
+		IFile auxfile = getRelated(file, "annotation", false);
 		OntModel annote;
 		if (auxfile.exists()) {
 			annote = ModelFactory.createMem();

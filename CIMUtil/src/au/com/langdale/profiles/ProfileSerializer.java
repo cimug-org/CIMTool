@@ -33,6 +33,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.XSD;
+
 import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.kena.OntResource;
@@ -48,9 +51,6 @@ import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
 import au.com.langdale.profiles.ProfileModel.TypeNode;
 import au.com.langdale.sax.AbstractReader;
 import au.com.langdale.xmi.UML;
-
-import com.hp.hpl.jena.vocabulary.RDFS;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  * Convert a message model to XML. The form of the XML is designed to be easily
@@ -437,8 +437,10 @@ public class ProfileSerializer extends AbstractReader {
 			if (size == 0) {
 				OntResource range = node.getBaseProperty().getRange();
 				elem = new Element("Reference");
-				if (range != null && range.isURIResource())
+				if (range != null && range.isURIResource()) {
+					elem.set("baseClass",  range.getURI());
 					elem.set("type", range.getLocalName());
+				}
 				emit(node, elem);
 				
 				OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
@@ -592,7 +594,14 @@ public class ProfileSerializer extends AbstractReader {
 		if (!stereo.isURIResource())
 			return;
 		Element elem = new Element("Stereotype");
-		elem.set("label", stereo.getLabel());
+		if (stereo.getLabel() != null) {
+			elem.set("label", stereo.getLabel());
+		} else {
+			if (stereo.getLocalName() != null)
+				elem.set("label",  stereo.getLocalName());
+			else
+				elem.set("label", "");
+		}
 		elem.append(stereo.getURI());
 		elem.close();
 	}
@@ -672,7 +681,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("dataType", type.getURI());
 		elem.set("name", type.getLocalName());
 		OntResource defin = type.getResource(RDFS.isDefinedBy);
-		if( defin != null ){
+		if(defin != null){
 			elem.set("package", defin.getLabel());
 			elem.set("packageURI", defin.getURI());
 		}

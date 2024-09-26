@@ -133,7 +133,8 @@ public class OntModelAdapters  {
 		 */
 		public boolean isEditable() {
 			OntResource subject = context.getSubject();
-			if((subject == null) || NON_EDITABLE_IDENT.contains(ident.asNode().getURI()) || //
+			boolean isNonStandardStereotype = !UML.stereotypes.containsKey((ident.asNode().getLocalName() != null ? ident.asNode().getLocalName() : null));
+			if((subject == null) || NON_EDITABLE_IDENT.contains(ident.asNode().getURI()) || isNonStandardStereotype || //
 					((subject != null) && //
 							// Indicates it is the profile envelope that is selected...nothing is editable
 							(!subject.isClass() && !subject.isDatatype()) ||
@@ -144,7 +145,7 @@ public class OntModelAdapters  {
 							// This is relevant for a top-level enumeration that is selected... 
 							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && !subject.hasProperty(OWL.unionOf) && subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()))) || //
 							// This is relevant for an association that is selected... 
-							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && subject.hasProperty(OWL.unionOf) && !subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()))) || //
+							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && subject.hasProperty(OWL.unionOf) && !subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI())) && !EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI())) || //
 							// Remaining checks are for a non-primitive attribute...
 							(subject.isClass() && subject.hasProperty(UML.hasStereotype, UML.attribute) && //
 									(EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || 

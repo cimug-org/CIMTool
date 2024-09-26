@@ -9,11 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
+//import org.apache.commons.lang3.CharEncoding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
-import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.DatabaseBuilder;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
@@ -39,7 +40,7 @@ import au.com.langdale.util.Jobs;
 public class Info {
 
 	private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
-	
+
 	// properties and preferences
 	public static final QualifiedName PROFILE_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_path");
 	public static final QualifiedName BASE_MODEL_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "base_model_path");
@@ -81,7 +82,7 @@ public class Info {
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi", "eap")
+		return isFile(resource, "Schema", "owl", "xmi", "eap", "eapx", "qea", "qeax", "feap")
 				|| isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
 	}
 
@@ -142,7 +143,7 @@ public class Info {
 			return false;
 		ext = ext.toLowerCase();
 
-		return ext.equals("xmi") || ext.equals("eap") || ext.equals("owl") || ext.equals("n3")
+		return ext.equals("xmi") || ext.equals("eap") || ext.equals("eapx") || ext.equals("qea") || ext.equals("qeax") || ext.equals("feap") || ext.equals("owl") || ext.equals("n3")
 				|| ext.equals("simple-owl") || ext.equals("merged-owl") || ext.equals("diagnostic")
 				|| ext.equals("cimtool-settings") || ext.equals("repair") || ext.equals("mapping-ttl")
 				|| ext.equals("mapping-owl") || ModelParserRegistry.INSTANCE.hasParserForExtension(ext);
@@ -151,13 +152,15 @@ public class Info {
 	public static IFile findMasterFor(IFile file) {
 		String ext = file.getFileExtension();
 		if (ext != null && ext.equalsIgnoreCase("annotation")) {
-			IFile master = getRelated(file, "xmi");
-			if (master.exists())
-				return master;
-
-			master = getRelated(file, "eap");
-			if (master.exists())
-				return master;
+			IFile master = null;
+			
+			String[] schemaExt = new String[] {"xmi", "eap", "eapx", "qea", "qeax", "feap"};
+			for (String s : schemaExt) {
+				master = getRelated(file, s);
+				if (master.exists())
+					return master;
+			}
+			
 			for (String s : ModelParserRegistry.INSTANCE.getExtensions()) {
 				master = getRelated(file, s);
 				if (master.exists())
@@ -177,6 +180,17 @@ public class Info {
 		// locate the last index of the "." when removing a file extension we perform a
 		// recursive call to ensure that an extension is no longer at the end.
 		IPath path = removeFileExtension(file.getFullPath()).addFileExtension(ext);
+		return file.getWorkspace().getRoot().getFile(path);
+	}
+	
+	public static IFile getRelated(IResource file, String ext, boolean recursive) {
+		// This method allows for the specification of whether to make a recursive 
+		// call or not...  		
+		IPath path = null;
+		if (recursive)
+			path = removeFileExtension(file.getFullPath()).addFileExtension(ext);
+		else 
+			path = file.getFullPath().removeFileExtension().addFileExtension(ext);
 		return file.getWorkspace().getRoot().getFile(path);
 	}
 
@@ -239,7 +253,7 @@ public class Info {
 		InputStream source = null;
 		try {
 			source = openBundledFile("builders/default-copyright-template-empty.txt");
-			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			// We currently do nothing on error. This should typically not occur...
 		} finally {
@@ -268,7 +282,7 @@ public class Info {
 		InputStream source = null;
 		try {
 			source = openBundledFile("builders/default-copyright-template-multi-line.txt");
-			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			// We currently do nothing on error. This should typically not occur...
 		} finally {
@@ -297,7 +311,7 @@ public class Info {
 		InputStream source = null;
 		try {
 			source = openBundledFile("builders/default-copyright-template-single-line.txt");
-			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			// We currently do nothing on error. This should typically not occur...
 		} finally {
@@ -355,7 +369,7 @@ public class Info {
 				InputStream source = null;
 				try {
 					source = copyrightFile.getContents();
-					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 				} catch (IOException e) {
 					// We currently do nothing on error. This should typically not occur...
 				} finally {
@@ -420,7 +434,7 @@ public class Info {
 				InputStream source = null;
 				try {
 					source = copyrightFile.getContents();
-					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), CharEncoding.UTF_8));
+					copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 				} catch (IOException e) {
 					// We currently do nothing on error. This should typically not occur...
 				}finally {
@@ -556,12 +570,12 @@ public class Info {
 		return new CoreException(new Status(Status.ERROR, CIMToolPlugin.PLUGIN_ID, m, e));
 	}
 
-	public static String checkValidEAP(File source) {
+	public static String checkValidEAProject(File source) {
 		try {
-			Database.open(source, true).close();
+			DatabaseBuilder.open(source).close();
 			return null;
 		} catch (Exception e) {
-			return "The EAP file appears to be incompatible with CIMTool.";
+			return "The EAP/EAPX file appears to be incompatible with CIMTool.";
 		}
 	}
 }

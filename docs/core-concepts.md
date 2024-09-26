@@ -88,6 +88,11 @@ A Contextual Profile could generally be defined as a subset of an information mo
 
 The classes and properties in a Contextual Profile are subsets, or restrictions, of those in the information model.
 
+!!! tip
+
+    For details on namespace support in **CIMTool** for custom extensions see [CIMTool Support for Extension Namespaces](how-to/cimtool-support-for-extension-namespaces.md).
+
+
 ## Choosing a Namespace
 What namespace should be used for the terms in a Contextual Profile? There are two general approaches:
 

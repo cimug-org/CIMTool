@@ -2,11 +2,14 @@ site_name: CIMTool
 repo_url: https://github.com/CIMug-org/CIMTool
 theme:
   name: material
+  logo: logos/cimtool-v2_96x96.png
+  favicon: logos/cimtool-v2.ico
   features:
     - content.code.copy
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
+  - footnotes
   - admonition
   - tables
   - pymdownx.details
@@ -27,6 +30,8 @@ nav:
     - 'how-to/profile-maintenance.md'
     - 'how-to/comparing-profiles-schemas.md'
     - 'how-to/associations-anonymous-classes.md'
+    - 'how-to/namespaces-in-cimtool.md'
+    - 'how-to/cimtool-support-for-extension-namespaces.md'
   - 'Further Learning':
     - 'further-learning/uml-xmi-owl.md'
     - 'further-learning/cim.md'

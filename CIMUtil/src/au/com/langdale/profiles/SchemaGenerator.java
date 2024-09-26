@@ -220,7 +220,8 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		// emit properties
 		Iterator lt = props.getGroups().iterator();
 		while( lt.hasNext()) {
-			generateProperty((PropertyGroup)lt.next());
+			PropertyGroup pg = (PropertyGroup)lt.next();
+			generateProperty(pg);
 		}
 		
 		// emit superclass relationships

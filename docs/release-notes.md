@@ -3,6 +3,33 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
+### Release 2.1.0 [09-Aug-2024]
+
+CIMTool 2.1.0 is a minor release with some useful enhancements and an important defect fix.
+
+Enhancement [Issue #108](https://github.com/cimug-org/CIMTool/issues/108):
+**CIMTool** did not yet support the new .qea and .qeax (64-bit) EA project file format introduced in the 64-bit Sparx EA 16.x releases.  This enhancement allows these EA project file types to be imported directly as your CIM schema.
+
+Enhancement [Issue #114](https://github.com/cimug-org/CIMTool/issues/114):
+**CIMTool** did not yet support the .eapx and .feap (32-bit) EA project file formats available in the 32-bit Sparx EA 15.x releases. The .feap format is an embedded Firebird database that works across both EA 15.x 32-bit and EA 16.x 64-bit release of the product. This specific type of EA project file is the only file format that can be opened in both 32-bit Sparx EA 15.x and 64-bit EA 16.x releases without conversion.  Note that this enhancement intersects the work identified in [Issue #108](https://github.com/cimug-org/CIMTool/issues/108).
+
+Enhancement [Issue #118](https://github.com/cimug-org/CIMTool/issues/118):
+This issues introduces a new builder to generate a [LinkML](https://linkml.io) representation of a CIMTool profile and is useful for a wide variety of downstream processing. The output from this builder can be leverage LinkML's core python toolchain which includes functionality like generators to convert schemas to other modeling languages and data converters and validators for working with data that conforms to LinkML (including RDF, JSON, and TSV). The following offer some useful background as to what LinkML is and how it can be leveraged: [LinkML FAQ](https://linkml.io/linkml/faq/modeling.html) and [LinkML Documentation](https://linkml.io/linkml/)
+
+Enhancement [Issue #133](https://github.com/cimug-org/CIMTool/issues/133):
+PNNL has contributed two new XSLT custom builders (see: [cimantic-graphs](https://cimtool-builders.ucaiug.io/custom-builders/cimantic-graphs/builder.html)) that generate python-based code for working with semantic graphs. These have been added as OOTB builders. Thanks to Alex Anderson for his contribution to the CIM community.
+
+Defect [Issue #131](https://github.com/cimug-org/CIMTool/issues/131):
+Aggregation relationships between classes were not appearing in either the "Project Model" view or the "Add/Remove" tab in **CIMTool** (only associations and generalizations were visible). Thanks to Walter Concert for catching and reporting the issue.
+
+NOTE:  This release does not yet address the issues as reported in the 2.0.1 release notes.  Fixes for custom extensions in RDFS XSLT builders are now targeted for the 2.2.0 release.
+
+### Release 2.0.1 [12-May-2024]
+
+CIMTool 2.0.1 is a patch release and should be utilized in place of CIMTool 2.0.0 until release 2.1.0 is finalized and made public.
+
+Defect Issue #115:
+During development of the CIMTool 2.1.0 release, issues in the generated output of the RDFS XSLT builders introduced in CIMTool 2.0.0 have been identified. Specifically, during the testing of the modeling of extensions for new .qea and .feap EA project files support. In the short term a 2.0.1 patch release must be issued that re-introduced the original builders until the fix is addressed in CIMTool 2.1.0.
 
 ### Release 2.0.0 [06-Mar-2024]
 
@@ -38,11 +65,12 @@ Defect [Issue #79](https://github.com/cimug-org/CIMTool/issues/79):
 CIMTool's Stereotypes tab and UI does not correctly display all stereotypes imported from XMI/EAP schemas.
 
 Enhancement [Issue #80](https://github.com/cimug-org/CIMTool/issues/80):
-CIMTool currently only supports the generation of the older RDFS profile format (e.g. *.legacy-rdfs & *.legacy-rdfs-augmented) and is not current with regard to the latest extensions/additions that were agreed upon and implemented within CimConteXtor and CimSyntaxGen tooling as the new "RDFS2020" profile format. A *.legacy-cimcontextor.rdfs RDFS is introduced here that produces a variant that is a cross between CIMTool's existing *.legacy-rdfs-augmented builder and the new *.rdfs-2020.rdfs builder associated with [Issue #78](https://github.com/cimug-org/CIMTool/issues/78).
+CIMTool currently only supports the generation of the older RDFS profile format (e.g. ```*.legacy-rdfs``` & ```*.legacy-rdfs-augmented```) and is not current with regard to the latest extensions/additions that were agreed upon and implemented within **CimConteXtor** / **CimSyntaxGen** tooling as the new "RDFS2020" profile format. A ```*.legacy-cimcontextor.rdfs``` RDFS is introduced here that produces a variant that is a cross between CIMTool's existing ```*.legacy-rdfs-augmented``` builder and the new ```*.rdfs-2020.rdfs``` builder associated with [Issue #78](https://github.com/cimug-org/CIMTool/issues/78).
 
 Enhancement [Issue #81](https://github.com/cimug-org/CIMTool/issues/81):
-CIMTool requires enhancements to support specifying when a top-level concrete class is to utilize an rdf:ID (local) or rdf:about (global) identifier within the profile. The introduction of the <<Description>> stereotype on a concrete class is used to flags this distinction in CimConteXtor. To represent the equivalent within CIMTool a new http://langdale.com.au/2005/UML#description stereotype has been introduced that can be assigned by an end user via one of the following methods:
+**CIMTool** requires enhancements to support specifying when a top-level concrete class is to utilize an rdf:ID (local) or rdf:about (global) identifier within the profile. The introduction of the ```<<Description>>``` stereotype on a concrete class is used to flags this distinction in CimConteXtor. To represent the equivalent within CIMTool a new http://langdale.com.au/2005/UML#description stereotype has been introduced that can be assigned by an end user via one of the following methods:
 2.0.0
+
 * The "Stereotypes" tab:
 ![3024742.0.08eae4f-f495-474e-817a-de3e0b720465](https://github.com/cimug-org/CIMTool/assets/3385173/de317690-fb4d-4209-8ff2-8919f4047b5d)
 
