@@ -1,7 +1,7 @@
 # Welcome
 **CIMTool** is an open source tool for working with the Common Information Model (CIM) to produce design artifacts such as database schemas, message exchange syntax, source code classes, and reference documentation. CIM is a UML model used in the electric power generation, transmission, and distribution domains.
 
-![CIMToolScreenshot.png](./images/CIMToolScreenshot.png "CIMTool")
+[!![image](./images/CIMToolScreenshot.png)](./images/CIMToolScreenshot.png "CIMTool") 
 
 ## Overview
 **CIMTool** allows users to:
