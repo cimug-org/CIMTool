@@ -2,7 +2,7 @@
 
 **CIMTool** is an open source tool that supports the Common Information Model (CIM) standards used in the electric power industry.  It is potentially useful for other semantic applications too.
 
-![image](https://github.com/user-attachments/assets/ed46ec09-1d99-4ae5-babe-019a2fb17c9d)
+![image](https://github.com/user-attachments/assets/272e4fb6-438e-4c46-85d9-31fb2680ccc4)
 
 ## Project Supporters
 
