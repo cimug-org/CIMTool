@@ -40,7 +40,6 @@
 			<item><xsl:text>  copyright: </xsl:text>"<xsl:value-of select="$copyright-single-line" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
-		
     	<!-- Prefixes top-level section -->	
     	<item>prefixes:</item>
     	<xsl:text>&#10;</xsl:text>
@@ -48,7 +47,6 @@
             <item><xsl:text>  </xsl:text><xsl:value-of select="map:get($prefixes, .)"/>: <xsl:value-of select="."/></item>
 			<xsl:text>&#10;</xsl:text>
         </xsl:for-each>
-        
     	<item>imports:</item>
     	<xsl:text>&#10;</xsl:text>
     	<item>- linkml:types</item>
@@ -91,6 +89,10 @@
 			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
+		<xsl:text>    annotations:</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>      ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
 		<xsl:if test="a:SuperType">
 			<!-- The name of the superclass is determined using the @baseClass attribute (and not the a:SuperType/@name) -->
 		    <item><xsl:text>    is_a: </xsl:text><xsl:value-of select="substring-after(a:SuperType/@baseClass, '#')" /></item>
@@ -140,6 +142,8 @@
 		</xsl:if>
 		<xsl:text>    annotations:</xsl:text>
 		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>      ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
 		<xsl:text>      cim_data_type: true</xsl:text>
 		<xsl:text>&#10;</xsl:text>
         <item><xsl:text>      uri: </xsl:text><xsl:call-template name="prefix"><xsl:with-param name="uri" select="@dataType"/></xsl:call-template></item>
@@ -160,9 +164,13 @@
 			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
+		<xsl:text>        annotations:</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>          ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
         <item><xsl:text>        slot_uri: </xsl:text><xsl:call-template name="prefix"><xsl:with-param name="uri" select="@baseProperty"/></xsl:call-template></item>
         <xsl:text>&#10;</xsl:text>
-        <!-- Must map from an @xstype to a native linkml type which is what must specified for the range attribute. -->
+        <!-- Must map from an @xstype to a native linkml type which is what must be specified for the range of an attribute. -->
         <xsl:variable name="linkml_type">
 			<xsl:call-template name="xsd_type_to_linkml_type">
 				<xsl:with-param name="xstype" select="@xstype"/>
@@ -194,9 +202,13 @@
 		</xsl:if>
 		<xsl:variable name="comments"><xsl:call-template name="linkml-comments"/></xsl:variable>
 		<xsl:if test="$comments != ''">
-			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
+			<xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
+		<xsl:text>        annotations:</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>          ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
         <item><xsl:text>        slot_uri: </xsl:text><xsl:call-template name="prefix"><xsl:with-param name="uri" select="@baseProperty"/></xsl:call-template></item>
         <xsl:text>&#10;</xsl:text>
         <item><xsl:text>        range: </xsl:text><xsl:value-of select="substring-after(@dataType, '#')" /></item>
@@ -228,6 +240,10 @@
 			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
+		<xsl:text>        annotations:</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>          ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
         <item><xsl:text>        slot_uri: </xsl:text><xsl:call-template name="prefix"><xsl:with-param name="uri" select="@baseProperty"/></xsl:call-template></item>
         <xsl:text>&#10;</xsl:text>
         <item><xsl:text>        range: </xsl:text><xsl:value-of select="@type" /></item>
@@ -259,6 +275,10 @@
 			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
+		<xsl:text>    annotations:</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>      ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
 		<item><xsl:text>    enum_uri:  </xsl:text><xsl:value-of select="@baseClass" /></item>
         <xsl:text>&#10;</xsl:text>
         <item><xsl:text>    permissible_values:</xsl:text></item>
@@ -281,10 +301,13 @@
 			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
+		<xsl:text>        annotations:</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<item><xsl:text>          ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
+		<xsl:text>&#10;</xsl:text>
 	</xsl:template>
 	
-	<!-- Template that converts an @xstype into a corresponding 
-	--> 
+	<!-- Template that converts an @xstype into a corresponding python type --> 
 	<xsl:template name="xsd_type_to_python_type">
 		<xsl:param name="xstype"/>
 		<xsl:choose>
@@ -396,13 +419,13 @@
 	<!-- descriptions are to be placed.                                                             -->
 	<!-- ========================================================================================== -->
 	
-	<!-- The a:Note element in a CIMTool intermediary XML profile definition corresponds to the  
-		 "Profile Description" text entry field in CIMTool (on the description tab). This allows
-		 an end-user to enter profile specific notes or instructions relevant to a class, enum, 
-		 attribute, etc. used in a profile exchange. We are mapping these additional notes that 
-		 appear in the a:Note element to LinkML's 'comments' metadata attribute. Per the LinkML 
-		 documentation the 'comments' metadata attribute is equivalent to skos:note and defined
-		 as:
+	<!-- The a:Note element in a CIMTool intermediary XML profile definition file corresponds    
+		 to the "Profile Description" text entry field in CIMTool (on the description tab). This 
+		 allows an end-user to enter profile specific notes or instructions relevant to a class, 
+		 enum, attribute, etc. used in a profile exchange. We are mapping these additional notes  
+		 that appear in the a:Note element to LinkML's 'comments' metadata attribute. Per the 
+		 LinkML documentation the 'comments' metadata attribute is equivalent to skos:note and 
+		 defined as:
 
 			'notes and comments about an element intended primarily for external consumption'
 
@@ -425,8 +448,8 @@
 		</list>
 	</xsl:template>
 	
-	<!-- The a:Comment element in a CIMTool intermediary XML profile definition corresponds to 
-		 the description of the class, attribute, enum, etc. as it appears directly in the CIM   
+	<!-- The a:Comment element in a CIMTool intermediary XML profile definition file corresponds  
+		 to the description of the class, attribute, enum, etc. as it appears directly in the CIM   
 		 UML/schema. As a result we map the a:Comment element to LinkML's 'description' metadata 
 		 attribute. Per the LinkML documentation the 'description' metadata attribute is equivalent 
 		 to skos:definition and is defined as:

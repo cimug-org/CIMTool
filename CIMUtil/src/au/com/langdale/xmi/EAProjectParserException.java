@@ -4,26 +4,26 @@
  */
 package au.com.langdale.xmi;
 
-public class EAProjectExtractorException extends Exception {
+public class EAProjectParserException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	public EAProjectExtractorException() {
+	public EAProjectParserException() {
 	}
 
-	public EAProjectExtractorException(String message) {
+	public EAProjectParserException(String message) {
 		super(message);
 	}
 
-	public EAProjectExtractorException(Throwable cause) {
+	public EAProjectParserException(Throwable cause) {
 		super(cause);
 	}
 
-	public EAProjectExtractorException(String message, Throwable cause) {
+	public EAProjectParserException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public EAProjectExtractorException(String message, Throwable cause, boolean enableSuppression,
+	public EAProjectParserException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}

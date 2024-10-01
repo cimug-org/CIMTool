@@ -9,9 +9,12 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
 
+import java.util.TreeMap;
+
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -42,12 +45,36 @@ public class CIMInterpreter extends UMLInterpreter {
 		
 		System.out.println("Stage 1 XMI model size: " + getModel().size());
 
+		/**
+		ResIterator classes1 = raw.listSubjectsWithProperty(RDF.type, OWL2.Class);
+		TreeMap<String, OntResource> classMap1 = new TreeMap<>();
+		classes1.forEachRemaining((c) -> {
+			if (((OntResource)c).getLabel() != null)
+				classMap1.put(((OntResource)c).getLabel(), (OntResource)c);
+		});
+		classMap1.forEach((name, aClass) -> {
+			OntResource aParentPackage = aClass.getIsDefinedBy();
+			System.out.println(String.format("1 - Class:  %s;     Package: %s", name, (aParentPackage != null ? aParentPackage.getLabel() : aParentPackage)));
+		}); */
+		
 		Translator translator = new Translator(getModel(), baseURI, usePackageNames);
 		translator.run();
 		setModel(translator.getModel());
 		
 		System.out.println("Stage 3 XMI model size: " + getModel().size());
-
+		
+		/**
+		ResIterator classes3 = raw.listSubjectsWithProperty(RDF.type, OWL2.Class);
+		TreeMap<String, OntResource> classMap3 = new TreeMap<>();
+		classes3.forEachRemaining((c) -> {
+			if (((OntResource)c).getLabel() != null)
+				classMap3.put(((OntResource)c).getLabel(), (OntResource)c);
+		});
+		classMap3.forEach((name, aClass) -> {
+			OntResource aParentPackage = aClass.getIsDefinedBy();
+			System.out.println(String.format("3 - Class:  %s;     Package: %s", name, (aParentPackage != null ? aParentPackage.getLabel() : aParentPackage)));
+		}); */
+		
 		propagateComments();
 		applyStereotypes();
 		classifyAttributes();
@@ -56,6 +83,18 @@ public class CIMInterpreter extends UMLInterpreter {
 		createOntologyHeader(baseURI);
 		
 		System.out.println("Stage 4 XMI model size: " + getModel().size());
+		
+		/**
+		ResIterator classes4 = raw.listSubjectsWithProperty(RDF.type, OWL2.Class);
+		TreeMap<String, OntResource> classMap4 = new TreeMap<>();
+		classes4.forEachRemaining((c) -> {
+			if (((OntResource)c).getLabel() != null)
+				classMap4.put(((OntResource)c).getLabel(), (OntResource)c);
+		});
+		classMap4.forEach((name, aClass) -> {
+			OntResource aParentPackage = aClass.getIsDefinedBy();
+			System.out.println(String.format("4 - Class:  %s;     Package: %s", name, (aParentPackage != null ? aParentPackage.getLabel() : aParentPackage)));
+		}); */
 		
 		return getModel();
 	}

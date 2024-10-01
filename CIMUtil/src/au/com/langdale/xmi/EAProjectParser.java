@@ -6,9 +6,9 @@ package au.com.langdale.xmi;
 
 import au.com.langdale.kena.OntModel;
 
-public interface EAProjectExtractor {
+public interface EAProjectParser {
 	
-	public void run() throws EAProjectExtractorException;
+	public void parse() throws EAProjectParserException;
 
 	public OntModel getModel();
 	
