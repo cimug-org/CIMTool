@@ -4,7 +4,6 @@
  */
 package au.com.langdale.cimtoole.builder;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -24,6 +23,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.xml.sax.SAXException;
 
+import com.hp.hpl.jena.vocabulary.RDF;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Info;
@@ -31,10 +32,10 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.registries.ProfileBuildletConfigUtils;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistry;
 import au.com.langdale.jena.OntModelProvider;
+import au.com.langdale.kena.Format;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.kena.ResourceFactory;
-import au.com.langdale.kena.Format;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.OWLGenerator;
 import au.com.langdale.profiles.ProfileModel;
@@ -43,8 +44,6 @@ import au.com.langdale.profiles.RDFSBasedGenerator;
 import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.workspace.ResourceOutputStream;
-
-import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * A series of <code>Buildlet</code>s for building profile artifacts.

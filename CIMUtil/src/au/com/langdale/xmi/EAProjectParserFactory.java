@@ -7,23 +7,23 @@ package au.com.langdale.xmi;
 import java.io.File;
 
 /**
- * Static factory class for creating extractors specialized for specific EA
+ * Static factory class for creating parsers specialized for specific EA
  * Project files.
  *
  */
-public class EAProjectExtractorFactory {
+public class EAProjectParserFactory {
 	
-	public static EAProjectExtractor createExtractor(File file) {
+	public static EAProjectParser createParser(File file) {
 		String ext = file.getName().substring(file.getName().lastIndexOf(".") + 1).toLowerCase();
 		switch (ext) {
 			case "eap":
 			case "eapx":
-				return new EAPExtractor(file);
+				return new EAPParser(file);
 			case "qea":
 			case "qeax":
-				return new QEAExtractor(file);
+				return new QEAParser(file);
 			case "feap":
-				return new FEAPExtractor(file);
+				return new FEAPParser(file);
 			default:
 				throw new IllegalArgumentException("Unsupported EA project file type: " + ext);
 			}
