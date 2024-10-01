@@ -50,7 +50,7 @@ public class ProfileEditor extends ModelEditor {
 		addPage(new Populate("Add/Remove", this));
 		addPage(new Hierarchy("Restriction", this));
 		addPage(new Detail("Description", this));
-		addPage( new Stereotype("Stereotypes", this));
+		addPage(new Stereotype("Stereotypes", this));
 		addPage(new Summary("Profile Summary", this));
 	}
 

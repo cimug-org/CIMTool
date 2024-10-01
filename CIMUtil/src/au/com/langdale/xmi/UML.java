@@ -51,6 +51,7 @@ public class UML {
 	public final static Resource compound = ResourceFactory.createResource(NS + "compound");
 	public final static Resource preserve = ResourceFactory.createResource(NS + "preserve");
 	public final static Resource description = ResourceFactory.createResource(NS + "description");
+	public final static Resource hideOnDiagrams = ResourceFactory.createResource(NS + "hideondiagrams");
 	
 	// stereotype the two forms of aggregation, each in two directions
 	public final static Resource ofComposite = ResourceFactory.createResource(NS + "ofComposite");
@@ -79,6 +80,7 @@ public class UML {
 		stereotypes.put(compound.getLocalName(), compound);
 		stereotypes.put(preserve.getLocalName(), preserve);
 		stereotypes.put(description.getLocalName(), description);
+		stereotypes.put(hideOnDiagrams.getLocalName(), hideOnDiagrams);
 		stereotypes.put(ofComposite.getLocalName(), ofComposite);
 		stereotypes.put(ofAggregate.getLocalName(), ofAggregate);
 		stereotypes.put(compositeOf.getLocalName(), compositeOf);
@@ -126,26 +128,27 @@ public class UML {
 		model.createIndividual(global_package.getURI(), Package);
 		
 		// well known stereotypes
-		model.createIndividual(enumeration.getURI(), Stereotype).addLabel("Enumeration", null);
+		model.createIndividual(enumeration.getURI(), Stereotype).addLabel("enumeration", null);
 		model.createIndividual(enumliteral.getURI(), Stereotype).addLabel("enum", null);
 		model.createIndividual(union.getURI(), Stereotype).addLabel("Union", null);
-		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("Extended By", null);
+		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("ExtendedBy", null);
 		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension", null);
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
 		model.createIndividual(cimdatatype.getURI(), Stereotype).addLabel("CIMDatatype", null);
 		model.createIndividual(datatype.getURI(), Stereotype).addLabel("Datatype", null);
 		model.createIndividual(attribute.getURI(), Stereotype).addLabel("Attribute", null);
-		model.createIndividual(xmlelement.getURI(), Stereotype).addLabel("XML Element", null);
-		model.createIndividual(xmlattribute.getURI(), Stereotype).addLabel("XML Attribute", null);		
-		model.createIndividual(byreference.getURI(), Stereotype).addLabel("By Reference", null);
+		model.createIndividual(xmlelement.getURI(), Stereotype).addLabel("XMLElement", null);
+		model.createIndividual(xmlattribute.getURI(), Stereotype).addLabel("XMLAttribute", null);		
+		model.createIndividual(byreference.getURI(), Stereotype).addLabel("ByReference", null);
 		model.createIndividual(concrete.getURI(), Stereotype).addLabel("Concrete", null);
 		model.createIndividual(compound.getURI(), Stereotype).addLabel("Compound", null);
 		model.createIndividual(preserve.getURI(), Stereotype).addLabel("Preserve", null);
-		model.createIndividual(ofComposite.getURI(), Stereotype).addLabel("Of Composite", null);
-		model.createIndividual(ofAggregate.getURI(), Stereotype).addLabel("Of Aggregate", null);
-		model.createIndividual(compositeOf.getURI(), Stereotype).addLabel("Composite Of", null);
-		model.createIndividual(aggregateOf.getURI(), Stereotype).addLabel("Aggregate Of", null);
+		model.createIndividual(hideOnDiagrams.getURI(), Stereotype).addLabel("HideOnDiagrams", null);
+		model.createIndividual(ofComposite.getURI(), Stereotype).addLabel("OfComposite", null);
+		model.createIndividual(ofAggregate.getURI(), Stereotype).addLabel("OfAggregate", null);
+		model.createIndividual(compositeOf.getURI(), Stereotype).addLabel("CompositeOf", null);
+		model.createIndividual(aggregateOf.getURI(), Stereotype).addLabel("AggregateOf", null);
 		model.createIndividual(description.getURI(), Stereotype).addLabel("Description", null);
 		
 		model.createAnnotationProperty(baseuri.getURI());

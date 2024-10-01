@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 2.1.0" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.1.0" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="CIMTool 2.2.0" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.2.0" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="cimtool-about.png"/>
@@ -14,8 +14,6 @@
    </configIni>
 
    <launcherArgs>
-      <!-- Uncomment this if we want the Windows command line console to be started on launch -->
-      <!-- <programArgs>-consoleLog</programArgs> -->
       <vmArgs>-Xms40m -Xmx4G
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
@@ -44,6 +42,7 @@
             winExtraLargeHigh="cimtool-v2_256x256x32.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-20</windows>
@@ -91,6 +90,16 @@ See the GNU Lesser General Public License for more details.
       <plugin id="javax.inject"/>
       <plugin id="javax.servlet.jsp-api"/>
       <plugin id="javax.xml"/>
+      <plugin id="net.sourceforge.lpg.lpgjavaruntime"/>
+      <plugin id="net.sourceforge.plantuml.eclipse"/>
+      <plugin id="net.sourceforge.plantuml.eclipse.imagecontrol"/>
+      <plugin id="net.sourceforge.plantuml.ecore"/>
+      <plugin id="net.sourceforge.plantuml.jdt"/>
+      <plugin id="net.sourceforge.plantuml.lib"/>
+      <plugin id="net.sourceforge.plantuml.lib.elk" fragment="true"/>
+      <plugin id="net.sourceforge.plantuml.lib.jlatexmath" fragment="true"/>
+      <plugin id="net.sourceforge.plantuml.svg"/>
+      <plugin id="net.sourceforge.plantuml.text"/>
       <plugin id="org.apache.batik.constants"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
@@ -283,7 +292,6 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
       <plugin id="slf4j.api"/>
-      <plugin id="slf4j.nop"/>
    </plugins>
 
    <features>

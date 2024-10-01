@@ -56,13 +56,13 @@
     "rdfs-augmented-cimcontextor": {
         "type": "TRANSFORM",
         "style": "rdfs-augmented-cimcontextor",
-        "datetime": "2024-01-29T00:00:00Z",
+        "datetime": "2024-10-01T00:00:00Z",
         "ext": "augmented-cimcontextor.rdfs"
     },
     "rdfs-2020": {
         "type": "TRANSFORM",
         "style": "rdfs-2020",
-        "datetime": "2024-01-30T00:00:00Z",
+        "datetime": "2024-10-01T00:00:00Z",
         "ext": "rdfs-2020.rdfs"
     },
     "linkml": {
@@ -82,5 +82,23 @@
         "style": "cimantic-graphs-init",
         "datetime": "2024-08-07T00:00:00Z",
         "ext": "__init__.py"
+    },
+    "rdfs-501ed2-beta": {
+        "type": "TRANSFORM",
+        "style": "rdfs-501ed2-beta",
+        "datetime": "2024-09-20T00:00:00Z",
+        "ext": "rdfs-501ed2-beta.rdfs"
+    },
+    "puml-t2b": {
+        "type": "TEXT",
+        "style": "puml-t2b",
+        "datetime": "2024-09-30T00:00:00Z",
+        "ext": "t2b.puml"
+    },
+    "puml-l2r": {
+        "type": "TEXT",
+        "style": "puml-l2r",
+        "datetime": "2024-09-30T00:00:00Z",
+        "ext": "l2r.puml"
     }
 }

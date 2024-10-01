@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
-Bundle-Version: 3.3.2.qualifier
+Bundle-Version: 3.3.3
 Bundle-Vendor: Langdale Consultants
 Bundle-RequiredExecutionEnvironment: JavaSE-20
 Bundle-ClassPath: kena.jar,

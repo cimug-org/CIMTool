@@ -52,7 +52,7 @@ public class NewProject extends Wizard implements INewWizard {
 		copyrightTemplates.setSingleLineCopyrightSources(new String[]{"*.txt", "*.copyright-single-line"});
 		//
 		schema.setTitle("Import Initial Schema");
-		schema.setDescription("Import an XMI or OWL base schema.");
+		schema.setDescription("Import an XMI, OWL or EA project file as your base schema.");
 	}
 
 	@Override
