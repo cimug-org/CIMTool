@@ -2,7 +2,7 @@
 <feature
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
-      version="2.1.0"
+      version="2.2.0"
       provider-name="Langdale Consultants">
 
    <description url="https://cimtool.ucaiug.io">
@@ -69,7 +69,7 @@ info@healthmarketscience redistributed under the LGPL version 2.1.
       <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="au.com.langdale.cimutil" version="1.8.2" match="greaterOrEqual"/>
-      <import plugin="au.com.langdale.rcputil" version="2.1.0" match="greaterOrEqual"/>
+      <import plugin="au.com.langdale.rcputil" version="2.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf" version="2.5.0" match="greaterOrEqual"/>
