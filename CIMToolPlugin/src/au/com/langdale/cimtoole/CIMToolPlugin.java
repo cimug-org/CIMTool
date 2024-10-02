@@ -60,7 +60,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	 */
 	public CIMToolPlugin() {
 	}
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -92,14 +92,27 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 				unzip(zipFileInputStream, stateLocationNativePlatformDir.getAbsolutePath());
 			}
 			
-			// Finally set the 
-			System.setProperty("jna.library.path", stateLocationNativePlatformDir.getAbsolutePath());
-			System.err.println(System.getProperty("jna.library.path"));
+			// Finally, append to the JNA library path...
+			appendJnaLibraryPath(stateLocationNativePlatformDir.getAbsolutePath());
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			throw new RuntimeException(e);
 		}
 	}
+	
+    private void appendJnaLibraryPath(String newPath) {
+        // Retrieve the current value of jna.library.path
+        String existingPaths = System.getProperty("jna.library.path");
+        
+        // If there's an existing path, append the new one; otherwise, use the new path as is
+        if (existingPaths != null && !existingPaths.isEmpty()) {
+            System.setProperty("jna.library.path", existingPaths + System.getProperty("path.separator") + newPath);
+        } else {
+            System.setProperty("jna.library.path", newPath);
+        }
+
+        System.out.println("New 'jna.library.path':  " + System.getProperty("jna.library.path"));
+    }
 	
 	private void unzip(InputStream zipFileInputStream, String destDirectory) throws IOException {
 		File destDir = new File(destDirectory);
@@ -121,7 +134,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 		}
 		zipIn.close();
 	}
-	
+
 	private void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
 		byte[] bytesIn = new byte[4096];
@@ -161,7 +174,13 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 				return super.get(value, size);
 		}
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;

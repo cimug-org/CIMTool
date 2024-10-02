@@ -46,9 +46,6 @@
 	<xsl:template match="a:Root|a:ComplexType|a:EnumeratedType">
 		<rdf:Description rdf:about="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }">
 			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, $ontologyURI)) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
-			<xsl:if test="self::a:EnumeratedType">
-				<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#enumeration"/>
-			</xsl:if>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
@@ -68,7 +65,7 @@
 	
 	<xsl:template match="a:SimpleType">	
 		<rdf:Description rdf:about="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }">
-			<xsl:if test="not(a:Stereotype[contains(., '#cimdatatype')])">
+			<xsl:if test="not(a:Stereotype[contains(., '#CIMDatatype')])">
 				<cims:stereotype>CIMDatatype</cims:stereotype>
 			</xsl:if>
 			<xsl:call-template name="stereotypes"/>
@@ -87,8 +84,12 @@
 	<xsl:template match="a:Simple">
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:dataType rdf:resource="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }"/>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
-			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<!-- This conditional is a "safety check" in the event that a a:Stereotype of type #attribute doesn't already 
+				 exist. In that case we ensure we add it. This since all a:Domain elements are attributes. -->
+			<xsl:if test="not(a:Stereotype[contains(., '#attribute')])">
+				<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			</xsl:if>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
@@ -100,8 +101,12 @@
 	<xsl:template match="a:Domain">
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:dataType rdf:resource="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }"/>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
-			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<!-- This conditional is a "safety check" in the event that a a:Stereotype of type #attribute doesn't already 
+				 exist. In that case we ensure we add it. This since all a:Domain elements are attributes. -->
+			<xsl:if test="not(a:Stereotype[contains(., '#attribute')])">
+				<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			</xsl:if>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
@@ -122,7 +127,7 @@
 			<xsl:if test="@inverseBaseProperty">
 				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
@@ -141,7 +146,7 @@
 			<xsl:if test="@inverseBaseProperty">
 				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<!-- When an @inverseBaseProperty is missing it is a clear indicator that this is not actually an association but
 				 rather is an attribute that the end user has not pulled in the type for in CIMTool while doing constructing
 				 the profile. When that happens it appears as an a:Reference element and therefore the below conditional is 
@@ -174,14 +179,14 @@
 			<xsl:if test="@inverseBaseProperty">
 				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
 			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
-			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
+			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
 			<rdfs:range rdf:resource="#{@type}"/>
 		</rdf:Description>
 	</xsl:template>
@@ -193,7 +198,7 @@
 			<xsl:if test="@inverseBaseProperty">
 				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<!-- When an @inverseBaseProperty is missing it is a clear indicator that this is not actually an association but
 				 rather is an attribute that the end user has not pulled in the type for in CIMTool while doing constructing
 				 the profile. When that happens it appears as an a:Reference element and therefore the below conditional is 
@@ -213,8 +218,10 @@
 	
 	<xsl:template match="a:Enumerated">	
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
-			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<xsl:if test="not(a:Stereotype[contains(., '#attribute')])">
+				<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			</xsl:if>
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
@@ -228,7 +235,9 @@
 	
 	<xsl:template match="a:EnumeratedValue">
 		<rdf:Description rdf:about="{if (starts-with(@baseResource, $ontologyURI)) then concat('#', substring-after(@baseResource, '#')) else @baseResource }">
-			<cims:stereotype>enum</cims:stereotype>
+			<xsl:if test="not(a:Stereotype[contains(., '#enum')])">
+				<cims:stereotype>enum</cims:stereotype>
+			</xsl:if>
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="{if (starts-with(@baseResource, $ontologyURI)) then concat('#', substring-before(substring-after(@baseResource, '#'), '.')) else @baseResource }"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
@@ -276,18 +285,13 @@
 		</xs:complexType>
 	</xsl:template>
 	-->
-	
 	<xsl:template name="stereotypes">
 		<xsl:for-each select="a:Stereotype">
 			<xsl:sort select="." order="ascending" />
 			<xsl:variable name="stereotype" select="substring-after(., '#')"/>
-			<!-- We filter out all stereotypes except those support (below) within the RDFS2020 variant -->
 			<xsl:choose>
-				<xsl:when test="($stereotype = 'enum' ) or ($stereotype = 'concrete')">
+				<xsl:when test="($stereotype = 'attribute') or ($stereotype = 'byreference') or ($stereotype = 'enumeration') or ($stereotype = 'enum')or ($stereotype = 'concrete') or ($stereotype = 'ofAggregate') or ($stereotype = 'aggregateOf') or ($stereotype = 'ofComposite') or ($stereotype = 'compositeOf')">
 					<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#{$stereotype}"/>
-				</xsl:when>
-				<xsl:when test="($stereotype = 'enumeration') or ($stereotype = 'enum') or ($stereotype = 'byreference') or ($stereotype = 'attribute') or ($stereotype = 'ofAggregate') or ($stereotype = 'aggregateOf') or ($stereotype = 'ofComposite') or ($stereotype = 'compositeOf') or ($stereotype = 'diagramshide') or ($stereotype = 'diagramshideallattributes')">
-					<!-- We don't want to do anything with these specific enumerations.  Rather, we "pass through" and ignore them... -->
 				</xsl:when>
 				<xsl:otherwise>
 					<cims:stereotype><xsl:value-of select="@label"/></cims:stereotype>
@@ -295,7 +299,6 @@
 			</xsl:choose>
 		</xsl:for-each>
 	</xsl:template>
-	
 	<xsl:template match="." mode="comments">
 		<xsl:for-each select="a:Comment|a:Note">
 			<xsl:value-of select="."/><xsl:if test="position()!=last()"><xsl:value-of select="$newline"/></xsl:if>

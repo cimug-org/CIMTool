@@ -61,9 +61,9 @@ import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
 import au.com.langdale.workspace.ResourceOutputStream;
 import au.com.langdale.xmi.CIMInterpreter;
-import au.com.langdale.xmi.EAProjectExtractor;
-import au.com.langdale.xmi.EAProjectExtractorException;
-import au.com.langdale.xmi.EAProjectExtractorFactory;
+import au.com.langdale.xmi.EAProjectParser;
+import au.com.langdale.xmi.EAProjectParserException;
+import au.com.langdale.xmi.EAProjectParserFactory;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
 
@@ -313,17 +313,17 @@ public class Task extends Info {
 	}
 
 	private static OntModel parseEAProject(IFile file) throws CoreException {
-		EAProjectExtractor extractor;
+		EAProjectParser parser;
 		try {
-			extractor = EAProjectExtractorFactory.createExtractor(file.getLocation().toFile());
-			extractor.run();
-		} catch (EAProjectExtractorException e) {
+			parser = EAProjectParserFactory.createParser(file.getLocation().toFile());
+			parser.parse();
+		} catch (EAProjectParserException e) {
 			throw error("Can't access EA project", e);
 		}
-		return interpretSchema(extractor.getModel(), file);
+		return interpretSchema(parser.getModel(), file);
 	}
 
-	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {
+	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {	
 		String base = getProperty(file, SCHEMA_NAMESPACE);
 		if (base == null) {
 			if (file.getName().toLowerCase().startsWith("cim"))

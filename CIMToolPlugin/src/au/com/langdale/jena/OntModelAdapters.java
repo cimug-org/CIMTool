@@ -72,6 +72,7 @@ public class OntModelAdapters  {
 		private static final List<String> NON_EDITABLE_IDENT = new ArrayList<String>();
 		private static final List<String> EDITABLE_CLASS_IDENT = new ArrayList<String>();
 		private static final List<String> EDITABLE_ASSOCIATION_IDENT = new ArrayList<String>();
+		private static final List<String> EDITABLE_ROOT_IDENT = new ArrayList<String>();
 
 		static {
 			/** 
@@ -102,6 +103,9 @@ public class OntModelAdapters  {
 			
 			/** Stereotypes editable only for associations in the tree. */
 			EDITABLE_ASSOCIATION_IDENT.add(UML.byreference.getURI());
+			
+			/** Stereotypes editable for the top-level "Root" of the entire profile (note this "root of the profile" element does not exist in the UML). */
+			EDITABLE_ROOT_IDENT.add(UML.hideOnDiagrams.getURI());
 		}
 		
 		public Annotation(FrontsNode ident, FrontsNode prop, String comment, OntModelProvider context) {
@@ -137,7 +141,7 @@ public class OntModelAdapters  {
 			if((subject == null) || NON_EDITABLE_IDENT.contains(ident.asNode().getURI()) || isNonStandardStereotype || //
 					((subject != null) && //
 							// Indicates it is the profile envelope that is selected...nothing is editable
-							(!subject.isClass() && !subject.isDatatype()) ||
+							(!subject.isClass() && !subject.isDatatype() && !EDITABLE_ROOT_IDENT.contains(ident.asNode().getURI())) ||
 							// A subject that is a datatype indicates that a attribute of type primitive is currently selected...
 							(subject.isDatatype() && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()))) || //
 							// This is relevant for a top-level class that is selected... 

@@ -176,9 +176,9 @@ public class XMIModel {
 		}
 		return null;
 	}
-
+	
 	/**
-	 *Create and label an OWL annotation property 
+	 * Create and label an OWL annotation property 
 	 * for an XMI tag declaration.
 	 * 
 	 * @param element in XMI declaring the property.
@@ -231,11 +231,9 @@ public class XMIModel {
 	 * Create or reference a stereotype by name.
 	 */
 	protected OntResource createStereotypeByName(String name) {
-		if (UML.stereotypes.containsKey(name.toLowerCase())) {
-			return model.createIndividual(UML.NS + name.toLowerCase(), UML.Stereotype);
-		} else {
-			return model.createIndividual(UML.NS + name, UML.Stereotype);
-		}
+		OntResource stereotype =  model.createIndividual(UML.NS + name.toLowerCase().replaceAll("\\s", ""), UML.Stereotype);
+		stereotype.addLabel(name, LANG);
+		return stereotype;
 	}
 	
 	/**
@@ -297,7 +295,7 @@ public class XMIModel {
 		String name = atts.getValue("name");
 		if( xuid != null && name != null ) { 
 			OntResource subject = model.createResource(XMI.NS + xuid);
-			subject.addLabel(name, null);
+			subject.addLabel(name, LANG);
 			if(keepID)
 				subject.addProperty(UML.id, xuid);
 				return subject; 
@@ -363,7 +361,7 @@ public class XMIModel {
 
 	protected OntResource createGlobalPackage() {
 		OntResource packResource = model.createIndividual(UML.global_package.getURI(), UML.Package);
-		packResource.addLabel("Global", null);
+		packResource.addLabel("Global", LANG);
 		return packResource;
 	}
 	
@@ -377,6 +375,8 @@ public class XMIModel {
 		public int lower =-1, upper=-1;
 		public boolean composite;
 		public boolean aggregate;
+		public String baseuri;
+		public String baseprefix;
 		
 		/**
 		 * Interpret this association role in the context of its mate.
@@ -405,7 +405,10 @@ public class XMIModel {
     			property.addProperty(UML.hasStereotype, UML.compositeOf);
     		if( other.aggregate )
     			property.addProperty(UML.hasStereotype, UML.aggregateOf);
-
+			if (baseuri != null && !"".equals(baseuri))
+				property.addProperty(UML.baseuri, baseuri);
+			if (baseprefix != null && !"".equals(baseprefix))
+				property.addProperty(UML.baseprefix, baseprefix);
 		}
 		
 	}
