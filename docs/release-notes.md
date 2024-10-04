@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/ef5b01ae-6b42-4257-beae-1fc37c10217e)# Release Notes
+# Release Notes
 This section contains CIMTool release notes and can be used for quick reference of what has changed in each version. Note that these notes are the same
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
