@@ -6,19 +6,7 @@ The CIM UML model is maintained within Sparx Systems UML design tool, [Enterpris
 
 Before building a Contextual Profile in **CIMTool** you must first import a version of the CIM UML.  This step is typically done when creating a new **CIMTool** project. However, you can import additional custom UML schemas (i.e. additional schemas containing extensions to the CIM) and co-locate them alongside the base CIM UML schema in your project. **CIMTool** automatically processes such custom schemas by internally creating a union of them with the base CIM schema. Alternatively, an existing CIM UML schema can be replaced outright in a **CIMTool** project when a new version of the CIM is released.
 
-The CIM can be imported in one of two possible formats as described later on this page, but first a description of where to locate the CIM UML is necessary.
-
-## Obtain the CIM UML
-
-UCAIug Task Force 13 (UTF 13), UCAIug Task Force 14 (UTF 14), and UCAIug Task Force 16 (UTF 16) are groups that work to advance the CIM and who publish periodic releases of the CIM UML. These releases are published to the [UCAIug (CIM Users Group)](https://cimug.ucaiug.org/) website in [Enterprise Architect](https://sparxsystems.com/) project file (`.eap` or `.eapx`) format.
-
-Both past and current releases of these CIM EA project files are made publicly available for download from the UCAIug. Current releases can be found at [Current CIM Model Drafts](https://cimug.ucaiug.org/CIM%20Model%20Releases/Forms/AllItems.aspx) and this page should look similar to the next screenshot. Older releases are available at [Past CIM Model Releases](https://cimug.ucaiug.org/CIM%20Releases/Forms/AllItems.aspx).
-
-![CIM Users Group UML Documents Repository](../images/CIMugUMLDocumentsRepository.png)
-
-!!! note
-
-    Some content on the UCAIug site may be restricted to registered users. To access previous versions of the CIM UML you must be a CIM Users Group member. Use the CIM Users Group [join form](https://cimug.ucaiug.org/pages/Join.aspx) to register and create an account. Note that there are both paid and free levels of membership.
+The CIM can be imported in one of two possible formats as described later on this page, but first you will need to locate a stable public release of the CIM UML model. For information on where visit our [obtain CIM UML models](/how-to/import-cim-uml/) page.
 
 ## Using an `.xmi` schema file in CIMTool
 
