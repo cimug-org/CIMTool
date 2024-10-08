@@ -6,7 +6,7 @@ The CIM UML model is maintained within Sparx Systems UML design tool, [Enterpris
 
 Before building a Contextual Profile in **CIMTool** you must first import a version of the CIM UML.  This step is typically done when creating a new **CIMTool** project. However, you can import additional custom UML schemas (i.e. additional schemas containing extensions to the CIM) and co-locate them alongside the base CIM UML schema in your project. **CIMTool** automatically processes such custom schemas by internally creating a union of them with the base CIM schema. Alternatively, an existing CIM UML schema can be replaced outright in a **CIMTool** project when a new version of the CIM is released.
 
-The CIM can be imported in one of two possible formats as described later on this page, but first you will need to locate a stable public release of the CIM UML model. For information on where visit our [obtain CIM UML models](/how-to/import-cim-uml/) page.
+The CIM can be imported in one of two possible formats as described later on this page, but first you will need to locate a stable public release of the CIM UML model. For information on where visit our [obtain CIM UML models](how-to/import-cim-uml/) page.
 
 ## Using an `.xmi` schema file in CIMTool
 
