@@ -18,6 +18,7 @@ nav:
   - 'core-concepts.md'
   - 'getting-started.md'
   - 'How To':
+    - 'how-to/obtain-cim-models.md'
     - 'how-to/create-a-project.md'
     - 'how-to/navigate-workspace.md'
     - 'how-to/import-cim-uml.md'
