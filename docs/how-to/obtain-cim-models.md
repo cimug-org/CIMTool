@@ -1,4 +1,4 @@
-# Where to Download Stable Releases of the CIM UML Model
+# Obtain Stable Releases of the CIM
 
 One of the first questions often asked is: "Where do I download releases of the CIM UML model for use with Sparx Enterprise Architect?" 
 
