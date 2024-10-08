@@ -1,6 +1,6 @@
-# Where to Obtain Stable Releases of the CIM
+# Where to Download Stable Releases of the CIM UML Model
 
-One of the first questions often asked is "Where do I locate and download stable releases of the CIM UML model for use with Sparx EA?" 
+One of the first questions often asked is: "Where do I download releases of the CIM UML model for use with Sparx Enterprise Architect?" 
 
 ## Obtain the CIM UML
 
@@ -14,7 +14,7 @@ Both past and current stables releases of these CIM EA project files are made pu
 
     Some content on the UCAIug site may be restricted to registered users. To access previous versions of the CIM UML you must be a CIM Users Group member. Use the CIM Users Group [join form](https://cimug.ucaiug.org/pages/Join.aspx) to register and create an account. Note that there are both paid and free levels of membership.
     
-    Note that interim non-published releases of the CIM that reflect "work in progress" by the aforementioned TF13, TF14 and TF16 are generally not made publically available until for non-participants of those TFs. If you are interested in becoming an active member please reach out via the UCA [CIM User's Group](https://cimug.ucaiug.org/) webite.
+    Note that interim non-published releases of the CIM that reflect "work in progress" by the aforementioned Task Forces are generally not publically available  for non-participants. If you are interested in becoming an active member please reach out via the UCA [CIM User's Group](https://cimug.ucaiug.org/) webite.
 
 
 
