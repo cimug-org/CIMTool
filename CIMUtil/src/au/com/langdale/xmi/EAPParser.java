@@ -156,7 +156,7 @@ public class EAPParser extends AbstractEAProjectParser {
 			if (row.getName().equals("Model"))
 				subject = top;
 			else
-				subject = createIndividual(row.getXUID(), row.getName(), UML.Package);
+				subject = createIndividual(row.getPackageEAGUID(), row.getName(), UML.Package);
 			packageIDs.putID(row.getPackageID(), subject);
 		}
 	}
@@ -190,7 +190,7 @@ public class EAPParser extends AbstractEAProjectParser {
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
 			if (row.getObjectType().equals("Class")) {
-				OntResource subject = createClass(row.getXUID(), row.getName());
+				OntResource subject = createClass(row.getEAGUID(), row.getName());
 				objectIDs.putID(row.getObjectID(), subject);
 				annotate(subject, row.getNote());
 				OntResource parent = packageIDs.getID(row.getPackageID());
@@ -209,7 +209,7 @@ public class EAPParser extends AbstractEAProjectParser {
 			Row row = new Row(it.next());
 			OntResource id = objectIDs.getID(row.getObjectID());
 			if (id != null) {
-				OntResource subject = createAttributeProperty(row.getXUID(), row.getName());
+				OntResource subject = createAttributeProperty(row.getEAGUID(), row.getName());
 				subject.addDomain(id);
 				annotate(subject, row.getNotes());
 				subject.addIsDefinedBy(id.getIsDefinedBy());
@@ -246,7 +246,7 @@ public class EAPParser extends AbstractEAProjectParser {
 						source.addSuperClass(destin);
 					} else {
 						Role roleA = extractProperty( //
-								row.getXUID(), //
+								row.getEAGUID(), //
 								source, //
 								destin, //
 								row.getDestRole(), //
@@ -256,7 +256,7 @@ public class EAPParser extends AbstractEAProjectParser {
 								true, //
 								row.getConnectorID());
 						Role roleB = extractProperty( //
-								row.getXUID(), //
+								row.getEAGUID(), //
 								destin, //
 								source, //
 								row.getSourceRole(), //
@@ -409,14 +409,14 @@ public class EAPParser extends AbstractEAProjectParser {
 			return getInt(COL_ID);
 		}
 
-		String getEAGUID() {
-			String eaGUID = fields.get(COL_ea_guid).toString();
-			return eaGUID;
-		}
-
-		String getXUID() {
+		String getPackageEAGUID() {
 			String xuid = fields.get(COL_ea_guid).toString();
-			return "_" + xuid.substring(1, xuid.length() - 1);
+			return "EAPK_" + xuid.substring(1, xuid.length() - 1).replace("-", "_");
+		}
+		
+		String getEAGUID() {
+			String xuid = fields.get(COL_ea_guid).toString();
+			return "EAID_" + xuid.substring(1, xuid.length() - 1).replace("-", "_");
 		}
 
 		public String getClient() {

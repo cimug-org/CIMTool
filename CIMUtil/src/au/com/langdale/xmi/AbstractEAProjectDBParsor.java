@@ -243,7 +243,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 				if (rs.getString(COL_Name).equals("Model"))
 					subject = top;
 				else
-					subject = createIndividual(getXUID(rs), rs.getString(COL_Name), UML.Package);
+					subject = createIndividual(getPackageEAGUID(rs), rs.getString(COL_Name), UML.Package);
 				packageIDs.putID(rs.getInt(COL_Package_ID), subject);
 			}
 		} catch (SQLException sqlException) {
@@ -340,7 +340,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			statement = connection.createStatement();
 			rs = statement.executeQuery("select * from t_object where Object_Type = 'Class'");
 			while (rs.next()) {
-				OntResource subject = createClass(getXUID(rs), rs.getString(COL_Name));
+				OntResource subject = createClass(getEAGUID(rs), rs.getString(COL_Name));
 				int objectId = rs.getInt(COL_Object_ID);
 				objectIDs.putID(objectId, subject);
 				annotate(subject, rs.getString(COL_Note));
@@ -392,7 +392,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 				OntResource id = objectIDs.getID(objectId);
 				if (id != null) {
 					String name = rs.getString(COL_Name);
-					OntResource subject = createAttributeProperty(getXUID(rs), name);
+					OntResource subject = createAttributeProperty(getEAGUID(rs), name);
 					subject.addDomain(id);
 					annotate(subject, rs.getString(COL_Notes));
 					subject.addIsDefinedBy(id.getIsDefinedBy());
@@ -464,7 +464,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 							source.addSuperClass(destin);
 						} else {
 							Role roleA = extractProperty( //
-									getXUID(rs), //
+									getEAGUID(rs), //
 									source, //
 									destin, //
 									rs.getString(COL_DestRole), //
@@ -474,7 +474,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 									true, //
 									rs.getInt(COL_Connector_ID));
 							Role roleB = extractProperty( //
-									getXUID(rs), //
+									getEAGUID(rs), //
 									destin, //
 									source, //
 									rs.getString(COL_SourceRole), //
@@ -526,9 +526,14 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 		return getClassifier(rs) != 0;
 	}
 
-	private String getXUID(ResultSet rs) throws SQLException {
+	private String getEAGUID(ResultSet rs) throws SQLException {
 		String xuid = rs.getString(COL_ea_guid);
-		return "_" + xuid.substring(1, xuid.length() - 1);
+		return "EAID_" + xuid.substring(1, xuid.length() - 1).replace("-", "_");
+	}
+	
+	private String getPackageEAGUID(ResultSet rs) throws SQLException {
+		String xuid = rs.getString(COL_ea_guid);
+		return "EAPK_" + xuid.substring(1, xuid.length() - 1).replace("-", "_");
 	}
 
 }
