@@ -84,6 +84,7 @@
 	
 	<xsl:template match="a:SimpleType">	
 		<rdf:Description rdf:about="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }">
+			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, $ontologyURI)) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
 			<xsl:if test="not(a:Stereotype[contains(., '#cimdatatype')])">
 				<cims:stereotype>CIMDatatype</cims:stereotype>
 			</xsl:if>
@@ -132,7 +133,6 @@
 	<!-- Elements of type a:Instance are always associations and not attributes. -->
 	<!-- ======================================================================= -->
 	<xsl:template match="a:Instance">
-		<!-- Create the association -->
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>Yes</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
@@ -146,12 +146,11 @@
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="#{@type}"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template match="a:Reference">
-		<!-- Create the association -->
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>Yes</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
@@ -171,7 +170,7 @@
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
 			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="#{@type}"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 
@@ -181,10 +180,9 @@
 		Enumeration. When correctly pulled in the entry appears as an a:Enumerated and the template (below) would be used in which 
 		case an inverse association is not relevant at all. However, when an end user neglects to do so it appears as an a:Reference
 		but such an entry has no @inverse* attributes.  Therefore, we conditionally check for such a scenario and in that case we
-		do not generate an inverse association. 
+		do not generate an inverseRoleName. 
 		============================================================================================================================ -->
 	<xsl:template match="a:InverseInstance">
-		<!-- Create the primary association -->
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>No</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
@@ -198,12 +196,11 @@
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="#{@type}"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template match="a:InverseReference">
-		<!-- Create the association -->
 		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>No</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
@@ -223,7 +220,7 @@
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
 			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="#{@type}"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
@@ -238,7 +235,23 @@
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 enumerated attribute within a class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="#{@type}"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+		</rdf:Description>
+	</xsl:template>
+	
+	<xsl:template match="a:Value|a:Unit|a:Multiplier">	
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+			<xsl:if test="@constant and @constant != ''">
+				<cims:isFixed rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="@constant"/></cims:isFixed>
+			</xsl:if>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			<xsl:call-template name="stereotypes"/>	
+			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, $ontologyURI)) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
+			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
@@ -254,44 +267,6 @@
 	<!-- ============================================================================================================ -->
 	<!-- END SECTION:  (ComplexType, Root, and EnumeratedType attribute & association templates)                    -->
 	<!-- ============================================================================================================ -->
-
-<!--
-	<xsl:template match="a:Complex">
-		<xs:element name="{@name}" minOccurs="{@minOccurs}" maxOccurs="{@maxOccurs}" sawsdl:modelReference="{@baseProperty}">
-			<xsl:call-template name="annotate"/>
-			<xs:complexType sawsdl:modelReference="{@baseClass}">
-				<xsl:call-template name="type_body"/>
-			</xs:complexType>
-		</xs:element>
-	</xsl:template>
-	
-	<xsl:template match="a:Choice[a:Stereotype='http://langdale.com.au/2005/UML#preserve']">
-		<xs:element name="{@name}" minOccurs="{@minOccurs}" maxOccurs="{@maxOccurs}" sawsdl:modelReference="{@baseProperty}">
-			<xsl:call-template name="annotate"/>
-			<xs:complexType>
-				<xs:choice>
-					<xsl:apply-templates/>
-				</xs:choice>
-			</xs:complexType>
-		</xs:element>
-	</xsl:template>
-	<xsl:template match="a:SimpleEnumerated">
-		<xs:element name="{@name}" minOccurs="{@minOccurs}" maxOccurs="{@maxOccurs}" sawsdl:modelReference="{@baseProperty}">
-			<xsl:call-template name="annotate"/>
-			<xs:simpleType sawsdl:modelReference="{@baseClass}">
-				<xs:restriction base="xs:string">
-					<xsl:apply-templates/>
-				</xs:restriction>
-			</xs:simpleType>
-		</xs:element>
-	</xsl:template>
-	<xsl:template match="a:CompoundType" mode="declare">
-		<xs:complexType name="{@name}" sawsdl:modelReference="{@baseClass}">
-			<xsl:call-template name="annotate"/>
-			<xsl:call-template name="type_body"/>
-		</xs:complexType>
-	</xsl:template>
-	-->
 	
 	<xsl:template name="stereotypes">
 		<xsl:for-each select="a:Stereotype">
