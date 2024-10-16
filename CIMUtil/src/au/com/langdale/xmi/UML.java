@@ -94,8 +94,19 @@ public class UML {
 	public final static Property hasInitialValue = ResourceFactory.createProperty(NS + "hasInitialValue");
 
 	// units and multiplier are not really a UML concepts, we infer these under CIM conventions
+	// these properties are included in order to allow for "flattened" CIMDatatypes meaning that
+	// the .OWL profile will not contain representations of these CIM classes that contain the 
+	// value/unit/multiplier attributes.  
 	public final static Property hasUnits = ResourceFactory.createProperty(NS + "hasUnits");
 	public final static Property hasMultiplier = ResourceFactory.createProperty(NS + "hasMultiplier");
+	public final static Property valueDataType = ResourceFactory.createProperty(NS + "valueDataType");
+	public final static Property valuePrimitiveDataType = ResourceFactory.createProperty(NS + "valuePrimitiveDataType");
+	public final static Property valueEAGUID = ResourceFactory.createProperty(NS + "valueEAGUID");
+	public final static Property unitDataType = ResourceFactory.createProperty(NS + "unitDataType");
+	public final static Property unitEAGUID = ResourceFactory.createProperty(NS + "unitEAGUID");
+	public final static Property multiplierDataType = ResourceFactory.createProperty(NS + "multiplierDataType");
+	public final static Property multiplierEAGUID = ResourceFactory.createProperty(NS + "multiplierEAGUID");
+	public final static Property primitiveDataType = ResourceFactory.createProperty(NS + "primitiveDataType");
 	
 	// tags we recognise that aid conversion to RDFS/OWL
 	public final static Property baseuri = ResourceFactory.createProperty(NS + "baseuri");
@@ -162,6 +173,13 @@ public class UML {
 		model.createAnnotationProperty(hasInitialValue.getURI());
 		model.createAnnotationProperty(hasUnits.getURI());
 		model.createAnnotationProperty(hasMultiplier.getURI());
+		model.createAnnotationProperty(valueDataType.getURI());
+		model.createAnnotationProperty(valueEAGUID.getURI());
+		model.createAnnotationProperty(unitDataType.getURI());
+		model.createAnnotationProperty(unitEAGUID.getURI());
+		model.createAnnotationProperty(multiplierDataType.getURI());
+		model.createAnnotationProperty(multiplierEAGUID.getURI());
+		model.createAnnotationProperty(primitiveDataType.getURI());
 		model.createAnnotationProperty(id.getURI());
 		model.createAnnotationProperty(hasMaxCardinality.getURI());
 		model.createAnnotationProperty(hasMinCardinality.getURI());

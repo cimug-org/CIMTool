@@ -116,6 +116,8 @@ public class UMLInterpreter {
 				else
 					attrib.addRDFType( OWL.ObjectProperty);
 				attrib.addRDFType(OWL.FunctionalProperty);
+			} else {
+				System.err.println(attrib.getURI() + ":  has no range. It's domain is: " + attrib.getDomain());
 			}
 		}
 	}
