@@ -174,7 +174,7 @@
 			</xsl:variable>
 			<xsl:variable name="targetCardinality">
 				<xsl:choose>
-					<xsl:when test="not(@minCOccurs = '') and not(@maxOccurs = '')"><xsl:call-template name="cardinality"/></xsl:when>
+					<xsl:when test="not(@minCOccurs = '') and not(@maxOccurs = '')"><xsl:call-template name="association-cardinality"/></xsl:when>
 					<xsl:otherwise><xsl:text></xsl:text></xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -219,21 +219,21 @@
 	<xsl:template match="a:Simple">	
 		<xsl:if test="not(@hideInDiagrams = 'true')">
 			<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
-			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="@xstype"/> [<xsl:call-template name="cardinality"/>]</item>
+			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="@xstype"/> <xsl:call-template name="cardinality"/></item>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="a:Domain">	
 		<xsl:if test="not(@hideInDiagrams = 'true')">
 			<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
-			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="substring-after(@dataType, '#')"/> [<xsl:call-template name="cardinality"/>]</item>
+			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="substring-after(@dataType, '#')"/> <xsl:call-template name="cardinality"/></item>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="a:Enumerated">
 		<xsl:if test="not(@hideInDiagrams = 'true')">
 			<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
-			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="@type"/> [<xsl:call-template name="cardinality"/>]</item>
+			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="@type"/> <xsl:call-template name="cardinality"/></item>
 		</xsl:if>
 	</xsl:template>
 
@@ -297,7 +297,18 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="cardinality">	
+	<xsl:template name="cardinality">
+		<xsl:choose>
+			<xsl:when test="@minOccurs = 1">
+				<xsl:value-of select="if (@minOccurs = @maxOccurs) then '' else concat(' [', @minOccurs, '..', replace(replace(@maxOccurs, 'unbounded', '*'), 'n', '*'), ']')"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="if (@minOccurs = @maxOccurs) then @minOccurs else concat(' [', @minOccurs, '..', replace(replace(@maxOccurs, 'unbounded', '*'), 'n', '*'), ']')"/>
+			</xsl:otherwise>
+		</xsl:choose>	
+	</xsl:template>
+	
+	<xsl:template name="association-cardinality">	
 		<xsl:value-of select="if (@minOccurs = @maxOccurs) then @minOccurs else concat(@minOccurs, '..', replace(replace(@maxOccurs, 'unbounded', '*'), 'n', '*'))"/>
 	</xsl:template>
 		
