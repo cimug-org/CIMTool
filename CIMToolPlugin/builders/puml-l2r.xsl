@@ -115,6 +115,7 @@
 							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
 							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
 							<item>HeaderFontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->		
 							<!-- Errors classes <<error-style>> definition -->
 							<item>' Errors classes style definition</item>
 							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsColor)"/></item>
@@ -171,6 +172,7 @@
 							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
 							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
 							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->		
 							<!-- Errors classes <<error-style>> definition -->
 							<item>' Errors classes style definition</item>
 							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsColor)"/></item>
