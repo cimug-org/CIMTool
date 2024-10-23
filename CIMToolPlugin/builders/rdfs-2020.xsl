@@ -245,7 +245,6 @@
 				<cims:isFixed rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="@constant"/></cims:isFixed>
 			</xsl:if>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
-			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>

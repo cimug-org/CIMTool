@@ -64,7 +64,22 @@ public class Info {
 	public static final QualifiedName MAPPING_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
 			"mapping_namespace");
 	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
-
+	
+	public static final QualifiedName CONCRETE_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_concrete_classes_color");
+	public static final QualifiedName ABSTRACT_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_abstract_classes_color");
+	public static final QualifiedName ENUMERATIONS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_enumerations_color");
+	public static final QualifiedName CIMDATATYPES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_cimdatatypes_color");
+	public static final QualifiedName COMPOUNDS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_compounds_color");
+	public static final QualifiedName PRIMITIVES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_primitives_color");
+	public static final QualifiedName ERRORS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_errors_color");
+	public static final QualifiedName ENABLE_DARK_MODE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_enable_dark_mode");
+	public static final QualifiedName ENABLE_SHADOWING = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_enable_shadowing");
+	public static final QualifiedName HIDE_ENUMERATIONS = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_hide_enumerations");
+	public static final QualifiedName HIDE_CIMDATATYPES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_hide_cimdatatypes");
+	public static final QualifiedName HIDE_COMPOUNDS = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_hide_compounds");
+	public static final QualifiedName HIDE_PRIMITIVES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_hide_primitives");
+	public static final QualifiedName HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_hide_cardinality_for_required_attributes");
+	
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
 	public static final String COPYRIGHT_MULTI_LINE_EXTENSION = "copyright-multi-line";
 	public static final String COPYRIGHT_SINGLE_LINE_EXTENSION = "copyright-single-line";

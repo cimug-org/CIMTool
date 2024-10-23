@@ -407,7 +407,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 						}
 					}
 					String defaultValue = rs.getString(COL_Default);
-					if (defaultValue != null && "".equals(defaultValue)) {
+					if (defaultValue != null && !"".equals(defaultValue)) {
 						subject.addProperty(UML.hasInitialValue, defaultValue);
 					}
 					//

@@ -23,12 +23,172 @@
 	<xsl:param name="baseURI"/>
 	<xsl:param name="ontologyURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
+	<!-- All of the following param(s) correspond to PlantUML preferences in the CIMTool preferences screen  -->
+	<xsl:param name="concreteClassesColor"/>
+	<xsl:param name="concreteClassesFontColor"/>
+	<xsl:param name="abstractClassesColor"/>
+	<xsl:param name="abstractClassesFontColor"/>
+	<xsl:param name="enumerationsColor"/>
+	<xsl:param name="enumerationsFontColor"/>
+	<xsl:param name="cimDatatypesColor"/>
+	<xsl:param name="cimDatatypesFontColor"/>
+	<xsl:param name="compoundsColor"/>
+	<xsl:param name="compoundsFontColor"/>
+	<xsl:param name="primitivesColor"/>
+	<xsl:param name="primitivesFontColor"/>
+	<xsl:param name="errorsColor"/>
+	<xsl:param name="errorsFontColor"/>
+	<xsl:param name="enableDarkMode" as="xs:boolean"/>
+	<xsl:param name="enableShadowing" as="xs:boolean" />
+	<xsl:param name="hideEnumerations" as="xs:boolean"/>
+	<xsl:param name="hideCIMDatatypes" as="xs:boolean"/>
+	<xsl:param name="hideCompounds" as="xs:boolean"/>
+	<xsl:param name="hidePrimitives" as="xs:boolean"/>
+	<xsl:param name="hideCardinalityForRequiredAttributes" as="xs:boolean"/>
 
 	<xsl:template match="a:Catalog">
 		<document>
 			<list begin="@startuml" indent="" delim="" end="@enduml">
 				<item>left to right direction</item>
 				<item>hide empty methods</item>
+				<item>skinparam shadowing <xsl:value-of select="if ($enableShadowing) then 'true' else 'false'"/></item>
+				<xsl:if test="$enableDarkMode">
+					<item>skinparam BackgroundColor #2e2e2e</item>
+					<item>skinparam ArrowColor #FFFFFF</item>
+					<item>skinparam ArrowFontColor #FFFFFF</item>
+					<item>skinparam ArrowThickness 1</item>
+				</xsl:if>
+				<list begin="{concat('skinparam class ', '&#123;')}" indent="  " delim="" end="{'&#125;'}">
+					<xsl:choose>
+						<xsl:when test="$enableDarkMode">
+							<item>StereotypeFontColor #FFFFFF</item>
+							<!-- Concrete classes <<concrete-style>> definition -->
+							<item>' Concrete classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt; '"/> #3e3e3e</item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt; '"/> #6a6a6a</item>
+							<item>FontColor<xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>HeaderFontColor <xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- Abstract classes <<abstract-style>> definition -->
+							<item>' Abstract classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt; '"/> #3e3e3e</item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt; '"/> #6a6a6a</item>
+							<item>FontColor<xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>HeaderFontColor<xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- Enumerations <<enumeration-style>> definition -->
+							<item>' Enumerations style definition</item>
+							<item>BackgroundColor<xsl:value-of select="'&lt;&lt;enumeration-style&gt;&gt; '"/> #3e3e3e</item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;enumeration-style&gt;&gt; '"/> #6a6a6a</item>
+							<item>FontColor<xsl:value-of select="'&lt;&lt;enumeration-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;enumeration-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;enumeration-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>HeaderFontColor<xsl:value-of select="'&lt;&lt;enumeration-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- CIMDatatype classes <<cimdatatype-style>> definition -->
+							<item>' CIMDatatypes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="'&lt;&lt;cimdatatype-style&gt;&gt; '"/> #3e3e3e</item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;cimdatatype-style&gt;&gt; '"/> #6a6a6a</item>
+							<item>FontColor<xsl:value-of select="'&lt;&lt;cimdatatype-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;cimdatatype-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;cimdatatype-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>HeaderFontColor <xsl:value-of select="'&lt;&lt;cimdatatype-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->						
+							<!-- Compound classes <<compound-style>> definition -->
+							<item>' Compound classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="'&lt;&lt;compound-style&gt;&gt; '"/> #3e3e3e</item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;compound-style&gt;&gt; '"/> #6a6a6a</item>
+							<item>FontColor<xsl:value-of select="'&lt;&lt;compound-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;compound-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;compound-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>HeaderFontColor<xsl:value-of select="'&lt;&lt;compound-style&gt;&gt; '"/> #FFFFFF</item>	
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->	
+							<!-- Primitive classes <<primitive-style>> definition -->
+							<item>' Primitive classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #3e3e3e</item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #6a6a6a</item>
+							<item>FontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>AttributeFontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>StereotypeFontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
+							<item>HeaderFontColor<xsl:value-of select="'&lt;&lt;primitive-style&gt;&gt; '"/> #FFFFFF</item>
+							<!-- Errors classes <<error-style>> definition -->
+							<item>' Errors classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+						</xsl:when>
+						<xsl:otherwise>
+							<!-- Concrete classes <<concrete-style>> definition -->
+							<item>' Concrete classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;concrete-style&gt;&gt; ', $concreteClassesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;concrete-style&gt;&gt; ', $concreteClassesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;concrete-style&gt;&gt; ', $concreteClassesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;concrete-style&gt;&gt; ', $concreteClassesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;concrete-style&gt;&gt; ', $concreteClassesFontColor)"/></item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- Abstract classes <<abstract-style>> definition -->
+							<item>' Abstract classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;abstract-style&gt;&gt; ', $abstractClassesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;abstract-style&gt;&gt; ', $abstractClassesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;abstract-style&gt;&gt; ', $abstractClassesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;abstract-style&gt;&gt; ', $abstractClassesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;abstract-style&gt;&gt; ', $abstractClassesFontColor)"/></item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- Enumerations <<enumeration-style>> definition -->
+							<item>' Enumerations style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;enumeration-style&gt;&gt; ', $enumerationsColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;enumeration-style&gt;&gt; ', $enumerationsFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;enumeration-style&gt;&gt; ', $enumerationsFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;enumeration-style&gt;&gt; ', $enumerationsFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat(' &lt;&lt;enumeration-style&gt;&gt; ', $enumerationsFontColor)"/></item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- CIMDatatype classes <<cimdatatype-style>> definition -->
+							<item>' CIMDatatypes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;cimdatatype-style&gt;&gt; ', $cimDatatypesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;cimdatatype-style&gt;&gt; ', $cimDatatypesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;cimdatatype-style&gt;&gt; ', $cimDatatypesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;cimdatatype-style&gt;&gt; ', $cimDatatypesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;cimdatatype-style&gt;&gt; ', $cimDatatypesFontColor)"/></item>	
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->				
+							<!-- Compound classes <<compound-style>> definition -->
+							<item>' Compound classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;compound-style&gt;&gt; ', $compoundsColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;compound-style&gt;&gt; ', $compoundsFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;compound-style&gt;&gt; ', $compoundsFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;compound-style&gt;&gt; ', $compoundsFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;compound-style&gt;&gt; ', $compoundsFontColor)"/></item>
+							<item>&#xD;&#xA;</item> <!-- CR/LF -->
+							<!-- Primitive classes <<primitive-style>> definition -->
+							<item>' Primitive classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;primitive-style&gt;&gt; ', $primitivesFontColor)"/></item>
+							<!-- Errors classes <<error-style>> definition -->
+							<item>' Errors classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;error-style&gt;&gt; ', $errorsFontColor)"/></item>
+						</xsl:otherwise>
+					</xsl:choose>
+				</list>
+				<item>&#xD;&#xA;</item> <!-- CR/LF -->
+				<item><xsl:value-of select="'hide &lt;&lt;concrete-style&gt;&gt; stereotype'"/></item>
+				<item><xsl:value-of select="'hide &lt;&lt;abstract-style&gt;&gt; stereotype'"/></item>
+				<item><xsl:value-of select="'hide &lt;&lt;enumeration-style&gt;&gt; stereotype'"/></item>
+				<item><xsl:value-of select="'hide &lt;&lt;cimdatatype-style&gt;&gt; stereotype'"/></item>
+				<item><xsl:value-of select="'hide &lt;&lt;compound-style&gt;&gt; stereotype'"/></item>
+				<item><xsl:value-of select="'hide &lt;&lt;primitive-style&gt;&gt; stereotype'"/></item>
+				<item><xsl:value-of select="'hide &lt;&lt;error-style&gt;&gt; stereotype'"/></item>
 				<item>&#xD;&#xA;</item> <!-- CR/LF -->
 				<xsl:if test="not(@hideInDiagrams = 'true')">
 					<list begin="{concat('skinparam note ', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
@@ -50,19 +210,19 @@
 					</list>
 					<item>&#xD;&#xA;</item> <!-- CR/LF -->
 				</xsl:if>
-				<xsl:apply-templates select="a:Root|a:ComplexType|a:EnumeratedType"/>			
+				<xsl:apply-templates select="a:Root|a:ComplexType|a:EnumeratedType|a:CompoundType|a:SimpleType|a:PrimitiveType"/>			
 			</list>
 		</document>
 	</xsl:template>
 
 	<xsl:template match="a:EnumeratedType">
-		<xsl:if test="not(@hideInDiagrams = 'true')">
+		<xsl:if test="not($hideEnumerations) and not(@hideInDiagrams = 'true')">
 			<xsl:variable name="enumName" select="substring-after(@baseClass, '#')"/>
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
 			<xsl:variable name="count" select="count(a:EnumeratedValue)"/>
 			<list begin="" indent="" delim="" end="">
 				<item>' Enumeration <xsl:value-of select="$enumName"/></item>
-				<list begin="enum {concat($enumName, ' ', $stereotypes, ' ', '#lightgreen', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+				<list begin="enum {concat($enumName, ' ', ' &lt;&lt;enumeration-style&gt;&gt;', $stereotypes, ' ', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 					<xsl:for-each select="a:EnumeratedValue[position() &lt;= 20]">
 						<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
 						<item><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="substring-after(substring-after(@baseResource, '#'), '.')" /></item>
@@ -75,18 +235,80 @@
 		</xsl:if>
 	</xsl:template>
 	
+	<xsl:template match="a:SimpleType">
+		<xsl:if test="not($hideCIMDatatypes) and not(@hideInDiagrams = 'true')">
+			<xsl:variable name="className" select="substring-after(@dataType, '#')"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
+			<xsl:variable name="colorStyle" select="'&lt;&lt;cimdatatype-style&gt;&gt;'"/>
+			<list begin="" indent="" delim="" end="">
+				<item>' <xsl:value-of select="$className"/></item>
+				<list begin="{concat('class ', $className, ' ', $stereotypes, ' ', $colorStyle, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+					<xsl:choose>
+						<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
+							<xsl:apply-templates select="a:Value|a:Unit|a:Multiplier"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<item>[Attributes hidden]</item>
+						</xsl:otherwise>
+					</xsl:choose>							
+				</list>
+			</list>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="a:PrimitiveType">
+		<xsl:if test="not($hidePrimitives) and not(@hideInDiagrams = 'true')">
+			<xsl:variable name="className" select="substring-after(@dataType, '#')"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
+			<xsl:variable name="colorStyle" select="'&lt;&lt;primitive-style&gt;&gt;'"/>
+			<list begin="" indent="" delim="" end="">
+				<item>' <xsl:value-of select="$className"/></item>
+				<list begin="{concat('class ', $className, ' ', $stereotypes, ' ', $colorStyle, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">		
+				</list>
+			</list>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="a:CompoundType">
+		<xsl:if test="not(hideCompounds) and not(@hideInDiagrams = 'true')">
+			<xsl:variable name="className" select="substring-after(@baseClass, '#')"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
+			<xsl:variable name="colorStyle" select="'&lt;&lt;compound-style&gt;&gt;'"/>
+			<list begin="" indent="" delim="" end="">
+				<item>' <xsl:value-of select="$className"/></item>
+				<list begin="{concat(if (not(a:Stereotype[@label='Concrete'])) then 'abstract class' else 'class', ' ', $className, ' ', $stereotypes, ' ', $colorStyle, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+					<xsl:choose>
+						<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
+							<xsl:apply-templates select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Choice"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<item>[Attributes hidden]</item>
+						</xsl:otherwise>
+					</xsl:choose>							
+				</list>
+				<!-- Now process all associations: -->
+				<xsl:choose>
+					<xsl:when test="a:Reference|a:Instance">
+						<xsl:apply-templates select="a:Reference|a:Instance"/>
+						<item>&#xD;&#xA;</item> <!-- CR/LF -->
+					</xsl:when>
+					<xsl:otherwise>
+						<item>&#xD;&#xA;</item> <!-- CR/LF -->
+					</xsl:otherwise>
+				</xsl:choose>
+			</list>
+		</xsl:if>
+	</xsl:template>
+	
 	<xsl:template match="a:Root|a:ComplexType">
 		<xsl:if test="not(@hideInDiagrams = 'true')">
 			<xsl:variable name="className" select="substring-after(@baseClass, '#')"/>
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
-			<xsl:variable name="color">
+			<xsl:variable name="colorStyle">
 				<xsl:choose>
-					<!-- light yellow for classes with the 'Description' stereotype. Include separately to easily updated the color. -->
-					<xsl:when test="a:Stereotype[contains(., '#description')]">#lightyellow</xsl:when>
-					<!-- light gray for classes that are abstract stereotype -->
-					<xsl:when test="not(a:Stereotype[contains(., '#concrete')])">#lightgray</xsl:when>
-					<!-- light yellow for all concrete classes -->
-					<xsl:otherwise>#lightyellow</xsl:otherwise>
+					<xsl:when test="a:Stereotype[contains(., '#compound')]"><xsl:value-of select="'&lt;&lt;compound-style&gt;&gt;'"/></xsl:when>
+					<xsl:when test="not(a:Stereotype[contains(., '#concrete')])"><xsl:value-of select="'&lt;&lt;abstract-style&gt;&gt;'"/></xsl:when>
+					<xsl:otherwise><xsl:value-of select="'&lt;&lt;concrete-style&gt;&gt;'"/></xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
 			<xsl:choose>
@@ -94,7 +316,7 @@
 					<xsl:variable name="superClassName" select="substring-after(a:SuperType/@baseClass, '#')"/>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/> inherits from <xsl:value-of select="$superClassName"/></item>
-						<list begin="{concat(if (not(a:Stereotype[@label='Concrete'])) then 'abstract' else 'class', ' ', $className, ' ',$stereotypes, ' ', $color, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+						<list begin="{concat(if (not(a:Stereotype[@label='Concrete'])) then 'abstract' else 'class', ' ', $className, ' ', $stereotypes, ' ',$colorStyle, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
 									<xsl:apply-templates select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Choice"/>
@@ -122,7 +344,7 @@
 				<xsl:otherwise>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/></item>
-						<list begin="{concat(if (not(a:Stereotype[@label='Concrete'])) then 'abstract' else 'class', ' ', $className, ' ',$stereotypes, ' ', $color, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+						<list begin="{concat(if (not(a:Stereotype[@label='Concrete'])) then 'abstract class' else 'class', ' ', $className, ' ', $stereotypes, ' ', $colorStyle, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
 									<xsl:apply-templates select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Choice"/>
@@ -196,16 +418,16 @@
 			</xsl:variable>
 
 			<!-- Output the association -->	
-			<item><xsl:value-of select="concat($sourceClass, ' ', '&quot;', $sourceRoleEndName, ' ', $sourceCardinality, '&quot;', ' ', $associationType, ' ', '&quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', $targetClass)"/><xsl:if test="a:Stereotype[contains(., '#enumeration')] or a:Stereotype[contains(., '#compound')] or (self::a:Reference and not(a:Stereotype[contains(., '#byreference')]))">#red</xsl:if></item>
+			<item><xsl:value-of select="concat($sourceClass, ' ', '&quot;', $sourceRoleEndName, ' ', $sourceCardinality, '&quot;', ' ', $associationType, ' ', '&quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', $targetClass)"/><xsl:if test="a:Stereotype[contains(., '#enumeration')] or a:Stereotype[contains(., '#compound')] or a:Stereotype[contains(., '#cimdatatype')] or a:Stereotype[contains(., '#primitive')] or (self::a:Reference and not(a:Stereotype[contains(., '#byreference')]))"><xsl:valueof select="if ($enableDarkMode) then '#FF2D2D' else '#red'"/></item>
 			
 			<!-- If none of the below four types of elements is defined as a top level class for $targetClass then it means that the class has 
 				 not yet been pulled into the profile and therefore should be flagged as an error (i.e. expressed as class in pink) -->
-			<xsl:if test="not(//a:ComplexType[@name = $targetClass]|//a:Root[@name = $targetClass]|//a:CompoundType[@name = $targetClass]|//a:EnumeratedType[@name = $targetClass])">
+			<xsl:if test="not(//a:ComplexType[@name = $targetClass]|//a:Root[@name = $targetClass]|//a:CompoundType[@name = $targetClass]|//a:EnumeratedType[@name = $targetClass]|//a:PrimitiveType[@name = $targetClass])">
 				<item>&#xD;&#xA;</item> <!-- CR/LF -->
 				<list begin="" indent="" delim="" end="">
 					<item>' This abstract indicates an "orphan" reference on an invalid Reference/Instance that must be fixed in the profile</item>
-					<item>' We highlight it by generating a color indicating it is invalid and that the user should add in the type</item>
-					<list begin="{concat('abstract ', $targetClass, (if (a:Stereotype[contains(., '#enumeration')]) then ' &lt;&lt;enumeration&gt;&gt; #pink ' else ' #pink '), '&#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+					<item>' We highlight it by generating a color indicating it is invalid and that the user should add in the orphaned type</item>
+					<list begin="{concat('abstract class ', $targetClass, ' &lt;&lt;error-style&gt;&gt; ', (if (a:Stereotype[contains(., '#enumeration')]) then '&lt;&lt;enumeration&gt;&gt; &lt;&lt;error-style&gt;&gt; ' else ''), $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 						<item>' nothing to generate</item>
 					</list>
 				</list>
@@ -237,6 +459,14 @@
 		</xsl:if>
 	</xsl:template>
 
+	<xsl:template match="a:Value|a:Unit|a:Multiplier">	
+		<xsl:if test="not(@hideInDiagrams = 'true')">
+			<xsl:variable name="constant" select="if (@constant and not(@constant = '')) then concat(' = ', @constant, ' {readOnly}') else ''"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
+			<item>+<xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="@name"/> : <xsl:value-of select="substring-after(@baseClass, '#')"/> <xsl:call-template name="cardinality"/><xsl:value-of select="$constant"/></item>
+		</xsl:if>
+	</xsl:template>
+	
 	<!-- ============================================================================================================ -->
 	<!-- END SECTION:  (Simple, Domain, and Enumerated attributes templates)                           -->
 	<!-- ============================================================================================================ -->
@@ -299,11 +529,11 @@
 	
 	<xsl:template name="cardinality">
 		<xsl:choose>
-			<xsl:when test="@minOccurs = 1">
+			<xsl:when test="$hideCardinalityForRequiredAttributes and (@minOccurs = 1)">
 				<xsl:value-of select="if (@minOccurs = @maxOccurs) then '' else concat(' [', @minOccurs, '..', replace(replace(@maxOccurs, 'unbounded', '*'), 'n', '*'), ']')"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="if (@minOccurs = @maxOccurs) then @minOccurs else concat(' [', @minOccurs, '..', replace(replace(@maxOccurs, 'unbounded', '*'), 'n', '*'), ']')"/>
+				<xsl:value-of select="if (@minOccurs = @maxOccurs) then concat(' [', @minOccurs, ']') else concat(' [', @minOccurs, '..', replace(replace(@maxOccurs, 'unbounded', '*'), 'n', '*'), ']')"/>
 			</xsl:otherwise>
 		</xsl:choose>	
 	</xsl:template>

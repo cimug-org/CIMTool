@@ -773,6 +773,10 @@ public class Templates {
 	public static Template Column(Template a, Template b, Template c, Template d, Template e, Template f) {
 		return new GridTemplate(new GroupTemplate[] { Group(a), Group(b), Group(c), Group(d), Group(e), Group(f) });
 	}
+	
+	public static Template Column(Template a, Template b, Template c, Template d, Template e, Template f, Template g) {
+		return new GridTemplate(new GroupTemplate[] { Group(a), Group(b), Group(c), Group(d), Group(e), Group(f), Group(g) });
+	}
 
 	public static Template Span(Template a) {
 		return new GridTemplate(new GroupTemplate[] { new GroupTemplate(new Template[] { a }) });

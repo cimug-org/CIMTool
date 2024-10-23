@@ -16,11 +16,6 @@ import au.com.langdale.cimtoole.project.Info;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CIMToolPlugin.getDefault().getPreferenceStore();
@@ -33,6 +28,20 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);
 		store.setDefault(Info.PROBLEM_PER_SUBJECT.getLocalName(), true);
 		store.setDefault(Info.USE_PACKAGE_NAMES.getLocalName(), false);
+		store.setDefault(Info.CONCRETE_CLASSES_COLOR.getLocalName(), "#FFFFE0");
+		store.setDefault(Info.ABSTRACT_CLASSES_COLOR.getLocalName(), "#D3D3D3");
+		store.setDefault(Info.ENUMERATIONS_COLOR.getLocalName(), "#90EE90");
+		store.setDefault(Info.CIMDATATYPES_COLOR.getLocalName(), "#FFEBCD");
+		store.setDefault(Info.COMPOUNDS_COLOR.getLocalName(), "#FFEBCD");
+		store.setDefault(Info.PRIMITIVES_COLOR.getLocalName(), "#E6E6FF");
+		store.setDefault(Info.ERRORS_COLOR.getLocalName(), "#FFC0CB");
+		store.setDefault(Info.ENABLE_DARK_MODE.getLocalName(), false);
+		store.setDefault(Info.ENABLE_SHADOWING.getLocalName(), true);
+		store.setDefault(Info.HIDE_ENUMERATIONS.getLocalName(), false);
+		store.setDefault(Info.HIDE_CIMDATATYPES.getLocalName(), true);
+		store.setDefault(Info.HIDE_COMPOUNDS.getLocalName(), true);
+		store.setDefault(Info.HIDE_PRIMITIVES.getLocalName(), true);
+		store.setDefault(Info.HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES.getLocalName(), false);
 	}
 
 }

@@ -68,15 +68,41 @@ import au.com.langdale.xmi.UML;
  */
 public class ProfileSerializer extends AbstractReader {
 	public static final String XSDGEN = "http://langdale.com.au/2005/xsdgen";
+	
+	TransformerFactory factory = TransformerFactory.newInstance();
+	private ArrayList templates = new ArrayList();
+	private final String xsd = XSD.anyURI.getNameSpace();
 	private JenaTreeModelBase model;
+	
+	/** The following are parameters to be passed into XSLT builders */
 	private String baseURI = "";
 	private String ontologyURI = "";
 	private String version = "";
 	private String copyrightMultiLine = "";
 	private String copyrightSingleLine = "";
-	private ArrayList templates = new ArrayList();
-	TransformerFactory factory = TransformerFactory.newInstance();
-	private final String xsd = XSD.anyURI.getNameSpace();
+	// the next set of parameters are PlantUML specific
+	private String concreteClassesColor = "";
+	private String concreteClassesFontColor = "";
+	private String abstractClassesColor = "";
+	private String abstractClassesFontColor = "";
+	private String enumerationsColor = "";
+	private String enumerationsFontColor = "";
+	private String cimDatatypesColor = "";
+	private String cimDatatypesFontColor = "";
+	private String compoundsColor = "";
+	private String compoundsFontColor = "";
+	private String primitivesColor = "";
+	private String primitivesFontColor = "";
+	private String errorsColor = "";
+	private String errorsFontColor = "";
+	private boolean enableDarkMode = false;
+	private boolean enableShadowing = true;
+	private boolean hideEnumerations = false;
+	private boolean hideCIMDatatypes = true;
+	private boolean hideCompounds = true;
+	private boolean hidePrimitives = true;
+	private boolean hideCardinalityForRequiredAttributes = false;
+	
 	private TreeSet deferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
 		@Override
 		public int compare(OntResource o1, OntResource o2) {
@@ -285,6 +311,29 @@ public class ProfileSerializer extends AbstractReader {
 				ti.setParameter("envelope", model.getRoot().getName());
 				ti.setParameter("copyright", copyrightMultiLine);
 				ti.setParameter("copyright-single-line", copyrightSingleLine);
+				
+				// PlantUML diagram preferences for all PlantUML diagram builders...
+				ti.setParameter("concreteClassesColor", concreteClassesColor);
+				ti.setParameter("concreteClassesFontColor", concreteClassesFontColor);
+				ti.setParameter("abstractClassesColor", abstractClassesColor);
+				ti.setParameter("abstractClassesFontColor", abstractClassesFontColor);
+				ti.setParameter("enumerationsColor", enumerationsColor);
+				ti.setParameter("enumerationsFontColor", enumerationsFontColor);
+				ti.setParameter("cimDatatypesColor", cimDatatypesColor);
+				ti.setParameter("cimDatatypesFontColor", cimDatatypesFontColor);
+				ti.setParameter("compoundsColor", compoundsColor);
+				ti.setParameter("compoundsFontColor", compoundsFontColor);
+				ti.setParameter("primitivesColor", primitivesColor);
+				ti.setParameter("primitivesFontColor", primitivesFontColor);
+				ti.setParameter("errorsColor", errorsColor);
+				ti.setParameter("errorsFontColor", errorsFontColor);
+				ti.setParameter("enableDarkMode", enableDarkMode);
+				ti.setParameter("enableShadowing", enableShadowing);
+				ti.setParameter("hideEnumerations", hideEnumerations);
+				ti.setParameter("hideCIMDatatypes", hideCIMDatatypes);
+				ti.setParameter("hideCompounds", hideCompounds);
+				ti.setParameter("hidePrimitives", hidePrimitives);
+				ti.setParameter("hideCardinalityForRequiredAttributes", hideCardinalityForRequiredAttributes);
 				tx[ix] = ti;
 			}
 		} else {
@@ -550,7 +599,7 @@ public class ProfileSerializer extends AbstractReader {
 		emit(node, elem, false);
 	}
 	
-	private void emitValueUnitAndMultiplier(OntResource cimDatatype) throws SAXException {
+	private void emitValueUnitMultiplier(OntResource cimDatatype) throws SAXException {
 		if (cimDatatype == null)
 			return;
 		boolean hasMultiplier = cimDatatype.hasProperty(UML.hasMultiplier);
@@ -560,6 +609,7 @@ public class ProfileSerializer extends AbstractReader {
 		String unitDataType = cimDatatype.getString(UML.unitDataType, null);
 		String multiplierDataType = cimDatatype.getString(UML.multiplierDataType, null);
 		
+		/** Generate the CIMDatatype "value" attribute. */
 		Element valueElement = new Element("Value");
 		valueElement.set("baseClass", valuePrimitiveDataType);
 		valueElement.set("type", valuePrimitiveDataType.substring(valuePrimitiveDataType.lastIndexOf("#") + 1));
@@ -572,32 +622,52 @@ public class ProfileSerializer extends AbstractReader {
 		valueElement.set("basePropertyClass", cimDatatype.getURI());
 		valueElement.set("minOccurs", ProfileModel.cardString(0));
 		valueElement.set("maxOccurs", ProfileModel.cardString(1, "1"));
+		//
+		Element valueAttrStereotype = new Element("Stereotype");
+		valueAttrStereotype.set("label", UML.attribute.getLocalName());
+		valueAttrStereotype.append(UML.attribute.getURI());
+		valueAttrStereotype.close();
+		//
 		valueElement.close();
 		
+		/** Generate the CIMDatatype "unit" attribute. */
 		Element unitElement = new Element("Unit");
 		unitElement.set("baseClass", unitDataType);
 		unitElement.set("type", unitDataType.substring(unitDataType.lastIndexOf("#") + 1));
 		unitElement.set("name", "unit");
-		unitElement.set("constant", (hasUnits ? cimDatatype.getString(UML.hasUnits, null) : ""));
+		unitElement.set("constant", (hasUnits ? cimDatatype.getString(UML.hasUnits, null) : "none"));
 		unitElement.set("ea_guid", cimDatatype.getString(UML.unitEAGUID, null));
 		unitElement.set("hideInDiagrams", "false");
 		unitElement.set("baseProperty", cimDatatype.getURI() + ".unit");
 		unitElement.set("basePropertyClass", cimDatatype.getURI());
 		unitElement.set("minOccurs", ProfileModel.cardString(0));
 		unitElement.set("maxOccurs", ProfileModel.cardString(1, "1"));
+		//
+		Element unitAttrStereotype = new Element("Stereotype");
+		unitAttrStereotype.set("label", UML.attribute.getLocalName());
+		unitAttrStereotype.append(UML.attribute.getURI());
+		unitAttrStereotype.close();
+		//
 		unitElement.close();	
 		
+		/** Generate the CIMDatatype "multiplier" attribute. */
 		Element multiplierElement = new Element("Multiplier");
 		multiplierElement.set("baseClass", multiplierDataType);
 		multiplierElement.set("type", multiplierDataType.substring(multiplierDataType.lastIndexOf("#") + 1));
 		multiplierElement.set("name", "multiplier");
-		multiplierElement.set("constant", (hasMultiplier ? cimDatatype.getString(UML.hasMultiplier, null) : ""));
+		multiplierElement.set("constant", (hasMultiplier ? cimDatatype.getString(UML.hasMultiplier, null) : "none"));
 		multiplierElement.set("ea_guid", cimDatatype.getString(UML.multiplierEAGUID, null));
 		multiplierElement.set("hideInDiagrams", "false");
 		multiplierElement.set("baseProperty", cimDatatype.getURI() + ".multiplier");
 		multiplierElement.set("basePropertyClass", cimDatatype.getURI());
 		multiplierElement.set("minOccurs", ProfileModel.cardString(0));
 		multiplierElement.set("maxOccurs", ProfileModel.cardString(1, "1"));
+		//
+		Element multiplierAttrStereotype = new Element("Stereotype");
+		multiplierAttrStereotype.set("label", UML.attribute.getLocalName());
+		multiplierAttrStereotype.append(UML.attribute.getURI());
+		multiplierAttrStereotype.close();
+		//
 		multiplierElement.close();	
 	}
 
@@ -821,9 +891,9 @@ public class ProfileSerializer extends AbstractReader {
 			elem.set("packageURI", defin.getURI());
 		}
 		elem.set("xstype", xstype(type));
-
 		emitComment(type.getComment(null));
-		emitValueUnitAndMultiplier(type);
+		emitStereotypes(type);
+		emitValueUnitMultiplier(type);
 		elem.close();
 	}
 	
@@ -849,7 +919,7 @@ public class ProfileSerializer extends AbstractReader {
 	 * format at this point would break CIMTool's current instance data validation features. 
 	 */
 	private void emitPrimitive(OntResource type) throws SAXException {
-		Element elem = new Element("Primitive");
+		Element elem = new Element("PrimitiveType");
 
 		String dataType = type.getString(UML.primitiveDataType);
 		elem.set("dataType", dataType);	
@@ -859,14 +929,15 @@ public class ProfileSerializer extends AbstractReader {
 		if (type.hasProperty(UML.id))
 			elem.set("ea_guid", type.getString(UML.id));	
 		
-		OntResource defin = type.getResource(RDFS.isDefinedBy);
-		if (defin != null) {
-			elem.set("package", defin.getLabel());
-			elem.set("packageURI", defin.getURI());
+		OntResource definedBy = type.getResource(RDFS.isDefinedBy);
+		if (definedBy != null) {
+			elem.set("package", definedBy.getLabel());
+			elem.set("packageURI", definedBy.getURI());
 		}
 		elem.set("xstype", xstype(type));
 
 		emitComment(type.getComment(null));
+		emitStereotypes(type);
 		elem.close();
 	}
 
@@ -889,5 +960,166 @@ public class ProfileSerializer extends AbstractReader {
 	public void setVersion(String version) {
 		this.version = version;
 	}
+	
+	public String getConcreteClassesColor() {
+		return concreteClassesColor;
+	}
 
+	public void setConcreteClassesColor(String concreteClassesColor) {
+		this.concreteClassesColor = concreteClassesColor;
+	}
+
+	public String getAbstractClassesColor() {
+		return abstractClassesColor;
+	}
+
+	public void setAbstractClassesColor(String abstractClassesColor) {
+		this.abstractClassesColor = abstractClassesColor;
+	}
+
+	public String getEnumerationsColor() {
+		return enumerationsColor;
+	}
+
+	public void setEnumerationsColor(String enumerationsColor) {
+		this.enumerationsColor = enumerationsColor;
+	}
+	
+	public boolean isHideCardinalityForRequiredAttributes() {
+		return hideCardinalityForRequiredAttributes;
+	}
+
+	public void setHideCardinalityForRequiredAttributes(boolean hideCardinalityForRequiredAttributes) {
+		this.hideCardinalityForRequiredAttributes = hideCardinalityForRequiredAttributes;
+	}
+	
+	public boolean isEnableDarkMode() {
+		return enableDarkMode;
+	}
+
+	public void setEnableDarkMode(boolean enableDarkMode) {
+		this.enableDarkMode = enableDarkMode;
+	}
+	
+	public boolean isEnableShadowing() {
+		return enableShadowing;
+	}
+
+	public void setEnableShadowing(boolean enableShadowing) {
+		this.enableShadowing = enableShadowing;
+	}
+	
+	public String getAbstractClassesFontColor() {
+		return abstractClassesFontColor;
+	}
+
+	public void setAbstractClassesFontColor(String abstractClassesFontColor) {
+		this.abstractClassesFontColor = abstractClassesFontColor;
+	}
+
+	public String getEnumerationsFontColor() {
+		return enumerationsFontColor;
+	}
+
+	public void setEnumerationsFontColor(String enumerationsFontColor) {
+		this.enumerationsFontColor = enumerationsFontColor;
+	}
+
+	public String getConcreteClassesFontColor() {
+		return concreteClassesFontColor;
+	}
+	
+	public void setConcreteClassesFontColor(String concreteClassesFontColor) {
+		this.concreteClassesFontColor = concreteClassesFontColor;
+	}
+
+	public String getCIMDatatypesColor() {
+		return cimDatatypesColor;
+	}
+	
+	public void setCIMDatatypesColor(String cimDatatypesColor) {
+		this.cimDatatypesColor = cimDatatypesColor;
+	}
+	
+	public String getCIMDatatypesFontColor() {
+		return cimDatatypesFontColor;
+	}
+	
+	public void setCIMDatatypesFontColor(String cimDatatypesFontColor) {
+		this.cimDatatypesFontColor = cimDatatypesFontColor;
+	}
+	
+	public void setCompoundsColor(String compoundsColor) {
+		this.compoundsColor = compoundsColor;
+	}
+
+	public void setCompoundsFontColor(String compoundsFontColor) {
+		this.compoundsFontColor = compoundsFontColor;
+	}
+	
+	public void setPrimitivesColor(String primitivesColor) {
+		this.primitivesColor = primitivesColor;
+	}
+	
+	public String getPrimitivesColor() {
+		return this.primitivesColor;
+	}
+
+	public void setPrimitivesFontColor(String primitivesFontColor) {
+		this.primitivesFontColor = primitivesFontColor;
+	}
+	
+	public String getPrimitivesFontColor() {
+		return this.primitivesFontColor;
+	}
+	
+	public void setErrorsColor(String errorsColor) {
+		this.errorsColor = errorsColor;
+	}
+	
+	public String getErrorsColor() {
+		return this.errorsColor;
+	}
+
+	public void setErrorsFontColor(String errorsFontColor) {
+		this.errorsFontColor = errorsFontColor;
+	}
+	
+	public String getErrorsFontColor() {
+		return this.errorsFontColor;
+	}
+	
+
+	public boolean isHideEnumerations() {
+		return hideEnumerations;
+	}
+
+	public void setHideEnumerations(boolean hideEnumerations) {
+		this.hideEnumerations = hideEnumerations;
+	}
+
+	public boolean isHideCIMDatatypes() {
+		return hideCIMDatatypes;
+	}
+
+	public void setHideCIMDatatypes(boolean hideCIMDatatypes) {
+		this.hideCIMDatatypes = hideCIMDatatypes;
+	}
+	
+	public boolean isHidePrimitives() {
+		return hidePrimitives;
+	}
+
+	public void setHidePrimitives(boolean hidePrimitives) {
+		this.hidePrimitives = hidePrimitives;
+	}
+	
+	public boolean isHideCompounds() {
+		return hideCompounds;
+	}
+
+	public void setHideCompounds(boolean hideCompounds) {
+		this.hideCompounds = hideCompounds;
+	}
+	
 }

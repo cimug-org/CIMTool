@@ -43,6 +43,7 @@ import au.com.langdale.profiles.ProfileSerializer;
 import au.com.langdale.profiles.RDFSBasedGenerator;
 import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
+import au.com.langdale.ui.builder.ColorUtils;
 import au.com.langdale.workspace.ResourceOutputStream;
 
 /**
@@ -211,6 +212,29 @@ public class ProfileBuildlets extends Task {
 				serializer.setCopyrightMultiLine(Info.getMultiLineCopyrightText(file.getProject()));
 				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
+				// Set diagram preferences used by any PlantUML diagram builders
+				serializer.setConcreteClassesColor(Info.getPreference(CONCRETE_CLASSES_COLOR));
+				serializer.setConcreteClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(CONCRETE_CLASSES_COLOR)));
+				serializer.setAbstractClassesColor(Info.getPreference(ABSTRACT_CLASSES_COLOR));
+				serializer.setAbstractClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(ABSTRACT_CLASSES_COLOR)));
+				serializer.setEnumerationsColor(Info.getPreference(ENUMERATIONS_COLOR));
+				serializer.setEnumerationsFontColor(ColorUtils.getHexFontColor(Info.getPreference(ENUMERATIONS_COLOR)));
+				serializer.setCIMDatatypesColor(Info.getPreference(CIMDATATYPES_COLOR));
+				serializer.setCIMDatatypesFontColor(ColorUtils.getHexFontColor(Info.getPreference(CIMDATATYPES_COLOR)));
+				serializer.setCompoundsColor(Info.getPreference(COMPOUNDS_COLOR));
+				serializer.setCompoundsFontColor(ColorUtils.getHexFontColor(Info.getPreference(COMPOUNDS_COLOR)));
+				serializer.setPrimitivesColor(Info.getPreference(PRIMITIVES_COLOR));
+				serializer.setPrimitivesFontColor(ColorUtils.getHexFontColor(Info.getPreference(PRIMITIVES_COLOR)));
+				serializer.setErrorsColor(Info.getPreference(ERRORS_COLOR));
+				serializer.setErrorsFontColor(ColorUtils.getHexFontColor(Info.getPreference(ERRORS_COLOR)));
+				serializer.setEnableDarkMode(Boolean.parseBoolean(Info.getPreference(ENABLE_DARK_MODE)));
+				serializer.setEnableShadowing(Boolean.parseBoolean(Info.getPreference(ENABLE_SHADOWING)));
+				serializer.setHideEnumerations(Boolean.parseBoolean(Info.getPreference(HIDE_ENUMERATIONS)));
+				serializer.setHideCIMDatatypes(Boolean.parseBoolean(Info.getPreference(HIDE_CIMDATATYPES)));
+				serializer.setHideCompounds(Boolean.parseBoolean(Info.getPreference(HIDE_COMPOUNDS)));
+				serializer.setHidePrimitives(Boolean.parseBoolean(Info.getPreference(HIDE_PRIMITIVES)));
+				serializer.setHideCardinalityForRequiredAttributes(Boolean.parseBoolean(Info.getPreference(HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES)));
+				
 				// TODO: make this better
 				serializer.setVersion("Beta");
 
@@ -242,9 +266,9 @@ public class ProfileBuildlets extends Task {
 						serializer.setStyleSheet(style);
 					}
 				}
-
+				
 				setupPostProcessors(serializer);
-
+				
 			} catch (TransformerConfigurationException e) {
 				error("error parsing XSLT script", e);
 			}

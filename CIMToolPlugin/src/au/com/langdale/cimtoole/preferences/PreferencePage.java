@@ -6,6 +6,7 @@ package au.com.langdale.cimtoole.preferences;
 
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.HRule;
 import static au.com.langdale.ui.builder.Templates.Label;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
@@ -47,9 +48,59 @@ public class PreferencePage extends FurnishedPropertyPage {
 								"Add package names to default schema namespace")),
 						Group( 
 								new PreferenceOption(Info.PROBLEM_PER_SUBJECT, 
-								"Limit validation output by subject and message type"))
-				);
+								"Limit validation output by subject and message type")),
+						Group(  
+								HRule()),
+						Group(  
+								Label("PlantUML Diagram Preferences:")),
+						Group( 
+								Label("Concrete Classes Color:"),
+								new ColorPreference("", Info.CONCRETE_CLASSES_COLOR),
+								Label(Info.CONCRETE_CLASSES_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.CONCRETE_CLASSES_COLOR.getLocalName()))),
+						Group( 
+								Label("Abstract Classes Color:"),
+								new ColorPreference("", Info.ABSTRACT_CLASSES_COLOR),
+								Label(Info.ABSTRACT_CLASSES_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.ABSTRACT_CLASSES_COLOR.getLocalName()))),
+						Group( 
+								Label("Enumerations Color:"),
+								new ColorPreference("", Info.ENUMERATIONS_COLOR),
+								Label(Info.ENUMERATIONS_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.ENUMERATIONS_COLOR.getLocalName()))),
+						Group( 
+								Label("CIMDatatypes Color:"),
+								new ColorPreference("", Info.CIMDATATYPES_COLOR),
+								Label(Info.CIMDATATYPES_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.CIMDATATYPES_COLOR.getLocalName()))),
+						Group( 
+								Label("Compounds Color:"),
+								new ColorPreference("", Info.COMPOUNDS_COLOR),
+								Label(Info.COMPOUNDS_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.COMPOUNDS_COLOR.getLocalName()))),
+						Group( 
+								Label("Primitives Color:"),
+								new ColorPreference("", Info.PRIMITIVES_COLOR),
+								Label(Info.PRIMITIVES_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.PRIMITIVES_COLOR.getLocalName()))),
+						Group( 
+								new PreferenceOption(Info.ENABLE_DARK_MODE, 
+								"Enable 'Dark Mode' (overrides colors above)")),
+						Group( 
+								new PreferenceOption(Info.ENABLE_SHADOWING, 
+								"Enable shadowing on classes")),
+						Group( 
+								new PreferenceOption(Info.HIDE_ENUMERATIONS, 
+								"Hide enumerations in diagrams")),
+						Group( 
+								new PreferenceOption(Info.HIDE_CIMDATATYPES, 
+								"Hide CIMDatatype classes in diagrams")),
+						Group( 
+								new PreferenceOption(Info.HIDE_COMPOUNDS, 
+								"Hide Compound classes in diagrams")),
+						Group( 
+								new PreferenceOption(Info.HIDE_PRIMITIVES, 
+								"Hide Primitive classes in diagrams")),	
+						Group( 
+								new PreferenceOption(Info.HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES, 
+								"Hide cardinality for required attributes"))
+						);
 			}
 		};
 	}
+    
 }
