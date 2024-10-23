@@ -480,6 +480,7 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emit(ElementNode node) throws SAXException {
 		Element elem;
+
 		if (node.isDatatype()) {
 			OntResource range = node.getBaseProperty().getRange();
 			if (range == null)

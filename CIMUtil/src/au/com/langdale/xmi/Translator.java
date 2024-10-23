@@ -241,7 +241,7 @@ public class Translator implements Runnable {
 			if (r.hasProperty(RDF.type, OWL.Class)) {
 				if ((r.hasProperty(UML.hasStereotype, UML.datatype) || r.hasProperty(UML.hasStereotype, UML.cimdatatype)
 						|| r.hasProperty(UML.hasStereotype, UML.primitive))
-						&& !r.hasProperty(UML.hasStereotype, UML.enumeration)) {	
+						&& !r.hasProperty(UML.hasStereotype, UML.enumeration)) {
 					FrontsNode x = XSDTypeUtils.selectXSDType(l);
 					if (x != null) {
 						OntResource resource = result.createResource(x.toString());
@@ -249,8 +249,7 @@ public class Translator implements Runnable {
 						return resource;
 					}
 				}
-				OntResource resource = result.createResource(namespace + l);
-				return resource;
+				return result.createResource(namespace + l);
 			}
 
 			if (r.hasProperty(RDF.type, OWL.ObjectProperty) || r.hasProperty(RDF.type, OWL.DatatypeProperty)
