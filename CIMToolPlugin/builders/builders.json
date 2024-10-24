@@ -89,16 +89,28 @@
         "datetime": "2024-09-20T00:00:00Z",
         "ext": "rdfs-501ed2-beta.rdfs"
     },
-    "puml-t2b": {
+    "puml-rdfs-t2b": {
         "type": "TEXT",
-        "style": "puml-t2b",
+        "style": "puml-rdfs-t2b",
         "datetime": "2024-09-30T00:00:00Z",
-        "ext": "t2b.puml"
+        "ext": "rdfs-t2b.puml"
     },
-    "puml-l2r": {
+    "puml-rdfs-l2r": {
         "type": "TEXT",
-        "style": "puml-l2r",
+        "style": "puml-rdfs-l2r",
         "datetime": "2024-09-30T00:00:00Z",
-        "ext": "l2r.puml"
+        "ext": "rdfs-l2r.puml"
+    },
+    "puml-xsd-t2b": {
+        "type": "TEXT",
+        "style": "puml-xsd-t2b",
+        "datetime": "2024-10-23T00:00:00Z",
+        "ext": "xsd-t2b.puml"
+    },
+    "puml-xsd-l2r": {
+        "type": "TEXT",
+        "style": "puml-xsd-l2r",
+        "datetime": "2024-10-23T00:00:00Z",
+        "ext": "xsd-l2r.puml"
     }
 }
