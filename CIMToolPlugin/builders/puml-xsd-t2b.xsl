@@ -237,7 +237,7 @@
 						<item>Font Bold</item>
 					</list>
 					<item>' Add a note towards the upper left corner of the diagram</item>
-					<list begin="note as {$envelope} #lightyellow" indent="   " delim="" end="end note">
+					<list begin="note as NoteInfo #lightyellow" indent="   " delim="" end="end note">
 						<item>Profile: <xsl:value-of select="$envelope"/></item>
 						<item>Namespace: <xsl:value-of select="$baseURI"/></item>
 						<xsl:if test="$copyright-single-line and $copyright-single-line != ''">
