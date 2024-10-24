@@ -219,7 +219,9 @@
 				<xsl:if test="not(@hideInDiagrams = 'true')">
 				<list begin="" indent="" delim="" end="">
 					<item>' <xsl:value-of select="@name"/></item>
-					<list begin="{concat('class ', @name, ' &lt;&lt;docroot-style&gt;&gt; &lt;&lt;Document Root&gt;&gt; &lt;&lt;(R, #F3F3F3)&gt;&gt;', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}"/>				
+					<list begin="{concat('class ', @name, ' &lt;&lt;docroot-style&gt;&gt; &lt;&lt;Document Root&gt;&gt; &lt;&lt;(R, #F3F3F3)&gt;&gt;', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+						<item><xsl:value-of select="$baseURI"/></item>
+					</list>			
 						<xsl:for-each select="a:Root">
 							<!-- Output the association -->	
 							<xsl:variable name="targetRoleEndName" select="concat('+', @name)"/>
@@ -236,19 +238,14 @@
 						<item>FontSize 14</item>
 						<item>Font Bold</item>
 					</list>
-					<item>' Add a note towards the upper left corner of the diagram</item>
-					<list begin="note as NoteInfo #lightyellow" indent="   " delim="" end="end note">
-						<item>Profile: <xsl:value-of select="$envelope"/></item>
-						<item>Namespace: <xsl:value-of select="$baseURI"/></item>
-						<xsl:if test="$copyright-single-line and $copyright-single-line != ''">
-							<item>Copyright: <xsl:value-of select="$copyright-single-line" disable-output-escaping="yes"/></item>			
-						</xsl:if>
-						<xsl:if test="a:Note and a:Note[string-length(.) > 0]">
-							<item></item>
-							<item>Profile Notes:</item>
-							<xsl:apply-templates select="a:Note" mode="profile-notes"/>
-						</xsl:if>
-					</list>
+					<xsl:if test="a:Note and a:Note[string-length(.) > 0]">
+						<item>&#xD;&#xA;</item> <!-- CR/LF -->
+						<item>' Add a note towards the upper left corner of the diagram</item>
+						<list begin="note as NoteInfo {$docRootClassesColor}" indent="   " delim="" end="end note">
+								<item>Profile Notes:</item>
+								<xsl:apply-templates select="a:Note" mode="profile-notes"/>
+						</list>
+					</xsl:if>
 					<item>&#xD;&#xA;</item> <!-- CR/LF -->
 				</xsl:if>
 				<xsl:apply-templates select="a:Root|a:ComplexType|a:EnumeratedType|a:CompoundType|a:SimpleType|a:PrimitiveType"/>			
