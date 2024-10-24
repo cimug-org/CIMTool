@@ -81,6 +81,8 @@ public class ProfileSerializer extends AbstractReader {
 	private String copyrightMultiLine = "";
 	private String copyrightSingleLine = "";
 	// the next set of parameters are PlantUML specific
+	private String docRootClassesColor = "";
+	private String docRootClassesFontColor = "";
 	private String concreteClassesColor = "";
 	private String concreteClassesFontColor = "";
 	private String abstractClassesColor = "";
@@ -107,14 +109,6 @@ public class ProfileSerializer extends AbstractReader {
 		@Override
 		public int compare(OntResource o1, OntResource o2) {
 			return o1.getURI().compareTo(o2.getURI());
-		}
-	});
-	private TreeSet primitives = new TreeSet<OntResource>(new Comparator<OntResource>() {
-		@Override
-		public int compare(OntResource o1, OntResource o2) {
-			String str1 = o1.getString(UML.primitiveDataType);
-			String str2 = o2.getString(UML.primitiveDataType);
-			return str1.compareTo(str2);
 		}
 	});
 
@@ -313,6 +307,8 @@ public class ProfileSerializer extends AbstractReader {
 				ti.setParameter("copyright-single-line", copyrightSingleLine);
 				
 				// PlantUML diagram preferences for all PlantUML diagram builders...
+				ti.setParameter("docRootClassesColor", docRootClassesColor);
+				ti.setParameter("docRootClassesFontColor", docRootClassesFontColor);
 				ti.setParameter("concreteClassesColor", concreteClassesColor);
 				ti.setParameter("concreteClassesFontColor", concreteClassesFontColor);
 				ti.setParameter("abstractClassesColor", abstractClassesColor);
@@ -416,19 +412,13 @@ public class ProfileSerializer extends AbstractReader {
 		while (it.hasNext()) {
 			emitCIMDatatype((OntResource) it.next());
 		}
-		
-		it = primitives.iterator();
-		while (it.hasNext()) {
-			emitPrimitive((OntResource) it.next());
-		}
-		
 		elem.close();
 	}
 
 	private void emit(EnvelopeNode node) throws SAXException {
 		Element elem = new Element("Message", MESSAGE.NS);
-		elem.set("name", node.getName());
 		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("name", node.getName());
 		emitChildren(node);
 		elem.close();
 	}
@@ -487,27 +477,13 @@ public class ProfileSerializer extends AbstractReader {
 				range = model.getOntModel().createResource(XSD.xstring.asNode());
 			if (range.hasProperty(UML.hasStereotype, UML.primitive) || range.getNameSpace().equals(xsd)) {
 				elem = new Element("Simple");
-				/**
-				 * For backwards compatibility, rather than setting the "dataType" attribute
-				 * to the <<Primitive>> type in the CIM (which is now specified as a property 
-				 * on the range which has historically specified the W3C XSD type such as:
-				 * 
-				 *    http://www.w3.org/2001/XMLSchema#float 
-				 *    
-				 * Given that we have numerous existing builders that produce profiles (e.g. 
-				 * XSD & JSON schemas) that are XSL transforms that would break if this were
-				 * changed we have opted to go this route as an interim solution. When first 
-				 * class support for <<Primitive>> and <<CIMDatatype>>s is introduced we will
-				 * updated at that time to ensure this implementation is updated.
-				 */
-				elem.set("primitiveDataType", range.getString(UML.primitiveDataType));
-				primitives.add(range);
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 			} else {
 				elem = new Element("Domain");
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 				elem.set("type", range.getLocalName());
 				deferred.add(range);
 			}
-			elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 			elem.set("dataType", range.getURI());
 			elem.set("xstype", xstype(range));
 			emit(node, elem);
@@ -599,78 +575,6 @@ public class ProfileSerializer extends AbstractReader {
 	private void emit(ElementNode node, Element elem) throws SAXException {
 		emit(node, elem, false);
 	}
-	
-	private void emitValueUnitMultiplier(OntResource cimDatatype) throws SAXException {
-		if (cimDatatype == null)
-			return;
-		boolean hasMultiplier = cimDatatype.hasProperty(UML.hasMultiplier);
-		boolean hasUnits = cimDatatype.hasProperty(UML.hasUnits);
-		String valueDataType = cimDatatype.getString(UML.valueDataType, null);
-		String valuePrimitiveDataType = cimDatatype.getString(UML.valuePrimitiveDataType, null);
-		String unitDataType = cimDatatype.getString(UML.unitDataType, null);
-		String multiplierDataType = cimDatatype.getString(UML.multiplierDataType, null);
-		
-		/** Generate the CIMDatatype "value" attribute. */
-		Element valueElement = new Element("Value");
-		valueElement.set("baseClass", valuePrimitiveDataType);
-		valueElement.set("type", valuePrimitiveDataType.substring(valuePrimitiveDataType.lastIndexOf("#") + 1));
-		valueElement.set("xstype", valueDataType.substring(valueDataType.lastIndexOf("#") + 1));
-		valueElement.set("name", "value");
-		valueElement.set("constant", "");
-		valueElement.set("ea_guid", cimDatatype.getString(UML.valueEAGUID, null));
-		valueElement.set("hideInDiagrams", "false");
-		valueElement.set("baseProperty", cimDatatype.getURI() + ".value");
-		valueElement.set("basePropertyClass", cimDatatype.getURI());
-		valueElement.set("minOccurs", ProfileModel.cardString(0));
-		valueElement.set("maxOccurs", ProfileModel.cardString(1, "1"));
-		//
-		Element valueAttrStereotype = new Element("Stereotype");
-		valueAttrStereotype.set("label", UML.attribute.getLocalName());
-		valueAttrStereotype.append(UML.attribute.getURI());
-		valueAttrStereotype.close();
-		//
-		valueElement.close();
-		
-		/** Generate the CIMDatatype "unit" attribute. */
-		Element unitElement = new Element("Unit");
-		unitElement.set("baseClass", unitDataType);
-		unitElement.set("type", unitDataType.substring(unitDataType.lastIndexOf("#") + 1));
-		unitElement.set("name", "unit");
-		unitElement.set("constant", (hasUnits ? cimDatatype.getString(UML.hasUnits, null) : "none"));
-		unitElement.set("ea_guid", cimDatatype.getString(UML.unitEAGUID, null));
-		unitElement.set("hideInDiagrams", "false");
-		unitElement.set("baseProperty", cimDatatype.getURI() + ".unit");
-		unitElement.set("basePropertyClass", cimDatatype.getURI());
-		unitElement.set("minOccurs", ProfileModel.cardString(0));
-		unitElement.set("maxOccurs", ProfileModel.cardString(1, "1"));
-		//
-		Element unitAttrStereotype = new Element("Stereotype");
-		unitAttrStereotype.set("label", UML.attribute.getLocalName());
-		unitAttrStereotype.append(UML.attribute.getURI());
-		unitAttrStereotype.close();
-		//
-		unitElement.close();	
-		
-		/** Generate the CIMDatatype "multiplier" attribute. */
-		Element multiplierElement = new Element("Multiplier");
-		multiplierElement.set("baseClass", multiplierDataType);
-		multiplierElement.set("type", multiplierDataType.substring(multiplierDataType.lastIndexOf("#") + 1));
-		multiplierElement.set("name", "multiplier");
-		multiplierElement.set("constant", (hasMultiplier ? cimDatatype.getString(UML.hasMultiplier, null) : "none"));
-		multiplierElement.set("ea_guid", cimDatatype.getString(UML.multiplierEAGUID, null));
-		multiplierElement.set("hideInDiagrams", "false");
-		multiplierElement.set("baseProperty", cimDatatype.getURI() + ".multiplier");
-		multiplierElement.set("basePropertyClass", cimDatatype.getURI());
-		multiplierElement.set("minOccurs", ProfileModel.cardString(0));
-		multiplierElement.set("maxOccurs", ProfileModel.cardString(1, "1"));
-		//
-		Element multiplierAttrStereotype = new Element("Stereotype");
-		multiplierAttrStereotype.set("label", UML.attribute.getLocalName());
-		multiplierAttrStereotype.append(UML.attribute.getURI());
-		multiplierAttrStereotype.close();
-		//
-		multiplierElement.close();	
-	}
 
 	private void emit(ElementNode node, Element elem, boolean includeInverseBaseClass) throws SAXException {
 		elem.set("name", node.getName());
@@ -700,8 +604,8 @@ public class ProfileSerializer extends AbstractReader {
 	}
 
 	private void emitChoice(ElementNode node, Element elem) throws SAXException {
-		elem.set("name", node.getName());
 		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("name", node.getName());
 		elem.set("baseProperty", node.getBaseProperty().getURI());
 		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
@@ -844,8 +748,8 @@ public class ProfileSerializer extends AbstractReader {
 			elem = new Element("CompoundType");
 		else
 			elem = new Element("ComplexType");
-		elem.set("name", node.getName());
 		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("name", node.getName());
 		if (node.getBaseClass().hasProperty(UML.id))
 			elem.set("ea_guid", node.getBaseClass().getString(UML.id));		
 		elem.set("baseClass", node.getBaseClass().getURI());
@@ -864,8 +768,8 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emit(MessageNode node) throws SAXException {
 		Element elem = new Element("Root");
-		elem.set("name", node.getName());
 		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("name", node.getName());
 		if (node.getBaseClass().hasProperty(UML.id))
 			elem.set("ea_guid", node.getBaseClass().getString(UML.id));		
 		elem.set("baseClass", node.getBaseClass().getURI());
@@ -879,61 +783,15 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emitCIMDatatype(OntResource type) throws SAXException {
 		Element elem = new Element("SimpleType");
-
+		elem.set("hideInDiagrams", (type != null && isHidden(type) ? "true" : "false"));
 		elem.set("dataType", type.getURI());
 		elem.set("name", type.getLocalName());
-
 		if (type.hasProperty(UML.id))
 			elem.set("ea_guid", type.getString(UML.id));	
-		
 		OntResource defin = type.getResource(RDFS.isDefinedBy);
 		if (defin != null) {
 			elem.set("package", defin.getLabel());
 			elem.set("packageURI", defin.getURI());
-		}
-		elem.set("xstype", xstype(type));
-		emitComment(type.getComment(null));
-		emitStereotypes(type);
-		emitValueUnitMultiplier(type);
-		elem.close();
-	}
-	
-	/**
-	 * Some history on the below change introduced in 2.3.0. The context is that for the 
-	 * CIMTool implementation of CIM <<Primitive>> UML classes (e.g. Decimal, Boolean, Date, 
-	 * Float, Date, others...) the perspective was that the intent of those classes is that
-	 * they were representative of XSD schema type primitives and therefor the original
-	 * CIMTool design was to essentially remove them from the CIMTool *.OWL profile 
-	 * representation generated by CIMTool. For a more detailed understanding of how this
-	 * is done refer to the CIMInterpreter.applyPrimitiveStereotype() method. The result of
-	 * the model processing done there is ultimately used here in the ProfileSerializer class.  
-	 * 
-	 * The below method was introduced in 2.3.0 as a result of the evolution in thinking in
-	 * how we are now representing the profiles. Today, in formats such as RDFS2020 and others
-	 * we include CIM <<Primitive>> as actual RDF classes (such as in the CGMES RDFS profiles). 
-	 * However, to preserve backwards compatibility we have chosen (for the moment) not to update 
-	 * the core representation in CIMTool but rather to limit changes to only the generated
-	 * XML internal profile representation produced by the this ProfileSerializer class. Thus,  
-	 * in 2.3.0 we have added the additional method below to generated entries in the XML
-	 * internal format to include "Primitive" entries that can be used by XSLT transform 
-	 * builders to generate output such as RDFS2020 and equivalent.  To change the core internal
-	 * format at this point would break CIMTool's current instance data validation features. 
-	 */
-	private void emitPrimitive(OntResource type) throws SAXException {
-		Element elem = new Element("PrimitiveType");
-
-		String dataType = type.getString(UML.primitiveDataType);
-		elem.set("dataType", dataType);	
-		elem.set("name", dataType.substring(dataType.lastIndexOf("#") + 1));
-		elem.set("hideInDiagrams", (isHidden(type) ? "true" : "false"));
-		
-		if (type.hasProperty(UML.id))
-			elem.set("ea_guid", type.getString(UML.id));	
-		
-		OntResource definedBy = type.getResource(RDFS.isDefinedBy);
-		if (definedBy != null) {
-			elem.set("package", definedBy.getLabel());
-			elem.set("packageURI", definedBy.getURI());
 		}
 		elem.set("xstype", xstype(type));
 
@@ -960,6 +818,22 @@ public class ProfileSerializer extends AbstractReader {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public String getDocRootClassesColor() {
+		return docRootClassesColor;
+	}
+
+	public void setDocRootClassesColor(String docRootClassesColor) {
+		this.docRootClassesColor = docRootClassesColor;
+	}
+	
+	public String getDocRootClassesFontColor() {
+		return docRootClassesFontColor;
+	}
+
+	public void setDocRootClassesFontColor(String docRootClassesFontColor) {
+		this.docRootClassesFontColor = docRootClassesFontColor;
 	}
 	
 	public String getConcreteClassesColor() {

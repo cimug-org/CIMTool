@@ -245,7 +245,6 @@ public class Translator implements Runnable {
 					FrontsNode x = XSDTypeUtils.selectXSDType(l);
 					if (x != null) {
 						OntResource resource = result.createResource(x.toString());
-						resource.addProperty(UML.primitiveDataType, namespace + l);
 						return resource;
 					}
 				}

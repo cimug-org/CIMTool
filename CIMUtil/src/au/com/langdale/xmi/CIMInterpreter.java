@@ -41,18 +41,6 @@ public class CIMInterpreter extends UMLInterpreter {
 		labelRoles();
 		
 		System.out.println("Stage 1 XMI model size: " + getModel().size());
-
-		/**
-		ResIterator classes1 = raw.listSubjectsWithProperty(RDF.type, OWL2.Class);
-		TreeMap<String, OntResource> classMap1 = new TreeMap<>();
-		classes1.forEachRemaining((c) -> {
-			if (((OntResource)c).getLabel() != null)
-				classMap1.put(((OntResource)c).getLabel(), (OntResource)c);
-		});
-		classMap1.forEach((name, aClass) -> {
-			OntResource aParentPackage = aClass.getIsDefinedBy();
-			System.out.println(String.format("1 - Class:  %s;     Package: %s", name, (aParentPackage != null ? aParentPackage.getLabel() : aParentPackage)));
-		}); */
 		
 		Translator translator = new Translator(getModel(), baseURI, usePackageNames);
 		translator.run();
@@ -60,21 +48,8 @@ public class CIMInterpreter extends UMLInterpreter {
 		
 		System.out.println("Stage 3 XMI model size: " + getModel().size());
 		
-		/**
-		ResIterator classes3 = raw.listSubjectsWithProperty(RDF.type, OWL2.Class);
-		TreeMap<String, OntResource> classMap3 = new TreeMap<>();
-		classes3.forEachRemaining((c) -> {
-			if (((OntResource)c).getLabel() != null)
-				classMap3.put(((OntResource)c).getLabel(), (OntResource)c);
-		});
-		classMap3.forEach((name, aClass) -> {
-			OntResource aParentPackage = aClass.getIsDefinedBy();
-			System.out.println(String.format("3 - Class:  %s;     Package: %s", name, (aParentPackage != null ? aParentPackage.getLabel() : aParentPackage)));
-		}); */
-		
 		propagateComments();
 		applyStereotypes();
-		
 		classifyAttributes();
 		removeUntyped();
 //		convertToSubClassOf("extensionMSITE");
@@ -82,18 +57,6 @@ public class CIMInterpreter extends UMLInterpreter {
 		
 		System.out.println("Stage 4 XMI model size: " + getModel().size());
 		
-		/**
-		ResIterator classes4 = raw.listSubjectsWithProperty(RDF.type, OWL2.Class);
-		TreeMap<String, OntResource> classMap4 = new TreeMap<>();
-		classes4.forEachRemaining((c) -> {
-			if (((OntResource)c).getLabel() != null)
-				classMap4.put(((OntResource)c).getLabel(), (OntResource)c);
-		});
-		classMap4.forEach((name, aClass) -> {
-			OntResource aParentPackage = aClass.getIsDefinedBy();
-			System.out.println(String.format("4 - Class:  %s;     Package: %s", name, (aParentPackage != null ? aParentPackage.getLabel() : aParentPackage)));
-		}); */
-
 		return getModel();
 	}
 
@@ -183,17 +146,10 @@ public class CIMInterpreter extends UMLInterpreter {
 	private void applyPrimitiveStereotype(OntResource clss, boolean interpret_value) {
 
 		OntResource truetype = null;
-		String unit = null;
-		String valueDataType = null;
-		String valuePrimitiveDataType = null;
-		String valueEAGUID = null;
-		String unitDataType = null;
-		String unitEAGUID = null;
+		String units = null;
 		String multiplier = null;
-		String multiplierDataType = null;
-		String multiplierEAGUID = null;
 		
-		// strip the classes properties, record the value, units, and multiplier information
+		// strip the classes properties, record the value and units information
 		ResIterator it = model.listSubjectsBuffered(RDFS.domain, clss);
 		while(it.hasNext()) {
 			OntResource m = it.nextResource();
@@ -202,22 +158,12 @@ public class CIMInterpreter extends UMLInterpreter {
 				String name = m.getLabel();
 				if(name != null) {
 					// this is a CIM-style annotation to indicate the primitive datatype 
-					if( name.equals("value")) {
+					if( name.equals("value"))
 						truetype = m.getResource(RDFS.range);
-						valueDataType = m.getRange().getURI();
-						valuePrimitiveDataType = m.getRange().getString(UML.primitiveDataType);
-						valueEAGUID = m.getString(UML.id);
-					}
-					if( name.equals("unit") || name.equals("units")) {
-						unit = m.getString(UML.hasInitialValue);
-						unitDataType = m.getRange().getURI();
-						unitEAGUID = m.getString(UML.id);
-					}
-					if( name.equals("multiplier")) {
+					if( name.equals("unit") || name.equals("units"))
+						units = m.getString(UML.hasInitialValue);
+					if( name.equals("multiplier"))
 						multiplier = m.getString(UML.hasInitialValue);
-						multiplierDataType = m.getRange().getURI();
-						multiplierEAGUID = m.getString(UML.id);
-					}
 				}
 			}
 			// remove spurious property attached to datatype
@@ -226,86 +172,20 @@ public class CIMInterpreter extends UMLInterpreter {
 
 		// for XML Schema datatypes remove all definitions
 		if(clss.hasProperty(UML.hasStereotype, UML.primitive) || clss.getNameSpace().equals(XSD.getURI())){
-			/**
-			 * Some history on the below change introduced in 2.3.0. The context for the original 
-			 * implementation in 2010/2011 was that the implementation of CIM <<Primitive>> UML
-			 * classes (e.g. Decimal, Integer, Boolean, Date, Float, DateTime, Month, etc.)
-			 * was originally from the perspective that the intent in the UML was that the are 
-			 * representative of XSD schema types. Based on that assumption, the implementation
-			 * resulted in the removing them as RDF Classes from the *.OWL profiles generated
-			 * by CIMTool. This occurs via a two step process during the import of a CIM schema 
-			 * (i.e. an *.xmi, *.eap, *.qea, etc. file) into CIMTool. During the execution of the
-			 * CIMInterpreter.postProcess() method the Translator class runs two passes as part 
-			 * if its translation processing. It is during "pass 2" that it does a rename in the 
-			 * Translator.renameResource(OntResource r, String l) method and renames/transforms the 
-			 * CIM <<Primitive>> class itself to it's XSD schema type. That translation leaves the
-			 * OntResource looking like the following if you were to perform a OntResource.desribe():
-			 * 
-			 * http://www.w3.org/2001/XMLSchema#boolean
-			 *   http://langdale.com.au/2005/UML#hasStereotype = http://langdale.com.au/2005/UML#primitive
-			 *   http://www.w3.org/2000/01/rdf-schema#isDefinedBy = http://iec.ch/TC57/CIM100#Package_Domain
-			 *   http://langdale.com.au/2005/UML#id = "EAID_9F8964F1_6C32_465b_A83D_F5A201A291C3"
-			 *   http://www.w3.org/2000/01/rdf-schema#label = "Boolean"
-			 *   http://www.w3.org/2000/01/rdf-schema#comment = "A type with the value space "true" and "false"."
-			 * 
-			 * Thus, the translation step was a preparatory step that essentially was completed in
-			 * this method where the call to removeProperites(), commented out below, would remove
-			 * the additional properties above. 
-			 * 
-			 * However, as things have evolved in the broader CIM community and as RDFS2020 and other
-			 * representations have been introduced, those representations explicitly represent the 
-			 * CIM <<Primitive>> classes as RDF Classes in those newer formats (such as in the CGMES
-			 * RDFS profiles). However, to preserve backwards compatibility we have chosen (for now) 
-			 * not to update the core representation but rather to limit changes to only the generated
-			 * XML internal profile representation produced by the ProfileSerializer class. Thus by 
-			 * changing the below to remove only the RDF.type properties it filters it still "filters
-			 * out" the <<Primitive>> classes from the core *.OWL profile (which only includes valid
-			 * OntResources defined with a property of:   
-			 * 
-			 * http://www.w3.org/1999/02/22-rdf-syntax-ns#type = http://www.w3.org/2002/07/owl#Class
-			 * 
-			 * Thus, the change below preserves the remaining 4 properties (for package name, comments, 
-			 * stereotypes, etc.) that we can use "downstream" when generating the XML internal profile
-			 * used by the XSLT RDFS2020 builder (and others). for further details, refer to the 
-			 * ProfileSerializer.emitPrimitive() method on that class.
-			 */
-			//clss.removeProperties();
-			clss.removeAll(RDF.type);
-			//
-			String localName = clss.getLocalName();
-			FrontsNode xsdType = XSDTypeUtils.selectXSDType(localName);
-			if (xsdType != null) {
-				clss.addProperty(OWL.equivalentClass, xsdType);
-			}
+			clss.removeProperties();
 		}
 		
 		// for defined datatypes, establish an RDFS datatype
 		else {
 			clss.removeAll(RDF.type);
 			clss.addProperty(RDF.type, RDFS.Datatype);
-			//
-			if( truetype != null && !clss.equals(truetype) ) 
+
+			if( truetype != null && ! clss.equals(truetype)) 
 				clss.addProperty( OWL.equivalentClass, truetype );
-			if( valueDataType != null )
-				clss.addProperty( UML.valueDataType, valueDataType);
-			if ( valuePrimitiveDataType != null)
-				clss.addProperty( UML.valuePrimitiveDataType, valuePrimitiveDataType);
-			if( valueEAGUID != null )
-				clss.addProperty( UML.valueEAGUID, valueEAGUID);
-			//
-			if( unit != null )
-				clss.addProperty( UML.hasUnits, unit);
-			if( unitDataType != null )
-				clss.addProperty( UML.unitDataType, unitDataType);
-			if( unitEAGUID != null )
-				clss.addProperty( UML.unitEAGUID, unitEAGUID);
-			//
+			if( units != null )
+				clss.addProperty( UML.hasUnits, units);
 			if( multiplier != null )
 				clss.addProperty( UML.hasMultiplier, multiplier);
-			if( multiplierDataType != null )
-				clss.addProperty( UML.multiplierDataType, multiplierDataType);
-			if( multiplierEAGUID != null )
-				clss.addProperty( UML.multiplierEAGUID, multiplierEAGUID);
 		}
 	}
 
