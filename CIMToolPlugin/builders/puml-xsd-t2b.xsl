@@ -217,12 +217,27 @@
 				<item><xsl:value-of select="'hide &lt;&lt;error-style&gt;&gt; stereotype'"/></item>
 				<item>&#xD;&#xA;</item> <!-- CR/LF -->
 				<xsl:if test="not(@hideInDiagrams = 'true')">
+				<list begin="" indent="" delim="" end="">
+					<item>' <xsl:value-of select="@name"/></item>
+					<list begin="{concat('class ', @name, ' &lt;&lt;docroot-style&gt;&gt; &lt;&lt;Document Root&gt;&gt; &lt;&lt;(R, #F3F3F3)&gt;&gt;', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}"/>				
+						<xsl:for-each select="a:Root">
+							<!-- Output the association -->	
+							<xsl:variable name="targetRoleEndName" select="concat('+', @name)"/>
+							<xsl:variable name="targetCardinality">
+								<xsl:choose>
+									<xsl:when test="not(@minOccurs = '') and not(@maxOccurs = '')"><xsl:call-template name="association-cardinality"/></xsl:when>
+								</xsl:choose>
+							</xsl:variable>
+							<item><xsl:value-of select="concat($envelope, ' --&gt;  &quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', @name)"/></item>
+						</xsl:for-each>		
+					</list>
+					<item>&#xD;&#xA;</item> <!-- CR/LF -->
 					<list begin="{concat('skinparam note ', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 						<item>FontSize 14</item>
 						<item>Font Bold</item>
 					</list>
 					<item>' Add a note towards the upper left corner of the diagram</item>
-					<list begin="note as InfoNote #lightyellow" indent="   " delim="" end="end note">
+					<list begin="note as {$envelope} #lightyellow" indent="   " delim="" end="end note">
 						<item>Profile: <xsl:value-of select="$envelope"/></item>
 						<item>Namespace: <xsl:value-of select="$baseURI"/></item>
 						<xsl:if test="$copyright-single-line and $copyright-single-line != ''">
@@ -236,20 +251,6 @@
 					</list>
 					<item>&#xD;&#xA;</item> <!-- CR/LF -->
 				</xsl:if>
-				<list begin="" indent="" delim="" end="">
-					<item>' <xsl:value-of select="@name"/></item>
-					<list begin="{concat('class ', @name, ' &lt;&lt;docroot-style&gt;&gt; &lt;&lt;Document Root&gt;&gt; &lt;&lt;(R, #F3F3F3)&gt;&gt;', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}"/>				
-					<xsl:for-each select="a:Root">
-						<!-- Output the association -->	
-						<xsl:variable name="targetRoleEndName" select="concat('+', @name)"/>
-						<xsl:variable name="targetCardinality">
-							<xsl:choose>
-								<xsl:when test="not(@minOccurs = '') and not(@maxOccurs = '')"><xsl:call-template name="association-cardinality"/></xsl:when>
-							</xsl:choose>
-						</xsl:variable>
-						<item><xsl:value-of select="concat($envelope, ' --&gt;  &quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', @name)"/></item>
-					</xsl:for-each>		
-				</list>
 				<xsl:apply-templates select="a:Root|a:ComplexType|a:EnumeratedType|a:CompoundType|a:SimpleType|a:PrimitiveType"/>			
 			</list>
 		</document>
@@ -310,7 +311,7 @@
 	</xsl:template>
 
 	<xsl:template match="a:CompoundType">
-		<xsl:if test="not(hideCompounds) and not(@hideInDiagrams = 'true')">
+		<xsl:if test="not($hideCompounds) and not(@hideInDiagrams = 'true')">
 			<xsl:variable name="className" select="substring-after(@baseClass, '#')"/>
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
 			<xsl:variable name="colorStyle" select="'&lt;&lt;compound-style&gt;&gt;'"/>
