@@ -213,6 +213,8 @@ public class ProfileBuildlets extends Task {
 				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
 				// Set diagram preferences used by any PlantUML diagram builders
+				serializer.setDocRootClassesColor(Info.getPreference(DOCROOT_CLASSES_COLOR));
+				serializer.setDocRootClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(DOCROOT_CLASSES_COLOR)));
 				serializer.setConcreteClassesColor(Info.getPreference(CONCRETE_CLASSES_COLOR));
 				serializer.setConcreteClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(CONCRETE_CLASSES_COLOR)));
 				serializer.setAbstractClassesColor(Info.getPreference(ABSTRACT_CLASSES_COLOR));
