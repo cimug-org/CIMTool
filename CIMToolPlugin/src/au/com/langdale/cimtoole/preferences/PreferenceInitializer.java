@@ -28,6 +28,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);
 		store.setDefault(Info.PROBLEM_PER_SUBJECT.getLocalName(), true);
 		store.setDefault(Info.USE_PACKAGE_NAMES.getLocalName(), false);
+		store.setDefault(Info.DOCROOT_CLASSES_COLOR.getLocalName(), "#D3FBFE");
 		store.setDefault(Info.CONCRETE_CLASSES_COLOR.getLocalName(), "#FFFFE0");
 		store.setDefault(Info.ABSTRACT_CLASSES_COLOR.getLocalName(), "#D3D3D3");
 		store.setDefault(Info.ENUMERATIONS_COLOR.getLocalName(), "#90EE90");

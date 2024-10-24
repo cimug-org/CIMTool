@@ -54,6 +54,10 @@ public class PreferencePage extends FurnishedPropertyPage {
 						Group(  
 								Label("PlantUML Diagram Preferences:")),
 						Group( 
+								Label("Document Root Class Color:"),
+								new ColorPreference("", Info.DOCROOT_CLASSES_COLOR),
+								Label(Info.DOCROOT_CLASSES_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.DOCROOT_CLASSES_COLOR.getLocalName()))),
+						Group( 
 								Label("Concrete Classes Color:"),
 								new ColorPreference("", Info.CONCRETE_CLASSES_COLOR),
 								Label(Info.CONCRETE_CLASSES_COLOR.getLocalName() + "-label", getPreferenceStore().getString(Info.CONCRETE_CLASSES_COLOR.getLocalName()))),

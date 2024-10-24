@@ -65,6 +65,7 @@ public class Info {
 			"mapping_namespace");
 	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
 	
+	public static final QualifiedName DOCROOT_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_docroot_classes_color");
 	public static final QualifiedName CONCRETE_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_concrete_classes_color");
 	public static final QualifiedName ABSTRACT_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_abstract_classes_color");
 	public static final QualifiedName ENUMERATIONS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_enumerations_color");
