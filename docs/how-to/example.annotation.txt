@@ -10,7 +10,7 @@
 # Note the underscore (_) after the #Package portion of the prefix...
 #
 @prefix uml: <http://langdale.com.au/2005/UML#> .
-@prefix package: <http://iec.ch/TC57/CIM100#Package_> .
+@prefix package: <http://cim.ucaiug.io/2020/CIM100#Package_> .
 
 # 
 # Each line below is read:

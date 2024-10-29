@@ -4,7 +4,7 @@ See also: [CIMTool Support for Extension Namespaces](cimtool-support-for-extensi
 
 ## Background
 
-In CIM/XML, each name, such as ACLineSegment, is qualified by a namespace, such as http://iec.ch/TC57/2013/CIM-schema-cim16#. The combination forms a globally unique term. By convention, only the IEC TC57 would define a term beginning with http://iec.ch/TC57/....
+In CIM/XML, each name, such as ACLineSegment, is qualified by a namespace, such as `http://cim.ucaiug.io/CIM-schema-cim16#`. The combination forms a globally unique term. By convention, only the authority designated by the namespace URI would define a term beginning with `http://cim.ucaiug.io/CIM-schema-cim16#...`
 
 The same applies in XML schema's derived from the CIM. An XML schema has a target namespace, declared in its header, that qualifies names defined in the body of the schema.
 
@@ -12,7 +12,7 @@ In practical applications of the CIM it is combined with project and vendor-spec
 
 ### Version Control and Namespaces
 
-Namespaces prevent name conflicts between authors of terms. They are also used to prevent conflicts between different versions of a term's definition. For example, http://iec.ch/TC57/2013/CIM-schema-cim16#ACLineSegment might be succeeded by http://iec.ch/TC57/CIM100#ACLineSegment with a slightly different definition.
+Namespaces prevent name conflicts between authors of terms. They are also used to prevent conflicts between different versions of a term's definition. For example, `http://cim.ucaiug.io/CIM-schema-cim17##ACLineSegment` might be succeeded by `http://cim.ucaiug.io/CIM-schema-cim18##ACLineSegment` with a slightly different definition.
 
 Both versions of the term might be in use at the same time. The potential conflict can be detected because the different versions have different namespaces. Resolving a version conflict is another matter, however.
 
