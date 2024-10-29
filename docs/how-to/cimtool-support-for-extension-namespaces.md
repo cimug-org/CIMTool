@@ -18,11 +18,11 @@ The default namespace is used as follows:
 
 ### UML Tag: baseuri
 
-**CIMTool** recognises a UML Tag with name ```baseuri``` which is expected to have a namespace URI as its value. The ```baseuri``` tag can be attached to any **package**, **class**, **association** or **attribute** using the UML editor.  
+**CIMTool** recognises a UML Tag with name `baseuri` which is expected to have a namespace URI as its value. The `baseuri` tag can be attached to any **package**, **class**, **association** or **attribute** using the UML editor.  
 
-- When attached to a class, association or attribute, ```baseuri``` specifies the namespace of the resulting OWL class or properties. 
+- When attached to a class, association or attribute, `baseuri` specifies the namespace of the resulting OWL class or properties. 
 
-- When attached to a package, ```baseuri``` specifies the namespace of all OWL classes and properties resulting from that package or its sub-packages recursively except where a sub-package, class, association or attribute has a ```baseuri``` tag. 
+- When attached to a package, `baseuri` specifies the namespace of all OWL classes and properties resulting from that package or its sub-packages recursively except where a sub-package, class, association or attribute has a `baseuri` tag. 
 
 Generally, it is sufficient to tag the top level packages in a UML model to obtain the correct namespaces throughout.
 
@@ -32,7 +32,7 @@ An example of a Tag on a Class:
 
 ### Annotation File
 
-**CIMTool** can obtain namespace information from a file accompanying the XMI file, called an annotation file. There is no editor or other GUI for managing namespace information in the annotation file. It is a stopgap intended for situations where the user does not control the XMI file and that file lacks ```baseuri``` tags.
+**CIMTool** can obtain namespace information from a file accompanying the XMI file, called an annotation file. There is no editor or other GUI for managing namespace information in the annotation file. It is a stopgap intended for situations where the user does not control the XMI file and that file lacks `baseuri` tags.
 
 The annotation file should be placed in the project's Schema folder where the XMI file is located. It must have the same base name as the XMI file and extension .annotation instead of .xmi.
 
@@ -42,22 +42,22 @@ An example file that can be used as a template can be found here:
 
 [example.annotation.txt](example.annotation.txt)
 
-The file contains ```baseuri``` statements in the RDF TURTLE language. For example, the line:
+The file contains `baseuri` statements in the RDF TURTLE language. For example, the line:
 
 ```
  package:Extensions     uml:baseuri "http://www.ucaiug.org/CIM100/2024/extension#" 
  ```	
 
-Has the same effect as attaching a ```baseuri``` tag to the Extensions package with the given URI as its value.
+Has the same effect as attaching a `baseuri` tag to the Extensions package with the given URI as its value.
 
 
 !!! note
 
-    The ```baseuri``` statements are merged with any ```baseuri``` tags in the xmi file.
+    The `baseuri` statements are merged with any `baseuri` tags in the xmi file.
 
-    The effect of assigning two different ```baseuri``` values to the same package is undefined.
+    The effect of assigning two different `baseuri` values to the same package is undefined.
 
-    Only packages can be given ```baseuri``` values via the annotation file.
+    Only packages can be given `baseuri` values via the annotation file.
 
 
 
