@@ -10,10 +10,10 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.  This should include a high level description of what you were trying to do that produced the issue. (e.g. "While creating a new profile I selected the 
 
-** CIMTool release**
+**CIMTool release**
 The exact release of CIMTool you were using (e.g. CIMTool 2.0.1)
 
-** CIM Schema version **
+**CIM Schema Version**
 If relevant to the bug you are reporting, please include the exact name of the schema(s) you are using for your profiling.  For example:
 - iec61970cim17v38_iec61968cim13v13b_iec62325cim03v17a_CIM100.2.eap
 - iec61970cim17v40-cimtool.xmi 
