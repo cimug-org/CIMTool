@@ -134,7 +134,7 @@ The enhancements made to the existing "Import Copyright Templates" wizard screen
 
 Import Copyright Templates (OLD) | Import Copyright Templates (NEW)
 ---------|---------
-[!![image](https://user-images.githubusercontent.com/63370413/210397916-1f3843a3-81a3-4634-8089-cc2162eec974.png)](https://user-images.githubusercontent.com/63370413/210397916-1f3843a3-81a3-4634-8089-cc2162eec974.png) | [!![image](https://user-images.githubusercontent.com/63370413/210398294-4830020f-d3f6-41ab-87cc-e22ee4d66ec0.png)](https://user-images.githubusercontent.com/63370413/210398294-4830020f-d3f6-41ab-87cc-e22ee4d66ec0.png)
+[![image](https://user-images.githubusercontent.com/63370413/210397916-1f3843a3-81a3-4634-8089-cc2162eec974.png)](https://user-images.githubusercontent.com/63370413/210397916-1f3843a3-81a3-4634-8089-cc2162eec974.png) | [![image](https://user-images.githubusercontent.com/63370413/210398294-4830020f-d3f6-41ab-87cc-e22ee4d66ec0.png)](https://user-images.githubusercontent.com/63370413/210398294-4830020f-d3f6-41ab-87cc-e22ee4d66ec0.png)
 
 
 ### Release 1.11.0 [28-Sep-2022]
