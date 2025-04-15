@@ -48,9 +48,9 @@
 	<!-- templates) i.e. All "top level" element in the XML profile definition file...                                -->
 	<!-- ============================================================================================================ -->
 	<xsl:template match="a:Package">
-		<rdf:Description rdf:about="{if (starts-with(@basePackage, $ontologyURI)) then concat('#', substring-after(@basePackage, '#')) else @basePackage }">
+		<rdf:Description rdf:about="{if (starts-with(@basePackage, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePackage, '#')) else @basePackage }">
 			<xsl:for-each select="a:ParentPackage">
-				<cims:belongsToCategory rdf:resource="{if (starts-with(@basePackage, $ontologyURI)) then concat('#', substring-after(@basePackage, '#')) else @basePackage }"/>
+				<cims:belongsToCategory rdf:resource="{if (starts-with(@basePackage, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePackage, '#')) else @basePackage }"/>
 			</xsl:for-each>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#ClassCategory"/>
@@ -59,11 +59,14 @@
 		</rdf:Description>
 	</xsl:template>
 	
-	<xsl:template match="a:Root|a:ComplexType|a:EnumeratedType">
-		<rdf:Description rdf:about="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }">
-			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, $ontologyURI)) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
+	<xsl:template match="a:Root|a:ComplexType|a:EnumeratedType|a:CompoundType">
+		<rdf:Description rdf:about="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }">
+			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, concat($ontologyURI, '#'))) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
 			<xsl:if test="self::a:EnumeratedType">
 				<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#enumeration"/>
+			</xsl:if>
+			<xsl:if test="self::a:CompoundType">
+				<cims:stereotype>Compound</cims:stereotype>
 			</xsl:if>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
@@ -73,18 +76,15 @@
 				 what appears later in this XSLT for attributes and associations where the rdfs:label is 
 				 determined using the @name attribute -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="substring-after(@baseClass, '#')"/></rdfs:label>
-			<xsl:if test="a:SuperType">
-				<!-- The name of the superclass is determined using the @baseClass attribute 
-					 (and not the a:SuperType/@name) -->
-				<!-- <rdfs:subClassOf rdf:resource="#{substring-after(a:SuperType/@baseClass, '#')}"/> -->
-				<rdfs:subClassOf rdf:resource="{if (starts-with(a:SuperType/@baseClass, $ontologyURI)) then concat('#', substring-after(a:SuperType/@baseClass, '#')) else a:SuperType/@baseClass }"/>
-			</xsl:if>
+			<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'false']">
+				<rdfs:subClassOf rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			</xsl:for-each>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template match="a:SimpleType">	
-		<rdf:Description rdf:about="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }">
-			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, $ontologyURI)) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
+		<rdf:Description rdf:about="{if (starts-with(@dataType, concat($ontologyURI, '#'))) then concat('#', substring-after(@dataType, '#')) else @dataType }">
+			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, concat($ontologyURI, '#'))) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
 			<xsl:if test="not(a:Stereotype[contains(., '#cimdatatype')])">
 				<cims:stereotype>CIMDatatype</cims:stereotype>
 			</xsl:if>
@@ -94,6 +94,20 @@
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 		</rdf:Description>
   	</xsl:template>
+	
+	<xsl:template match="a:PrimitiveType">	
+		<rdf:Description rdf:about="{if (starts-with(@dataType, concat($ontologyURI, '#'))) then concat('#', substring-after(@dataType, '#')) else @dataType }">
+			<cims:belongsToCategory rdf:resource="{if (starts-with(@packageURI, concat($ontologyURI, '#'))) then concat('#', substring-after(@packageURI, '#')) else @packageURI }"/>
+			<xsl:if test="not(a:Stereotype[contains(., '#primitive')])">
+				<cims:stereotype>Primitive</cims:stereotype>
+			</xsl:if>
+			<xsl:call-template name="stereotypes"/>
+			<rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
+			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
+		</rdf:Description>
+  	</xsl:template>
+	
 	<!-- ============================================================================================================ -->
 	<!-- END SECTION:  Package, Complex, ComplexType, Root, & CompoundType(s) TYPE DEFINITION templates               -->
 	<!-- ============================================================================================================ -->	
@@ -102,59 +116,74 @@
 	<!-- START SECTION:  (Simple, Domain, Instance, Reference attribute & association templates)                      -->
 	<!-- ============================================================================================================ -->
 	<xsl:template match="a:Simple">
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
-			<cims:dataType rdf:resource="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }"/>
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+			<cims:dataType rdf:resource="{if (starts-with(@cimDatatype, concat($ontologyURI, '#'))) then concat('#', substring-after(@cimDatatype, '#')) else @cimDatatype }"/>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, $ontologyURI)) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 		</rdf:Description>
   	</xsl:template>
   	
 	<xsl:template match="a:Domain">
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
-			<cims:dataType rdf:resource="{if (starts-with(@dataType, $ontologyURI)) then concat('#', substring-after(@dataType, '#')) else @dataType }"/>
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+			<cims:dataType rdf:resource="{if (starts-with(@dataType, concat($ontologyURI, '#'))) then concat('#', substring-after(@dataType, '#')) else @dataType }"/>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, $ontologyURI)) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for a 
 				 domain attribute defined for the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 		</rdf:Description>
 	</xsl:template>
+	
+	<xsl:template match="a:Compound">
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+			<cims:dataType rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
+			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+			<xsl:call-template name="stereotypes"/>	
+			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
+			<!-- Note: this is intentionally using the @name attribute to source the label for an 
+				 enumerated attribute within a class. -->
+			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
+		</rdf:Description>
+	</xsl:template>	
 
 	<!-- ======================================================================= -->
 	<!-- Elements of type a:Instance are always associations and not attributes. -->
 	<!-- ======================================================================= -->
 	<xsl:template match="a:Instance">
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>Yes</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
-				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
+				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template match="a:Reference">
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>Yes</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
-				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
+				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<!-- When an @inverseBaseProperty is missing it is a clear indicator that this is not actually an association but
@@ -168,9 +197,9 @@
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 
@@ -183,28 +212,28 @@
 		do not generate an inverseRoleName. 
 		============================================================================================================================ -->
 	<xsl:template match="a:InverseInstance">
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>No</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
-				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
+				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template match="a:InverseReference">
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
 			<cims:AssociationUsed>No</cims:AssociationUsed>
 			<xsl:if test="@inverseBaseProperty">
-				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, $ontologyURI)) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
+				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
 			</xsl:if>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<!-- When an @inverseBaseProperty is missing it is a clear indicator that this is not actually an association but
@@ -218,47 +247,36 @@
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, $ontologyURI)) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
-	<xsl:template match="a:Enumerated">	
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+	<xsl:template match="a:Enumerated">
+		<rdf:Description rdf:about="{if (starts-with(@baseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
+			<xsl:if test="@constant and @constant != ''">
+				<cims:isFixed rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="@constant"/></cims:isFixed>
+			</xsl:if>
 			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
 			<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, $ontologyURI)) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 enumerated attribute within a class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
-		</rdf:Description>
-	</xsl:template>
-	
-	<xsl:template match="a:Value|a:Unit|a:Multiplier">	
-		<rdf:Description rdf:about="{if (starts-with(@baseProperty, $ontologyURI)) then concat('#', substring-after(@baseProperty, '#')) else @baseProperty }">
-			<xsl:if test="@constant and @constant != ''">
-				<cims:isFixed rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:value-of select="@constant"/></cims:isFixed>
-			</xsl:if>
-			<cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:{concat(@minOccurs, '..', replace(@maxOccurs, 'unbounded', 'n'))}"/>
-			<xsl:call-template name="stereotypes"/>	
-			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
-			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, $ontologyURI)) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
-			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
-			<rdfs:range rdf:resource="{if (starts-with(@baseClass, $ontologyURI)) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
+			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
 	</xsl:template>
 	
 	<xsl:template match="a:EnumeratedValue">
-		<rdf:Description rdf:about="{if (starts-with(@baseResource, $ontologyURI)) then concat('#', substring-after(@baseResource, '#')) else @baseResource }">
+		<rdf:Description rdf:about="{if (starts-with(@baseResource, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseResource, '#')) else @baseResource }">
 			<cims:stereotype>enum</cims:stereotype>
 			<xsl:call-template name="stereotypes"/>	
-			<rdf:type rdf:resource="{if (starts-with(@baseResource, $ontologyURI)) then concat('#', substring-before(substring-after(@baseResource, '#'), '.')) else @baseResource }"/>
+			<xsl:variable name="type" select="substring-before(@baseResource, concat('.', @name))"/>
+			<rdf:type rdf:resource="{if (starts-with($type, concat($ontologyURI, '#'))) then concat('#', substring-after($type, '#')) else $type }"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 		</rdf:Description>
@@ -273,11 +291,13 @@
 			<xsl:variable name="stereotype" select="substring-after(., '#')"/>
 			<!-- We filter out all stereotypes except those support (below) within the RDFS2020 variant -->
 			<xsl:choose>
-				<xsl:when test="($stereotype = 'enum' ) or ($stereotype = 'concrete')">
+				<!-- this first condition tests for "standard" stereotypes that in RDFS2020 
+					 are be expressed as "http://iec.ch/TC57/NonStandard/UML#{$stereotype}" -->
+				<xsl:when test="($stereotype = 'enum' ) or ($stereotype = 'concrete') or ($stereotype = 'ofAggregate') or ($stereotype = 'aggregateOf') or ($stereotype = 'ofComposite') or ($stereotype = 'compositeOf')">
 					<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#{$stereotype}"/>
 				</xsl:when>
-				<xsl:when test="($stereotype = 'enumeration') or ($stereotype = 'enum') or ($stereotype = 'byreference') or ($stereotype = 'attribute') or ($stereotype = 'ofAggregate') or ($stereotype = 'aggregateOf') or ($stereotype = 'ofComposite') or ($stereotype = 'compositeOf') or ($stereotype = 'diagramshide') or ($stereotype = 'diagramshideallattributes')">
-					<!-- We don't want to do anything with these specific enumerations.  Rather, we "pass through" and ignore them... -->
+				<xsl:when test="($stereotype = 'compound') or ($stereotype = 'enumeration') or ($stereotype = 'enum') or ($stereotype = 'byreference') or ($stereotype = 'attribute') or ($stereotype = 'diagramshide') or ($stereotype = 'diagramshideallattributes')">
+					<!-- We don't want to do anything with these specific stereotypes.  Rather, we "pass through" and ignore them... -->
 				</xsl:when>
 				<xsl:otherwise>
 					<cims:stereotype><xsl:value-of select="@label"/></cims:stereotype>

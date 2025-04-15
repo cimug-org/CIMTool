@@ -32,7 +32,7 @@ public class ImportTransformBuilder extends Wizard implements IImportWizard {
 	@Override
 	public boolean performFinish() {
 		boolean successful = Jobs.runInteractive(
-				Task.importTransformBuilder(main.getTranformBuildlet(), main.getXslFile()), null, getContainer(),
+				Task.importTransformBuilder(main.getTranformBuildlet(), main.getXslFile(), main.getXslIncludesFile()), null, getContainer(),
 				getShell());
 		ProfileBuildletRegistryManager.fireBuildersChanged();
 		return successful;

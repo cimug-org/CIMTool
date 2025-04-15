@@ -13,11 +13,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.vocabulary.OWL2;
 
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
 public abstract class AbstractEAProjectParser extends XMIModel implements EAProjectParser {
-
+	
+	// Default logger to Standard.out
+	protected static SchemaImportLogger logger = new SchemaImportLoggerImpl(); 
+	
 	// Table name constants corresponding to the EA project file database tables.
 	protected static final String TABLE_t_package = "t_package";
 	protected static final String TABLE_t_object = "t_object";
@@ -60,11 +65,29 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 	protected static final String COL_Object_ID = "Object_ID";
 	protected static final String COL_ElementID = "ElementID";
 	protected static final String COL_Classifier = "Classifier";
+	protected static final String COL_Type = "Type";
+	protected static final String COL_Stereotype = "Stereotype"; // ONLY used to check for "enum" stereotype on attributes...
+	protected static final String COL_LowerBound = "LowerBound"; // t_attribute min card
+	protected static final String COL_UpperBound = "UpperBound"; // t_attribute max card
+	//
+	protected static final String STEREO_ENUMERATION = "enumeration";
+	protected static final String STEREO_ENUM = "enum";
+	//
+	protected static final String OBJ_TYPE_CLASS = "Class";
+	protected static final String OBJ_TYPE_PACKAGE = "Package";
+	protected static final String OBJ_TYPE_ENUMERATION = "Enumeration";
+	//
+	protected static final String CONN_TYPE_AGGREGATION = "Aggregation";
+	protected static final String CONN_TYPE_ASSOCIATION = "Association";
+	protected static final String CONN_TYPE_GENERALIZATION = "Generalization";
+	//
+	protected static final String PKG_MODEL = "Model";
 
 	protected File file;
+	protected boolean selfHealOnImport;
 
-	protected IDList packageIDs = new IDList(100);
-	protected IDList objectIDs = new IDList(2000);
+	protected IDList packageIDs = new IDList(200);
+	protected IDList objectIDs = new IDList(3000);
 
 	private static String stereoPattern = "@STEREO;(.+?)@ENDSTEREO;";
 	private static String name = "(.+?)=(.+?);";
@@ -98,6 +121,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			parseClasses();
 			parseAssociations();
 			parseAttributes();
+			validateExtensions();
 		} catch (EAProjectParserException eapException) {
 			eapException.printStackTrace(System.err);
 			throw eapException;
@@ -109,9 +133,12 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			dbShutdown();
 		}
 	}
-
-	public AbstractEAProjectParser(File file) {
+	
+	public AbstractEAProjectParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
 		this.file = file;
+		this.selfHealOnImport = selfHealOnImport;
+		if (logger != null)
+			this.importLogger = logger;
 	}
 
 	protected class TaggedValue {
@@ -166,6 +193,70 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 
 	protected abstract void parseAttributes() throws EAProjectParserException;
 
+	protected String getPackageHierarchy(OntResource parent) {
+		String packageHierarchy = null;
+		while (parent != null && !parent.equals(UML.global_package)) {
+			String parentPackageName = parent.getLabel();
+			packageHierarchy = (packageHierarchy != null ? parentPackageName + "::" + packageHierarchy : parentPackageName);
+			parent = parent.getIsDefinedBy();
+		}
+		return (packageHierarchy == null ? "<Unknown Package>" : packageHierarchy);
+		//return "";
+	}
+	
+	protected String getPackageHierarchy(int packageId) {
+		OntResource parent = packageIDs.getID(packageId);
+		return getPackageHierarchy(parent);
+	}
+	
+	protected String validatedCardinality(String cardFromUML) {
+		String card = ""; // Defaults to empty string if cardFromUML is invalid...
+		if (cardFromUML != null && cardFromUML.length() > 0) {
+			if (cardFromUML.contains("..")) {
+				if (!cardFromUML.startsWith("..") && !cardFromUML.endsWith("..")) {
+					String minCard = cardFromUML.substring(0, cardFromUML.indexOf("."));
+					String maxCard = cardFromUML.substring(cardFromUML.lastIndexOf(".") + 1);
+					try {
+						int parsedMinCard = Integer.parseInt(minCard);
+						int parsedMaxCard = Integer.MAX_VALUE; // Default to unbounded
+						if (!maxCard.toLowerCase().equals("n") && !maxCard.toLowerCase().equals("*")) {
+							parsedMaxCard = Integer.parseInt(maxCard); 
+						}
+						if (parsedMinCard <= parsedMaxCard) {
+							card = cardFromUML;
+						}
+					} catch (Exception e) {
+					}
+				}
+			} else {
+				try {
+					// If we reach this point we assume that cardinality is declared as
+					// a valid number such as "1" or "3" for example in which case we
+					// simply parse the value to ensure it's a valid integer.
+					Integer.valueOf(cardFromUML);
+					card = cardFromUML;
+				} catch (Exception e) {
+				}
+			}
+		}
+		return card;
+	}
+	
+	protected void validateExtensions() {
+		/**
+		 * Pass one here addresses approach one described in the method comments.
+		 */
+		List<OntResource> shadowClasses = new ArrayList<OntResource>();
+		ResIterator shadowExtensions = model.listSubjectsBuffered(UML.hasStereotype, UML.shadowextension);
+		while (shadowExtensions.hasNext()) {
+			OntResource shadowClass = shadowExtensions.nextResource();
+			if (shadowClass.hasProperty(UML.hasStereotype, UML.cimdatatype) || shadowClass.hasProperty(UML.hasStereotype, UML.primitive)) {
+				shadowClasses.add(shadowClass);
+				//System.err.println("Shadow Extension:  " + shadowClass.describe());
+			}
+		}
+	}
+	
 	protected void annotate(OntResource subject, String note) {
 		if (note == null)
 			return;
@@ -248,6 +339,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 	protected Role extractProperty(String xuid, OntResource source, OntResource destin, String name, String note,
 			String card, int aggregate, boolean sideA, int connectorId) {
 		Role role = new Role();
+		role.sideA = sideA;
 		role.property = createObjectProperty(xuid, sideA, name);
 		annotate(role.property, note);
 		role.property.addIsDefinedBy(source.getIsDefinedBy()); // FIXME: the package of an association is not always
@@ -269,35 +361,49 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			break;
 		}
 		
-		if (card.equals("1") || card.endsWith("..1"))
-			role.upper = 1;
-		
-		// Keeping this around...need to test to see if it is needed and should be uncommented...
-		// if so we'd need to also look at the XMIModel / XMIParser classes for initializing upper bound..
-
-		// else if (!card.endsWith("..1") && !card.endsWith("..*"))
-		// 	role.upper = Integer.parseInt(card.substring(card.lastIndexOf(".") + 1));
-		
-		if (card.equals("*") || card.startsWith("0.."))
+		// Determine and set min cardinality 
+		if (card.equals("*") || card.equals("n") || card.startsWith("0..")) {
 			role.lower = 0;
-		else
+		} else if (card.equals("1") || card.startsWith("1..")) {
 			role.lower = 1;
-
+		} else if (card.contains("..")) {
+			// We know that the lower bounds is a numerical value > 1
+			try {
+				role.lower = Integer.parseInt(card.substring(0, card.indexOf(".")));
+			} catch (Exception e1) {
+			}
+		}
+		
+		// Determine and set max cardinality 
+		if (card.equals("1") || card.endsWith("..1")) {
+			role.upper = 1;
+		} else if (card.contains("..") && !card.endsWith("..*") && !card.endsWith("..n")) {
+			// We know that the upper bounds is a numerical value > 1
+			try {
+				String maxCard = card.substring(card.lastIndexOf(".") + 1);
+				role.upper = Integer.parseInt(maxCard);
+			} catch (Exception e1) {
+			}
+		} else if (!card.contains("..") && !card.equals("*") && !card.equals("n")) {
+			try {
+				// We know that the upper bounds is a numerical value > 1
+				role.upper = Integer.parseInt(card.substring(card.lastIndexOf(".") + 1));
+			} catch (Exception e1) {
+			}
+		}
+		
 		role.baseuri = getTaggedValueForAssociation(UML.baseuri, connectorId);
 		role.baseprefix = getTaggedValueForAssociation(UML.baseprefix, connectorId);
 		
-		/**
-		 * NOTE: We can and should support Stereotypes on connectors. We just need to
-		 * determine what subject that they should be assigned to. Unsure of this.
-		 * 
-		 * select Description from t_xref where Client = 'ea_guid of t_connector' and Name = 'Stereotypes' and Type = 'connector property';
-		 * 
-		 * Stereotypes on connectors: 
-		 * 
-		 * addStereotypes(subject, row.getEAGUID());
-		 */
-
 		return role;
+	}
+
+	public OntResource createCardinalityRestriction(OntResource domain, String uri, FrontsNode prop, FrontsNode cardinalityType, int card) {
+		OntResource result = model.createIndividual(uri, OWL2.Restriction);
+		result.addProperty(OWL2.onProperty, prop);
+		result.addProperty(cardinalityType, card);
+		domain.addSuperClass(result);
+		return result;
 	}
 
 }

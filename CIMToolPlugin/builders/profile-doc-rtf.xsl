@@ -64,6 +64,13 @@
 	<xsl:sort select="@name"/>
 </xsl:apply-templates>
 </xsl:if>
+
+<xsl:if test="count(/.//a:PrimitiveType) > 0">
+{\par\b\fs28 Primitive Types \par}
+<xsl:apply-templates select="a:PrimitiveType" >
+	<xsl:sort select="@name"/>
+</xsl:apply-templates>
+</xsl:if>
 \par}}}}}}}}
 </xsl:template>
 	
@@ -78,8 +85,8 @@
 <xsl:template name="type_definition"><xsl:if test="a:SuperType">\par\fs20 Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy" /></xsl:if><xsl:apply-templates mode="annotate-type" />
 \par\pard\plain \sb120\qj\fs20\lang1033 
 <xsl:choose>
-<xsl:when test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:SuperType">
-<xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated">{\par\b\fs20 Native Members\par}
+<xsl:when test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:Choice|a:SuperType">
+<xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:Choice">{\par\b\fs20 Native Members\par}
 \par
 {
 \trowd \trgaph70 
@@ -97,7 +104,7 @@
 {\pard \intbl \sb120\sa120\fs16\qc\b description \cell}
 \row
 }
-<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" />
+<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:Choice" />
 </xsl:if>
 <xsl:if test="a:SuperType">{\par\b\fs20 Inherited Members\par}\par
 {
@@ -130,7 +137,7 @@
 <xsl:variable name="supertype_name" select="@name"/><xsl:if test="/*/node()[@name = $supertype_name]/a:SuperType"> :: <xsl:apply-templates select="/*/node()[@name = $supertype_name]/a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
 </xsl:template>
 
-<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain">
+<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain">
 {
 \trowd \trgaph70 
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
@@ -161,8 +168,30 @@
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
 {\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
-{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/> \cell}
-{\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@xstype"/> \cell}
+{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose> \cell}
+{\pard \intbl \sb120\sa120\ql\fs16 {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="substring-after(@cimDatatype, '#')"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="substring-after(@cimDatatype, '#')"/>}}} \cell}
+{\pard \intbl \sb120\sa120\ql\fs16 <xsl:apply-templates mode="annotate-table-row" /> \cell}
+\row
+}
+</xsl:template>
+
+<xsl:template match="a:Choice">
+<xsl:variable name="choices">
+<xsl:if test="count(a:Instance|a:Reference) > 0">Choices: <xsl:for-each select="a:Instance|a:Reference">{\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="@type"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="@type"/>}}}<xsl:if test="position()!=last()"><xsl:value-of select="' or '"/></xsl:if></xsl:for-each></xsl:if>
+</xsl:variable>
+{
+\trowd \trgaph70 
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx2000
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx2720
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx4125
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx9500
+{\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
+{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose> \cell}
+{\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="$choices"/> \cell}
 {\pard \intbl \sb120\sa120\ql\fs16 <xsl:apply-templates mode="annotate-table-row" /> \cell}
 \row
 }
@@ -174,11 +203,11 @@
 </xsl:template>
 
 <xsl:template match="a:ComplexType|a:Root" mode="inherited">
-	<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" mode="inherited"/>
+	<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:Choice" mode="inherited"/>
 	<xsl:apply-templates select="a:SuperType" mode="inherited"/>
 </xsl:template>
 	
-<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain" mode="inherited">
+<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain" mode="inherited">
 {
 \trowd \trgaph70 
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
@@ -190,14 +219,14 @@
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
 {\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
-{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/> \cell}
+{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose> \cell}
 {\pard \intbl \sb120\sa120\ql\fs16 {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="@type"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="@type"/>}}} \cell}
 {\pard \intbl \sb120\sa120\ql\fs16 see {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="../@name"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="../@name"/>}}} \cell}
 \row
 }
 </xsl:template>
 	
-<xsl:template match="a:Simple"  mode="inherited">
+<xsl:template match="a:Simple" mode="inherited">
 {
 \trowd \trgaph70 
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
@@ -209,9 +238,31 @@
 \clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
 \cellx9500
 {\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
-{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/> \cell}
-{\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@xstype"/> \cell}
+{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose> \cell}
+{\pard \intbl \sb120\sa120\ql\fs16 {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="substring-after(@cimDatatype, '#')"/>"}}{\fldrslt {\fs16\ul\cf1 substring-after(@cimDatatype, '#')}}} \cell}
 {\pard \intbl \sb120\sa120\ql\fs16 see {\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="../@name"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="../@name"/>}}} \cell}
+\row
+}
+</xsl:template>
+
+<xsl:template match="a:Choice" mode="inherited">
+<xsl:variable name="choices">
+<xsl:if test="count(a:Instance|a:Reference) > 0">Choices: <xsl:for-each select="a:Instance|a:Reference">{\field{\*\fldinst {\fs16 HYPERLINK  \\l "<xsl:value-of select="@type"/>"}}{\fldrslt {\fs16\ul\cf1 <xsl:value-of select="@type"/>}}}<xsl:if test="position()!=last()"><xsl:value-of select="' or '"/></xsl:if></xsl:for-each></xsl:if>
+</xsl:variable>
+{
+\trowd \trgaph70 
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx2000
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx2720
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx4125
+\clbrdrt\brdrs\clbrdrl\brdrs\clbrdrb\brdrs\clbrdrr\brdrs
+\cellx9500
+{\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/> \cell}
+{\pard \intbl \sb120\sa120\qc\fs16 <xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose> \cell}
+{\pard \intbl \sb120\sa120\ql\fs16 <xsl:value-of select="$choices"/> \cell}
+{\pard \intbl \sb120\sa120\ql\fs16 <xsl:apply-templates mode="annotate-table-row" /> \cell}
 \row
 }
 </xsl:template>
@@ -242,10 +293,17 @@
 {\pard \intbl \sb120\sa120\fs16\qc\b description \cell}
 \row
 }
-<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" />
+<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound" />
 </xsl:template>
 
 <xsl:template match="a:SimpleType">
+{\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:value-of select="@name"/>}{\fs32 {\*\bkmkend <xsl:value-of select="@name"/>} \par}
+<xsl:apply-templates mode="annotate" />
+\par\pard\plain \sb120\qj\fs20\lang1033 XSD type: <xsl:value-of select="@xstype"/> 
+\par\pard\plain \sb120\qj\fs20\lang1033 
+</xsl:template>
+
+<xsl:template match="a:PrimitiveType">
 {\par\b\fs24 {\*\bkmkstart <xsl:value-of select="@name"/>}<xsl:value-of select="@name"/>}{\fs32 {\*\bkmkend <xsl:value-of select="@name"/>} \par}
 <xsl:apply-templates mode="annotate" />
 \par\pard\plain \sb120\qj\fs20\lang1033 XSD type: <xsl:value-of select="@xstype"/> 

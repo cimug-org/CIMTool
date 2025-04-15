@@ -329,6 +329,14 @@
             name="Documentation"
             restorable="true">
       </view>
+      <view
+            name="CIMTool PlantUML Svg"
+            icon="platform:/plugin/net.sourceforge.plantuml.eclipse/icons/p5.gif"
+            category="au.com.langdale.cimtoole"
+            class="net.sourceforge.plantuml.eclipse.svg.PlantUmlSvgView"
+            id="net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView"
+            allowMultiple="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

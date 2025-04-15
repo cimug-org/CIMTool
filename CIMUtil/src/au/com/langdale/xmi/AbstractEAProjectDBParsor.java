@@ -17,8 +17,8 @@ import au.com.langdale.kena.OntResource;
 
 public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser {
 
-	public AbstractEAProjectDBParsor(File file) {
-		super(file);
+	public AbstractEAProjectDBParsor(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
+		super(file, selfHealOnImport, logger);
 	}
 
 	protected abstract void dbInit() throws EAProjectParserException;
@@ -85,7 +85,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 
 			/** This query retrieves all tagged values on packages */
 			rs = statement.executeQuery(
-					"select * from t_object o, t_objectproperties tv where (tv.Object_ID = o.Object_ID) and (o.Object_Type = 'Package' or o.Object_Type = 'Class')");
+					"select * from t_object o, t_objectproperties tv where (tv.Object_ID = o.Object_ID) and (o.Object_Type = 'Package' or o.Object_Type = 'Class' or o.Object_Type = 'Enumeration')");
 			while (rs.next()) {
 				if ("Package".equals(rs.getString(COL_Object_Type))) {
 					int packageId = rs.getInt(COL_PDATA1);
@@ -291,8 +291,12 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 				if (!subject.equals(UML.global_package)) {
 					int parentPackageId = rs.getInt(COL_Parent_ID);
 					OntResource parent = packageIDs.getID(parentPackageId);
-					if (!parent.equals(UML.global_package))
-						subject.addIsDefinedBy(parent);
+					if (parent != null) {
+						if (!parent.equals(UML.global_package))
+							subject.addIsDefinedBy(parent);
+					} else {
+						System.err.println("Package " + (subject.getLabel() != null ? subject.getLabel() : subject.getLocalName()) + " has invalid parent package ID: " + parentPackageId);
+					}
 					annotate(subject, rs.getString(COL_Notes));
 					/**
 					 * Should we ever need to add support for Stereotypes on Packages simply uncomment the line below
@@ -338,18 +342,50 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 		try {
 			connection = getConnection();
 			statement = connection.createStatement();
-			rs = statement.executeQuery("select * from t_object where Object_Type = 'Class'");
+			/**
+			 * We've identified that some models have classes that do not "participate" in any 
+			 * associations nor are they the declared type for any attributes with the model. 
+			 * Prior to adding the additional where class filters below such "orphan" classes 
+			 * which could potentially be the source of issues in the model. 
+			 */
+			StringBuffer sqlQuery = new StringBuffer();
+			sqlQuery.append("SELECT * ");
+			sqlQuery.append("FROM t_object ");
+			sqlQuery.append("WHERE ");
+			sqlQuery.append("(Object_Type = 'Class' OR Object_Type = 'Enumeration') ");
+			sqlQuery.append(" AND ");
+			sqlQuery.append("(");
+			sqlQuery.append("(Object_ID IN (SELECT DISTINCT Classifier FROM t_attribute))");
+			sqlQuery.append(" OR ");
+			sqlQuery.append("(Object_ID IN (SELECT DISTINCT Start_Object_ID FROM t_connector))");
+			sqlQuery.append(" OR ");
+			sqlQuery.append("(Object_ID IN (SELECT DISTINCT End_Object_ID FROM t_connector))");
+			sqlQuery.append(") ");
+			sqlQuery.append("ORDER BY Name");
+			//
+			rs = statement.executeQuery(sqlQuery.toString());
 			while (rs.next()) {
-				OntResource subject = createClass(getEAGUID(rs), rs.getString(COL_Name));
-				int objectId = rs.getInt(COL_Object_ID);
-				objectIDs.putID(objectId, subject);
-				annotate(subject, rs.getString(COL_Note));
-				OntResource parent = packageIDs.getID(rs.getInt(COL_Package_ID));
-				if (!parent.equals(UML.global_package))
-					subject.addIsDefinedBy(parent);
-				//
-				addStereotypes(subject, rs.getString(COL_ea_guid));
-				addTaggedValuesToClass(subject, objectId);
+				boolean isInvalidEnumeration = false;
+				if (rs.getString(COL_Object_Type).equals("Enumeration")) {
+					logger.logInvalidEnumerationDefinition(getPackageHierarchy(rs.getInt(COL_Package_ID)), rs.getString(COL_Name));
+					isInvalidEnumeration = true; // We ignore and "convert"/"treat" it as a correctly defined enumeration...
+				}
+				if (!isInvalidEnumeration) {
+					OntResource subject = createClass(getEAGUID(rs), rs.getString(COL_Name));
+					int objectId = rs.getInt(COL_Object_ID);
+					objectIDs.putID(objectId, subject);
+					annotate(subject, rs.getString(COL_Note));
+					OntResource parent = packageIDs.getID(rs.getInt(COL_Package_ID));
+					if (parent != null) {
+						if (!parent.equals(UML.global_package))
+							subject.addIsDefinedBy(parent);
+					} else {
+						System.err.println("Class " + (subject.getLabel() != null ? subject.getLabel() : subject.getLocalName()) + " has invalid package ID: " + rs.getInt(COL_Package_ID));
+					}
+					//
+					addStereotypes(subject, rs.getString(COL_ea_guid));
+					addTaggedValuesToClass(subject, objectId);
+				}
 			}
 		} catch (SQLException sqlException) {
 			throw new EAProjectParserException("Unable to import the EA project file:  " + file.getAbsolutePath(),
@@ -389,21 +425,23 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			rs = statement.executeQuery("select * from t_attribute");
 			while (rs.next()) {
 				int objectId = rs.getInt(COL_Object_ID);
-				OntResource id = objectIDs.getID(objectId);
-				if (id != null) {
-					String name = rs.getString(COL_Name);
-					OntResource subject = createAttributeProperty(getEAGUID(rs), name);
-					subject.addDomain(id);
+				OntResource domainOfAttribute = objectIDs.getID(objectId);
+				if (domainOfAttribute != null) {
+					String attributeName = rs.getString(COL_Name);
+					OntResource subject = createAttributeProperty(getEAGUID(rs), attributeName);
+					subject.addDomain(domainOfAttribute);
 					annotate(subject, rs.getString(COL_Notes));
-					subject.addIsDefinedBy(id.getIsDefinedBy());
+					subject.addIsDefinedBy(domainOfAttribute.getIsDefinedBy());
 					if (hasClassifier(rs)) {
 						int classifier = getClassifier(rs);
 						OntResource range = objectIDs.getID(classifier);
 						if (range != null)
 							subject.addRange(range);
 						else {
-							System.out.println(
-									"Could not find the range of attribute " + name + ". Range ID = " + classifier);
+							String packageHierarchy = getPackageHierarchy(domainOfAttribute.getIsDefinedBy());
+							String className = domainOfAttribute.getLabel();
+							
+							importLogger.logAttributeMissingRange(packageHierarchy, className, attributeName, rs.getString(COL_Type), classifier);
 						}
 					}
 					String defaultValue = rs.getString(COL_Default);
@@ -411,11 +449,32 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 						subject.addProperty(UML.hasInitialValue, defaultValue);
 					}
 					//
+					int lower = 0; // default lower bound...
+					int upper = Integer.MAX_VALUE; // default upper bound...
+					if (rs.getString(COL_LowerBound) != null && !"".equals(rs.getString(COL_LowerBound))) {
+						try {
+							lower = Integer.parseInt(rs.getString(COL_LowerBound));
+						} catch (NumberFormatException nfe) {
+						}
+					}
+					if (rs.getString(COL_UpperBound) != null && !"".equals(rs.getString(COL_UpperBound))) {
+						try {
+							upper = Integer.parseInt(rs.getString(COL_UpperBound));
+						} catch (NumberFormatException nfe) {
+						}
+					}
+					subject.addProperty(UML.schemaMin, lower);
+					subject.addProperty(UML.schemaMax, upper);
+					//
 					addStereotypes(subject, rs.getString(COL_ea_guid));
 					addTaggedValuesToAttribute(subject, rs.getInt(COL_ID));
 				} else {
-					System.out.println("Could not find the domain of attribute " + rs.getString(COL_Name)
-							+ ". Domain ID = " + rs.getInt(COL_Object_ID));
+					/**
+					 * Handle missing domain type (i.e. class containing the current attribute)...
+					 */
+					String attributeName = rs.getString(COL_Name);
+					int domainObjectId = rs.getInt(COL_Object_ID);
+					importLogger.logAttributeMissingDomain(attributeName, domainObjectId);
 				}
 			}
 		} catch (SQLException sqlException) {
@@ -456,20 +515,41 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			rs = statement.executeQuery("select * from t_connector");
 			while (rs.next()) {
 				String type = rs.getString(COL_Connector_Type);
-				if (type.equals("Generalization") || type.equals("Association") || type.equals("Aggregation")) {
+				if (type.equals(CONN_TYPE_GENERALIZATION) || type.equals(CONN_TYPE_ASSOCIATION) || type.equals(CONN_TYPE_AGGREGATION)) {
 					OntResource source = objectIDs.getID(rs.getInt(COL_Start_Object_ID));
 					OntResource destin = objectIDs.getID(rs.getInt(COL_End_Object_ID));
 					if (source != null && destin != null) {
-						if (type.equals("Generalization")) {
+						if (type.equals(CONN_TYPE_GENERALIZATION)) {
 							source.addSuperClass(destin);
 						} else {
+							/**
+							 * Both source and destination cardinalities must be specified on an association 
+							 * in the CIM. If not specified we default to "0..1" and log an error message.
+							 */
+							String sourceCard = validatedCardinality(rs.getString(COL_SourceCard));
+							String sourceRole = (rs.getString(COL_SourceRole) == null ? "" : rs.getString(COL_SourceRole));
+							String destCard = validatedCardinality(rs.getString(COL_DestCard));
+							String destRole = (rs.getString(COL_DestRole) == null ? "" : rs.getString(COL_DestRole));
+							/**
+							 *  Confirm both source and destination cardinalities are valid otherwise 
+							 *  log an error and default the invalid cardinality to "0..1" to allow
+							 *  processing to continue...
+							 */
+							if ("".equals(sourceCard)) {
+								importLogger.logAssociationInvalidCardinality(true, type, rs.getString(COL_SourceCard), source, sourceRole, destin, destRole);
+								sourceCard = "0..1";
+							}
+							if ("".equals(destCard)) {
+								importLogger.logAssociationInvalidCardinality(false, type, rs.getString(COL_DestCard), source, sourceRole, destin, destRole);
+								destCard = "0..1";
+							}
 							Role roleA = extractProperty( //
 									getEAGUID(rs), //
 									source, //
 									destin, //
-									rs.getString(COL_DestRole), //
+									destRole, //
 									rs.getString(COL_DestRoleNote), //
-									rs.getString(COL_DestCard), //
+									destCard, //
 									rs.getInt(COL_DestIsAggregate), //
 									true, //
 									rs.getInt(COL_Connector_ID));
@@ -477,19 +557,23 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 									getEAGUID(rs), //
 									destin, //
 									source, //
-									rs.getString(COL_SourceRole), //
+									sourceRole, //
 									rs.getString(COL_SourceRoleNote), //
-									rs.getString(COL_SourceCard), //
+									sourceCard, //
 									rs.getInt(COL_SourceIsAggregate), //
 									false, //
 									rs.getInt(COL_Connector_ID));
 							roleA.mate(roleB);
 							roleB.mate(roleA);
+							//
+							addStereotypes(roleA.property, rs.getString(COL_ea_guid));
+							addStereotypes(roleB.property, rs.getString(COL_ea_guid));
 						}
 					}
 				}
 			}
 		} catch (SQLException sqlException) {
+			importLogger.logException(sqlException);
 			throw new EAProjectParserException("Unable to import the EA project file:  " + file.getAbsolutePath(),
 					sqlException);
 		} finally {
@@ -518,7 +602,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 	}
 
 	private int getClassifier(ResultSet rs) throws SQLException {
-		String classifier = rs.getString("Classifier");
+		String classifier = rs.getString(COL_Classifier);
 		return classifier != null ? Integer.parseInt(classifier) : 0;
 	}
 

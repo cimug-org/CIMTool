@@ -175,19 +175,34 @@ public class ProfileBuildlets extends Task {
 
 		private String style;
 		private DateTime datetime;
-
+		private String includesFile;
+		
 		public TransformBuildlet(String style, String ext) {
 			super(ext);
 			this.style = style;
 			this.datetime = DateTime.now(DateTimeZone.UTC);
 		}
-
+		
+		public TransformBuildlet(String style, String ext, String includesFile) {
+			super(ext);
+			this.style = style;
+			this.datetime = DateTime.now(DateTimeZone.UTC);
+			this.includesFile = includesFile;
+		}
+		
 		public TransformBuildlet(String style, String ext, DateTime datetime) {
 			super(ext);
 			this.style = style;
 			this.datetime = (datetime == null ? DateTime.now(DateTimeZone.UTC) : datetime);
 		}
-
+		
+		public TransformBuildlet(String style, String ext, DateTime datetime, String includesFile) {
+			super(ext);
+			this.style = style;
+			this.datetime = (datetime == null ? DateTime.now(DateTimeZone.UTC) : datetime);
+			this.includesFile = includesFile;
+		}
+		
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if (isProfile(file) || isRuleSet(file, style + "-xslt") && isProfile(getRelated(file, "owl")))
@@ -195,16 +210,18 @@ public class ProfileBuildlets extends Task {
 			else
 				return Collections.EMPTY_LIST;
 		}
-
+		
 		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
 		}
-
+		
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			ProfileModel tree = getMessageModel(file);
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
+				String fileName = result.getName().substring(0, result.getName().indexOf('.'));
+				serializer.setFileName(fileName);
 				serializer.setBaseURI(tree.getNamespace());
 				serializer.setOntologyURI(tree.getOntologyNamespace());
 				
@@ -213,30 +230,8 @@ public class ProfileBuildlets extends Task {
 				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
 				// Set diagram preferences used by any PlantUML diagram builders
-				serializer.setDocRootClassesColor(Info.getPreference(DOCROOT_CLASSES_COLOR));
-				serializer.setDocRootClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(DOCROOT_CLASSES_COLOR)));
-				serializer.setConcreteClassesColor(Info.getPreference(CONCRETE_CLASSES_COLOR));
-				serializer.setConcreteClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(CONCRETE_CLASSES_COLOR)));
-				serializer.setAbstractClassesColor(Info.getPreference(ABSTRACT_CLASSES_COLOR));
-				serializer.setAbstractClassesFontColor(ColorUtils.getHexFontColor(Info.getPreference(ABSTRACT_CLASSES_COLOR)));
-				serializer.setEnumerationsColor(Info.getPreference(ENUMERATIONS_COLOR));
-				serializer.setEnumerationsFontColor(ColorUtils.getHexFontColor(Info.getPreference(ENUMERATIONS_COLOR)));
-				serializer.setCIMDatatypesColor(Info.getPreference(CIMDATATYPES_COLOR));
-				serializer.setCIMDatatypesFontColor(ColorUtils.getHexFontColor(Info.getPreference(CIMDATATYPES_COLOR)));
-				serializer.setCompoundsColor(Info.getPreference(COMPOUNDS_COLOR));
-				serializer.setCompoundsFontColor(ColorUtils.getHexFontColor(Info.getPreference(COMPOUNDS_COLOR)));
-				serializer.setPrimitivesColor(Info.getPreference(PRIMITIVES_COLOR));
-				serializer.setPrimitivesFontColor(ColorUtils.getHexFontColor(Info.getPreference(PRIMITIVES_COLOR)));
-				serializer.setErrorsColor(Info.getPreference(ERRORS_COLOR));
-				serializer.setErrorsFontColor(ColorUtils.getHexFontColor(Info.getPreference(ERRORS_COLOR)));
-				serializer.setEnableDarkMode(Boolean.parseBoolean(Info.getPreference(ENABLE_DARK_MODE)));
-				serializer.setEnableShadowing(Boolean.parseBoolean(Info.getPreference(ENABLE_SHADOWING)));
-				serializer.setHideEnumerations(Boolean.parseBoolean(Info.getPreference(HIDE_ENUMERATIONS)));
-				serializer.setHideCIMDatatypes(Boolean.parseBoolean(Info.getPreference(HIDE_CIMDATATYPES)));
-				serializer.setHideCompounds(Boolean.parseBoolean(Info.getPreference(HIDE_COMPOUNDS)));
-				serializer.setHidePrimitives(Boolean.parseBoolean(Info.getPreference(HIDE_PRIMITIVES)));
-				serializer.setHideCardinalityForRequiredAttributes(Boolean.parseBoolean(Info.getPreference(HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES)));
-				
+				serializer.setPlantUMLParameters(Info.getPlantUMLParameters(result));
+			
 				// TODO: make this better
 				serializer.setVersion("Beta");
 
@@ -337,6 +332,10 @@ public class ProfileBuildlets extends Task {
 			return this.datetime;
 		}
 
+		public String getIncludesFile() {
+			return this.includesFile;
+		}
+
 	}
 
 	/**
@@ -349,9 +348,17 @@ public class ProfileBuildlets extends Task {
 		public XSDBuildlet(String style, String ext) {
 			super(style, ext);
 		}
+		
+		public XSDBuildlet(String style, String ext, String includesFile) {
+			super(style, ext, includesFile);
+		}
 
 		public XSDBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
+		}
+		
+		public XSDBuildlet(String style, String ext, DateTime datetime, String includesFile) {
+			super(style, ext, datetime, includesFile);
 		}
 
 		@Override
@@ -376,9 +383,17 @@ public class ProfileBuildlets extends Task {
 		public TextBuildlet(String style, String ext) {
 			super(style, ext);
 		}
+		
+		public TextBuildlet(String style, String ext, String includesFile) {
+			super(style, ext, includesFile);
+		}
 
 		public TextBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
+		}
+		
+		public TextBuildlet(String style, String ext, DateTime datetime, String includesFile) {
+			super(style, ext, datetime, includesFile);
 		}
 
 		@Override

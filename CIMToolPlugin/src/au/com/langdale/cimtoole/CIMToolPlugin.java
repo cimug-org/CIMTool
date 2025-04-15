@@ -22,6 +22,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import au.com.langdale.cimtoole.pandoc.PandocPathResolver;
 import au.com.langdale.cimtoole.project.Cache;
 import au.com.langdale.cimtoole.project.Settings;
 import au.com.langdale.ui.util.GeneralIconCache;
@@ -64,14 +65,15 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		loadFirebirdEmbeddedLibraries();
+		loadEmbeddedFirebirdLibraries();
+		loadEmbeddedPandocLibraries();
 		IconCache.setIcons(new CIMToolIconCache(context.getBundle(), "/icons/"));
 		cache = new Cache();
 		settings = new Settings();
 		plugin = this;
 	}
 	
-	private void loadFirebirdEmbeddedLibraries() {
+	private void loadEmbeddedFirebirdLibraries() {
 		try {
 			// Build the full path to the DLLs
 			String platform = getPlatformFolder(); // Determine the platform-specific subfolder
@@ -94,6 +96,34 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 			
 			// Finally, append to the JNA library path...
 			appendJnaLibraryPath(stateLocationNativePlatformDir.getAbsolutePath());
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private void loadEmbeddedPandocLibraries() {
+		try {
+			// Build the full path to the DLLs
+			String platform = getPlatformFolder(); // Determine the platform-specific subfolder
+			IPath stateLocation = getStateLocation(); 
+			IPath stateLocationNativePlatformPath = stateLocation.append("native").append(platform).append("pandoc");
+			File stateLocationNativePlatformDir = stateLocationNativePlatformPath.toFile();
+			
+			PandocPathResolver.setEmbeddedPandocRootDir(stateLocationNativePlatformDir);
+			
+			File pandocExe = PandocPathResolver.getPandocExecutablePath();
+
+			if (!pandocExe.exists()) {
+				// Locate the ZIP file within the bundle...
+				Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
+				URL pandocExeURL = cimtooleBundle.getEntry("native/Pandoc_" + platform + ".zip");
+				URL pandocClientExeFileURL = FileLocator.toFileURL(pandocExeURL);
+				
+				// Create input stream to the ZIP file in the bundle to unzip to the file system.
+				InputStream zipFileInputStream = pandocClientExeFileURL.openStream();
+				unzip(zipFileInputStream, stateLocationNativePlatformDir.getAbsolutePath());
+			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			throw new RuntimeException(e);
@@ -148,13 +178,10 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	private String getPlatformFolder() {
 		String os = System.getProperty(OS_NAME).toLowerCase();
 		String arch = System.getProperty(OS_ARCH).toLowerCase();
-
 		if (os.contains("win")) {
 			return arch.contains("64") ? "win32-x86_64" : "win32-x86";
-		} else if (os.contains("linux")) {
-			return arch.contains("64") ? "linux-x86_64" : "linux-x86";
 		} else if (os.contains("mac")) {
-			return "macosx-x86_64";
+			return ("amd64".equals(arch) || "x86_64".equals(arch)) ? "mac-x86_64" : "mac-arm64";
 		} else {
 			throw new IllegalStateException("Unsupported platform: " + os);
 		}

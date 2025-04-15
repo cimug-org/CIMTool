@@ -365,7 +365,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 		else {
 			String range = catalog.getURI(info.base_range);
-			emitObjectProperty(uri, prop.getURI(), domain, range, info.required, info.functional);
+			emitObjectProperty(uri, prop, domain, range, info);
 			
 			OntResource inverse = prop.getInverse();
 			if( inverse != null && props.containsKey(inverse)) {
@@ -389,6 +389,24 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		for (Iterator it = group.getRestrictions().iterator(); it.hasNext();) {
 			PropertySpec rest = (PropertySpec) it.next();
 			String domain = catalog.getURI(rest.base_domain);
+
+			int minCard = 0; // Default min
+			int maxCard = Integer.MAX_VALUE; // Default max
+			
+			/**
+			 * Set any min or max cardinality restrictions that may exist.
+			 * It is possible that none are specified and in that case the 
+			 * defaults are used.
+			 */ 
+			ResIterator resources = model.listSubjectsWithProperty(OWL.onProperty, rest.prop);
+			while (resources.hasNext()) {
+				OntResource resource = resources.nextResource();
+				if (resource.hasProperty(OWL.minCardinality))
+					minCard = resource.getMinCardinality();
+				if (resource.hasProperty(OWL.maxCardinality))
+					maxCard = resource.getMaxCardinality();
+			}
+			
 			if(rest.prop.isDatatypeProperty()) {
 				TypeInfo range = new TypeInfo( rest.prop.getRange(), this);
 				if( range.xsdtype != null)
@@ -398,7 +416,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 				emitRestriction(uri, domain, catalog.getURI(rest.base_range));
 			}
 			if( rest.required || rest.functional ) {
-				emitRestriction(uri, domain, rest.required, rest.functional);
+				emitRestriction(uri, domain, rest.required, rest.functional, minCard, maxCard);
+			} else if (minCard >= 1 || maxCard != Integer.MAX_VALUE) {
+				emitRestriction(uri, domain, rest.required, rest.functional, minCard, maxCard);
 			}
 		}
 	}
@@ -471,9 +491,9 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	protected abstract void emitInstance(String uri, String base, String type);
 	protected abstract void emitDatatype(String uri, String xsdtype) ;
 	protected abstract void emitDatatypeProperty(String uri, String base, String domain, String type, String xsdtype, boolean required) ;
-	protected abstract void emitObjectProperty(String uri, String base, String domain, String range, boolean required, boolean functional) ;
+	protected abstract void emitObjectProperty(String uri, OntResource prop, String domain, String range, PropertySpec info) ;
 	protected abstract void emitRestriction(String uri, String domain, String range);
-	protected abstract void emitRestriction(String uri, String domain, boolean required, boolean functional) ;
+	protected abstract void emitRestriction(String uri, String domain, boolean required, boolean functional, int minCard, int maxCard) ;
 	protected abstract void emitInverse(String uri, String iuri) ;
 	protected abstract void emitStereotype(String uri, String stereo) ;
 	protected abstract void emitBaseStereotype(String uri, String stereo) ;

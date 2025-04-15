@@ -19,15 +19,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CIMToolPlugin.getDefault().getPreferenceStore();
-		store.setDefault(Info.INSTANCE_NAMESPACE.getLocalName(), "http://iec.ch/TC57/2007/network#");
-		store.setDefault(Info.PROFILE_NAMESPACE.getLocalName(), "http://iec.ch/TC57/2007/profile#");
+		store.setDefault(Info.INSTANCE_NAMESPACE.getLocalName(), "http://www.ucaiug.org/network#");
+		store.setDefault(Info.PROFILE_NAMESPACE.getLocalName(), "http://www.ucaiug.org/profile#");
 		store.setDefault(Info.MAPPING_NAMESPACE.getLocalName(), "http://langdale.com.au/2010/schema-mapping#");
 		store.setDefault(Info.MAPPING_LABEL.getLocalName(), "Mappings");
 		store.setDefault(Info.SCHEMA_NAMESPACE.getLocalName(), CIM.NS);
+		store.setDefault(Info.MERGE_SHADOW_EXTENSIONS.getLocalName(), false);
+		store.setDefault(Info.SELF_HEAL_ON_IMPORT.getLocalName(), false);
 		store.setDefault(Info.PROFILE_ENVELOPE.getLocalName(), "Profile");
 		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);
 		store.setDefault(Info.PROBLEM_PER_SUBJECT.getLocalName(), true);
 		store.setDefault(Info.USE_PACKAGE_NAMES.getLocalName(), false);
+		store.setDefault(Info.PLANTUML_THEME.getLocalName(), "_none_");
 		store.setDefault(Info.DOCROOT_CLASSES_COLOR.getLocalName(), "#D3FBFE");
 		store.setDefault(Info.CONCRETE_CLASSES_COLOR.getLocalName(), "#FFFFE0");
 		store.setDefault(Info.ABSTRACT_CLASSES_COLOR.getLocalName(), "#D3D3D3");
@@ -43,6 +46,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(Info.HIDE_COMPOUNDS.getLocalName(), true);
 		store.setDefault(Info.HIDE_PRIMITIVES.getLocalName(), true);
 		store.setDefault(Info.HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES.getLocalName(), false);
+		store.setDefault(Info.HORIZONTAL_SPACING.getLocalName(), "20");
+		store.setDefault(Info.VERTICAL_SPACING.getLocalName(), "30");
 	}
 
 }

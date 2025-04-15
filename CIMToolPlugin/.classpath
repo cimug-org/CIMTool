@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="builders/includes/"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="builders" sourcepath="builders"/>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time-2.10.6.jar" sourcepath="lib/joda-time-2.10.6-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gson-2.8.6.jar" sourcepath="lib/gson-2.8.6-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">

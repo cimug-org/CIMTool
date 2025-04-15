@@ -64,6 +64,8 @@ import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAProjectParser;
 import au.com.langdale.xmi.EAProjectParserException;
 import au.com.langdale.xmi.EAProjectParserFactory;
+import au.com.langdale.xmi.SchemaImportLogger;
+import au.com.langdale.xmi.SchemaImportLoggerImpl;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
 
@@ -163,19 +165,21 @@ public class Task extends Info {
 		};
 	}
 
-	public static IWorkspaceRunnable importSchema(final IFile file, final String pathname, final String namespace) {
+	public static IWorkspaceRunnable importSchema(final IFile file, final String pathname, final String namespace, final Boolean mergeShadowExtensions, final Boolean selfHealingOnImport) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				importFile(file, pathname, monitor);
 				putProperty(file, SCHEMA_NAMESPACE, namespace);
+				putProperty(file, MERGE_SHADOW_EXTENSIONS, (mergeShadowExtensions != null ? mergeShadowExtensions.toString() :  Boolean.TRUE.toString()));
+				putProperty(file, SELF_HEAL_ON_IMPORT, (selfHealingOnImport != null ? selfHealingOnImport.toString() :  Boolean.FALSE.toString()));
 			}
 		};
 	}
 
-	public static IWorkspaceRunnable importTransformBuilder(final TransformBuildlet buildlet, final File xslFile) {
+	public static IWorkspaceRunnable importTransformBuilder(final TransformBuildlet buildlet, final File xslFile, final File xslImportFile) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile);
+				ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile, xslImportFile);
 				/**
 				 * Given that we've imported a new buildlet, we need to reload the "cached"
 				 * available profile buildlets. This will allow the new buildlet to appear in
@@ -315,7 +319,9 @@ public class Task extends Info {
 	private static OntModel parseEAProject(IFile file) throws CoreException {
 		EAProjectParser parser;
 		try {
-			parser = EAProjectParserFactory.createParser(file.getLocation().toFile());
+			Boolean selfHealingOnImportEnabled = Boolean.parseBoolean(getProperty(file, SELF_HEAL_ON_IMPORT));
+			SchemaImportLogger logger = new SchemaImportLoggerImpl();
+			parser = EAProjectParserFactory.createParser(file.getLocation().toFile(), selfHealingOnImportEnabled, logger);
 			parser.parse();
 		} catch (EAProjectParserException e) {
 			throw error("Can't access EA project", e);
@@ -324,6 +330,7 @@ public class Task extends Info {
 	}
 
 	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {	
+		Boolean mergeShadowExtensionsEnabled = Boolean.parseBoolean(getProperty(file, MERGE_SHADOW_EXTENSIONS));
 		String base = getProperty(file, SCHEMA_NAMESPACE);
 		if (base == null) {
 			if (file.getName().toLowerCase().startsWith("cim"))
@@ -338,7 +345,7 @@ public class Task extends Info {
 			IO.read(annote, auxfile.getContents(), base, Format.TURTLE.toFormat());
 		} else
 			annote = null;
-		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES));
+		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES), mergeShadowExtensionsEnabled);
 	}
 
 	private static OntModel parseOWL(IFile file) throws CoreException {
@@ -473,7 +480,7 @@ public class Task extends Info {
 			}
 		};
 	}
-	
+
 	public static IWorkspaceRunnable saveDefaultMultiLineCopyrightTemplate(final IProject project) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -482,6 +489,17 @@ public class Task extends Info {
 			}
 		};
 	}
+	
+	/**
+	public static IWorkspaceRunnable saveAsciidocThemesForBuilder(final IProject project, String themeName) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFile file = Info.getAsciidocThemesForBuilder(project, themeName);
+				importFileFromBundle(file, "builders/" + themeName, monitor);
+			}
+		};
+	}
+	*/
 	
 	public static IWorkspaceRunnable saveDefaultSingleLineCopyrightTemplate(final IProject project) {
 		return new IWorkspaceRunnable() {

@@ -11,8 +11,8 @@ import java.sql.SQLException;
 
 public class QEAParser extends AbstractEAProjectDBParsor {
 
-	public QEAParser(File file) {
-		super(file);
+	public QEAParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
+		super(file, selfHealOnImport, logger);
 	}
 
 	@Override

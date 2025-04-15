@@ -13,17 +13,17 @@ import java.io.File;
  */
 public class EAProjectParserFactory {
 	
-	public static EAProjectParser createParser(File file) {
+	public static EAProjectParser createParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
 		String ext = file.getName().substring(file.getName().lastIndexOf(".") + 1).toLowerCase();
 		switch (ext) {
 			case "eap":
 			case "eapx":
-				return new EAPParser(file);
+				return new EAPParser(file, selfHealOnImport, logger);
 			case "qea":
 			case "qeax":
-				return new QEAParser(file);
+				return new QEAParser(file, selfHealOnImport, logger);
 			case "feap":
-				return new FEAPParser(file);
+				return new FEAPParser(file, selfHealOnImport, logger);
 			default:
 				throw new IllegalArgumentException("Unsupported EA project file type: " + ext);
 			}

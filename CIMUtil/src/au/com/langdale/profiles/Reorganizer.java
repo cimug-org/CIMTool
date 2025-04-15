@@ -20,17 +20,19 @@ import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
- * Transform a profile model to conform with CIM/XML RDFS schema rules.  
+ * Transform a profile model to conform with CIM/XML RDFS schema rules as defined
+ * in IEC 61970-501 Ed 1.0.  
+ * 
  * In the resulting profile model, each base class or property is represented
  * by at most one profile class or property.
  */
 public class Reorganizer extends SchemaGenerator {
 	
-	private OntModel model, result;
-	private Map classes = new HashMap();
-	private Map proxies = new HashMap();
-	private boolean useRefs;
-	private OntResource ontNode;
+	protected OntModel model, result;
+	protected Map classes = new HashMap();
+	protected Map proxies = new HashMap();
+	protected boolean useRefs;
+	protected OntResource ontNode;
 	
 	public Reorganizer(OntModel profile, OntModel background, boolean useRefs) {
 		super(profile, background);
@@ -91,7 +93,8 @@ public class Reorganizer extends SchemaGenerator {
 		OntResource prop = model.createResource(base);
 		ProfileClass profile = (ProfileClass) classes.get(domain);
 		
-		OntResource proxy = profile.createAllValuesFrom(prop, required);
+		SelectionOptions options = new SelectionOptions((required ? SelectionOption.PropertyRequired : SelectionOption.NoOp));
+		OntResource proxy = profile.createAllValuesFrom(prop, options);
 		proxies.put(uri, proxy);
 	}
 
@@ -121,12 +124,14 @@ public class Reorganizer extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitObjectProperty(String uri, String base, String domain,
-			String range, boolean required, boolean functional) {
-		OntResource prop = model.createResource(base);
+	protected void emitObjectProperty(String uri, OntResource profileProp, String domain,
+			String range, PropertySpec propSpec) {
+		boolean required = propSpec.required;
+		boolean functional = propSpec.functional;
+		OntResource prop = model.createResource(profileProp.getURI());
 		ProfileClass profile = (ProfileClass) classes.get(domain);
 		
-		OntResource proxy = profile.createAllValuesFrom(prop, required);
+		OntResource proxy = profile.createAllValuesFrom(prop, getSelectionOptions(required));
 		proxy.addSuperClass(model.createResource(range));
 		proxies.put(uri, proxy);
 		
@@ -171,7 +176,7 @@ public class Reorganizer extends SchemaGenerator {
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,
-			boolean functional) {
+			boolean functional, int minCard, int maxCard) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -182,4 +187,9 @@ public class Reorganizer extends SchemaGenerator {
 			subject = result.createResource(uri);
 		return subject;
 	}
+
+	protected SelectionOptions getSelectionOptions(boolean required) {
+		return new SelectionOptions(required ? SelectionOption.PropertyRequired : SelectionOption.NoOp);
+	}
+	
 }

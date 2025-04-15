@@ -3,14 +3,15 @@ Bundle-ManifestVersion: 2
 Automatic-Module-Name: au.com.langdale.cimtoole
 Bundle-Name: CIMTool Plug-in
 Bundle-SymbolicName: au.com.langdale.cimtoole;singleton:=true
-Bundle-Version: 2.2.0
+Bundle-Version: 2.3.0
 Bundle-RequiredExecutionEnvironment: JavaSE-20
 Bundle-ClassPath: cimtoole.jar,
  lib/commons-logging-1.1.1.jar,
- builders/,
  lib/joda-time-2.10.6.jar,
  lib/gson-2.8.6.jar,
  lib/commons-io-2.5.jar,
+ builders/includes/,
+ builders/,
  .
 Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin
 Bundle-Vendor: Langdale Consultants

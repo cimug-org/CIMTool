@@ -264,23 +264,27 @@ public class Refactory extends ProfileUtility {
 		}
 	}
 
-	public void createAllProperties(ProfileClass profile, boolean arePropertiesRequired) {
+	public void createAllProperties(ProfileClass profile, SelectionOptions selectionOptions) {
 		ResIterator it = getModel().listSubjectsWithProperty(RDFS.domain, profile.getBaseClass());
-		while( it.hasNext()) {
+		while(it.hasNext()) {
 			OntResource prop = it.nextResource();
-			if( prop.isFunctionalProperty()) {
-				profile.createAllValuesFrom(prop, arePropertiesRequired);
+			if (selectionOptions.includeAllAssociations()) {
+				if (prop.hasProperty(UML.id) && (prop.getString(UML.id).toUpperCase().endsWith("-A") || !prop.getString(UML.id).toUpperCase().endsWith("-B"))) {
+					profile.createAllValuesFrom(prop, selectionOptions);
+					createDefaultRange(profile, prop);
+				} 
+			} else if (prop.isFunctionalProperty()) {
+				profile.createAllValuesFrom(prop, selectionOptions);
 				createDefaultRange(profile, prop);
 			}
 		}
 	}
 	
-	public void createCompleteProfile(OntResource base, boolean isConcrete, boolean arePropertiesRequired) {
-		createAllProperties(createProfileClass(base, isConcrete), arePropertiesRequired);
-		
+	public void createCompleteProfile(OntResource base, SelectionOptions selectionOptions) {
+		createAllProperties(createProfileClass(base, selectionOptions.isConcrete()), selectionOptions);
 	}
 
-	public void createAllProperties(OntResource clss, boolean arePropertiesRequired) {
-		createAllProperties(new ProfileClass(clss, getNamespace()), arePropertiesRequired);
+	public void createAllProperties(OntResource clss, SelectionOptions selectionOptions) {
+		createAllProperties(new ProfileClass(clss, getNamespace()), selectionOptions);
 	}
 }

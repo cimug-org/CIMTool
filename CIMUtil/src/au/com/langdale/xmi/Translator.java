@@ -4,6 +4,8 @@
  */
 package au.com.langdale.xmi;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.xerces.util.XMLChar;
@@ -75,11 +77,14 @@ public class Translator implements Runnable {
 
 	private abstract class Pass implements Runnable {
 		protected abstract FrontsNode renameResource(OntResource r, String l);
+		
+		protected HashMap<OntResource, String> primitiveToCIMDatatypeMap = new HashMap<OntResource, String>();
 
 		/**
 		 * Pass over every statement and apply renameResource() to each resource.
 		 */
 		public void run() {
+			
 			result = ModelFactory.createMem();
 			Iterator it = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
 			while (it.hasNext()) {
@@ -88,6 +93,7 @@ public class Translator implements Runnable {
 						renameResource(model.createResource(s.getPredicate())), renameObject(s.getObject()));
 			}
 			model = result;
+
 		}
 
 		/**
@@ -227,6 +233,25 @@ public class Translator implements Runnable {
 	 * apply to classes, properties and enumeration members.
 	 */
 	Runnable pass2 = new Pass() {
+		
+		@Override
+		public void run() {
+			super.run();
+			
+			/**
+			 * Once all renaming has completed for pass 2, the final step is
+			 * to add the UML.cimdatatypeMapping to each of the primitives.
+			 * This is executed after rename processing as 
+			 */
+			ResIterator it = result.listSubjectsBuffered(UML.hasStereotype, UML.primitive);
+			while (it.hasNext()) {
+				OntResource primitive = it.nextResource();
+				String cimdatatypeMapping = primitiveToCIMDatatypeMap.get(primitive);
+				if (cimdatatypeMapping != null)
+					primitive.addProperty(UML.cimdatatypeMapping, cimdatatypeMapping);
+			}
+		}
+
 		/**
 		 * Substitute a a single resource.
 		 * 
@@ -245,6 +270,10 @@ public class Translator implements Runnable {
 					FrontsNode x = XSDTypeUtils.selectXSDType(l);
 					if (x != null) {
 						OntResource resource = result.createResource(x.toString());
+						if (r.hasProperty(UML.hasStereotype, UML.primitive)) {
+							if (!primitiveToCIMDatatypeMap.containsKey(resource))
+								primitiveToCIMDatatypeMap.put(resource, namespace + l);
+						}
 						return resource;
 					}
 				}
@@ -354,7 +383,7 @@ public class Translator implements Runnable {
 	}
 
 	/**
-	 * Propagate a given annotation property to descendents.
+	 * Propagate a given annotation property to descendants.
 	 *
 	 */
 	private void propagateAnnotation(FrontsNode a) {
@@ -372,7 +401,7 @@ public class Translator implements Runnable {
 		if (v != null) {
 			return v;
 		}
-
+		
 		OntResource s = p.getResource(RDFS.isDefinedBy);
 		if (s != null) {
 			v = propagateAnnotation(s, a);

@@ -8,6 +8,7 @@ import org.xml.sax.Attributes;
 
 import au.com.langdale.sax.XMLElement;
 import com.hp.hpl.jena.graph.FrontsNode;
+
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntResource;
@@ -18,6 +19,8 @@ import au.com.langdale.kena.OntResource;
  * as resource in that model.
  */
 public class XMIModel {
+	
+	protected SchemaImportLogger importLogger = new SchemaImportLoggerNoOpImpl();
 
 	public static final String LANG = null; // if changed, review the SearchWizard code
 
@@ -371,44 +374,108 @@ public class XMIModel {
 	 */
 	public class Role {
 		public OntResource range;
-		public  OntResource property;
-		public int lower =-1, upper=-1;
+		public OntResource property;
+		public int lower = 0, upper = Integer.MAX_VALUE;
 		public boolean composite;
 		public boolean aggregate;
+		public boolean sideA;
 		public String baseuri;
 		public String baseprefix;
 		
 		/**
-		 * Interpret this association role in the context of its mate.
-		 * Establish the OWL domain and range.  Interpret the UML
-		 * multiplicity as OWL functional and inverse functional
-		 * property types.
+		 * Method to interpret this association role in the context of its mate.
+		 * Responsible for Establishing the OWL domain and range and interpreting the
+		 * UML multiplicity as OWL functional and inverse functional property types.
+		 * 
+		 * Next, is a view into the aggregation and composite attributes defined for a
+		 * role and how these ultimately are to be used to assigned respective
+		 * "ofAggregate", "aggregateOf", "ofComposite" and "compositeOf" stereotypes.
+		 * 
+		 * AGGREGATION RELATIONSHIPS:
+		 * 
+		 * In the UML, suppose we have an aggregation relationship between EventSchedule
+		 * and EventTimePoint (the relationship notation below indicates which side the
+		 * white aggregation diamond is on):
+		 * 
+		 * EventSchedule ◇-- EventTimePoint
+		 * 
+		 * ...where EventSchedule is the aggregate (whole) and EventTimePoint is the
+		 * part. In this scenario, the stereotypes "ofAggregate" and "aggregateOf" are
+		 * handled as follows:
+		 * 
+		 * - "ofAggregate" refers to the direction pointing from the part
+		 * (EventTimePoint) to the whole (EventSchedule). This implies that an
+		 * EventTimePoint is part of an EventSchedule.
+		 * 
+		 * - "aggregateOf" refers to the direction pointing from the whole
+		 * (EventSchedule) to the part (EventTimePoint). This means that an
+		 * EventSchedule is an aggregate of multiple EventTimePoint instances.
+		 * 
+		 * In summary:
+		 * 
+		 * - EventTimePoint is "ofAggregate" EventSchedule.
+		 * 
+		 * - EventSchedule is "aggregateOf" EventTimePoint.
+		 * 
+		 * This relationship indicates that an EventSchedule aggregates multiple
+		 * EventTimePoint objects, but each EventTimePoint belongs to exactly one
+		 * EventSchedule.
+		 * 
+		 * COMPOSITE RELATIONSHIPS:
+		 * 
+		 * In the UML, suppose we have a composite relationship between EventSchedule
+		 * and EventTimePoint (the relationship notation below indicates which side the
+		 * black aggregation diamond is on):
+		 * 
+		 * EventSchedule ◆-- EventTimePoint
+		 * 
+		 * ...where EventSchedule is the composite (whole) and EventTimePoint is the
+		 * part. In this scenario, the stereotypes "ofComposite" and "compositeOf" are
+		 * handled as follows:
+		 * 
+		 * - "compositeOf" refers to the direction from the whole (EventSchedule) to the
+		 * part (EventTimePoint). This means that an EventSchedule is a composite of
+		 * multiple EventTimePoint instances, and their lifecycle is tightly bound.
+		 * 
+		 * - "ofComposite" refers to the direction from the part (EventTimePoint) to the
+		 * whole (EventSchedule). This indicates that an EventTimePoint is part of an
+		 * EventSchedule and cannot exist independently.
+		 * 
+		 * In summary:
+		 * 
+		 * - EventTimePoint is "ofComposite" EventSchedule.
+		 * 
+		 * - EventSchedule is "compositeOf" EventTimePoint.
+		 * 
 		 */
 		public void mate(Role other) {
-			if( property == null)
+			if (property == null)
 				return;
-    		if( composite )
-    			property.addProperty(UML.hasStereotype, UML.ofComposite);
-    		if( aggregate )
-    			property.addProperty(UML.hasStereotype, UML.ofAggregate);
-			if( other.range != null)
+			if (composite)
+				property.addProperty(UML.hasStereotype, UML.ofComposite);
+			if (aggregate)
+				property.addProperty(UML.hasStereotype, UML.ofAggregate);
+			if (other.range != null)
 				property.addDomain(other.range);
-			if( range != null ) 
+			if (range != null)
 				property.addRange(range);
-			if( other.property != null )
+			if (other.property != null)
 				property.addInverseOf(other.property);
-			if( upper == 1 )
+			if (upper == 1)
 				property.convertToFunctionalProperty();
-			if( other.upper == 1)
+			if (other.upper == 1)
 				property.convertToInverseFunctionalProperty();
-    		if( other.composite )
-    			property.addProperty(UML.hasStereotype, UML.compositeOf);
-    		if( other.aggregate )
-    			property.addProperty(UML.hasStereotype, UML.aggregateOf);
+			if (other.composite)
+				property.addProperty(UML.hasStereotype, UML.compositeOf);
+			if (other.aggregate)
+				property.addProperty(UML.hasStereotype, UML.aggregateOf);
 			if (baseuri != null && !"".equals(baseuri))
 				property.addProperty(UML.baseuri, baseuri);
 			if (baseprefix != null && !"".equals(baseprefix))
 				property.addProperty(UML.baseprefix, baseprefix);
+			//
+			property.addProperty(UML.schemaMin, lower);
+			property.addProperty(UML.schemaMax, upper);
 		}
 		
 	}

@@ -100,7 +100,7 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 		assertTrue(dataAreaXslFile.exists());
 
 		// Now delete the configuration entry...
-		ProfileBuildletConfigUtils.deleteTransformBuilderConfigEntry(builderKey);
+		ProfileBuildletConfigUtils.deleteTransformBuilderConfigEntry(new TransformBuildlet(builderKey, "ext"));
 
 		assertTrue("Builder " + builderKey + " was not deleted", !ProfileBuildletConfigUtils.hasBuildlet(builderKey));
 		assertTrue("XSLT file " + JUNIT_TEST_XSL_FILE + " was not deleted", !dataAreaXslFile.exists());
@@ -129,8 +129,8 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 		// Now delete the configuration entry...
 		TransformBuildlet buildlet = new TransformBuildlet(builderKey, "junit-ext2");
 
-		File xslFile2 = new File(CONFIG_DIR + "/" + JUNIT_TEST2_XSL_FILE);
-		ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile2);
+		File xslFile = new File(CONFIG_DIR + "/" + JUNIT_TEST2_XSL_FILE);
+		ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile, null);
 
 		assertTrue("Builder " + builderKey + " was not added", ProfileBuildletConfigUtils.hasBuildlet(builderKey));
 		assertTrue("XSLT file " + JUNIT_TEST2_XSL_FILE + " was not added", dataAreaXslFile2.exists());

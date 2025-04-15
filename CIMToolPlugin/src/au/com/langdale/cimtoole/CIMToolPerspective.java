@@ -15,16 +15,19 @@ public class CIMToolPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addView("au.com.langdale.cimtoole.views.ProjectModelView", IPageLayout.LEFT, .25f, layout.getEditorArea());
 		layout.addView("org.eclipse.ui.navigator.ProjectExplorer", IPageLayout.TOP, .5f, "au.com.langdale.cimtoole.views.ProjectModelView");
-		layout.addView("org.eclipse.ui.views.ContentOutline", IPageLayout.RIGHT, .66f, layout.getEditorArea());
-		
-		
+
 		IFolderLayout folder = layout.createFolder("au.com.langdale.cimtoole.Detail", IPageLayout.BOTTOM, .66f, layout.getEditorArea());
 		folder.addView("au.com.langdale.cimtoole.views.Documentation");
 		folder.addView("org.eclipse.ui.views.PropertySheet");
+		folder.addView("net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView");	
+		
+		IFolderLayout topRightContentLayout = layout.createFolder("topRightFolder", IPageLayout.RIGHT, 0.75f, layout.getEditorArea());
+	    topRightContentLayout.addView("org.eclipse.ui.views.ContentOutline");
 		
 		layout.addShowViewShortcut("org.eclipse.ui.views.ProblemView");
 		layout.addShowViewShortcut("org.eclipse.ui.views.PropertySheet");
 		layout.addShowViewShortcut("au.com.langdale.cimtoole.views.Documentation");
+		layout.addShowViewShortcut("net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView");	
 		layout.addShowViewShortcut("org.eclipse.ui.views.ContentOutline");
 		layout.addShowViewShortcut("au.com.langdale.cimtoole.views.ProjectModelView");
 		layout.addShowViewShortcut("org.eclipse.ui.navigator.ProjectExplorer");

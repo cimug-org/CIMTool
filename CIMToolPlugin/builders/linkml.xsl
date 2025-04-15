@@ -92,7 +92,7 @@
     	<xsl:apply-templates select="a:EnumeratedType" mode="gen-enums"/>
 	</xsl:template>
 
-    <xsl:template match="a:Root|a:ComplexType|CompoundType ">
+    <xsl:template match="a:Root|a:ComplexType|a:CompoundType">
         <item><xsl:text>  </xsl:text><xsl:value-of select="@name" />:</item>
         <xsl:text>&#10;</xsl:text>
         <xsl:variable name="description"><xsl:call-template name="linkml-description"/></xsl:variable>
@@ -114,7 +114,7 @@
 		    <item><xsl:text>    is_a: </xsl:text><xsl:value-of select="substring-after(a:SuperType/@baseClass, '#')" /></item>
 		    <xsl:text>&#10;</xsl:text>
 		</xsl:if>
-        <xsl:if test="not(a:Stereotype[contains(., '#concrete')])">
+        <xsl:if test="not(a:Stereotype[contains(., '#concrete') or contains(., '#compound')])">
 			<xsl:text>    abstract: true</xsl:text>
 			<xsl:text>&#10;</xsl:text>
         </xsl:if>
@@ -177,7 +177,7 @@
 		</xsl:if>
 		<xsl:variable name="comments"><xsl:call-template name="linkml-comments"/></xsl:variable>
 		<xsl:if test="$comments != ''">
-			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
+			<item><xsl:text>        comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
 		<xsl:text>        annotations:</xsl:text>
@@ -218,7 +218,7 @@
 		</xsl:if>
 		<xsl:variable name="comments"><xsl:call-template name="linkml-comments"/></xsl:variable>
 		<xsl:if test="$comments != ''">
-			<xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"
+			<item><xsl:text>        comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
 		<xsl:text>        annotations:</xsl:text>
@@ -243,7 +243,7 @@
 		</xsl:choose>
     </xsl:template>
 
-    <xsl:template match="a:Reference|a:Instance">
+    <xsl:template match="a:Reference|a:Instance|a:Compound">
         <item><xsl:text>      </xsl:text><xsl:value-of select="@name" />:</item>
         <xsl:text>&#10;</xsl:text>
         <xsl:variable name="description"><xsl:call-template name="linkml-description"/></xsl:variable>
@@ -253,7 +253,7 @@
 		</xsl:if>
 		<xsl:variable name="comments"><xsl:call-template name="linkml-comments"/></xsl:variable>
 		<xsl:if test="$comments != ''">
-			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
+			<item><xsl:text>        comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
 		<xsl:text>        annotations:</xsl:text>
@@ -314,7 +314,7 @@
 		</xsl:if>
 		<xsl:variable name="comments"><xsl:call-template name="linkml-comments"/></xsl:variable>
 		<xsl:if test="$comments != ''">
-			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
+			<item><xsl:text>        comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
 		<xsl:text>        annotations:</xsl:text>
@@ -384,7 +384,7 @@
 		</xsl:if>
 		<xsl:variable name="comments"><xsl:call-template name="linkml-comments"/></xsl:variable>
 		<xsl:if test="$comments != ''">
-			<item><xsl:text>    comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
+			<item><xsl:text>        comments: </xsl:text>"<xsl:value-of select="$comments" />"</item>
 			<xsl:text>&#10;</xsl:text>
 		</xsl:if>
 		<item><xsl:text>        slot_uri: </xsl:text><xsl:call-template name="prefix"><xsl:with-param name="uri" select="@baseProperty"/></xsl:call-template></item>

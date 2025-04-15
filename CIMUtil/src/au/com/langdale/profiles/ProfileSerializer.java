@@ -74,38 +74,27 @@ public class ProfileSerializer extends AbstractReader {
 	private final String xsd = XSD.anyURI.getNameSpace();
 	private JenaTreeModelBase model;
 	
+	// Each instance of a ProfileSerializer that is executed 
+	private SortedMap<String, OntResource> packages = new TreeMap<String, OntResource>();
+	
 	/** The following are parameters to be passed into XSLT builders */
+	private String fileName = "";
 	private String baseURI = "";
 	private String ontologyURI = "";
 	private String version = "";
 	private String copyrightMultiLine = "";
 	private String copyrightSingleLine = "";
 	// the next set of parameters are PlantUML specific
-	private String docRootClassesColor = "";
-	private String docRootClassesFontColor = "";
-	private String concreteClassesColor = "";
-	private String concreteClassesFontColor = "";
-	private String abstractClassesColor = "";
-	private String abstractClassesFontColor = "";
-	private String enumerationsColor = "";
-	private String enumerationsFontColor = "";
-	private String cimDatatypesColor = "";
-	private String cimDatatypesFontColor = "";
-	private String compoundsColor = "";
-	private String compoundsFontColor = "";
-	private String primitivesColor = "";
-	private String primitivesFontColor = "";
-	private String errorsColor = "";
-	private String errorsFontColor = "";
-	private boolean enableDarkMode = false;
-	private boolean enableShadowing = true;
-	private boolean hideEnumerations = false;
-	private boolean hideCIMDatatypes = true;
-	private boolean hideCompounds = true;
-	private boolean hidePrimitives = true;
-	private boolean hideCardinalityForRequiredAttributes = false;
+	private String plantUMLParameters = "";
+
+	private TreeSet primitivesDeferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
+		@Override
+		public int compare(OntResource o1, OntResource o2) {
+			return o1.getURI().compareTo(o2.getURI());
+		}
+	});
 	
-	private TreeSet deferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
+	private TreeSet cimDatatypesDeferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
 		@Override
 		public int compare(OntResource o1, OntResource o2) {
 			return o1.getURI().compareTo(o2.getURI());
@@ -305,31 +294,10 @@ public class ProfileSerializer extends AbstractReader {
 				ti.setParameter("envelope", model.getRoot().getName());
 				ti.setParameter("copyright", copyrightMultiLine);
 				ti.setParameter("copyright-single-line", copyrightSingleLine);
+				ti.setParameter("fileName", fileName);
 				
 				// PlantUML diagram preferences for all PlantUML diagram builders...
-				ti.setParameter("docRootClassesColor", docRootClassesColor);
-				ti.setParameter("docRootClassesFontColor", docRootClassesFontColor);
-				ti.setParameter("concreteClassesColor", concreteClassesColor);
-				ti.setParameter("concreteClassesFontColor", concreteClassesFontColor);
-				ti.setParameter("abstractClassesColor", abstractClassesColor);
-				ti.setParameter("abstractClassesFontColor", abstractClassesFontColor);
-				ti.setParameter("enumerationsColor", enumerationsColor);
-				ti.setParameter("enumerationsFontColor", enumerationsFontColor);
-				ti.setParameter("cimDatatypesColor", cimDatatypesColor);
-				ti.setParameter("cimDatatypesFontColor", cimDatatypesFontColor);
-				ti.setParameter("compoundsColor", compoundsColor);
-				ti.setParameter("compoundsFontColor", compoundsFontColor);
-				ti.setParameter("primitivesColor", primitivesColor);
-				ti.setParameter("primitivesFontColor", primitivesFontColor);
-				ti.setParameter("errorsColor", errorsColor);
-				ti.setParameter("errorsFontColor", errorsFontColor);
-				ti.setParameter("enableDarkMode", enableDarkMode);
-				ti.setParameter("enableShadowing", enableShadowing);
-				ti.setParameter("hideEnumerations", hideEnumerations);
-				ti.setParameter("hideCIMDatatypes", hideCIMDatatypes);
-				ti.setParameter("hideCompounds", hideCompounds);
-				ti.setParameter("hidePrimitives", hidePrimitives);
-				ti.setParameter("hideCardinalityForRequiredAttributes", hideCardinalityForRequiredAttributes);
+				ti.setParameter("plantUMLParameters", this.plantUMLParameters);
 				tx[ix] = ti;
 			}
 		} else {
@@ -350,8 +318,7 @@ public class ProfileSerializer extends AbstractReader {
 		emit(model.getRoot());
 	}
 
-	private void emitPackages(CatalogNode node) throws SAXException {
-		SortedMap<String, OntResource> packages = new TreeMap<String, OntResource>();
+	private void emitPackages(CatalogNode node, TreeSet<OntResource> cimDatatypes, TreeSet<OntResource> primitives) throws SAXException {
 		Iterator it = node.iterator();
 		while (it.hasNext()) {
 			Node nextNode = (Node) it.next();
@@ -365,6 +332,33 @@ public class ProfileSerializer extends AbstractReader {
 				}
 			}
 		}
+		//
+		if (!cimDatatypes.isEmpty()) {
+			it = cimDatatypes.descendingIterator();
+			while (it.hasNext()) {
+				OntResource cimDatatype = (OntResource) it.next();
+				OntResource aPackage = cimDatatype.getIsDefinedBy();
+				while (aPackage != null) {
+					if (!packages.containsKey(aPackage.getURI()))
+						packages.put(aPackage.getURI(), aPackage);
+					aPackage = aPackage.getIsDefinedBy();
+				}
+			}
+		}
+		//
+		if (!primitives.isEmpty()) {
+			it = primitives.descendingIterator();
+			while (it.hasNext()) {
+				OntResource primitive = (OntResource) it.next();
+				OntResource aPackage = primitive.getIsDefinedBy();
+				while (aPackage != null) {
+					if (!packages.containsKey(aPackage.getURI()))
+						packages.put(aPackage.getURI(), aPackage);
+					aPackage = aPackage.getIsDefinedBy();
+				}
+			}
+		}
+		//
 		for (OntResource aPackage : packages.values()) {
 			emitPackage(aPackage);
 		}
@@ -399,25 +393,32 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emit(CatalogNode node) throws SAXException {
 		Element elem = new Element("Catalog", MESSAGE.NS);
-		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("ontologyURI", ontologyURI);
 		elem.set("baseURI", baseURI);
 		elem.set("xmlns:m", baseURI);
 		elem.set("name", node.getName());
 		emitNote(node);
-		emitPackages(node);
+		emitStereotypes(node.getSubject());
 		emitChildren(node);
 
-		Iterator it = deferred.iterator();
+		Iterator it = cimDatatypesDeferred.iterator();
 		while (it.hasNext()) {
 			emitCIMDatatype((OntResource) it.next());
 		}
+		
+		it = primitivesDeferred.iterator();
+		while (it.hasNext()) {
+			emitPrimitive((OntResource) it.next());
+		}
+		
+		emitPackages(node, cimDatatypesDeferred, primitivesDeferred);
 		elem.close();
 	}
 
 	private void emit(EnvelopeNode node) throws SAXException {
 		Element elem = new Element("Message", MESSAGE.NS);
-		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
 		emitChildren(node);
 		elem.close();
@@ -427,16 +428,30 @@ public class ProfileSerializer extends AbstractReader {
 		Element elem = new Element("SuperType");
 		elem.set("name", node.getName());
 		elem.set("baseClass", node.getBaseClass().getURI());
+		boolean isShadowExtension = false;
+		if (node.getBaseClass().hasProperty(UML.hasStereotype, UML.shadowextension)) {
+			isShadowExtension = true;
+		} else if (!node.getBaseClass().getURI().startsWith(ontologyURI + "#")){
+			ResIterator subclasses = model.getOntModel().listSubjectsBuffered(RDFS.subClassOf, node.getBaseClass());
+			while (subclasses.hasNext()) {
+				OntResource subclass = subclasses.nextResource();
+				if (subclass.getURI() != null && subclass.getURI().startsWith(ontologyURI + "#")) {
+					isShadowExtension = true;
+				}
+			}
+		} 
+		elem.set("baseClassIsShadowExtension", Boolean.toString(isShadowExtension));
 		elem.close();
 	}
 
 	private void emit(SubTypeNode node) throws SAXException {
 		Element elem = select(node);
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
 		elem.set("minOccurs", "1");
 		elem.set("maxOccurs", "1");
 		emitNote(node);
+		emitStereotypes(node.getSubject());
 		if (node.getSubject().isAnon())
 			emitChildren(node);
 		elem.close();
@@ -450,13 +465,15 @@ public class ProfileSerializer extends AbstractReader {
 				elem = new Element("SimpleEnumerated");
 			else
 				elem = new Element("Enumerated");
+		} else if (node.isCompound()) {
+			elem = new Element("Compound");
 		} else {
-			if (anon)
+			if (anon) {
 				elem = new Element("Complex");
-			else {
+			} else {
 				if (node.getParent() instanceof ElementNode && ((ElementNode) node.getParent()).isReference())
 					elem = new Element("Reference");
-				else
+				else 
 					elem = new Element("Instance");
 			}
 		}
@@ -477,12 +494,15 @@ public class ProfileSerializer extends AbstractReader {
 				range = model.getOntModel().createResource(XSD.xstring.asNode());
 			if (range.hasProperty(UML.hasStereotype, UML.primitive) || range.getNameSpace().equals(xsd)) {
 				elem = new Element("Simple");
-				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
+				String cimDatatype = range.getString(UML.cimdatatypeMapping);
+				elem.set("cimDatatype", (cimDatatype != null ? cimDatatype : ""));
+				primitivesDeferred.add(range);
 			} else {
 				elem = new Element("Domain");
-				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 				elem.set("type", range.getLocalName());
-				deferred.add(range);
+				cimDatatypesDeferred.add(range);
 			}
 			elem.set("dataType", range.getURI());
 			elem.set("xstype", xstype(range));
@@ -493,7 +513,7 @@ public class ProfileSerializer extends AbstractReader {
 			if (size == 0) {
 				OntResource range = node.getBaseProperty().getRange();
 				elem = new Element("Reference");
-				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 				if (range != null && range.isURIResource()) {
 					elem.set("baseClass", range.getURI());
 					elem.set("type", range.getLocalName());
@@ -504,21 +524,20 @@ public class ProfileSerializer extends AbstractReader {
 				if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
 					elem.close(); // First, close "Reference" ...
 					elem = new Element("InverseReference");
-					elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+					elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 					emitInverse(node, elem);
 				}
 			} else if (size == 1) {
 				SubTypeNode child = (SubTypeNode) node.getChildren().get(0);
 				elem = select(child);
-				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
-				emit(node, elem, (!child.getSubject().isAnon() && !child.isEnumerated()));
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
+				emit(node, elem, (!child.getSubject().isAnon() && !child.isEnumerated() && !child.isCompound()));
 				if (child.getSubject().isAnon()) {
 					emitChildren(child);
-				} else if (!child.isEnumerated()) {
+				} else if (!child.isEnumerated() && !child.isCompound()) {
 					// If child is not an enumeration and not anonymous it indicates it is an
-					// Instance
-					// or Reference element and an InverseInstance or InverseReference must be
-					// created...
+					// Instance or Reference element and an InverseInstance or InverseReference 
+					// must be created...
 					OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
 					if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
 						elem.close(); // First, close out the "Reference" or "Instance" element...
@@ -528,7 +547,7 @@ public class ProfileSerializer extends AbstractReader {
 						} else {
 							elem = new Element("InverseInstance");
 						}
-						elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+						elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 						emitInverse(node, elem);
 					}
 				}
@@ -547,7 +566,7 @@ public class ProfileSerializer extends AbstractReader {
 		if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
 			elem.set("baseClass", inverse.getRange().getURI());
 			if (inverse.hasProperty(UML.id))
-				elem.set("ea_guid", inverse.getString(UML.id));	
+				elem.set("ea_guid", EAGuidUtils.fixEAGuid(inverse.getString(UML.id)));	
 			elem.set("type", inverse.getRange().getLocalName());
 			if (inverse.getLabel() != null)
 				elem.set("name", inverse.getLabel());
@@ -579,7 +598,7 @@ public class ProfileSerializer extends AbstractReader {
 	private void emit(ElementNode node, Element elem, boolean includeInverseBaseClass) throws SAXException {
 		elem.set("name", node.getName());
 		if (node.getBase().hasProperty(UML.id))
-			elem.set("ea_guid", node.getBase().getString(UML.id));	
+			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBase().getString(UML.id)));	
 		elem.set("baseProperty", node.getBaseProperty().getURI());
 		if (node.getBaseProperty().getDomain() != null) {
 			elem.set("basePropertyClass", node.getBaseProperty().getDomain().getURI());
@@ -601,10 +620,11 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(node.getBaseProperty().getComment(null));
 		emitNote(node);
+		emitStereotypes(node.getSubject());
 	}
 
 	private void emitChoice(ElementNode node, Element elem) throws SAXException {
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
 		elem.set("baseProperty", node.getBaseProperty().getURI());
 		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
@@ -632,6 +652,7 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(node.getBaseProperty().getComment(null));
 		emitNote(node);
+		emitStereotypes(node.getSubject());
 	}
 
 	private void emitComment(String comment) throws SAXException {
@@ -653,7 +674,6 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emitNote(Node node) throws SAXException {
 		emit("Note", node.getSubject().getComment(null));
-		emitStereotypes(node.getSubject());
 	}
 
 	private boolean isHidden(OntResource subject) throws SAXException {
@@ -696,6 +716,8 @@ public class ProfileSerializer extends AbstractReader {
 	}
 
 	private String xstype(OntResource type) {
+		/**
+		 * NEW code is temporarily commented out below...OLD code is after it...
 		if (type.getNameSpace().equals(xsd))
 			return type.getLocalName();
 
@@ -715,6 +737,17 @@ public class ProfileSerializer extends AbstractReader {
 
 		System.out.println("Warning: undefined datatype: " + type);
 		return "string";
+		*/
+		
+		if(type.getNameSpace().equals(xsd))
+			return type.getLocalName();
+		
+		OntResource xtype = type.getEquivalentClass();
+		if( xtype != null && xtype.getNameSpace().equals(xsd))
+			return xtype.getLocalName();
+
+		System.out.println("Warning: undefined datatype: " + type);
+		return "string";
 	}
 
 	private void emitPackage(OntResource aPackage) throws SAXException {
@@ -722,7 +755,7 @@ public class ProfileSerializer extends AbstractReader {
 			Element elem = new Element("Package");
 			elem.set("name", aPackage.getLabel());
 			if (aPackage.hasProperty(UML.id))
-				elem.set("ea_guid", aPackage.getString(UML.id));		
+				elem.set("ea_guid", EAGuidUtils.fixPackageEAGuid(aPackage.getString(UML.id)));		
 			elem.set("basePackage", aPackage.getURI());
 			emitComment(aPackage.getComment(null));
 			emitStereotypes(aPackage);
@@ -748,10 +781,10 @@ public class ProfileSerializer extends AbstractReader {
 			elem = new Element("CompoundType");
 		else
 			elem = new Element("ComplexType");
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
 		if (node.getBaseClass().hasProperty(UML.id))
-			elem.set("ea_guid", node.getBaseClass().getString(UML.id));		
+			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBaseClass().getString(UML.id)));		
 		elem.set("baseClass", node.getBaseClass().getURI());
 		elem.set("package", node.getPackageName());
 		if (node.getPackage() != null) {
@@ -761,6 +794,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
+		emitStereotypes(node.getSubject());
 
 		emitChildren(node);
 		elem.close();
@@ -768,26 +802,27 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emit(MessageNode node) throws SAXException {
 		Element elem = new Element("Root");
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
 		if (node.getBaseClass().hasProperty(UML.id))
-			elem.set("ea_guid", node.getBaseClass().getString(UML.id));		
+			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBaseClass().getString(UML.id)));		
 		elem.set("baseClass", node.getBaseClass().getURI());
 
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
+		emitStereotypes(node.getSubject());
 
 		emitChildren(node);
 		elem.close();
 	}
-
+	
 	private void emitCIMDatatype(OntResource type) throws SAXException {
 		Element elem = new Element("SimpleType");
-		elem.set("hideInDiagrams", (type != null && isHidden(type) ? "true" : "false"));
+		elem.set("hideInDiagrams", (type != null && isHidden(type) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("dataType", type.getURI());
 		elem.set("name", type.getLocalName());
 		if (type.hasProperty(UML.id))
-			elem.set("ea_guid", type.getString(UML.id));	
+			elem.set("ea_guid", EAGuidUtils.fixEAGuid(type.getString(UML.id)));	
 		OntResource defin = type.getResource(RDFS.isDefinedBy);
 		if (defin != null) {
 			elem.set("package", defin.getLabel());
@@ -797,21 +832,123 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(type.getComment(null));
 		emitStereotypes(type);
+
+		Element valueElem = new Element("Simple");
+		valueElem.set("hideInDiagrams", Boolean.FALSE.toString());
+		valueElem.set("type", "Float");
+		valueElem.set("cimDatatype", "http://iec.ch/TC57/CIM100#Float");
+		valueElem.set("dataType", type.getEquivalentClass().getURI());
+		valueElem.set("xstype", xstype(type));
+		valueElem.set("name", "value");
+		String valueEAGUID = type.hasProperty(UML.valueEAGUID) ? type.getString(UML.valueEAGUID) : "";
+		valueElem.set("ea_guid", valueEAGUID);
+		valueElem.set("baseProperty", type.getURI() + ".value"); 
+		valueElem.set("basePropertyClass", type.getURI()); 
+		valueElem.set("minOccurs", "0");
+		valueElem.set("maxOccurs", "1");
+		String valueComment = type.hasProperty(UML.valueComment) ? type.getString(UML.valueComment) : "";
+		emitComment(valueComment);
+		// Add stereotypes for multiplier attribute
+		Element stereoElem = new Element("Stereotype");
+		stereoElem.set("label", "Attribute");
+		stereoElem.append(UML.NS + "attribute");
+		stereoElem.close();
+		valueElem.close();
+
+		Element unitElem = new Element("Enumerated");
+		unitElem.set("baseClass", "http://iec.ch/TC57/CIM100#UnitSymbol"); 
+		unitElem.set("type", "UnitSymbol");
+		unitElem.set("hideInDiagrams", Boolean.FALSE.toString());
+		unitElem.set("name", "unit");
+		String unitEAGUID = type.hasProperty(UML.unitEAGUID) ? type.getString(UML.unitEAGUID) : "";
+		unitElem.set("ea_guid", unitEAGUID);
+		String unitConstant = type.hasProperty(UML.hasUnits) ? type.getString(UML.hasUnits) : "";
+		unitElem.set("constant", unitConstant); 
+		unitElem.set("baseProperty", type.getURI() + ".unit"); 
+		unitElem.set("basePropertyClass", type.getURI()); 
+		unitElem.set("minOccurs", "0");
+		unitElem.set("maxOccurs", "1");
+		String unitComment = type.hasProperty(UML.unitComment) ? type.getString(UML.unitComment) : "";
+		emitComment(unitComment);
+		// Add stereotypes for multiplier attribute
+		stereoElem = new Element("Stereotype");
+		stereoElem.set("label", "enumeration");
+		stereoElem.append(UML.NS + "enumeration");
+		stereoElem.close();
+		stereoElem = new Element("Stereotype");
+		stereoElem.set("label", "Attribute");
+		stereoElem.append(UML.NS + "attribute");
+		stereoElem.close();
+		unitElem.close();
+		
+		Element multiplierElem = new Element("Enumerated");
+		multiplierElem.set("hideInDiagrams", Boolean.FALSE.toString());
+		multiplierElem.set("type", "UnitMultiplier");
+		multiplierElem.set("name", "multiplier");
+		String multiplierConstant = type.hasProperty(UML.hasMultiplier) ? type.getString(UML.hasMultiplier) : "";
+		multiplierElem.set("constant", multiplierConstant);
+		String multiplierEAGUID = type.hasProperty(UML.multiplierEAGUID) ? type.getString(UML.multiplierEAGUID) : "";
+		multiplierElem.set("ea_guid", multiplierEAGUID);
+		multiplierElem.set("baseClass", "http://iec.ch/TC57/CIM100#UnitMultiplier");
+		multiplierElem.set("baseProperty", type.getURI() + ".multiplier");
+		multiplierElem.set("basePropertyClass", type.getURI());
+		multiplierElem.set("minOccurs", "0");
+		multiplierElem.set("maxOccurs", "1");
+		String multiplierComment = type.hasProperty(UML.multiplierComment) ? type.getString(UML.multiplierComment) : "";
+		emitComment(multiplierComment);
+		// Add stereotypes for multiplier attribute
+		stereoElem = new Element("Stereotype");
+		stereoElem.set("label", "enumeration");
+		stereoElem.append(UML.NS + "enumeration");
+		stereoElem.close();
+		stereoElem = new Element("Stereotype");
+		stereoElem.set("label", "Attribute");
+		stereoElem.append(UML.NS + "attribute");
+		stereoElem.close();
+		multiplierElem.close();
+
 		elem.close();
 	}
+	
+	private void emitPrimitive(OntResource primitive) throws SAXException {
+		Element elem = new Element("PrimitiveType");
+		elem.set("hideInDiagrams", (primitive != null && isHidden(primitive) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
+		elem.set("dataType", primitive.getString(UML.cimdatatypeMapping));
+		elem.set("name", primitive.getLabel());
+		if (primitive.hasProperty(UML.id))
+			elem.set("ea_guid", EAGuidUtils.fixEAGuid(primitive.getString(UML.id)));	
+		OntResource defin = primitive.getResource(RDFS.isDefinedBy);
+		if (defin != null) {
+			elem.set("package", defin.getLabel());
+			elem.set("packageURI", defin.getURI());
+		}
+		elem.set("xstype", xstype(primitive));
 
+		emitComment(primitive.getComment(null));
+		emitStereotypes(primitive);
+		elem.close();
+	}
+	
 	private void emit(EnumValueNode node) throws SAXException {
 		OntResource value = node.getSubject();
 		Element elem = new Element("EnumeratedValue");
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
 		if (node.getBase().hasProperty(UML.id))
-			elem.set("ea_guid", node.getBase().getString(UML.id));	
+			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBase().getString(UML.id)));	
 		elem.set("baseResource", node.getBase().getURI());
 		emitComment(value.getComment(null));
 		elem.close();
 	}
-
+	
+	public String getFileName() {
+		return this.fileName;
+	}
+	
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
 	public String getVersion() {
 		return version;
 	}
@@ -819,182 +956,13 @@ public class ProfileSerializer extends AbstractReader {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-
-	public String getDocRootClassesColor() {
-		return docRootClassesColor;
-	}
-
-	public void setDocRootClassesColor(String docRootClassesColor) {
-		this.docRootClassesColor = docRootClassesColor;
+	
+	public String getPlantUMLParameters(String plantUMLParameters) {
+		return this.plantUMLParameters;
 	}
 	
-	public String getDocRootClassesFontColor() {
-		return docRootClassesFontColor;
-	}
-
-	public void setDocRootClassesFontColor(String docRootClassesFontColor) {
-		this.docRootClassesFontColor = docRootClassesFontColor;
-	}
-	
-	public String getConcreteClassesColor() {
-		return concreteClassesColor;
-	}
-
-	public void setConcreteClassesColor(String concreteClassesColor) {
-		this.concreteClassesColor = concreteClassesColor;
-	}
-
-	public String getAbstractClassesColor() {
-		return abstractClassesColor;
-	}
-
-	public void setAbstractClassesColor(String abstractClassesColor) {
-		this.abstractClassesColor = abstractClassesColor;
-	}
-
-	public String getEnumerationsColor() {
-		return enumerationsColor;
-	}
-
-	public void setEnumerationsColor(String enumerationsColor) {
-		this.enumerationsColor = enumerationsColor;
-	}
-	
-	public boolean isHideCardinalityForRequiredAttributes() {
-		return hideCardinalityForRequiredAttributes;
-	}
-
-	public void setHideCardinalityForRequiredAttributes(boolean hideCardinalityForRequiredAttributes) {
-		this.hideCardinalityForRequiredAttributes = hideCardinalityForRequiredAttributes;
-	}
-	
-	public boolean isEnableDarkMode() {
-		return enableDarkMode;
-	}
-
-	public void setEnableDarkMode(boolean enableDarkMode) {
-		this.enableDarkMode = enableDarkMode;
-	}
-	
-	public boolean isEnableShadowing() {
-		return enableShadowing;
-	}
-
-	public void setEnableShadowing(boolean enableShadowing) {
-		this.enableShadowing = enableShadowing;
-	}
-	
-	public String getAbstractClassesFontColor() {
-		return abstractClassesFontColor;
-	}
-
-	public void setAbstractClassesFontColor(String abstractClassesFontColor) {
-		this.abstractClassesFontColor = abstractClassesFontColor;
-	}
-
-	public String getEnumerationsFontColor() {
-		return enumerationsFontColor;
-	}
-
-	public void setEnumerationsFontColor(String enumerationsFontColor) {
-		this.enumerationsFontColor = enumerationsFontColor;
-	}
-
-	public String getConcreteClassesFontColor() {
-		return concreteClassesFontColor;
-	}
-	
-	public void setConcreteClassesFontColor(String concreteClassesFontColor) {
-		this.concreteClassesFontColor = concreteClassesFontColor;
-	}
-
-	public String getCIMDatatypesColor() {
-		return cimDatatypesColor;
-	}
-	
-	public void setCIMDatatypesColor(String cimDatatypesColor) {
-		this.cimDatatypesColor = cimDatatypesColor;
-	}
-	
-	public String getCIMDatatypesFontColor() {
-		return cimDatatypesFontColor;
-	}
-	
-	public void setCIMDatatypesFontColor(String cimDatatypesFontColor) {
-		this.cimDatatypesFontColor = cimDatatypesFontColor;
-	}
-	
-	public void setCompoundsColor(String compoundsColor) {
-		this.compoundsColor = compoundsColor;
-	}
-
-	public void setCompoundsFontColor(String compoundsFontColor) {
-		this.compoundsFontColor = compoundsFontColor;
-	}
-	
-	public void setPrimitivesColor(String primitivesColor) {
-		this.primitivesColor = primitivesColor;
-	}
-	
-	public String getPrimitivesColor() {
-		return this.primitivesColor;
-	}
-
-	public void setPrimitivesFontColor(String primitivesFontColor) {
-		this.primitivesFontColor = primitivesFontColor;
-	}
-	
-	public String getPrimitivesFontColor() {
-		return this.primitivesFontColor;
-	}
-	
-	public void setErrorsColor(String errorsColor) {
-		this.errorsColor = errorsColor;
-	}
-	
-	public String getErrorsColor() {
-		return this.errorsColor;
-	}
-
-	public void setErrorsFontColor(String errorsFontColor) {
-		this.errorsFontColor = errorsFontColor;
-	}
-	
-	public String getErrorsFontColor() {
-		return this.errorsFontColor;
-	}
-	
-
-	public boolean isHideEnumerations() {
-		return hideEnumerations;
-	}
-
-	public void setHideEnumerations(boolean hideEnumerations) {
-		this.hideEnumerations = hideEnumerations;
-	}
-
-	public boolean isHideCIMDatatypes() {
-		return hideCIMDatatypes;
-	}
-
-	public void setHideCIMDatatypes(boolean hideCIMDatatypes) {
-		this.hideCIMDatatypes = hideCIMDatatypes;
-	}
-	
-	public boolean isHidePrimitives() {
-		return hidePrimitives;
-	}
-
-	public void setHidePrimitives(boolean hidePrimitives) {
-		this.hidePrimitives = hidePrimitives;
-	}
-	
-	public boolean isHideCompounds() {
-		return hideCompounds;
-	}
-
-	public void setHideCompounds(boolean hideCompounds) {
-		this.hideCompounds = hideCompounds;
+	public void setPlantUMLParameters(String plantUMLParameters) {
+		this.plantUMLParameters = plantUMLParameters;
 	}
 	
 }

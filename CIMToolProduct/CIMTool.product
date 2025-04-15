@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 2.2.0" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.2.0" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="CIMTool 2.3.0 beta" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.3.0" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="cimtool-about.png"/>
@@ -43,7 +43,6 @@
       </win>
    </launcher>
 
-
    <vm>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-20</windows>
    </vm>
@@ -77,12 +76,22 @@ See the GNU Lesser General Public License for more details.
       <plugin id="au.com.langdale.rcputil"/>
       <plugin id="bcpg"/>
       <plugin id="bcprov"/>
+      <plugin id="ch.qos.logback.classic"/>
+      <plugin id="ch.qos.logback.core"/>
       <plugin id="com.cimphony.cimtoole"/>
+      <plugin id="com.google.gson"/>
+      <plugin id="com.google.guava"/>
+      <plugin id="com.google.guava.failureaccess"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.sun.jna"/>
       <plugin id="com.sun.jna.platform"/>
+      <plugin id="de.jcup.asciidoctor.converter"/>
+      <plugin id="de.jcup.asciidoctoreditor"/>
+      <plugin id="de.jcup.asciidoctoreditor.css"/>
+      <plugin id="de.jcup.asciidoctoreditor.libs"/>
       <plugin id="jakarta.enterprise.cdi-api"/>
       <plugin id="jakarta.interceptor-api"/>
+      <plugin id="jakarta.servlet"/>
       <plugin id="jakarta.servlet-api"/>
       <plugin id="jakarta.transaction-api"/>
       <plugin id="javax.annotation"/>
@@ -104,6 +113,8 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
       <plugin id="org.apache.batik.util"/>
+      <plugin id="org.apache.commons.cli"/>
+      <plugin id="org.apache.commons.codec"/>
       <plugin id="org.apache.commons.io"/>
       <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.logging"/>
@@ -201,7 +212,13 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.help.ui"/>
       <plugin id="org.eclipse.help.webapp"/>
       <plugin id="org.eclipse.jdt.annotation"/>
+      <plugin id="org.eclipse.jdt.core"/>
       <plugin id="org.eclipse.jdt.core.compiler.batch"/>
+      <plugin id="org.eclipse.jdt.core.manipulation"/>
+      <plugin id="org.eclipse.jdt.debug"/>
+      <plugin id="org.eclipse.jdt.debug.ui"/>
+      <plugin id="org.eclipse.jdt.launching"/>
+      <plugin id="org.eclipse.jdt.ui"/>
       <plugin id="org.eclipse.jem.util"/>
       <plugin id="org.eclipse.jetty.http"/>
       <plugin id="org.eclipse.jetty.io"/>
@@ -219,6 +236,13 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.ltk.core.refactoring"/>
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
+      <plugin id="org.eclipse.m2e.archetype.common"/>
+      <plugin id="org.eclipse.m2e.core"/>
+      <plugin id="org.eclipse.m2e.core.ui"/>
+      <plugin id="org.eclipse.m2e.logback" fragment="true"/>
+      <plugin id="org.eclipse.m2e.maven.runtime"/>
+      <plugin id="org.eclipse.m2e.model.edit"/>
+      <plugin id="org.eclipse.m2e.workspace.cli"/>
       <plugin id="org.eclipse.nebula.cwt"/>
       <plugin id="org.eclipse.nebula.widgets.cdatetime"/>
       <plugin id="org.eclipse.osgi"/>
@@ -325,6 +349,7 @@ See the GNU Lesser General Public License for more details.
       <feature id="org.eclipse.wst.xml_userdoc.feature"/>
       <feature id="org.eclipse.emf.converter" version="2.6.0.v20100914-1218"/>
       <feature id="org.eclipse.emf.doc" version="2.6.0.v20100914-1218"/>
+      <feature id="org.eclipse.wst.xml_ui.feature"/>
    </features>
 
    <configurations>

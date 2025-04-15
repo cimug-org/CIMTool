@@ -32,13 +32,14 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Resource;
 
 public class ProfileModel extends JenaTreeModelBase {
-	
-	public ProfileModel() {}
-	
+
+	public ProfileModel() {
+	}
+
 	private String namespace = "http://example.com/NoName#";
 	private OntModel profileModel, backgroundModel;
 	private Refactory refactory;
-	
+
 	public Refactory getRefactory() {
 		return refactory;
 	}
@@ -46,107 +47,113 @@ public class ProfileModel extends JenaTreeModelBase {
 	public String getNamespace() {
 		return namespace;
 	}
-	
+
 	public void setBackgroundModel(OntModel backgroundModel) {
 		super.setOntModel(null);
 		this.backgroundModel = backgroundModel;
 		initModels();
 	}
-	
+
 	public String getOntologyNamespace() {
-		return (this.backgroundModel != null && this.backgroundModel.getValidOntology() != null ? this.backgroundModel.getValidOntology().getURI() : "");
+		return (this.backgroundModel != null && this.backgroundModel.getValidOntology() != null
+				? this.backgroundModel.getValidOntology().getURI()
+				: "");
 	}
-	
+
 	@Override
 	public void setOntModel(OntModel profileModel) {
 		super.setOntModel(null);
 		this.profileModel = profileModel;
-		if( profileModel != null) {
+		if (profileModel != null) {
 			OntResource ont = profileModel.getValidOntology();
-			if( ont != null) {
+			if (ont != null) {
 				namespace = ont.getURI() + "#";
 				setRootResource(ont);
 			}
 		}
 		initModels();
 	}
-	
+
 	private void initModels() {
-		if( profileModel != null && backgroundModel != null) {
+		if (profileModel != null && backgroundModel != null) {
 			OntModel fullModel = Composition.merge(profileModel, backgroundModel);
 			super.setOntModel(fullModel);
 			refactory = new Refactory(profileModel, fullModel);
 		}
 	}
-	
+
 	@Override
 	protected List findResourcePathTo(FrontsNode symbol) {
 		OntResource target = profileModel.createResource(symbol.asNode());
-		if( getRoot() == null || target == null) 
+		if (getRoot() == null || target == null)
 			return null;
 
 		OntResource start = getRoot().getSubject();
-		if( start == null)
+		if (start == null)
 			return null;
-		
+
 		ArrayList path = new ArrayList(6);
 		path.add(target);
 
-		while( ! target.equals(start)) {
+		while (!target.equals(start)) {
 			OntResource parent;
-			if( target.isClass() && target.isURIResource())
+			if (target.isClass() && target.isURIResource())
 				parent = start;
 			else {
 				parent = findParent(target);
-				while( parent != null && ! parent.hasRDFType(OWL.Class))
+				while (parent != null && !parent.hasRDFType(OWL.Class))
 					parent = findParent(parent);
 			}
-			if(parent == null)
+			if (parent == null)
 				return null;
 			path.add(parent);
 			target = parent;
 		}
-		
+
 		Collections.reverse(path);
 		return path;
 	}
-	
-	private FrontsNode[] steps = new FrontsNode[] { 
-		RDFS.subClassOf, OWL.allValuesFrom, RDF.first, RDF.rest, OWL.unionOf, OWL.oneOf
-	};
-	
+
+	private FrontsNode[] steps = new FrontsNode[] { RDFS.subClassOf, OWL.allValuesFrom, RDF.first, RDF.rest,
+			OWL.unionOf, OWL.oneOf };
+
 	private OntResource findParent(OntResource target) {
-		for(int ix = 0; ix < steps.length; ix++) {
+		for (int ix = 0; ix < steps.length; ix++) {
 			OntResource parent = target.getSubject(steps[ix]);
-			if( parent != null)
+			if (parent != null)
 				return parent;
 		}
-		
+
 //		OntResource type = backgroundModel.createResource(target.asNode()).getResource(RDF.type);
 //		if( type != null && type.hasProperty(UML.hasStereotype, UML.enumeration)) 
 //			return profileModel.createResource(type.asNode());
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Interface for manipulating the cardinality of a Node.
 	 * 
-	 * Both TypeNodes (concrete classes) and ElementNodes (properties)
-	 * have cardinality.
+	 * Both TypeNodes (concrete classes) and ElementNodes (properties) have
+	 * cardinality.
 	 *
 	 */
 	public interface Cardinality {
 		public int getMaxCardinality();
+
 		public int getMinCardinality();
+
 		public boolean setMaxCardinality(int max);
+
 		public boolean setMinCardinality(int min);
+
 		public boolean isMinVariable();
+
 		public boolean isMaxVariable();
 	}
 
 	public abstract class SortedNode extends ModelNode {
-		
+
 		public ProfileModel getProfileModel() {
 			return ProfileModel.this;
 		}
@@ -155,31 +162,32 @@ public class ProfileModel extends JenaTreeModelBase {
 		protected String collation() {
 			return "0" + toString();
 		}
-		
+
 		public void setName(String newName) {
 			getSubject().setLabel(newName, null);
 			changed();
 		}
-		
+
 		public void setComment(String text) {
 			getSubject().setComment(text, null);
 		}
-		
-		protected abstract void create(Node node, boolean isConcrete, boolean arePropertiesRequired);
 
-		protected void createAnon(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+		protected abstract void create(Node node, SelectionOptions selectedOptions);
+
+		protected void createAnon(Node node, SelectionOptions selectedOptions) {
 			// Anon classes are never concrete...
-			create(node, false, arePropertiesRequired);
+			SelectionOptions anonSelectionOptions = selectedOptions.cloneAndRemove(SelectionOption.Concrete);
+			create(node, anonSelectionOptions);
 		}
-		
-		protected void createDeep(Node node, boolean isConcrete, boolean arePropertiesRequired) {
-			create(node, isConcrete, arePropertiesRequired);
+
+		protected void createDeep(Node node, SelectionOptions selectionOptions) {
+			create(node, selectionOptions);
 		}
 
 		protected abstract void destroy();
 
 		public void profileRemove(Node node) {
-			if( node instanceof SortedNode ) {
+			if (node instanceof SortedNode) {
 				SortedNode target = (SortedNode) node;
 				target.destroy();
 				InfGraph ig = (InfGraph) getSubject().getOntModel().getGraph();
@@ -187,35 +195,36 @@ public class ProfileModel extends JenaTreeModelBase {
 				structureChanged();
 			}
 		}
-		
 
-		public void profileAddAll(Collection args, boolean isConcrete, boolean arePropertiesRequired) {
+		public void profileAddAll(Collection args, SelectionOptions selectionOptions) {
 			for (Iterator it = args.iterator(); it.hasNext();)
-				create((Node) it.next(), isConcrete, arePropertiesRequired);
+				create((Node) it.next(), selectionOptions);
 			structureChanged();
 		}
 
-		public void profileAddAllDeep(Collection args, boolean isConcrete, boolean arePropertiesRequired) {
+		public void profileAddAllDeep(Collection args, SelectionOptions selectionOptions) {
 			for (Iterator it = args.iterator(); it.hasNext();)
-				createDeep((Node) it.next(), isConcrete, arePropertiesRequired);
+				createDeep((Node) it.next(), selectionOptions);
 			getRoot().structureChanged();
 		}
-		
-		public void profileAddAnon(Node node, boolean isConcrete, boolean isRequired) {
-			createAnon(node, false, isRequired);
+
+		public void profileAddAnon(Node node, SelectionOptions selectionOptions) {
+			// Anon classes are never concrete...
+			SelectionOptions anonSelectionOptions = selectionOptions.cloneAndRemove(SelectionOption.Concrete);
+			createAnon(node, anonSelectionOptions);
 			structureChanged();
 		}
 
 		public Collection profileExpandArgs(Node node) {
 			Collection args = new ArrayList();
-		    ProfileModel.buildArguments(args, node);
+			ProfileModel.buildArguments(args, node);
 			return args;
 		}
 	}
-	
+
 	public class CatalogNode extends SortedNode {
 		private OntResource subject;
-		
+
 		public CatalogNode(OntResource message) {
 			this.subject = message;
 		}
@@ -223,47 +232,47 @@ public class ProfileModel extends JenaTreeModelBase {
 		@Override
 		protected void populate() {
 			Iterator it = ProfileClass.getProfileClasses(profileModel, getOntModel());
-			while( it.hasNext()) {
+			while (it.hasNext()) {
 				ProfileClass profile = (ProfileClass) it.next();
-				if( profile.getBaseClass() != null) {
-					if( profile.getBaseClass().equals(MESSAGE.Message) )
-						add( new EnvelopeNode(profile));
-					else 
-						add( new TypeNode(profile));
+				if (profile.getBaseClass() != null) {
+					if (profile.getBaseClass().equals(MESSAGE.Message))
+						add(new EnvelopeNode(profile));
+					else
+						add(new TypeNode(profile));
 				}
 			}
 		}
 
 		/**
-		 * Create a new envelope class with the given URI. 
+		 * Create a new envelope class with the given URI.
 		 */
 		public OntResource profileAddEnvelope(String uri) {
 			OntResource child = getOntModel().createClass(uri);
 			child.addSuperClass(MESSAGE.Message);
 			return child;
 		}
-		
+
 		@Override
 		protected void destroy() {
 			// can't destroy this node
-			
+
 		}
 
 		/**
 		 * Create a new named class derived from the given class.
 		 */
 		@Override
-		protected void create(Node node, boolean isConcrete, boolean isRequired) {
+		protected void create(Node node, SelectionOptions selectionOptions) {
 			OntResource base = node.getSubject();
-			if( base.isClass())
-				getRefactory().createProfileClass(base, isConcrete);
+			if (base.isClass())
+				getRefactory().createProfileClass(base, selectionOptions.isConcrete());
 		}
-		
+
 		@Override
-		protected void createDeep(Node node, boolean isConcrete, boolean isRequired) {
+		protected void createDeep(Node node, SelectionOptions selectionOptions) {
 			OntResource base = node.getSubject();
-			if( base.isClass()) {
-				getRefactory().createCompleteProfile(base, isConcrete, isRequired);
+			if (base.isClass()) {
+				getRefactory().createCompleteProfile(base, selectionOptions);
 			}
 		}
 
@@ -276,22 +285,21 @@ public class ProfileModel extends JenaTreeModelBase {
 		public OntResource getSubject() {
 			return subject;
 		}
-		
+
 		public String abbrevNamespace() {
 			try {
 				String path = new URI(namespace).getPath();
-				while( path.endsWith("/"))
-					path = path.substring(0, path.length()-1);
+				while (path.endsWith("/"))
+					path = path.substring(0, path.length() - 1);
 				return path.substring(path.lastIndexOf('/') + 1);
 			} catch (URISyntaxException e) {
 				return namespace;
 			}
 		}
 	}
-	
+
 	/**
-	 * Base for all nodes.  Handles the creation
-	 * of child nodes.
+	 * Base for all nodes. Handles the creation of child nodes.
 	 * 
 	 *
 	 */
@@ -301,24 +309,24 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 
 		protected ProfileClass profile;
-		
+
 		/**
 		 * Remove all definitions associated with a profile.
 		 *
 		 */
 		@Override
 		protected void destroy() {
-			
+
 			// destroy dependent nodes
 			Iterator it = iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				SortedNode node = (SortedNode) it.next();
 				node.destroy();
 			}
-			
+
 			profile.getSubject().remove();
 		}
-		
+
 		/**
 		 * The (usually anonymous) message element class.
 		 */
@@ -331,26 +339,26 @@ public class ProfileModel extends JenaTreeModelBase {
 		public boolean getErrorIndicator() {
 			return profile.getSubject().hasProperty(LOG.hasProblems);
 		}
-		
+
 		public boolean setStereotype(Resource stereo, boolean state) {
-			if( hasStereotype(stereo) == state)
+			if (hasStereotype(stereo) == state)
 				return false;
 			profile.setStereotype(stereo, state);
 			changed();
 			return true;
 		}
-		
+
 		public boolean hasStereotype(Resource stereo) {
 			return profile.hasStereotype(stereo);
 		}
-		
+
 		/**
 		 * The CIM class on which this message element is based.
 		 */
 		public OntResource getBaseClass() {
 			return profile.getBaseClass();
 		}
-		
+
 		/**
 		 * The CIM property or class of which this element is profile.
 		 */
@@ -364,11 +372,11 @@ public class ProfileModel extends JenaTreeModelBase {
 			profile.analyse();
 			super.structureChanged();
 		}
-		
+
 		public boolean isEnumerated() {
 			return profile.isEnumerated();
 		}
-		
+
 		public boolean isCompound() {
 			return profile.isCompound();
 		}
@@ -377,7 +385,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			return profile;
 		}
 	}
-	
+
 	public abstract class NaturalNode extends ProfileNode {
 
 		/**
@@ -388,81 +396,81 @@ public class ProfileModel extends JenaTreeModelBase {
 			 * A union member
 			 */
 			public class SubTypeNode extends GeneralTypeNode {
-			
+
 				public SubTypeNode(ProfileClass profile) {
 					super(profile);
 				}
-				
+
 				@Override
 				public boolean isPruned() {
 					return true;
 				}
-			
+
 				@Override
 				protected void destroy() {
 					ElementNode.this.getProfile().removeUnionMember(getSubject());
-					if( profile.getSubject().isAnon())
+					if (profile.getSubject().isAnon())
 						super.destroy();
 				}
 			}
 
 			private OntResource prop;
 			private PropertyInfo info;
-		
+
 			/**
-			 * The element is defined by a property and the 
-			 * collection of restrictions applied to that property.
+			 * The element is defined by a property and the collection of restrictions
+			 * applied to that property.
 			 */
 			public ElementNode(PropertyInfo info) {
-				super( info.createProfileClass());
+				super(info.createProfileClass());
 				this.info = info;
 				prop = info.getProperty();
 			}
-			
+
 			/**
 			 * Override in concrete nodes to control sort order.
+			 * 
 			 * @return a String that will serve as the sort key.
 			 */
 			@Override
 			protected String collation() {
 				String base = toString();
 				String key = base.toLowerCase() + base;
-				if(isDatatype() || isEnumerated()) {
-					if( getName().equals("mRID"))
+				if (isDatatype() || isEnumerated()) {
+					if (getName().equals("mRID"))
 						return "1" + key;
 					else
 						return "2" + key;
-				}
-				else
+				} else
 					return "3" + key;
-				
+
 			}
-			
+
 			@Override
 			public Class getIconClass() {
-				if(prop.isDatatypeProperty())
+				if (prop.isDatatypeProperty())
 					return AttributeNode.class;
-				else if(profile.isReference())
+				else if (profile.isReference())
 					return ReferenceNode.class;
 				else
 					return ElementNode.class;
 			}
-			
+
 			@Override
 			public String toString() {
 				return getName() + " " + getCardString();
 			}
-		
+
 			public String getCardString() {
 				int max = getMaxCardinality();
 				int min = getMinCardinality();
 				return cardString(min) + ".." + cardString(max);
 			}
-		
+
 			public OntResource getBaseProperty() {
 				return prop;
 			}
-			
+
 			/**
 			 * The CIM property or class of which this element is profile.
 			 */
@@ -470,96 +478,97 @@ public class ProfileModel extends JenaTreeModelBase {
 			public OntResource getBase() {
 				return prop;
 			}
-			
+
 			public boolean isReference() {
 				return profile.isReference();
 			}
-			
+
 			public boolean isDatatype() {
 				return prop.isDatatypeProperty();
 			}
-			
+
 			public boolean isMaxVariable() {
-				return ! info.isAlwaysFunctional();
+				return !info.isAlwaysFunctional();
 			}
-			
+
 			public boolean isMinVariable() {
 				return info.canBeRequired();
 			}
-			
+
 			public int getMaxCardinality() {
 				return info.getMaxCardinality();
 			}
-			
+
 			public int getMinCardinality() {
 				return info.getMinCardinality();
 			}
-			
+
 			@Override
 			public boolean getAllowsChildren() {
-				return 	! prop.isDatatypeProperty();
-		
+				return !prop.isDatatypeProperty();
+
 			}
-		
+
 			@Override
 			public boolean getErrorIndicator() {
 				return prop.hasProperty(LOG.hasProblems) || super.getErrorIndicator();
 			}
-			
+
 			public void setReference(boolean state) {
 				profile.setReference(state);
 				changed();
 			}
-			
+
 			public boolean setMaxCardinality(int card) {
-				if(getMaxCardinality() == card || card < getMinCardinality() || ! isMaxVariable())
+				if (getMaxCardinality() == card || card < getMinCardinality() || !isMaxVariable())
 					return false;
-				
+
 				info.setMaxCardinality(card);
 				changed();
 				return true;
 			}
-			
+
 			public boolean setMinCardinality(int card) {
-				if(getMinCardinality() == card || card > getMaxCardinality() || ! isMinVariable())
+				if (getMinCardinality() == card || card > getMaxCardinality() || !isMinVariable())
 					return false;
-				
+
 				info.setMinCardinality(card);
 				changed();
 				return true;
 			}
-			
+
 			@Override
 			protected void populate() {
 				populateUnion();
 			}
-			
+
 			private void populateUnion() {
 				for (Iterator jt = profile.getUnionMembers().iterator(); jt.hasNext();) {
-					add( new SubTypeNode((ProfileClass) jt.next()));
+					add(new SubTypeNode((ProfileClass) jt.next()));
 				}
 			}
+
 			public Collection profileExpandArgs(Node node) {
 				return Collections.singletonList(node);
 			}
-			
+
 			@Override
-			protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+			protected void create(Node node, SelectionOptions selectionOptions) {
 				OntResource base = node.getSubject();
-				if( base.isClass() && ! isDatatype()) {
+				if (base.isClass() && !isDatatype()) {
 					OntResource member = getRefactory().findOrCreateNamedProfile(base);
 					profile.addUnionMember(member);
 				}
 			}
-			
+
 			@Override
-			protected void createAnon(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+			protected void createAnon(Node node, SelectionOptions selectionOptions) {
 				OntResource base = node.getSubject();
-				if( base.isClass() && ! isDatatype()) {
+				if (base.isClass() && !isDatatype()) {
 					profile.createUnionMember(base);
 				}
 			}
-			
+
 			@Override
 			protected void destroy() {
 				super.destroy();
@@ -571,21 +580,21 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * A supertype of a root element or other supertype in a message
 		 */
 		public class SuperTypeNode extends GeneralTypeNode {
-		
+
 			public SuperTypeNode(ProfileClass profile) {
 				super(profile);
 			}
-			
+
 			@Override
 			public Class getIconClass() {
 				return SuperTypeNode.class;
 			}
-			
+
 			@Override
 			public boolean isPruned() {
 				return true;
 			}
-		
+
 			@Override
 			protected void destroy() {
 				NaturalNode.this.getProfile().removeSuperClass(getSubject());
@@ -594,48 +603,48 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		public class EnumValueNode extends SortedNode {
 			private OntResource subject;
-			
+
 			public EnumValueNode(OntResource subject) {
 				this.subject = subject;
 			}
-		
+
 			@Override
 			public boolean getErrorIndicator() {
 				return subject.hasProperty(LOG.hasProblems);
 			}
-		
+
 			@Override
 			public OntResource getSubject() {
 				return subject;
 			}
-		
+
 			@Override
 			protected void populate() {
 				// there are no children
 			}
-		
+
 			@Override
 			public boolean getAllowsChildren() {
 				return false;
 			}
-		
+
 			@Override
 			protected void destroy() {
 				NaturalNode.this.getProfile().removeIndividual(getSubject());
 			}
-			
+
 			@Override
 			public void setName(String name) {
 				// can't change the name
 			}
-			
+
 			@Override
 			public void setComment(String name) {
 				// can't comment
 			}
-			
+
 			@Override
-			protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+			protected void create(Node node, SelectionOptions selectionOptions) {
 				// can't add children
 			}
 		}
@@ -648,21 +657,20 @@ public class ProfileModel extends JenaTreeModelBase {
 		 * Create a child element in the underlying ontology.
 		 */
 		@Override
-		protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+		protected void create(Node node, SelectionOptions selectionOptions) {
 			OntResource base = node.getSubject();
-			if( base.isProperty()) {
-				profile.createAllValuesFrom(base, arePropertiesRequired);
-			}
-			else if( base.hasRDFType(profile.getBaseClass())) {
+			if (base.isProperty()) {
+				profile.createAllValuesFrom(base, selectionOptions);
+			} else if (base.hasRDFType(profile.getBaseClass())) {
 				profile.addIndividual(base);
 			}
 		}
-		
+
 		@Override
-		protected void createDeep(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+		protected void createDeep(Node node, SelectionOptions selectionOptions) {
 			OntResource prop = node.getSubject();
-			if( prop.isProperty()) {
-				profile.createAllValuesFrom(prop, arePropertiesRequired);
+			if (prop.isProperty()) {
+				profile.createAllValuesFrom(prop, selectionOptions);
 				getRefactory().createDefaultRange(profile, prop);
 			}
 		}
@@ -676,8 +684,8 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		private void populateIndividuals() {
 			Iterator it = profile.getIndividuals();
-			while(it.hasNext()) {
-				add( new EnumValueNode((OntResource)it.next()));
+			while (it.hasNext()) {
+				add(new EnumValueNode((OntResource) it.next()));
 			}
 		}
 
@@ -686,27 +694,27 @@ public class ProfileModel extends JenaTreeModelBase {
 		 */
 		private void populateProps() {
 			Iterator it = profile.getProperties();
-			
-			while( it.hasNext()) {
-				PropertyInfo info = profile.getPropertyInfo((OntResource)it.next());
-				
+
+			while (it.hasNext()) {
+				PropertyInfo info = profile.getPropertyInfo((OntResource) it.next());
+
 				// only add the child if a restriction identified its range class.
-				if(info.getRange() != null)
+				if (info.getRange() != null)
 					add(new ElementNode(info));
 			}
 		}
-		
+
 		private void populateClasses() {
 			Iterator it = profile.getSuperClasses();
-			
-			while( it.hasNext()) {
+
+			while (it.hasNext()) {
 				OntResource clss = (OntResource) it.next();
 				SuperTypeNode node = new SuperTypeNode(new ProfileClass(clss, namespace));
 				add(node);
 			}
 		}
 	}
-	
+
 	public abstract class GeneralTypeNode extends NaturalNode implements Cardinality {
 		public GeneralTypeNode(ProfileClass profile) {
 			super(profile);
@@ -714,15 +722,15 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		@Override
 		public Class getIconClass() {
-			if(hasStereotype(UML.compound))
+			if (hasStereotype(UML.compound))
 				return CompoundElementNode.class;
-			else if(hasStereotype(UML.enumeration))
+			else if (hasStereotype(UML.enumeration))
 				return EnumElementNode.class;
-			else if(hasStereotype(UML.concrete) && hasStereotype(UML.description))
+			else if (hasStereotype(UML.concrete) && hasStereotype(UML.description))
 				return DescriptorRootElementNode.class;
-			else if(hasStereotype(UML.concrete))
+			else if (hasStereotype(UML.concrete))
 				return RootElementNode.class;
-			else if( profile.getSubject().isAnon())
+			else if (profile.getSubject().isAnon())
 				return AnonTypeNode.class;
 			else
 				return TypeNode.class;
@@ -745,24 +753,24 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 
 		public boolean setMaxCardinality(int card) {
-			if(getMaxCardinality() == card || card < getMinCardinality() || ! isMaxVariable())
+			if (getMaxCardinality() == card || card < getMinCardinality() || !isMaxVariable())
 				return false;
-			
+
 			profile.setMaxCardinality(card);
 			changed();
 			return true;
 		}
 
 		public boolean setMinCardinality(int card) {
-			if(getMinCardinality() == card || card > getMaxCardinality() || ! isMinVariable())
+			if (getMinCardinality() == card || card > getMaxCardinality() || !isMinVariable())
 				return false;
-			
+
 			profile.setMinCardinality(card);
 			changed();
 			return true;
 		}
 	}
-	
+
 	/**
 	 * A root element in a message
 	 */
@@ -770,19 +778,19 @@ public class ProfileModel extends JenaTreeModelBase {
 		public TypeNode(ProfileClass profile) {
 			super(profile);
 		}
-		
+
 		@Override
 		protected void destroy() {
 			getRefactory().remove(getSubject());
 			super.destroy();
 		}
 	}
-	
+
 	/**
 	 * The root node of a message.
 	 */
 	public class EnvelopeNode extends ProfileNode {
-		
+
 		/**
 		 * A root element in an envelope
 		 */
@@ -790,7 +798,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			public MessageNode(ProfileClass profile) {
 				super(profile);
 			}
-			
+
 			@Override
 			public Class getIconClass() {
 				return RootElementNode.class;
@@ -802,121 +810,125 @@ public class ProfileModel extends JenaTreeModelBase {
 				EnvelopeNode.this.getProfile().remove(MESSAGE.about, this.getProfile().getSubject());
 			}
 		}
-		
+
 		public EnvelopeNode(ProfileClass profile) {
 			super(profile);
 		}
 
-
 		@Override
 		protected void populate() {
 			Iterator it = profile.getRestrictions(MESSAGE.about);
-			
-			while(it.hasNext()) {
-			    OntResource res = (OntResource) it.next();
-			    if( res.isSomeValuesFromRestriction()) {
-			    	OntResource type =  res.getSomeValuesFrom();
-			    	if(type != null && type.isClass()) {
-			    		Node node = new MessageNode(new ProfileClass(type, namespace));
-			    		add(node);
-			    	}
-			    }
+
+			while (it.hasNext()) {
+				OntResource res = (OntResource) it.next();
+				if (res.isSomeValuesFromRestriction()) {
+					OntResource type = res.getSomeValuesFrom();
+					if (type != null && type.isClass()) {
+						Node node = new MessageNode(new ProfileClass(type, namespace));
+						add(node);
+					}
+				}
 			}
 		}
-		
+
 		@Override
-		protected void create(Node node, boolean isConcrete, boolean arePropertiesRequired) {
+		protected void create(Node node, SelectionOptions selectionOptions) {
 			OntResource type = node.getSubject();
-			if( ! type.isClass())
+			if (!type.isClass())
 				return;
 			OntResource prop = profileModel.createOntProperty(MESSAGE.about.getURI());
 			profile.createSomeValuesFrom(prop, type);
 		}
 	}
-	
-	/**
-	 * A marker class returned by getIconClass() is the node is attribute-like; 
-	 *
-	 */
-	public interface AttributeNode {}
-	
-	/**
-	 * A marker class returned by getIconClass() is the node is reference-like; 
-	 *
-	 */
-	public interface ReferenceNode {}
 
 	/**
-	 * A marker class returned for concrete type nodes that also are marked as 'descriptors'; 
+	 * A marker class returned by getIconClass() is the node is attribute-like;
 	 *
 	 */
-	public interface DescriptorRootElementNode {}
-	
+	public interface AttributeNode {
+	}
+
 	/**
-	 * A marker class returned for concrete type nodes; 
+	 * A marker class returned by getIconClass() is the node is reference-like;
 	 *
 	 */
-	public interface RootElementNode {}
-	
+	public interface ReferenceNode {
+	}
+
 	/**
-	 * A marker class returned for compound type nodes; 
+	 * A marker class returned for concrete type nodes that also are marked as
+	 * 'descriptors';
 	 *
 	 */
-	public interface CompoundElementNode {}
-	
+	public interface DescriptorRootElementNode {
+	}
+
 	/**
-	 * A marker class returned for enumerated property nodes; 
+	 * A marker class returned for concrete type nodes;
 	 *
 	 */
-	public interface EnumElementNode {}
-	
+	public interface RootElementNode {
+	}
+
+	/**
+	 * A marker class returned for compound type nodes;
+	 *
+	 */
+	public interface CompoundElementNode {
+	}
+
+	/**
+	 * A marker class returned for enumerated property nodes;
+	 *
+	 */
+	public interface EnumElementNode {
+	}
+
 	/**
 	 * A marker class returned for anonymous types.
 	 */
-	public interface AnonTypeNode {}
-	
+	public interface AnonTypeNode {
+	}
+
 	/**
 	 * The root should be a subclass of the generic Message class.
 	 */
 	@Override
 	protected Node classify(OntResource root) {
-		if( root.hasRDFType(OWL.Ontology)) 
+		if (root.hasRDFType(OWL.Ontology))
 			return new CatalogNode(root);
-		
-		if( root.hasSuperClass(MESSAGE.Message))
+
+		if (root.hasSuperClass(MESSAGE.Message))
 			return new EnvelopeNode(new ProfileClass(root, namespace));
-		
+
 		return new TypeNode(new ProfileClass(root, namespace));
 	}
-	
+
 	private static void buildArguments(Collection args, Node node) {
-	
-		if((node instanceof SubClassNode) 
-				|| (node instanceof SuperClassNode)
-				|| (node instanceof PackageNode)) {
-	
+
+		if ((node instanceof SubClassNode) || (node instanceof SuperClassNode) || (node instanceof PackageNode)) {
+
 			Iterator it = node.iterator();
-			while (it.hasNext()) 
+			while (it.hasNext())
 				buildArguments(args, (Node) it.next());
-	
-		}
-		else
+
+		} else
 			args.add(node);
 	}
 
 	public static String cardString(int card) {
 		return cardString(card, "n");
 	}
-	
+
 	public static String cardString(int card, String unbounded) {
-		return card == Integer.MAX_VALUE? unbounded: Integer.toString(card);
+		return card == Integer.MAX_VALUE ? unbounded : Integer.toString(card);
 	}
-	
+
 	public static int cardInt(String symbol) {
-		if(symbol.equals("n")) 
+		if (symbol.equals("n"))
 			return Integer.MAX_VALUE;
 		int card = Integer.parseInt(symbol);
-		if( card < 0)
+		if (card < 0)
 			throw new NumberFormatException();
 		return card;
 	}

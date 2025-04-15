@@ -237,7 +237,7 @@ public class SpreadsheetParser {
 			throw new ParseProblem("undefined "+ type.asNode().getLocalName() + " : " + qualified);
 
 		OntResource prop = model.createResource(base.getURI());
-		profile.createAllValuesFrom(prop, false);
+		profile.createAllValuesFrom(prop, new SelectionOptions());
 		return prop;
 	}
 

@@ -635,6 +635,7 @@ public class XMIParser extends XMIModel {
 				Role role = new Role();
 
 				AssociationEndMode(XMLElement element, boolean sideA) {
+					role.sideA = sideA;
 					role.property = createObjectProperty(element);
 					if (role.property == null)
 						role.property = createObjectProperty(element, associd, sideA);
@@ -674,26 +675,40 @@ public class XMIParser extends XMIModel {
 					public XMLMode visit(XMLElement element) {
 						if (element.matches("MultiplicityRange")) {
 							Attributes attrs = element.getAttributes();
-							role.lower = number(attrs, "lower");
-							role.upper = number(attrs, "upper");
+							role.lower = numberLowerBound(attrs, "lower");
+							role.upper = numberUpperBound(attrs, "upper");
 							return null;
 						}
 						return this;
 					}
 
 					/**
-					 * Interpret a multiplicity attribute as a decimal.
+					 * Interpret lower bound multiplicity attribute as an integer.
 					 */
-					int number(Attributes atts, String name) {
+					int numberLowerBound(Attributes atts, String name) {
 						String value = atts.getValue(name);
 						if (value != null) {
 							try {
 								return Integer.parseInt(value);
 							} catch (NumberFormatException e) {
-								return -1;
+								return 0;
 							}
 						} else
-							return -1;
+							return 0;
+					}
+					/**
+					 * Interpret upper bound multiplicity attribute as a decimal.
+					 */
+					int numberUpperBound(Attributes atts, String name) {
+						String value = atts.getValue(name);
+						if (value != null) {
+							try {
+								return Integer.parseInt(value);
+							} catch (NumberFormatException e) {
+								return 1;
+							}
+						} else
+							return 1;
 					}
 				}
 			}

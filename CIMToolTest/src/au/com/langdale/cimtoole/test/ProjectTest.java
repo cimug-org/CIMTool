@@ -28,6 +28,8 @@ public class ProjectTest extends WorkspaceTest {
 	public static final String SAMPLE_COPYRIGHT = "profile.txt";
 	public static final String ALT_XSD_RULES = "alternative.xsd-xslt";
 	public static final String SCHEMA_NS = "http://iec.ch/TC57/2007/CIM-schema-cim12#";
+	public static final Boolean MERGE_SHADOW_EXTENSIONS = Boolean.TRUE;
+	public static final Boolean SELF_HEAL_ON_IMPORT = Boolean.TRUE;
 	public static final String PROFILE_NS = "http://example.com/profile#";
 	public static final String MODEL_NS = "http://example.com/network#";
 	public static final String PROFILE_ENVELOPE = "Envelope";
@@ -87,7 +89,7 @@ public class ProjectTest extends WorkspaceTest {
 	}
 
 	protected void setupSchema() throws CoreException {
-		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + SAMPLE_SCHEMA, SCHEMA_NS);
+		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + SAMPLE_SCHEMA, SCHEMA_NS, MERGE_SHADOW_EXTENSIONS, SELF_HEAL_ON_IMPORT);
 		task.run(monitor);
 	}
 

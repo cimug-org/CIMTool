@@ -99,7 +99,7 @@
 			<xsl:apply-templates/>
 		</xs:choice>
 	</xsl:template>
-	<xsl:template match="a:Instance|a:Domain|a:Enumerated">
+	<xsl:template match="a:Instance|a:Domain|a:Enumerated|a:Compound">
 		<!-- generates a nested instance of a type declared elsewhere -->
 		<xs:element name="{@name}" minOccurs="{@minOccurs}" maxOccurs="{@maxOccurs}" type="m:{@type}" sawsdl:modelReference="{@baseProperty}">
 			<xsl:call-template name="annotate"/>

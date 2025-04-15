@@ -411,7 +411,7 @@ public class EcoreGenerator extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitDatatypeProperty(String uri, String base, String domain,
+	protected void emitDatatypeProperty(String uri, String base, String domain, 
 			String type, String xsdtype, boolean required) {
 		EAttribute attr = coreFactory.createEAttribute();
 		if (index.eDataTypes.containsKey(type)) {
@@ -531,8 +531,10 @@ public class EcoreGenerator extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitObjectProperty(String uri, String base, String domain,
-			String range, boolean required, boolean functional) {
+	protected void emitObjectProperty(String uri, OntResource prop, String domain,
+			String range, PropertySpec info) {
+		boolean required = info.required;
+		boolean functional = info.functional;
 		if (index.eClasses.containsKey(domain) && index.eClasses.containsKey(range)) {
 			EReference ref = coreFactory.createEReference();
 			EClass klass = index.eClasses.get(domain);
@@ -591,7 +593,7 @@ public class EcoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,
-			boolean functional) {
+			boolean functional, int minCard, int maxCard) {
 		//Do nothing
 	}
 

@@ -11,6 +11,6 @@ package au.com.langdale.cim;
 
 public class CIM {
 
-	public final static String NS = "http://iec.ch/TC57/CIM-generic#";
+	public final static String NS = "http://www.ucaiug.org/CIM-generic#";
 
 }

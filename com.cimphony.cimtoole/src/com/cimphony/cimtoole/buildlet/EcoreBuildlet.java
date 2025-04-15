@@ -36,7 +36,7 @@ public class EcoreBuildlet extends ProfileBuildlet {
     protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
         IFile file = Task.getRelated(result, "owl");
         boolean preserveNS = Task.getPreferenceOption(Task.PRESERVE_NAMESPACES);
-        String namespace = preserveNS? Task.getSchemaNamespace(file): Task.getProperty(file, Task.PROFILE_NAMESPACE);
+        String namespace = preserveNS ? Task.getSchemaNamespace(file) : Task.getProperty(file, Task.PROFILE_NAMESPACE);
         EcoreGenerator generator = getGenerator(Task.getProfileModel(file), Task.getBackgroundModel(file), namespace, Task.getProperty(file, Task.PROFILE_NAMESPACE), preserveNS, result.getProject());
         generator.run();
         // Use file name for top level package name.

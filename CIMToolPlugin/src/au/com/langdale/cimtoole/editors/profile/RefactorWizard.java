@@ -16,9 +16,11 @@ import org.eclipse.swt.widgets.Shell;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.profiles.ProfileReorganizer;
 import au.com.langdale.profiles.Refactory;
 import au.com.langdale.profiles.Remapper;
 import au.com.langdale.profiles.Reorganizer;
+import au.com.langdale.profiles.SchemaReorganizer;
 import au.com.langdale.ui.binding.BooleanBinding;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.ui.binding.BooleanModel.BooleanValue;
@@ -45,16 +47,18 @@ public class RefactorWizard extends Wizard  {
 	BooleanValue concrete = new BooleanValue("Stereotype leaf classes as Concrete");
 	BooleanValue remap = new BooleanValue("Repair and remap profile to schema");
 	BooleanValue reorg = new BooleanValue("Reorganise profile per RDFS rules");
-	
+	BooleanValue useProfileCardinality = new BooleanValue("Reorganise profile per RDFS rules but keep profile cardinalities as currently defined in the profile");
+	BooleanValue useSchemaCardinality = new BooleanValue("Reorganise profile per RDFS rules but override profile cardinalities with those defined in the base schema");
+
 	BooleanBinding options = new BooleanBinding() {
 		@Override
 		protected BooleanModel[] getFlags() {
-			return new BooleanModel[] {refs, concrete, remap, reorg};
+			return new BooleanModel[] {refs, concrete, remap, reorg, useProfileCardinality, useSchemaCardinality};
 		}
 		
 		@Override
 		public String validate() {
-			if( refs.isTrue() || concrete.isTrue() || remap.isTrue() || reorg.isTrue())
+			if( refs.isTrue() || concrete.isTrue() || remap.isTrue() || reorg.isTrue() || useProfileCardinality.isTrue() || useSchemaCardinality.isTrue())
 				return null;
 			else
 				return "At least one option must be selected";
@@ -80,11 +84,26 @@ public class RefactorWizard extends Wizard  {
 				utility.run();
 				monitor.worked(1);
 			}
-			if( reorg.isTrue()) {
-				Reorganizer utility = new Reorganizer(profileModel, projectModel, refs.isTrue());
-				utility.run();
-				profileModel = utility.getResult();
-				monitor.worked(1);
+			if( reorg.isTrue() || useProfileCardinality.isTrue() || useSchemaCardinality.isTrue()) {
+				Reorganizer utility;
+				if (reorg.isTrue()) {
+					utility = new Reorganizer(profileModel, projectModel, refs.isTrue());
+					utility.run();
+					profileModel = utility.getResult();
+					monitor.worked(1);
+				}
+				if (useSchemaCardinality.isTrue()) {
+					utility = new SchemaReorganizer(profileModel, projectModel, refs.isTrue());
+					utility.run();
+					profileModel = utility.getResult();
+					monitor.worked(1);
+				}
+				if (useProfileCardinality.isTrue()) {
+					utility = new ProfileReorganizer(profileModel, projectModel, refs.isTrue());
+					utility.run();
+					profileModel = utility.getResult();
+					monitor.worked(1);
+				}
 			}
 			else if( refs.isTrue()) {
 				createRefactory().setByReference();

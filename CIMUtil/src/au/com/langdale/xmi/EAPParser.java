@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,16 +24,16 @@ import au.com.langdale.kena.OntResource;
 public class EAPParser extends AbstractEAProjectParser {
 
 	private Database db;
-
-	public EAPParser(File file) {
-		super(file);
+	
+	public EAPParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
+		super(file, selfHealOnImport, logger);
 	}
 
 	protected void dbInit() throws EAProjectParserException {
 		try {
 			db = DatabaseBuilder.open(file);
 		} catch (IOException ioException) {
-			ioException.printStackTrace(System.err);
+			importLogger.logException(ioException);
 			throw new EAProjectParserException("Unable to import the EA project file:  " + file.getAbsolutePath(),
 					ioException);
 		}
@@ -75,10 +76,11 @@ public class EAPParser extends AbstractEAProjectParser {
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
 			switch (row.getObjectType()) {
-			case "Class":
+			case OBJ_TYPE_ENUMERATION:
+			case OBJ_TYPE_CLASS:
 				classIds.add(row.getObjectID());
 				break;
-			case "Package":
+			case OBJ_TYPE_PACKAGE:
 				objectIdToPackageMap.put(row.getObjectID(), Integer.parseInt(row.getPDATA1()));
 				break;
 			}
@@ -153,7 +155,7 @@ public class EAPParser extends AbstractEAProjectParser {
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
 			OntResource subject;
-			if (row.getName().equals("Model"))
+			if (row.getName().equals(PKG_MODEL))
 				subject = top;
 			else
 				subject = createIndividual(row.getXUID(), row.getName(), UML.Package);
@@ -162,6 +164,7 @@ public class EAPParser extends AbstractEAProjectParser {
 	}
 
 	protected void parsePackages() throws EAProjectParserException {
+		System.out.println("Processing all packages in the model:");
 		Iterator it = getPackageTable().iterator();
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
@@ -170,8 +173,12 @@ public class EAPParser extends AbstractEAProjectParser {
 			if (!subject.equals(UML.global_package)) {	
 				int parentPackageId = row.getParentID();
 				OntResource parent = packageIDs.getID(parentPackageId);
-				if (!parent.equals(UML.global_package))
-					subject.addIsDefinedBy(parent);
+				if (parent != null) {
+					if (!parent.equals(UML.global_package))
+						subject.addIsDefinedBy(parent);
+				} else {
+					importLogger.logInvalidParentPackage(subject, parentPackageId);
+				}
 				annotate(subject, row.getNotes());
 				/**
 				 * Should we ever need to add support for Stereotypes on Packages simply uncomment the line 
@@ -186,72 +193,178 @@ public class EAPParser extends AbstractEAProjectParser {
 	}
 
 	protected void parseClasses() throws EAProjectParserException {
+		importLogger.log("Processing all classes:");
+		/**
+		 * The following Set(s) are used to simulate a WHERE clause and 
+		 * to flag any classes not actually used in the model.
+		 */
+		Set<Integer> enumLiteralsObjectIDs = new HashSet<Integer>();
+		Set<Integer> attributesObjectIDs = new HashSet<Integer>();
+		Set<Integer> connectorsStartObjectIDs = new HashSet<Integer>();
+		Set<Integer> connectorsEndObjectIDs = new HashSet<Integer>();
+		//
+		// Collect IDs for all enumerations used as the declared type of 
+		// an enum literal attribute.
+		Iterator iterator = getAttributeTable().iterator();	
+		iterator.forEachRemaining(r -> {
+			Row row = new Row(r);
+			// the t_attribute.Classifier column contains the t_object.Object_ID 
+			// of the enumeration of the enum literal attribute...
+			if (STEREO_ENUM.equals(row.getStereotype()))
+				enumLiteralsObjectIDs.add(row.getObjectID());
+		});
+		//
+		// Collect IDs for all classes used as the declared type of an attribute.
+		iterator = getAttributeTable().iterator();	
+		iterator.forEachRemaining(r -> {
+			Row row = new Row(r);
+			// the t_attribute.Classifier column contains the t_object.Object_ID 
+			// of the class of the declare type of a standard attribute (i.e. a
+			// non-enum literal...
+			if (!STEREO_ENUM.equals(row.getStereotype()))
+				attributesObjectIDs.add(row.getClassifier());
+		});
+		//
+		// Collect IDs for all classes used as the source side of an association.
+		iterator = getConnectorTable().iterator();
+		iterator.forEachRemaining(r -> {
+			Row row = new Row(r);
+			String type = row.getConnectorType();
+			if (type.equals(CONN_TYPE_GENERALIZATION) || type.equals(CONN_TYPE_ASSOCIATION) || type.equals(CONN_TYPE_AGGREGATION)) 
+				connectorsStartObjectIDs.add(row.getStartObjectID());
+		});
+		//
+		// Collect IDs for all classes used as the destination side of an association.
+		iterator = getConnectorTable().iterator();
+		iterator.forEachRemaining(r -> {
+			Row row = new Row(r);
+			String type = row.getConnectorType();
+			if (type.equals(CONN_TYPE_GENERALIZATION) || type.equals(CONN_TYPE_ASSOCIATION) || type.equals(CONN_TYPE_AGGREGATION)) 
+				connectorsEndObjectIDs.add(row.getEndObjectID());
+		});
+		//
 		Iterator it = getObjectTable().iterator();
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
-			if (row.getObjectType().equals("Class")) {
-				OntResource subject = createClass(row.getXUID(), row.getName());
-				objectIDs.putID(row.getObjectID(), subject);
-				annotate(subject, row.getNote());
-				OntResource parent = packageIDs.getID(row.getPackageID());
-				if (!parent.equals(UML.global_package))
-					subject.addIsDefinedBy(parent);
-				//
-				addStereotypes(subject, row.getEAGUID());
-				addTaggedValuesToClass(subject, row.getObjectID());
+			if (row.getObjectType().equals(OBJ_TYPE_CLASS)) {
+				int objectID = row.getObjectID();
+				if (objectID > -1) {
+					if (!enumLiteralsObjectIDs.contains(objectID) && !attributesObjectIDs.contains(objectID) && !connectorsStartObjectIDs.contains(objectID) && !connectorsEndObjectIDs.contains(objectID)) {
+						OntResource parentPackage = packageIDs.getID(row.getPackageID());
+						String packageHierarchy = getPackageHierarchy(parentPackage);
+						if (parentPackage != null && !parentPackage.equals(UML.global_package)) {
+							if (row.getStereotype() != null && row.getStereotype().equals(STEREO_ENUMERATION)) {
+								importLogger.logClassUnusedInAttribute(packageHierarchy, row.getName());
+							} else {
+								importLogger.logClassUnusedInAttributeOrAssociation(packageHierarchy, row.getName());
+							}
+						} else if (parentPackage == null){
+							importLogger.logOrphanedClass(packageHierarchy, row.getName());
+						}
+					}
+					OntResource subject = createClass(row.getXUID(), row.getName());
+					objectIDs.putID(objectID, subject);
+					annotate(subject, row.getNote());
+					OntResource parent = packageIDs.getID(row.getPackageID());
+					if (parent != null) {
+						if (!parent.equals(UML.global_package))
+							subject.addIsDefinedBy(parent);
+					} else {
+						importLogger.logInvalidPackageForClass(subject, row.getPackageID());
+					}
+					//
+					addStereotypes(subject, row.getEAGUID());
+					addTaggedValuesToClass(subject, row.getObjectID());
+				}
+			} else if (row.getObjectType().equals(OBJ_TYPE_ENUMERATION)) {
+				logger.logInvalidEnumerationDefinition(getPackageHierarchy(row.getPackageID()), row.getName());
 			}
 		}
 	}
 
 	protected void parseAttributes() throws EAProjectParserException {
+		importLogger.log("Processing all attributes:");
 		Iterator it = getAttributeTable().iterator();
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
-			OntResource id = objectIDs.getID(row.getObjectID());
-			if (id != null) {
-				OntResource subject = createAttributeProperty(row.getXUID(), row.getName());
-				subject.addDomain(id);
-				annotate(subject, row.getNotes());
-				subject.addIsDefinedBy(id.getIsDefinedBy());
+			int objectID = row.getObjectID();
+			OntResource domain = objectIDs.getID(objectID);
+			if (domain != null) {
+				OntResource attribute = createAttributeProperty(row.getXUID(), row.getName());
+				attribute.addDomain(domain);
+				annotate(attribute, row.getNotes());
+				attribute.addIsDefinedBy(domain.getIsDefinedBy());
 				if (row.hasClassifier()) {
 					OntResource range = objectIDs.getID(row.getClassifier());
-					if (range != null)
-						subject.addRange(range);
-					else
-						System.out.println("Could not find the range of attribute " + row.getName() + ". Range ID = "
-								+ row.getClassifier());
+					if (range != null) {
+						attribute.addRange(range);
+					} else {
+						String packageHierarchy = getPackageHierarchy(domain.getIsDefinedBy());
+						String className = domain.getLabel();
+						String attributeName = row.getName();
+						importLogger.logAttributeMissingRange(packageHierarchy, className, attributeName, row.getType(), row.getClassifier());
+					}
 				}
 				if (row.hasDefault()) {
-					subject.addProperty(UML.hasInitialValue, row.getDefault());
+					attribute.addProperty(UML.hasInitialValue, row.getDefault());
 				}
+				attribute.addProperty(UML.schemaMin, row.getLowerBound());
+				attribute.addProperty(UML.schemaMax, row.getUpperBound());
 				//
-				addStereotypes(subject, row.getEAGUID());
-				addTaggedValuesToAttribute(subject, row.getID());
-			} else
-				System.out.println("Could not find the domain of attribute " + row.getName() + ". Domain ID = "
-						+ row.getObjectID());
+				addStereotypes(attribute, row.getEAGUID());
+				addTaggedValuesToAttribute(attribute, row.getID());
+			} else {
+				/**
+				 * Handle missing domain (i.e. the class the attribute is defined in)...
+				 */
+				String attributeName = row.getName();
+				int domainObjectId = row.getObjectID();
+				importLogger.logAttributeMissingDomain(attributeName, domainObjectId);
+			}
 		}
 	}
 
 	protected void parseAssociations() throws EAProjectParserException {
+		importLogger.log("Processing all associations:");
 		Iterator it = getConnectorTable().iterator();
 		while (it.hasNext()) {
 			Row row = new Row(it.next());
 			String type = row.getConnectorType();
-			if (type.equals("Generalization") || type.equals("Association") || type.equals("Aggregation")) {
+			if (type.equals(CONN_TYPE_GENERALIZATION) || type.equals(CONN_TYPE_ASSOCIATION) || type.equals(CONN_TYPE_AGGREGATION)) {
 				OntResource source = objectIDs.getID(row.getStartObjectID());
 				OntResource destin = objectIDs.getID(row.getEndObjectID());
 				if (source != null && destin != null) {
-					if (type.equals("Generalization")) {
+					if (type.equals(CONN_TYPE_GENERALIZATION)) {
 						source.addSuperClass(destin);
 					} else {
+						/**
+						 * Both source and destination cardinalities must be specified on an association 
+						 * in the CIM. If not specified we default to "0..1" and log an error message.
+						 */
+						String sourceCard = validatedCardinality(row.getSourceCard());
+						String sourceRole = (row.getSourceRole() == null ? "" : row.getSourceRole());
+						String destCard = validatedCardinality(row.getDestCard());
+						String destRole = (row.getDestRole() == null ? "" : row.getDestRole());
+						/**
+						 *  Confirm both source and destination cardinalities are valid else 
+						 *  log an error and default the invalid cardinality to "0..1" to allow
+						 *  processing to continue...
+						 */
+						if ("".equals(sourceCard)) {
+							importLogger.logAssociationInvalidCardinality(true, type, row.getSourceCard(), source, sourceRole, destin, destRole);
+							sourceCard = "0..1";
+						}
+						if ("".equals(destCard)) {
+							importLogger.logAssociationInvalidCardinality(false, type, row.getDestCard(), source, sourceRole, destin, destRole);
+							destCard = "0..1";
+						}
 						Role roleA = extractProperty( //
 								row.getXUID(), //
 								source, //
 								destin, //
-								row.getDestRole(), //
+								destRole, //
 								row.getDestRoleNote(), //
-								row.getDestCard(), //
+								destCard, //
 								row.getDestIsAggregate(), //
 								true, //
 								row.getConnectorID());
@@ -259,14 +372,17 @@ public class EAPParser extends AbstractEAProjectParser {
 								row.getXUID(), //
 								destin, //
 								source, //
-								row.getSourceRole(), //
+								sourceRole, //
 								row.getSourceRoleNote(), //
-								row.getSourceCard(), //
+								sourceCard, //
 								row.getSourceIsAggregate(), //
 								false, //
 								row.getConnectorID());
 						roleA.mate(roleB);
 						roleB.mate(roleA);
+						//
+						addStereotypes(roleA.property, row.getEAGUID());
+						addStereotypes(roleB.property, row.getEAGUID());
 					}
 				}
 			}
@@ -400,6 +516,32 @@ public class EAPParser extends AbstractEAProjectParser {
 			Object raw = fields.get(COL_Classifier);
 			return raw != null ? Integer.parseInt(raw.toString()) : 0;
 		}
+		
+		String getType() {
+			return getString(COL_Type);
+		}
+		
+		int getLowerBound() {
+			Object raw = fields.get(COL_LowerBound);
+			if (raw != null) {
+				try {
+					return Integer.parseInt(raw.toString());
+				} catch (NumberFormatException nfe) {
+				}
+			} 
+			return 0;
+		}
+		
+		int getUpperBound() {
+			Object raw = fields.get(COL_UpperBound);
+			if (raw != null) {
+				try {
+					return Integer.parseInt(raw.toString());
+				} catch (NumberFormatException nfe) {
+				}
+			} 
+			return 1;
+		}
 
 		boolean hasClassifier() {
 			return getClassifier() != 0;
@@ -504,9 +646,13 @@ public class EAPParser extends AbstractEAProjectParser {
 			return getString(COL_Value);
 		}
 
+		String getStereotype() {
+			return getString(COL_Stereotype);
+		}
+
 		int getInt(String name) {
 			Object raw = fields.get(name);
-			return (raw instanceof Integer) ? ((Integer) raw).intValue() : 0;
+			return (raw != null && raw instanceof Integer) ? ((Integer) raw).intValue() : 0;
 		}
 
 		String getString(String name) {

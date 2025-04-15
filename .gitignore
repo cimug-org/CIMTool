@@ -17,3 +17,4 @@ CIMToolPlugin/console.log
 bin
 .settings
 .directory
+CIMToolPlugin/.asciidoctorconfig.adoc

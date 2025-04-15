@@ -19,6 +19,9 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class UMLInterpreter {
 
+	// Default logger to System.out
+	protected SchemaImportLogger logger = new SchemaImportLoggerImpl();
+	
 	protected OntModel model;
 	/**
 	 * Set the Jena OWL model to be interpreted.
@@ -111,15 +114,30 @@ public class UMLInterpreter {
 				else if( ! type.hasRDFType()) {
 					type.addRDFType(RDFS.Datatype);
 					attrib.addRDFType( OWL.DatatypeProperty);
-					System.out.println("Inferring that " + type + " is a Datatype");
+					System.out.println("[INFO] Inferring that " + type + " is a Datatype");
 				}
 				else
 					attrib.addRDFType( OWL.ObjectProperty);
 				attrib.addRDFType(OWL.FunctionalProperty);
 			} else {
-				System.err.println(attrib.getURI() + ":  has no range. It's domain is: " + attrib.getDomain());
+				OntResource domain = attrib.getDomain();
+				String attrURI = attrib.getURI();
+				String qualifiedAttribute = attrURI.contains("#") ? attrURI.substring(attrURI.indexOf("#") + 1): attrURI;
+				String className = qualifiedAttribute.substring(0, qualifiedAttribute.indexOf("."));
+				String attributeName = qualifiedAttribute.substring(qualifiedAttribute.indexOf(".") + 1);
+				logger.logAttributeMissingRange(getPackageHierarchy(domain.getIsDefinedBy()), className, attributeName);
 			}
 		}
 	}
 
+	protected String getPackageHierarchy(OntResource parent) {
+		String packageHierarchy = null;
+		while (parent != null && !parent.equals(UML.global_package)) {
+			String parentPackageName = parent.getLabel();
+			packageHierarchy = (packageHierarchy != null ? parentPackageName + "::" + packageHierarchy : parentPackageName);
+			parent = parent.getIsDefinedBy();
+		}
+		return (packageHierarchy == null ? "<Unknown Package>::" : packageHierarchy + "::");
+	}
+	
 }

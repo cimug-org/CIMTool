@@ -47,7 +47,8 @@ public class OWLGenerator extends RDFSBasedGenerator {
 	}
 
 	@Override
-	protected void emitObjectProperty(String uri, String base, String domain, String range, boolean required, boolean functional) {
+	protected void emitObjectProperty(String uri, OntResource prop, String domain, String range, PropertySpec propSpec) {
+		boolean functional = propSpec.functional;
 		emit(uri, OWL.ObjectProperty);
 		if( ! useRestrictions ) {
 			emit(uri, RDFS.domain, domain);
@@ -55,7 +56,6 @@ public class OWLGenerator extends RDFSBasedGenerator {
 			if( functional )
 				emit(uri, OWL.FunctionalProperty);
 		}
-		
 	}
 
 	@Override
@@ -111,23 +111,31 @@ public class OWLGenerator extends RDFSBasedGenerator {
 	}
 
 	@Override
-	protected void emitRestriction(String uri, String domain, boolean required,	boolean functional) {
+	protected void emitRestriction(String uri, String domain, boolean required,	boolean functional, int minCard, int maxCard) {
 		if( useRestrictions ) {
 			Resource prop = result.createResource(uri);
-			if( functional && required ) 
-				emitRestriction(prop, domain, OWL.cardinality);
-			else if( functional )
-				emitRestriction(prop, domain, OWL.maxCardinality);
-			else if( required )
-				emitRestriction(prop, domain, OWL.minCardinality);
+			if ( functional && required ) {
+				emitRestriction(prop, domain, OWL.cardinality, 1);
+			} else if ( functional && !required ) {
+				emitRestriction(prop, domain, OWL.maxCardinality, 1);
+			} else {
+				if (minCard == maxCard) {
+					emitRestriction(prop, domain, OWL.cardinality, maxCard);
+				} else {
+					if (minCard > 0)
+						emitRestriction(prop, domain, OWL.minCardinality, minCard);
+					if (maxCard != Integer.MAX_VALUE)
+						emitRestriction(prop, domain, OWL.maxCardinality, maxCard);
+				}
+			}
 		}
-
 	}
 	
-	private void emitRestriction(FrontsNode prop, String domain, FrontsNode kind) {
+	private void emitRestriction(FrontsNode prop, String domain, FrontsNode kind, int card) {
 		OntResource restrict = result.createIndividual(null, OWL.Restriction);
-		restrict.addProperty(kind, 1);
+		restrict.addProperty(kind, card);
 		restrict.addProperty(OWL.onProperty, prop);
 		result.createResource(domain).addSuperClass(restrict);
 	}
+	
 }

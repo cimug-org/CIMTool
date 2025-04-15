@@ -80,7 +80,9 @@ public class NewProject extends Wizard implements INewWizard {
 		if(pathname != null && pathname.length() != 0) {
 			IFile schemaFile = schema.getFile();
 			String namespace = schema.getNamespace();
-			job = Task.chain( job, Task.importSchema(schemaFile, pathname, namespace));
+			Boolean mergeShadowExtensionsEnabled = schema.isMergeShadowExtensionsEnabled();
+			Boolean selfHealingOnImportEnabled = schema.isSelfHealingOnImportEnabled();
+			job = Task.chain( job, Task.importSchema(schemaFile, pathname, namespace, mergeShadowExtensionsEnabled, selfHealingOnImportEnabled));
 		}
 
 		return Jobs.runInteractive(job, ResourcesPlugin.getWorkspace().getRoot(), getContainer(), getShell());

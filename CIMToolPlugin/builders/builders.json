@@ -112,5 +112,54 @@
         "style": "puml-xsd-l2r",
         "datetime": "2024-10-23T00:00:00Z",
         "ext": "xsd-l2r.puml"
+    },
+    "adoc-article-xsd": {
+        "type": "TEXT",
+        "style": "adoc-article-xsd",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "article-xsd.adoc"
+    },
+    "adoc-inline-xsd": {
+        "type": "TEXT",
+        "style": "adoc-inline-xsd",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "inline-xsd.adoc"
+    },
+    "adoc-article-rdfs": {
+        "type": "TEXT",
+        "style": "adoc-article-rdfs",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "article-rdfs.adoc"
+    },
+    "adoc-inline-rdfs": {
+        "type": "TEXT",
+        "style": "adoc-inline-rdfs",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "inline-rdfs.adoc"
+    },
+    "adoc-article-rdfs-mappings": {
+        "type": "TEXT",
+        "style": "adoc-article-rdfs-mappings",
+        "datetime": "2025-04-01T00:00:00Z",
+        "ext": "article-rdfs-mappings.adoc"
+    },
+    "adoc-inline-rdfs-mappings": {
+        "type": "TEXT",
+        "style": "adoc-inline-rdfs-mappings",
+        "datetime": "2025-04-01T00:00:00Z",
+        "ext": "inline-rdfs-mappings.adoc"
+    },
+    "csharp-entity-framework": {
+		"type": "TEXT",
+        "style": "csharp-entity-framework",
+        "datetime": "2025-04-01T00:00:00Z",
+        "ext": "cs"
+    },
+    "rdfs-cimstudio": {
+        "type": "TRANSFORM",
+        "style": "rdfs-cimstudio",
+        "datetime": "2025-02-04T00:00:00Z",
+        "ext": "cimstudio.xml",
+        "importFile": "rdfs-cimstudio-namespaces.xsl"
     }
 }

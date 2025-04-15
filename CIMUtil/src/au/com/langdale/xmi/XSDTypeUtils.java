@@ -11,7 +11,6 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public final class XSDTypeUtils {
 
-	
 	/**
 	 * Select XSD datatypes for UML attributes.
 	 * 
@@ -56,52 +55,32 @@ public final class XSDTypeUtils {
 			return XSD.duration;
 		else if (l.equalsIgnoreCase("monthday"))
 			return XSD.gMonthDay;
-		/**
-		 * Below reflects the introduction of the URI primitive domain type in CIM18.
-		 */
 		else if (l.equalsIgnoreCase("uri"))
 			return XSD.anyURI;
 		/**
-		 * Below reflects the introduction of the UUID primitive domain type in CIM18.
+		 * Below reflects the introduction of the URI primitive domain type in CIM18.
 		 * 
-		 * We are using XSD.xstring and not XSD:ID datatype here. This is due to the
-		 * fact that xsd:ID in XML Schema Definition (XSD) is not suitable for
-		 * representing a UUID. Here's why:
+		 * 1. IRI in XSD 1.0
 		 * 
-		 * Purpose and Constraints:
+		 * XSD 1.0 does not define a separate type for IRIs.
 		 * 
-		 * - xsd:ID is intended to represent a unique identifier within an XML document.
-		 * It must be unique within the document and is generally used for linking with
-		 * xsd:IDREF.
+		 * However, IRIs can be used with anyURI, but they must be converted to a valid
+		 * URI using percent-encoding.
 		 * 
-		 * - xsd:ID must follow the rules for XML names, meaning it must start with a
-		 * letter or underscore and cannot contain certain characters, such as hyphens
-		 * (-) or numbers at the beginning. This makes it incompatible with the typical
-		 * structure of UUIDs, which are typically in the form 8-4-4-4-12 hexadecimal
-		 * digits separated by hyphens.
+		 * This is because anyURI follows RFC 2396 (URIs), which only allows ASCII
+		 * characters.
 		 * 
-		 * UUID Format:
+		 * 2. XSD 1.1 and IRI Support
 		 * 
-		 * - A UUID (Universally Unique Identifier) is typically represented as a
-		 * 36-character string, including 32 hexadecimal digits and 4 hyphens. This
-		 * format does not conform to the XML name rules required by xsd:ID.
+		 * In XSD 1.1, anyURI aligns with IRI (RFC 3987), allowing Unicode characters.
 		 * 
-		 * Alternative:
-		 * 
-		 * - Instead of using xsd:ID, we need to use xsd:string with a pattern (i.e.
-		 * facet) or define a custom type with a pattern that matches the UUID format
-		 * such as in this example:
-		 * 
-		 * 
-		 * <xs:simpleType name="UUID"> <xs:restriction base="xs:string">
-		 * <xs:pattern value=
-		 * "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
-		 * </xs:restriction> </xs:simpleType>
+		 * This means in XSD 1.1, anyURI can accept both URIs and IRIs, making explicit
+		 * IRI support unnecessary.
 		 */
-		else if (l.equalsIgnoreCase("uuid"))
-			return XSD.xstring;
+		// else if (l.equalsIgnoreCase("iri"))
+		//	return XSD.anyURI;
 		else
 			return null;
 	}
-	
+
 }

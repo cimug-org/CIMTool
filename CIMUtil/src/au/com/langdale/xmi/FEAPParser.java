@@ -14,8 +14,8 @@ public class FEAPParser extends AbstractEAProjectDBParsor {
 	private static final String USERNAME = "SYSDBA";
 	private static final String PASSWORD = "masterkey";
 
-	public FEAPParser(File file) {
-		super(file);
+	public FEAPParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
+		super(file, selfHealOnImport, logger);
 	}
 
 	@Override

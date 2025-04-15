@@ -43,6 +43,7 @@ public class UML {
 	public final static Resource enumeration = ResourceFactory.createResource(NS + "enumeration");
 	public final static Resource union = ResourceFactory.createResource(NS + "union");
 	public final static Resource extendedBy = ResourceFactory.createResource(NS + "extendedby");
+	public final static Resource shadowextension = ResourceFactory.createResource(NS + "shadowextension");
 	public final static Resource extension = ResourceFactory.createResource(NS + "extension");
 	public final static Resource xmlelement = ResourceFactory.createResource(NS + "xmlelement");
 	public final static Resource xmlattribute = ResourceFactory.createResource(NS + "xmlattribute");
@@ -52,7 +53,22 @@ public class UML {
 	public final static Resource preserve = ResourceFactory.createResource(NS + "preserve");
 	public final static Resource description = ResourceFactory.createResource(NS + "description");
 	public final static Resource hideOnDiagrams = ResourceFactory.createResource(NS + "hideondiagrams");
+	public final static Resource schemaMin = ResourceFactory.createResource(NS + "schemaMin");
+	public final static Resource schemaMax = ResourceFactory.createResource(NS + "schemaMax");
 	
+	// Interim solution to support backward compatibility for primitives until nextgen implementation... 
+	public final static Resource cimdatatypeMapping = ResourceFactory.createResource(NS + "cimdatatypeMapping");
+	
+	// Interim solution to support backward compatibility for CIMDatatypes until nextgen implementation... 
+	public final static Resource valueEAGUID = ResourceFactory.createResource(NS + "valueEAGUID");	
+    public final static Resource valueComment = ResourceFactory.createResource(NS + "valueComment");	
+	public final static Resource unitEAGUID = ResourceFactory.createResource(NS + "unitEAGUID");	
+    public final static Resource unitConstant = ResourceFactory.createResource(NS + "unitConstant");	
+    public final static Resource unitComment = ResourceFactory.createResource(NS + "unitComment");	
+	public final static Resource multiplierEAGUID = ResourceFactory.createResource(NS + "multiplierEAGUID");	
+    public final static Resource multiplierConstant = ResourceFactory.createResource(NS + "multiplierConstant");
+    public final static Resource multiplierComment = ResourceFactory.createResource(NS + "multiplierComment");	
+
 	// stereotype the two forms of aggregation, each in two directions
 	public final static Resource ofComposite = ResourceFactory.createResource(NS + "ofComposite");
 	public final static Resource ofAggregate = ResourceFactory.createResource(NS + "ofAggregate");
@@ -132,6 +148,7 @@ public class UML {
 		model.createIndividual(enumliteral.getURI(), Stereotype).addLabel("enum", null);
 		model.createIndividual(union.getURI(), Stereotype).addLabel("Union", null);
 		model.createIndividual(extendedBy.getURI(), Stereotype).addLabel("ExtendedBy", null);
+		model.createIndividual(shadowextension.getURI(), Stereotype).addLabel("ShadowExtension", null);
 		model.createIndividual(extension.getURI(), Stereotype).addLabel("Extension", null);
 		model.createIndividual(primitive.getURI(), Stereotype).addLabel("Primitive", null);
 		model.createIndividual(base.getURI(), Stereotype).addLabel("Base", null);
@@ -165,5 +182,18 @@ public class UML {
 		model.createAnnotationProperty(id.getURI());
 		model.createAnnotationProperty(hasMaxCardinality.getURI());
 		model.createAnnotationProperty(hasMinCardinality.getURI());
+		model.createAnnotationProperty(schemaMin.getURI());
+		model.createAnnotationProperty(schemaMax.getURI());
+		// Set of temporary annotations until the next gen implementation...
+		model.createAnnotationProperty(cimdatatypeMapping.getURI());
+		model.createAnnotationProperty(valueEAGUID.getURI());
+		model.createAnnotationProperty(valueComment.getURI());
+		model.createAnnotationProperty(unitEAGUID.getURI());
+		model.createAnnotationProperty(unitConstant.getURI());
+		model.createAnnotationProperty(unitComment.getURI());
+		model.createAnnotationProperty(multiplierEAGUID.getURI());
+		model.createAnnotationProperty(multiplierConstant.getURI());
+		model.createAnnotationProperty(multiplierComment.getURI());
+
 	}
 }

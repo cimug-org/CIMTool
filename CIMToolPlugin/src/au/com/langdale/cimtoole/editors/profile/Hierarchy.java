@@ -298,7 +298,7 @@ public class Hierarchy extends FurnishedEditor {
 					else {
 					    showStackLayer("assoc");
 					}
-					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype() && !enode.isEnumerated());
+					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype());
 					refreshCardinality(enode);
 					
 				}

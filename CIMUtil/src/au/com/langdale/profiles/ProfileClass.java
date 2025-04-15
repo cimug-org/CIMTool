@@ -21,6 +21,7 @@ import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.util.OneToManyMap;
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -272,7 +273,56 @@ public class ProfileClass {
 		return child;
 	}
 
-	public OntResource createAllValuesFrom(OntResource prop, boolean required) {
+	public OntResource createAllValuesFrom(OntResource prop, int minCard, int maxCard) {
+		OntResource child; 
+		OntResource range = prop.getRange();
+		
+		if( prop.isDatatypeProperty()) {
+			child = model.createIndividual(RDFS.Datatype);
+			if( range != null )
+				child.addProperty(OWL.equivalentClass, range);
+		}
+		else {
+			child = model.createClass();
+			if( range != null )
+				child.addSuperClass(range);
+		}
+		String label = prop.getLabel(null);
+		if( label == null)
+			label = prop.getLocalName();
+		child.addLabel(label, null);
+		
+		if (prop.hasProperty(UML.hasStereotype)) {
+			ResIterator stereotypes = prop.listProperties(UML.hasStereotype);
+			while (stereotypes.hasNext()) {
+				OntResource stereo = stereotypes.nextResource();
+				if (!child.hasProperty(UML.hasStereotype, stereo))
+					child.addProperty(UML.hasStereotype, stereo);
+			}
+		}
+		
+		OntResource res = model.createAllValuesFromRestriction(null, prop, child);
+		clss.addSuperClass(res);
+		props.put(prop, res);
+
+		if (minCard > 0 && canBeRequired(prop)) {
+			OntResource req = model.createMinCardinalityRestriction(null, prop, minCard);
+			clss.addSuperClass(req);
+			props.put(prop, req);
+		}
+		if (maxCard != Integer.MAX_VALUE) {
+			OntResource req = model.createMaxCardinalityRestriction(null, prop, maxCard);
+			clss.addSuperClass(req);
+			props.put(prop, req);
+		}
+		
+		return child;
+	}
+	
+	public OntResource createAllValuesFrom(OntResource prop, SelectionOptions selectionOptions) {
+		boolean required = selectionOptions.isPropertyRequired();
+		boolean useSchemaCardinality = selectionOptions.useSchemaCardinality();
+		
 		OntResource child; 
 		OntResource range = prop.getRange();
 		
@@ -304,11 +354,46 @@ public class ProfileClass {
 		clss.addSuperClass(res);
 		props.put(prop, res);
 		
+		int minCard = 0; // Default min
+		int maxCard = Integer.MAX_VALUE; // Default max
+
+		/**
+		 * If directed via useSchemaCardinality to use the cardinality as defined in 
+		 * the base CIM schema imported for the project, then any relevant restrictions 
+		 * will be based of those min and max cardinalities. Note that the values for
+		 * these will be found on schemaMin and schemaMax annotations defined on the 
+		 * property during initial import of the schema i.e. XMI, EAP, QEA file...
+		 */	
+		if (useSchemaCardinality) {	
+			minCard = prop.getInteger(UML.schemaMin);
+			maxCard = prop.getInteger(UML.schemaMax);
+		} 
+		
 		if(required && canBeRequired(prop)) {
-			OntResource req = model.createMinCardinalityRestriction(null, prop, 1);
-			clss.addSuperClass(req);
-			props.put(prop, req);
+			OntResource minRestriction = model.createMinCardinalityRestriction(null, prop, 1);
+			clss.addSuperClass(minRestriction);
+			props.put(prop, minRestriction);
+			
+			if (useSchemaCardinality) {	
+				if (maxCard != Integer.MAX_VALUE) {
+					OntResource maxRestriction = model.createMaxCardinalityRestriction(null, prop, maxCard);
+					clss.addSuperClass(maxRestriction);
+					props.put(prop, maxRestriction);
+				}
+			}
+		} else if (useSchemaCardinality) {	
+			if (minCard > 0 && canBeRequired(prop)) {
+				OntResource req = model.createMinCardinalityRestriction(null, prop, minCard);
+				clss.addSuperClass(req);
+				props.put(prop, req);
+			}
+			if (maxCard != Integer.MAX_VALUE) {
+				OntResource req = model.createMaxCardinalityRestriction(null, prop, maxCard);
+				clss.addSuperClass(req);
+				props.put(prop, req);
+			}
 		}
+		
 		return child;
 	}
 

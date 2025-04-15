@@ -1,0 +1,79 @@
+# We are extending the default theme
+# extends: default-with-font-fallbacks
+
+page:
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: Letter
+  
+# Sets the base font size to 10 for the entire document
+base:
+  font: arial
+  font_size: 10
+
+table:
+  font_size: 8   # Adjust the font size as needed
+  
+# 
+# Optional: Customize font sizes for headings or other elements
+#
+# h1 = Level 0  (Main Title)
+# h2 = Level 1  (1. Overview)
+# h3 = Level 2  (1.1. Overview)
+# h4 = Level 3  (1.1.1.  Concrete Classes)
+heading:
+  h1:
+    font_size: 18
+  h2:
+    font_size: 16
+  h3:
+    font_size: 14
+  h4:
+    font_size: 12
+  h5:
+    font_size: 10
+ 
+# Sets the captions for diagrams to be centered
+caption:
+  align: center
+  
+footer:
+  height: 0.45in
+  recto:
+    right:
+      content: '{section-or-chapter-title} | {page-number}'
+  verso:
+    left:
+      content: '{section-or-chapter-title} | {page-number}'
+
+      # Example of the use of roles for PDF styling.
+# The role attribute in an AsciiDoc plantuml diagram (or other blocks and elements) 
+# is used to assign a CSS class or styling identifier to that specific element. This 
+# is particularly useful for customizing the appearance of specific diagrams or blocks, 
+# especially in HTML output, and for targeting elements in a PDF theme.
+#
+# Example use of the below 'custom-diagram-style':
+#
+#  plantuml::./Profiles/CPSM-CoreEquipment.rdfs-t2b.puml[
+#     format=svg, 
+#     align=center, 
+#     caption="Figure 1: ", 
+#     title="CoreEquipment Profile", 
+#     role=custom-diagram-style
+#  ]
+#
+# Example use of the 'table-small-fonts' role:
+# 
+# [.small-font-table]
+# |===
+# |Header 1 |Header 2 |Header 3
+# |Data 1   |Data 2   |Data 3
+# |===
+#
+roles:
+  custom-diagram-style:
+    align: center
+    border_color: #333333
+    padding: 5
+  table-small-fonts:
+    font_size: 8

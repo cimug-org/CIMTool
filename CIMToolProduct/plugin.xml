@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="org.eclipse.ui.ide.workbench"
-            name="CIMTool 2.2.0">
+            name="CIMTool 2.3.0 beta">
          <property
                name="windowImages"
                value="icons/cimtool-v2_16x16.png,icons/cimtool-v2_32x32.png,icons/cimtool-v2_48x48.png,icons/cimtool-v2_64x64.png,icons/cimtool-v2_128x128.png,icons/cimtool-v2_256x256.png">
@@ -30,7 +30,7 @@
          </property>
          <property
                name="appName"
-               value="CIMTool 2.2.0">
+               value="CIMTool 2.3.0 beta">
          </property>
          <property
                name="startupForegroundColor"

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2024 UCAIug
 
@@ -137,10 +137,10 @@
 				<xsl:for-each select="/*/node()[@name = $supertype_name]">
 					<xsl:call-template name="generate_properties"/>
 				</xsl:for-each>
-				<xsl:apply-templates select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice"/>
+				<xsl:apply-templates select="a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice"/>
+				<xsl:apply-templates select="a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -151,14 +151,14 @@
 				<xsl:for-each select="/*/node()[@name = $supertype_name]">
 					<xsl:call-template name="required_properties"/>
 				</xsl:for-each>
-				<xsl:for-each select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference">
+				<xsl:for-each select="a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference">
 					<xsl:if test="@minOccurs &gt;= 1">
 						<item>"<xsl:value-of select="@name"/>", </item>
 					</xsl:if>
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:for-each select="a:Complex|a:Enumerated|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference">
+				<xsl:for-each select="a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference">
 					<xsl:if test="@minOccurs &gt;= 1">
 						<item>"<xsl:value-of select="@name"/>", </item>
 					</xsl:if>
@@ -168,7 +168,7 @@
 	</xsl:template>
 	<xsl:template name="count_required_non_choices">
 		<xsl:param name="count"/>
-		<xsl:variable name="total_count" select="$count + count(a:Complex[@minOccurs >= 1]|a:Enumerated[@minOccurs >= 1]|a:SimpleEnumerated[@minOccurs >= 1]|a:Simple[@minOccurs >= 1]|a:Domain[@minOccurs >= 1]|a:Instance[@minOccurs >= 1]|a:Reference[@minOccurs >= 1])"/>
+		<xsl:variable name="total_count" select="$count + count(a:Complex[@minOccurs >= 1]|a:Enumerated[@minOccurs >= 1]|a:Compound[@minOccurs >= 1]|a:SimpleEnumerated[@minOccurs >= 1]|a:Simple[@minOccurs >= 1]|a:Domain[@minOccurs >= 1]|a:Instance[@minOccurs >= 1]|a:Reference[@minOccurs >= 1])"/>
 		<xsl:choose>
 			<xsl:when test="a:SuperType">
 				<xsl:variable name="supertype_name" select="a:SuperType/@name"/>
@@ -838,6 +838,11 @@
 					<xsl:call-template name="standard_body"/>
 				</xsl:otherwise>
 			</xsl:choose>
+		</list>
+	</xsl:template>
+	<xsl:template match="a:Compound">
+		<list begin="&quot;{@name}&quot;: {{" indent="    " delim="," end="}}">
+			<xsl:call-template name="standard_body"/>
 		</list>
 	</xsl:template>
 	<!-- This template should be removed when we do not want to generate a "reduced" CIMDatatype -->
