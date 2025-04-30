@@ -311,6 +311,20 @@ public class Info {
 		return (path.getFileExtension() != null ? removeFileExtension(path.removeFileExtension()) : path);
 	}
 
+	public static IFolder getDocumentationFolder(IProject project) {
+		return project != null ? project.getFolder("Documentation") : (IFolder) null;
+	}
+	
+	public static IFolder getDocumentationIncludes(IProject project) {
+		IFolder documentation = getDocumentationFolder(project);
+		return documentation != null ? documentation.getFolder("Includes") : (IFolder) null;
+	}
+	
+	public static IFolder getDocumentationStyles(IProject project) {
+		IFolder documentation = getDocumentationFolder(project);
+		return documentation != null ? documentation.getFolder("Styles") : (IFolder) null;
+	}
+	
 	public static IFolder getSchemaFolder(IProject project) {
 		return project != null ? project.getFolder("Schema") : null;
 	}
