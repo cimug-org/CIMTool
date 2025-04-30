@@ -15,7 +15,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:a="http://langdale.com.au/2005/Message#" xmlns="http://langdale.com.au/2009/Indent">
+<xsl:stylesheet version="3.0" 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+	xmlns:map="http://www.w3.org/2005/xpath-functions/map" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:a="http://langdale.com.au/2005/Message#" 
+	xmlns="http://langdale.com.au/2009/Indent">
 	
 	<xsl:output indent="no" method="text" encoding="utf-8"/>
 	<xsl:param name="fileName"/>
@@ -23,6 +28,31 @@
 	<xsl:param name="ontologyURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
 	<xsl:variable name="apos">'</xsl:variable>
+	<xsl:variable name="ascii"> !"#$%&amp;'()*+,-.\/0123456789:;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~=&lt;&gt;</xsl:variable>
+	<xsl:variable name="asciidoc-restricted" as="map(xs:string, xs:string)">
+		<xsl:map>
+			<xsl:map-entry key="'|'" select="'vbar'"/>
+			<xsl:map-entry key="'+'" select="'plus'"/>
+			<xsl:map-entry key="'['" select="'startsb'"/> 
+			<xsl:map-entry key="']'" select="'endsb'"/>
+			<xsl:map-entry key="'^'" select="'caret'"/>
+			<xsl:map-entry key="'*'" select="'asterisk'"/>
+			<!--
+			<xsl:map-entry key="'&amp;'" select="'amp'"/>
+			<xsl:map-entry key="'`'" select="'backtick'"/>
+			<xsl:map-entry key="'‘'" select="'lsquo'"/>
+			<xsl:map-entry key="'’'" select="'rsquo'"/>
+			<xsl:map-entry key="'“'" select="'ldquo'"/>
+			<xsl:map-entry key="'”'" select="'rdquo'"/>
+			<xsl:map-entry key="'°'" select="'deg'"/>
+			<xsl:map-entry key="'¦'" select="'brvbar'"/>
+			<xsl:map-entry key="'&lt;'" select="'lt'"/>
+			<xsl:map-entry key="'>'" select="'gt'"/>
+			<xsl:map-entry key="'~'" select="'tilde'"/> 
+			<xsl:map-entry key="'\'" select="'backslash'"/> 
+			-->
+		</xsl:map>
+    </xsl:variable>
 
 	<xsl:template match="a:Catalog">
 		<!--  Delimiter is CR/LF -->
@@ -120,7 +150,7 @@
 		<xsl:choose>
 			<xsl:when test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:SuperType">
 				<xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound">
-					<item>*Native Members*</item>
+					<item>===== Native Members</item>
 					<item></item>
 					<item>[%header,width="100%",cols="25%,^10%,20%,45%"]</item>
 					<item>|===</item>
@@ -130,7 +160,7 @@
 				</xsl:if>
 				<xsl:if test="a:SuperType">
 					<item></item>
-					<item>*Inherited Members*</item>
+					<item>===== Inherited Members</item>
 					<item></item>
 					<item>[%header,width="100%",cols="25%,^10%,20%,45%"]</item>
 					<item>|===</item>
@@ -185,7 +215,7 @@
 	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain" mode="inherited">
 		<item></item>
 		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
-		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
+		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
 	</xsl:template>
@@ -194,7 +224,7 @@
 		<item></item>
 		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
-		<item>|<xsl:value-of select="@xstype"/></item>
+		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
 	</xsl:template>
 	
@@ -283,6 +313,28 @@
 		<item></item>
 	</xsl:template>
 	
+	<!-- Specialized template for annotations that appear within an asciidoc table cell  -->
+	<!-- Such text within the CIM model may have asciidoc sensitive characters that need -->
+	<!-- to be parsed and replaced...                                                    -->
+	<xsl:template match="a:Comment" mode="annotate-table-cell">
+		<item><xsl:call-template name="replace-non-ascii-and-asciidoc-sensitive"><xsl:with-param name="text" select="."/></xsl:call-template></item>
+		<item></item>
+	</xsl:template>
+	
+	<xsl:template match="a:Note" mode="annotate">
+		<xsl:param name="type"/>
+		<xsl:choose>
+			<xsl:when test="$type">
+				<xsl:variable name="notes"><xsl:call-template name="replace-non-ascii"><xsl:with-param name="text" select="."/></xsl:call-template></xsl:variable>
+				<item><xsl:value-of select="$notes"/></item>
+			</xsl:when>
+			<xsl:otherwise>
+				<item><xsl:call-template name="replace-non-ascii"><xsl:with-param name="text" select="."/></xsl:call-template></item>
+			</xsl:otherwise>
+		</xsl:choose>
+		<item></item>
+	</xsl:template>
+	
 	<xsl:template match="node()" mode="annotate">
 	</xsl:template>
 
@@ -291,7 +343,6 @@
 	
 	<xsl:template name="replace-non-ascii">
 		<xsl:param name="text"/>
-		<xsl:variable name="ascii"> !"#$%&amp;'()*+,-./0123456789:;=&lt;>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~</xsl:variable>
 		<xsl:variable name="non-ascii" select="translate($text, $ascii, '')"/>
 		<xsl:choose>
 			<xsl:when test="$non-ascii">
@@ -303,6 +354,39 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$text"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template name="replace-non-ascii-and-asciidoc-sensitive">
+		<xsl:param name="text"/>
+		<xsl:variable name="non-ascii" select="translate($text, $ascii, '')"/>
+		<xsl:choose>
+			<xsl:when test="$non-ascii">
+				<xsl:variable name="char" select="substring($non-ascii, 1, 1)"/>
+				<!-- recursive call -->
+				<xsl:call-template name="replace-non-ascii-and-asciidoc-sensitive">
+					<xsl:with-param name="text" select="translate($text, $char, '')"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<!--
+				<xsl:variable name="restricted" select="map:keys($asciidoc-restricted)"/>
+				<xsl:variable name="end-result">
+					<xsl:iterate select="$restricted">
+						<xsl:param name="result" select="$text"/>
+						<xsl:variable name="key" select="."/>
+						<xsl:variable name="replacement" select="map:get($asciidoc-restricted, $key)"/>
+						<xsl:variable name="newResult" select="replace($result, concat('\', $key), concat('{', $replacement, '}'))"/>
+						<xsl:next-iteration>
+							<xsl:with-param name="result" select="$newResult"/>
+						</xsl:next-iteration>
+					</xsl:iterate>
+				</xsl:variable>
+				<xsl:value-of select="$end-result"/>
+				-->
+				<xsl:variable name="end-result" select="replace(replace($text, '\|', '{vbar}'), '\+', '{plus}')"/>
+				<xsl:value-of select="$end-result"/>  
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

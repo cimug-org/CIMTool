@@ -57,21 +57,30 @@
 	<xsl:template match="a:Catalog">
 		<!--  Delimiter is CR/LF -->
 		<list begin="" indent="" delim="&#xD;&#xA;" end="">
+			<item>:pdf-themesdir: {docdir}</item>
+			<item>:pdf-theme: adoc-inline-rdfs-mappings</item>
 			<item></item>
 			<xsl:choose>
 				<xsl:when test="$envelope != 'Profile'">
-					<item>== <xsl:value-of select="$envelope"/> Profile Specification</item>
+					<item>== <xsl:value-of select="$envelope"/> Profile</item>
 					<item></item>
 				</xsl:when>
 				<xsl:otherwise>
-					<item>== <xsl:value-of select="$fileName"/> Profile Specification</item>
+					<item>= <xsl:value-of select="$fileName"/> Profile</item>
 					<item></item>
 				</xsl:otherwise>
 			</xsl:choose>
+			<item>// Settings:</item>
+			<item>:doctype: inline</item>
+			<item>:reproducible:</item>
+			<item>:icons: font</item>
+			<item>:sectnums:</item>
+			<item>:sectnumlevels: 4</item>
+			<item>:xrefstyle: short</item>
 			<item></item>
 			<item>Profile namespace:  <xsl:value-of select="$baseURI"/></item>
 			<item></item>
-			<item>plantuml::./Profiles/<xsl:value-of select="$fileName"/>.xsd-t2b.puml[format=svg, align=center, caption="Figure 1: ", title="<xsl:value-of select="$envelope"/> Profile"]</item>
+			<item>plantuml::./Profiles/<xsl:value-of select="$fileName"/>.rdfs-t2b.puml[format=svg, align=center, caption="Figure 1: ", title="<xsl:value-of select="$envelope"/> Profile"]</item>
 			<item></item>
 			<xsl:apply-templates mode="annotate" select="a:Note"/>
 			<item></item>
@@ -130,7 +139,7 @@
 		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
-		<xsl:apply-templates mode="annotate"/><xsl:apply-templates/>
+		<xsl:apply-templates mode="annotate" select="a:Comment"/><xsl:apply-templates/>
 		<item></item>
 	</xsl:template>
 	
@@ -140,7 +149,9 @@
 		<item></item>
 		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
 		<item></item>
+		<item>:<xsl:value-of select="@name"/>:</item>
 		<xsl:call-template name="type_definition"/>
+		<item>:!<xsl:value-of select="@name"/>:</item>
 		<item></item>
 	</xsl:template>
 	
@@ -148,23 +159,23 @@
 		<xsl:apply-templates mode="annotate"/>
 		<item></item>
 		<xsl:choose>
-			<xsl:when test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:SuperType">
-				<xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound">
+			<xsl:when test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:SuperType">
+				<xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated">
 					<item>===== Native Members</item>
 					<item></item>
-					<item>[%header,width="100%",cols="25%,^10%,20%,45%"]</item>
+					<item>[%header,width="100%",cols="15%,15%,25%,45%a"]</item>
 					<item>|===</item>
-					<item>|name |mult |type |description</item>		
-					<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound"/>
+					<item>|name |type |description |mapping</item>		
+					<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated"/>
 					<item>|===</item>
 				</xsl:if>
 				<xsl:if test="a:SuperType">
 					<item></item>
 					<item>===== Inherited Members</item>
 					<item></item>
-					<item>[%header,width="100%",cols="25%,^10%,20%,45%"]</item>
+					<item>[%header,width="100%",cols="15%,15%,25%,45%a"]</item>
 					<item>|===</item>
-					<item>|name |mult |type |description</item>	
+					<item>|name |type |description |mapping</item>
 					<item></item>			
 					<xsl:apply-templates select="a:SuperType" mode="inherited"/>
 					<item>|===</item>
@@ -181,25 +192,25 @@
 	
 	<xsl:template match="a:SuperType" mode="inheritance_hierarchy">
 		<xsl:variable name="inheritance">
-			&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;<xsl:variable name="supertype_name" select="@name"/><xsl:if test="/*/node()[@name = $supertype_name]/a:SuperType"> => <xsl:apply-templates select="/*/node()[@name = $supertype_name]/a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
+			<text>&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;<xsl:variable name="supertype_name" select="@name"/><xsl:if test="/*/node()[@name = $supertype_name]/a:SuperType"> => <xsl:apply-templates select="/*/node()[@name = $supertype_name]/a:SuperType" mode="inheritance_hierarchy"/></xsl:if></text>
 		</xsl:variable>
 		<xsl:value-of select="$inheritance"/>
 	</xsl:template>
 	
-	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain">
+	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain">
 		<item></item>
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
-		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
+		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:text> </xsl:text>[<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'"><item>* </item></xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose>]</item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
-		<item>|</item><xsl:apply-templates mode="annotate"/>
+		<item>|</item><xsl:apply-templates mode="annotate-table-cell" select="a:Comment"/>
+		<item>|</item><xsl:apply-templates mode="annotate" select="a:Note"/>
 	</xsl:template>
 
 	<xsl:template match="a:Simple">
 		<item></item>
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
-		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
+		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:text> </xsl:text>[<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/>]</item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
-		<item>|</item><xsl:apply-templates mode="annotate"/>
+		<item>|</item><xsl:apply-templates mode="annotate-table-cell" select="a:Comment"/>
+		<item>|</item><xsl:apply-templates mode="annotate" select="a:Note"/>
 	</xsl:template>
 
 	<xsl:template match="a:SuperType" mode="inherited">
@@ -208,24 +219,24 @@
 	</xsl:template>
 	
 	<xsl:template match="a:ComplexType|a:Root" mode="inherited">
-		<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound" mode="inherited"/>
+		<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated" mode="inherited"/>
 		<xsl:apply-templates select="a:SuperType" mode="inherited"/>
 	</xsl:template>
 	
-	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain" mode="inherited">
+	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Domain" mode="inherited">
 		<item></item>
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
-		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
+		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:text> </xsl:text>[<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/>]</item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
+		<item>|</item><xsl:apply-templates mode="annotate" select="a:Note"/>
 	</xsl:template>
 	
 	<xsl:template match="a:Simple" mode="inherited">
 		<item></item>
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
-		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
+		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:text> </xsl:text>[<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/>]</item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
+		<item>|</item><xsl:apply-templates mode="annotate" select="a:Note"/>
 	</xsl:template>
 	
 	<xsl:template match="a:ComplexType">
@@ -234,7 +245,9 @@
 		<item></item>
 		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
 		<item></item>
+		<item>:<xsl:value-of select="@name"/>:</item>
 		<xsl:call-template name="type_definition"/>
+		<item>:!<xsl:value-of select="@name"/>:</item>
 		<item></item>
 	</xsl:template>
 	
@@ -245,10 +258,10 @@
 		<xsl:apply-templates mode="annotate"/>
 		<item>*Members*</item>
 		<item></item>
-		<item>[%header,width="100%",cols="25%,^10%,20%,45%"]</item>
+		<item>[%header,width="100%",cols="15%,15%,25%,45%a"]</item>
 		<item>|===</item>
-		<item>|name |mult |type |description</item>		
-		<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound"/>
+		<item>|name |type |description |mapping</item>		
+		<xsl:apply-templates select="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated"/>
 		<item>|===</item>	
 	</xsl:template>
 	
@@ -308,8 +321,30 @@
 	</xsl:template>
 	
 	<!-- Default templates for annotations supporting annotations without formatting... -->
-	<xsl:template match="a:Comment|a:Note" mode="annotate">
+	<xsl:template match="a:Comment" mode="annotate">
 		<item><xsl:call-template name="replace-non-ascii"><xsl:with-param name="text" select="."/></xsl:call-template></item>
+		<item></item>
+	</xsl:template>
+	
+	<!-- Specialized template for annotations that appear within an asciidoc table cell  -->
+	<!-- Such text within the CIM model may have asciidoc sensitive characters that need -->
+	<!-- to be parsed and replaced...                                                    -->
+	<xsl:template match="a:Comment" mode="annotate-table-cell">
+		<item><xsl:call-template name="replace-non-ascii-and-asciidoc-sensitive"><xsl:with-param name="text" select="."/></xsl:call-template></item>
+		<item></item>
+	</xsl:template>
+	
+	<xsl:template match="a:Note" mode="annotate">
+		<xsl:param name="type"/>
+		<xsl:choose>
+			<xsl:when test="$type">
+				<xsl:variable name="notes"><xsl:call-template name="replace-non-ascii"><xsl:with-param name="text" select="."/></xsl:call-template></xsl:variable>
+				<item><xsl:value-of select="$notes"/></item>
+			</xsl:when>
+			<xsl:otherwise>
+				<item><xsl:call-template name="replace-non-ascii"><xsl:with-param name="text" select="."/></xsl:call-template></item>
+			</xsl:otherwise>
+		</xsl:choose>
 		<item></item>
 	</xsl:template>
 	
@@ -332,6 +367,39 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$text"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template name="replace-non-ascii-and-asciidoc-sensitive">
+		<xsl:param name="text"/>
+		<xsl:variable name="non-ascii" select="translate($text, $ascii, '')"/>
+		<xsl:choose>
+			<xsl:when test="$non-ascii">
+				<xsl:variable name="char" select="substring($non-ascii, 1, 1)"/>
+				<!-- recursive call -->
+				<xsl:call-template name="replace-non-ascii-and-asciidoc-sensitive">
+					<xsl:with-param name="text" select="translate($text, $char, '')"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<!--
+				<xsl:variable name="restricted" select="map:keys($asciidoc-restricted)"/>
+				<xsl:variable name="end-result">
+					<xsl:iterate select="$restricted">
+						<xsl:param name="result" select="$text"/>
+						<xsl:variable name="key" select="."/>
+						<xsl:variable name="replacement" select="map:get($asciidoc-restricted, $key)"/>
+						<xsl:variable name="newResult" select="replace($result, concat('\', $key), concat('{', $replacement, '}'))"/>
+						<xsl:next-iteration>
+							<xsl:with-param name="result" select="$newResult"/>
+						</xsl:next-iteration>
+					</xsl:iterate>
+				</xsl:variable>
+				<xsl:value-of select="$end-result"/>
+				-->
+				<xsl:variable name="end-result" select="replace(replace($text, '\|', '{vbar}'), '\+', '{plus}')"/>
+				<xsl:value-of select="$end-result"/>  
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
