@@ -119,6 +119,9 @@ public class Task extends Info {
 				project.create(description, monitor);
 				project.open(monitor);
 				monitor.worked(1);
+				getDocumentationFolder(project).create(false, true, monitor);
+				getDocumentationIncludes(project).create(false, true, monitor);
+				getDocumentationStyles(project).create(false, true, monitor);
 				getSchemaFolder(project).create(false, true, monitor);
 				getProfileFolder(project).create(false, true, monitor);
 				getInstanceFolder(project).create(false, true, monitor);
