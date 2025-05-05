@@ -197,7 +197,7 @@
 			<xsl:when test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound|a:SuperType">
 				<xsl:if test="a:Domain|a:Simple|a:Instance|a:Reference|a:Enumerated|a:Compound">
 					<item></item>
-					<item>==== Native Members</item>
+					<item>*Native Members*</item>
 					<item></item>
 					<item>[%header,width="100%",cols="25%,^10%,20%,45%a"]</item>
 					<item>|===</item>
@@ -207,7 +207,7 @@
 				</xsl:if>
 				<xsl:if test="a:SuperType">
 					<item></item>
-					<item>==== Inherited Members</item>
+					<item>*Inherited Members*</item>
 					<item></item>
 					<item>[%header,width="100%",cols="25%,^10%,20%,45%a"]</item>
 					<item>|===</item>
@@ -287,7 +287,7 @@
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
-		<item>==== Members</item>
+		<item>*Members*</item>
 		<item></item>
 		<item>[%header,width="100%",cols="25%,^10%,20%,45%a"]</item>
 		<item>|===</item>
