@@ -1,5 +1,5 @@
 ---
-name: Documentation Update
+name: Documentation Needed
 about: Documentation updates or recommendations
 title: "[DOCUMENTATION]"
 labels: documentation
