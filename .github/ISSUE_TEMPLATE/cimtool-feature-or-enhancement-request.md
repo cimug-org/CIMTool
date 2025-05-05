@@ -2,7 +2,7 @@
 name: CIMTool Feature or Enhancement Request
 about: Suggest an idea for CIMTool
 title: "[ENHANCEMENT]"
-labels: ''
+labels: enhancement
 assignees: ''
 
 ---
