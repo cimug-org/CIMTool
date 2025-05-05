@@ -1,0 +1,1631 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../logos/cimtool-v2.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.12">
+    
+    
+      
+        <title>Development Environment Setup - CIMTool</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2afb09e1.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#development-environment-setup" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTool" class="md-header__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Development Environment Setup
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTool" class="md-nav__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    CIMTool
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    How To
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            How To
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/obtain-cim-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Obtain Stable Releases of the CIM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/create-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Create a Project
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/navigate-workspace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Navigate the Workspace
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/import-cim-uml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Using CIMTool with Enterprise Architect: Importing a CIM Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/create-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Create a Contextual Profile
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/edit-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Editing a Profile
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/browsing-the-CIM-UML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Browsing the CIM UML
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/exchange-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Exchange a Project
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/search-schemas-profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Searching Schemas and Profiles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/generate-database-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generating a Database Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/profile-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Profile Maintenance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/comparing-profiles-schemas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Comparing Profiles and Schemas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/associations-anonymous-classes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Associations and Anonymous Classes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/namespaces-in-cimtool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Namespaces in CIMTool
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/cimtool-support-for-extension-namespaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CIMTool Support for Extension Namespaces
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Further Learning
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Further Learning
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/uml-xmi-owl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    UML, XMI, and OWL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/cim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CIM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/protege-and-topbraid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Using CIMTool with Protege and Top Braid
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Release Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Developers
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Developers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev-env-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Environment Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../package-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Packaging &amp; Deployment Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-eclipse-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 1: Eclipse Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Eclipse Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-download-eclipse-pde" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Download Eclipse PDE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-install-java" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Install Java
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-extract-eclipse-pde" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Extract Eclipse PDE
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-installupdate-additional-plugin-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 2: Install/Update Additional Plugin Dependencies
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: Install/Update Additional Plugin Dependencies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#install-eclipse-emf-260-orgeclipseemf-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install: Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Install: Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-download-eclipse-emf" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Download Eclipse EMF
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-locate-dropins" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Locate \dropins
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-verify-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Verify Installation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-scalaide-300-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install: ScalaIDE 3.0.0 Plugin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Install: ScalaIDE 3.0.0 Plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-download-scala-ide-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Download Scala-IDE Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-install-in-eclipse" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Install in Eclipse
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-repository-dialog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Add Repository Dialog
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-select-local-update-sitezip" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: Select Local update-site.zip
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-select-items-to-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: Select Items to Install
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-install-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 6: Install Details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-accept-license" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 7: Accept License
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-accept-unsigned-content-warning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 8: Accept Unsigned Content Warning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-9-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 9: Restart
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-eclipse-egit-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update: Eclipse EGit Plugin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Update: Eclipse EGit Plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#steps-to-install-the-egit-plugin-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Steps to Install the EGit Plugin Update
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Steps to Install the EGit Plugin Update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-install-new-software-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Install New Software Menu
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-open-repository-dialog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Open Repository Dialog
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-respository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Add Respository
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-select-checkboxes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: Select Checkboxes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-accept-install-items" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: Accept Install Items
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-accept-license" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 6: Accept License
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-accept-unsigned-content-warning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 7: Accept Unsigned Content Warning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 8: Restart
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-clone-and-import-of-the-cimtool-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 3: Clone and Import of the CIMTool Project
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Clone and Import of the CIMTool Project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloning-a-cimtool-branch-using-the-eclipse-egit-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cloning a CIMTool Branch Using the Eclipse EGit Plugin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cloning a CIMTool Branch Using the Eclipse EGit Plugin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-open-egit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Open EGit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-select-clone-option" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Select Clone Option
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-select-repository-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Select Repository Location
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-copy-cimtool-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: Copy CIMTool URL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-paste-cimtool-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: Paste CIMTool URL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-select-branches" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 6: Select Branches
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-select-initial-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 7: Select Initial Branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-switch-to-plug-in-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 8: Switch to "Plug-in Development"
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-9-fix-any-auto-import-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 9: Fix Any Auto-Import Errors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="development-environment-setup">Development Environment Setup</h1>
+<p>If you are looking to make an enhancement or fix a defect in <strong>CIMTool</strong> itself, these instructions help you get setup with a development environment to work on <strong>CIMTool</strong> as a developer. Users of <strong>CIMTool</strong> generally don't need to be concerned with these details.</p>
+<h2 id="part-1-eclipse-installation">Part 1:  Eclipse Installation</h2>
+<p>The following steps describe how to locate, install and setup Eclipse plug-ins development environment (PDE).</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>A special edition of the Eclipse plug-ins development environment (PDE) is required to develop <strong>CIMTool</strong>.  This environment is known as the <a href="https://www.eclipse.org/downloads/packages/release/indigo/sr2/eclipse-rcp-and-rap-developers">Eclipse for RCP and RAP Developers</a> package (the newer 4.x PDE package is referred to as the Eclipse Committers package).  Since CIMTool is currently built on the older Eclipse 3.x SWT plug-ins platform this older version is required.</p>
+</div>
+<h3 id="step-1-download-eclipse-pde">Step 1: Download Eclipse PDE</h3>
+<p>The Windows 64-bit version of Eclipse PDE 3.7.2 (Indigo) can be downloaded at <a href="https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-rcp-indigo-SR2-win32-x86_64.zip">eclipse-rcp-indigo-SR2-win32-x86_64.zip</a>. (Note that versions for Mac and Linux are also available at <a href="https://www.eclipse.org/downloads/packages/release/indigo/sr2/eclipse-rcp-and-rap-developers">Eclipse for RCP and RAP Developers</a> but the instructions that follow are for Windows only.)</p>
+<h3 id="step-2-install-java">Step 2: Install Java</h3>
+<p>Though the <strong>CIMTool</strong> plug-ins themselves are configured and compiled for a later version of Java, the Eclipse PDE 3.7.2 (Indigo) development environment itself requires Java 1.5. If you do not have this older version of the JRE or JDK on your system you should locate and install it before moving on to the next step.  Currently, <a href="https://www.oracle.com/java/technologies/oracle-java-archive-downloads.html">Oracle's Java Archives</a> page links to the <a href="https://www.oracle.com/java/technologies/java-archive-javase5-downloads.html#license-lightbox">Java Development Kit 5.0 Update 22</a> Windows 64-bit release (i.e. the <code>jdk-1_5_0_22-windows-amd64.exe</code> installer). Note that you will need to accept Oracle's license agreement and have a (free) Oracle account to do so.  Feel free to locate and install Java 1.5 from an alternate provider if desired.</p>
+<h3 id="step-3-extract-eclipse-pde">Step 3: Extract Eclipse PDE</h3>
+<p>The installation process for the Eclipse environment is straightforward in that it involves simply extracting the <a href="https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR2/eclipse-rcp-indigo-SR2-win32-x86_64.zip">eclipse-rcp-indigo-SR2-win32-x86_64.zip</a> archive downloaded in Step 1.  It should be noted that depending on where you choose to extract the archive on Windows, the process may fail due to path names being too long. If this occurs it is suggested you create a temp directory off of the root of one of your local drives (e.g. <code>C:\temp-indigo</code>) and extract the ZIP archive into that folder. The shorter base path should prevent "path too long" errors while extracting the archive. A folder called <code>\eclipse</code> will be created under the selected extract directory and will contain your eclipse environment. Feel free to relocate this new folder to a location on the file system where you prefer to host your Eclipse plug-ins development environment.</p>
+<details class="tip">
+<summary>Dealing with newer Java versions</summary>
+<p>If an attempt is made to launch the development environment directly via the <code>eclipse.exe</code> executable, the system default JRE/JDK is used and if this is a newer version of Java (e.g. Java 11) you will see a dialog similar to the following:</p>
+<p><img alt="WorkspaceLauncher.png" src="../../images/install-java-error-0.png" title="Install Java Error" /></p>
+<p>To resolve this, create a shortcut to the <code>eclipse.exe</code> that explicitly specifies the JRE/JDK to be used.</p>
+<ul>
+<li>Create the shortcut by performing a right mouse click on the <code>eclipse.exe</code> executable and selecting <code>Create shortcut</code></li>
+<li>Next, right mouse click on the new shortcut and select <code>Properties</code>.  In the <strong>Target</strong> text field shown below specify a launch configuration consistent with your system's installation.  The field below (though not fully visible) contains an example launch configuration illustrating the use of the <code>-vm</code> option to specify the JRE/JDK Eclipse should use at startup:</li>
+</ul>
+<p><code>C:\eclipse-committers-3.7.2\eclipse.exe -vm "C:\Program Files\Java\jdk1.5.0_22\bin\javaw.exe"</code></p>
+<p><img alt="CIMToolShortcutForAltJava.png" src="../../images/CIMToolShortcutForAltJava.png" title="Eclipse Shortcut for specifying alternate Java version" /></p>
+</details>
+<h2 id="part-2-installupdate-additional-plugin-dependencies">Part 2:  Install/Update Additional Plugin Dependencies</h2>
+<p>There are two additional plugin dependencies needed by <strong>CIMTool</strong> that are not pre-packaged with the Eclipse 3.7.2 Plugin Development Environment. These dependencies must be installed prior to importing the <strong>CIMTool</strong> project in Part 3 of these instructions. In addition, an update of the <strong>EGit</strong> plugin bundled with Eclipse is required if using <strong>EGit</strong> rather than external Git tooling to manage code changes in Git.</p>
+<h3 id="install-eclipse-emf-260-orgeclipseemf-plugin">Install: Eclipse EMF 2.6.0 (org.eclipse.emf) Plugin</h3>
+<p>The installation of this plugin is performed manually using the steps as outlined. Be sure that your instance of Eclipse is <strong>shut down</strong> before performing the installation.</p>
+<h5 id="step-1-download-eclipse-emf">Step 1: Download Eclipse EMF</h5>
+<p>Download the <a href="https://github.com/cimug-org/CIMTool/blob/gh-pages/assets/archives/org.eclipse.emf_2.6.0.v20110606-0949.jar">Eclipse EMF (Core) 2.6.0 Plugin</a> and temporarily copy it to a local directory.</p>
+<h5 id="step-2-locate-dropins">Step 2: Locate <code>\dropins</code></h5>
+<p>Locate the <code>\dropins</code> directory as illustrated in the screenshot below and drop the plugin jar into it.</p>
+<p><img alt="install-plugins-dropins-folder.png" src="../../images/install-plugins-dropins-folder.png" title="dropins Folder" /></p>
+<h5 id="step-3-verify-installation">Step 3: Verify Installation</h5>
+<p>Last, launch Eclipse and verify that the plug-in was properly installed.  It should appear within the Plug-ins tab as shown.</p>
+<p><img alt="confirm-emf-2.6.0-plugin-installed.png" src="../../images/confirm-emf-2.6.0-plugin-installed.png" title="Confirm EMF Plugin Installed" /></p>
+<h3 id="install-scalaide-300-plugin">Install: ScalaIDE 3.0.0 Plugin</h3>
+<p>An older version of the Scala-IDE plugin (located at the <a href="http://scala-ide.org/download/prev-stable.html">ScalaIDE for Eclipse Archive site</a>). The installation steps are:</p>
+<h5 id="step-1-download-scala-ide-plugin">Step 1: Download Scala-IDE Plugin</h5>
+<p>Download the <a href="http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip">update-site.zip</a> file and extract it to a local directory on your file system.  The directory structure after extraction should look like:</p>
+<pre><code>|
+site (root directory)
+    |
+    features (directory containing the scala-ide features .jar files)
+    |
+    plugins (directory containing the scala-ide plug-ins .jar files)
+    |
+    artifacts.jar
+    content.jar (this is the archive file that will be selected in a later step)
+</code></pre>
+<h5 id="step-2-install-in-eclipse">Step 2: Install in Eclipse</h5>
+<p>Next launch Eclipse and select the "<strong>Install New Software...</strong>" menu option as shown in the screenshot.</p>
+<p><img alt="install-scala-ide-plugin-0.png" src="../../images/install-scala-ide-plugin-0.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-3-add-repository-dialog">Step 3: Add Repository Dialog</h5>
+<p>In the <strong>Install</strong> wizard dialog that is launched click "<strong>Add...</strong>" to launch the <strong>Add Repository</strong> dialog.</p>
+<p><img alt="install-scala-ide-plugin-1.png" src="../../images/install-scala-ide-plugin-1.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-4-select-local-update-sitezip">Step 4: Select Local update-site.zip</h5>
+<p>In the <strong>Add Repository</strong> dialog click "<strong>Local...</strong>" button:</p>
+<p><img alt="install-scala-ide-plugin-2a.png" src="../../images/install-scala-ide-plugin-2a.png" title="Install Scala IDE Plugin" /></p>
+<p>Using the file chooser navigate to the location  where the <a href="http://download.scala-ide.org/sdk/helium/e37/scala29/stable/update-site.zip">update-site.zip</a> archive was extracted to and select the <code>\site</code> directory and click "<strong>OK</strong>".</p>
+<p><img alt="install-scala-ide-plugin-2b.png" src="../../images/install-scala-ide-plugin-2b.png" title="Install Scala IDE Plugin" /></p>
+<p>Finally, enter a name for this new local plugin repository in the <strong>Name</strong> field.  Note that the <strong>Location</strong> field should now reference the <code>\site</code> directory you just selected (i.e. the "root" of the file structure described in <strong>step 1</strong>):</p>
+<p><img alt="install-scala-ide-plugin-2c.png" src="../../images/install-scala-ide-plugin-2c.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-5-select-items-to-install">Step 5: Select Items to Install</h5>
+<p>Next, select the check boxes as shown in the <strong>details</strong> sections of the screen shot below. Once selected click the "<strong>Select All</strong>" button and then "<strong>Next</strong>" to proceed to the next page of the installation wizard.</p>
+<p><img alt="install-scala-ide-plugin-3.png" src="../../images/install-scala-ide-plugin-3.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-6-install-details">Step 6: Install Details</h5>
+<p>Continue by clicking "<strong>Next</strong>" to accept the items to be installed.</p>
+<p><img alt="install-scala-ide-plugin-4.png" src="../../images/install-scala-ide-plugin-4.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-7-accept-license">Step 7: Accept License</h5>
+<p>On the <strong>Review Licenses</strong> page select the "I accept the terms of the license agreements" radio button and click the "<strong>Finish</strong>" button.</p>
+<p><img alt="install-scala-ide-plugin-5.png" src="../../images/install-scala-ide-plugin-5.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-8-accept-unsigned-content-warning">Step 8: Accept Unsigned Content Warning</h5>
+<p>A security warning will be displayed.  Just click "<strong>OK</strong>" to continue.</p>
+<p><img alt="install-scala-ide-plugin-6.png" src="../../images/install-scala-ide-plugin-6.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-9-restart">Step 9: Restart</h5>
+<p>If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "<strong>Restart Now</strong>" button and allow your instance of Eclipse to restart.</p>
+<p><img alt="install-scala-ide-plugin-7.png" src="../../images/install-scala-ide-plugin-7.png" title="Install Scala IDE Plugin" /></p>
+<h3 id="update-eclipse-egit-plugin">Update: Eclipse EGit Plugin</h3>
+<p>The 3.7.2 (Indigo) version of Eclipse outlined within these instructions is bundled with an older version of the <strong>EGit</strong> plugin.  In view of this it is recommended that either a newer version of <strong>EGit</strong> be installed or that external Git tooling such as Git Desktop, TortoiseGit, or Git Bash be used for source code management.</p>
+<p>From the Eclipse Foundation wiki site the EGit version support matrix outlines the following as the latest possible version of <strong>EGit</strong> support within Eclipse 3.7.2 (See:  <a href="https://wiki.eclipse.org/EGit/FAQ#What_versions_of_Eclipse_does_EGit_target.3F">what versions of Eclipse does EGit target</a>):</p>
+<table>
+<thead>
+<tr>
+<th>EGit</th>
+<th>Contained in release train</th>
+<th>Supported Version of Eclipse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.3.1.201302201838-r</td>
+<td>3.8.2/4.2.2 (Juno SR2)</td>
+<td>Eclipse 3.7.2+ (Indigo) (except EGit Import Support feature, which is optional)</td>
+</tr>
+</tbody>
+</table>
+<p>Then from the <a href="https://wiki.eclipse.org/EGit/FAQ#Where_can_I_find_older_releases_of_EGit.3F">Where can I find older releases of EGit?</a> section of the wiki we locate the <strong>p2 repository URL</strong> to be used during update:</p>
+<table>
+<thead>
+<tr>
+<th>Release Version</th>
+<th>Release Date</th>
+<th>p2 repository URL</th>
+<th>browse p2 repository</th>
+<th>download p2 repository</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.3.1.201302201838-r</td>
+<td>2013-03-01</td>
+<td><a href="https://archive.eclipse.org/egit/updates-2.3">https://archive.eclipse.org/egit/updates-2.3</a></td>
+<td><a href="https://www.eclipse.org/downloads/download.php?file=/egit/updates-2.3/&amp;r=1">updates-2.3</a></td>
+<td><a href="https://www.eclipse.org/downloads/download.php?file=/egit/updates-2.3/org.eclipse.egit.repository-2.3.1.201302201838-r.zip">2.3.1.201302201838-r</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps-to-install-the-egit-plugin-update">Steps to Install the EGit Plugin Update</h4>
+<h5 id="step-1-install-new-software-menu">Step 1: Install New Software Menu</h5>
+<p>Again navigate to the <strong>"Install New Software..."</strong> menu option as shown.</p>
+<p><img alt="install-scala-ide-plugin-0.png" src="../../images/install-scala-ide-plugin-0.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-2-open-repository-dialog">Step 2: Open Repository Dialog</h5>
+<p>In the <strong>Install</strong> wizard dialog that is launched click "<strong>Add...</strong>" to launch the <strong>Add Repository</strong> dialog.</p>
+<p><img alt="update-egit-plugin-1.png" src="../../images/update-egit-plugin-1.png" title="Update EGit Plugin" /></p>
+<h5 id="step-3-add-respository">Step 3: Add Respository</h5>
+<p>In the <strong>Add Repository</strong> dialog simply add the description and the <strong>p2 repository URL</strong> (previously located) into the fields as shown and select the <strong>OK</strong> button.</p>
+<p><img alt="update-egit-plugin-2.png" src="../../images/update-egit-plugin-2.png" title="Update EGit Plugin" /></p>
+<h5 id="step-4-select-checkboxes">Step 4: Select Checkboxes</h5>
+<p>Next, select the checkboxes as shown in the screenshot.  Once selected click the  <strong>Next</strong> button to proceed to the next page of the installation wizard.</p>
+<p><img alt="update-egit-plugin-3.png" src="../../images/update-egit-plugin-3.png" title="Update EGit Plugin" /></p>
+<h5 id="step-5-accept-install-items">Step 5: Accept Install Items</h5>
+<p>Continue by clicking <strong>Next</strong> to accept the items to be installed.</p>
+<p><img alt="update-egit-plugin-4.png" src="../../images/update-egit-plugin-4.png" title="Update EGit Plugin" /></p>
+<h5 id="step-6-accept-license">Step 6: Accept License</h5>
+<p>On the <strong>Review Licenses</strong> page select the "I accept the terms of the license agreements" radio button and click the <strong>Finish</strong> button.</p>
+<p><img alt="update-egit-plugin-5.png" src="../../images/update-egit-plugin-5.png" title="Update EGit Plugin" /></p>
+<h5 id="step-7-accept-unsigned-content-warning">Step 7: Accept Unsigned Content Warning</h5>
+<p>If a security warning is displayed.  Just click <strong>OK</strong> to continue.</p>
+<p><img alt="install-scala-ide-plugin-6.png" src="../../images/install-scala-ide-plugin-6.png" title="Install Scala IDE Plugin" /></p>
+<h5 id="step-8-restart">Step 8: Restart</h5>
+<p>If all was successful a final dialog is displayed asking if you want to restart in order for the plug-ins to take affect.  Click the "<strong>Restart Now</strong>" button and allow your instance of Eclipse to restart.</p>
+<p><img alt="install-scala-ide-plugin-7.png" src="../../images/install-scala-ide-plugin-7.png" title="Install Scala IDE Plugin" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On rare occasion, it has been observed that during installation of the EGit plugin update that at <strong>Steps 6</strong> or <strong>Step 7</strong> an error may occur indicating that Eclipse was unable to download specific jar artifacts as part of the installation.  If this occurs simply shutdown and restart Eclipse and perform the installation steps once again.  This typically will resolve any issues.  </p>
+</div>
+<h2 id="part-3-clone-and-import-of-the-cimtool-project">Part 3:  Clone and Import of the CIMTool Project</h2>
+<blockquote>
+<p>The final steps needed to complete the setup of the CIMTool Eclipse Development Environment is to clone an appropriate development branch of the CIMTool codebase from the <a href="https://github.com/cimug-org/CIMTool">CIMTool GitHub Repo</a>.  There are two general approaches to clone a branch for use in Eclipse with the second being the one outlined in the steps that follow:
+- Utilizing external tooling such as GitHub Desktop, TortoiseGit, Git Bash, Git GUI, etc. a clone is performed to a local directory.  In this scenario the projects in that directory are subsequently imported into an Eclipse workspace.
+- Alternatively, Eclipse's pre-bundled <strong>EGit</strong> plugin can be used to directly clone and automatically import the CIMTool projects in Eclipse.</p>
+</blockquote>
+<h4 id="cloning-a-cimtool-branch-using-the-eclipse-egit-plugin">Cloning a CIMTool Branch Using the Eclipse EGit Plugin</h4>
+<h5 id="step-1-open-egit">Step 1: Open EGit</h5>
+<ul>
+<li>Start out by opening the <strong>EGit</strong> Perspective in Eclipse.</li>
+</ul>
+<p><img alt="egit-clone-repo-1.png" src="../../images/egit-clone-repo-1.png" title="EGit Clone Repo" /></p>
+<ul>
+<li>Then select the <strong>"Git Repository Exploring"</strong> Perspective.</li>
+</ul>
+<p><img alt="egit-clone-repo-2.png" src="../../images/egit-clone-repo-2.png" title="EGit Clone Repo" /></p>
+<h5 id="step-2-select-clone-option">Step 2: Select Clone Option</h5>
+<p>Select the <strong>"Clone a Git repository"</strong> option as shown.</p>
+<p><img alt="egit-clone-repo-3.png" src="../../images/egit-clone-repo-3.png" title="EGit Clone Repo" /></p>
+<h5 id="step-3-select-repository-location">Step 3: Select Repository Location</h5>
+<p>Depending on your local Git installation you may or may not be shown the <strong>"Check Home Directory"</strong> dialog.  If this dialog appears you may choose to either update the HOME environment variable and return to the previous <strong>Step 2</strong> or you can simply check the <strong>"Do not show again"</strong> checkbox and click the OK button to accept the default Git repository location.</p>
+<p><img alt="egit-clone-repo-4.png" src="../../images/egit-clone-repo-4.png" title="EGit Clone Repo" /></p>
+<h5 id="step-4-copy-cimtool-url">Step 4: Copy CIMTool URL</h5>
+<p>Next, in a browser locate the <a href="https://github.com/cimug-org/CIMTool">CIMTool</a> GitHub Open Source Site and copy the URL of the CIMTool repository to the clipboard as shown in the screenshot below.  Note that this will then be used in the <strong>"Clone Git Repository"</strong> dialog.</p>
+<p><img alt="egit-clone-repo-5.png" src="../../images/egit-clone-repo-5.png" title="EGit Clone Repo" /></p>
+<h5 id="step-5-paste-cimtool-url">Step 5: Paste CIMTool URL</h5>
+<p>Paste the copied URL into the <strong>URI</strong> field as shown next.  Doing so will then auto-populate the <strong>Host</strong> and <strong>Repository Path</strong> fields on the wizard page.  At this point you must select the <strong>Protocol</strong> which can be either <code>https</code> or <code>git</code> depending on preference. Then click the <strong>Next</strong> button.</p>
+<p><img alt="egit-clone-repo-6.png" src="../../images/egit-clone-repo-6.png" title="EGit Clone Repo" /></p>
+<h5 id="step-6-select-branches">Step 6: Select Branches</h5>
+<p>The next page of the <strong>"Clone Git Repository"</strong> dialog wizard will be displayed asking for you to select the branches to clone from the remote repository.  You can choose to select any number or even all branches that you may be interested in and click <strong>Next</strong>.  In this example screenshot all are selected.  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It should be noted that if you select all branches they will be made available to you later in <strong>EGit</strong> should you desire to switch to another development branch .  It is important to keep in mind that if you decide to switch to a different branch in <strong>EGit</strong> that any code changes in the branch on your local file system will be lost unless they are first stashed/shelved <strong>before</strong> switching to another branch. Stashed changes can later be reapplied when switching back to the original branch on your local file system. See <a href="https://wiki.eclipse.org/EGit/New_and_Noteworthy/2.0#Stash_Support">EGit Stash Support</a> introduced in 2.0 of the plugin.  To utilize this functionality the <strong>EGit</strong> plugin update must be installed as outlined under the <strong>Part 2: Install Additional Plugin Dependencies</strong> section these instructions.</p>
+</div>
+<p><img alt="egit-clone-repo-7.png" src="../../images/egit-clone-repo-7.png" title="EGit Clone Repo" /></p>
+<h5 id="step-7-select-initial-branch">Step 7: Select Initial Branch</h5>
+<p>On the final page of the dialog wizard you should select from the <strong>Initial branch</strong> drop down the specific branch you want to clone.  In this example the "release-1.10.0.RC2" branch has been selected.  Note that the branch can be changed later to one of the other branches that was included in the checked list but for now choose .   </p>
+<p>Finally, be sure on this wizard page to check the <strong>"Import all existing projects after clone finishes"</strong> and click the <strong>"Finish"</strong> button.</p>
+<p><img alt="egit-clone-repo-8.png" src="../../images/egit-clone-repo-8.png" title="EGit Clone Repo" /></p>
+<h5 id="step-8-switch-to-plug-in-development">Step 8: Switch to "Plug-in Development"</h5>
+<p>After completion of the cloning and auto-import of the CIMTool projects switch to the <strong>"Plug-in Development"</strong> perspective.  If there are no errors/problems to address then the Projects listed should appear similar to the next screenshot and the <strong>"Problems"</strong> tab indicate no errors.  </p>
+<p>If errors/problems do exist as illustrated in the second screenshot then continue on with <strong>Step 9 &amp; 10</strong> of this procedure.</p>
+<ul>
+<li>
+<p>Successful import
+<img alt="egit-clone-repo-14.png" src="../../images/egit-clone-repo-14.png" title="EGit Clone Repo" /></p>
+</li>
+<li>
+<p>Import with errors
+<img alt="egit-clone-repo-9.png" src="../../images/egit-clone-repo-9.png" title="EGit Clone Repo" /></p>
+</li>
+</ul>
+<h5 id="step-9-fix-any-auto-import-errors">Step 9: Fix Any Auto-Import Errors</h5>
+<p>A common error after auto-import of the projects is the lack of a JDK/JRE matching that configured for the CIMTool plugin projects (currently a Java 6 JDK/JRE is needed).  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that a wide variety of versions of the <strong>OpenJDK</strong> starting with Java 6 can be download from the <a href="https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&amp;package=jdk">Azul download site</a>.  The <code>.msi</code> installer for 64-bit Windows of the Zulu build of <strong>OpenJDK Java 6</strong> is located <a href="https://cdn.azul.com/zulu/bin/zulu6.22.0.3-jdk6.0.119-win_x64.msi">here</a>.</p>
+</div>
+<p>Such errors will always be present when importing CIMTool projects into a new Eclipse workspace.  If importing into an existing workspace that previously had Java 6 added as an <strong>Installed JDK/JRE</strong> then these errors will not appear in the projects.</p>
+<p>If it is necessary to add the JDK/JRE, perform the steps that follow to select a JDK/JRE from those installed on the local file system.  These steps assume that you already have an existing <strong>Java 6</strong> JDK/JRE installed or have downloaded and installed it from the link previously provided above.  Once installed and the Java 6 JDK/JRE selected here the remaining errors should be resolved after performing a "clean all projects" in Eclipse.</p>
+<ul>
+<li>First, from the Eclipse <strong>"Preferences"</strong> dialog select the <strong>Add</strong> button.</li>
+</ul>
+<p><img alt="egit-clone-repo-10.png" src="../../images/egit-clone-repo-10.png" title="EGit Clone Repo" /></p>
+<ul>
+<li>Next, select the <strong>"Standard VM"</strong> JRE Types and click the <strong>"Next"</strong> button.</li>
+</ul>
+<p><img alt="egit-clone-repo-11.png" src="../../images/egit-clone-repo-11.png" title="EGit Clone Repo" /></p>
+<ul>
+<li>Next, select the <strong>"Directory..."</strong> button and choose a JDK/JRE home directory on the file system corresponding to the version of the JDK/JRE desired.  Note that once selected the other fields in the dialog will auto-populate.  Just click the <strong>"Finish"</strong> button to add the JDK/JRE.  Once finished execute a "Clean all projects" from within Eclipse.</li>
+</ul>
+<p><img alt="egit-clone-repo-12.png" src="../../images/egit-clone-repo-12.png" title="EGit Clone Repo" /></p>
+<ul>
+<li>Verify whether or not all errors have been removed from the projects or if a reduced set remains.  If errors remain an observation has been that they are commonly related to the Scala libraries as shown in the next screenshot.  </li>
+</ul>
+<p><img alt="egit-clone-repo-13.png" src="../../images/egit-clone-repo-13.png" title="EGit Clone Repo" /></p>
+<ul>
+<li>Scala-related errors at this stage usually indicate that the steps outlined in the <strong>"Installation of the ScalaIDE 3.0.0 Plugin"</strong> section within the <strong>"Part 2: Install Additional Plugin Dependencies"</strong> of these instructions either has not yet been applied or may need to be performed again if the earlier steps were not accurately followed.</li>
+</ul>
+<p>Once the steps have been (re)applied the remaining errors should then be resolved:</p>
+<p><img alt="egit-clone-repo-14.png" src="../../images/egit-clone-repo-14.png" title="EGit Clone Repo" /></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
