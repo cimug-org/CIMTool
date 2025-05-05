@@ -154,12 +154,5 @@
         "style": "csharp-entity-framework",
         "datetime": "2025-04-01T00:00:00Z",
         "ext": "cs"
-    },
-    "rdfs-cimstudio": {
-        "type": "TRANSFORM",
-        "style": "rdfs-cimstudio",
-        "datetime": "2025-02-04T00:00:00Z",
-        "ext": "cimstudio.xml",
-        "importFile": "rdfs-cimstudio-namespaces.xsl"
     }
 }
