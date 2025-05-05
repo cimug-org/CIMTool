@@ -28,8 +28,6 @@ import au.com.langdale.ui.util.IconCache;
 
 public class Detail extends FurnishedEditor {
 	
-	private static final String CRLF = "\r\n";
-	
 	private ProfileEditor master;
 
 	public Detail(String name, ProfileEditor master) {
@@ -61,18 +59,8 @@ public class Detail extends FurnishedEditor {
 		            @Override
 		            public void focusLost(FocusEvent e) {
 						if (master.getNode() instanceof SortedNode) { 
-							String notes;
-							if (getText("notes").getText() != null && !getText("notes").getText().endsWith(CRLF)) {
-								/** 
-								 * For GitHub comparisons and resolving GitHub merge conflicts
-								 * of profile descriptions we need to have a CRLF at the end.
-								 */
-								notes = getText("notes").getText() + CRLF;
-							} else {
-								notes = getText("notes").getText();
-							}
 							SortedNode pnode = (SortedNode) master.getNode();	
-							pnode.setComment(notes);
+							pnode.setComment(getText("notes").getText());
 						}
 		            }
 		        });

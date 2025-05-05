@@ -55,6 +55,7 @@ public class UML {
 	public final static Resource hideOnDiagrams = ResourceFactory.createResource(NS + "hideondiagrams");
 	public final static Resource schemaMin = ResourceFactory.createResource(NS + "schemaMin");
 	public final static Resource schemaMax = ResourceFactory.createResource(NS + "schemaMax");
+	public final static Resource asciidoc = ResourceFactory.createResource(NS + "asciidoc");
 	
 	// Interim solution to support backward compatibility for primitives until nextgen implementation... 
 	public final static Resource cimdatatypeMapping = ResourceFactory.createResource(NS + "cimdatatypeMapping");
@@ -184,6 +185,7 @@ public class UML {
 		model.createAnnotationProperty(hasMinCardinality.getURI());
 		model.createAnnotationProperty(schemaMin.getURI());
 		model.createAnnotationProperty(schemaMax.getURI());
+		model.createAnnotationProperty(asciidoc.getURI());
 		// Set of temporary annotations until the next gen implementation...
 		model.createAnnotationProperty(cimdatatypeMapping.getURI());
 		model.createAnnotationProperty(valueEAGUID.getURI());

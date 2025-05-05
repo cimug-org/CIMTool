@@ -21,7 +21,6 @@ import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.util.OneToManyMap;
 import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 

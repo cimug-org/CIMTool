@@ -171,6 +171,10 @@ public class ProfileModel extends JenaTreeModelBase {
 		public void setComment(String text) {
 			getSubject().setComment(text, null);
 		}
+		
+		public void setAsciiDoc(String text) {
+			getSubject().setProperty(UML.asciidoc, text, null);
+		}
 
 		protected abstract void create(Node node, SelectionOptions selectedOptions);
 
