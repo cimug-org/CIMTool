@@ -13,6 +13,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -399,6 +400,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("xmlns:m", baseURI);
 		elem.set("name", node.getName());
 		emitNote(node);
+		emitAsciiDoc(node);
 		emitStereotypes(node.getSubject());
 		emitChildren(node);
 
@@ -451,6 +453,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("minOccurs", "1");
 		elem.set("maxOccurs", "1");
 		emitNote(node);
+		emitAsciiDoc(node);
 		emitStereotypes(node.getSubject());
 		if (node.getSubject().isAnon())
 			emitChildren(node);
@@ -620,6 +623,7 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(node.getBaseProperty().getComment(null));
 		emitNote(node);
+		emitAsciiDoc(node);
 		emitStereotypes(node.getSubject());
 	}
 
@@ -652,6 +656,7 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(node.getBaseProperty().getComment(null));
 		emitNote(node);
+		emitAsciiDoc(node);
 		emitStereotypes(node.getSubject());
 	}
 
@@ -660,7 +665,7 @@ public class ProfileSerializer extends AbstractReader {
 	}
 
 	private static Pattern delimiter = Pattern.compile(" *([\r\n] *)+");
-
+	
 	private void emit(String ename, String comment) throws SAXException {
 		if (comment == null)
 			return;
@@ -671,9 +676,27 @@ public class ProfileSerializer extends AbstractReader {
 			elem.close();
 		}
 	}
-
+	
 	private void emitNote(Node node) throws SAXException {
 		emit("Note", node.getSubject().getComment(null));
+	}
+	
+	private void emitAsciiDoc(Node node) throws SAXException {
+		String asciiDoc = node.getSubject().getString(UML.asciidoc, null);
+		if (asciiDoc == null)
+			return;
+		Stream<String> lines = asciiDoc.lines();
+		lines.forEach(line -> {  
+			Element elem;
+			try {
+				elem = new Element("AsciiDoc");
+				elem.set("xml:space", "preserve");
+				elem.append(line);
+				elem.close();
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	private boolean isHidden(OntResource subject) throws SAXException {
@@ -794,6 +817,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
+		emitAsciiDoc(node);
 		emitStereotypes(node.getSubject());
 
 		emitChildren(node);
@@ -810,6 +834,7 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
+		emitAsciiDoc(node);
 		emitStereotypes(node.getSubject());
 
 		emitChildren(node);

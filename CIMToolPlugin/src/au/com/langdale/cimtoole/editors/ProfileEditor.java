@@ -20,6 +20,7 @@ import org.eclipse.ui.PartInitException;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 import au.com.langdale.cimtoole.editors.profile.Detail;
+import au.com.langdale.cimtoole.editors.profile.Documentation;
 import au.com.langdale.cimtoole.editors.profile.Hierarchy;
 import au.com.langdale.cimtoole.editors.profile.Populate;
 import au.com.langdale.cimtoole.editors.profile.Stereotype;
@@ -49,6 +50,7 @@ public class ProfileEditor extends ModelEditor {
 	protected void createPages() {
 		addPage(new Populate("Add/Remove", this));
 		addPage(new Hierarchy("Restriction", this));
+		addPage(new Documentation("Documentation", this));
 		addPage(new Detail("Description", this));
 		addPage(new Stereotype("Stereotypes", this));
 		addPage(new Summary("Profile Summary", this));

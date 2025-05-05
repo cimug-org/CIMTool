@@ -314,6 +314,11 @@ public class Info {
 	public static IFolder getDocumentationFolder(IProject project) {
 		return project != null ? project.getFolder("Documentation") : (IFolder) null;
 	}
+
+	public static IFolder getDocumentationImages(IProject project) {
+		IFolder documentation = getDocumentationFolder(project);
+		return documentation != null ? documentation.getFolder("Images") : (IFolder) null;
+	}
 	
 	public static IFolder getDocumentationIncludes(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
@@ -323,6 +328,11 @@ public class Info {
 	public static IFolder getDocumentationStyles(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Styles") : (IFolder) null;
+	}
+	
+	public static IFolder getDocumentationThemes(IProject project) {
+		IFolder documentation = getDocumentationFolder(project);
+		return documentation != null ? documentation.getFolder("Themes") : (IFolder) null;
 	}
 	
 	public static IFolder getSchemaFolder(IProject project) {
