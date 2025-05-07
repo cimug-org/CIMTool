@@ -238,7 +238,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			if (multiplier != null) {
 				clss.addProperty(UML.hasMultiplier, multiplier);
 			}
-			// 
+			//
 			// Add the EA GUIDS for the attributes of a CIMDatatype...
 			if (valueEAGUID != null) {
 				clss.addProperty(UML.valueEAGUID, valueEAGUID);
@@ -249,7 +249,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			if (multiplierEAGUID != null) {
 				clss.addProperty(UML.multiplierEAGUID, multiplierEAGUID);
 			}
-			// 
+			//
 			// Add the comments for the attributes of a CIMDatatype...
 			if (valueComment != null) {
 				clss.addProperty(UML.valueComment, valueComment);
@@ -484,7 +484,8 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * related to these classes:
 	 * 
 	 * 1. A shadow extension class may only have a single generalization
-	 * relationship generalization which must always be to the normative CIM class it shadows.
+	 * relationship generalization which must always be to the normative CIM class
+	 * it shadows.
 	 * 
 	 * 2. A normative CIM class could have multiple shadow classes defined as
 	 * parents to it in which case each shadow class's attributes and associations
@@ -503,9 +504,14 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * name different than the class it "shadows" (e.g. ExtMyIdentifiedObject) but
 	 * with a corresponding <<ShadowExtension>> stereotype assigned to the class.
 	 * 
-	 * In this way CIMTool is made aware that the class is a "shadow class "
+	 * In this way CIMTool is made aware that the class is a "shadow class"
 	 * 
-	 * ExtMyIdentifiedObject ExtEuIdentifiedObject △ △ | | ExtEuIdentifiedObject
+	 * <pre>
+	 * ExtMyIdentifiedObject  ExtEuIdentifiedObject 
+	 *                   △      △ 
+	 *                   |      | 
+	 *              ExtEuIdentifiedObject
+	 * </pre>
 	 * 
 	 * The second manner in which to model a shadow class extension is to name the
 	 * shadow class the same as the class it shadows but with the caveat that it be
@@ -515,8 +521,14 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * and associations that will be merged into the normative IdentifiedObject
 	 * class.
 	 * 
-	 * IdentifiedObject IdentifiedObject (http://my1.com#) (http://my2.com#) △ △ | |
-	 * IdentifiedObject (http://iec.ch/TC57/CIM100#)
+	 * <pre>
+	 *  IdentifiedObject   IdentifiedObject 
+	 * (http://my1.com#)   (http://my2.com#) 
+	 *              △       △ 
+	 *              |       |      
+	 *           IdentifiedObject    
+	 *      (http://iec.ch/TC57/CIM100#)
+	 * </pre>
 	 * 
 	 * @param baseURI The baseURI for CIM to use for processing.
 	 */

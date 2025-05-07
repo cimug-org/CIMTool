@@ -83,9 +83,14 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			connection = getConnection();
 			statement = connection.createStatement();
 
-			/** This query retrieves all tagged values on packages */
+			/** 
+			 * This query retrieves all tagged values on Packages, Classes and Enumerations. 
+			 * Technically there should not be Enumerations in the model as they should all
+			 * be defined as Classes with <<enumeration>> stereotypes. There included here
+			 * if "self heal" mode is to work. 
+			 */
 			rs = statement.executeQuery(
-					"select * from t_object o, t_objectproperties tv where (tv.Object_ID = o.Object_ID) and (o.Object_Type = 'Package' or o.Object_Type = 'Class' or o.Object_Type = 'Enumeration')");
+					"select Property, Value, Object_Type, PDATA1 from t_object o, t_objectproperties tv where (tv.Object_ID = o.Object_ID) and (o.Object_Type = 'Package' or o.Object_Type = 'Class' or o.Object_Type = 'Enumeration')");
 			while (rs.next()) {
 				if ("Package".equals(rs.getString(COL_Object_Type))) {
 					int packageId = rs.getInt(COL_PDATA1);
@@ -237,7 +242,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 		try {
 			connection = getConnection();
 			statement = connection.createStatement();
-			rs = statement.executeQuery("select * from t_package order by Name");
+			rs = statement.executeQuery("select * from t_package");
 			while (rs.next()) {
 				OntResource subject;
 				if (rs.getString(COL_Name).equals("Model"))
@@ -292,8 +297,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 					int parentPackageId = rs.getInt(COL_Parent_ID);
 					OntResource parent = packageIDs.getID(parentPackageId);
 					if (parent != null) {
-						if (!parent.equals(UML.global_package))
-							subject.addIsDefinedBy(parent);
+						subject.addIsDefinedBy(parent);
 					} else {
 						System.err.println("Package " + (subject.getLabel() != null ? subject.getLabel() : subject.getLocalName()) + " has invalid parent package ID: " + parentPackageId);
 					}
@@ -353,15 +357,6 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			sqlQuery.append("FROM t_object ");
 			sqlQuery.append("WHERE ");
 			sqlQuery.append("(Object_Type = 'Class' OR Object_Type = 'Enumeration') ");
-			sqlQuery.append(" AND ");
-			sqlQuery.append("(");
-			sqlQuery.append("(Object_ID IN (SELECT DISTINCT Classifier FROM t_attribute))");
-			sqlQuery.append(" OR ");
-			sqlQuery.append("(Object_ID IN (SELECT DISTINCT Start_Object_ID FROM t_connector))");
-			sqlQuery.append(" OR ");
-			sqlQuery.append("(Object_ID IN (SELECT DISTINCT End_Object_ID FROM t_connector))");
-			sqlQuery.append(") ");
-			sqlQuery.append("ORDER BY Name");
 			//
 			rs = statement.executeQuery(sqlQuery.toString());
 			while (rs.next()) {
