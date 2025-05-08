@@ -32,7 +32,6 @@
 	<xsl:variable name="asciidoc-restricted" as="map(xs:string, xs:string)">
 		<xsl:map>
 			<xsl:map-entry key="'|'" select="'vbar'"/>
-			<xsl:map-entry key="'+'" select="'plus'"/>
 			<xsl:map-entry key="'['" select="'startsb'"/> 
 			<xsl:map-entry key="']'" select="'endsb'"/>
 			<xsl:map-entry key="'^'" select="'caret'"/>
@@ -55,7 +54,6 @@
     <xsl:variable name="asciidoc-table-sensitive" as="map(xs:string, xs:string)">
 		<xsl:map>
 			<xsl:map-entry key="'|'" select="'vbar'"/>
-			<xsl:map-entry key="'+'" select="'plus'"/>
 		</xsl:map>
     </xsl:variable>
     
