@@ -229,14 +229,14 @@
 	</xsl:template>
 	
 	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain">
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
+		<item>|<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">[extension]#</xsl:if><xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">#</xsl:if></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
 	</xsl:template>
 
 	<xsl:template match="a:Simple">
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
+		<item>|<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">[extension]#</xsl:if><xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">#</xsl:if></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
@@ -253,14 +253,14 @@
 	</xsl:template>
 	
 	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain" mode="inherited">
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
+		<item>|<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">[extension]#</xsl:if><xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">#</xsl:if></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
 	</xsl:template>
 	
 	<xsl:template match="a:Simple" mode="inherited">
-		<item>|<xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/></item>
+		<item>|<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">[extension]#</xsl:if><xsl:value-of select="@name"/><xsl:call-template name="process-attribute-stereotypes"/><xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">#</xsl:if></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
