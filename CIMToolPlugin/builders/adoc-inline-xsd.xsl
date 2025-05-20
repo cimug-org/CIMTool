@@ -141,7 +141,7 @@
 	</xsl:template>
 
 	<xsl:template match="a:Message">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -150,7 +150,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:Root">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
@@ -241,7 +241,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:ComplexType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
@@ -253,7 +253,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:CompoundType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -267,7 +267,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:SimpleType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -277,7 +277,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:PrimitiveType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate"/>
@@ -287,7 +287,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:EnumeratedType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -366,16 +366,16 @@
 		<xsl:param name="text"/>
 		<xsl:param name="map" as="map(xs:string, xs:string)"/>
 		<xsl:variable name="final" as="xs:string">
-				<xsl:iterate select="string-to-codepoints($text)">
-					<xsl:param name="result" select="''"/>
-					<xsl:on-completion>
-						<xsl:value-of select="$result"/>
-					</xsl:on-completion>   
-					<xsl:variable name="char" select="codepoints-to-string(.)"/>
-					<xsl:next-iteration>
-						<xsl:with-param name="result" select="concat($result, if (map:contains($map, $char)) then concat('{', map:get($map, $char), '}') else $char)"/>
-					</xsl:next-iteration>
-				</xsl:iterate>
+			<xsl:iterate select="string-to-codepoints($text)">
+				<xsl:param name="result" select="''"/>
+				<xsl:on-completion>
+					<xsl:value-of select="$result"/>
+				</xsl:on-completion>   
+				<xsl:variable name="char" select="codepoints-to-string(.)"/>
+				<xsl:next-iteration>
+					<xsl:with-param name="result" select="concat($result, if (map:contains($map, $char)) then concat('{', map:get($map, $char), '}') else $char)"/>
+				</xsl:next-iteration>
+			</xsl:iterate>
 		</xsl:variable>
 		<xsl:sequence select="$final"/>
 	</xsl:template>

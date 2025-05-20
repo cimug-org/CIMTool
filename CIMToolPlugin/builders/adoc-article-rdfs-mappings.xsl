@@ -107,7 +107,7 @@
 				<item></item>
 				<item>Profile namespace:  <xsl:value-of select="$baseURI"/></item>
 				<item></item>
-				<!-- Note that AsciiDoc auto-generates the period below into a prefix of:  "Figure n." -->
+				<!-- Note that AsciiDoc auto-generates the period below into a prefix of:  "Figure N." -->
 				<!-- Allowing for auto-number of the figures throughout a document                     -->
 				<item>.<xsl:value-of select="$envelope"/> Profile</item>
 				<item>plantuml::./Profiles/<xsl:value-of select="$fileName"/>.rdfs-t2b.puml[format=svg, align=center]</item>
@@ -169,7 +169,7 @@
 	</xsl:template>
 
 	<xsl:template match="a:Message">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -178,7 +178,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:Root">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
@@ -269,7 +269,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:ComplexType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
@@ -281,7 +281,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:CompoundType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -295,7 +295,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:SimpleType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
@@ -305,7 +305,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:PrimitiveType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate"/>
@@ -315,7 +315,7 @@
 	</xsl:template>
 	
 	<xsl:template match="a:EnumeratedType">
-		<item>[#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]</item>
+		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
 		<xsl:apply-templates mode="annotate-type"/>
