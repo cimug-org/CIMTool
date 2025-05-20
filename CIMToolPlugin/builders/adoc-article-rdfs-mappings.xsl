@@ -394,16 +394,16 @@
 		<xsl:param name="text"/>
 		<xsl:param name="map" as="map(xs:string, xs:string)"/>
 		<xsl:variable name="final" as="xs:string">
-				<xsl:iterate select="string-to-codepoints($text)">
-					<xsl:param name="result" select="''"/>
-					<xsl:on-completion>
-						<xsl:value-of select="$result"/>
-					</xsl:on-completion>   
-					<xsl:variable name="char" select="codepoints-to-string(.)"/>
-					<xsl:next-iteration>
-						<xsl:with-param name="result" select="concat($result, if (map:contains($map, $char)) then concat('{', map:get($map, $char), '}') else $char)"/>
-					</xsl:next-iteration>
-				</xsl:iterate>
+			<xsl:iterate select="string-to-codepoints($text)">
+				<xsl:param name="result" select="''"/>
+				<xsl:on-completion>
+					<xsl:value-of select="$result"/>
+				</xsl:on-completion>   
+				<xsl:variable name="char" select="codepoints-to-string(.)"/>
+				<xsl:next-iteration>
+					<xsl:with-param name="result" select="concat($result, if (map:contains($map, $char)) then concat('{', map:get($map, $char), '}') else $char)"/>
+				</xsl:next-iteration>
+			</xsl:iterate>
 		</xsl:variable>
 		<xsl:sequence select="$final"/>
 	</xsl:template>
