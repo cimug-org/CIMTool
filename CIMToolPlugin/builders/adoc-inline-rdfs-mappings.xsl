@@ -201,12 +201,12 @@
 				<xsl:if test="not(child::a:Stereotype[contains(., '#concrete')]) and (count(/.//a:Reference[@baseClass=$baseClass]) > 0)">
 					<!-- Adoc conditional for when there is a byref profile dependency attribute set -->
 					<item>ifdef::<xsl:value-of select="$fileName"/>-byref-profile[]</item>
-					<item>This abstract class serves as a 'By Reference' association within this profile and as such has no attributes or associations defined. Rather, it is used to reference a corresponding concrete class defined in an external profile that this one depends upon. To reference this definition in that profile visit &lt;&lt;{<xsl:value-of select="$fileName"/>-byref-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;.</item>
+					<item>This abstract class serves as a 'By Reference' association within this profile and as such has no attributes or associations are defined. Rather, it is used to reference a corresponding concrete class defined in an external profile that this one depends upon. To reference this definition in that profile visit &lt;&lt;{<xsl:value-of select="$fileName"/>-byref-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;.</item>
 					<item></item>
 					<item>endif::<xsl:value-of select="$fileName"/>-byref-profile[]</item>	
 					<!-- Adoc conditional for when there is no byref profile dependency attribute set -->
 					<item>ifndef::<xsl:value-of select="$fileName"/>-byref-profile[]</item>
-					<item>This abstract class serves as a 'By Reference' association within this profile and as such has no attributes or associations defined. Rather, it is used to reference a corresponding concrete class defined in an external profile that this one depends upon.</item>
+					<item>This abstract class serves as a 'By Reference' association within this profile and as such has no attributes or associations are defined. Rather, it is used to reference a corresponding concrete class defined in an external profile that this one depends upon.</item>
 					<item></item>
 					<item>endif::<xsl:value-of select="$fileName"/>-byref-profile[]</item>					
 				</xsl:if>
