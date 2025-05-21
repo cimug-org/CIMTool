@@ -153,18 +153,18 @@
 		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
+		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
+		<item></item>
 		<!-- 
 			This conditional is intended only for RDFS related adoc and for classes tagged 
 			with the 'Description' stereotype (i.e. rdf:about) 
 		-->
 		<xsl:if test="a:Stereotype[contains(., '#description')]">
 			<item>ifdef::<xsl:value-of select="$fileName"/>-description-profile[]</item>
-			<item>This class is tagged as a 'Description' in this profile. Refer to &lt;&lt;{<xsl:value-of select="$fileName"/>-description-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt; for the full definition of the class as defined in the profile this one depends on.</item>
+			<item>This class is tagged in this profile with the 'Description' tag. To refer to the full definition of this class as defined in the profile this one depends on visit &lt;&lt;{<xsl:value-of select="$fileName"/>-description-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;.</item>
 			<item>endif::<xsl:value-of select="$fileName"/>-description-profile[]</item>
 			<item></item>
 		</xsl:if>
-		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
-		<item></item>
 		<item>:<xsl:value-of select="@name"/>:</item>
 		<xsl:call-template name="type_definition"/>
 		<item>:!<xsl:value-of select="@name"/>:</item>
@@ -199,7 +199,16 @@
 			<xsl:otherwise>
 				<xsl:variable name="baseClass" select="@baseClass"/>
 				<xsl:if test="not(child::a:Stereotype[contains(., '#concrete')]) and (count(/.//a:Reference[@baseClass=$baseClass]) > 0)">
-					<item>This abstract class is a placeholder for 'By Reference' associations defined within this profile. Such classes have no attributes or associations defined. Rather, 'By Reference' associations of this type reference a corresponding concrete type in external profiles that this one is dependent upon.</item>
+					<!-- Adoc conditional for when there is a byref profile dependency attribute set -->
+					<item>ifdef::<xsl:value-of select="$fileName"/>-byref-profile[]</item>
+					<item>This abstract class serves as a 'By Reference' association within this profile and as such has no attributes or associations defined. Rather, it is used to reference a corresponding concrete class defined in an external profile that this one depends upon. To reference this definition in that profile visit &lt;&lt;{<xsl:value-of select="$fileName"/>-byref-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;.</item>
+					<item></item>
+					<item>endif::<xsl:value-of select="$fileName"/>-byref-profile[]</item>	
+					<!-- Adoc conditional for when there is no byref profile dependency attribute set -->
+					<item>ifndef::<xsl:value-of select="$fileName"/>-byref-profile[]</item>
+					<item>This abstract class serves as a 'By Reference' association within this profile and as such has no attributes or associations defined. Rather, it is used to reference a corresponding concrete class defined in an external profile that this one depends upon.</item>
+					<item></item>
+					<item>endif::<xsl:value-of select="$fileName"/>-byref-profile[]</item>					
 				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -254,18 +263,18 @@
 		<item>[[<xsl:value-of select="$fileName"/>-<xsl:value-of select="@name"/>]]</item>
 		<item>==== <xsl:apply-templates select="a:Stereotype"/><xsl:value-of select="@name"/></item>
 		<item></item>
+		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
+		<item></item>
 		<!-- 
 			This conditional is intended only for RDFS related adoc and for classes tagged 
 			with the 'Description' stereotype (i.e. rdf:about) 
 		-->
 		<xsl:if test="a:Stereotype[contains(., '#description')]">
 			<item>ifdef::<xsl:value-of select="$fileName"/>-description-profile[]</item>
-			<item>This class is tagged as a 'Description' in this profile. Refer to &lt;&lt;{<xsl:value-of select="$fileName"/>-description-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt; for the full definition of the class as defined in the profile this one depends on.</item>
+			<item>This class is tagged in this profile with the 'Description' tag. To refer to the full definition of this class as defined in the profile this one depends on visit &lt;&lt;{<xsl:value-of select="$fileName"/>-description-profile}-<xsl:value-of select="@name"/>,<xsl:value-of select="@name"/>&gt;&gt;.</item>
 			<item>endif::<xsl:value-of select="$fileName"/>-description-profile[]</item>
 			<item></item>
 		</xsl:if>
-		<xsl:if test="a:SuperType">Inheritance path = <xsl:apply-templates select="a:SuperType" mode="inheritance_hierarchy"/></xsl:if>
-		<item></item>
 		<item>:<xsl:value-of select="@name"/>:</item>
 		<xsl:call-template name="type_definition"/>
 		<item>:!<xsl:value-of select="@name"/>:</item>
