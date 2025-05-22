@@ -170,18 +170,21 @@ public class Task extends Info {
 		};
 	}
 
-	public static IWorkspaceRunnable importSchema(final IFile file, final String pathname, final String namespace, final Boolean mergeShadowExtensions, final Boolean selfHealingOnImport) {
+	public static IWorkspaceRunnable importSchema(final IFile file, final String pathname, final String namespace,
+			final Boolean mergeShadowExtensions, final Boolean selfHealingOnImport) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				importFile(file, pathname, monitor);
 				putProperty(file, SCHEMA_NAMESPACE, namespace);
-				putProperty(file, MERGE_SHADOW_EXTENSIONS, (mergeShadowExtensions != null ? mergeShadowExtensions.toString() :  Boolean.TRUE.toString()));
-				putProperty(file, SELF_HEAL_ON_IMPORT, (selfHealingOnImport != null ? selfHealingOnImport.toString() :  Boolean.FALSE.toString()));
+				// The next two settings are project-level and therefore the call to file.getProject()...
+				putProperty(file.getProject(), MERGE_SHADOW_EXTENSIONS, (mergeShadowExtensions != null ? mergeShadowExtensions.toString() :  getPreference(MERGE_SHADOW_EXTENSIONS)));
+				putProperty(file.getProject(), SELF_HEAL_ON_IMPORT, (selfHealingOnImport != null ? selfHealingOnImport.toString() :  getPreference(SELF_HEAL_ON_IMPORT)));
 			}
 		};
 	}
 
-	public static IWorkspaceRunnable importTransformBuilder(final TransformBuildlet buildlet, final File xslFile, final File xslImportFile) {
+	public static IWorkspaceRunnable importTransformBuilder(final TransformBuildlet buildlet, final File xslFile,
+			final File xslImportFile) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ProfileBuildletConfigUtils.addTransformBuilderConfigEntry(buildlet, xslFile, xslImportFile);
@@ -207,7 +210,7 @@ public class Task extends Info {
 			}
 		};
 	}
-	
+
 	public static IWorkspaceRunnable importMultiLineCopyright(final IFile file, final String pathname) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -217,7 +220,7 @@ public class Task extends Info {
 			}
 		};
 	}
-	
+
 	public static IWorkspaceRunnable importInputStreamToFile(final IFile file, final InputStream inputStream) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -225,7 +228,7 @@ public class Task extends Info {
 			}
 		};
 	}
-	
+
 	public static IWorkspaceRunnable importSingleLineCopyright(final IFile file, final String pathname) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -259,7 +262,8 @@ public class Task extends Info {
 		String ext = file.getFileExtension().toLowerCase();
 		if (ext.equals("xmi")) {
 			return parseXMI(file);
-		} else if (ext.equals("eap") || ext.equals("eapx") || ext.equals("qea") || ext.equals("qeax") || ext.equals("feap"))
+		} else if (ext.equals("eap") || ext.equals("eapx") || ext.equals("qea") || ext.equals("qeax")
+				|| ext.equals("feap"))
 			return parseEAProject(file);
 		else {
 			if (ModelParserRegistry.INSTANCE.hasParserForExtension(ext)) {
@@ -324,9 +328,10 @@ public class Task extends Info {
 	private static OntModel parseEAProject(IFile file) throws CoreException {
 		EAProjectParser parser;
 		try {
-			Boolean selfHealingOnImportEnabled = Boolean.parseBoolean(getProperty(file, SELF_HEAL_ON_IMPORT));
+			Boolean selfHealingOnImportEnabled = Info.isSelfHealingOnSchemaImportEnabled(file);
 			SchemaImportLogger logger = new SchemaImportLoggerImpl();
-			parser = EAProjectParserFactory.createParser(file.getLocation().toFile(), selfHealingOnImportEnabled, logger);
+			parser = EAProjectParserFactory.createParser(file.getLocation().toFile(), selfHealingOnImportEnabled,
+					logger);
 			parser.parse();
 		} catch (EAProjectParserException e) {
 			throw error("Can't access EA project", e);
@@ -334,8 +339,8 @@ public class Task extends Info {
 		return interpretSchema(parser.getModel(), file);
 	}
 
-	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {	
-		Boolean mergeShadowExtensionsEnabled = Boolean.parseBoolean(getProperty(file, MERGE_SHADOW_EXTENSIONS));
+	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {
+		Boolean mergeShadowExtensionsEnabled = Info.isMergeShadowExtensionsEnabled(file);
 		String base = getProperty(file, SCHEMA_NAMESPACE);
 		if (base == null) {
 			if (file.getName().toLowerCase().startsWith("cim"))
@@ -350,7 +355,8 @@ public class Task extends Info {
 			IO.read(annote, auxfile.getContents(), base, Format.TURTLE.toFormat());
 		} else
 			annote = null;
-		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES), mergeShadowExtensionsEnabled);
+		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES),
+				mergeShadowExtensionsEnabled);
 	}
 
 	private static OntModel parseOWL(IFile file) throws CoreException {
@@ -400,11 +406,11 @@ public class Task extends Info {
 
 	public static void write(OntModel model, String namespace, boolean xmlbase, String format, OutputStream stream)
 			throws CoreException {
-		write(model,  namespace,  xmlbase,  format,  stream, null);
+		write(model, namespace, xmlbase, format, stream, null);
 	}
-	
-	public static void write(OntModel model, String namespace, boolean xmlbase, String format, OutputStream stream, String copyright)
-			throws CoreException {
+
+	public static void write(OntModel model, String namespace, boolean xmlbase, String format, OutputStream stream,
+			String copyright) throws CoreException {
 		try {
 			HashMap style = new HashMap();
 			if (format != null && format.equals(Format.RDF_XML_ABBREV.toFormat()))
@@ -417,7 +423,7 @@ public class Task extends Info {
 				style.put("relativeURIs", "same-document");
 			}
 			style.put("showXmlDeclaration", "true");
-			
+
 			if ((copyright != null && !"".equals(copyright.trim())) && Format.isXML(format)) {
 				IO.write(model, stream, namespace, format, style, copyright);
 			} else {
@@ -494,18 +500,15 @@ public class Task extends Info {
 			}
 		};
 	}
-	
+
 	/**
-	public static IWorkspaceRunnable saveAsciidocThemesForBuilder(final IProject project, String themeName) {
-		return new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IFile file = Info.getAsciidocThemesForBuilder(project, themeName);
-				importFileFromBundle(file, "builders/" + themeName, monitor);
-			}
-		};
-	}
-	*/
-	
+	 * public static IWorkspaceRunnable saveAsciidocThemesForBuilder(final IProject
+	 * project, String themeName) { return new IWorkspaceRunnable() { public void
+	 * run(IProgressMonitor monitor) throws CoreException { IFile file =
+	 * Info.getAsciidocThemesForBuilder(project, themeName);
+	 * importFileFromBundle(file, "builders/" + themeName, monitor); } }; }
+	 */
+
 	public static IWorkspaceRunnable saveDefaultSingleLineCopyrightTemplate(final IProject project) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -534,28 +537,29 @@ public class Task extends Info {
 			}
 		};
 	}
-	
+
 	private static void importFile(final IFile file, final String pathname, IProgressMonitor monitor)
 			throws CoreException {
 		InputStream source = openExternalFile(pathname, monitor);
 		writeFile(file, source, monitor);
 		monitor.worked(1);
 	}
-	
+
 	private static void importFile(final IFile file, final InputStream source, IProgressMonitor monitor)
 			throws CoreException {
 		writeFile(file, source, monitor);
 		monitor.worked(1);
 	}
-	
+
 	private static void importFileFromBundle(final IFile file, final String pathWithinBundle, IProgressMonitor monitor)
 			throws CoreException {
 		InputStream source = openBundledFile(pathWithinBundle, monitor);
 		writeFile(file, source, monitor);
 		monitor.worked(1);
 	}
-	
-	public static InputStream inputStreamFromBundle(final String pathWithinBundle, IProgressMonitor monitor) throws CoreException {
+
+	public static InputStream inputStreamFromBundle(final String pathWithinBundle, IProgressMonitor monitor)
+			throws CoreException {
 		InputStream source = openBundledFile(pathWithinBundle, monitor);
 		monitor.worked(1);
 		return source;
@@ -571,9 +575,11 @@ public class Task extends Info {
 		monitor.worked(1);
 		return source;
 	}
-	
-	private static InputStream openBundledFile(final String pathWithinBundle, IProgressMonitor monitor) throws CoreException {
-		// Below attempts to load a file located within a bundle shipped as part of the CIMTool product. 
+
+	private static InputStream openBundledFile(final String pathWithinBundle, IProgressMonitor monitor)
+			throws CoreException {
+		// Below attempts to load a file located within a bundle shipped as part of the
+		// CIMTool product.
 		InputStream source;
 		try {
 			Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
@@ -595,7 +601,8 @@ public class Task extends Info {
 	}
 
 	public static void writeProfile(IFile file, OntModel model, IProgressMonitor monitor) throws CoreException {
-		writeOntology(file, model, Format.RDF_XML_WITH_NODEIDS.toFormat(), Info.getMultiLineCopyrightText(file.getProject()), monitor);
+		writeOntology(file, model, Format.RDF_XML_WITH_NODEIDS.toFormat(),
+				Info.getMultiLineCopyrightText(file.getProject()), monitor);
 	}
 
 	public static void writeOntology(IFile file, OntModel model, String format, IProgressMonitor monitor)
@@ -603,9 +610,9 @@ public class Task extends Info {
 		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
 		writeOntology(stream, model, format, monitor);
 	}
-	
-	public static void writeOntology(IFile file, OntModel model, String format, String copyright, IProgressMonitor monitor)
-			throws CoreException {
+
+	public static void writeOntology(IFile file, OntModel model, String format, String copyright,
+			IProgressMonitor monitor) throws CoreException {
 		OutputStream stream = new ResourceOutputStream(file, monitor, false, false);
 		writeOntology(stream, model, format, copyright, monitor);
 	}
@@ -621,9 +628,9 @@ public class Task extends Info {
 			namespace = null;
 		write(model, namespace, true, format, stream);
 	}
-	
-	public static void writeOntology(OutputStream stream, OntModel model, String format, String copyright, IProgressMonitor monitor)
-			throws CoreException {
+
+	public static void writeOntology(OutputStream stream, OntModel model, String format, String copyright,
+			IProgressMonitor monitor) throws CoreException {
 		OntResource ont = model.getValidOntology();
 		String namespace;
 		if (ont != null) {

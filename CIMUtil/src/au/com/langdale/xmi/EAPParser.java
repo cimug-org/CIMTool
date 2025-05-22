@@ -67,7 +67,7 @@ public class EAPParser extends AbstractEAProjectParser {
 
 	protected void loadTaggedValuesCaches() throws EAProjectParserException {
 		/**
-		 * Jackess doesn't support joins. This is a "poor man's join" to associate the
+		 * Jacksess doesn't support joins. This is a "poor man's join" to associate the
 		 * package id to the object id...
 		 */
 		Map<Integer, Integer> objectIdToPackageMap = new HashMap<Integer, Integer>();

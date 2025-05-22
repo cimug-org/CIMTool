@@ -745,7 +745,8 @@ public class Info {
 
 	public static Boolean isMergeShadowExtensionsEnabled(IResource resource) {
 		try {
-			return Boolean.valueOf(getProperty(resource, Info.MERGE_SHADOW_EXTENSIONS));
+			// The 'merge shadow extensions' setting is a project level setting in the .cimtool-settings file.
+			return Boolean.valueOf(getProperty(resource.getProject(), Info.MERGE_SHADOW_EXTENSIONS));
 		} catch (CoreException e) {
 			return Boolean.FALSE; // Should not happen, but defaults to enabled.
 		}
@@ -753,7 +754,8 @@ public class Info {
 	
 	public static Boolean isSelfHealingOnSchemaImportEnabled(IResource resource) {
 		try {
-			return Boolean.valueOf(getProperty(resource, Info.SELF_HEAL_ON_IMPORT));
+			// The 'self heal' setting is a project level setting in the .cimtool-settings file.
+			return Boolean.valueOf(getProperty(resource.getProject(), Info.SELF_HEAL_ON_IMPORT));
 		} catch (CoreException e) {
 			return Boolean.FALSE; // Should not happen, but defaults to enabled.
 		}

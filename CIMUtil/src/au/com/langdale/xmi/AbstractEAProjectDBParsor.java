@@ -90,7 +90,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			 * if "self heal" mode is to work. 
 			 */
 			rs = statement.executeQuery(
-					"select Property, Value, Object_Type, PDATA1 from t_object o, t_objectproperties tv where (tv.Object_ID = o.Object_ID) and (o.Object_Type = 'Package' or o.Object_Type = 'Class' or o.Object_Type = 'Enumeration')");
+					"select o.Object_ID as Object_ID, Property, Value, Object_Type, PDATA1 from t_object o, t_objectproperties tv where (tv.Object_ID = o.Object_ID) and (o.Object_Type = 'Package' or o.Object_Type = 'Class' or o.Object_Type = 'Enumeration')");
 			while (rs.next()) {
 				if ("Package".equals(rs.getString(COL_Object_Type))) {
 					int packageId = rs.getInt(COL_PDATA1);
