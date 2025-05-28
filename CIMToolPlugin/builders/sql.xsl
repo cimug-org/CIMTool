@@ -32,17 +32,43 @@
 		<xsl:text>"</xsl:text><xsl:value-of select="$name"/><xsl:text>"</xsl:text>
 	</xsl:template>
 	
-	<xsl:param name="mridType">CHAR VARYING(30)</xsl:param>
+	<!-- NOTE: CHAR VARYING (or CHARACTER VARYING) is the ANSI SQL standard term for what is more commonly known as VARCHAR              -->
+	<xsl:param name="mridType">VARCHAR(36)</xsl:param>
 
 	<xsl:template name="type">
+		<xsl:param name="name" select="@name"/>
 		<xsl:text> </xsl:text>
 		<xsl:choose>
-			<xsl:when test="@xstype = 'string'">CHAR VARYING(30)</xsl:when>
+			<xsl:when test="@xstype = 'string' and $name = 'mRID'">VARCHAR(36)</xsl:when>
+			<xsl:when test="@xstype = 'string'">VARCHAR(255)</xsl:when>
+			<xsl:when test="@xstype = 'normalizedsString'">VARCHAR(255)</xsl:when>
+			<xsl:when test="@xstype = 'token'">VARCHAR(255)</xsl:when>
+			<!-- The 2,048-character limit is widely considered a safe maximum for URLs in 
+			     practice, especially due to legacy compatibility with Internet Explorer. -->
+			<xsl:when test="@xstype = 'anyURI' ">VARCHAR(2048)</xsl:when>
+			<!-- short is a 16-bit signed integer -->
+			<xsl:when test="@xstype = 'short'">SMALLINT</xsl:when>
+			<!-- Below is a 32-bit signed integer -->
+			<!-- INTEGER is a standard exact numeric type defined in the ANSI    -->
+			<!-- SQL standard (SQL-92) as a 32-bit integer.                      -->
+			<!-- Represents: whole numbers from -2,147,483,648 to +2,147,483,647 -->
+			<!-- Equivalent to: NUMERIC(p, 0) with p roughly <= 10               -->
 			<xsl:when test="@xstype = 'integer' or @xstype = 'int'">INTEGER</xsl:when>
+			<!-- long is a 64-bit signed integer -->
+			<xsl:when test="@xstype = 'long'">BIGINT</xsl:when>
+			<!--  Binary encoded in base64 -->
+			<xsl:when test="@xstype = 'base64Binary'">BLOB</xsl:when>
+			<!--  Binary encoded in hex -->
+			<xsl:when test="@xstype = 'hexBinary'">BLOB</xsl:when>
+			<xsl:when test="@xstype = 'decimal'">DOUBLE PRECISION</xsl:when>
 			<xsl:when test="@xstype = 'float'">DOUBLE PRECISION</xsl:when>
 			<xsl:when test="@xstype = 'double'">DOUBLE PRECISION</xsl:when>
-			<xsl:when test="@xstype = 'boolean'">CHAR(1)</xsl:when>
-			<xsl:otherwise>CHAR VARYING(30)</xsl:otherwise>
+			<xsl:when test="@xstype = 'date'">DATE</xsl:when>
+			<xsl:when test="@xstype = 'time'">TIME</xsl:when>
+			<xsl:when test="@xstype = 'dateTime'">TIMESTAMP</xsl:when>
+			<!-- Below is a common approach for representing a boolean types across all common databases. -->
+			<xsl:when test="@xstype = 'boolean'">INTEGER NOT NULL DEFAULT 1 CHECK (<xsl:value-of select="$name"/> IN (0, 1))</xsl:when>
+			<xsl:otherwise>VARCHAR(255)</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	
@@ -63,7 +89,7 @@
 		</document>
 	</xsl:template>
 
-	<xsl:template match="a:ComplexType|a:Root">
+	<xsl:template match="a:ComplexType|a:Root|a:CompoundType">
 		<!-- a table -->
 		<item/>
 		<xsl:call-template name="annotate" />
@@ -74,7 +100,7 @@
 		</list>
 	</xsl:template>
 
-	<xsl:template match="a:ComplexType|a:Root" mode="constraints" >
+	<xsl:template match="a:ComplexType|a:Root|a:CompoundType" mode="constraints" >
 		<xsl:apply-templates mode="constraints"/>
 	</xsl:template>
 	
@@ -97,7 +123,7 @@
 		<xsl:call-template name="annotate" />
 		<item>
 		    CREATE TABLE <xsl:call-template name="ident"/>
-		    ( "name" CHAR VARYING(30) UNIQUE );
+		    ( "name" VARCHAR(36) UNIQUE );
 		</item>    
 
 		<xsl:variable name="name" select="@name"/>
@@ -114,13 +140,14 @@
 		</xsl:for-each>
 	</xsl:template>
 
-	<xsl:template match="a:Instance|a:Reference">
+	<xsl:template match="a:Instance|a:Reference|a:Compound">
 		<xsl:if test="@maxOccurs &lt;= 1 and @name != 'mRID'">
 			<!-- a foreign key column -->
 			<decorate>
 				<xsl:call-template name="annotate" />
 				<item>
 					<xsl:call-template name="ident"/>
+					<xsl:text> </xsl:text>
 					<xsl:value-of select="$mridType"/>
 					<xsl:call-template name="notnull"/>
 				</item>
@@ -128,7 +155,7 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template match="a:Instance|a:Reference" mode="constraints">
+	<xsl:template match="a:Instance|a:Reference|a:Compound" mode="constraints">
 		<xsl:if test="@maxOccurs &lt;= 1 and @name != 'mRID'">
 			<list indent="-- ">association constraint</list>
 			<item>
@@ -152,7 +179,7 @@
 			<xsl:call-template name="annotate" />
 			<item>
 				<xsl:call-template name="ident"/>
-				CHAR VARYING(30)
+				VARCHAR(36)
 				<xsl:call-template name="notnull"/>
 			</item>
 		</decorate>
