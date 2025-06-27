@@ -11,6 +11,8 @@ import java.util.List;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
+import au.com.langdale.logging.SchemaImportConsoleLoggerImpl;
+import au.com.langdale.logging.SchemaImportLogger;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -20,7 +22,9 @@ import com.hp.hpl.jena.vocabulary.XSD;
 public class UMLInterpreter {
 
 	// Default logger to System.out
-	protected SchemaImportLogger logger = new SchemaImportLoggerImpl();
+	protected SchemaImportLogger logger = new SchemaImportConsoleLoggerImpl();
+	
+	protected boolean TRACE = false;
 	
 	protected OntModel model;
 	/**
