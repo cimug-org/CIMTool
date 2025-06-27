@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import au.com.langdale.logging.SchemaImportLogger;
+
 public class QEAParser extends AbstractEAProjectDBParsor {
 
 	public QEAParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {

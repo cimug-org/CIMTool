@@ -12,6 +12,8 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.logging.SchemaImportLogger;
+import au.com.langdale.logging.SchemaImportNoOpLoggerImpl;
 
 /**
  * A base for the XMI2OWL interpretor that wraps a Jena OWL model
@@ -20,7 +22,7 @@ import au.com.langdale.kena.OntResource;
  */
 public class XMIModel {
 	
-	protected SchemaImportLogger importLogger = new SchemaImportLoggerNoOpImpl();
+	protected SchemaImportLogger importLogger = new SchemaImportNoOpLoggerImpl();
 
 	public static final String LANG = null; // if changed, review the SearchWizard code
 
@@ -29,12 +31,25 @@ public class XMIModel {
 	
 	/** a debug flag that causes xmi:id's to be preserved as annotations */
 	public boolean keepID = true;
-
+	
+	private boolean selfHealOnImport = false;
+	
+	public XMIModel() {
+	}
+	
+	public XMIModel(boolean selfHealOnImport) {
+		this.selfHealOnImport = selfHealOnImport;
+	}
+	
 	/**
 	 * Return the underlying Jena OWL model. 
 	 */
 	public OntModel getModel() {
 		return model;
+	}
+	
+	protected boolean selfHealOnImportEnabled() {
+		return this.selfHealOnImport;
 	}
 
 	/**

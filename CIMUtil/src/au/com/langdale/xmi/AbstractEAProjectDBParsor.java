@@ -6,14 +6,17 @@ package au.com.langdale.xmi;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.logging.SchemaImportLogger;
 
 public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser {
 
@@ -31,20 +34,25 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 		Statement statement = null;
 		ResultSet rs = null;
 		try {
+			Map<String, OntResource> stereotypedNamespaces = new HashMap<String, OntResource>();
 			connection = getConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery("select * from t_xref where Name = 'Stereotypes'");
 			while (rs.next()) {
 				String eaGUID = rs.getString(COL_Client);
+				String stereotypes = rs.getString(COL_Description);
 				if (stereotypesMap.containsKey(eaGUID)) {
 					List<String> stereotypesList = stereotypesMap.get(eaGUID);
-					stereotypesList.add(rs.getString(COL_Description));
+					stereotypesList.add(stereotypes);
 				} else {
 					List<String> stereotypesList = new ArrayList<String>();
-					stereotypesList.add(rs.getString(COL_Description));
+					stereotypesList.add(stereotypes);
 					stereotypesMap.put(eaGUID, stereotypesList);
 				}
+				Map<String,OntResource> stereos = createStereotypedNamespaces(stereotypes);
+				stereotypedNamespaces.putAll(stereos);
 			}
+			StereotypedNamespaces.init(stereotypedNamespaces);
 		} catch (SQLException sqlException) {
 			throw new EAProjectParserException("Unable to import the EA project file:  " + file.getAbsolutePath(),
 					sqlException);
@@ -72,7 +80,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			}
 		}
 	}
-
+	
 	protected void loadTaggedValuesCaches() throws EAProjectParserException {
 		packagesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
 		classesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
@@ -86,7 +94,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			/** 
 			 * This query retrieves all tagged values on Packages, Classes and Enumerations. 
 			 * Technically there should not be Enumerations in the model as they should all
-			 * be defined as Classes with <<enumeration>> stereotypes. There included here
+			 * be defined as Classes with <<enumeration>> stereotypes. They are included here
 			 * if "self heal" mode is to work. 
 			 */
 			rs = statement.executeQuery(
@@ -306,8 +314,10 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 					 * Should we ever need to add support for Stereotypes on Packages simply uncomment the line below
 					 * to add them. Additionally, the XMIParser.PackageMode.visit() method would need to
 					 * have the following code uncommented: return new StereotypeMode(element, packResource);
+					 * 
+					 * select P.Package_ID, P.Name, P.ea_guid, X.Description  from t_xref X, t_package P where X.Name = 'Stereotypes' and P.ea_guid = X.Client
 					 */
-					// addStereotypes(subject, rs.getString(COL_ea_guid));
+					addStereotypes(subject, rs.getString(COL_ea_guid));
 					addTaggedValuesToPackage(subject, packageId);
 				}
 			}
@@ -366,9 +376,19 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 					isInvalidEnumeration = true; // We ignore and "convert"/"treat" it as a correctly defined enumeration...
 				}
 				if (!isInvalidEnumeration) {
-					OntResource subject = createClass(getEAGUID(rs), rs.getString(COL_Name));
+					String className = rs.getString(COL_Name);
+					OntResource subject = createClass(getEAGUID(rs), className);
 					int objectId = rs.getInt(COL_Object_ID);
 					objectIDs.putID(objectId, subject);
+					
+					if (classifierMappings.containsKey(className)) {
+						// We only allow for a single classifier mapping. If one exists  
+						// already we remove it and allow have no classifier entry...
+						classifierMappings.remove(className);
+					} else  {
+						classifierMappings.put(className, objectId);
+					}
+					
 					annotate(subject, rs.getString(COL_Note));
 					OntResource parent = packageIDs.getID(rs.getInt(COL_Package_ID));
 					if (parent != null) {
@@ -380,6 +400,8 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 					//
 					addStereotypes(subject, rs.getString(COL_ea_guid));
 					addTaggedValuesToClass(subject, objectId);
+				} else {
+					// If self heal enabled then fix enumeration
 				}
 			}
 		} catch (SQLException sqlException) {
@@ -420,6 +442,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			rs = statement.executeQuery("select * from t_attribute");
 			while (rs.next()) {
 				int objectId = rs.getInt(COL_Object_ID);
+				String declaredTypeForAttribute = rs.getString(COL_Type);
 				OntResource domainOfAttribute = objectIDs.getID(objectId);
 				if (domainOfAttribute != null) {
 					String attributeName = rs.getString(COL_Name);
@@ -427,18 +450,29 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 					subject.addDomain(domainOfAttribute);
 					annotate(subject, rs.getString(COL_Notes));
 					subject.addIsDefinedBy(domainOfAttribute.getIsDefinedBy());
-					if (hasClassifier(rs)) {
-						int classifier = getClassifier(rs);
-						OntResource range = objectIDs.getID(classifier);
-						if (range != null)
+					
+					if (!"enum".equalsIgnoreCase(rs.getString(COL_Stereotype))) {
+						int classifier = 0;
+						
+						if (hasClassifier(rs)) {
+							classifier = getClassifier(rs);
+						} else if (selfHealOnImportEnabled()){
+							classifier = 0;
+							if (classifierMappings.containsKey(declaredTypeForAttribute)) {
+								classifier = classifierMappings.get(declaredTypeForAttribute);
+							}
+						}
+						
+						if (classifier > 0 && (objectIDs.getID(classifier) != null)) {
+							OntResource range = objectIDs.getID(classifier);
 							subject.addRange(range);
-						else {
+						} else {
 							String packageHierarchy = getPackageHierarchy(domainOfAttribute.getIsDefinedBy());
 							String className = domainOfAttribute.getLabel();
-							
 							importLogger.logAttributeMissingRange(packageHierarchy, className, attributeName, rs.getString(COL_Type), classifier);
 						}
 					}
+					
 					String defaultValue = rs.getString(COL_Default);
 					if (defaultValue != null && !"".equals(defaultValue)) {
 						subject.addProperty(UML.hasInitialValue, defaultValue);
@@ -595,6 +629,7 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 			}
 		}
 	}
+
 
 	private int getClassifier(ResultSet rs) throws SQLException {
 		String classifier = rs.getString(COL_Classifier);

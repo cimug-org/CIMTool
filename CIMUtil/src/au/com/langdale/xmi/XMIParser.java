@@ -474,7 +474,7 @@ public class XMIParser extends XMIModel {
 				}
 				return null;
 			} else if (element.matches("Stereotype")) {
-				return new StereotypeMode(element); // pick up stereotype but don't apply to package
+				//return new StereotypeMode(element); // pick up stereotype but don't apply to package
 				/**
 				 * Should we ever need to add support for Stereotypes on Packages simply comment 
 				 * out the line above and uncomment the line below to add them to the package.
@@ -482,7 +482,8 @@ public class XMIParser extends XMIModel {
 				 * should have the call to addStereotypes(subject, rs.getString(COL_ea_guid)) 
 				 * uncommented.
 				 */
-				// return new StereotypeMode(element, packResource); // pick up stereotype but don't apply to package
+				// pick up stereotype and apply to package
+				return new StereotypeMode(element, packResource); 
 			} else if (element.matches("Diagram")) {
 				return null; // chop off any diagrams
 			} else if (element.matches("Subsystem")) {

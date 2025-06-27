@@ -6,6 +6,8 @@ package au.com.langdale.xmi;
 
 import java.io.File;
 
+import au.com.langdale.logging.SchemaImportLogger;
+
 /**
  * Static factory class for creating parsers specialized for specific EA
  * Project files.

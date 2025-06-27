@@ -16,59 +16,13 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL2;
 
 import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
+import au.com.langdale.logging.SchemaImportConsoleLoggerImpl;
+import au.com.langdale.logging.SchemaImportLogger;
 
-public abstract class AbstractEAProjectParser extends XMIModel implements EAProjectParser {
-	
+public abstract class AbstractEAProjectParser extends XMIModel implements EAProjectParser, EADBColumns {
+
 	// Default logger to Standard.out
-	protected static SchemaImportLogger logger = new SchemaImportLoggerImpl(); 
-	
-	// Table name constants corresponding to the EA project file database tables.
-	protected static final String TABLE_t_package = "t_package";
-	protected static final String TABLE_t_object = "t_object";
-	protected static final String TABLE_t_connector = "t_connector";
-	protected static final String TABLE_t_xref = "t_xref";
-	protected static final String TABLE_t_objectproperties = "t_objectproperties";
-	protected static final String TABLE_t_attribute = "t_attribute";
-	protected static final String TABLE_t_attributetag = "t_attributetag";
-	protected static final String TABLE_t_connectortag = "t_connectortag";
-
-	// Column name constants corresponding to the EA project file database columns.
-	// These names are case sensitive by design and should not be modified.
-	protected static final String COL_Client = "Client";
-	protected static final String COL_Description = "Description";
-	protected static final String COL_Parent_ID = "Parent_ID";
-	protected static final String COL_Connector_ID = "Connector_ID";
-	protected static final String COL_Note = "Note";
-	protected static final String COL_Object_Type = "Object_Type";
-	protected static final String COL_Package_ID = "Package_ID";
-	protected static final String COL_PDATA1 = "PDATA1";
-	protected static final String COL_VALUE = "VALUE";
-	protected static final String COL_Value = "Value";
-	protected static final String COL_Property = "Property";
-	protected static final String COL_SourceRole = "SourceRole";
-	protected static final String COL_DestRole = "DestRole";
-	protected static final String COL_SourceCard = "SourceCard";
-	protected static final String COL_DestCard = "DestCard";
-	protected static final String COL_SourceRoleNote = "SourceRoleNote";
-	protected static final String COL_End_Object_ID = "End_Object_ID";
-	protected static final String COL_Start_Object_ID = "Start_Object_ID";
-	protected static final String COL_DestRoleNote = "DestRoleNote";
-	protected static final String COL_DestIsAggregate = "DestIsAggregate";
-	protected static final String COL_SourceIsAggregate = "SourceIsAggregate";
-	protected static final String COL_Connector_Type = "Connector_Type";
-	protected static final String COL_ea_guid = "ea_guid";
-	protected static final String COL_ID = "ID";
-	protected static final String COL_Default = "Default";
-	protected static final String COL_Name = "Name";
-	protected static final String COL_Notes = "Notes";
-	protected static final String COL_Object_ID = "Object_ID";
-	protected static final String COL_ElementID = "ElementID";
-	protected static final String COL_Classifier = "Classifier";
-	protected static final String COL_Type = "Type";
-	protected static final String COL_Stereotype = "Stereotype"; // ONLY used to check for "enum" stereotype on attributes...
-	protected static final String COL_LowerBound = "LowerBound"; // t_attribute min card
-	protected static final String COL_UpperBound = "UpperBound"; // t_attribute max card
+	protected static SchemaImportLogger logger = new SchemaImportConsoleLoggerImpl();
 	//
 	protected static final String STEREO_ENUMERATION = "enumeration";
 	protected static final String STEREO_ENUM = "enum";
@@ -84,10 +38,10 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 	protected static final String PKG_MODEL = "Model";
 
 	protected File file;
-	protected boolean selfHealOnImport;
 
 	protected IDList packageIDs = new IDList(200);
 	protected IDList objectIDs = new IDList(3000);
+	protected Map<String, Integer> classifierMappings = new HashMap<>();
 
 	private static String stereoPattern = "@STEREO;(.+?)@ENDSTEREO;";
 	private static String name = "(.+?)=(.+?);";
@@ -100,13 +54,13 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 	protected Map<Integer, List<TaggedValue>> classesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
 	protected Map<Integer, List<TaggedValue>> attributesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
 	protected Map<Integer, List<TaggedValue>> associationsTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
-
+	
 	protected abstract void dbInit() throws EAProjectParserException;
 
 	protected abstract void dbShutdown() throws EAProjectParserException;
 
 	public void parse() throws EAProjectParserException {
-		// NOTE: Connection and Statement are AutoClosable. These should 
+		// NOTE: Connection and Statement are AutoClosable. These should
 		// be closed within the dbShutdown method to avoid leaks.
 		try {
 			// We call dbInit for those databases that may need to perform
@@ -121,7 +75,6 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			parseClasses();
 			parseAssociations();
 			parseAttributes();
-			validateExtensions();
 		} catch (EAProjectParserException eapException) {
 			eapException.printStackTrace(System.err);
 			throw eapException;
@@ -133,10 +86,10 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			dbShutdown();
 		}
 	}
-	
+
 	public AbstractEAProjectParser(File file, boolean selfHealOnImport, SchemaImportLogger logger) {
+		super(selfHealOnImport);
 		this.file = file;
-		this.selfHealOnImport = selfHealOnImport;
 		if (logger != null)
 			this.importLogger = logger;
 	}
@@ -188,7 +141,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 	protected abstract void parsePackages() throws EAProjectParserException;
 
 	protected abstract void parseClasses() throws EAProjectParserException;
-
+	
 	protected abstract void parseAssociations() throws EAProjectParserException;
 
 	protected abstract void parseAttributes() throws EAProjectParserException;
@@ -197,18 +150,19 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 		String packageHierarchy = null;
 		while (parent != null && !parent.equals(UML.global_package)) {
 			String parentPackageName = parent.getLabel();
-			packageHierarchy = (packageHierarchy != null ? parentPackageName + "::" + packageHierarchy : parentPackageName);
+			packageHierarchy = (packageHierarchy != null ? parentPackageName + "::" + packageHierarchy
+					: parentPackageName);
 			parent = parent.getIsDefinedBy();
 		}
 		return (packageHierarchy == null ? "<Unknown Package>" : packageHierarchy);
-		//return "";
+		// return "";
 	}
-	
+
 	protected String getPackageHierarchy(int packageId) {
 		OntResource parent = packageIDs.getID(packageId);
 		return getPackageHierarchy(parent);
 	}
-	
+
 	protected String validatedCardinality(String cardFromUML) {
 		String card = ""; // Defaults to empty string if cardFromUML is invalid...
 		if (cardFromUML != null && cardFromUML.length() > 0) {
@@ -220,7 +174,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 						int parsedMinCard = Integer.parseInt(minCard);
 						int parsedMaxCard = Integer.MAX_VALUE; // Default to unbounded
 						if (!maxCard.toLowerCase().equals("n") && !maxCard.toLowerCase().equals("*")) {
-							parsedMaxCard = Integer.parseInt(maxCard); 
+							parsedMaxCard = Integer.parseInt(maxCard);
 						}
 						if (parsedMinCard <= parsedMaxCard) {
 							card = cardFromUML;
@@ -241,22 +195,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 		}
 		return card;
 	}
-	
-	protected void validateExtensions() {
-		/**
-		 * Pass one here addresses approach one described in the method comments.
-		 */
-		List<OntResource> shadowClasses = new ArrayList<OntResource>();
-		ResIterator shadowExtensions = model.listSubjectsBuffered(UML.hasStereotype, UML.shadowextension);
-		while (shadowExtensions.hasNext()) {
-			OntResource shadowClass = shadowExtensions.nextResource();
-			if (shadowClass.hasProperty(UML.hasStereotype, UML.cimdatatype) || shadowClass.hasProperty(UML.hasStereotype, UML.primitive)) {
-				shadowClasses.add(shadowClass);
-				//System.err.println("Shadow Extension:  " + shadowClass.describe());
-			}
-		}
-	}
-	
+
 	protected void annotate(OntResource subject, String note) {
 		if (note == null)
 			return;
@@ -266,6 +205,24 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			return;
 
 		subject.addComment(note, LANG);
+	}
+
+	protected Map<String, OntResource> createStereotypedNamespaces(String stereotypes) {
+		Map<String, OntResource> resourcesMap = new HashMap<>(); 
+		Matcher matcher = pattern.matcher(stereotypes);
+		while (matcher.find()) {
+			String description = matcher.group(1);
+			Matcher stereoNameMatcher = namePattern.matcher(description);
+			while (stereoNameMatcher.find()) {
+				String groupName = stereoNameMatcher.group(1);
+				if ("Name".equals(groupName)) {
+					String stereoName = stereoNameMatcher.group(2);
+					OntResource s = createStereotypeByName(stereoName);
+					resourcesMap.put(s.getLabel(), s);
+				}
+			}
+		}
+		return resourcesMap;
 	}
 
 	protected void addStereotypes(OntResource subject, String eaGUID) {
@@ -299,7 +256,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			}
 		}
 	}
-	
+
 	protected void addTaggedValuesToClass(OntResource subject, int objectId) {
 		if (classesTaggedValuesMap.containsKey(objectId)) {
 			List<TaggedValue> taggedValuesList = classesTaggedValuesMap.get(objectId);
@@ -345,7 +302,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 		role.property.addIsDefinedBy(source.getIsDefinedBy()); // FIXME: the package of an association is not always
 																// that of the source class
 		role.range = destin;
-		
+
 		switch (aggregate) {
 		case 1: // Aggregate
 			role.aggregate = true;
@@ -360,8 +317,8 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			role.composite = false;
 			break;
 		}
-		
-		// Determine and set min cardinality 
+
+		// Determine and set min cardinality
 		if (card.equals("*") || card.equals("n") || card.startsWith("0..")) {
 			role.lower = 0;
 		} else if (card.equals("1") || card.startsWith("1..")) {
@@ -373,8 +330,8 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			} catch (Exception e1) {
 			}
 		}
-		
-		// Determine and set max cardinality 
+
+		// Determine and set max cardinality
 		if (card.equals("1") || card.endsWith("..1")) {
 			role.upper = 1;
 		} else if (card.contains("..") && !card.endsWith("..*") && !card.endsWith("..n")) {
@@ -391,14 +348,15 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 			} catch (Exception e1) {
 			}
 		}
-		
+
 		role.baseuri = getTaggedValueForAssociation(UML.baseuri, connectorId);
 		role.baseprefix = getTaggedValueForAssociation(UML.baseprefix, connectorId);
-		
+
 		return role;
 	}
 
-	public OntResource createCardinalityRestriction(OntResource domain, String uri, FrontsNode prop, FrontsNode cardinalityType, int card) {
+	public OntResource createCardinalityRestriction(OntResource domain, String uri, FrontsNode prop,
+			FrontsNode cardinalityType, int card) {
 		OntResource result = model.createIndividual(uri, OWL2.Restriction);
 		result.addProperty(OWL2.onProperty, prop);
 		result.addProperty(cardinalityType, card);
