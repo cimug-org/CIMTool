@@ -229,8 +229,8 @@ public class ProfileBuildlets extends Task {
 				serializer.setCopyrightMultiLine(Info.getMultiLineCopyrightText(file.getProject()));
 				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
-				// Set diagram preferences used by any PlantUML diagram builders
-				serializer.setPlantUMLParameters(Info.getPlantUMLParameters(result));
+				// Set builder specific preferences passed to the serializer as parameters.
+				serializer.setBuilderSpecificParameters(Info.getBuilderSpecificParameters(result));
 			
 				// TODO: make this better
 				serializer.setVersion("Beta");
