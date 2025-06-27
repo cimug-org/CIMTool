@@ -268,15 +268,20 @@ public class Refactory extends ProfileUtility {
 		ResIterator it = getModel().listSubjectsWithProperty(RDFS.domain, profile.getBaseClass());
 		while(it.hasNext()) {
 			OntResource prop = it.nextResource();
-			if (selectionOptions.includeAllAssociations()) {
+			if (prop.isFunctionalProperty()) {
+				profile.createAllValuesFrom(prop, selectionOptions);
+				createDefaultRange(profile, prop);
+			} else if (selectionOptions.includeOnlySourceSideAssociations()) {
 				if (prop.hasProperty(UML.id) && (prop.getString(UML.id).toUpperCase().endsWith("-A") || !prop.getString(UML.id).toUpperCase().endsWith("-B"))) {
 					profile.createAllValuesFrom(prop, selectionOptions);
 					createDefaultRange(profile, prop);
 				} 
-			} else if (prop.isFunctionalProperty()) {
-				profile.createAllValuesFrom(prop, selectionOptions);
-				createDefaultRange(profile, prop);
-			}
+			} else if (selectionOptions.includeAllAssociations()) {
+					if (prop.hasProperty(UML.id) && (prop.getString(UML.id).toUpperCase().endsWith("-A") || prop.getString(UML.id).toUpperCase().endsWith("-B"))) {
+						profile.createAllValuesFrom(prop, selectionOptions);
+						createDefaultRange(profile, prop);
+					} 
+			} 
 		}
 	}
 	

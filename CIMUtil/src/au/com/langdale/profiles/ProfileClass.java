@@ -320,6 +320,7 @@ public class ProfileClass {
 	
 	public OntResource createAllValuesFrom(OntResource prop, SelectionOptions selectionOptions) {
 		boolean required = selectionOptions.isPropertyRequired();
+		boolean byReference = selectionOptions.isByReference();
 		boolean useSchemaCardinality = selectionOptions.useSchemaCardinality();
 		
 		OntResource child; 
@@ -332,8 +333,12 @@ public class ProfileClass {
 		}
 		else {
 			child = model.createClass();
-			if( range != null )
+			if( range != null ) {
 				child.addSuperClass(range);
+				if(byReference) {
+					child.addProperty(UML.hasStereotype, UML.byreference);
+				}
+			}
 		}
 		String label = prop.getLabel(null);
 		if( label == null)
