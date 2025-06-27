@@ -86,7 +86,7 @@ public class ProfileSerializer extends AbstractReader {
 	private String copyrightMultiLine = "";
 	private String copyrightSingleLine = "";
 	// the next set of parameters are PlantUML specific
-	private String plantUMLParameters = "";
+	private String builderSpecificParameters = "";
 
 	private TreeSet primitivesDeferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
 		@Override
@@ -297,8 +297,14 @@ public class ProfileSerializer extends AbstractReader {
 				ti.setParameter("copyright-single-line", copyrightSingleLine);
 				ti.setParameter("fileName", fileName);
 				
-				// PlantUML diagram preferences for all PlantUML diagram builders...
-				ti.setParameter("plantUMLParameters", this.plantUMLParameters);
+				/**
+				 * The follow line sets any builder-specific parameters. These types of parameters are
+				 * defined as preferences in CIMTool that have default values defined. Such parameters
+				 * are further designed to be overridable via a PropertyPage accessed via the right
+				 * mouse menu selected on a specific generated artifact and selecting the "Properties".
+				 * For an example, refer to the PlantUML preferences/properties..
+				 */
+				ti.setParameter("builderSpecificParameters", this.builderSpecificParameters);
 				tx[ix] = ti;
 			}
 		} else {
@@ -567,10 +573,15 @@ public class ProfileSerializer extends AbstractReader {
 	private void emitInverse(ElementNode node, Element elem) throws SAXException {
 		OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
 		if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
-			elem.set("baseClass", inverse.getRange().getURI());
+			// REVERT
+			if (inverse.getRange() == null)
+				System.err.println("Null getRange() on INVERSE:  " + inverse.describe());
+			elem.set("baseClass", (inverse.getRange() != null ? inverse.getRange().getURI() : ""));
+			//elem.set("baseClass", inverse.getRange().getURI());
 			if (inverse.hasProperty(UML.id))
 				elem.set("ea_guid", EAGuidUtils.fixEAGuid(inverse.getString(UML.id)));	
-			elem.set("type", inverse.getRange().getLocalName());
+			// REVERT below
+			elem.set("type", (inverse.getRange() != null ? inverse.getRange().getLocalName() : ""));
 			if (inverse.getLabel() != null)
 				elem.set("name", inverse.getLabel());
 			if (inverse.getURI() != null)
@@ -982,12 +993,12 @@ public class ProfileSerializer extends AbstractReader {
 		this.version = version;
 	}
 	
-	public String getPlantUMLParameters(String plantUMLParameters) {
-		return this.plantUMLParameters;
+	public String getBuilderSpecificParameters(String builderSpecificParameters) {
+		return this.builderSpecificParameters;
 	}
 	
-	public void setPlantUMLParameters(String plantUMLParameters) {
-		this.plantUMLParameters = plantUMLParameters;
+	public void setBuilderSpecificParameters(String builderSpecificParameters) {
+		this.builderSpecificParameters = builderSpecificParameters;
 	}
 	
 }

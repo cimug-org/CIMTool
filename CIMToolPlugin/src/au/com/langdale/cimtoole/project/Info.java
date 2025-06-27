@@ -71,7 +71,7 @@ public class Info {
 	public static final QualifiedName MAPPING_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
 			"mapping_namespace");
 	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
-	
+
 	/**
 	 * PlantUML preferences below. When adding a new QualifiedName to the list here
 	 * be sure to also add the new entry to the Info.getPlantUMLParameters() method
@@ -115,7 +115,7 @@ public class Info {
 
 	public static final List<String> themes = new LinkedList<String>();
 	static {
-		/*  Below are the current PlantUML themes supported OOTB */
+		/* Below are the current PlantUML themes supported OOTB */
 		themes.add("_none_");
 		themes.add("amiga");
 		themes.add("aws-orange");
@@ -160,7 +160,7 @@ public class Info {
 		themes.add("united");
 		// themes.add("vibrant"); // unrecognized by asciidoc plugin
 	}
-	
+
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
 	public static final String COPYRIGHT_MULTI_LINE_EXTENSION = "copyright-multi-line";
 	public static final String COPYRIGHT_SINGLE_LINE_EXTENSION = "copyright-single-line";
@@ -168,7 +168,7 @@ public class Info {
 	public static boolean isProfile(IResource resource) {
 		return isFile(resource, "Profiles", "owl", "n3");
 	}
-	
+
 	public static boolean isPlantUML(IResource resource) {
 		return isFile(resource, "Profiles", "puml");
 	}
@@ -180,12 +180,12 @@ public class Info {
 	public static boolean isRuleSet(IResource resource, String type) {
 		return isFile(resource, "Profiles", type);
 	}
-	
+
 	public static boolean isSchema(IResource resource) {
 		return isFile(resource, "Schema", "owl", "xmi", "eap", "eapx", "qea", "qeax", "feap")
 				|| isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
 	}
-	
+
 	public static boolean isSettings(IResource resource) {
 		String extension = resource.getFileExtension();
 		boolean isSettings = (extension != null ? SETTINGS_EXTENSION.equals(extension) : false);
@@ -238,11 +238,12 @@ public class Info {
 		return (resource instanceof IFolder) && path.segmentCount() == 2 && path.segment(0).equals(location);
 	}
 
-	/*
-	 * public static boolean isXMI(IFile file) { String ext =
-	 * file.getFileExtension(); if( ext == null) return false; ext =
-	 * ext.toLowerCase(); return ext.equals("xmi"); }
-	 */
+
+	 public static boolean isXMI(IFile file) { 
+		 String ext = file.getFileExtension(); if( ext == null) return false; ext = ext.toLowerCase(); 
+		 return ext.equals("xmi"); 
+	 }
+
 	public static boolean isParseable(IFile file) {
 		String ext = file.getFileExtension();
 		if (ext == null)
@@ -319,22 +320,22 @@ public class Info {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Images") : (IFolder) null;
 	}
-	
+
 	public static IFolder getDocumentationIncludes(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Includes") : (IFolder) null;
 	}
-	
+
 	public static IFolder getDocumentationStyles(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Styles") : (IFolder) null;
 	}
-	
+
 	public static IFolder getDocumentationThemes(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Themes") : (IFolder) null;
 	}
-	
+
 	public static IFolder getSchemaFolder(IProject project) {
 		return project != null ? project.getFolder("Schema") : null;
 	}
@@ -707,12 +708,26 @@ public class Info {
 		}
 		return value;
 	}
-	
+
 	public static String getPropertyNoException(IResource resource, QualifiedName symbol) {
 		String value = "";
 		try {
 			value = getProperty(resource, symbol);
 		} catch (CoreException ce) {
+		}
+		return value;
+	}
+
+	public static String getBuilderSpecificParameter(IResource resource, QualifiedName symbol) {
+		String value = "";
+		if (resource.exists()) {
+			Settings settings = CIMToolPlugin.getSettings();
+			value = settings.getSetting(resource, symbol);
+			if (value == null) {
+				value = getPreference(symbol);
+			}
+		} else {
+			value = getPreference(symbol);
 		}
 		return value;
 	}
@@ -745,16 +760,18 @@ public class Info {
 
 	public static Boolean isMergeShadowExtensionsEnabled(IResource resource) {
 		try {
-			// The 'merge shadow extensions' setting is a project level setting in the .cimtool-settings file.
+			// The 'merge shadow extensions' setting is a project level setting in the
+			// .cimtool-settings file.
 			return Boolean.valueOf(getProperty(resource.getProject(), Info.MERGE_SHADOW_EXTENSIONS));
 		} catch (CoreException e) {
 			return Boolean.FALSE; // Should not happen, but defaults to enabled.
 		}
 	}
-	
+
 	public static Boolean isSelfHealingOnSchemaImportEnabled(IResource resource) {
 		try {
-			// The 'self heal' setting is a project level setting in the .cimtool-settings file.
+			// The 'self heal' setting is a project level setting in the .cimtool-settings
+			// file.
 			return Boolean.valueOf(getProperty(resource.getProject(), Info.SELF_HEAL_ON_IMPORT));
 		} catch (CoreException e) {
 			return Boolean.FALSE; // Should not happen, but defaults to enabled.
@@ -778,49 +795,69 @@ public class Info {
 		}
 	}
 
-	public static String getPlantUMLParameters(IFile file) {
-		StringBuffer plantUMLParameters = new StringBuffer();
-		// 
-		// Set diagram preferences used by any PlantUML diagram builders...
-		plantUMLParameters.append("plantUMLTheme=" + Info.getPropertyNoException(file, PLANTUML_THEME) + "|");
-		plantUMLParameters.append("docRootClassesColor=" + Info.getPropertyNoException(file, DOCROOT_CLASSES_COLOR) + "|");
-		plantUMLParameters.append("docRootClassesFontColor="
-				+ ColorUtils.getHexFontColor(Info.getPropertyNoException(file, DOCROOT_CLASSES_COLOR)) + "|");
-		plantUMLParameters.append("concreteClassesColor=" + Info.getPropertyNoException(file, CONCRETE_CLASSES_COLOR) + "|");
-		plantUMLParameters.append("concreteClassesFontColor="
-				+ ColorUtils.getHexFontColor(Info.getPropertyNoException(file, CONCRETE_CLASSES_COLOR)) + "|");
-		plantUMLParameters.append("abstractClassesColor=" + Info.getPropertyNoException(file, ABSTRACT_CLASSES_COLOR) + "|");
-		plantUMLParameters.append("abstractClassesFontColor="
-				+ ColorUtils.getHexFontColor(Info.getPropertyNoException(file, ABSTRACT_CLASSES_COLOR)) + "|");
-		plantUMLParameters.append("enumerationsColor=" + Info.getPropertyNoException(file, ENUMERATIONS_COLOR) + "|");
-		plantUMLParameters.append(
-				"enumerationsFontColor=" + ColorUtils.getHexFontColor(Info.getPropertyNoException(file, ENUMERATIONS_COLOR)) + "|");
-		plantUMLParameters.append("cimDatatypesColor=" + Info.getPropertyNoException(file, CIMDATATYPES_COLOR) + "|");
-		plantUMLParameters.append(
-				"cimDatatypesFontColor=" + ColorUtils.getHexFontColor(Info.getPropertyNoException(file, CIMDATATYPES_COLOR)) + "|");
-		plantUMLParameters.append("compoundsColor=" + Info.getPropertyNoException(file, COMPOUNDS_COLOR) + "|");
-		plantUMLParameters
-				.append("compoundsFontColor=" + ColorUtils.getHexFontColor(Info.getPropertyNoException(file, COMPOUNDS_COLOR)) + "|");
-		plantUMLParameters.append("primitivesColor=" + Info.getPropertyNoException(file, PRIMITIVES_COLOR) + "|");
-		plantUMLParameters.append(
-				"primitivesFontColor=" + ColorUtils.getHexFontColor(Info.getPropertyNoException(file, PRIMITIVES_COLOR)) + "|");
-		plantUMLParameters.append("errorsColor=" + Info.getPropertyNoException(file, ERRORS_COLOR) + "|");
-		plantUMLParameters
-				.append("errorsFontColor=" + ColorUtils.getHexFontColor(Info.getPropertyNoException(file, ERRORS_COLOR)) + "|");
-		plantUMLParameters.append("enableDarkMode=" + Boolean.parseBoolean(Info.getPropertyNoException(file, ENABLE_DARK_MODE)) + "|");
-		plantUMLParameters
-				.append("enableShadowing=" + Boolean.parseBoolean(Info.getPropertyNoException(file, ENABLE_SHADOWING)) + "|");
-		plantUMLParameters
-				.append("hideEnumerations=" + Boolean.parseBoolean(Info.getPropertyNoException(file, HIDE_ENUMERATIONS)) + "|");
-		plantUMLParameters
-				.append("hideCIMDatatypes=" + Boolean.parseBoolean(Info.getPropertyNoException(file, HIDE_CIMDATATYPES)) + "|");
-		plantUMLParameters.append("hideCompounds=" + Boolean.parseBoolean(Info.getPropertyNoException(file, HIDE_COMPOUNDS)) + "|");
-		plantUMLParameters.append("hidePrimitives=" + Boolean.parseBoolean(Info.getPropertyNoException(file, HIDE_PRIMITIVES)) + "|");
-		plantUMLParameters.append("hideCardinalityForRequiredAttributes="
-				+ Boolean.parseBoolean(Info.getPropertyNoException(file, HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES)) + "|");
-		plantUMLParameters.append("horizontalSpacing=" + Info.getPropertyNoException(file, HORIZONTAL_SPACING) + "|");
-		plantUMLParameters.append("verticalSpacing=" + Info.getPropertyNoException(file, VERTICAL_SPACING) + "|");
-		
-		return plantUMLParameters.toString();
+	public static String getBuilderSpecificParameters(IFile file) {
+		StringBuffer builderSpecificParameters = new StringBuffer();
+		// Currently we only have PlantUML builder specific parameters...
+		if (isFile(file, "Profiles", "puml")) {
+			//
+			// Set diagram preferences used by any PlantUML diagram builders...
+			builderSpecificParameters
+					.append("plantUMLTheme=" + Info.getBuilderSpecificParameter(file, PLANTUML_THEME) + "|");
+			builderSpecificParameters.append(
+					"docRootClassesColor=" + Info.getBuilderSpecificParameter(file, DOCROOT_CLASSES_COLOR) + "|");
+			builderSpecificParameters.append("docRootClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, DOCROOT_CLASSES_COLOR)) + "|");
+			builderSpecificParameters.append(
+					"concreteClassesColor=" + Info.getBuilderSpecificParameter(file, CONCRETE_CLASSES_COLOR) + "|");
+			builderSpecificParameters.append("concreteClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, CONCRETE_CLASSES_COLOR)) + "|");
+			builderSpecificParameters.append(
+					"abstractClassesColor=" + Info.getBuilderSpecificParameter(file, ABSTRACT_CLASSES_COLOR) + "|");
+			builderSpecificParameters.append("abstractClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, ABSTRACT_CLASSES_COLOR)) + "|");
+			builderSpecificParameters
+					.append("enumerationsColor=" + Info.getBuilderSpecificParameter(file, ENUMERATIONS_COLOR) + "|");
+			builderSpecificParameters.append("enumerationsFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, ENUMERATIONS_COLOR)) + "|");
+			builderSpecificParameters
+					.append("cimDatatypesColor=" + Info.getBuilderSpecificParameter(file, CIMDATATYPES_COLOR) + "|");
+			builderSpecificParameters.append("cimDatatypesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, CIMDATATYPES_COLOR)) + "|");
+			builderSpecificParameters
+					.append("compoundsColor=" + Info.getBuilderSpecificParameter(file, COMPOUNDS_COLOR) + "|");
+			builderSpecificParameters.append("compoundsFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, COMPOUNDS_COLOR)) + "|");
+			builderSpecificParameters
+					.append("primitivesColor=" + Info.getBuilderSpecificParameter(file, PRIMITIVES_COLOR) + "|");
+			builderSpecificParameters.append("primitivesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, PRIMITIVES_COLOR)) + "|");
+			builderSpecificParameters
+					.append("errorsColor=" + Info.getBuilderSpecificParameter(file, ERRORS_COLOR) + "|");
+			builderSpecificParameters.append("errorsFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, ERRORS_COLOR)) + "|");
+			builderSpecificParameters.append("enableDarkMode="
+					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, ENABLE_DARK_MODE)) + "|");
+			builderSpecificParameters.append("enableShadowing="
+					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, ENABLE_SHADOWING)) + "|");
+			builderSpecificParameters.append("hideEnumerations="
+					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_ENUMERATIONS)) + "|");
+			builderSpecificParameters.append("hideCIMDatatypes="
+					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_CIMDATATYPES)) + "|");
+			builderSpecificParameters.append("hideCompounds="
+					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_COMPOUNDS)) + "|");
+			builderSpecificParameters.append("hidePrimitives="
+					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_PRIMITIVES)) + "|");
+			builderSpecificParameters
+					.append("hideCardinalityForRequiredAttributes="
+							+ Boolean.parseBoolean(
+									Info.getBuilderSpecificParameter(file, HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES))
+							+ "|");
+			builderSpecificParameters
+					.append("horizontalSpacing=" + Info.getBuilderSpecificParameter(file, HORIZONTAL_SPACING) + "|");
+			builderSpecificParameters
+					.append("verticalSpacing=" + Info.getBuilderSpecificParameter(file, VERTICAL_SPACING) + "|");
+		}
+
+		return builderSpecificParameters.toString();
 	}
 }

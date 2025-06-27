@@ -24,13 +24,13 @@
 	<xsl:param name="ontologyURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
 	<!-- All of the following params correspond to PlantUML preferences in the CIMTool preferences -->
-	<!-- screen. They are passed in via a single string parameter $plantUMLParameters that consist   -->
+	<!-- screen. They are passed in via a single string parameter $builderSpecificParameters that consist   -->
 	<!-- of parameter name/value paris that are delimited using the pipe character ("|"). This       -->
 	<!-- allows for more dynamically adding parameters within the core CIMTool codebase.  -->
-    <xsl:param name="plantUMLParameters"/>
+    <xsl:param name="builderSpecificParameters"/>
 
     <!-- Tokenize by '|' to get name=value pairs -->
-    <xsl:variable name="pairs" select="tokenize($plantUMLParameters, '\|')"/>
+    <xsl:variable name="pairs" select="tokenize($builderSpecificParameters, '\|')"/>
 
     <!-- Extracting all individual values -->
     <xsl:param name="abstractClassesColor" select="substring-after((for $pair in $pairs return if (starts-with($pair, 'abstractClassesColor=')) then $pair else ())[1], '=')"/>
