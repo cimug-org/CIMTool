@@ -18,6 +18,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
 /**
  * A translator which produces a new OWL model from an existing OWL model that
@@ -177,11 +178,18 @@ public class ExtensionsTranslator implements Runnable {
 		 */
 		@Override
 		protected FrontsNode rename(OntResource r) {
-			if (r.hasProperty(RDF.type, OWL.ObjectProperty) || r.hasProperty(RDF.type, OWL.DatatypeProperty)
-					|| r.hasProperty(RDF.type, RDF.Property)) {
-				OntResource ds = r.getResource(RDFS.domain);
-				if (ds != null) {
-					String domainClass = ds.getString(RDFS.label); //
+			
+			boolean isEnumeratedAttribute = isEnumeratedAttribute(r);
+			
+			if ((r.hasProperty(RDF.type, OWL.ObjectProperty) || //
+					r.hasProperty(RDF.type, OWL.DatatypeProperty) || //
+					r.hasProperty(RDF.type, RDF.Property)) || //
+					isEnumeratedAttribute) {
+				
+				OntResource domain = r.getResource(RDFS.domain);
+				
+				if (domain != null) {
+					String domainClass = domain.getString(RDFS.label); //
 					if (domainClass != null) {
 						String propNamespace = r.getNameSpace();
 						String inversePropNamespace = null; // Must default to NULL and only set if there exists an inverse...
@@ -199,11 +207,9 @@ public class ExtensionsTranslator implements Runnable {
 						 * classes are migrated into the normative class being shadowed, the URI of
 						 * these classes must be "remapped" after they are migrated. The URI change that
 						 * is performed is using the name of the new domain for the property within the
-						 * URI of the property.
+						 * URI of the property. For example:
 						 * 
-						 * For example:
-						 * 
-						 * http://entsoe.eu/CIM/SchemaExtension/3/1#ExtEuIdentifiedObject.shortName =>
+						 * http://entsoe.eu/CIM/SchemaExtension/3/1#ExtEuIdentifiedObject.shortName ->
 						 * http://entsoe.eu/CIM/SchemaExtension/3/1#IdentifiedObject.shortName
 						 */
 						String newPropNamespace = null;
@@ -220,12 +226,62 @@ public class ExtensionsTranslator implements Runnable {
 
 						if (newPropNamespace != null || newPropDomain != null) {
 							String newURI = (newPropNamespace != null ? newPropNamespace : propNamespace) + (newPropDomain != null ? newPropDomain : propDomain) + "." + propName;
+							OntResource newResource = resultModel.createResource(newURI);
+							return newResource;
+						}
+					}
+				} else if (isEnumeratedAttribute) {
+					String propNamespace = r.getNameSpace();
+					OntResource type = null;
+					ResIterator types = r.listRDFTypes(false);
+					if (types.hasNext()) {
+						type = types.nextResource();
+						if (!type.hasProperty(UML.hasStereotype, UML.enumeration))
+							type = null;
+					}
+					//
+					if (type != null) {
+						String typeDomain = type.getLabel();
+						String propName = r.getString(RDFS.label);
+						String newURI = propNamespace + typeDomain + "." + propName;
+	
+						/**
+						 * Given that the enumerations defined on shadow class extensions
+						 * are migrated into the normative enumeration being shadowed, the URI of
+						 * these classes must be "remapped" after they are migrated. The URI change that
+						 * is performed is using the name of the new domain for the property within the
+						 * URI of the property. For example:
+						 * 
+						 * http://entsoe.eu/CIM/SchemaExtension/3/1#ExtSinglePhaseKind.kind ->
+						 * http://entsoe.eu/CIM/SchemaExtension/3/1#SinglePhaseKind.kind
+						 */
+						if (!r.getURI().equals(newURI)) {
 							return resultModel.createResource(newURI);
 						}
 					}
 				}
 			}
+			
 			return r;
+		}
+		
+		private boolean isEnumeratedAttribute(OntResource r) {
+			boolean isEnumeratedAttribute = false;
+			if (!r.isProperty() && //
+				!r.isDatatype() && //
+				!r.isClass() && //
+				!r.hasProperty(RDF.type, UML.Package) && //
+				!r.hasProperty(UML.hasStereotype, UML.cimdatatype) && //
+				!r.hasProperty(UML.hasStereotype, UML.primitive) && //
+				!r.hasProperty(UML.hasStereotype, UML.enumeration) ) {
+				ResIterator types = r.listRDFTypes(false);
+				if (types.hasNext()) {
+					OntResource type = types.nextResource();
+					if (type.hasProperty(UML.hasStereotype, UML.enumeration))
+						isEnumeratedAttribute = true;
+				}
+			}
+			return isEnumeratedAttribute;
 		}
 
 	};

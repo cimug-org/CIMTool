@@ -6,11 +6,9 @@ package au.com.langdale.xmi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
@@ -64,7 +62,7 @@ public class CIMInterpreter extends UMLInterpreter {
 		removeUntyped();
 
 		if (mergeShadowExtensions) {
-			processExtensions(baseURI);
+			processShadowExtensions(baseURI);
 			ExtensionsTranslator extensionsTranslator = new ExtensionsTranslator(getModel(), baseURI);
 			extensionsTranslator.run();
 			setModel(extensionsTranslator.getModel());
@@ -476,16 +474,15 @@ public class CIMInterpreter extends UMLInterpreter {
 	}
 
 	/**
-	 * Method for special processing of a any "extensions" to the cim (i.e. all
-	 * non-normative CIM classes, attributes, and associations).
+	 * Method for special processing of a any "shadow extensions" to the CIM 
+	 * (i.e. all non-normative CIM classes, attributes, and associations).
 	 * 
-	 * Synthesize all attributes and associations defined on shadow extension
-	 * classes into the normative class that they shadow. Note the following "rules"
+	 * Merges all attributes and associations defined on "shadow classes"
+	 * into the normative class that they shadow. Note the following rules
 	 * related to these classes:
 	 * 
 	 * 1. A shadow extension class may only have a single generalization
-	 * relationship generalization which must always be to the normative CIM class
-	 * it shadows.
+	 * relationship which must always be to the normative CIM class it shadows.
 	 * 
 	 * 2. A normative CIM class could have multiple shadow classes defined as
 	 * parents to it in which case each shadow class's attributes and associations
@@ -494,32 +491,34 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * such classes the rules defined for their naming must comply with the
 	 * association and role-end rules defined within the official CIM Modeling
 	 * Guidelines document. The "lens" through which their naming should be via
-	 * evaluating all of them as if they were all defined on the normative CIM class
-	 * for which they are shadowing. In this way it can be assured that role ends
-	 * are not duplicated, etc.
+	 * evaluating all of them as if they were all defined on the normative CIM 
+	 * class for which they are shadowing. In this way it can be assured that 
+	 * role ends are not duplicated, etc.
 	 * 
 	 * The OWL representation of a UML class is modified in place below.
 	 * 
-	 * The first manner in which a "shadow class extension" can be modeled is with a
-	 * name different than the class it "shadows" (e.g. ExtMyIdentifiedObject) but
-	 * with a corresponding <<ShadowExtension>> stereotype assigned to the class.
+	 * The first manner in which a "shadow class" can be modeled is with a
+	 * name different than the class it "shadows" (e.g. ExtMyIdentifiedObject) 
+	 * but with a corresponding <<ShadowExtension>> stereotype declared on the 
+	 * class.
 	 * 
 	 * In this way CIMTool is made aware that the class is a "shadow class"
 	 * 
 	 * <pre>
+	 *  <<ShadowExtension>>    <<ShadowExtension>>
 	 * ExtMyIdentifiedObject  ExtEuIdentifiedObject 
 	 *                   △      △ 
 	 *                   |      | 
 	 *              ExtEuIdentifiedObject
 	 * </pre>
 	 * 
-	 * The second manner in which to model a shadow class extension is to name the
-	 * shadow class the same as the class it shadows but with the caveat that it be
-	 * namespaced (via the CIMTool baseuri tagged value) in a different namespace.
-	 * Using this technique you can have multiple sets of extensions from different
-	 * sources each defining their own IdentifiedObject shadow class with attributes
-	 * and associations that will be merged into the normative IdentifiedObject
-	 * class.
+	 * The second manner in which to model a shadow class is to name the shadow
+	 * class the same as the CIM class it is shadowing but with the caveat that 
+	 * it be namespaced (via the CIMTool baseuri tagged value) in a non-CIM 
+	 * namespace. Using this technique you can have multiple sets of extensions 
+	 * from different sources each defining their own IdentifiedObject shadow 
+	 * class with attributes and associations that will be merged into the 
+	 * normative IdentifiedObject class.
 	 * 
 	 * <pre>
 	 *  IdentifiedObject   IdentifiedObject 
@@ -530,198 +529,420 @@ public class CIMInterpreter extends UMLInterpreter {
 	 *      (http://iec.ch/TC57/CIM100#)
 	 * </pre>
 	 * 
-	 * @param baseURI The baseURI for CIM to use for processing.
+	 * @param baseURI The baseURI of the CIM schema. Needed for processing.
 	 */
-	private void processExtensions(String baseURI) {
-		/**
-		 * Pass one here addresses approach one described in the method comments.
-		 */
-		List<OntResource> shadowClasses = new ArrayList<OntResource>();
-		ResIterator shadowExtensions = model.listSubjectsBuffered(UML.hasStereotype, UML.shadowextension);
-		while (shadowExtensions.hasNext()) {
-			OntResource shadowClass = shadowExtensions.nextResource();
-			shadowClasses.add(shadowClass);
-			System.err.println("Shadow Extension:  " + shadowClass.describe());
-		}
+	private void processShadowExtensions(String baseURI) {
+		Map<String, OntResource> shadowClasses = getShadowClasses(baseURI);
 
-		for (OntResource shadowClass : shadowClasses) {
-			List<OntResource> subclasses = new ArrayList<OntResource>();
-			ResIterator shadowClassSubclasses = model.listSubjectsWithProperty(RDFS.subClassOf, shadowClass);
-			while (shadowClassSubclasses.hasNext()) {
-				OntResource subclass = shadowClassSubclasses.nextResource();
-				subclasses.add(subclass);
+		// Validate each shadow class for any modeling violations...
+		shadowClasses.values().forEach(shadowClass -> {
+			validateShadowExtensionsModeling(baseURI, shadowClass);
+		});
+
+		List<OntResource> normativeClasses = new LinkedList<OntResource>();
+		ResIterator allClasses = model.listSubjectsBuffered(RDF.type, OWL2.Class);
+		allClasses.forEachRemaining(resource -> {
+			OntResource aClass = (OntResource) resource;
+			if (aClass.getURI().startsWith(baseURI) && aClass.hasProperty(RDFS.subClassOf)) {
+				normativeClasses.add(aClass);
 			}
+		});
 
-			if (subclasses.size() > 1) {
-				StringBuffer errorMsg = new StringBuffer();
-				errorMsg.append("<<ShadowExtension>> class '") //
-						.append(shadowClass.getLocalName()) //
-						.append("' is invalid. A shadow extension may only shadow a single CIM class while '"
-								+ shadowClass.getLocalName() + "' shadows ") //
-						.append(subclasses.size()) //
-						.append(" classes:  ");
-				subclasses.forEach(subclass -> {
-					errorMsg.append("  ").append(subclass.getURI()).append("\n");
-				});
-				System.err.println(errorMsg.toString());
-				logger.log(errorMsg.toString());
-				// TODO: throw an Exception here ??
+		normativeClasses.forEach(normativeClass -> {
+			System.out.println("Processing normative CIM class:  " + normativeClass.describe());
+			
+			List<OntResource> parentShadowClasses = new ArrayList<OntResource>();
+			ResIterator parentClasses = normativeClass.listSuperClasses(false);
+			while (parentClasses.hasNext()) {
+				OntResource superClass = parentClasses.nextResource();
+				if (shadowClasses.containsKey(superClass.getURI())) {
+					parentShadowClasses.add(superClass);					
+				}
 			}
+			parentShadowClasses.forEach(aParentShadowClass -> {
+				mergeShadowClass(aParentShadowClass, normativeClass, shadowClasses, baseURI, true);
+			});
+		});
+		
+//		normativeClasses.forEach(normativeClass -> {
+//			System.out.println("Pass 2 - processing normative CIM class:  " + normativeClass.describe());
+//			
+//			List<OntResource> parentShadowClasses = new ArrayList<OntResource>();
+//			ResIterator parentClasses = normativeClass.listSuperClasses(false);
+//			while (parentClasses.hasNext()) {
+//				OntResource superClass = parentClasses.nextResource();
+//				if (shadowClasses.containsKey(superClass.getURI())) {
+//					parentShadowClasses.add(superClass);					
+//				}
+//			}
+//			parentShadowClasses.forEach(aParentShadowClass -> {
+//				ResIterator it = model.listSubjectsWithProperty(OWL2.inverseOf, aParentShadowClass);
+//				while (it.hasNext()) {
+//					OntResource subject = it.nextResource();
+//					System.err.println("BEFORE inverseof replacement:  " + subject.describe());
+//					subject.removeProperty(OWL2.inverseOf, aParentShadowClass);
+//					subject.addProperty(OWL2.inverseOf, normativeClass);
+//					System.err.println("AFTER inverseof replacement:  " + subject.describe());
+//				}
+//				normativeClass.removeSuperClass(aParentShadowClass);
+//			});
+//		});
 
-			for (OntResource aClass : subclasses) {
-				if (!aClass.hasProperty(UML.hasStereotype, UML.shadowextension)) {
-					List<OntResource> props = new ArrayList<OntResource>();
-					if (shadowClass.hasProperty(UML.hasStereotype, UML.enumeration)) {
-						ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
-						while (funcProps.hasNext()) {
-							OntResource prop = funcProps.nextResource();
-							props.add(prop);
-						}
-						for (OntResource prop : props) {
-							// Remap the RDF type on the enum literal from
-							// the extension to the normative class.
-							prop.removeProperty(RDF.type, shadowClass);
-							prop.addRDFType(aClass);
-							if (prop.getIsDefinedBy() != null)
-								prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
-							if (aClass.getIsDefinedBy() != null)
-								prop.addIsDefinedBy(aClass.getIsDefinedBy());
-						}
-					} else if (shadowClass.hasProperty(UML.hasStereotype, UML.primitive)) {
-						ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
-						while (funcProps.hasNext()) {
-							OntResource prop = funcProps.nextResource();
-							props.add(prop);
-							System.err.println(prop.describe());
-						}
-					} else if (shadowClass.hasProperty(UML.hasStereotype, UML.cimdatatype)) {
-						ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
-						while (funcProps.hasNext()) {
-							OntResource prop = funcProps.nextResource();
-							props.add(prop);
-							System.err.println(prop.describe());
-						}
-					} else {
-						ResIterator funcProps = model.listSubjectsWithProperty(RDFS.domain, shadowClass);
-						while (funcProps.hasNext()) {
-							OntResource prop = funcProps.nextResource();
-							props.add(prop);
-						}
-						for (OntResource prop : props) {
-							if (prop.getRange() != null && prop.getRange().equals(shadowClass)) {
-								// We've reached this point because we've identified that the
-								// association is a "self-reference" meaning that both the domain
-								// and range are the same class. Therefore we must also remap the
-								// range to be the normative class.
-								prop.removeProperty(RDFS.range, shadowClass);
-								prop.addRange(aClass);
-							}
-							// Remap the domain class from the extension to the normative class.
-							prop.removeProperty(RDFS.domain, shadowClass);
-							prop.addDomain(aClass);
-							if (prop.getIsDefinedBy() != null)
-								prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
-							if (aClass.getIsDefinedBy() != null)
-								prop.addIsDefinedBy(aClass.getIsDefinedBy());
-						}
-					}
+		shadowClasses.values().forEach(shadowClass -> {
+//			ResIterator it = model.listSubjectsWithProperty(OWL2.inverseOf, shadowClass);
+//			while (it.hasNext()) {
+//				OntResource subject = it.nextResource();
+//				System.err.println("OUTSTANDING inverseof:  " + subject.describe());
+//			}
+//			// The final step is to remove each shadow class from the model.
+//			// The below call removes it both as a Subject and an Object.
+			shadowClass.remove();
+		});
+	}
 
-					aClass.removeSuperClass(shadowClass);
-					model.removeSubject(shadowClass);
+	/**
+	 * Method responsible for merging the attributes and/or associations from a
+	 * specified "shadow class" to a specified target CIM class.
+	 * 
+	 * @param shadowClass The shadow class containing the attributes and/or
+	 *                    associations to be merged.
+	 * @param targetClass The target CIM class to which the shadow class extensions
+	 *                    will be merged into.
+	 */
+	private void mergeShadowClass(OntResource shadowClass, OntResource normativeClass,
+			Map<String, OntResource> shadowClasses, String baseURI, boolean isShadowClassDirectParent) {
+		
+		System.out.println("Merging shadow class:  " + shadowClass.describe());
+		
+		ArrayList<OntResource> props = new ArrayList<OntResource>();
+		
+		if (shadowClass.hasProperty(UML.hasStereotype, UML.enumeration)) {
+			ResIterator funcProps = model.listSubjectsBuffered(RDF.type, shadowClass);
+			while (funcProps.hasNext()) {
+				OntResource prop = funcProps.nextResource();
+				props.add(prop);
+			}
+			for (OntResource prop : props) {
+				// Remap the RDF type on the enum literal from
+				// the extension to the normative class.
+				prop.removeProperty(RDF.type, shadowClass);
+				prop.addRDFType(normativeClass);
+				if (prop.getIsDefinedBy() != null)
+					prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
+				if (normativeClass.getIsDefinedBy() != null)
+					prop.addIsDefinedBy(normativeClass.getIsDefinedBy());
+			}
+		} else if (shadowClass.hasProperty(UML.hasStereotype, UML.primitive)) {
+			/** This is a placeholder for now. Currently just prints. Must be implemented/tested */
+			ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
+			while (funcProps.hasNext()) {
+				OntResource prop = funcProps.nextResource();
+				props.add(prop);
+				if (TRACE)
+					System.err.println("Shadow class <<Primitive>>:  " + prop.describe());
+			}
+		} else if (shadowClass.hasProperty(UML.hasStereotype, UML.cimdatatype)) {
+			/** This is a placeholder for now. Currently just prints. Must be implemented/tested */
+			ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
+			while (funcProps.hasNext()) {
+				OntResource prop = funcProps.nextResource();
+				props.add(prop);
+				if (TRACE)
+					System.err.println("Shadow class <<CIMDatatype>>:  " + prop.describe());
+			}
+		} else {
+			ResIterator funcProps = model.listSubjectsWithProperty(RDFS.domain, shadowClass);
+			
+			while (funcProps.hasNext()) {
+				OntResource prop = funcProps.nextResource();
+				props.add(prop);
+				System.err.println("Including property:   " + prop.getURI());
+			}
+			
+			for (OntResource prop : props) {
+				if (prop.getRange() != null && prop.getRange().equals(shadowClass)) {
+					// We've reached this point because we've identified that the
+					// association is a "self-reference" meaning that both the domain
+					// and range are the same class. Therefore we must also remap the
+					// range to be the normative class.
+					prop.removeProperty(RDFS.range, shadowClass);
+					prop.addRange(normativeClass);
+				}
+				// Remap the domain class from the extension to the normative class.
+				prop.removeProperty(RDFS.domain, shadowClass);
+				prop.addDomain(normativeClass);
+				if (prop.getIsDefinedBy() != null)
+					prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
+				if (normativeClass.getIsDefinedBy() != null)
+					prop.addIsDefinedBy(normativeClass.getIsDefinedBy());
+				
+				if (prop.getInverseOf() != null) {
+					System.err.println(prop.describe());
+					OntResource inverseOf = prop.getInverseOf();
+					System.err.println(inverseOf.describe());
 				}
 			}
 		}
+		
+		/**
+		 * Once the shadow class is been processed we remove its  
+		 * super class reference in the normative CIM class...
+		 */
+		if (isShadowClassDirectParent) {
+			normativeClass.removeSuperClass(shadowClass);
+		}
 
 		/**
-		 * Pass two here addresses approach two described above. This pass expects that
-		 * the 'baseuri' tagged values have already processed and propagated throughout
-		 * the model.
+		 * Iterate through the immediate super classes for the current 
+		 * "shadow class" being processed...
 		 */
-		List<OntResource> normativeExtendedClasses = new LinkedList<OntResource>();
-		Map<String, Set<OntResource>> shadowClassesMapping = new HashMap<String, Set<OntResource>>();
-		Set<String> validityChecks = new HashSet<String>();
+		ResIterator superClasses = shadowClass.listSuperClasses(false);
+		while (superClasses.hasNext()) {
+			OntResource superClass = superClasses.nextResource();
+			/**
+			 * Starting at the CIM class we now recursively navigate up the inheritance
+			 * hierarchy and merge the extensions from each level into the specified
+			 * normative class.
+			 */
+			if (superClass.hasProperty(UML.hasStereotype, UML.shadowextension)
+					&& shadowClasses.containsKey(superClass.getURI())) {
+				mergeShadowClass(superClass, normativeClass, shadowClasses, baseURI, false);
+			} else {
+				if (TRACE)
+					System.err.println("ERROR:  " + superClass.describe());
+			}
+		}
+	}
+	
+	/**
+	 * Perform extensions modeling validation checks and log all violations.
+	 *
+	 * @param baseURI
+	 * @param shadowClass
+	 */
+	private void validateShadowExtensionsModeling(String baseURI, OntResource shadowClass) {
 
-		ResIterator classesIterator = model.listSubjectsWithProperty(RDF.type, OWL2.Class);
+		String shadowClassURI = shadowClass.getURI().substring(0, shadowClass.getURI().indexOf("#") + 1);
+
+		boolean isValidModeling = true;
+		int totalSuperClasses = 0;
+		int superClassesWithBaseURI = 0;
+		int superClassesWithShadowExtension = 0;
+		int superClassesWithMatchingURI = 0;
+		int superClassesWithNonMatchingURI = 0;
+
+		ResIterator shadowClassSuperClasses = shadowClass.listProperties(RDFS.subClassOf);
+		while (shadowClassSuperClasses.hasNext()) {
+			OntResource superclass = shadowClassSuperClasses.nextResource();
+			String superClassURI = superclass.getURI().substring(0, superclass.getURI().indexOf("#") + 1);
+
+			totalSuperClasses++;
+			if (superclass.hasProperty(UML.hasStereotype, UML.shadowextension))
+				superClassesWithShadowExtension++;
+
+			if (!superClassURI.equals(shadowClassURI))
+				superClassesWithNonMatchingURI++;
+			else
+				superClassesWithMatchingURI++;
+
+			if (superClassURI.startsWith(baseURI)) {
+				isValidModeling = false;
+				System.err.println(String.format(
+						"[ERROR] Invalid extensions modeling. Shadow class '%s' may not extend the normative CIM class '%s'.",
+						shadowClass.getURI(), superclass.getURI()));
+			} else if (!superclass.hasProperty(UML.hasStereotype, UML.shadowextension)) {
+				isValidModeling = false;
+				System.err.println(String.format(
+						"[ERROR] Invalid extensions modeling. Shadow class '%s' may not extend a class that is not another shadow class CIM class '%s'.",
+						shadowClass.getURI(), superclass.getURI()));
+			} else if (!superClassURI.equals(shadowClassURI)) {
+				isValidModeling = false;
+				System.err.println(String.format(
+						"[ERROR] Invalid extensions modeling. The parent shadow class '%s' of shadow class '%s' is not in the same namespace.",
+						superclass.getURI(), shadowClass.getURI()));
+			}
+		}
+
+		int totalSubClasses = 0;
+		int subClassesWithBaseURI = 0;
+		int subClassesWithShadowExtension = 0;
+		int subClassesWithMatchingURI = 0;
+		int subClassesWithNonMatchingURI = 0;
+
+		ResIterator shadowClassSubClasses = model.listSubjectsWithProperty(RDFS.subClassOf, shadowClass);
+		while (shadowClassSubClasses.hasNext()) {
+			OntResource subclass = shadowClassSubClasses.nextResource();
+			String subClassURI = subclass.getURI().substring(0, subclass.getURI().indexOf("#") + 1);
+
+			totalSubClasses++;
+			if (subclass.hasProperty(UML.hasStereotype, UML.shadowextension))
+				subClassesWithShadowExtension++;
+
+			if (subClassURI.equals(baseURI))
+				subClassesWithBaseURI++;
+			else if (!subClassURI.equals(shadowClassURI))
+				subClassesWithNonMatchingURI++;
+			else
+				subClassesWithMatchingURI++;
+
+			if (subclass.hasProperty(UML.hasStereotype, UML.shadowextension) && !subClassURI.equals(baseURI)
+					&& !subClassURI.equals(shadowClassURI)) {
+				isValidModeling = false;
+				System.err.println(String.format(
+						"[ERROR] Invalid extensions modeling. The child shadow class '%s' of shadow class '%s' is not in the same namespace.",
+						subclass.getURI(), shadowClass.getURI()));
+			} else if (!subclass.hasProperty(UML.hasStereotype, UML.shadowextension) && !subClassURI.equals(baseURI)) {
+				isValidModeling = false;
+				System.err.println(String.format(
+						"[ERROR] Invalid extensions modeling. The child class '%s' of shadow class '%s' is not a normative CIM class.",
+						subclass.getURI(), shadowClass.getURI()));
+			}
+		}
+
+		if (totalSubClasses > 1 && subClassesWithBaseURI > 1) {
+			isValidModeling = false;
+			System.err.println(String.format(
+					"[ERROR] Invalid extensions modeling. Shadow class '%s' is the parent of %d normative CIM classes when only one is allowed.",
+					shadowClass.getURI(), subClassesWithBaseURI));
+		} else if ((!((totalSubClasses == 1 && subClassesWithBaseURI == 1) && (totalSuperClasses == 0))) //
+				&& (!((totalSubClasses == 1 && subClassesWithBaseURI == 1)
+						&& (totalSuperClasses > 0 && superClassesWithMatchingURI == totalSuperClasses)))) {
+			isValidModeling = false;
+			System.err.println(String.format(
+					"[ERROR] Invalid extensions modeling. Shadow class '%s' and its parent and child classes should be reviewed.",
+					shadowClass.getURI()));
+		}
+
+		if (isValidModeling) {
+			/**
+			 * Final validation checks on modeled associations are needed for the current
+			 * "shadow class".
+			 */
+			ResIterator props = model.listSubjectsWithProperty(RDFS.domain, shadowClass);
+			while (props.hasNext()) {
+				OntResource property = props.nextResource();
+				if (property.hasProperty(RDF.type, OWL.ObjectProperty)) {
+					//System.out.println("Property:  " + property.describe());
+					OntResource range = property.getRange(); // The "other end" of the association
+					String rangeURI = range.getURI().substring(0, range.getURI().indexOf("#") + 1);
+					if (!shadowClassURI.equals(rangeURI) && !rangeURI.equals(baseURI)) {
+						isValidModeling = false;
+						System.err.println(String.format(
+								"[ERROR] Invalid extensions modeling. Shadow class '%s' has association '%s' that does not have the same namespace on both ends ['%s']. This is not allowed and the modeling should be reviewed.",
+								shadowClass.getURI(), property.getURI(), range.getURI()));
+					} else if (!shadowClassURI.equals(rangeURI)) {
+						isValidModeling = false;
+						System.err.println(String.format(
+								"[ERROR] Invalid extensions modeling. Shadow class '%s' has association '%s' that does not have the same namespace on both ends ['%s']. This is not allowed and the modeling should be reviewed.",
+								shadowClass.getURI(), property.getURI(), range.getURI()));
+					}
+				}
+			}
+		}
+		/*
+		 * else if (totalSuperClasses == 0 && (totaltotalSubClasses = ()))) { // //
+		 * validation must be checked... ResIterator props =
+		 * model.listSubjectsWithProperty(RDFS.domain, shadowClass); while
+		 * (props.hasNext()) { OntResource property = props.nextResource(); if
+		 * (property.hasProperty(RDF.type, OWL.ObjectProperty)) {
+		 * System.out.println("Property:  " + property.describe()); OntResource range =
+		 * property.getRange(); // The "other end" of the association String rangeURI =
+		 * range.getURI().substring(0, range.getURI().indexOf("#") + 1); if
+		 * (!shadowClassURI.equals(rangeURI) && !rangeURI.equals(baseURI)) {
+		 * isValidModeling = false; System.err.println(String.
+		 * format("[ERROR] Invalid extensions modeling. Shadow class '%s' has association '%s' that does not have the same namespace on both ends ['%s']. This is not allowed and the modeling should be reviewed."
+		 * , shadowClass.getURI(), property.getURI(), range.getURI())); } else if
+		 * (!shadowClassURI.equals(rangeURI)) { isValidModeling = false;
+		 * System.err.println(String.
+		 * format("[ERROR] Invalid extensions modeling. Shadow class '%s' has association '%s' that does not have the same namespace on both ends ['%s']. This is not allowed and the modeling should be reviewed."
+		 * , shadowClass.getURI(), property.getURI(), range.getURI())); } } } }
+		 */
+	}
+
+	/**
+	 * This method is responsible for retrieving the complete list of "shadow
+	 * classes" that exists in the full CIM model this is being used as the schema
+	 * for the project.
+	 * 
+	 * The list is determined by combining both a "bottom-up" and "top-down" query.
+	 * This is necessary to retrieve a complete list.
+	 * 
+	 * @param baseURI The base URI of the CIM schema (e.g.
+	 *                http://iec.ch/TC57/CIM100#)
+	 * @return A map contained the list of shadow classes with the key being the
+	 *         absolute URI of the mapped shadow class.
+	 */
+	private Map<String, OntResource> getShadowClasses(String baseURI) {
+		/**
+		 * The "bottom-up" step is performed first whereby all classes are queried and
+		 * iterated through to locate each of the normative CIM classes. When one is
+		 * found that has parent classes, each parent classes is checked to determine
+		 * whether it is a "shadow class" and if so it is added to the list.
+		 */
+		Map<String, OntResource> shadowClasses = new HashMap<String, OntResource>();
+		ResIterator classesIterator = model.listSubjectsBuffered(RDF.type, OWL2.Class);
 		while (classesIterator.hasNext()) {
 			OntResource aClass = classesIterator.nextResource();
 			if (aClass.getURI().startsWith(baseURI) && aClass.hasProperty(RDFS.subClassOf)) {
+				if (TRACE)
+					System.out.println("CIM classes:  " + aClass.describe());
 				ResIterator it = aClass.listProperties(RDFS.subClassOf);
-				if (it.hasNext()) {
-					Set<OntResource> shadowSuperClasses = new HashSet<OntResource>();
-					while (it.hasNext()) {
-						OntResource aSuperClass = it.nextResource();
-						// Check if the superclass has an identical class name but in a
-						// different namespace (i.e. a "shadow class extension")
-						if (!aSuperClass.getURI().startsWith(baseURI)
-								&& aSuperClass.getURI().endsWith("#" + aClass.getLabel())) {
-							shadowSuperClasses.add(aSuperClass);
-							if (!validityChecks.contains(aSuperClass.getURI())) {
-								validityChecks.add(aSuperClass.getURI());
-							} else {
-								System.err.println(
-										"Invalid shadow class extension modeling. The follow shadow class is either a duplicate or is modeled as the superclass of multiple normative CIM classes (which is now allowed): "
-												+ aSuperClass.getURI());
-							}
-						}
-					}
-					if (shadowSuperClasses.size() > 0) {
-						normativeExtendedClasses.add(aClass);
-						shadowClassesMapping.put(aClass.getURI(), shadowSuperClasses);
+				while (it.hasNext()) {
+					OntResource aSuperClass = it.nextResource();
+					if (TRACE)
+						System.out.println("CIM superclass:  " + aSuperClass.describe());
+					/**
+					 * <pre>
+					 * Check for parent classes that are shadow extensions. There are 
+					 * two types of checks needed:
+					 * 
+					 * 1. If there is an explicit <<ShadowExtension>> stereotype on the 
+					 *    parent class.
+					 * 
+					 * 2. If the parent is named identically to the CIM class but is 
+					 *    defined in a different namespace (i.e. by definition a 
+					 *    "shadow class").
+					 * </pre>
+					 */
+					if ((aSuperClass.hasProperty(UML.hasStereotype, UML.shadowextension) && (!aSuperClass.getURI().startsWith(baseURI))) || //
+							(!aSuperClass.getURI().startsWith(baseURI)
+									&& aSuperClass.getURI().endsWith("#" + aClass.getLabel()))) {
+						if (TRACE)
+							System.err.println("Shadow class:  " + aSuperClass.describe());
+						shadowClasses.put(aSuperClass.getURI(), aSuperClass);
 					}
 				}
 			}
 		}
 
-		normativeExtendedClasses.forEach(aClass -> {
-			// Retrieve the set of shadow classes for the current normative class
-			Set<OntResource> mappedShadowClasses = shadowClassesMapping.get(aClass.getURI());
-			mappedShadowClasses.forEach(aSuperClass -> {
-				List<OntResource> props = new ArrayList<OntResource>();
-				if (aSuperClass.hasProperty(UML.hasStereotype, UML.enumeration)) {
-					ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, aSuperClass);
-					while (funcProps.hasNext()) {
-						OntResource prop = funcProps.nextResource();
-						props.add(prop);
-					}
-					for (OntResource prop : props) {
-						// Remap the RDF type on the enum literal from
-						// the extension to the normative class.
-						prop.removeProperty(RDF.type, aSuperClass);
-						prop.addRDFType(aClass);
-						if (prop.getIsDefinedBy() != null)
-							prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
-						if (aClass.getIsDefinedBy() != null)
-							prop.addIsDefinedBy(aClass.getIsDefinedBy());
-					}
-				} else {
-					ResIterator funcProps = model.listSubjectsWithProperty(RDFS.domain, aSuperClass);
-					while (funcProps.hasNext()) {
-						OntResource prop = funcProps.nextResource();
-						props.add(prop);
-					}
-					for (OntResource prop : props) {
-						System.err.println(prop.describe());
-						if (prop.getRange() != null && prop.getRange().equals(aSuperClass)) {
-							// We've reached this point because we've identified that the
-							// association is a "self-reference" meaning that both the domain
-							// and range are the same class. Therefore we must also remap the
-							// range to be the normative class.
-							prop.removeProperty(RDFS.range, aSuperClass);
-							prop.addRange(aClass);
-						}
-						// Remap the domain class from the extension to the normative class.
-						prop.removeProperty(RDFS.domain, aSuperClass);
-						prop.addDomain(aClass);
-						if (prop.getIsDefinedBy() != null)
-							prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
-						if (aClass.getIsDefinedBy() != null)
-							prop.addIsDefinedBy(aClass.getIsDefinedBy());
-					}
-				}
-
-				aClass.removeSuperClass(aSuperClass);
-				model.removeSubject(aSuperClass);
-			});
-		});
+		/**
+		 * The "top-down" step is performed second whereby just classes with a
+		 * <<ShadowExtension>> stereotype are queried and iterated through and a check
+		 * performed to determined if they were NOT identified during the "bottom-up"
+		 * pass. 
+		 * 
+		 * Note that we also check to ensure that namespace is not that of baseURI 
+		 * (i.e. the namespace for the normative CIM). Since <<ShadowExtension>> 
+		 * stereotypes have no relevance on normative CIM classes it would then indicate
+		 * a scenario where a baseuri tagged value was not specified at an appropriate place 
+		 * in the model and this instead would have been logged as a CIM modeling violation
+		 * during the model validation process. If the above criteria is met then the "shadow 
+		 * class" is added to the list of shadow classes. This second step is needed since 
+		 * the first step only verifies the immediate parents. That pass does not take into 
+		 * consideration that a "shadow class" itself can potentially have a parent "shadow 
+		 * class" but with the caveat that such classes MUST HAVE the <<ShadowExtension>> 
+		 * stereotype defined on it.
+		 */
+		ResIterator shadowClassesIterator = model.listSubjectsBuffered(UML.hasStereotype, UML.shadowextension);
+		while (shadowClassesIterator.hasNext()) {
+			OntResource aShadowClass = shadowClassesIterator.nextResource();
+			if (!shadowClasses.containsKey(aShadowClass.getURI()) && !aShadowClass.getURI().startsWith(baseURI)) {
+				if (TRACE)
+					System.err.println("Shadow class:  " + aShadowClass.describe());
+				shadowClasses.put(aShadowClass.getURI(), aShadowClass);
+			}
+		}
+		return shadowClasses;
 	}
+
 }
