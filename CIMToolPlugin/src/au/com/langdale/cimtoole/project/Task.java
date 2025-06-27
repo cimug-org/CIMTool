@@ -55,6 +55,8 @@ import au.com.langdale.kena.IO;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.logging.SchemaImportConsoleLoggerImpl;
+import au.com.langdale.logging.SchemaImportLogger;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.validation.RepairMan;
@@ -64,8 +66,7 @@ import au.com.langdale.xmi.CIMInterpreter;
 import au.com.langdale.xmi.EAProjectParser;
 import au.com.langdale.xmi.EAProjectParserException;
 import au.com.langdale.xmi.EAProjectParserFactory;
-import au.com.langdale.xmi.SchemaImportLogger;
-import au.com.langdale.xmi.SchemaImportLoggerImpl;
+import au.com.langdale.xmi.StereotypedNamespaces;
 import au.com.langdale.xmi.UML;
 import au.com.langdale.xmi.XMIParser;
 
@@ -329,7 +330,7 @@ public class Task extends Info {
 		EAProjectParser parser;
 		try {
 			Boolean selfHealingOnImportEnabled = Info.isSelfHealingOnSchemaImportEnabled(file);
-			SchemaImportLogger logger = new SchemaImportLoggerImpl();
+			SchemaImportLogger logger = new SchemaImportConsoleLoggerImpl();
 			parser = EAProjectParserFactory.createParser(file.getLocation().toFile(), selfHealingOnImportEnabled,
 					logger);
 			parser.parse();
@@ -348,6 +349,12 @@ public class Task extends Info {
 			else
 				base = file.getLocationURI().toString() + "#";
 		}
+		//
+		IFile namespacesFile = getRelated(file, "namespaces" , false);
+		if (namespacesFile.getLocation().toFile().exists()) {
+			StereotypedNamespaces.load(namespacesFile.getLocation().toFile());
+		}
+		//
 		IFile auxfile = getRelated(file, "annotation", false);
 		OntModel annote;
 		if (auxfile.exists()) {
