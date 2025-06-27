@@ -60,7 +60,10 @@ public class ImportRegistrySchema extends Wizard implements IImportWizard {
 			else
 				file.setContents(new ByteArrayInputStream(buf.toByteArray()), false, true, new NullProgressMonitor());
 			Info.putProperty(file, Task.SCHEMA_NAMESPACE, ns);
-			Info.putProperty(file, Task.MERGE_SHADOW_EXTENSIONS, Boolean.FALSE.toString());
+			// The next two settings are project-level and therefore the call to file.getProject()...
+			Info.putProperty(file.getProject(), Task.MERGE_SHADOW_EXTENSIONS, Info.getPreference(Task.MERGE_SHADOW_EXTENSIONS));
+			Info.putProperty(file.getProject(), Task.SELF_HEAL_ON_IMPORT, Info.getPreference(Task.SELF_HEAL_ON_IMPORT));
+		
 		} catch (IOException ex) {
 			ErrorDialog.openError(this.getShell(), "IO Error", ex.getMessage(),
 					new Status(IStatus.ERROR, CimphonyCIMToolPlugin.PLUGIN_ID, ex.getMessage(), ex));
