@@ -31,11 +31,27 @@ public class CIMInterpreter extends UMLInterpreter {
 
 	public static final String LANG = null; // if changed, review the SearchWizard code
 
+	private CIMInterpreter() {
+		super();
+	}
+
+	private CIMInterpreter(StereotypedNamespaces stereotypedNamespaces) {
+		super(stereotypedNamespaces);
+	}
+
 	public static OntModel interpret(OntModel raw, String baseURI, OntModel annote, boolean usePackageNames,
 			boolean mergeShadowExtensions) {
 		if (annote != null)
 			raw.add(annote);
 		CIMInterpreter interpreter = new CIMInterpreter();
+		return interpreter.postProcess(raw, baseURI, usePackageNames, mergeShadowExtensions);
+	}
+
+	public static OntModel interpret(OntModel raw, StereotypedNamespaces stereotypedNamespaces, String baseURI, OntModel annote, boolean usePackageNames,
+			boolean mergeShadowExtensions) {
+		if (annote != null)
+			raw.add(annote);
+		CIMInterpreter interpreter = new CIMInterpreter(stereotypedNamespaces);
 		return interpreter.postProcess(raw, baseURI, usePackageNames, mergeShadowExtensions);
 	}
 
@@ -50,7 +66,7 @@ public class CIMInterpreter extends UMLInterpreter {
 
 		System.out.println("Stage 1 XMI model size: " + getModel().size());
 
-		Translator translator = new Translator(getModel(), baseURI, usePackageNames);
+		Translator translator = new Translator(getModel(), stereotypedNamespaces, baseURI, usePackageNames);
 		translator.run();
 		setModel(translator.getModel());
 
@@ -218,7 +234,9 @@ public class CIMInterpreter extends UMLInterpreter {
 			 * property declared as an OWL.Class. This is intended to serve as the interim
 			 * solution to allow for the inclusion of "Primitive" elements in the XSLT
 			 * transforms. By removing it as an OWL.Class it does not get processed along
-			 * with other resources declared as type OWL.Class.
+			 * with other resources declared as type OWL.Class. This is still not a "first
+			 * class citizen" from an ontological perspective as we may desire long term,
+			 * but it is the interim path we've chosen as we transition into the long term.
 			 */
 			// clss.removeProperties();
 			clss.removeProperty(RDF.type, OWL.Class);
@@ -474,12 +492,12 @@ public class CIMInterpreter extends UMLInterpreter {
 	}
 
 	/**
-	 * Method for special processing of a any "shadow extensions" to the CIM 
-	 * (i.e. all non-normative CIM classes, attributes, and associations).
+	 * Method for special processing of a any "shadow extensions" to the CIM (i.e.
+	 * all non-normative CIM classes, attributes, and associations).
 	 * 
-	 * Merges all attributes and associations defined on "shadow classes"
-	 * into the normative class that they shadow. Note the following rules
-	 * related to these classes:
+	 * Merges all attributes and associations defined on "shadow classes" into the
+	 * normative class that they shadow. Note the following rules related to these
+	 * classes:
 	 * 
 	 * 1. A shadow extension class may only have a single generalization
 	 * relationship which must always be to the normative CIM class it shadows.
@@ -491,16 +509,15 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * such classes the rules defined for their naming must comply with the
 	 * association and role-end rules defined within the official CIM Modeling
 	 * Guidelines document. The "lens" through which their naming should be via
-	 * evaluating all of them as if they were all defined on the normative CIM 
-	 * class for which they are shadowing. In this way it can be assured that 
-	 * role ends are not duplicated, etc.
+	 * evaluating all of them as if they were all defined on the normative CIM class
+	 * for which they are shadowing. In this way it can be assured that role ends
+	 * are not duplicated, etc.
 	 * 
 	 * The OWL representation of a UML class is modified in place below.
 	 * 
-	 * The first manner in which a "shadow class" can be modeled is with a
-	 * name different than the class it "shadows" (e.g. ExtMyIdentifiedObject) 
-	 * but with a corresponding <<ShadowExtension>> stereotype declared on the 
-	 * class.
+	 * The first manner in which a "shadow class" can be modeled is with a name
+	 * different than the class it "shadows" (e.g. ExtMyIdentifiedObject) but with a
+	 * corresponding <<ShadowExtension>> stereotype declared on the class.
 	 * 
 	 * In this way CIMTool is made aware that the class is a "shadow class"
 	 * 
@@ -513,12 +530,12 @@ public class CIMInterpreter extends UMLInterpreter {
 	 * </pre>
 	 * 
 	 * The second manner in which to model a shadow class is to name the shadow
-	 * class the same as the CIM class it is shadowing but with the caveat that 
-	 * it be namespaced (via the CIMTool baseuri tagged value) in a non-CIM 
-	 * namespace. Using this technique you can have multiple sets of extensions 
-	 * from different sources each defining their own IdentifiedObject shadow 
-	 * class with attributes and associations that will be merged into the 
-	 * normative IdentifiedObject class.
+	 * class the same as the CIM class it is shadowing but with the caveat that it
+	 * be namespaced (via the CIMTool baseuri tagged value) in a non-CIM namespace.
+	 * Using this technique you can have multiple sets of extensions from different
+	 * sources each defining their own IdentifiedObject shadow class with attributes
+	 * and associations that will be merged into the normative IdentifiedObject
+	 * class.
 	 * 
 	 * <pre>
 	 *  IdentifiedObject   IdentifiedObject 
@@ -536,7 +553,7 @@ public class CIMInterpreter extends UMLInterpreter {
 
 		// Validate each shadow class for any modeling violations...
 		shadowClasses.values().forEach(shadowClass -> {
-			validateShadowExtensionsModeling(baseURI, shadowClass);
+			validateShadowExtensionsModeling(shadowClass, baseURI);
 		});
 
 		List<OntResource> normativeClasses = new LinkedList<OntResource>();
@@ -549,53 +566,25 @@ public class CIMInterpreter extends UMLInterpreter {
 		});
 
 		normativeClasses.forEach(normativeClass -> {
-			System.out.println("Processing normative CIM class:  " + normativeClass.describe());
-			
+			if (TRACE)
+				System.out.println("Processing normative CIM class:  " + normativeClass.describe());
+
 			List<OntResource> parentShadowClasses = new ArrayList<OntResource>();
 			ResIterator parentClasses = normativeClass.listSuperClasses(false);
 			while (parentClasses.hasNext()) {
 				OntResource superClass = parentClasses.nextResource();
 				if (shadowClasses.containsKey(superClass.getURI())) {
-					parentShadowClasses.add(superClass);					
+					parentShadowClasses.add(superClass);
 				}
 			}
 			parentShadowClasses.forEach(aParentShadowClass -> {
 				mergeShadowClass(aParentShadowClass, normativeClass, shadowClasses, baseURI, true);
 			});
 		});
-		
-//		normativeClasses.forEach(normativeClass -> {
-//			System.out.println("Pass 2 - processing normative CIM class:  " + normativeClass.describe());
-//			
-//			List<OntResource> parentShadowClasses = new ArrayList<OntResource>();
-//			ResIterator parentClasses = normativeClass.listSuperClasses(false);
-//			while (parentClasses.hasNext()) {
-//				OntResource superClass = parentClasses.nextResource();
-//				if (shadowClasses.containsKey(superClass.getURI())) {
-//					parentShadowClasses.add(superClass);					
-//				}
-//			}
-//			parentShadowClasses.forEach(aParentShadowClass -> {
-//				ResIterator it = model.listSubjectsWithProperty(OWL2.inverseOf, aParentShadowClass);
-//				while (it.hasNext()) {
-//					OntResource subject = it.nextResource();
-//					System.err.println("BEFORE inverseof replacement:  " + subject.describe());
-//					subject.removeProperty(OWL2.inverseOf, aParentShadowClass);
-//					subject.addProperty(OWL2.inverseOf, normativeClass);
-//					System.err.println("AFTER inverseof replacement:  " + subject.describe());
-//				}
-//				normativeClass.removeSuperClass(aParentShadowClass);
-//			});
-//		});
 
 		shadowClasses.values().forEach(shadowClass -> {
-//			ResIterator it = model.listSubjectsWithProperty(OWL2.inverseOf, shadowClass);
-//			while (it.hasNext()) {
-//				OntResource subject = it.nextResource();
-//				System.err.println("OUTSTANDING inverseof:  " + subject.describe());
-//			}
-//			// The final step is to remove each shadow class from the model.
-//			// The below call removes it both as a Subject and an Object.
+			// The final step is to remove each shadow class from the model.
+			// The below call removes it both as a Subject and an Object.
 			shadowClass.remove();
 		});
 	}
@@ -611,11 +600,12 @@ public class CIMInterpreter extends UMLInterpreter {
 	 */
 	private void mergeShadowClass(OntResource shadowClass, OntResource normativeClass,
 			Map<String, OntResource> shadowClasses, String baseURI, boolean isShadowClassDirectParent) {
-		
-		System.out.println("Merging shadow class:  " + shadowClass.describe());
-		
+
+		if (TRACE)
+			System.out.println("Merging shadow class:  " + shadowClass.describe());
+
 		ArrayList<OntResource> props = new ArrayList<OntResource>();
-		
+
 		if (shadowClass.hasProperty(UML.hasStereotype, UML.enumeration)) {
 			ResIterator funcProps = model.listSubjectsBuffered(RDF.type, shadowClass);
 			while (funcProps.hasNext()) {
@@ -633,7 +623,10 @@ public class CIMInterpreter extends UMLInterpreter {
 					prop.addIsDefinedBy(normativeClass.getIsDefinedBy());
 			}
 		} else if (shadowClass.hasProperty(UML.hasStereotype, UML.primitive)) {
-			/** This is a placeholder for now. Currently just prints. Must be implemented/tested */
+			/**
+			 * This is a placeholder for now. Currently just prints. Must be determine if we
+			 * need to support extensions of Primtives. The initial thought is no.
+			 */
 			ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
 			while (funcProps.hasNext()) {
 				OntResource prop = funcProps.nextResource();
@@ -642,7 +635,10 @@ public class CIMInterpreter extends UMLInterpreter {
 					System.err.println("Shadow class <<Primitive>>:  " + prop.describe());
 			}
 		} else if (shadowClass.hasProperty(UML.hasStereotype, UML.cimdatatype)) {
-			/** This is a placeholder for now. Currently just prints. Must be implemented/tested */
+			/**
+			 * This is a placeholder for now. Currently just prints. Must be determine if we
+			 * need to support extensions of CIMDatatypes. The initial thought is no.
+			 */
 			ResIterator funcProps = model.listSubjectsWithProperty(RDF.type, shadowClass);
 			while (funcProps.hasNext()) {
 				OntResource prop = funcProps.nextResource();
@@ -652,13 +648,12 @@ public class CIMInterpreter extends UMLInterpreter {
 			}
 		} else {
 			ResIterator funcProps = model.listSubjectsWithProperty(RDFS.domain, shadowClass);
-			
+
 			while (funcProps.hasNext()) {
 				OntResource prop = funcProps.nextResource();
 				props.add(prop);
-				System.err.println("Including property:   " + prop.getURI());
 			}
-			
+
 			for (OntResource prop : props) {
 				if (prop.getRange() != null && prop.getRange().equals(shadowClass)) {
 					// We've reached this point because we've identified that the
@@ -671,56 +666,87 @@ public class CIMInterpreter extends UMLInterpreter {
 				// Remap the domain class from the extension to the normative class.
 				prop.removeProperty(RDFS.domain, shadowClass);
 				prop.addDomain(normativeClass);
+
 				if (prop.getIsDefinedBy() != null)
 					prop.removeProperty(RDFS.isDefinedBy, prop.getIsDefinedBy());
 				if (normativeClass.getIsDefinedBy() != null)
 					prop.addIsDefinedBy(normativeClass.getIsDefinedBy());
-				
+
 				if (prop.getInverseOf() != null) {
-					System.err.println(prop.describe());
-					OntResource inverseOf = prop.getInverseOf();
-					System.err.println(inverseOf.describe());
+					OntResource inverse = prop.getInverseOf();
+					OntResource inverseRange = inverse.getRange();
+					if (inverseRange != null && !inverseRange.getURI().equals(normativeClass.getURI())) {
+						inverse.removeProperty(RDFS.range, inverseRange);
+						inverse.addProperty(RDFS.range, normativeClass);
+					}
 				}
 			}
 		}
-		
-		/**
-		 * Once the shadow class is been processed we remove its  
-		 * super class reference in the normative CIM class...
-		 */
+
 		if (isShadowClassDirectParent) {
+			// Once processed we remove the super class reference from the normative CIM
+			// class.
 			normativeClass.removeSuperClass(shadowClass);
 		}
 
 		/**
-		 * Iterate through the immediate super classes for the current 
-		 * "shadow class" being processed...
+		 * Iterate through the immediate super classes for the current "shadow class"
+		 * being processed...
 		 */
 		ResIterator superClasses = shadowClass.listSuperClasses(false);
 		while (superClasses.hasNext()) {
 			OntResource superClass = superClasses.nextResource();
-			/**
-			 * Starting at the CIM class we now recursively navigate up the inheritance
-			 * hierarchy and merge the extensions from each level into the specified
-			 * normative class.
-			 */
+			// merge the extensions from shadow class into the normative class...
 			if (superClass.hasProperty(UML.hasStereotype, UML.shadowextension)
 					&& shadowClasses.containsKey(superClass.getURI())) {
-				mergeShadowClass(superClass, normativeClass, shadowClasses, baseURI, false);
-			} else {
-				if (TRACE)
-					System.err.println("ERROR:  " + superClass.describe());
+
+				int totalClasses = 0;
+				ResIterator shadowClassSubClasses = model.listSubjectsWithProperty(RDFS.subClassOf, superClass);
+				while (shadowClassSubClasses.hasNext()) {
+					shadowClassSubClasses.nextResource();
+					totalClasses++;
+				}
+				if (totalClasses > 1) {
+					shadowClassSubClasses = model.listSubjectsWithProperty(RDFS.subClassOf, superClass);
+					while (shadowClassSubClasses.hasNext()) {
+						OntResource subclass = shadowClassSubClasses.nextResource();
+						shadowClass.removeSubClass(subclass);
+					}
+					// Here we simply fall through after removing the shadowClass from the model.
+				} else {
+					mergeShadowClass(superClass, normativeClass, shadowClasses, baseURI, false);
+				}
 			}
 		}
 	}
-	
+
+	private OntResource getNormativeSubClass(OntResource shadowClass, String baseURI) {
+		OntResource normativeSubClass = null;
+
+		// The counter is a safeguard to ensure that the modeling is valid and
+		// has only a single normative CIM subclass. If not we return null...
+		int count = 0;
+
+		ResIterator shadowClassSubClasses = model.listSubjectsWithProperty(RDFS.subClassOf, shadowClass);
+		while (shadowClassSubClasses.hasNext()) {
+			OntResource subClass = shadowClassSubClasses.nextResource();
+			String subClassURI = subClass.getURI().substring(0, subClass.getURI().indexOf("#") + 1);
+			if (subClassURI.equals(baseURI) && !subClass.hasProperty(UML.hasStereotype, UML.shadowextension)) {
+				normativeSubClass = subClass;
+				count++;
+			}
+		}
+
+		return (count == 1 ? normativeSubClass : null);
+	}
+
 	/**
 	 * Perform extensions modeling validation checks and log all violations.
 	 *
 	 * @param baseURI
 	 * @param shadowClass
 	 */
-	private void validateShadowExtensionsModeling(String baseURI, OntResource shadowClass) {
+	private void validateShadowExtensionsModeling(OntResource shadowClass, String baseURI) {
 
 		String shadowClassURI = shadowClass.getURI().substring(0, shadowClass.getURI().indexOf("#") + 1);
 
@@ -822,7 +848,7 @@ public class CIMInterpreter extends UMLInterpreter {
 			while (props.hasNext()) {
 				OntResource property = props.nextResource();
 				if (property.hasProperty(RDF.type, OWL.ObjectProperty)) {
-					//System.out.println("Property:  " + property.describe());
+					// System.out.println("Property: " + property.describe());
 					OntResource range = property.getRange(); // The "other end" of the association
 					String rangeURI = range.getURI().substring(0, range.getURI().indexOf("#") + 1);
 					if (!shadowClassURI.equals(rangeURI) && !rangeURI.equals(baseURI)) {
@@ -904,7 +930,8 @@ public class CIMInterpreter extends UMLInterpreter {
 					 *    "shadow class").
 					 * </pre>
 					 */
-					if ((aSuperClass.hasProperty(UML.hasStereotype, UML.shadowextension) && (!aSuperClass.getURI().startsWith(baseURI))) || //
+					if ((aSuperClass.hasProperty(UML.hasStereotype, UML.shadowextension)
+							&& (!aSuperClass.getURI().startsWith(baseURI))) || //
 							(!aSuperClass.getURI().startsWith(baseURI)
 									&& aSuperClass.getURI().endsWith("#" + aClass.getLabel()))) {
 						if (TRACE)
@@ -919,19 +946,19 @@ public class CIMInterpreter extends UMLInterpreter {
 		 * The "top-down" step is performed second whereby just classes with a
 		 * <<ShadowExtension>> stereotype are queried and iterated through and a check
 		 * performed to determined if they were NOT identified during the "bottom-up"
-		 * pass. 
+		 * pass.
 		 * 
-		 * Note that we also check to ensure that namespace is not that of baseURI 
-		 * (i.e. the namespace for the normative CIM). Since <<ShadowExtension>> 
-		 * stereotypes have no relevance on normative CIM classes it would then indicate
-		 * a scenario where a baseuri tagged value was not specified at an appropriate place 
-		 * in the model and this instead would have been logged as a CIM modeling violation
-		 * during the model validation process. If the above criteria is met then the "shadow 
-		 * class" is added to the list of shadow classes. This second step is needed since 
-		 * the first step only verifies the immediate parents. That pass does not take into 
-		 * consideration that a "shadow class" itself can potentially have a parent "shadow 
-		 * class" but with the caveat that such classes MUST HAVE the <<ShadowExtension>> 
-		 * stereotype defined on it.
+		 * Note that we also check to ensure that namespace is not that of baseURI (i.e.
+		 * the namespace for the normative CIM). Since <<ShadowExtension>> stereotypes
+		 * have no relevance on normative CIM classes it would then indicate a scenario
+		 * where a baseuri tagged value was not specified at an appropriate place in the
+		 * model and this instead would have been logged as a CIM modeling violation
+		 * during the model validation process. If the above criteria is met then the
+		 * "shadow class" is added to the list of shadow classes. This second step is
+		 * needed since the first step only verifies the immediate parents. That pass
+		 * does not take into consideration that a "shadow class" itself can potentially
+		 * have a parent "shadow class" but with the caveat that such classes MUST HAVE
+		 * the <<ShadowExtension>> stereotype defined on it.
 		 */
 		ResIterator shadowClassesIterator = model.listSubjectsBuffered(UML.hasStereotype, UML.shadowextension);
 		while (shadowClassesIterator.hasNext()) {

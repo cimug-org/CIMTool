@@ -23,10 +23,20 @@ public class UMLInterpreter {
 
 	// Default logger to System.out
 	protected SchemaImportLogger logger = new SchemaImportConsoleLoggerImpl();
+	protected StereotypedNamespaces stereotypedNamespaces = new StereotypedNamespaces();
 	
 	protected boolean TRACE = false;
 	
 	protected OntModel model;
+
+	public UMLInterpreter() {
+	}
+	
+	public UMLInterpreter(StereotypedNamespaces stereotypedNamespaces) {
+		if (stereotypedNamespaces != null)
+			this.stereotypedNamespaces = stereotypedNamespaces;
+	}
+
 	/**
 	 * Set the Jena OWL model to be interpreted.
 	 */

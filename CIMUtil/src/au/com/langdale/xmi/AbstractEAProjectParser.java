@@ -50,6 +50,7 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 	private static Pattern namePattern = Pattern.compile(name);
 
 	protected Map<String, List<String>> stereotypesMap = new HashMap<String, List<String>>();
+	protected Map<String, OntResource> namedStereotypes = new HashMap<String, OntResource>();
 	protected Map<Integer, List<TaggedValue>> packagesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
 	protected Map<Integer, List<TaggedValue>> classesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
 	protected Map<Integer, List<TaggedValue>> attributesTaggedValuesMap = new HashMap<Integer, List<TaggedValue>>();
@@ -146,6 +147,10 @@ public abstract class AbstractEAProjectParser extends XMIModel implements EAProj
 
 	protected abstract void parseAttributes() throws EAProjectParserException;
 
+	public Map<String, OntResource> getNamedStereotypes() {
+		return namedStereotypes;
+	}
+	
 	protected String getPackageHierarchy(OntResource parent) {
 		String packageHierarchy = null;
 		while (parent != null && !parent.equals(UML.global_package)) {

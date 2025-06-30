@@ -32,14 +32,17 @@ public class Translator implements Runnable {
 	private String defaultNamespace;
 	private boolean extraDecoration;
 	private boolean uniqueNamespaces;
+	private StereotypedNamespaces stereotypedNamespaces;
 
 	/**
 	 * Construct from input model and the namespace for renamed resources.
+	 * @param stereotypedNamespaces 
 	 * 
 	 * @param input the model to be translated.
 	 */
-	public Translator(OntModel model, String namespace, boolean usePackageNames) {
+	public Translator(OntModel model, StereotypedNamespaces stereotypedNamespaces, String namespace, boolean usePackageNames) {
 		this.model = model;
+		this.stereotypedNamespaces = stereotypedNamespaces;
 		OntResource ont = model.getValidOntology();
 		if (ont != null) {
 			defaultNamespace = ont.getURI() + "#";
@@ -358,8 +361,8 @@ public class Translator implements Runnable {
 	 */
 	protected String findBaseURI(OntResource r) {
 		String b = null;
-		if (StereotypedNamespaces.hasNamespaces()) {
-			b = StereotypedNamespaces.getNamespace(r);
+		if (stereotypedNamespaces.hasNamespaces()) {
+			b = stereotypedNamespaces.getNamespace(r);
 		} else {
 			b = r.getString(UML.baseuri);
 		}
@@ -370,8 +373,8 @@ public class Translator implements Runnable {
 
 		// If the resource itself does not have a baseuri we then check the domain
 		if (r.getDomain() != null) {
-			if (StereotypedNamespaces.hasNamespaces()) {
-				b = StereotypedNamespaces.getNamespace(r.getDomain());
+			if (stereotypedNamespaces.hasNamespaces()) {
+				b = stereotypedNamespaces.getNamespace(r.getDomain());
 			} else {
 				b = r.getDomain().getString(UML.baseuri);
 			}
@@ -385,7 +388,7 @@ public class Translator implements Runnable {
 		// ensure that no namespaces have been loaded from a *.namespaces 
 		// mapping file. If not then we need to do the additional check for
 		// a baseprefix tagged value...
-		if (!StereotypedNamespaces.hasNamespaces()) {
+		if (!stereotypedNamespaces.hasNamespaces()) {
 			String x = r.getString(UML.baseprefix);
 			if (x != null) {
 				ResIterator it = model.listSubjectsWithProperty(UML.uriHasPrefix, x);
@@ -400,8 +403,8 @@ public class Translator implements Runnable {
 		
 		OntResource p = r.getResource(RDFS.isDefinedBy);
 		if (p != null) {
-			if (StereotypedNamespaces.hasNamespaces()) {
-				b = StereotypedNamespaces.getNamespace(p);
+			if (stereotypedNamespaces.hasNamespaces()) {
+				b = stereotypedNamespaces.getNamespace(p);
 			} else {
 				b = p.getString(UML.baseuri);
 			}
@@ -435,8 +438,8 @@ public class Translator implements Runnable {
 	private String propagateAnnotation(OntResource p, FrontsNode a) {
 		String v = null;
 
-		if (StereotypedNamespaces.hasNamespaces()) {
-			v = StereotypedNamespaces.getNamespace(p);
+		if (stereotypedNamespaces.hasNamespaces()) {
+			v = stereotypedNamespaces.getNamespace(p);
 		} else {
 			v = p.getString(a);
 		}
@@ -449,9 +452,9 @@ public class Translator implements Runnable {
 		if (s != null) {
 			v = propagateAnnotation(s, a);
 			if (v != null) {
-				if (StereotypedNamespaces.hasNamespaces()) {
-					if (StereotypedNamespaces.hasNamespace(v)) {
-						p.addProperty(UML.hasStereotype, StereotypedNamespaces.getStereotypeResource(v));
+				if (stereotypedNamespaces.hasNamespaces()) {
+					if (stereotypedNamespaces.hasNamespace(v)) {
+						p.addProperty(UML.hasStereotype, stereotypedNamespaces.getStereotypeResource(v));
 					}
 				} else {
 					p.addProperty(a, v);

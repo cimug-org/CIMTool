@@ -6,7 +6,6 @@ package au.com.langdale.xmi;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -34,7 +33,6 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 		Statement statement = null;
 		ResultSet rs = null;
 		try {
-			Map<String, OntResource> stereotypedNamespaces = new HashMap<String, OntResource>();
 			connection = getConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery("select * from t_xref where Name = 'Stereotypes'");
@@ -50,9 +48,8 @@ public abstract class AbstractEAProjectDBParsor extends AbstractEAProjectParser 
 					stereotypesMap.put(eaGUID, stereotypesList);
 				}
 				Map<String,OntResource> stereos = createStereotypedNamespaces(stereotypes);
-				stereotypedNamespaces.putAll(stereos);
+				namedStereotypes.putAll(stereos);
 			}
-			StereotypedNamespaces.init(stereotypedNamespaces);
 		} catch (SQLException sqlException) {
 			throw new EAProjectParserException("Unable to import the EA project file:  " + file.getAbsolutePath(),
 					sqlException);

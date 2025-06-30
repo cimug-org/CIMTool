@@ -78,6 +78,7 @@ public class ExtensionsTranslator implements Runnable {
 		public void run() {
 			resultModel = ModelFactory.createMem();
 			Iterator it = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
+			
 			while (it.hasNext()) {
 				Triple s = (Triple) it.next();
 				//
@@ -94,6 +95,7 @@ public class ExtensionsTranslator implements Runnable {
 				//
 				add(renamedSubject, renamedPredicate, renamedObject);
 			}
+
 			model = resultModel;
 		}
 

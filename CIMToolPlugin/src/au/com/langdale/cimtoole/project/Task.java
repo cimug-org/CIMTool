@@ -327,6 +327,8 @@ public class Task extends Info {
 	}
 
 	private static OntModel parseEAProject(IFile file) throws CoreException {
+		// We initialize with the default object which represents no mapped stereotypes
+		StereotypedNamespaces stereotypedNamespaces = new StereotypedNamespaces(); 
 		EAProjectParser parser;
 		try {
 			Boolean selfHealingOnImportEnabled = Info.isSelfHealingOnSchemaImportEnabled(file);
@@ -334,13 +336,22 @@ public class Task extends Info {
 			parser = EAProjectParserFactory.createParser(file.getLocation().toFile(), selfHealingOnImportEnabled,
 					logger);
 			parser.parse();
+			//
+			IFile namespacesFile = getRelated(file, "namespaces" , false);
+			if (namespacesFile.getLocation().toFile().exists()) {
+				stereotypedNamespaces = new StereotypedNamespaces(namespacesFile.getLocation().toFile(), parser.getNamedStereotypes());
+			} 
 		} catch (EAProjectParserException e) {
 			throw error("Can't access EA project", e);
 		}
-		return interpretSchema(parser.getModel(), file);
+		return interpretSchema(parser.getModel(), file, stereotypedNamespaces);
 	}
-
+	
 	private static OntModel interpretSchema(OntModel raw, IFile file) throws CoreException {
+		return interpretSchema( raw, file, new StereotypedNamespaces());
+	}
+	
+	private static OntModel interpretSchema(OntModel raw, IFile file, StereotypedNamespaces stereotypedNamespaces) throws CoreException {
 		Boolean mergeShadowExtensionsEnabled = Info.isMergeShadowExtensionsEnabled(file);
 		String base = getProperty(file, SCHEMA_NAMESPACE);
 		if (base == null) {
@@ -350,11 +361,6 @@ public class Task extends Info {
 				base = file.getLocationURI().toString() + "#";
 		}
 		//
-		IFile namespacesFile = getRelated(file, "namespaces" , false);
-		if (namespacesFile.getLocation().toFile().exists()) {
-			StereotypedNamespaces.load(namespacesFile.getLocation().toFile());
-		}
-		//
 		IFile auxfile = getRelated(file, "annotation", false);
 		OntModel annote;
 		if (auxfile.exists()) {
@@ -362,7 +368,7 @@ public class Task extends Info {
 			IO.read(annote, auxfile.getContents(), base, Format.TURTLE.toFormat());
 		} else
 			annote = null;
-		return CIMInterpreter.interpret(raw, base, annote, getPreferenceOption(USE_PACKAGE_NAMES),
+		return CIMInterpreter.interpret(raw, stereotypedNamespaces, base, annote, getPreferenceOption(USE_PACKAGE_NAMES),
 				mergeShadowExtensionsEnabled);
 	}
 

@@ -49,7 +49,6 @@ public class EAPParser extends AbstractEAProjectParser {
 	}
 
 	protected void loadStereotypesCache() throws EAProjectParserException {
-		Map<String, OntResource> stereotypedNamespaces = new HashMap<String, OntResource>();
 		stereotypesMap = new HashMap<String, List<String>>();
 		Iterator it = getXRefTable().iterator();
 		while (it.hasNext()) {
@@ -65,10 +64,9 @@ public class EAPParser extends AbstractEAProjectParser {
 					stereotypesMap.put(row.getClient(), stereotypesList);
 				}
 				Map<String, OntResource> stereos = createStereotypedNamespaces(stereotypes);
-				stereotypedNamespaces.putAll(stereos);
+				namedStereotypes.putAll(stereos);
 			}
 		}
-		StereotypedNamespaces.init(stereotypedNamespaces);
 	}
 
 	protected void loadTaggedValuesCaches() throws EAProjectParserException {
