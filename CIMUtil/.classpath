@@ -17,5 +17,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/easy-rules-core-4.1.0.jar" sourcepath="lib/easy-rules-core-4.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/easy-rules-support-4.1.0.jar" sourcepath="lib/easy-rules-support-4.1.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
