@@ -233,7 +233,6 @@ public class ProfileUtility {
 		 * Merge two property specifications
 		 */
 		private PropertySpec(PropertySpec lhs, PropertySpec rhs) {
-			
 			prop = lhs.prop; // == rhs.prop
 			base_domain = lhs.base_domain; // == rhs.base_domain
 			
@@ -241,6 +240,16 @@ public class ProfileUtility {
 			functional = lhs.functional || rhs.functional;
 			reference = lhs.reference || rhs.reference;
 			required = lhs.required || rhs.required;
+			compound = lhs.compound || rhs.compound;
+			base_range = mergeRange(prop.getRange(), lhs.base_range, rhs.base_range);
+			
+			// take the profile label if both sides agree
+			if( lhs.label.equals(rhs.label))
+				label = lhs.label;
+			else
+				label = prop.getLabel(null);
+			
+			comment = "";
 			
 			// initialize min
 			if (!required) {
@@ -276,17 +285,6 @@ public class ProfileUtility {
 					max = Integer.MAX_VALUE;
 				}
 			}
-			
-			compound = lhs.compound || rhs.compound;
-			base_range = mergeRange(prop.getRange(), lhs.base_range, rhs.base_range);
-			
-			// take the profile label if both sides agree
-			if( lhs.label.equals(rhs.label))
-				label = lhs.label;
-			else
-				label = prop.getLabel(null);
-			
-			comment = "";
 		}
 
 		private PropertySpec selectDominant(PropertySpec other) {
