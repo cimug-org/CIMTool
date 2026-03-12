@@ -4,11 +4,11 @@
 
 ![image](https://github.com/user-attachments/assets/a89eff0d-deae-4541-be58-d59a8806a27e)
 
+## Project Corporate Sponsorship
 
-## Project Supporters
+[![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   
 
-[![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   [![image](docs/logos/project-supporter-statnett-logo.png)](https://www.statnett.no/en/)   [![image](docs/logos/project-supporter-ogs-logo.png)](https://www.opengrid.com/)
-
+AspenTech serves at the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug and for the benefit of the CIM community.  
 
 ## CIMTool Discussion Forums
 
