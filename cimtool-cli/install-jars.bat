@@ -128,7 +128,7 @@ REM is forced to resolve from lib-repo/ and always uses the freshest JAR.
 if exist "%USERPROFILE%\.m2\repository\au\com\langdale\kena" (
     rmdir /s /q "%USERPROFILE%\.m2\repository\au\com\langdale\kena"
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="au.com.langdale" -DartifactId="kena" -Dversion="%KENA_VERSION%" -Dfile="%KENA_JAR%" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="au.com.langdale" -DartifactId="kena" -Dversion="%KENA_VERSION%" -Dfile="%KENA_JAR%" --quiet
 echo   OK
 :kena_done
 echo.
@@ -153,7 +153,7 @@ REM is forced to resolve from lib-repo/ and always uses the freshest JAR.
 if exist "%USERPROFILE%\.m2\repository\au\com\langdale\cimutil" (
     rmdir /s /q "%USERPROFILE%\.m2\repository\au\com\langdale\cimutil"
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="au.com.langdale" -DartifactId="cimutil" -Dversion="%CIMUTIL_VERSION%" -Dfile="%CIMUTIL_JAR%" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="au.com.langdale" -DartifactId="cimutil" -Dversion="%CIMUTIL_VERSION%" -Dfile="%CIMUTIL_JAR%" --quiet
 echo   OK
 :cimutil_done
 echo.
@@ -187,7 +187,7 @@ if not exist "%KENA_LIB%\jena-2.6.3.jar" (
     echo   [MISSING] %KENA_LIB%\jena-2.6.3.jar -- skipping
     goto :jena_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.hp.hpl.jena" -DartifactId="jena" -Dversion="2.6.3" -Dfile="%KENA_LIB%\jena-2.6.3.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.hp.hpl.jena" -DartifactId="jena" -Dversion="2.6.3" -Dfile="%KENA_LIB%\jena-2.6.3.jar" --quiet
 echo   OK
 :jena_done
 echo.
@@ -197,7 +197,7 @@ if not exist "%KENA_LIB%\arq-2.8.4.jar" (
     echo   [MISSING] %KENA_LIB%\arq-2.8.4.jar -- skipping
     goto :arq_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.hp.hpl.jena" -DartifactId="arq" -Dversion="2.8.4" -Dfile="%KENA_LIB%\arq-2.8.4.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.hp.hpl.jena" -DartifactId="arq" -Dversion="2.8.4" -Dfile="%KENA_LIB%\arq-2.8.4.jar" --quiet
 echo   OK
 :arq_done
 echo.
@@ -207,7 +207,7 @@ if not exist "%KENA_LIB%\iri-0.8.jar" (
     echo   [MISSING] %KENA_LIB%\iri-0.8.jar -- skipping
     goto :iri_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.hp.hpl.jena" -DartifactId="iri" -Dversion="0.8" -Dfile="%KENA_LIB%\iri-0.8.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.hp.hpl.jena" -DartifactId="iri" -Dversion="0.8" -Dfile="%KENA_LIB%\iri-0.8.jar" --quiet
 echo   OK
 :iri_done
 echo.
@@ -217,7 +217,7 @@ if not exist "%KENA_LIB%\lucene-core-2.3.1.jar" (
     echo   [MISSING] %KENA_LIB%\lucene-core-2.3.1.jar -- skipping
     goto :lucene_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.apache.lucene" -DartifactId="lucene-core" -Dversion="2.3.1" -Dfile="%KENA_LIB%\lucene-core-2.3.1.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.apache.lucene" -DartifactId="lucene-core" -Dversion="2.3.1" -Dfile="%KENA_LIB%\lucene-core-2.3.1.jar" --quiet
 echo   OK
 :lucene_done
 echo.
@@ -227,7 +227,7 @@ if not exist "%KENA_LIB%\stax-api-1.0.1.jar" (
     echo   [MISSING] %KENA_LIB%\stax-api-1.0.1.jar -- skipping
     goto :stax_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="javax.xml.stream" -DartifactId="stax-api" -Dversion="1.0.1" -Dfile="%KENA_LIB%\stax-api-1.0.1.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="javax.xml.stream" -DartifactId="stax-api" -Dversion="1.0.1" -Dfile="%KENA_LIB%\stax-api-1.0.1.jar" --quiet
 echo   OK
 :stax_done
 echo.
@@ -237,7 +237,7 @@ if not exist "%KENA_LIB%\wstx-asl-3.2.9.jar" (
     echo   [MISSING] %KENA_LIB%\wstx-asl-3.2.9.jar -- skipping
     goto :wstx_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.codehaus.woodstox" -DartifactId="wstx-asl" -Dversion="3.2.9" -Dfile="%KENA_LIB%\wstx-asl-3.2.9.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.codehaus.woodstox" -DartifactId="wstx-asl" -Dversion="3.2.9" -Dfile="%KENA_LIB%\wstx-asl-3.2.9.jar" --quiet
 echo   OK
 :wstx_done
 echo.
@@ -247,7 +247,7 @@ if not exist "%KENA_LIB%\xercesImpl-2.7.1.jar" (
     echo   [MISSING] %KENA_LIB%\xercesImpl-2.7.1.jar -- skipping
     goto :xerces_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="xerces" -DartifactId="xercesImpl" -Dversion="2.7.1" -Dfile="%KENA_LIB%\xercesImpl-2.7.1.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="xerces" -DartifactId="xercesImpl" -Dversion="2.7.1" -Dfile="%KENA_LIB%\xercesImpl-2.7.1.jar" --quiet
 echo   OK
 :xerces_done
 echo.
@@ -257,7 +257,7 @@ if not exist "%KENA_LIB%\icu4j-71.1.jar" (
     echo   [MISSING] %KENA_LIB%\icu4j-71.1.jar -- skipping
     goto :icu4j_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.ibm.icu" -DartifactId="icu4j" -Dversion="71.1" -Dfile="%KENA_LIB%\icu4j-71.1.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.ibm.icu" -DartifactId="icu4j" -Dversion="71.1" -Dfile="%KENA_LIB%\icu4j-71.1.jar" --quiet
 echo   OK
 :icu4j_done
 echo.
@@ -267,7 +267,7 @@ if not exist "%KENA_LIB%\log4j-1.2.13.jar" (
     echo   [MISSING] %KENA_LIB%\log4j-1.2.13.jar -- skipping
     goto :log4j_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="log4j" -DartifactId="log4j" -Dversion="1.2.13" -Dfile="%KENA_LIB%\log4j-1.2.13.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="log4j" -DartifactId="log4j" -Dversion="1.2.13" -Dfile="%KENA_LIB%\log4j-1.2.13.jar" --quiet
 echo   OK
 :log4j_done
 echo.
@@ -277,7 +277,7 @@ if not exist "%KENA_LIB%\slf4j-log4j12-1.5.8.jar" (
     echo   [MISSING] %KENA_LIB%\slf4j-log4j12-1.5.8.jar -- skipping
     goto :slf4j_log4j12_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-log4j12" -Dversion="1.5.8" -Dfile="%KENA_LIB%\slf4j-log4j12-1.5.8.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-log4j12" -Dversion="1.5.8" -Dfile="%KENA_LIB%\slf4j-log4j12-1.5.8.jar" --quiet
 echo   OK
 :slf4j_log4j12_done
 echo.
@@ -293,7 +293,7 @@ if not exist "%CIMUTIL_LIB%\saxon-he-10.8.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\saxon-he-10.8.jar -- skipping
     goto :saxon_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="net.sf.saxon" -DartifactId="Saxon-HE" -Dversion="10.8" -Dfile="%CIMUTIL_LIB%\saxon-he-10.8.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="net.sf.saxon" -DartifactId="Saxon-HE" -Dversion="10.8" -Dfile="%CIMUTIL_LIB%\saxon-he-10.8.jar" --quiet
 echo   OK
 :saxon_done
 echo.
@@ -303,7 +303,7 @@ if not exist "%CIMUTIL_LIB%\easy-rules-core-4.1.0.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\easy-rules-core-4.1.0.jar -- skipping
     goto :easyrules_core_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.jeasy" -DartifactId="easy-rules-core" -Dversion="4.1.0" -Dfile="%CIMUTIL_LIB%\easy-rules-core-4.1.0.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.jeasy" -DartifactId="easy-rules-core" -Dversion="4.1.0" -Dfile="%CIMUTIL_LIB%\easy-rules-core-4.1.0.jar" --quiet
 echo   OK
 :easyrules_core_done
 echo.
@@ -313,7 +313,7 @@ if not exist "%CIMUTIL_LIB%\easy-rules-support-4.1.0.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\easy-rules-support-4.1.0.jar -- skipping
     goto :easyrules_support_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.jeasy" -DartifactId="easy-rules-support" -Dversion="4.1.0" -Dfile="%CIMUTIL_LIB%\easy-rules-support-4.1.0.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.jeasy" -DartifactId="easy-rules-support" -Dversion="4.1.0" -Dfile="%CIMUTIL_LIB%\easy-rules-support-4.1.0.jar" --quiet
 echo   OK
 :easyrules_support_done
 echo.
@@ -323,7 +323,7 @@ if not exist "%CIMUTIL_LIB%\poi-3.9.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\poi-3.9.jar -- skipping
     goto :poi_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.apache.poi" -DartifactId="poi" -Dversion="3.9" -Dfile="%CIMUTIL_LIB%\poi-3.9.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.apache.poi" -DartifactId="poi" -Dversion="3.9" -Dfile="%CIMUTIL_LIB%\poi-3.9.jar" --quiet
 echo   OK
 :poi_done
 echo.
@@ -333,7 +333,7 @@ if not exist "%CIMUTIL_LIB%\commons-lang-2.6.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\commons-lang-2.6.jar -- skipping
     goto :commons_lang_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="commons-lang" -DartifactId="commons-lang" -Dversion="2.6" -Dfile="%CIMUTIL_LIB%\commons-lang-2.6.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="commons-lang" -DartifactId="commons-lang" -Dversion="2.6" -Dfile="%CIMUTIL_LIB%\commons-lang-2.6.jar" --quiet
 echo   OK
 :commons_lang_done
 echo.
@@ -343,7 +343,7 @@ if not exist "%CIMUTIL_LIB%\commons-logging-1.1.3.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\commons-logging-1.1.3.jar -- skipping
     goto :commons_logging_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="commons-logging" -DartifactId="commons-logging" -Dversion="1.1.3" -Dfile="%CIMUTIL_LIB%\commons-logging-1.1.3.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="commons-logging" -DartifactId="commons-logging" -Dversion="1.1.3" -Dfile="%CIMUTIL_LIB%\commons-logging-1.1.3.jar" --quiet
 echo   OK
 :commons_logging_done
 echo.
@@ -353,7 +353,7 @@ if not exist "%CIMUTIL_LIB%\xml-resolver-1.2.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\xml-resolver-1.2.jar -- skipping
     goto :xml_resolver_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="xml-resolver" -DartifactId="xml-resolver" -Dversion="1.2" -Dfile="%CIMUTIL_LIB%\xml-resolver-1.2.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="xml-resolver" -DartifactId="xml-resolver" -Dversion="1.2" -Dfile="%CIMUTIL_LIB%\xml-resolver-1.2.jar" --quiet
 echo   OK
 :xml_resolver_done
 echo.
@@ -363,7 +363,7 @@ if not exist "%CIMUTIL_LIB%\sqlite-jdbc-3.45.2.0.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\sqlite-jdbc-3.45.2.0.jar -- skipping
     goto :sqlite_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.xerial" -DartifactId="sqlite-jdbc" -Dversion="3.45.2.0" -Dfile="%CIMUTIL_LIB%\sqlite-jdbc-3.45.2.0.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.xerial" -DartifactId="sqlite-jdbc" -Dversion="3.45.2.0" -Dfile="%CIMUTIL_LIB%\sqlite-jdbc-3.45.2.0.jar" --quiet
 echo   OK
 :sqlite_done
 echo.
@@ -373,7 +373,7 @@ if not exist "%CIMUTIL_LIB%\slf4j-api-1.7.36.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\slf4j-api-1.7.36.jar -- skipping
     goto :slf4j_api_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-api" -Dversion="1.7.36" -Dfile="%CIMUTIL_LIB%\slf4j-api-1.7.36.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-api" -Dversion="1.7.36" -Dfile="%CIMUTIL_LIB%\slf4j-api-1.7.36.jar" --quiet
 echo   OK
 :slf4j_api_done
 echo.
@@ -383,7 +383,7 @@ if not exist "%CIMUTIL_LIB%\jackcess-2.2.3.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\jackcess-2.2.3.jar -- skipping
     goto :jackcess_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.healthmarketscience.jackcess" -DartifactId="jackcess" -Dversion="2.2.3" -Dfile="%CIMUTIL_LIB%\jackcess-2.2.3.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.healthmarketscience.jackcess" -DartifactId="jackcess" -Dversion="2.2.3" -Dfile="%CIMUTIL_LIB%\jackcess-2.2.3.jar" --quiet
 echo   OK
 :jackcess_done
 echo.
@@ -393,7 +393,7 @@ if not exist "%CIMUTIL_LIB%\ucanaccess-4.0.4.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\ucanaccess-4.0.4.jar -- skipping
     goto :ucanaccess_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="net.sf.ucanaccess" -DartifactId="ucanaccess" -Dversion="4.0.4" -Dfile="%CIMUTIL_LIB%\ucanaccess-4.0.4.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="net.sf.ucanaccess" -DartifactId="ucanaccess" -Dversion="4.0.4" -Dfile="%CIMUTIL_LIB%\ucanaccess-4.0.4.jar" --quiet
 echo   OK
 :ucanaccess_done
 echo.
@@ -403,7 +403,7 @@ if not exist "%CIMUTIL_LIB%\hsqldb-2.3.6.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\hsqldb-2.3.6.jar -- skipping
     goto :hsqldb_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.hsqldb" -DartifactId="hsqldb" -Dversion="2.3.6" -Dfile="%CIMUTIL_LIB%\hsqldb-2.3.6.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.hsqldb" -DartifactId="hsqldb" -Dversion="2.3.6" -Dfile="%CIMUTIL_LIB%\hsqldb-2.3.6.jar" --quiet
 echo   OK
 :hsqldb_done
 echo.
@@ -413,7 +413,7 @@ if not exist "%CIMUTIL_LIB%\gson-2.8.6.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\gson-2.8.6.jar -- skipping
     goto :gson_done
 )
-call mvn install:install-file -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.google.code.gson" -DartifactId="gson" -Dversion="2.8.6" -Dfile="%CIMUTIL_LIB%\gson-2.8.6.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="com.google.code.gson" -DartifactId="gson" -Dversion="2.8.6" -Dfile="%CIMUTIL_LIB%\gson-2.8.6.jar" --quiet
 echo   OK
 :gson_done
 echo.
