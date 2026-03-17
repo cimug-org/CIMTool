@@ -15,8 +15,8 @@ public class SchemaWizards extends WorkbenchTest {
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
 		Assembly content = dialog.getContent();
-		content.getText("source").setText(getSamplesFolder() + SAMPLE_SCHEMA);
-		assertEquals("suggested file", SAMPLE_SCHEMA, content.getText("filename").getText());
+		content.getText("source").setText(getSamplesFolder() + SAMPLE_SCHEMA_XMI);
+		assertEquals("suggested file", SAMPLE_SCHEMA_XMI, content.getText("filename").getText());
 		pause();
 		content.getCheckboxTableViewer("projects").setChecked(project, true);
 		content.fireWidgetEvent();

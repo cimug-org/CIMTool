@@ -19,13 +19,16 @@ public class ProjectTest extends WorkspaceTest {
 
 	public static final String SAMPLES_ZIP = "CIMToolTestFiles.zip";
 	public static final String SAMPLES_FOLDER = "CIMToolTestFiles";
-	public static final String SAMPLE_SCHEMA = "cim11v09combined.xmi";
+	public static final String SAMPLE_SCHEMA_XMI = "cim11v09combined.xmi";
+	public static final String SAMPLE_SCHEMA_EAP = "iec61970cim17v38_iec61968cim13v13b_iec62325cim03v17a_CIM100.2.eap";
+	public static final String SAMPLE_SCHEMA_QEA = "CIM17-2_CGMES31v01_PROF-20v02_NC23v66_MS10v01_DES10v01.qea";
 	public static final String SAMPLE_CUSTOM_BUILDER = "junit-test.xsl";
 	public static final String SAMPLE_PROFILE = "cpsm2007.owl";
 	public static final String SAMPLE_RULES = "profile.rules";
 	public static final String SAMPLE_HTML_RULES = "profile.html-xslt";
 	public static final String SAMPLE_XSD_RULES = "profile.xsd-xslt";
-	public static final String SAMPLE_COPYRIGHT = "profile.txt";
+	public static final String SAMPLE_COPYRIGHT_MULTI_LINE = "copyright-multi-line.txt";
+	public static final String SAMPLE_COPYRIGHT_SINGLE_LINE = "copyright-single-line.txt";
 	public static final String ALT_XSD_RULES = "alternative.xsd-xslt";
 	public static final String SCHEMA_NS = "http://iec.ch/TC57/2007/CIM-schema-cim12#";
 	public static final Boolean MERGE_SHADOW_EXTENSIONS = Boolean.TRUE;
@@ -36,7 +39,7 @@ public class ProjectTest extends WorkspaceTest {
 	public static final String MODEL_NAME = "TestModel";
 	public static final String INCREMENT_NAME = "TestIncrement";
 	public static final String SMALL_CASES = "SmallCases";
-
+	//
 	protected IFile schema;
 	protected IFile profile;
 	protected IFolder model;
@@ -47,8 +50,8 @@ public class ProjectTest extends WorkspaceTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		workspace.run(Task.createProject(project, null), monitor);
-		schema = Info.getSchemaFolder(project).getFile(SAMPLE_SCHEMA);
-		profile = Info.getProfileFolder(project).getFile(SAMPLE_PROFILE);
+		schema = Info.getSchemaFolder(project).getFile(getSchemaForTesting());
+		profile = Info.getProfileFolder(project).getFile(getProfileForTesting());
 		model = Info.getInstanceFolder(project).getFolder(MODEL_NAME);
 		increment = Info.getIncrementalFolder(project).getFolder(INCREMENT_NAME);
 		setUpTestData();
@@ -60,12 +63,34 @@ public class ProjectTest extends WorkspaceTest {
 		tearDownTestData();
 	}
 
+	/**
+	 * Default profile for testing.
+	 */
+	protected String getProfileForTesting() {
+		return SAMPLE_PROFILE;
+	}
+
+	/**
+	 * Default schema for testing.
+	 */
+	protected String getSchemaForTesting() {
+		return SAMPLE_SCHEMA_XMI;
+	}
+	
+	/**
+	 * Default schema namespace for testing.
+	 */
+	protected String getSchemaNSForTesting() {
+		return SCHEMA_NS;
+	}
+	
 	protected void createReader() throws IOException {
 		reader = new SplitReader(model.getLocation().toOSString());
 	}
 
 	protected void setUpTestData() {
-		// We create an InputStream from the ZIP file resource loaded from the classpath...
+		// We create an InputStream from the ZIP file resource loaded from the
+		// classpath...
 		InputStream is = Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(SAMPLES_FOLDER + "/" + SAMPLES_ZIP);
 		unzip(is, getSamplesFolder());
@@ -89,14 +114,20 @@ public class ProjectTest extends WorkspaceTest {
 	}
 
 	protected void setupSchema() throws CoreException {
-		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + SAMPLE_SCHEMA, SCHEMA_NS, MERGE_SHADOW_EXTENSIONS, SELF_HEAL_ON_IMPORT);
+		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + getSchemaForTesting(), getSchemaNSForTesting(),
+				MERGE_SHADOW_EXTENSIONS, SELF_HEAL_ON_IMPORT);
 		task.run(monitor);
 	}
-
+	
+	/**
+	 * Should be overridden in subclasses if needed.
+	 * 
+	 * @throws CoreException
+	 */
 	protected void setupProfile() throws CoreException {
 		setupProfile(getSamplesFolder() + SAMPLE_PROFILE);
 	}
-
+	
 	protected void setupProfile(final String path) throws CoreException {
 		IWorkspaceRunnable task = Task.importProfile(profile, path);
 		task.run(monitor);

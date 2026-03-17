@@ -1,10 +1,11 @@
 package au.com.langdale.cimtoole.test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -36,60 +37,36 @@ public class WorkspaceTest extends TestUtility {
 	}
 
 	protected void unzip(InputStream is, String destDirectory) {
+		Path destDir = Paths.get(destDirectory);
 
-		File destDir = new File(destDirectory);
+		try (ZipInputStream zis = new ZipInputStream(is)) {
+			
+			// Create destination directory if it doesn't exist
+			if (!Files.exists(destDir)) {
+				Files.createDirectories(destDir);
+			}
+			
+			ZipEntry entry;
+			while ((entry = zis.getNextEntry()) != null) {
+				Path entryPath = destDir.resolve(entry.getName());
 
-		// create output directory if it doesn't exist
-		if (!destDir.exists())
-			destDir.mkdirs();
-
-		// buffer for read and write data to file
-		byte[] buffer = new byte[1024];
-
-		ZipInputStream zis = null;
-
-		try {
-			zis = new ZipInputStream(is);
-			ZipEntry ze = zis.getNextEntry();
-			while (ze != null) {
-				String fileName = ze.getName();
-				File newFile = new File(destDir, fileName);
-				
-				System.out.println("Unzipping to " + newFile.getAbsolutePath());
-
-				// create directories for sub directories in zip
-				new File(newFile.getParent()).mkdirs();
-
-				FileOutputStream fos = new FileOutputStream(newFile);
-
-				int len;
-				
-				while ((len = zis.read(buffer)) > 0) {
-					fos.write(buffer, 0, len);
+				// Security check: prevent zip slip vulnerability
+				if (!entryPath.normalize().startsWith(destDir.normalize())) {
+					throw new IOException("Bad zip entry: " + entry.getName());
 				}
-				
-				fos.close();
 
-				// close this ZipEntry
+				if (entry.isDirectory()) {
+					Files.createDirectories(entryPath);
+				} else {
+					// Create parent directories if needed
+					Files.createDirectories(entryPath.getParent());
+					// Extract file - this is the key method!
+					Files.copy(zis, entryPath, StandardCopyOption.REPLACE_EXISTING);
+				}
 				zis.closeEntry();
-				ze = zis.getNextEntry();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			// close last ZipEntry
-			try {
-				zis.closeEntry();
-			} catch (IOException e) {
-			}
-			try {
-				zis.close();
-			} catch (IOException e) {
-			}
-			try {
-				is.close();
-			} catch (IOException e) {
-			}
 		}
 	}
 

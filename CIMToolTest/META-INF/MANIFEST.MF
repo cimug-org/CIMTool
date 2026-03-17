@@ -1,14 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: CIMToolTest Plug-in
+Bundle-Name: CIMToolTest Fragment
 Bundle-SymbolicName: CIMToolTest
 Bundle-Version: 1.1.1.qualifier
-Require-Bundle: au.com.langdale.cimtoole,
+Fragment-Host: au.com.langdale.cimtoole;bundle-version="0.0.0"
+Require-Bundle: org.junit;bundle-version="4.0.0",
  au.com.langdale.kena,
  au.com.langdale.rcputil,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
- org.eclipse.ui,
- org.junit
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-20
 Automatic-Module-Name: CIMToolTest
