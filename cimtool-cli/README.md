@@ -175,6 +175,18 @@ When run without an argument the script prompts:
   Export root: _
 ```
 
+After installing the two core module JARs, the script prompts whether to
+also install the vendor JARs:
+
+```
+  The vendor JARs (Kena\lib and CIMUtil\lib) rarely change between
+  releases. Re-installing them is only needed if new or updated JARs
+  have been added to those directories since the last run.
+  If unsure, answer Y to ensure lib-repo is fully up to date.
+
+  Install vendor JARs? (Y/N): _
+```
+
 The script processes all 25 dependencies in three groups:
 
 | Group                       | Count | Source                                      |
@@ -192,7 +204,7 @@ skips it rather than aborting, so you can see all missing files in a single run.
 | ------------------------------------------------------------ | ------------------------------------------- |
 | First-time project setup                                     | Run install script once after Eclipse build |
 | New CIMTool PDE product export (e.g. after a new release build) | Update `kena` and `cimutil` versions in `pom.xml`, then re-run install script with the new export root path |
-| Vendored JARs in `Kena/lib/` or `CIMUtil/lib/` updated      | Re-run install script                       |
+| Vendored JARs in `Kena/lib/` or `CIMUtil/lib/` updated      | Re-run install script and answer `Y` at the vendor JAR prompt |
 | Another developer clones the repo                            | No action needed — `lib-repo/` is committed |
 
 ### Committing lib-repo/ to Source Control

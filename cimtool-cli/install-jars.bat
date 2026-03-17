@@ -159,6 +159,22 @@ echo   OK
 echo.
 
 REM -----------------------------------------------------------------------
+REM Prompt user before installing vendor JARs
+REM
+REM Vendor JARs (Kena\lib and CIMUtil\lib) rarely change between releases.
+REM Re-installing them is only necessary if new JARs have been added or
+REM existing ones updated since the last time the script was run.
+REM -----------------------------------------------------------------------
+echo.
+echo   The vendor JARs (Kena\lib and CIMUtil\lib) rarely change between
+echo   releases. Re-installing them is only needed if new or updated JARs
+echo   have been added to those directories since the last run.
+echo   If unsure, answer Y to ensure lib-repo is fully up to date.
+echo.
+set /p INSTALL_VENDOR="  Install vendor JARs? (Y/N): "
+if /i not "%INSTALL_VENDOR%"=="Y" goto :skip_vendor
+
+REM -----------------------------------------------------------------------
 REM Kena\lib
 REM Note: jena-2.6.3-tests.jar, iri-0.8-sources.jar, junit-4.5.jar, and
 REM       slf4j-api-1.5.8.jar are intentionally omitted. See pom.xml.
@@ -402,6 +418,7 @@ echo   OK
 :gson_done
 echo.
 
+:skip_vendor
 :end
 echo =======================================================================
 echo   Installation complete.
