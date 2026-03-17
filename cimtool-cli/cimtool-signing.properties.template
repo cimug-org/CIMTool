@@ -1,0 +1,48 @@
+# =============================================================================
+# cimtool-signing.properties
+#
+# Keystore configuration for signing cimtool-cli.jar.
+#
+# LOCATION: This file lives in %USERPROFILE%\.cimtool\ alongside the keystore.
+# It must NOT be committed to source control as it contains passwords.
+#
+# This file is read automatically when running: mvn clean package -Psign
+# The default path Maven looks for is:
+#   %USERPROFILE%\.cimtool\cimtool-signing.properties  (Windows)
+#   ~/.cimtool/cimtool-signing.properties              (Mac/Linux)
+#
+# Override the path at build time if needed:
+#   mvn clean package -Psign -Dsigning.properties=C:\other\path\signing.properties
+#
+# SELF-SIGNED CERT:
+#   Run create-keystore.bat to generate the keystore. This file will be
+#   copied automatically to %USERPROFILE%\.cimtool\ with signing.keystore
+#   and signing.alias pre-filled. You only need to add the passwords.
+#
+# CA-ISSUED CERT:
+#   Replace the keystore file and update the values below accordingly.
+#   No changes to pom.xml are required.
+# =============================================================================
+
+# Absolute path to the keystore file.
+# IMPORTANT: Use forward slashes (/) not backslashes (\).
+# Java .properties files treat \ as an escape character, so backslashes in
+# paths will be misread. Forward slashes work correctly on Windows or 
+# alternatively use double backslashes \\.
+# Windows example: C:/Users/<username>/.cimtool/cimtool-keystore.jks
+# Mac/Linux example: /home/<username>/.cimtool/cimtool-keystore.jks
+signing.keystore=C:\\Users\\<username>\\.cimtool\\cimtool-keystore.jks
+
+# Alias of the key entry to sign with.
+signing.alias=cimtool-cli
+
+# Password used to open the keystore file.
+# IMPORTANT: Avoid shell-special characters: & $ % ^ < >
+# These are interpreted by cmd.exe and will cause the build to fail.
+# Safe characters include: letters, digits, # @ ! - _
+signing.storepass=
+
+# Password for the specific key entry identified by signing.alias.
+# For self-signed keystores this is typically the same as signing.storepass.
+# Same character restrictions apply as for signing.storepass above.
+signing.keypass=

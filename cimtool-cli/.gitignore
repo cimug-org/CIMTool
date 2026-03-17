@@ -1,0 +1,10 @@
+# Asciidocor config
+.asciidoctorconfig.adoc
+
+# Maven build output
+target/
+ 
+# Signed distribution JARs — not committed to source control.
+# The official signed release JAR is attached as an artifact to the
+# corresponding GitHub Release for the relevant version tag.
+dist/
