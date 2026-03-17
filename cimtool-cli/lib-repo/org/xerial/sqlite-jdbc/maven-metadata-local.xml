@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.xerial</groupId>
+  <artifactId>sqlite-jdbc</artifactId>
+  <versioning>
+    <release>3.45.2.0</release>
+    <versions>
+      <version>3.45.2.0</version>
+    </versions>
+    <lastUpdated>20260316185346</lastUpdated>
+  </versioning>
+</metadata>
