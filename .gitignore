@@ -18,3 +18,5 @@ bin
 .settings
 .directory
 CIMToolPlugin/.asciidoctorconfig.adoc
+/target/
+**/cimtool-signing.properties
