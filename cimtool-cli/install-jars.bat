@@ -7,14 +7,15 @@ REM plus all vendored JARs from Kena\lib\ and CIMUtil\lib\, into the local Maven
 REM file repository at cimtool-cli\lib-repo\.
 REM
 REM kena.jar and cimutil.jar are located by searching the plugins\ directory of
-REM the PDE export for folders matching au.com.langdale.kena_* and
-REM au.com.langdale.cimutil_*. The version number is extracted automatically from
-REM each JAR filename (e.g. kena-3.3.4.jar -> 3.3.4) and used as the Maven
-REM coordinate version. This means the script works for any release version
-REM without requiring any changes between releases.
+REM the PDE export for plugin folders matching au.com.langdale.kena_* and
+REM au.com.langdale.cimutil_*. The version number is extracted from the plugin
+REM folder name (e.g. au.com.langdale.kena_3.3.4 -> 3.3.4) rather than from
+REM the JAR filename, since the JARs are named kena.jar and cimutil.jar without
+REM a version suffix.
 REM
-REM NOTE: The version extracted from the JAR filename must match the <version>
-REM declared for kena and cimutil in pom.xml. Update pom.xml if the version changes.
+REM NOTE: The version extracted from the plugin folder name must match the
+REM <version> declared for kena and cimutil in pom.xml. Update pom.xml if
+REM the version changes.
 REM
 REM Usage:
 REM   install-jars.bat <export-root>
@@ -23,8 +24,8 @@ REM   <export-root>  Path to the root of the Eclipse PDE product export.
 REM                  If omitted, the script will prompt for it interactively.
 REM
 REM Examples:
-REM   install-jars.bat D:\CIMTool-Releases\CIMTool-2.3.0-RC6
-REM   install-jars.bat "D:\My Releases\CIMTool-2.3.0-RC6"
+REM   install-jars.bat D:\CIMTool-Releases\CIMTool-2.3.0
+REM   install-jars.bat "D:\My Releases\CIMTool-2.3.0"
 REM
 REM Prerequisites:
 REM   - mvn must be on your PATH
@@ -49,7 +50,7 @@ if "%~1"=="" (
     echo.
     echo   No export root specified.
     echo   Enter the path to the CIMTool Eclipse PDE product export root.
-    echo   Example: D:\CIMTool-Releases\CIMTool-2.3.0-RC6
+    echo   Example: D:\CIMTool-Releases\CIMTool-2.3.0
     echo   Tip: If the path contains spaces, wrap it in double quotes.
     echo.
     set /p EXPORT_ROOT="  Export root: "
@@ -83,13 +84,17 @@ if not exist "%PLUGINS_DIR%" (
 )
 
 REM -----------------------------------------------------------------------
-REM Purge stale kena and cimutil entries from lib-repo/
+REM Purge stale kena and cimutil entries from lib-repo/ AND from the main
+REM local Maven cache (~/.m2). Both purges are unconditional — they run
+REM before the PDE export JARs are searched so that even if the search
+REM fails (MISSING), Maven cannot fall back to a stale cached copy.
 REM
-REM These are deleted before reinstalling to prevent version accumulation.
-REM If a version changes between runs (e.g. kena 3.3.4 -> 3.3.5), the old
-REM versioned folder would otherwise remain alongside the new one and Maven
-REM could resolve the wrong version. Vendored lib JARs are not purged here
-REM as their versions are fixed and do not change between releases.
+REM lib-repo/ purge: prevents version accumulation when the version number
+REM changes between runs (e.g. kena 3.3.4 -> 3.3.5).
+REM
+REM .m2 purge: prevents Maven from resolving a previously-cached JAR that
+REM may contain ECJ stub classes from an earlier failed Eclipse build.
+REM Vendored lib JARs are not purged here as their versions are fixed.
 REM -----------------------------------------------------------------------
 if exist "%REPO%\au\com\langdale\kena" (
     rmdir /s /q "%REPO%\au\com\langdale\kena"
@@ -97,37 +102,42 @@ if exist "%REPO%\au\com\langdale\kena" (
 if exist "%REPO%\au\com\langdale\cimutil" (
     rmdir /s /q "%REPO%\au\com\langdale\cimutil"
 )
+if exist "%USERPROFILE%\.m2\repository\au\com\langdale\kena" (
+    rmdir /s /q "%USERPROFILE%\.m2\repository\au\com\langdale\kena"
+)
+if exist "%USERPROFILE%\.m2\repository\au\com\langdale\cimutil" (
+    rmdir /s /q "%USERPROFILE%\.m2\repository\au\com\langdale\cimutil"
+)
 
 REM -----------------------------------------------------------------------
 REM CIMTool core modules — sourced from the PDE product export plugins\
 REM
-REM The for /r loop searches plugins\ for the versioned plugin folder and
-REM JAR file matching the wildcard pattern. This handles any version number
-REM without requiring changes to the script between releases.
+REM The for /d loop searches plugins\ for the versioned plugin folder
+REM matching the wildcard pattern. The version is extracted from the folder
+REM name (e.g. au.com.langdale.kena_3.3.4 -> 3.3.4) since the JARs are
+REM named kena.jar and cimutil.jar without a version suffix.
 REM -----------------------------------------------------------------------
 echo --- CIMTool core modules -------------------------------------------
 echo.
 
 echo   Installing kena
 set KENA_JAR=
-for /r "%PLUGINS_DIR%" %%F in (kena-*.jar) do (
-    if exist "%%F" set KENA_JAR=%%F
+set KENA_FOLDER=
+for /d %%D in ("%PLUGINS_DIR%\au.com.langdale.kena_*") do (
+    if exist "%%D\kena.jar" (
+        set KENA_JAR=%%D\kena.jar
+        set KENA_FOLDER=%%~nxD
+    )
 )
 if "%KENA_JAR%"=="" (
-    echo   [MISSING] No kena-*.jar found under %PLUGINS_DIR%
+    echo   [MISSING] No au.com.langdale.kena_* folder containing kena.jar found under %PLUGINS_DIR%
     echo             Ensure the PDE export completed successfully.
     goto :kena_done
 )
 echo   Found: %KENA_JAR%
-REM Extract version from filename: kena-3.3.4.jar -> 3.3.4
-for %%A in ("%KENA_JAR%") do set KENA_STEM=%%~nA
-set KENA_VERSION=%KENA_STEM:kena-=%
+REM Extract version from folder name: au.com.langdale.kena_3.3.4 -> 3.3.4
+set KENA_VERSION=%KENA_FOLDER:au.com.langdale.kena_=%
 echo   Version: %KENA_VERSION%
-REM Purge any stale cached copy from the main local Maven cache so Maven
-REM is forced to resolve from lib-repo/ and always uses the freshest JAR.
-if exist "%USERPROFILE%\.m2\repository\au\com\langdale\kena" (
-    rmdir /s /q "%USERPROFILE%\.m2\repository\au\com\langdale\kena"
-)
 call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="au.com.langdale" -DartifactId="kena" -Dversion="%KENA_VERSION%" -Dfile="%KENA_JAR%" --quiet
 echo   OK
 :kena_done
@@ -135,24 +145,22 @@ echo.
 
 echo   Installing cimutil
 set CIMUTIL_JAR=
-for /r "%PLUGINS_DIR%" %%F in (cimutil-*.jar) do (
-    if exist "%%F" set CIMUTIL_JAR=%%F
+set CIMUTIL_FOLDER=
+for /d %%D in ("%PLUGINS_DIR%\au.com.langdale.cimutil_*") do (
+    if exist "%%D\cimutil.jar" (
+        set CIMUTIL_JAR=%%D\cimutil.jar
+        set CIMUTIL_FOLDER=%%~nxD
+    )
 )
 if "%CIMUTIL_JAR%"=="" (
-    echo   [MISSING] No cimutil-*.jar found under %PLUGINS_DIR%
+    echo   [MISSING] No au.com.langdale.cimutil_* folder containing cimutil.jar found under %PLUGINS_DIR%
     echo             Ensure the PDE export completed successfully.
     goto :cimutil_done
 )
 echo   Found: %CIMUTIL_JAR%
-REM Extract version from filename: cimutil-2.3.0.jar -> 2.3.0
-for %%A in ("%CIMUTIL_JAR%") do set CIMUTIL_STEM=%%~nA
-set CIMUTIL_VERSION=%CIMUTIL_STEM:cimutil-=%
+REM Extract version from folder name: au.com.langdale.cimutil_2.3.0 -> 2.3.0
+set CIMUTIL_VERSION=%CIMUTIL_FOLDER:au.com.langdale.cimutil_=%
 echo   Version: %CIMUTIL_VERSION%
-REM Purge any stale cached copy from the main local Maven cache so Maven
-REM is forced to resolve from lib-repo/ and always uses the freshest JAR.
-if exist "%USERPROFILE%\.m2\repository\au\com\langdale\cimutil" (
-    rmdir /s /q "%USERPROFILE%\.m2\repository\au\com\langdale\cimutil"
-)
 call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="au.com.langdale" -DartifactId="cimutil" -Dversion="%CIMUTIL_VERSION%" -Dfile="%CIMUTIL_JAR%" --quiet
 echo   OK
 :cimutil_done

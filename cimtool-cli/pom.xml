@@ -244,16 +244,17 @@
         <!-- CIMTool core modules — sourced from Eclipse PDE product export-->
         <!--                                                              -->
         <!-- IMPORTANT: These version numbers must match the versions     -->
-        <!-- extracted by install-jars.bat from the JAR filenames in the  -->
-        <!-- PDE export plugins/ directory. When a new CIMTool release is -->
-        <!-- built, update these versions to match the new JAR filenames  -->
-        <!-- before running install-jars.bat and mvn package.             -->
+        <!-- extracted by install-jars.bat from the plugin folder names   -->
+        <!-- in the PDE export plugins/ directory (e.g.                   -->
+        <!-- au.com.langdale.kena_3.3.4 -> 3.3.4). When a new CIMTool    -->
+        <!-- release is built, update these versions to match the plugin  -->
+        <!-- folder names, then run install-jars.bat and mvn package.     -->
         <!-- ============================================================ -->
 
         <dependency>
             <groupId>au.com.langdale</groupId>
             <artifactId>kena</artifactId>
-            <version>3.3.4</version> <!-- UPDATE when kena version changes -->
+            <version>3.3.4</version> <!-- UPDATE to match au.com.langdale.kena_<version> folder in PDE export -->
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -265,7 +266,7 @@
         <dependency>
             <groupId>au.com.langdale</groupId>
             <artifactId>cimutil</artifactId>
-            <version>2.3.0</version> <!-- UPDATE when cimutil version changes -->
+            <version>2.3.0</version> <!-- UPDATE to match au.com.langdale.cimutil_<version> folder in PDE export -->
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
