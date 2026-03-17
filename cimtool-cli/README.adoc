@@ -39,7 +39,7 @@ The CLI entry point is `au.com.langdale.profiles.cl.CIMToolCLI`, which lives in
 | 11 or later
 
 | Maven
-| 3.6 or later
+| 3.8 or later
 
 | Eclipse PDE product export
 | Required before running the install script — provides `kena-<version>.jar` and `cimutil-<version>.jar` from the `plugins/` directory
@@ -123,7 +123,7 @@ CIMTool/
 
 == Dependency Management — Local File Repository
 
-=== Why a Local File Repository?
+=== Why a Local Maven File Repository?
 
 All of this project's dependencies are vendored JARs that live under `Kena/lib/`
 and `CIMUtil/lib/` in the Eclipse PDE project tree, plus `kena-<version>.jar` and

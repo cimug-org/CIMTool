@@ -109,7 +109,7 @@ CIMTool/
 
 ## Dependency Management — Local File Repository
 
-### Why a Local File Repository?
+### Why a Local Maven File Repository?
 
 All of this project's dependencies are vendored JARs that live under `Kena/lib/`
 and `CIMUtil/lib/` in the Eclipse PDE project tree, plus `kena-<version>.jar` and
