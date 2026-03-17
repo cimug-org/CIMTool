@@ -28,7 +28,7 @@ The CLI entry point is `au.com.langdale.profiles.cl.CIMToolCLI`, which lives in
 | Requirement        | Version                                                      |
 | ------------------ | ------------------------------------------------------------ |
 | JDK                | 11 or later                                                  |
-| Maven              | 3.6 or later                                                 |
+| Maven              | 3.8 or later                                                 |
 | Eclipse PDE product export | Required before running the install script — provides `kena-<version>.jar` and `cimutil-<version>.jar` from the `plugins/` directory |
 
 ### Eclipse PDE Product Export Must Run First
