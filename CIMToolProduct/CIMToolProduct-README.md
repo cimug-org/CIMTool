@@ -1,0 +1,198 @@
+# CIMToolProduct
+
+An Eclipse PDE product project that defines and packages the CIMTool application
+as a standalone, distributable Eclipse RCP product.
+
+This project contains no Java source of its own. Its sole purpose is to declare
+the product identity, branding, launch configuration, and packaging metadata that
+the Eclipse PDE build system uses to assemble a distributable CIMTool ZIP archive.
+
+
+
+## Overview
+
+In Eclipse PDE terminology a **product** is the outermost packaging unit — it
+defines what an end user actually runs. The `CIMTool.product` file at the root of
+this project is the authoritative descriptor for everything about the CIMTool
+application from the user's perspective: its name, version, icons, splash screen,
+JVM arguments, included plugins, and launcher name.
+
+This project is responsible for:
+
+1. Declaring the set of plugins that constitute the CIMTool application
+2. Configuring branding assets (icons, splash screen, about dialog image)
+3. Setting JVM arguments for the launched application
+4. Defining default workspace preferences via `plugin_customization.ini`
+5. Bundling `logging.properties` for extraction to the installation root at runtime
+6. Producing the `CIMTool-<version>` ZIP archive via the Eclipse PDE product export
+
+
+
+## Project Structure
+
+```
+CIMToolProduct/
+├── CIMTool.product              ← Master product descriptor — the PDE export entry point
+├── META-INF/
+│   └── MANIFEST.MF             ← OSGi bundle manifest (au.com.langdale.cimtool.product)
+├── build.properties            ← Declares files included in the bundle and export
+├── plugin.xml                  ← Registers the product extension and branding properties
+├── plugin.properties           ← Externalised strings for plugin.xml
+├── plugin_customization.ini    ← Default workspace preferences (perspective, UI settings)
+├── helpData.xml                ← Ordering of help table-of-contents entries
+├── logging.properties          ← JUL logging configuration — extracted to install root at startup
+├── cimtool-about.png           ← Image shown in the Help > About dialog
+├── splash.bmp                  ← Splash screen displayed on startup
+├── cimtool-v2.ico              ← Windows application icon
+├── cimtool-v2.icns             ← macOS application icon
+├── cimtool-v2.xpm              ← Linux application icon
+├── makeicons.sh                ← Script to regenerate icon assets from source
+└── icons/                      ← Window title bar and taskbar icons at multiple resolutions
+    ├── cimtool-v2_16x16.png
+    ├── cimtool-v2_32x32.png
+    ├── cimtool-v2_48x48.png
+    ├── cimtool-v2_64x64.png
+    ├── cimtool-v2_96x96.png
+    ├── cimtool-v2_128x128.png
+    ├── cimtool-v2_256x256.png
+    └── ...                     ← BMP variants for Windows ICO assembly
+```
+
+
+
+## Dependencies on Other Projects
+
+This project has **no compile-time dependencies**. It contains no Java source and
+does not declare `Require-Bundle` dependencies in its MANIFEST. Instead it
+references other plugins by symbolic name in `CIMTool.product` via the `<plugins>`
+list — these are resolved by the PDE export at packaging time.
+
+The plugins that CIMTool.product explicitly includes which are developed within
+this repository are:
+
+| Plugin | Symbolic Name | Role |
+| --- | --- | --- |
+| CIMToolPlugin | `au.com.langdale.cimtoole` | Core Eclipse UI plugin — perspectives, editors, views, wizards, builders |
+| CIMUtil | `au.com.langdale.cimutil` | Profile processing, XMI import, validation, XSLT transforms, CLI entry point |
+| Kena | `au.com.langdale.kena` | RDF/OWL abstraction layer over Apache Jena |
+| RCPUtil | `au.com.langdale.rcputil` | Reusable Eclipse RCP UI utilities (binding, builder, plumbing) |
+| CIMToolHelp | `au.com.langdale.cimtoole.help` | Integrated HTML help documentation |
+| com.cimphony.cimtoole | `com.cimphony.cimtoole` | CIMphony extensions — Ecore integration, additional buildlets |
+
+All remaining plugins in the `<plugins>` list are Eclipse platform and third-party
+plugins resolved from the active Eclipse target platform at export time.
+
+
+
+## Key Configuration Files
+
+### CIMTool.product
+
+The central descriptor consumed by the PDE export wizard. Key settings:
+
+| Setting | Value |
+| --- | --- |
+| Product UID | `au.com.langdale.cimtool.deployment` |
+| Application | `org.eclipse.ui.ide.workbench` |
+| Launcher name | `CIMTool` (produces `CIMTool.exe` on Windows, `CIMTool` on macOS/Linux) |
+| JVM heap | `-Xms40m -Xmx4G` |
+| Logging config | `-Djava.util.logging.config.file=./logging.properties` |
+| Java requirement | JavaSE-17 |
+
+### plugin_customization.ini
+
+Sets default Eclipse preference values that apply when a user first opens a new
+workspace. Key settings:
+
+- Opens the **CIMTool Perspective** by default (`au.com.langdale.cimtoole.CIMToolPerspective`)
+- Enables new-style tabs
+- Places the perspective switcher in the top-right
+- Shows a progress indicator on startup
+
+These are default values only — users can override them through Eclipse preferences
+and their choices are persisted per-workspace.
+
+### logging.properties
+
+Configures `java.util.logging` (JUL) for the running application. This file is:
+
+1. Bundled inside the `au.com.langdale.cimtool.product` plugin via `bin.includes`
+2. Extracted by `CIMToolPlugin.extractLoggingProperties()` to the installation root on first startup
+3. Loaded by the JVM on all subsequent startups via the `-Djava.util.logging.config.file=./logging.properties` JVM argument
+
+It configures a rolling `FileHandler` that writes to `logs/cimtool-%u-%g.log`
+under the installation root (5 × 10 MB rotating files), suppresses spurious
+UCanAccess/HSQLDB reserved-word warnings, and — in production mode — captures
+`System.out` and `System.err` output through JUL loggers (`stdout` and `stderr`
+respectively) so all console output is captured in the log file.
+
+Changes to `logging.properties` take effect on the next restart.
+
+
+
+## Building and Packaging
+
+### PDE Product Export
+
+The CIMTool distribution is produced via the Eclipse PDE product export:
+
+1. From the Eclipse menu select **File > Export**
+2. In the Export dialog select **Plug-in Development > Eclipse product** and click **Next**
+3. Set the fields as shown in the screenshot below:
+   - **Configuration:** `/CIMToolProduct/CIMTool.product`
+   - **Root directory:** `CIMTool-<version>` (e.g. `CIMTool-2.3.0-RC7`) — replace with the actual release version being built
+   - **Destination:** Choose one of:
+     - **Directory** — exports an unpacked folder; use this when you need to run `install-jars.bat` against the `plugins/` directory for `cimtool-cli`
+     - **Archive file** — exports directly to a ZIP (e.g. `CIMTool-2.3.0-RC7-win32.win32.x86_64.zip`); use this for distribution
+   - Check **Synchronize before exporting**
+   - Check **Allow for binary cycles in target platform**
+4. Click **Finish**
+
+![Eclipse Product Export dialog](readme-images/Eclipse_Product_Export.png)
+
+The export produces a versioned directory under the destination path:
+
+```
+<export-root>/
+└── CIMTool-<version>/
+    ├── CIMTool.exe             ← Windows launcher
+    ├── CIMTool.ini             ← JVM arguments (heap, logging config path)
+    ├── logging.properties      ← Extracted here by CIMToolPlugin on first run
+    ├── logs/                   ← Created by CIMToolPlugin on first run
+    ├── plugins/
+    │   ├── au.com.langdale.cimtoole_<version>/
+    │   ├── au.com.langdale.cimutil_<version>/
+    │   ├── au.com.langdale.kena_<version>/
+    │   └── ...
+    └── ...
+```
+
+> **Note:** The `logging.properties` file at the installation root is not placed
+> there by the PDE export directly. It is extracted from the
+> `au.com.langdale.cimtool.product` plugin bundle at first startup by
+> `CIMToolPlugin.extractLoggingProperties()`.
+
+### Versioning
+
+The product version is declared in two places that must be kept in sync:
+
+- `CIMTool.product` — `version` attribute on the `<product>` element and the `name` attribute (e.g. `CIMTool 2.3.0`)
+- `META-INF/MANIFEST.MF` — `Bundle-Version`
+
+The `plugin.xml` product name property should also be updated to match.
+
+> **Note:** Before running a product export at release time, verify that all
+> version references above are updated and consistent. This includes
+> `CIMTool.product`, `META-INF/MANIFEST.MF`, and `plugin.xml`. Exporting with
+> stale or mismatched version values will produce an incorrectly versioned
+> distribution that is difficult to retract once published.
+
+
+
+## Relationship to cimtool-cli
+
+The PDE product export produces versioned plugin folders under `plugins/`. Two of
+these — `au.com.langdale.kena_<version>/kena.jar` and
+`au.com.langdale.cimutil_<version>/cimutil.jar` — are consumed by the
+`cimtool-cli` project's `install-jars.bat` script to assemble the standalone CLI
+uber JAR. See `cimtool-cli/cimtool-cli-README.adoc` for details.
