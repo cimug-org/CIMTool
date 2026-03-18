@@ -6,7 +6,7 @@
 
     <groupId>au.com.langdale</groupId>
     <artifactId>cimtool-cli</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.0.RC7</version>
     <packaging>jar</packaging>
 
     <name>CIMTool CLI</name>

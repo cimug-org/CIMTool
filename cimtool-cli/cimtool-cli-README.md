@@ -51,7 +51,7 @@ To perform the export in Eclipse:
    - Check **Allow for binary cycles in target platform**
 4. Click **Finish**
 
-![Eclipse Product Export dialog](images/Eclipse_Product_Export.png)
+![Eclipse Product Export dialog](readme-images/Eclipse_Product_Export.png)
 
 After the export completes, the `plugins\` directory under the export root will
 contain versioned plugin folders including:
