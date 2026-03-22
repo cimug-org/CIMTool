@@ -8,7 +8,7 @@
 
 [![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   
 
-AspenTech serves at the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug and for the benefit of the CIM community.  
+AspenTech serves at the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug.  
 
 ## CIMTool Discussion Forums
 
