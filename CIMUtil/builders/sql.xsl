@@ -22,28 +22,28 @@
 	xmlns:sawsdl="http://www.w3.org/ns/sawsdl"
 	xmlns="http://langdale.com.au/2009/Indent">
 
-	<xsl:output indent="yes" method="xml" encoding="utf-8" />
+	<xsl:output indent="yes" method="xml" encoding="UTF-8" />
 	<xsl:param name="version"/>
 	<xsl:param name="baseURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
 
 	<xsl:template name="ident">
 		<xsl:param name="name" select="@name"/>
-		<xsl:text>"</xsl:text><xsl:value-of select="$name"/><xsl:text>"</xsl:text>
+		<xsl:text>"</xsl:text><xsl:value-of select="translate($name, ' ', '_')"/><xsl:text>"</xsl:text>
 	</xsl:template>
 	
 	<!-- NOTE: CHAR VARYING (or CHARACTER VARYING) is the ANSI SQL standard term. The more 
 		 commonly known equivalent type is VARCHAR which is what has been used here. Here
 		 the type corresponds to an assumed UUID. This relevant for mRID and ID PKs -->
-	<xsl:param name="uuidType">VARCHAR(36)</xsl:param>
+	<xsl:param name="uuidType">VARCHAR(100)</xsl:param>
 
 	<xsl:template name="type">
 		<xsl:param name="name" select="@name"/>
 		<xsl:text> </xsl:text>
 		<xsl:choose>
-			<xsl:when test="@xstype = 'string' and $name = 'mRID'">VARCHAR(36)</xsl:when>
+			<xsl:when test="@xstype = 'string' and $name = 'mRID'">VARCHAR(100)</xsl:when>
 			<xsl:when test="@xstype = 'string'">VARCHAR(255)</xsl:when>
-			<xsl:when test="@xstype = 'normalizedsString'">VARCHAR(255)</xsl:when>
+			<xsl:when test="@xstype = 'normalizedString'">VARCHAR(255)</xsl:when>
 			<xsl:when test="@xstype = 'token'">VARCHAR(255)</xsl:when>
 			<!-- The 2,048-character limit is widely considered a safe maximum for URLs in 
 			     practice, especially due to legacy compatibility with Internet Explorer. -->
@@ -69,7 +69,7 @@
 			<xsl:when test="@xstype = 'time'">TIME</xsl:when>
 			<xsl:when test="@xstype = 'dateTime'">TIMESTAMP</xsl:when>
 			<!-- Below is a common approach for representing a boolean types across all common databases. -->
-			<xsl:when test="@xstype = 'boolean'">INTEGER NOT NULL DEFAULT 1 CHECK (<xsl:value-of select="$name"/> IN (0, 1))</xsl:when>
+			<xsl:when test="@xstype = 'boolean'">INTEGER NOT NULL DEFAULT 1 CHECK ("<xsl:value-of select="$name"/>" IN (0, 1))</xsl:when>
 			<xsl:otherwise>VARCHAR(255)</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -158,7 +158,7 @@
 		<xsl:call-template name="annotate" />
 		<item>CREATE TABLE <xsl:call-template name="ident"/></item>
 		<list begin="(" indent="    " delim="," end=");"> 
-		    <item><xsl:choose><xsl:when test="self::a:CompoundType"> "id" </xsl:when><xsl:otherwise> "mRID" </xsl:otherwise></xsl:choose><xsl:value-of select="$uuidType"/> PRIMARY KEY</item>
+		    <item><xsl:choose><xsl:when test="self::a:CompoundType or (self::a:Root and a:Stereotype[contains(., '#compound')])"> "id" </xsl:when><xsl:otherwise> "mRID" </xsl:otherwise></xsl:choose><xsl:value-of select="$uuidType"/> PRIMARY KEY</item>
 		    <xsl:apply-templates/>
 		</list>
 	</xsl:template>
@@ -169,7 +169,7 @@
 		<xsl:call-template name="annotate" />
 		<item>
 		    CREATE TABLE <xsl:call-template name="ident"/>
-		    ( "name" VARCHAR(50) UNIQUE );
+		    ( "name" VARCHAR(100) UNIQUE );
 		</item>    
 
 		<xsl:variable name="name" select="@name"/>
@@ -186,12 +186,28 @@
 		</xsl:for-each>
 	</xsl:template>
 	
-	<xsl:template match="a:Instance|a:Reference|a:Compound">
+	<!-- ============================================================================================================== -->
+	<!--    The reason we have the various filters (e.g. a:Reference[not(a:Stereotype[contains(., '#enumeration')])]    -->
+	<!--    on any templates that have a:Reference is that we need to filter out (or include) where the end-user has    -->
+	<!--    added an attribute of a type that is either an enumeration or a compound, but for which they neglected to   -->
+	<!--    perform a deep copy when adding it to the profile. In such cases the attribute will appear in the interim   --> 
+	<!--    XML format for the profile as an a:Reference with either an #enumeration or #compound stereotype. Therefore -->
+	<!--    we either include or exclude as needed depending on the template.                                           -->
+	<!-- ============================================================================================================== -->	
+	
+	<xsl:template match="a:Instance|a:Reference[not(a:Stereotype[contains(., '#enumeration')])]|a:Compound">
 		<xsl:if test="not(@maxOccurs = 'unbounded') and @maxOccurs &lt;= 1 and @name != 'mRID'">
 			<!-- a foreign key column -->
 			<decorate>
-				<item>-- FK column reference to table "<xsl:value-of select="@type"/>"</item>
 				<xsl:call-template name="annotate" />
+				<xsl:choose>
+					<xsl:when test="self::a:Compound or (self::a:Reference and a:Stereotype[contains(., '#compound')])">
+						<item>-- FK column reference to the table representing the "<xsl:value-of select="@type"/>" compound</item>
+					</xsl:when>
+					<xsl:otherwise>
+						<item>-- FK column reference to table representing the "<xsl:value-of select="@type"/>" class</item>
+					</xsl:otherwise>
+				</xsl:choose>
 				<item>
 					<xsl:call-template name="ident"/>
 					<xsl:text> </xsl:text>
@@ -250,8 +266,8 @@
 			<xsl:apply-templates mode="fk-indexes"/>
 		</xsl:if>
 	</xsl:template>
-
-	<xsl:template match="a:Instance|a:Reference|a:Compound" mode="constraints">
+	
+	<xsl:template match="a:Instance|a:Reference[not(a:Stereotype[contains(., '#enumeration')])]|a:Compound" mode="constraints">
 		<xsl:if test="not(@maxOccurs = 'unbounded') and @maxOccurs &lt;= 1 and @name != 'mRID'">
 			<item>
 				ALTER TABLE
@@ -264,7 +280,7 @@
 					<xsl:with-param name="name" select="@type"/>
 				</xsl:call-template> 
 				<xsl:choose>
-					<xsl:when test="self::a:Compound">
+					<xsl:when test="self::a:Compound or (self::a:Reference and a:Stereotype[contains(., '#compound')])">
 						( "id" );
 					</xsl:when>
 					<xsl:otherwise>
@@ -275,16 +291,17 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template match="a:Compound" mode="cascade-constraints">
+	<xsl:template match="a:Compound|a:Reference[a:Stereotype[contains(., '#compound')]]" mode="cascade-constraints">
 		<xsl:if test="not(@maxOccurs = 'unbounded') and @maxOccurs &lt;= 1 and @name != 'mRID'">
 			<xsl:variable name="fkTable" select="@type"/>
 			<xsl:variable name="cascadeColumn" select="../@name"/>
+			<xsl:variable name="attrName" select="@name"/>
 			<item>
 				ALTER TABLE
 				<xsl:call-template name="ident">
 					<xsl:with-param name="name" select="@type"/>
 				</xsl:call-template> 
-				ADD CONSTRAINT <xsl:value-of select="concat('fk_', $fkTable, '_', $cascadeColumn)"/> 
+				ADD CONSTRAINT <xsl:value-of select="concat('fk_', $fkTable, '_', $cascadeColumn, '_', $attrName)"/> 
 				FOREIGN KEY ( "id" ) REFERENCES 
 				<xsl:call-template name="ident">
 					<xsl:with-param name="name" select="../@name"/>
@@ -295,13 +312,13 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template match="a:Instance|a:Reference|a:Compound" mode="fk-indexes">
+	<xsl:template match="a:Instance|a:Reference[not(a:Stereotype[contains(., '#enumeration')])]|a:Compound" mode="fk-indexes">
 		<xsl:if test="not(@maxOccurs = 'unbounded') and @maxOccurs &lt;= 1 and @name != 'mRID'">
 			<xsl:variable name="fkTable" select="../@name"/>
 			<xsl:variable name="indexedColumn" select="@name"/>
 			<item>
 				CREATE INDEX 
-				<xsl:value-of select="concat('ix_', $fkTable, '_', $indexedColumn)"/> 
+				<xsl:value-of select="concat('ix_', $fkTable, '_', translate($indexedColumn, ' ', '_'))"/> 
 				ON 
 				<xsl:call-template name="ident">
 					<xsl:with-param name="name" select="../@name"/>
@@ -315,19 +332,20 @@
 		<!-- We do nothing for these types other than simply consume and ignore them. -->
 	</xsl:template>
 		
-	<xsl:template match="a:Enumerated">
+	<xsl:template match="a:Enumerated|a:Reference[a:Stereotype[contains(., '#enumeration')]]">
 		<!-- a foreign key column for a reference table -->
 		<decorate>
 			<xsl:call-template name="annotate" />
+			<item>-- FK column reference to table representing the "<xsl:value-of select="@type"/>" enumeration</item>
 			<item>
 				<xsl:call-template name="ident"/>
-				VARCHAR(50)
+				VARCHAR(100)
 				<xsl:call-template name="notnull"/>
 			</item>
 		</decorate>
 	</xsl:template>
 	
-	<xsl:template match="a:Enumerated" mode="constraints">
+	<xsl:template match="a:Enumerated|a:Reference[a:Stereotype[contains(., '#enumeration')]]" mode="constraints">
 		<item>
 			ALTER TABLE
 			<xsl:call-template name="ident">
@@ -336,7 +354,7 @@
 			ADD FOREIGN KEY ( <xsl:call-template name="ident"/> ) 
 			REFERENCES 
    			<xsl:call-template name="ident">
-				<xsl:with-param name="name" select="@name"/>
+				<xsl:with-param name="name" select="@type"/>
 			</xsl:call-template> 
 			( "name" );
 		</item> 
