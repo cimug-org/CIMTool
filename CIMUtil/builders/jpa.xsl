@@ -22,7 +22,7 @@
 	xmlns:sawsdl="http://www.w3.org/ns/sawsdl"
 	xmlns="http://langdale.com.au/2009/Indent">
 
-	<xsl:output indent="yes" method="xml" encoding="utf-8" />
+	<xsl:output indent="yes" method="xml" encoding="UTF-8" />
 	<xsl:param name="version"/>
 	<xsl:param name="baseURI"/>
 	<xsl:param name="envelope">Profile</xsl:param>
@@ -52,13 +52,13 @@
 	<xsl:variable name="lc">abcdefghijklmnopqrstuvwxyz</xsl:variable>
 	<xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
 	
-	<xsl:template name="capitalise">
+	<xsl:template name="capitalize">
 		<xsl:param name="name" select="@name"/>
 		<xsl:param name="prefix"/>
 		<xsl:value-of select="concat($prefix,translate(substring($name,1,1),$lc,$uc),substring($name,2))"/>
 	</xsl:template>
 
-	<xsl:template name="uncapitalise">
+	<xsl:template name="uncapitalize">
 		<xsl:param name="name" select="@name"/>
 		<xsl:value-of select="concat(translate(substring($name,1,1),$uc,$lc),substring($name,2))"/>
 	</xsl:template>
@@ -76,7 +76,7 @@
 			<xsl:value-of select="translate($name,'_','')"/>
 		</xsl:param>
 		<xsl:variable name="field">
-			<xsl:call-template name="uncapitalise">
+			<xsl:call-template name="uncapitalize">
 				<xsl:with-param name="name" select="$prop"/>
 			</xsl:call-template>
 		</xsl:variable>
@@ -85,7 +85,7 @@
 			public
 			<xsl:value-of select="$type"/>
 			<sp/>
-			<xsl:call-template name="capitalise">
+			<xsl:call-template name="capitalize">
 				<xsl:with-param name="prefix">get</xsl:with-param>
 				<xsl:with-param name="name" select="$prop"/>
 			</xsl:call-template>
@@ -94,7 +94,7 @@
 		</item>
 		<item>
 			public void
-			<xsl:call-template name="capitalise">
+			<xsl:call-template name="capitalize">
 				<xsl:with-param name="prefix">set</xsl:with-param>
 				<xsl:with-param name="name" select="$prop"/>
 			</xsl:call-template>
