@@ -32,7 +32,7 @@ This project is responsible for:
 
 ```
 CIMToolProduct/
-├── CIMTool.product              ← Master product descriptor — the PDE export entry point
+├── CIMTool.product             ← Master product descriptor — the PDE export entry point
 ├── META-INF/
 │   └── MANIFEST.MF             ← OSGi bundle manifest (au.com.langdale.cimtool.product)
 ├── build.properties            ← Declares files included in the bundle and export
@@ -206,7 +206,7 @@ The following projects are currently dormant. Their versions do not need to be a
 Before the release is built, the public-facing release notes page must be updated.
 This page is located at `docs/release-notes.md` in the repository and is the
 source of content for the CIMTool website at
-[https://cimtool.ucaiug.io](https://cimtool.ucaiug.io). A new entry for the
+[https://cimtool.ucaiug.io/release-notes/](https://cimtool.ucaiug.io/release-notes/). A new entry for the
 release being prepared must be added at the top of the file following the
 established format used by prior releases.
 

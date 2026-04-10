@@ -5,6 +5,8 @@
 
 = CIMToolProduct
 
+Here goes: {some-attribute}
+
 An Eclipse PDE product project that defines and packages the CIMTool application
 as a standalone, distributable Eclipse RCP product.
 
@@ -37,7 +39,7 @@ This project is responsible for:
 
 ----
 CIMToolProduct/
-├── CIMTool.product              ← Master product descriptor — the PDE export entry point
+├── CIMTool.product             ← Master product descriptor — the PDE export entry point
 ├── META-INF/
 │   └── MANIFEST.MF             ← OSGi bundle manifest (au.com.langdale.cimtool.product)
 ├── build.properties            ← Declares files included in the bundle and export
@@ -304,7 +306,7 @@ The following projects are currently dormant. Their versions do not need to be a
 
 Before the release is built, the public-facing release notes page must be updated.
 This page is located at `docs/release-notes.md` in the repository and is the
-source of content for the CIMTool website at https://cimtool.ucaiug.io. A new
+source of content for the CIMTool website at https://cimtool.ucaiug.io/release-notes/. A new
 entry for the release being prepared must be added at the top of the file
 following the established format used by prior releases.
 
@@ -333,7 +335,7 @@ The CIMTool distribution is produced via the Eclipse PDE product export. The exp
 ** Check *Allow for binary cycles in target platform*
 . Click *Finish*
 
-image::{docdir}/readme-images/Eclipse_Product_Export.png[Eclipse Product Export dialog,700]
+image::readme-images/Eclipse_Product_Export.png[Eclipse Product Export dialog,700]
 
 The export produces a versioned directory under the destination path:
 
@@ -502,12 +504,12 @@ pipeline.
 
 *Confirm Prerequisites — Confirm EV USB token inserted / Step 1 — Start JAR signing:*
 
-image::{docdir}/readme-images/Step1.png[Step 1 Insert EV USB Token and SafeNet PIN prompt]
+image::readme-images/Step1.png[Step 1 Insert EV USB Token and SafeNet PIN prompt]
 
 
 *Step 1 — JAR signing complete / Step 2 — CIMTool.exe signing begins:*
 
-image::{docdir}/readme-images/Step2.png[Step 1 complete\, Step 2 SafeNet PIN prompt]
+image::readme-images/Step2.png[Step 1 complete\, Step 2 SafeNet PIN prompt]
 
 When Step 2 begins, the SafeNet Authentication Client presents a native GUI dialog
 prompting for the *Token Passcode* again. This second prompt is expected and cannot
@@ -518,11 +520,11 @@ in this dialog and click *OK* to proceed.
 
 *Step 2 complete / Step 3 — Distribution archive creation in progress:*
 
-image::{docdir}/readme-images/Step3.png[Step 2 complete\, Step 3 ZIP creation progress]
+image::readme-images/Step3.png[Step 2 complete\, Step 3 ZIP creation progress]
 
 *Steps 3 and 4 complete — Successful completion summary:*
 
-image::{docdir}/readme-images/Step4.png[Steps 3 and 4 complete\, final summary]
+image::readme-images/Step4.png[Steps 3 and 4 complete\, final summary]
 
 ===== Additional Notes
 

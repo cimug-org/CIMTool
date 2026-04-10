@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMToolEnvironment
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-SymbolicName: au.com.langdale.cimtool.product;singleton:=true
 Bundle-Version: 2.3.0
 Bundle-ClassPath: CIMToolProduct
