@@ -5,8 +5,6 @@
 
 = CIMToolProduct
 
-Here goes: {some-attribute}
-
 An Eclipse PDE product project that defines and packages the CIMTool application
 as a standalone, distributable Eclipse RCP product.
 
