@@ -1,0 +1,206 @@
+{
+    "html": {
+        "type": "TRANSFORM",
+        "style": "html",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "html"
+    },
+    "jpa": {
+		"type": "TEXT",
+        "style": "jpa",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "java"
+    },
+    "jpa-rdfs": {
+		"type": "TEXT",
+        "style": "jpa-rdfs",
+        "datetime": "2026-04-01T00:00:00Z",
+        "ext": "jpa-rdfs.java"
+    },
+    "scala": {
+        "type": "TEXT",
+        "style": "scala",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "scala"
+    },
+    "sql": {
+        "type": "TEXT",
+        "style": "sql",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "sql"
+    },
+    "sql-rdfs-ansi92": {
+        "type": "TEXT",
+        "style": "sql-rdfs-ansi92",
+        "datetime": "2026-04-01T00:00:00Z",
+        "ext": "rdfs-ansi92.sql"
+    },
+    "xsd": {
+        "type": "XSD",
+        "style": "xsd",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "xsd"
+    },
+    "xsd-part100-ed2": {
+		"type": "XSD",
+	    "style": "xsd-part100-ed2",
+	    "datetime": "2022-06-01T00:00:00Z",
+	    "ext": "part100-ed2.xsd"
+	},
+    "json-schema-draft-07": {
+		"type": "TEXT",
+		"style": "json-schema-draft-07",
+        "datetime": "2022-06-01T00:00:00Z",
+        "ext": "draft-07.schema.json"
+    },
+    "json-schema-draft-2020-12": {
+		"type": "TEXT",
+		"style": "json-schema-draft-2020-12",
+        "datetime": "2022-06-01T00:00:00Z",
+        "ext": "draft-2020-12.schema.json"
+    },
+    "profile-doc-rtf": {
+        "type": "TRANSFORM",
+        "style": "profile-doc-rtf",
+        "datetime": "2022-08-01T00:00:00Z",
+        "ext": "rtf"
+    },
+    "rdfs-2020": {
+        "type": "TRANSFORM",
+        "style": "rdfs-2020",
+        "datetime": "2024-10-01T00:00:00Z",
+        "ext": "rdfs-2020.rdfs"
+    },
+    "linkml": {
+        "type": "TRANSFORM",
+        "style": "linkml",
+        "datetime": "2024-07-29T00:00:00Z",
+        "ext": "linkml.yaml"
+    },
+    "cimantic-graphs": {
+        "type": "TEXT",
+        "style": "cimantic-graphs",
+        "datetime": "2024-08-07T00:00:00Z",
+        "ext": "cimantic-graphs.py"
+    },
+    "cimantic-graphs-init": {
+        "type": "TEXT",
+        "style": "cimantic-graphs-init",
+        "datetime": "2024-08-07T00:00:00Z",
+        "ext": "__init__.py"
+    },
+    "rdfs-501ed2-beta": {
+        "type": "TRANSFORM",
+        "style": "rdfs-501ed2-beta",
+        "datetime": "2024-09-20T00:00:00Z",
+        "ext": "rdfs-501ed2-beta.rdfs"
+    },
+    "puml-rdfs-t2b": {
+        "type": "TEXT",
+        "style": "puml-rdfs-t2b",
+        "datetime": "2024-09-30T00:00:00Z",
+        "ext": "rdfs-t2b.puml"
+    },
+    "puml-rdfs-l2r": {
+        "type": "TEXT",
+        "style": "puml-rdfs-l2r",
+        "datetime": "2024-09-30T00:00:00Z",
+        "ext": "rdfs-l2r.puml"
+    },
+    "puml-xsd-t2b": {
+        "type": "TEXT",
+        "style": "puml-xsd-t2b",
+        "datetime": "2024-10-23T00:00:00Z",
+        "ext": "xsd-t2b.puml"
+    },
+    "puml-xsd-l2r": {
+        "type": "TEXT",
+        "style": "puml-xsd-l2r",
+        "datetime": "2024-10-23T00:00:00Z",
+        "ext": "xsd-l2r.puml"
+    },
+    "puml-json-t2b": {
+        "type": "TEXT",
+        "style": "puml-json-t2b",
+        "datetime": "2025-01-01T00:00:00Z",
+        "ext": "json-t2b.puml"
+    },
+    "puml-json-l2r": {
+        "type": "TEXT",
+        "style": "puml-json-l2r",
+        "datetime": "2025-01-01T00:00:00Z",
+        "ext": "json-l2r.puml"
+    },
+    "adoc-article-json": {
+        "type": "TEXT",
+        "style": "adoc-article-json",
+        "datetime": "2026-01-01T00:00:00Z",
+        "ext": "article-json.adoc"
+    },
+    "adoc-inline-json": {
+        "type": "TEXT",
+        "style": "adoc-inline-json",
+        "datetime": "2026-01-01T00:00:00Z",
+        "ext": "inline-json.adoc"
+    },
+    "adoc-article-xsd": {
+        "type": "TEXT",
+        "style": "adoc-article-xsd",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "article-xsd.adoc"
+    },
+    "adoc-inline-xsd": {
+        "type": "TEXT",
+        "style": "adoc-inline-xsd",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "inline-xsd.adoc"
+    },
+    "adoc-article-rdfs": {
+        "type": "TEXT",
+        "style": "adoc-article-rdfs",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "article-rdfs.adoc"
+    },
+    "adoc-inline-rdfs": {
+        "type": "TEXT",
+        "style": "adoc-inline-rdfs",
+        "datetime": "2024-11-04T00:00:00Z",
+        "ext": "inline-rdfs.adoc"
+    },
+    "adoc-article-rdfs-mappings": {
+        "type": "TEXT",
+        "style": "adoc-article-rdfs-mappings",
+        "datetime": "2025-04-01T00:00:00Z",
+        "ext": "article-rdfs-mappings.adoc"
+    },
+    "adoc-inline-rdfs-mappings": {
+        "type": "TEXT",
+        "style": "adoc-inline-rdfs-mappings",
+        "datetime": "2025-04-01T00:00:00Z",
+        "ext": "inline-rdfs-mappings.adoc"
+    },
+    "csharp-ef-rdfs": {
+		"type": "TEXT",
+        "style": "csharp-ef-rdfs",
+        "datetime": "2026-04-01T00:00:00Z",
+        "ext": "csharp-ef-rdfs.cs"
+    },
+    "apache-avro-schema": {
+		"type": "TEXT",
+        "style": "apache-avro-schema",
+        "datetime": "2025-12-01T00:00:00Z",
+        "ext": "avsc"
+    },
+    "json-ld-context-json-beta": {
+		"type": "TEXT",
+		"style": "json-ld-context-json-beta",
+        "datetime": "2026-04-01T00:00:00Z",
+        "ext": "context-json-beta.jsonld"
+    },
+    "json-ld-context-rdfs": {
+		"type": "TEXT",
+		"style": "json-ld-context-rdfs-beta",
+        "datetime": "2026-04-01T00:00:00Z",
+        "ext": "context-rdfs-beta.jsonld"
+    }
+}

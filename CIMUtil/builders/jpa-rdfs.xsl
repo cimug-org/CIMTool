@@ -1404,10 +1404,68 @@
                     </decorate>
                 </xsl:if>
             </xsl:when>
+            <!-- Unbounded collection (maxOccurs > '1' or 'unbounded'): @OneToMany
+                 intentionally suppressed. See "No @OneToMany Mappings — Intentional
+                 Design" in the file header for the full rationale. A self-documenting
+                 comment block is emitted in the generated source in place of the
+                 suppressed mapping so that implementers know the association exists
+                 and are shown the correct JPQL pattern to use instead. -->
             <xsl:otherwise>
-                <!-- Collection associations (maxOccurs=unbounded) are intentionally
-                     not mapped as @OneToMany. See "Inverse Associations and JPQL
-                     Queries" in the file header for rationale and usage guidance. -->
+                <xsl:variable name="childType"      select="string(@type)"/>
+                <xsl:variable name="assocName"      select="cimtool:capitalize(@name, '')"/>
+                <xsl:variable name="parentType"     select="string(parent::*/@name)"/>
+                <xsl:variable name="inversePropRaw"
+                    select="tokenize(@inverseBaseProperty, '[\.#]')[last()]"/>
+                <xsl:variable name="inverseField"   select="cimtool:uncapitalize($inversePropRaw)"/>
+                <xsl:variable name="orderByField"
+                    select="if (cimtool:has-mrid-ancestor(parent::*)) then 'mRID' else 'id'"/>
+                <item></item>
+                <list begin="/**" indent="* " end="*/">
+					<item>─────────────────────────────────────────────────────────────────────────────────────────</item>
+					<item>Suppressed @OneToMany:  <xsl:value-of select="$parentType"/> → <xsl:value-of select="$childType"/>  [<xsl:value-of select="@minOccurs"/>..*]</item>
+					<item>The profile declares a [<xsl:value-of select="@minOccurs"/>..*] association on this class to <xsl:value-of select="$childType"/>.</item>
+					<item></item>
+					<item>A @OneToMany collection mapping has been intentionally suppressed:</item>
+					<item></item>
+					<list begin="" indent="    " end="">
+						<item>// NOT generated</item>
+						<item>@OneToMany(mappedBy="<xsl:value-of select="$inverseField"/>", fetch=FetchType.LAZY)</item>
+						<item>private List&lt;<xsl:value-of select="$childType"/>&gt; <xsl:value-of select="cimtool:uncapitalize($assocName)"/>;</item>
+					</list>
+					<item></item>
+					<item>See "No @OneToMany Mappings — Intentional Design" in the file header for</item>
+					<item>the full rationale. In summary: unbounded collections risk loading entire</item>
+					<item>result sets into memory with no pagination, require bidirectional sync on</item>
+					<item>every add/remove, and are not consistently present across profiles.</item>
+					<item>Use an explicit JPQL query through the child side instead:</item>
+					<item></item>
+					<item>Basic traversal:</item>
+					<list begin="" indent="    " end="">
+						<item>List&lt;<xsl:value-of select="$childType"/>&gt; results = em.createQuery(</item>
+						<list begin="" indent="    " end="">
+							<item>"SELECT x FROM <xsl:value-of select="$childType"/> x " +</item>
+							<item>"WHERE x.<xsl:value-of select="$inverseField"/> = :parent",</item>
+							<item><xsl:value-of select="$childType"/>.class)</item>
+							<item>.setParameter("parent", this)</item>
+							<item>.getResultList();</item>
+						</list>
+					</list>
+					<item></item>
+					<item>Paginated traversal:</item>
+					<list begin="" indent="    " end="">
+						<item>List&lt;<xsl:value-of select="$childType"/>&gt; page = em.createQuery(</item>
+						<list begin="" indent="    " end="">
+							<item>"SELECT x FROM <xsl:value-of select="$childType"/> x " + </item>
+							<item>"WHERE x.<xsl:value-of select="$inverseField"/> = :parent ORDER BY x.<xsl:value-of select="$orderByField"/>",</item>
+							<item><xsl:value-of select="$childType"/>.class)</item>
+							<item>.setParameter("parent", this)</item>
+							<item>.setFirstResult(offset)</item>
+							<item>.setMaxResults(pageSize)</item>
+							<item>.getResultList();</item>
+						</list>
+					</list>
+					<item>─────────────────────────────────────────────────────────────────────────────────────────</item>
+				</list>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

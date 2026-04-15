@@ -1492,14 +1492,60 @@
                 <item>[ForeignKey(nameof(<xsl:value-of select="cimtool:capitalize(@name)"/>Id))]</item>
                 <item>public virtual <xsl:value-of select="@type"/>?<xsl:text> </xsl:text><xsl:value-of select="cimtool:capitalize(@name)"/> { get; set; }</item>
             </xsl:when>
-            <!-- Collection navigation property when maxOccurs > 1 or 'unbounded' -->
+            <!-- Unbounded collection (maxOccurs > '1' or 'unbounded'): intentionally suppressed.
+                 ICollection<T> navigation properties are never generated — see the assembly-level
+                 <remarks> block at the top of this file for the full rationale. The FK column
+                 lives on the child table; the relationship must be configured from the child side
+                 via Fluent API. A self-documenting comment block is emitted in the generated
+                 source in place of the suppressed property so that implementers know the
+                 association exists and are shown the correct EF Core query pattern. -->
             <xsl:otherwise>
-                <!-- Collections carry no shadow FK and no [ForeignKey] annotation on this side.
-                     The FK column lives on the child table. EF Core resolves the relationship
-                     through the Fluent API configuration in ModelConfiguration, not via an
-                     attribute on this collection property. Mirrors the SQL DDL builder which
-                     emits no column at all for unbounded associations on the 'one' side. -->
-                <item>public virtual ICollection&lt;<xsl:value-of select="@type"/>&gt;<xsl:text> </xsl:text><xsl:value-of select="cimtool:capitalize(@name)"/> { get; set; } = new List&lt;<xsl:value-of select="@type"/>&gt;();</item>
+                <xsl:variable name="childType"      select="string(@type)"/>
+                <xsl:variable name="assocName"      select="cimtool:capitalize(@name)"/>
+                <xsl:variable name="parentType"     select="string(parent::*/@name)"/>
+                <xsl:variable name="inversePropName"
+                    select="cimtool:capitalize(tokenize(@inverseBaseProperty, '[\.#]')[last()])"/>
+                <xsl:variable name="parentPK"
+                    select="if (cimtool:has-mrid-ancestor(parent::*)) then 'MRId' else 'Id'"/>
+                <item></item>
+				<list begin="" indent="// " end="">
+					<item>────────────────────────────────────────────────────────────────────────────────────────────────</item>
+					<item> Suppressed Collection Navigation:  <xsl:value-of select="$parentType"/> → <xsl:value-of select="$childType"/>  [<xsl:value-of select="@minOccurs"/>..*] </item>
+					<item>The profile declares a [<xsl:value-of select="@minOccurs"/>..*] association on this class to <xsl:value-of select="$childType"/>.</item>
+					<item>A collection navigation property has been intentionally suppressed:</item>
+					<item></item>
+					<list begin="" indent="  " end="">
+						<item>// NOT generated</item>
+						<item>public virtual ICollection&lt;<xsl:value-of select="$childType"/>&gt; <xsl:value-of select="$assocName"/> { get; set; }</item>
+					</list>
+					<item></item>
+					<item>See the assembly-level &lt;remarks&gt; block at the top of this file for the full rationale.</item>
+					<item>In summary: unbounded collections risk loading entire result sets into memory with no</item>
+					<item>pagination, are not consistently present across profiles, and introduce serialisation</item>
+					<item>and change-tracking fragility. Instead, use an explicit LINQ query such as:</item>
+					<item></item>
+					<item>Basic traversal:</item>
+					<list begin="" indent="  " end="">
+						<item>IQueryable&lt;<xsl:value-of select="$childType"/>&gt; results = ctx.Set&lt;<xsl:value-of select="$childType"/>&gt;()</item>
+						<list begin="" indent="  " end="">
+							<item>.Where(x => x.<xsl:value-of select="$inversePropName"/>Id == this.<xsl:value-of select="$parentPK"/>);</item>
+						</list>
+					</list>
+					<item></item>
+					<item>Paginated traversal:</item>
+					<list begin="" indent="  " end="">
+						<item>var page = await ctx.Set&lt;<xsl:value-of select="$childType"/>&gt;()</item>
+						<list begin="" indent="  " end="">
+							<item>.Where(x => x.<xsl:value-of select="$inversePropName"/>Id == this.<xsl:value-of select="$parentPK"/>)</item>
+							<item>.OrderBy(x => x.MRId)</item>
+							<item>.OrderBy(x => x.MRId)</item>
+							<item>.Skip(offset).Take(pageSize)</item>
+							<item>.ToListAsync();</item>
+						</list>
+					</list>
+					<item>────────────────────────────────────────────────────────────────────────────────────────────────</item>
+				</list>
+				<item></item>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -1700,6 +1746,37 @@
                             <xsl:when test="self::a:Compound">
                                 <item>e.HasOne(x => x.<xsl:value-of select="cimtool:capitalize(@name)"/>).WithMany().HasForeignKey(x => x.<xsl:value-of select="cimtool:capitalize(@name)"/>Id).OnDelete(DeleteBehavior.Cascade);</item>
                             </xsl:when>
+                            <!-- Unbounded Reference [0..*]: FK lives on the child table.
+                                 No HasOne/HasMany is emitted on this (parent) side — doing so
+                                 would reference a shadow FK property that does not exist on this
+                                 entity. The relationship must be configured from the child side.
+                                 A comment is emitted here to make that expectation explicit and
+                                 to provide a copy-pasteable Fluent API starting point. -->
+                            <xsl:when test="self::a:Reference and (@maxOccurs='unbounded' or number(@maxOccurs) > 1)">
+                                <xsl:variable name="childType" select="string(@type)"/>
+                                <xsl:variable name="parentType" select="string(parent::*/@name)"/>
+                                <xsl:variable name="inversePropName" select="cimtool:capitalize(tokenize(@inverseBaseProperty, '[\.#]')[last()])"/>
+                                <item></item>
+								<list begin="" indent="// " end="">
+									<item>────────────────────────────────────────────────────────────────────────────────────────────────</item>
+									<item>Suppressed Fluent API:  <xsl:value-of select="$parentType"/> → <xsl:value-of select="$childType"/>  [<xsl:value-of select="@minOccurs"/>..*]</item>
+									<item>The FK column for this [<xsl:value-of select="@minOccurs"/>..*] association lives on <xsl:value-of select="$childType"/>, not here.</item>
+									<item>HasOne/HasMany is intentionally not configured on this parent side because</item>
+									<item>no shadow FK property exists on <xsl:value-of select="$parentType"/> (see the suppressed collection</item>
+									<item>navigation comment in the entity class above). Instead, configure from the child side:</item>
+									<item></item>
+									<list begin="" indent="  " end="">
+										<item>modelBuilder.Entity&lt;<xsl:value-of select="$childType"/>&gt;()</item>
+										<list begin="" indent="  " end="">
+											<item>.HasOne(x => x.<xsl:value-of select="$inversePropName"/>)</item>
+											<item>.WithMany()</item>
+											<item>.HasForeignKey(x => x.<xsl:value-of select="$inversePropName"/>Id)</item>
+											<item>.OnDelete(DeleteBehavior.ClientNoAction);</item>
+										</list>
+									</list>
+									<item>────────────────────────────────────────────────────────────────────────────────────────────────</item>
+								</list>
+                            </xsl:when>
                             <!-- Instance/Reference: independent entity — no cascade -->
                             <xsl:otherwise>
                                 <item>e.HasOne(x => x.<xsl:value-of select="cimtool:capitalize(@name)"/>).WithMany().HasForeignKey(x => x.<xsl:value-of select="cimtool:capitalize(@name)"/>Id).OnDelete(DeleteBehavior.ClientNoAction);</item>
@@ -1756,13 +1833,13 @@
         InverseInstance and InverseReference represent the one side of a one-to-many
         association (e.g. "all Equipment belonging to this EquipmentContainer"). These
         are omitted by design, not by accident. The rationale is documented in full in
-        the generated file header <remarks> block, but summarised here for maintainers:
+        the generated file header <remarks> block, but summarized here for maintainers:
 
-          1. CIM associations are unbounded. Materialising an ICollection<T> with no
+          1. CIM associations are unbounded. Materializing an ICollection<T> with no
              pagination is a runtime hazard for large profiles such as CGMES CoreEquipment.
           2. Bidirectional mappings require both sides to be kept in sync on every
              add/remove, adding fragility and bug surface to consumer code.
-          3. They introduce circular-reference risk during JSON serialisation.
+          3. They introduce circular-reference risk during JSON serialization.
           4. Inverse associations are profile-dependent — not every profile includes them,
              so generated ICollection<T> properties would be inconsistent across profiles.
           5. Explicit LINQ queries (query through the child side via the shadow FK property)
