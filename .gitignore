@@ -17,6 +17,6 @@ CIMToolPlugin/console.log
 bin
 .settings
 .directory
-CIMToolPlugin/.asciidoctorconfig.adoc
 /target/
 **/cimtool-signing.properties
+/CSharpEFTestProject/EfCoreSmokeTest/obj/
