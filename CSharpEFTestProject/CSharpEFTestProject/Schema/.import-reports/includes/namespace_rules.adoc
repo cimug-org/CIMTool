@@ -1,0 +1,81 @@
+[[Namespace_Rules]]
+==== Namespace Rules [Section 5.12]
+
+Namespaces are specified at level of packages in the CIM UML model. The namespaces apply to classes, attributes, association ends, data types (*«CIMDatatype»*, *«Compound»*, *«Primitive»*, and *«enumeration»*) and enums. Namespaces are useful for marking the source of CIM models for either standards or extensions.
+
+Namespaces are derived from the rules given below.
+
+Namespaces applied at the package level propagate to sub packages without a namespace and any contained classes. Namespaces on classes propagate to contained attributes. Namespaces on classes propagate to both ends a connected association if the association is owned by the package. Namespaces on cross package associations are propagated from the owning class as defined in clause 2.2.4 UML cross package dependencies and ownership.
+
+If a namespace is specified at a subpackage level it takes precedence over the containing package.
+
+The form is a tag of named “nsuri” with the value being the namespace URI value. A second tag named “nsprefix” whose value is used to specify the XML prefix. (The “nsuri” tag is similar to how CIMTool uses the tag named “uml:baseuri” with the value being the namespace URI, where “uml” is defined as “http://langdale.com.au/2005/UML#”.)
+
+The namespace tagged value approach can be extended to allow specific namespace assignment to classes, attributes, association ends, datatypes, and enumeration literals. Such extensions are not required for the CIM information model or extensions to the information model because all such features can be added to packages with the appropriate namespace, but the same approach could be used for profiles in UML However, document does not address profiles in UML.
+
+For example the base cim 61970-301 we use [Note the example does not match proposal]:
+
+- nsprefix=cim
+- nsuri=http://iec.ch/TC57/2015/CIM17
+- 61970-302 nsprefix=dycim nsuri=… dynamics…
+- 61968-11 nsprefix=dcim nsuri= http://iec.ch/2015/dcim12
+- 62325-301 nsprefix=mcim 
+- nsuri=htt://iec.ch/ … Market …
+
+[Proposed] The IEC is taking an approach of using a consistent namespace for all standard CIM within one consistent version of total CIM. Thus namespaces are only specified one time at the top-level package (i.e. the CIM top-level package) and version would be bumped when any subpackage changes. Therefore the namespace approach is useful to encode this single namespace in the UML for standard CIM canonical model plus namespace for any extension packages.
+
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule132]]Rule132 | CIM Namespace specifications shall consist of two (2) namespaces: 
+
+1. a CIM Universal Resource Identifier (URI) namespace; and 
+2. a CIM XML prefix.
+
+| [[Rule133]]Rule133 | CIM Namespaces shall be stored in Enterprise Architect (EA) as tagged values.
+| [[Rule134]]Rule134 | The tagged value name for the CIM URI namespace shall be `nsuri`.
+| [[Rule135]]Rule135 | The tagged value name for the CIM XML prefix shall be `nsprefix`.
+| [[Rule136]]Rule136 | Namespaces shall be specified at the package level in the CIM UML model.
+| [[Rule137]]Rule137 | Namespaces shall apply to classes, attributes, association ends, datatypes (*«CIMDatatype»*, *«Compound»*, *«Primitive»*, and *«enumeration»*) and enumerations.
+| [[Rule138]]Rule138 | Namespaces specified at the package level shall propagate to sub-packages without both specified namespaces and any contained classes.
+| [[Rule139]]Rule139 | Namespaces on classes shall propagate to contained attributes.
+| [[Rule140]]Rule140 | Namespaces on classes shall propagate to both ends of a connected association if the association is owned by the same package.
+| [[Rule141]]Rule141 | Namespaces on cross package associations shall be propagated from the owning class.
+| [[Rule142]]Rule142 | If a namespace is specified at a sub-package level, it shall take precedence over the containing package’s specified namespace.
+| [[Rule143]]Rule143 | The CIM top-level package shall have a namespace specification.
+| [[Rule144]]Rule144 | The value of the CIM (formerly TC57CIM) top-level package `nsuri` tag shall be: http://iec.ch/TC57/CIM<version># where:
+
+<version> = the version number of the CIM.
+
+| [[Rule145]]Rule145 | The value of the TC57CIM package `nsprefix` tag shall be `cim`.
+| [[Rule146]]Rule146 | The Grid (formerly IEC61970) package shall have a namespace specification.
+| [[Rule147]]Rule147 | The value of the Grid (formerly IEC61970) package `nsuri` tag shall be:
+
+http://iec.ch/TC57/61970/CIM<XX>.<YY># where:
+
+- <XX> = the major version number of the Grid (formerly IEC61970) package; and
+- <YY> = the minor version number of the Grid (formerly IEC61970) package.
+
+| [[Rule148]]Rule148 | The value of the Grid (formerly IEC61970) package `nsprefix` tag shall be `cim61970`.
+| [[Rule149]]Rule149 | The Enterprise (formerly IEC61968) package shall have a namespace specification.
+| [[Rule150]]Rule150 | The value of the Enterprise (formerly IEC61968) package `nsuri` tag shall be: 
+
+http://iec.ch/TC57/61968/CIM<XX>.<YY># where:
+
+- <XX> = the major version number of the Enterprise (formerly IEC61968) package; and
+- <YY> = the minor version number of the Enterprise (formerly IEC61968) package.
+
+| [[Rule151]]Rule151 | The value of the Enterprise (formerly IEC61968) package `nsprefix` tag shall be `cim61968`.
+| [[Rule152]]Rule152 | The Market (formerly IEC62325) package shall have a namespace specification.
+| [[Rule153]]Rule153 | 
+
+The value of the Market (formerly IEC62325) package `nsuri` tag shall be: 
+
+http://iec.ch/TC57/62325/CIM<XX>.<YY># where:
+
+- <XX> = the major version number of the Market (formerly IEC62325) package; and
+- <YY> = the minor version number of the Market (formerly IEC62325) package.
+
+| [[Rule154]]Rule154 | The value of the Market (formerly IEC62325) package `nsprefix` tag shall be `cim62325`.
+|===

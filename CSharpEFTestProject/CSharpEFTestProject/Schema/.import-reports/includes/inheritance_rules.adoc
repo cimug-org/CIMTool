@@ -1,0 +1,20 @@
+[[Inheritance_Rules]]
+==== Inheritance Rules [Section 5.10]
+
+Inheritance is used to specialise an existing class. The inheriting class is more specific than the base class. Inheritance is the strongest possible dependency; it is often misused and should be used with care (note: everything that can be expressed through inheritance could also be expressed through composition).
+
+The CIM is currently using a single type inheritance hierarchy and the use of multiple inheritance is not allowed (except as specified for extensions, see Section 5.4).
+
+Inheritance relationship must be drawn from the more specific class to the more general class. In case the classes from two top-level packages are involved, the subclass must be in the dependent package, and inherit from the class in a package upon which it depends (see 2.2.2).
+
+Inheritance should never create situations where attribute names or role names are duplicated or “override” within the inheritance linage.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule115]]Rule115 | Multiple inheritance shall not be used.
+| [[Rule116]]Rule116 | Inheritance relationships must be drawn from the more specific class to the more general class.
+| [[Rule117]]Rule117 | In case the classes from two top-level packages are involved, the subclass must be in the dependent package, and inherit from the class in a package upon which it depends.
+| [[Rule118]]Rule118 | Inheritance should never create situations where attribute names or role names are duplicated or “override” within the inheritance lineage.
+| [[Rule119]]Rule119 | Inheritance shall not be used with stereotyped classes.
+|===

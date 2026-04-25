@@ -1,0 +1,56 @@
+[[Package_Rules]]
+==== Package Rules [Section 5.3] 
+
+The purpose of packages in the CIM model is mainly for controlling working group ownership, with sub-packages mainly representing conceptual organization. This usage of the package structure allows for relatively easy movement of classes among packages without impacting concrete implementations.
+
+CIM package names are intended to be unique among all packages without consideration of package hierarchy.
+
+Package ordering is typically specified in dependency order. For example, the Domain and Core packages are ordered first in the UML. The printed documentation will use this package ordering. If no clear dependency relation exists, order packages alphabetically.
+
+To facilitate model management and evolution (and minimise IEC documents generation time), while preserving the means to print official documents at any time in the proper format, we have the following three special kinds of packages
+
+"Inf" is the prefix used to denote informative CIM UML sub-packages. This is to avoid name clashes among normative and informative packages (e.g., ‘Core’ vs. ‘InfCore’), and to make informative sub-packages obvious through their name. Note that this will apply to all packages that start with this prefix (e.g., 'InfCore' as well as 'Informative').
+
+The content of the informative package, including any sub-packages and its content, recursively, is considered as informative in the sense of IEC documents and is therefore by default excluded from the document generation. However, the CIM UML tool has an option to enable printing the informative content as well, which is useful for e.g., sharing documentation of the current work in an informative sandbox with the working group members, without impact to the stable, normative parts of the model.
+
+An informative package can be defined at any depth in the CIM UML model. The only requirement is the "Inf" prefix in the package name. It is recommended to specify "Inf" packages as "private" packages in Enterprise Architect package properties, so they can be filtered out of diagrams showing the sub packages.
+
+"Doc" is the prefix used to denote those CIM UML sub-packages that contain diagrams used for the IEC document template only, and that should not be printed with the content of the regular model. The sub-package of "ABC" with the name "DocABC" will be matched, and considered as informative package from the perspective of automatic document generation (i.e., it will be skipped), but it still can be referenced from the IEC document template to include the diagram, for instance in its introductory examples section.
+
+It is recommended to specify "Doc" packages as "private" packages in Enterprise Architect package properties, so they can be filtered out of diagrams showing the sub packages.
+
+===== Package Naming Rules [Section 5.3.1]
+
+Package names start with upper case (UpperCamelCase rule). Package names must be unique across the whole CIM. +
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule025]]Rule025 | Names for packages shall use the Upper Camel Case naming convention.
+| [[Rule026]]Rule026 | Names for packages shall be British English names.
+| [[Rule027]]Rule027 | All packages containing classes shall have unique names. (i.e., the package containment hierarchy shall not be used in uniquely identifying a package).
+| [[Rule028]]Rule028 | The name of the top-level package at the root of the model shall be CIM (formerly TC57CIM).
+| [[Rule029]]Rule029 | 
+
+The following names shall be used to identify CIM (formerly TC57CIM) top-level packages:
+
+- "Grid" (formerly IEC61970) for IEC TC57 WG13 domain information;
+- "Enterprise" (formerly IEC61968) for IEC TC57 WG14 domain information;
+- "Markets" (formerly IEC62325) for IEC TC57 WG16 domain information;
+
+| [[Rule030]]Rule030 | The "Inf" prefix shall be used in package names to denote informative CIM UML sub-packages.
+| [[Rule031]]Rule031 | An informative package can be defined at any depth in the CIM UML model. The only requirement is the "Inf" prefix in the package name.
+| [[Rule032]]Rule032 | The "Doc" prefix shall be used in package names to denote CIM UML sub-packages that contain diagrams used during the generation of IEC documents.
+| [[Rule033]]Rule033 | The package name "DetailedDiagrams" shall be a reserved package name.
+| [[Rule034]]Rule034 | There may be multiple instances of packages named "DetailedDiagrams" in the CIM.
+|===
+
+===== Package Specification Rules [Section 5.3.2]
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule035]]Rule035 | Informative packages should be specified as "private" packages in Enterprise Architect package properties, so they can be filtered out of diagrams showing the sub-packages.
+| [[Rule036]]Rule036 | "Doc" packages should be specified as "private" packages in Enterprise Architect package properties, so they can be filtered out of diagrams showing the sub-packages.
+| [[Rule037]]Rule037 | "DetailedDiagram" packages should be specified as "private" packages in Enterprise Architect package properties, so they can be filtered out of diagrams showing the sub-packages.
+|===

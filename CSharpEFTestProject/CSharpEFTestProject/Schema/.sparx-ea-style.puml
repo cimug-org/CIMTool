@@ -1,0 +1,60 @@
+@startuml
+' Defaults to top to bottom orientation. Can be easily overridden 
+' by specifying "left to right direction" after importing this
+' *.puml file...
+top to bottom direction
+
+' option gradient background to simulate EA 16.x diagrams
+' skinparam BackgroundColor #FBFBFB-#D6D2CE
+
+' Here we adjust the horizontal spacing for better spatial rendering (the PlantUML default is ~20)
+skinparam nodesep 20
+' Here we adjust the vertical spacing for better spatial rendering (the PlantUML default is ~30)
+skinparam ranksep 30
+
+' Hide class icons
+hide circle
+hide empty methods
+
+' This hides the attribute icons
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #454645
+skinparam shadowing true
+
+' skinning for notes
+skinparam note {
+  'BackgroundColor #f0f0f0
+  BackgroundColor #fcf8e3
+  BorderColor #454645
+  FontColor #333333
+  FontName Arial
+  FontSize 12
+  BorderThickness 1
+  Shadowing true
+}
+
+skinparam class {
+  BackgroundColor #FEFCF9|#F9EDE1
+  AttributeFontColor #5A404C
+  FontColor #000000
+  FontStyle bold
+  StereotypeFontColor #000000
+  HeaderFontColor #000000
+  HeaderFontStyle bold
+  BorderColor #454645
+  BorderThickness 1
+  
+  ' ShadowExtension classes style definition
+  BackgroundColor<<ShadowExtension>> #EFEFEF|#lightgray
+  
+  ' Enumerations style definition
+  BackgroundColor<<enumeration>> #E9FFE5|#D0FAC6
+
+  ' Errors classes style definition
+  BackgroundColor<<error>> #FFF3F5|#FFC0CB
+  FontColor<<Error>> #000000
+  AttributeFontColor<<Error>> #000000
+}
+
+hide <<Error>> stereotype
+@enduml

@@ -1,0 +1,219 @@
+# We are extending the default theme
+# extends: default-with-font-fallbacks
+extend: ~
+
+page:
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: Letter
+  
+title-page:
+  font_family: ArialNarrow
+  align: left
+  title:
+    font_size: 50
+    font-style: bold    
+    top: 33%
+    margin-bottom: 20
+  logo:
+    align: left
+    top: 3%
+    image: image:CIMTool-Logo.png[pdfwidth=45%]
+  subtitle:
+    font_size: 20
+  authors:
+    font_size: 28
+    font-style: bold
+    content:
+      name_only: "{author}"
+  revision:
+    margin-top: 295
+    font_size: 10
+    font-style: bold
+
+base:
+  font_family: TimesNew
+  font_size: 9
+  font-kerning: normal
+  
+literal:
+  font_family: Consolas
+  font_size: 9
+  
+code:
+  font_family: Consolas
+  font_size: 9
+  
+codespan:
+  font_family: Consolas
+  font_size: 9
+  
+lead:
+  font_family: ~
+  font_size: 9
+
+table:
+  font_family: TimesNew
+  font_size: 9
+  head:
+    background-color: #808080
+    border-bottom-style: solid
+    border-bottom-width: 1.5
+    font-style: bold
+    font-color: #FFFFFF
+  body:
+    background-color: #FFFFFF
+    stripe-background-color: #F0F0F0
+  
+caption:
+  font_family: TimesNew
+  align: left
+  font_size: 9
+  font-style: bold_italic
+
+heading:
+  font_family: ArialNarrow
+  min-height-after: 3.0in
+  
+heading-h0:
+  font_size: 96
+  font-style: bold  
+  h1:
+    font_size: 24
+    font-style: bold
+    border-width: 1.0
+    border-color: #0078C9
+    background-color: #BFDDF1
+    border-style: solid
+  h2:
+    font_size: 18
+    font-style: bold
+    border-width: 0.75
+    border-color: #76923C
+    border-style: solid
+  h3:
+    font_size: 16
+    font-style: normal 
+  h4:
+    font_size: 14
+    font-style: normal   
+  h5:
+    font_size: 12
+    font-style: normal
+  h6:
+    font_size: 10
+    font-style: bold_italic
+  chapter:
+    break-before: always
+  part:
+    break-after: avoid
+  
+toc:
+  indent: 20
+  break-after: auto
+  font_family: ArialNarrow
+  
+toc-h1:
+  font_size: 12
+  font-style: bold
+  margin-top: 12
+  margin-bottom: 6
+toc-h2:
+  font_size: 11
+  font-style: bold
+toc-h3:
+  font_size: 11
+  font-style: bold
+toc-h4:
+  font_size: 10
+  font-style: normal
+toc-h5:
+  font_size: 10
+  font-style: normal
+toc-h6:
+  font_size: 10
+  font-style: normal
+
+running-content:
+  start-at: toc
+
+header:
+  font_family: ArialNarrow
+  height: 0.65in
+  font_size: 12
+  font-style: bold
+  border-width: 2.0
+  border-color: #76923C
+  vertical-align: bottom
+  recto:
+    right:
+      content: '{chapter-title}'
+  verso:
+    left:
+      content: '{chapter-title}'
+
+footer:
+  font_family: ArialNarrow
+  height: 0.45in
+  font_size: 12
+  font-style: bold
+  vertical-align: top
+  recto:
+    right:
+      content: '{page-number}'
+    left:
+       content: 'CIMTool Generated Report'
+  verso:
+    left:
+      content: '{page-number}'
+    right:
+       content: 'CIMTool Generated Report'
+       
+admonition:
+  background-color: #BFDDF1
+  padding: [8, 12, 8, 12]
+  
+role:
+  red:
+    font-color: #FF0000
+  package:
+    font_family: ArialNarrow
+    font-style: bold
+    font_size: 10
+  element:
+    font-style: italic
+    
+font:
+  catalog:
+    Calibri:
+      normal: C:\Windows\Fonts\calibri.ttf
+      bold: C:\Windows\Fonts\calibrib.ttf
+      italic: C:\Windows\Fonts\calibrii.ttf
+      bold_italic: C:\Windows\Fonts\calibriz.ttf      
+    SegoeUI:
+      normal: C:\Windows\Fonts\segoeui.ttf
+      bold: C:\Windows\Fonts\segoeuib.ttf
+      italic: C:\Windows\Fonts\segoeuii.ttf
+      bold_italic: C:\Windows\Fonts\segoeuiz.ttf
+    TimesNew:
+      normal: C:\Windows\Fonts\times.ttf
+      bold: C:\Windows\Fonts\timesbd.ttf
+      italic: C:\Windows\Fonts\timesi.ttf
+      bold_italic: C:\Windows\Fonts\timesbi.ttf
+    ArialNarrow:
+      normal: C:\Windows\Fonts\ARIALN.TTF
+      bold: C:\Windows\Fonts\ARIALNB.TTF
+      italic: C:\Windows\Fonts\ARIALNI.TTF
+      bold_italic: C:\Windows\Fonts\ARIALNBI.TTF
+    Consolas:
+      normal: C:\Windows\Fonts\consola.ttf
+      bold: C:\Windows\Fonts\consolab.ttf
+      italic: C:\Windows\Fonts\consolai.ttf
+      bold_italic: C:\Windows\Fonts\consolaz.ttf
+    M+ 1mn:
+      normal: GEM_FONTS_DIR/mplus1mn-regular-subset.ttf
+      bold: GEM_FONTS_DIR/mplus1mn-bold-subset.ttf
+      italic: GEM_FONTS_DIR/mplus1mn-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/mplus1mn-bold_italic-subset.ttf
+  fallbacks: 
+      - M+ 1mn
