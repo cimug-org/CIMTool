@@ -34,11 +34,9 @@ For further details on how to use CIMTool to create and edit profiles based on t
 
   Note that these instructions are purely for those interested in participating in the development of **CIMTool**. They do not describe standard use of the tool for creating profiles.
 
-## CIMTool Roadmap
+## Product Roadmap
 
-The CIMTool public roadmap is maintained on GitHub Projects. View the current release plan and backlog here:
-
-👉 [CIMTool Roadmap](https://github.com/orgs/cimug-org/projects/19)
+The CIMTool public roadmap is maintained on GitHub Projects. View the current release plan and backlog at [CIMTool Roadmap](https://github.com/orgs/cimug-org/projects/17).
 
 ## Latest Release
 
