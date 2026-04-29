@@ -12,7 +12,7 @@ In practical applications of the CIM it is combined with project and vendor-spec
 
 ### Version Control and Namespaces
 
-Namespaces prevent name conflicts between authors of terms. They are also used to prevent conflicts between different versions of a term's definition. For example, `http://cim.ucaiug.io/CIM-schema-cim17##ACLineSegment` might be succeeded by `http://cim.ucaiug.io/CIM-schema-cim18##ACLineSegment` with a slightly different definition.
+Namespaces prevent name conflicts between authors of terms. They are also used to prevent conflicts between different versions of a term's definition. For example, `http://cim.ucaiug.io/CIM-schema-cim17#ACLineSegment` might be succeeded by `http://cim.ucaiug.io/CIM-schema-cim18#ACLineSegment` with a slightly different definition.
 
 Both versions of the term might be in use at the same time. The potential conflict can be detected because the different versions have different namespaces. Resolving a version conflict is another matter, however.
 
@@ -28,9 +28,9 @@ In the end, a namespace is just an identifier whose allocation is controlled by 
 
 A profile is a subset of an information model defined such that:
 
-An instance that conforms to the profile also conforms to the general information model.[^1] 
+- An instance that conforms to the profile also conforms to the general information model.[^1] 
 
-The classes and properties in a profile are subsets, or restrictions, of those in the information model.
+- The classes and properties in a profile are subsets, or restrictions, of those in the information model.
 
 What namespace should be used for the terms in a profile? There are two schools of thought.
 
