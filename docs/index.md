@@ -1,5 +1,8 @@
 # Welcome
-**CIMTool** is an open source tool for working with the Common Information Model (CIM) to produce design artifacts such as database schemas, message exchange syntax, source code classes, and reference documentation. CIM is a UML model used in the electric power generation, transmission, and distribution domains.
+
+**CIMTool** is an open source platform used in the provides a comprehensive technical foundation for the creation, development, and maintenance of IEC standards-compliant data exchange profiles based on the Common Information Model (CIM). Rather than a single-purpose utility, CIMTool delivers an integrated environment where profile definition, schema generation, documentation, and validation converge — enabling organizations to manage the full lifecycle of CIM-based interoperability artifacts from a single platform.
+
+Designed for the IEC standards community, utility enterprises, systems integrators, software developers, and data architects, **CIMTool** supports standards-based interoperability across the power systems domain. Its built-in schema builders automatically generate fully compliant output — including RDFS profiles (per IEC 61970-501 and -552), XML schemas (per IEC 62361-100), and JSON schemas (per the IEC 62361-104 draft specification) — eliminating the risk and effort associated with manual schema creation.
 
 [![image](./images/CIMToolScreenshot.png)](./images/CIMToolScreenshot.png "CIMTool") 
 
