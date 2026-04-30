@@ -61,25 +61,25 @@ The shadow class may have a distinct name (as in Variant 1) but the generalizati
 
 ## Enabling Shadow Class Merging in CIMTool
 
-Shadow class merging is controlled by a project-level setting. It must be enabled for **CIMTool** to process shadow classes and fold their members into the normative CIM classes they shadow.
-
-!!! note
-
-    This setting should always be enabled when your project schema is a Sparx EA project file (`.eap`, `.eapx`, `.qea`, or `.qeax`). If your project uses `.xmi` files as its schema, uncheck this setting.
+Shadow class merging is controlled by a project-level setting that must be enabled for **CIMTool** to process shadow classes and fold their members into the normative CIM classes they shadow.
 
 ### During New Project Creation
 
 The merge setting is available on the "Import Initial Schema" step of the **New Project** wizard. Check the "During import merge shadow/mixin extensions into the CIM classes that inherit from them" checkbox to enable it before completing the wizard.
 
+![Import Schema dialog showing the merge shadow class extensions checkbox](../images/ImportSchemaDialogMergeCheckbox.png)
+
 !!! note
 
     This setting does not appear on the "Import Schema" dialog used when re-importing or replacing a schema in an existing project. For existing projects, use the **Properties** dialog described below.
 
-![Import Schema dialog showing the merge shadow class extensions checkbox](../images/ImportSchemaDialogMergeCheckbox.png)
-
 ### After Project Creation
 
-The setting can also be changed after a project has been created via the project's "Properties" dialog, accessible by right-clicking the project in the Project Explorer and selecting "Properties".
+The setting can also be changed after a project has been created via the project's "Properties" dialog, accessible by right-clicking the project in the Project Explorer and selecting "Properties". In practice this is rarely needed — the most common scenario is correcting an initial import where the setting was inadvertently left unchecked.
+
+!!! note
+
+    This setting should always be enabled when your project schema is a Sparx EA project file (`.eap`, `.eapx`, `.qea`, or `.qeax`). If your project uses `.xmi` files as its schema, uncheck this setting.
 
 ![Project Properties dialog showing the merge shadow class extensions setting](../images/ProjectPropertiesMergeSetting.png)
 
