@@ -13,6 +13,8 @@ markdown_extensions:
   - admonition
   - tables
   - pymdownx.details
+  - toc:
+      toc_depth: 3
 nav:
   - 'index.md'
   - 'core-concepts.md'
@@ -42,6 +44,5 @@ nav:
   - 'Developers':
     - 'developers/dev-env-setup.md'
     - 'developers/package-deploy.md'
-  - 'SchemaOps Automation & Integration':
+  - 'SchemaOps Integration':
     - 'schemaops/cimtool-cli.md'
- 
