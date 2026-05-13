@@ -1,0 +1,2317 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../developers/package-deploy/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../logos/cimtool-v2.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Using CIMTool in CI/CD Pipelines with cimtool-cli - CIMTool</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-cimtool-in-cicd-pipelines-with-cimtool-cli" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTool" class="md-header__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Using CIMTool in CI/CD Pipelines with cimtool-cli
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTool" class="md-nav__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    CIMTool
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How To
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How To
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/obtain-cim-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Obtain Stable Releases of the CIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/create-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/navigate-workspace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Navigate the Workspace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/import-cim-uml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool with Enterprise Architect: Importing a CIM Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/create-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Contextual Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/edit-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editing a Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/browsing-the-CIM-UML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Browsing the CIM UML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/exchange-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exchange a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/search-schemas-profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Searching Schemas and Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/generate-database-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generating a Database Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/profile-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Maintenance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/comparing-profiles-schemas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparing Profiles and Schemas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/associations-anonymous-classes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Associations and Anonymous Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/namespaces-in-cimtool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces in CIMTool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/cimtool-support-for-extension-namespaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CIMTool Support for Extension Namespaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/modeling-cim-extensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modeling CIM Extensions: Shadow Extension Classes and Mix-Ins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Further Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Further Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/uml-xmi-owl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UML, XMI, and OWL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/cim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/protege-and-topbraid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool with Protege and Top Braid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/dev-env-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Environment Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developers/package-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packaging &amp; Deployment Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SchemaOps Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SchemaOps Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool in CI/CD Pipelines with cimtool-cli
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool in CI/CD Pipelines with cimtool-cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-schemaops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is SchemaOps?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#downloading-cimtool-clijar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Downloading cimtool-cli.jar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command-Line Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command-Line Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informational-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Informational Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformation-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transformation Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copyright-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copyright Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jvm-system-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JVM System Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option Summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#builder-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Builder Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generating-artifacts-from-a-single-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Artifacts from a Single Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-artifacts-from-all-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Artifacts from All Profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-a-custom-xslt-stylesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using a Custom XSLT Stylesheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listing-available-builders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Listing Available Builders
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exit-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exit Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schemaops-pipeline-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SchemaOps Pipeline Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SchemaOps Pipeline Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-asciidoc-documentation-publishing-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: AsciiDoc Documentation Publishing Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-linkml-artifact-generation-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: LinkML Artifact Generation Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-and-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging and Diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging and Diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-diagnostic-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling Diagnostic Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capturing-log-output-to-a-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capturing Log Output to a File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printing-a-full-stack-trace-on-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Printing a Full Stack Trace on Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-schemaops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is SchemaOps?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#downloading-cimtool-clijar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Downloading cimtool-cli.jar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command-Line Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command-Line Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#informational-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Informational Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformation-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transformation Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copyright-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copyright Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jvm-system-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JVM System Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option Summary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#builder-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Builder Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generating-artifacts-from-a-single-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Artifacts from a Single Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-artifacts-from-all-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Artifacts from All Profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-a-custom-xslt-stylesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using a Custom XSLT Stylesheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listing-available-builders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Listing Available Builders
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exit-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exit Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schemaops-pipeline-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SchemaOps Pipeline Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SchemaOps Pipeline Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-asciidoc-documentation-publishing-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: AsciiDoc Documentation Publishing Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-linkml-artifact-generation-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: LinkML Artifact Generation Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-and-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging and Diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging and Diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-diagnostic-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling Diagnostic Logging
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capturing-log-output-to-a-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capturing Log Output to a File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printing-a-full-stack-trace-on-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Printing a Full Stack Trace on Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="using-cimtool-in-cicd-pipelines-with-cimtool-cli">Using CIMTool in CI/CD Pipelines with cimtool-cli</h1>
+<p><strong>CIMTool</strong> has a companion standalone command-line tool — <code>cimtool-cli.jar</code> — that exposes <strong>CIMTool</strong>'s full artifact generation capabilities outside of the Eclipse desktop application. Beginning with the <strong>CIMTool</strong> 2.3.0 release, it is distributed as a separate optional download alongside each <strong>CIMTool</strong> release and runs headless on any platform where Java 11 or later is available, with no Eclipse installation, OSGi runtime, or workspace required.</p>
+<p>This opens up a <em>SchemaOps</em> workflow: the practice of treating your CIM schema and profile set as versioned source artifacts that can be checked into a repository and processed automatically as part of a CI/CD pipeline — in the same way DevOps treats application source code.</p>
+<h2 id="what-is-schemaops">What is SchemaOps?</h2>
+<p>SchemaOps applies the principles of DevOps — automation, reproducibility, version control, and pipeline-driven delivery — to the lifecycle of CIM schemas, profiles, and the artifacts derived from them.</p>
+<p>With a SchemaOps pipeline you can:</p>
+<ul>
+<li>Check in a Sparx EA project file (<code>.qea</code>) or a <strong>CIMTool</strong> project directory as the authoritative schema source</li>
+<li>Trigger <code>cimtool-cli.jar</code> on commit or pull request — pointing it at the project directory — to regenerate all profile artifacts (XSD, JSON Schema, RDFS/OWL, AsciiDoc documentation fragments, PlantUML diagrams, and so on)</li>
+<li>Feed those generated artifacts downstream to other tools — for example, invoke the Asciidoctor command-line toolchain to combine a master document with the generated fragments and produce a final HTML5 or PDF output, then deploy that output to a corporate intranet</li>
+<li>Or use <code>cimtool-cli.jar</code> to generate LinkML artifacts from <strong>CIMTool</strong> profiles, then pass those generated LinkML artifacts downstream to LinkML tooling to produce code, documentation, or further derivative artifacts</li>
+</ul>
+<p>Because <code>cimtool-cli.jar</code> runs on Linux, macOS, and Windows, you can integrate it with any CI/CD system — GitHub Actions, GitLab CI, Jenkins, Azure Pipelines, or any shell-based automation.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>You need Java 11 or later on the machine or container that will run the CLI. No other installation is required.</p>
+<pre><code class="language-bat">java -version
+</code></pre>
+<p>If Java is not available, download and install a distribution such as <a href="https://adoptium.net/">Eclipse Temurin</a> (recommended) or any other OpenJDK 11+ distribution.</p>
+<h2 id="downloading-cimtool-clijar">Downloading cimtool-cli.jar</h2>
+<p><code>cimtool-cli.jar</code> is an optional download co-deployed alongside the <strong>CIMTool</strong> Windows application on the <a href="https://github.com/cimug-org/CIMTool/releases">CIMTool GitHub Releases page</a>. It is a separate artifact from the <strong>CIMTool</strong> application ZIP — download only what you need. Each release provides the following files:</p>
+<ul>
+<li><code>CIMTool-X.Y.Z-win32.win32.x86_64.zip</code> — the <strong>CIMTool</strong> Eclipse desktop application (Windows only)</li>
+<li><code>cimtool-cli.jar</code> — the standalone cross-platform CLI tool</li>
+<li><code>cimtool-cli.jar.sha256</code> — SHA-256 checksum for verifying the download</li>
+<li><code>logback-debug.xml</code> — an optional diagnostic logging configuration file (see <a href="#logging-and-diagnostics">Logging and Diagnostics</a>)</li>
+</ul>
+<p>Download <code>cimtool-cli.jar</code> and, optionally, <code>logback-debug.xml</code> and place them in the same directory.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are optionally interested in verifying the signature on the downloaded JAR, you will need a JDK that includes the <code>jarsigner</code> command-line tool. Note that <code>jarsigner</code> is a JDK tool — it is not included in a JRE-only installation. <a href="https://adoptium.net/">Eclipse Temurin</a> is the recommended JDK distribution for this purpose, as other OpenJDK distributions (such as Zulu) may behave differently when verifying signatures produced with an EV certificate. To verify:</p>
+<p><code>bat
+"C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\jarsigner.exe" ^
+  -verify -verbose -certs cimtool-cli.jar</code></p>
+<p>Look for <strong>"jar verified"</strong> at the top of the output, which confirms the JAR has not been tampered with since signing. The JVM does not require a JAR to be signed in order to execute it via <code>java -jar</code>.</p>
+</div>
+<h2 id="basic-usage">Basic Usage</h2>
+<pre><code class="language-bat">java -jar cimtool-cli.jar --help
+</code></pre>
+<pre><code class="language-bat">java -jar cimtool-cli.jar --version
+</code></pre>
+<h2 id="command-line-reference">Command-Line Reference</h2>
+<h3 id="informational-options">Informational Options</h3>
+<p>These options are standalone — they print output and exit immediately. No other options are required or processed when you use them.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Short form</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--help</code></td>
+<td><code>-h</code></td>
+<td>Prints a summary of all available options and exits.</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td><code>-v</code></td>
+<td>Prints the CLI version (e.g. <code>CIMTool CLI version 2.3.0</code>) read from the JAR manifest and exits.</td>
+</tr>
+<tr>
+<td><code>--list-builders</code></td>
+<td><code>-l</code></td>
+<td>Prints the names, type indicators, and output file extensions of all builders bundled in the JAR and exits. Each builder is shown with a type in parentheses — <code>(JAVA)</code>, <code>(TEXT)</code>, <code>(XSD)</code>, or <code>(TRANSFORM)</code> — identifying its implementation type. Use this to discover the exact builder name to pass to <code>--builder</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transformation-options">Transformation Options</h3>
+<h4 id="-project-dir-path-pd-required"><code>--project-dir &lt;path&gt;</code> / <code>-pd</code> <em>(required)</em></h4>
+<p>Point this to the root directory of your <strong>CIMTool</strong> project — the folder that contains the <code>Schema</code>, <code>Profiles</code>, <code>Instances</code>, <code>Incremental</code>, and (optionally) <code>Documentation</code> subfolders, as well as the project settings files.</p>
+<pre><code class="language-bat">--project-dir .\MyProject
+</code></pre>
+<p>Your project directory must contain <code>.cimtool-settings</code>, <code>.builder-preferences</code>, and <code>.cimtool-global-preferences</code> files. These are created automatically by <strong>CIMTool</strong> when a project is created, loaded, or imported in the desktop application. The CLI reads your schema file locations from <code>.cimtool-settings</code>, your builder configurations from <code>.builder-preferences</code>, and any global preference values (such as PlantUML diagram style settings) from <code>.cimtool-global-preferences</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the only truly required option for a transformation run. When <code>--profile</code> is not specified, the CLI processes all <code>.owl</code> files in the project's <code>Profiles</code> subdirectory. The minimum valid invocation is therefore simply:</p>
+<p><code>bat
+java -jar cimtool-cli.jar --project-dir .\MyProject</code></p>
+</div>
+<h4 id="-profile-path-p-optional"><code>--profile &lt;path&gt;</code> / <code>-p</code> <em>(optional)</em></h4>
+<p>Use this option to process a single <code>.owl</code> profile file rather than the entire project. Specify the path to the profile you want to generate artifacts for.</p>
+<pre><code class="language-bat">--profile .\MyProject\Profiles\MyProfile.owl
+</code></pre>
+<p>If you omit <code>--profile</code>, the CLI processes all <code>.owl</code> files in the project's <code>Profiles</code> subdirectory.</p>
+<p>If you use <code>--profile</code> without specifying <code>--builder</code> or <code>--xslt</code>, and no builders are flagged on the profile, the CLI exits with code <code>1</code> and the message: <em>"No builders are flagged in the profile. Either specify --builder or enable builders in the profile OWL file."</em></p>
+<h4 id="-output-path-o-optional-when-project-dir-is-specified"><code>--output &lt;path&gt;</code> / <code>-o</code> <em>(optional when <code>--project-dir</code> is specified)</em></h4>
+<p>Specify the directory where you want the generated artifacts written.</p>
+<pre><code class="language-bat">--output .\MyProject\Profiles
+</code></pre>
+<p>When <code>--project-dir</code> is specified and <code>--output</code> is omitted, the CLI defaults to the project's <code>Profiles</code> subdirectory (<code>&lt;project-dir&gt;/Profiles</code>). This means your generated artifacts land alongside the source <code>.owl</code> profiles, exactly as the <strong>CIMTool</strong> desktop application does.</p>
+<h4 id="-builder-name-b-optional"><code>--builder &lt;name&gt;</code> / <code>-b</code> <em>(optional)</em></h4>
+<p>Specify a builder by name to override the builders configured on each profile. The name must exactly match one of the builder names returned by <code>--list-builders</code> (e.g. <code>xsd</code>, <code>linkml</code>, <code>json-schema-draft-07</code>, <code>legacy-rdfs</code>). This option works for all builder types — both XSLT-based builders (<code>TEXT</code>, <code>XSD</code>, <code>TRANSFORM</code>) and Java-based builders (<code>JAVA</code>).</p>
+<pre><code class="language-bat">--builder xsd
+</code></pre>
+<p>If you omit this option, the CLI uses whichever builders are already enabled on each profile in <strong>CIMTool</strong>. This is the recommended approach for pipeline use — configure your builders on profiles in the desktop application, then let the CLI execute them without needing to name each one explicitly. <code>--builder</code> and <code>--xslt</code> are mutually exclusive — specifying both results in an invalid arguments error (exit code <code>1</code>).</p>
+<h4 id="-xslt-path-x-optional"><code>--xslt &lt;path&gt;</code> / <code>-x</code> <em>(optional)</em></h4>
+<p>Use this option to apply a custom XSLT stylesheet that is not part of the bundled builder catalog. When you use <code>--xslt</code> you must also supply <code>--output-ext</code>. <code>--xslt</code> and <code>--builder</code> are mutually exclusive — specifying both results in an invalid arguments error (exit code <code>1</code>).</p>
+<pre><code class="language-bat">--xslt .\my-custom-transform.xsl
+</code></pre>
+<h4 id="-output-ext-ext-oe-required-when-xslt-is-used"><code>--output-ext &lt;ext&gt;</code> / <code>-oe</code> <em>(required when <code>--xslt</code> is used)</em></h4>
+<p>Specify the file extension for output files generated by your custom <code>--xslt</code> stylesheet, without the leading dot. You do not need this option when using <code>--builder</code> or profile-configured builders, as those builders define their own output extensions.</p>
+<pre><code class="language-bat">--output-ext json
+</code></pre>
+<h3 id="copyright-options">Copyright Options</h3>
+<p>These options control the copyright text injected into generated artifacts by builders that support it. If you specify none of these options, empty copyright templates are used.</p>
+<h4 id="-copyright-defaults-optional"><code>--copyright-defaults</code> <em>(optional)</em></h4>
+<p>Use this flag to inject the bundled default UCAIug Apache 2.0 copyright templates into your generated artifacts. This option takes no argument. <code>--copyright-defaults</code> is mutually exclusive with <code>--copyright-multi-line</code> and <code>--copyright-single-line</code>.</p>
+<pre><code class="language-bat">--copyright-defaults
+</code></pre>
+<h4 id="-copyright-multi-line-path-cm-optional"><code>--copyright-multi-line &lt;path&gt;</code> / <code>-cm</code> <em>(optional)</em></h4>
+<p>Specify the path to a plain text file containing your multi-line copyright notice to inject into generated artifacts.</p>
+<pre><code class="language-bat">--copyright-multi-line .\copyright-multi.txt
+</code></pre>
+<h4 id="-copyright-single-line-path-cs-optional"><code>--copyright-single-line &lt;path&gt;</code> / <code>-cs</code> <em>(optional)</em></h4>
+<p>Specify the path to a plain text file containing your single-line copyright notice to inject into generated artifacts.</p>
+<pre><code class="language-bat">--copyright-single-line .\copyright-single.txt
+</code></pre>
+<p>You can specify both <code>--copyright-multi-line</code> and <code>--copyright-single-line</code> together — both files are loaded and applied. Neither can be combined with <code>--copyright-defaults</code>.</p>
+<h3 id="jvm-system-properties">JVM System Properties</h3>
+<p>Pass these to the JVM before <code>-jar</code> rather than as CLI arguments.</p>
+<h4 id="-dcimtooldebug-optional"><code>-Dcimtool.debug</code> <em>(optional)</em></h4>
+<p>By default, when the CLI exits with a transformation error only the exception message is printed. Set this property to any non-null value to additionally print the full Java stack trace to <code>stderr</code>, which is useful when diagnosing an unexpected crash at the CLI level. This property has no effect on Logback log levels and does not enable verbose output from the parsing or interpretation pipeline — for that level of detail, see <a href="#logging-and-diagnostics">Logging and Diagnostics</a>.</p>
+<pre><code class="language-bat">java -Dcimtool.debug=true -jar cimtool-cli.jar [options...]
+</code></pre>
+<h4 id="-dlogbackconfigurationfilepath-optional"><code>-Dlogback.configurationFile=&lt;path&gt;</code> <em>(optional)</em></h4>
+<p>Use this property to override the production Logback configuration bundled inside the JAR with an external configuration file. The <code>logback-debug.xml</code> file distributed on the release page is the recommended starting point — see <a href="#logging-and-diagnostics">Logging and Diagnostics</a> for full details.</p>
+<pre><code class="language-bat">java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar [options...]
+</code></pre>
+<h3 id="option-summary">Option Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Short</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--project-dir</code></td>
+<td><code>-pd</code></td>
+<td>Yes</td>
+<td>Root directory of your <strong>CIMTool</strong> project; must contain <code>.cimtool-settings</code>, <code>.builder-preferences</code>, and <code>.cimtool-global-preferences</code></td>
+</tr>
+<tr>
+<td><code>--profile</code></td>
+<td><code>-p</code></td>
+<td>No</td>
+<td>Single profile to process; if omitted, all <code>.owl</code> files in <code>&lt;project-dir&gt;/Profiles</code> are processed</td>
+</tr>
+<tr>
+<td><code>--output</code></td>
+<td><code>-o</code></td>
+<td>Optional when <code>--project-dir</code> is specified</td>
+<td>Output directory; defaults to <code>&lt;project-dir&gt;/Profiles</code> when not specified</td>
+</tr>
+<tr>
+<td><code>--builder</code></td>
+<td><code>-b</code></td>
+<td>No</td>
+<td>Overrides profile-configured builders; mutually exclusive with <code>--xslt</code></td>
+</tr>
+<tr>
+<td><code>--xslt</code></td>
+<td><code>-x</code></td>
+<td>No</td>
+<td>Custom XSLT stylesheet; mutually exclusive with <code>--builder</code></td>
+</tr>
+<tr>
+<td><code>--output-ext</code></td>
+<td><code>-oe</code></td>
+<td>Only with <code>--xslt</code></td>
+<td>Output file extension for custom XSLT output</td>
+</tr>
+<tr>
+<td><code>--copyright-defaults</code></td>
+<td>—</td>
+<td>No</td>
+<td>Use bundled UCAIug Apache 2.0 copyright templates; mutually exclusive with other copyright options</td>
+</tr>
+<tr>
+<td><code>--copyright-multi-line</code></td>
+<td><code>-cm</code></td>
+<td>No</td>
+<td>File containing your multi-line copyright text</td>
+</tr>
+<tr>
+<td><code>--copyright-single-line</code></td>
+<td><code>-cs</code></td>
+<td>No</td>
+<td>File containing your single-line copyright text</td>
+</tr>
+<tr>
+<td><code>--list-builders</code></td>
+<td><code>-l</code></td>
+<td>—</td>
+<td>Standalone informational option</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td><code>-v</code></td>
+<td>—</td>
+<td>Standalone informational option</td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td><code>-h</code></td>
+<td>—</td>
+<td>Standalone informational option</td>
+</tr>
+</tbody>
+</table>
+<h3 id="builder-types">Builder Types</h3>
+<p>The <code>--list-builders</code> output shows each builder's type in parentheses. There are four types:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TEXT</code></td>
+<td>XSLT-based builders that produce text output with indentation post-processing</td>
+<td><code>xsd</code>, <code>json-schema-draft-07</code>, <code>adoc-article-rdfs</code>, <code>scala</code>, <code>jpa</code></td>
+</tr>
+<tr>
+<td><code>XSD</code></td>
+<td>XSLT-based builders that produce XSD schemas with XML Schema validation</td>
+<td><code>xsd</code>, <code>xsd-part100-ed2</code></td>
+</tr>
+<tr>
+<td><code>TRANSFORM</code></td>
+<td>XSLT-based builders that produce XML output without additional post-processing</td>
+<td><code>html</code>, <code>rdfs-2020</code>, <code>linkml</code>, <code>profile-doc-rtf</code></td>
+</tr>
+<tr>
+<td><code>JAVA</code></td>
+<td>Java-based builders that use CIMTool generator classes directly — no XSLT involved</td>
+<td><code>xml</code>, <code>ttl</code>, <code>simple-flat-owl</code>, <code>simple-owl</code>, <code>legacy-rdfs</code>, <code>simple-flat-owl-augmented</code>, <code>simple-owl-augmented</code>, <code>legacy-rdfs-augmented</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>(JAVA)</code> builders were historically executed only within the <strong>CIMTool</strong> Eclipse desktop application. Beginning with the 2.3.0 release they are fully supported by the CLI, enabling headless generation of OWL, RDFS, Turtle, and XML profile serializations as part of a CI/CD pipeline.</p>
+<h2 id="usage-examples">Usage Examples</h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The examples below use <code>cimtool-cli.jar</code> without a path, which assumes the JAR is in your current working directory. In practice, either run the commands from the directory containing the JAR, or substitute the full path to the JAR — for example <code>"D:\tools\cimtool-cli.jar"</code>.</p>
+</div>
+<h3 id="generating-artifacts-from-a-single-profile">Generating Artifacts from a Single Profile</h3>
+<p>Transform a single profile using a named builder, writing output to an explicit directory:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --profile .\MyProject\Profiles\MyProfile.owl ^
+  --builder xsd ^
+  --output .\output
+</code></pre>
+<p>Short-form equivalent:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar -pd .\MyProject -p .\MyProject\Profiles\MyProfile.owl -b xsd -o .\output
+</code></pre>
+<p>The CLI reads the project settings (<code>.cimtool-settings</code>, <code>.builder-preferences</code>, <code>.cimtool-global-preferences</code>) from <code>--project-dir</code> to resolve the schema and builder configuration. It then transforms <code>MyProfile.owl</code> using the <code>xsd</code> builder and writes <code>MyProfile.xsd</code> to the <code>.\output</code> directory.</p>
+<hr />
+<h3 id="generating-artifacts-from-all-profiles">Generating Artifacts from All Profiles</h3>
+<p>Process all profiles in the project's <code>Profiles</code> folder using the builders configured on each — the minimum valid invocation:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject
+</code></pre>
+<p>Short-form equivalent:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar -pd .\MyProject
+</code></pre>
+<p>The CLI reads all project settings from <code>.\MyProject</code>, discovers every <code>.owl</code> file in <code>.\MyProject\Profiles</code>, and for each profile runs whichever builders are enabled on it. Generated artifacts are written alongside the source <code>.owl</code> files in <code>.\MyProject\Profiles</code> — exactly as the <strong>CIMTool</strong> desktop application does.</p>
+<p>With an explicit output directory:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --output .\output
+</code></pre>
+<p>Short-form equivalent:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar -pd .\MyProject -o .\output
+</code></pre>
+<p>Behaviour is identical to the minimum invocation above, except all generated artifacts are written to <code>.\output</code> instead of back into the project's <code>Profiles</code> folder.</p>
+<hr />
+<h3 id="using-a-custom-xslt-stylesheet">Using a Custom XSLT Stylesheet</h3>
+<p>Apply a custom XSLT stylesheet to a profile and specify the output file extension for the generated artifact:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --profile .\MyProject\Profiles\MyProfile.owl ^
+  --xslt .\my-custom-transform.xsl ^
+  --output-ext json ^
+  --output .\output
+</code></pre>
+<p>Short-form equivalent:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar -pd .\MyProject -p .\MyProject\Profiles\MyProfile.owl -x .\my-custom-transform.xsl -oe json -o .\output
+</code></pre>
+<p>The CLI applies <code>my-custom-transform.xsl</code> to <code>MyProfile.owl</code> using the schema and settings from <code>--project-dir</code>. The <code>--output-ext</code> value determines the output filename — in this case <code>MyProfile.json</code> is written to <code>.\output</code>. Custom XSLT transforms have access to the same profile model and schema data as any built-in builder.</p>
+<hr />
+<h3 id="listing-available-builders">Listing Available Builders</h3>
+<p>To see all builders bundled with the CLI, their type indicators, and their output file extensions:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar --list-builders
+</code></pre>
+<p>Short-form equivalent:</p>
+<pre><code class="language-bat">java -jar cimtool-cli.jar -l
+</code></pre>
+<p>The output shows each builder name, its type in parentheses (<code>JAVA</code>, <code>TEXT</code>, <code>XSD</code>, or <code>TRANSFORM</code>), and the file extension it produces. Use the name shown here as the value for <code>--builder</code> when you want to override the builders configured on a profile.</p>
+<h2 id="exit-codes">Exit Codes</h2>
+<p>The CLI returns a standard exit code on completion, which your CI/CD pipeline can use to detect and handle failures:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Invalid arguments</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Transformation error</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>I/O error</td>
+</tr>
+</tbody>
+</table>
+<h2 id="schemaops-pipeline-examples">SchemaOps Pipeline Examples</h2>
+<h3 id="example-1-asciidoc-documentation-publishing-pipeline">Example 1: AsciiDoc Documentation Publishing Pipeline</h3>
+<p>This example uses <code>cimtool-cli.jar</code> to generate AsciiDoc documentation fragments for all profiles in a <strong>CIMTool</strong> project, then invokes the Asciidoctor command-line tool to combine those fragments with a master document and produce a final HTML5 output for deployment.</p>
+<div class="admonition tip">
+<p class="admonition-title">Real-world reference: CGMES-CIM17</p>
+<p>The <a href="https://github.com/cimug-org/CGMES-CIM17">cimug-org/CGMES-CIM17</a> repository on GitHub is a fully worked, production-grade example of this pattern. Released alongside <strong>CIMTool</strong> 2.3.0, it hosts the official CIMTool project for the <strong>IEC 61970-600-2:2021</strong> CGMES standard profiles based on CIM17. The project demonstrates modularized AsciiDoc documentation using a master document that aggregates multiple profiles, the <code>adoc-inline-rdfs</code> builder for inline RDFS content fragments, and the PlantUML RDFS builders for automatically generated profile diagrams. It is the recommended starting point for understanding how to structure a real SchemaOps documentation pipeline.</p>
+</div>
+<pre><code class="language-bat">REM Step 1 — Generate AsciiDoc fragments and PlantUML diagrams for all profiles
+java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --output .\MyProject\Profiles
+
+REM Step 2 — Render the master AsciiDoc document to HTML5
+asciidoctor ^
+  -r asciidoctor-diagram ^
+  -D .\output\html ^
+  .\MyProject\Documentation\master.adoc
+
+REM Step 3 — Deploy to intranet (example using xcopy or a deployment script)
+xcopy /E /I /Y .\output\html \\intranet-server\docs\cim-profiles\
+</code></pre>
+<p>The master document in your project's <code>Documentation</code> folder uses AsciiDoc <code>include::</code> directives to pull in the generated fragments from the <code>Profiles</code> folder. When your schema or profiles change and are committed to the repository, the pipeline regenerates everything automatically.</p>
+<h3 id="example-2-linkml-artifact-generation-pipeline">Example 2: LinkML Artifact Generation Pipeline</h3>
+<p>When the LinkML builder is enabled on a profile in <strong>CIMTool</strong> (via the "Builder for linkml" checkbox in the profile's "Profile Summary" tab), <code>cimtool-cli.jar</code> generates the <code>.linkml.yaml</code> artifact directly alongside all other configured builder outputs. You can then pass those generated <code>.linkml.yaml</code> files downstream to LinkML tooling to produce code, documentation, or other derivative artifacts.</p>
+<pre><code class="language-bat">REM Step 1 — Generate all configured builder artifacts including .linkml.yaml files
+java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --output .\MyProject\Profiles
+
+REM Step 2 — Pass generated LinkML artifacts to downstream LinkML tooling (example)
+for %%f in (.\MyProject\Profiles\*.linkml.yaml) do (
+  gen-python --output-directory .\output\python %%f
+)
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The LinkML builder must be enabled on each profile individually within <strong>CIMTool</strong> before running <code>cimtool-cli.jar</code>. The CLI executes whichever builders are configured on each profile — it does not enable or modify builder settings.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Linux and macOS CI runners</p>
+<p>All pipeline examples on this page use Windows <code>^</code> line-continuation syntax. On Linux and macOS, replace <code>^</code> with <code>\</code> and use standard shell <code>for</code> loop syntax where applicable. For example:</p>
+<p>```bash
+java -jar cimtool-cli.jar \
+  --project-dir ./MyProject \
+  --output ./MyProject/Profiles</p>
+<p>for f in ./MyProject/Profiles/*.linkml.yaml; do
+  gen-python --output-directory ./output/python "$f"
+done
+```</p>
+</div>
+<h2 id="logging-and-diagnostics">Logging and Diagnostics</h2>
+<p>Under normal operation <code>cimtool-cli.jar</code> is intentionally quiet. Only genuine warnings and errors appear on the console — schema integrity issues such as missing range types or invalid cardinality declarations. All log output is written to <code>stderr</code> so it does not interfere with structured <code>stdout</code> output that downstream pipeline tools may consume.</p>
+<h3 id="enabling-diagnostic-logging">Enabling Diagnostic Logging</h3>
+<p>The <code>logback-debug.xml</code> file distributed alongside <code>cimtool-cli.jar</code> on the releases page enables detailed diagnostic output. Place it in the same directory as the JAR and activate it with the <code>-Dlogback.configurationFile</code> system property:</p>
+<pre><code class="language-bat">java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar [options...]
+</code></pre>
+<p>This overrides the production logging configuration bundled inside the JAR without modifying it.</p>
+<h3 id="capturing-log-output-to-a-file">Capturing Log Output to a File</h3>
+<p><strong>Linux / macOS</strong> — writes to file and shows output on screen simultaneously:</p>
+<pre><code class="language-bash">java -Dlogback.configurationFile=./logback-debug.xml \
+  -jar cimtool-cli.jar [options...] 2&gt;&amp;1 | tee debug.log
+</code></pre>
+<p><strong>Windows Command Prompt</strong> — writes to file only:</p>
+<pre><code class="language-bat">java -Dlogback.configurationFile=.\logback-debug.xml ^
+  -jar cimtool-cli.jar [options...] &gt; debug.log 2&gt;&amp;1
+</code></pre>
+<p><strong>Windows PowerShell</strong> — writes to file and shows output on screen simultaneously:</p>
+<pre><code class="language-powershell">java -Dlogback.configurationFile=.\logback-debug.xml `
+  -jar cimtool-cli.jar [options...] 2&gt;&amp;1 | Tee-Object -FilePath debug.log
+</code></pre>
+<h3 id="printing-a-full-stack-trace-on-error">Printing a Full Stack Trace on Error</h3>
+<p>When the CLI exits with a transformation error, only the exception message is printed by default. To additionally print the full Java stack trace to <code>stderr</code> for diagnosing an unexpected crash, set the <code>-Dcimtool.debug</code> system property:</p>
+<pre><code class="language-bat">java -Dcimtool.debug=true -jar cimtool-cli.jar [options...]
+</code></pre>
+<p>This flag prints additional diagnostic information at the CLI level only. For verbose output from the parsing or interpretation pipeline, use <code>logback-debug.xml</code> as described above.</p>
+<h2 id="platform-notes">Platform Notes</h2>
+<p><code>cimtool-cli.jar</code> runs on Windows, Linux, and macOS. The examples on this page use Windows <code>^</code> line-continuation syntax for readability. On Linux and macOS, replace <code>^</code> with <code>\</code> and adjust path separators accordingly.</p>
+<p>The <strong>CIMTool</strong> Eclipse desktop application is currently released for Windows only. <code>cimtool-cli.jar</code> has no such restriction — it is fully cross-platform and is the recommended approach for integrating <strong>CIMTool</strong>'s artifact generation capabilities into Linux-based CI/CD runners and container environments.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
