@@ -41,7 +41,7 @@ The file can be edited with the Eclipse text editor. If an external text editor 
 
 An example file that can be used as a template can be found here:
 
-[example.annotation.txt](example.annotation.txt)
+[example.annotation](example.annotation)
 
 The file contains `baseuri` statements in the RDF TURTLE language. For example, the line:
 
