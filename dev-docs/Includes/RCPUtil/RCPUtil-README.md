@@ -1,0 +1,133 @@
+# RCPUtil
+
+A small Eclipse RCP utility plugin that provides reusable UI infrastructure
+for CIMTool — data binding, form builder, JFace plumbing, and workspace
+helpers. It contains no CIM-specific logic and has no dependency on any other
+in-repository plugin.
+
+
+
+## Overview
+
+RCPUtil (`au.com.langdale.rcputil`) is a low-level utility library for the
+Eclipse RCP layer. It was extracted to avoid duplicating common UI patterns
+across `CIMToolPlugin` and `com.cimphony.cimtoole`, and to provide a clean
+separation between Eclipse UI infrastructure and CIM domain logic.
+
+Its four exported packages cover distinct concerns:
+
+- **`ui.binding`** — a lightweight data binding framework that connects Eclipse JFace viewers and SWT widgets to model objects, with validation support
+- **`ui.builder`** — a form builder framework for constructing editor pages and wizard pages declaratively using a template/assembly pattern
+- **`ui.plumbing`** — the underlying observer/controller wiring that drives the binding and builder frameworks
+- **`ui.util`** — miscellaneous Eclipse UI utilities (icon cache, selection provider, wizard launcher, UI thread tickler)
+
+A single utility class, `util.Jobs`, provides Eclipse workspace job helpers
+and is exported under the `au.com.langdale.util` package namespace alongside
+the Kena utilities.
+
+
+
+## Project Structure
+
+```
+RCPUtil/
+├── META-INF/
+│   └── MANIFEST.MF              ← OSGi bundle manifest — exports and Eclipse platform dependencies
+├── build.properties             ← PDE build configuration
+└── src/
+    └── au/com/langdale/
+        ├── ui/
+        │   ├── binding/          ← Data binding framework
+        │   │   ├── Validator.java        ← Validation interface for binding
+        │   │   ├── Validators.java       ← Common validator implementations
+        │   │   ├── BooleanBinding.java   ← Boolean property binding
+        │   │   ├── BooleanModel.java     ← Boolean model interface
+        │   │   ├── TextBinding.java      ← Text field binding
+        │   │   ├── TextModel.java        ← Text model interface
+        │   │   ├── CheckBoxBinding.java  ← Checkbox widget binding
+        │   │   ├── ComboBinding.java     ← Combo/dropdown binding
+        │   │   ├── RadioTextBinding.java ← Radio button + text field binding
+        │   │   ├── ListBinding.java      ← JFace list viewer binding
+        │   │   ├── TableBinding.java     ← JFace table viewer binding
+        │   │   ├── AnyModel.java         ← Generic model interface
+        │   │   ├── ArrayModel.java       ← Array-backed model
+        │   │   └── FilteredContentProvider.java ← Filtered JFace content provider
+        │   ├── builder/          ← Form builder framework
+        │   │   ├── Assembly.java         ← Assembled form composite — hosts bound widgets
+        │   │   ├── Template.java         ← Abstract form template — declares widget layout
+        │   │   ├── Templates.java        ← Library of reusable template fragments
+        │   │   ├── LayoutGenerator.java  ← Generates GridLayout from template declarations
+        │   │   ├── FurnishedEditor.java  ← Base class for single-page editors using builder
+        │   │   ├── FurnishedMultiEditor.java ← Base class for multi-page editors
+        │   │   ├── FurnishedWizardPage.java  ← Base class for wizard pages using builder
+        │   │   ├── ArrayComposite.java   ← Composite for array-valued controls
+        │   │   └── ButtonObserver.java   ← Observer for button state changes
+        │   ├── plumbing/         ← Observer/controller wiring framework
+        │   │   ├── Binding.java          ← Core binding interface
+        │   │   ├── Bindings.java         ← Composite binding container
+        │   │   ├── Controller.java       ← Controller base class — coordinates bindings
+        │   │   ├── Observer.java         ← Observer interface for model change notifications
+        │   │   ├── Plumbing.java         ← Wiring utilities
+        │   │   ├── ICanRefresh.java      ← Refresh capability interface
+        │   │   └── SentinelBinding.java  ← Sentinel/guard binding
+        │   └── util/             ← Miscellaneous UI utilities
+        │       ├── IconCache.java        ← Interface for plugin icon caches
+        │       ├── GeneralIconCache.java ← General-purpose icon cache implementation
+        │       ├── SelectionProvider.java ← ISelectionProvider adapter
+        │       ├── WizardLauncher.java   ← Utility for programmatically launching wizards
+        │       └── Tickler.java          ← UI thread periodic refresh trigger
+        └── util/
+            └── Jobs.java                ← Eclipse workspace job and runnable utilities
+```
+
+
+
+## Dependencies on Other Projects
+
+RCPUtil has **no dependencies on other in-repository plugins**. Along with
+Kena, it sits at the base of the dependency stack.
+
+It depends only on standard Eclipse platform bundles:
+
+| Bundle | What RCPUtil uses from it |
+| --- | --- |
+| `org.eclipse.core.runtime` | `IProgressMonitor`, `CoreException`, `IStatus` — used by `Jobs.java` for workspace runnable execution |
+| `org.eclipse.core.resources` | `IWorkspaceRunnable`, workspace resource APIs — used by `Jobs.java` |
+| `org.eclipse.jface` | JFace viewers (`IStructuredContentProvider`, `ILabelProvider`), actions, resources — core of the binding and builder frameworks |
+| `org.eclipse.ui.workbench` | `IWorkbenchPage`, `IEditorPart`, `IViewPart` — used by editor and view base classes |
+| `org.eclipse.ui.forms` | `FormToolkit`, `ScrolledForm`, `Section`, `FormPage` — the Forms UI toolkit used by `FurnishedEditor` and `FurnishedMultiEditor` |
+
+
+
+## How the Builder Framework Works
+
+The `ui.builder` package provides a declarative pattern for constructing
+Eclipse Forms-based editor pages and wizard pages:
+
+- **`Template`** — a subclass declares the layout of a form page by overriding `defineContent()`, placing widget declarations in a grid. Each declaration specifies a widget type, its label, and a binding key.
+- **`Assembly`** — takes a `Template` and instantiates the declared widgets into an SWT `Composite`, applying the generated `GridLayout`. It is the concrete SWT container that appears in the editor or wizard.
+- **`FurnishedEditor` / `FurnishedMultiEditor` / `FurnishedWizardPage`** — base classes that wire a `Template` to an `Assembly` and connect the `Controller` (from `ui.plumbing`) to the assembled bindings. Subclasses in `CIMToolPlugin` extend these to build all of the profile, model, and mapping editor pages.
+
+This pattern means that the layout and binding of an editor page is declared once in the `Template` subclass, and the framework handles SWT widget creation, layout, data binding, and refresh automatically.
+
+
+
+## How the Binding Framework Works
+
+The `ui.binding` package connects SWT widgets to model data. Each binding
+class (e.g. `TextBinding`, `CheckBoxBinding`, `TableBinding`) knows how to
+read a value from a model object and write it back to a widget, and vice versa.
+`Validator` and `Validators` provide validation logic that runs before a
+binding value is committed back to the model. The `ui.plumbing` package
+provides the observer/controller pattern that propagates change notifications
+between bindings so that changing one widget can refresh others.
+
+
+
+## Relationship to Other Projects
+
+- **CIMToolPlugin** — the primary consumer. All editors, wizard pages, views, and property pages in `CIMToolPlugin` use `FurnishedEditor`, `FurnishedWizardPage`, and the binding framework from RCPUtil. `IconCache` and `GeneralIconCache` are used by `CIMToolPlugin`'s icon infrastructure.
+- **com.cimphony.cimtoole** — uses RCPUtil base classes for its wizards (`ExportEcore`, `ImportRegistrySchema`).
+- **CIMToolTest** — the `WorkbenchTest` base class depends on RCPUtil's workbench utilities for UI test setup.
+- **Kena** — no dependency on RCPUtil.
+- **CIMUtil** — no dependency on RCPUtil.

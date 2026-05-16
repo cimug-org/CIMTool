@@ -1,0 +1,57 @@
+//==================================================================
+// Following is the "header" attributes defined for this asciidoc
+//==================================================================
+:stem: latexmath
+//
+//----- Directory definitions used throughout the doc -----
+:includedir: Includes/
+
+//
+//----------- Styles definitions for PDF output -----------
+// From pragmatic testing PDF themes must be declared before the 
+// title in the document or else will not register correctly.
+//:pdf-themesdir: {docdir}/Documentation/Themes
+//:pdf-theme: cimtool-adoc
+//:stylesdir: {docdir}/Documentation/Styles
+//:stylesheet: cimtool-adoc.css
+//
+//------ General document settings ------
+:doctype: book
+:reproducible:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:xrefstyle: short
+//==================================================================
+//
+
+= CIMTool Developers Documentation
+
+// Sections included inline
+include::{includedir}/introduction.adoc[]
+
+include::{includedir}/CIMToolProduct/CIMToolProduct-README.adoc[]
+
+include::{includedir}/CIMToolPlugin/CIMToolPlugin-README.adoc[]
+
+include::{includedir}/CIMUtil/CIMUtil-README.adoc[]
+
+include::{rootdir}/Kena/Kena-README.adoc[] +
+
+include::{rootdir}/RCPUtil/RCPUtil-README.adoc[] + +
+
+include::{includedir}/CIMToolHelp/CIMToolHelp-README.adoc[]
+
+include::{includedir}/com.cimphony.cimtoole/com.cimphony.cimtoole-README.adoc[]
+
+include::{includedir}/io.ucaiug.slf4j.logback.binding/io.ucaiug.slf4j.logback.binding-README.adoc[]
+
+include::{includedir}/cimtool-cli/cimtool-cli-README.adoc[]
+
+include::{includedir}/CIMToolTest/CIMToolTest-README.adoc[]
+
+include::{includedir}/CSharpEFTestProject/CSharpEFTestProject-README.adoc[] +
+
+include::{includedir}/CIMToolUpdate/CIMToolUpdate-README.adoc[]
+
+include::{includedir}/CIMToolFeature/CIMToolFeature-README.adoc[]

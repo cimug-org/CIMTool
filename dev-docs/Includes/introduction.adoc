@@ -1,0 +1,6 @@
+
+== Introduction
+
+What follows is a sample document that highlights the latest documentation features introduced in the https://github.com/cimug-org/CIMTool/releases[2.3.0] release of https://cimtool.ucaiug.io/[CIMTool]. It illustrates how to modularize and include documentation components within a master document as well as how to dynamically include various CIMTool generated artifacts within your documentation.
+
+image::{docdir}/Documentation/Images/asciidoc-org.png[link="https://asciidoc.org/",alt="AsciiDoc.org",align="center"]
