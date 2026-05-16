@@ -1,0 +1,174 @@
+@startuml CLI Package Sequence Diagram
+
+title CIMTool CLI - Profile Transformation Sequence
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+participant "CIMToolCLI" as CLI #LightBlue
+participant "CLIOptions" as OPT #LightGreen
+participant "CLISettings" as SET #LightYellow
+participant "CLIBuilderPreferences" as PREF #LightYellow
+participant "CLISchemaParser" as PARSE #LightCoral
+participant "CLIProfileTransformer" as TRANS #LightPink
+
+== Initialization ==
+
+note over CLI : Entry point: main(args)
+activate CLI
+
+CLI -> OPT : parse(args)
+activate OPT
+OPT --> CLI : options
+deactivate OPT
+
+alt help, version, or listBuilders requested
+    CLI --> CLI : print usage, version, or builders
+else normal execution
+    CLI -> OPT : validate()
+    activate OPT
+    note right of OPT
+        Validates:
+        - project-dir exists
+        - .cimtool-settings exists
+        - .builder-preferences exists
+        - Defaults profiles-dir to
+          project/Profiles/
+    end note
+    OPT --> CLI
+    deactivate OPT
+end
+
+== Load Project Configuration ==
+
+CLI -> SET : new CLISettings(projectDir)
+activate SET
+note right of SET
+    Loads .cimtool-settings
+    (Turtle format)
+end note
+SET --> CLI : settings
+deactivate SET
+
+CLI -> PREF : new CLIBuilderPreferences(projectDir)
+activate PREF
+note right of PREF
+    Loads .builder-preferences
+    (Turtle format)
+end note
+PREF --> CLI : builderPrefs
+deactivate PREF
+
+== Schema Loading ==
+
+CLI -> SET : getSchemaFiles()
+activate SET
+note right of SET
+    Extracts schema paths from
+    URIs like:
+    http://cimtoole.../Schema/file.qea
+end note
+SET --> CLI : schemaFiles list
+deactivate SET
+
+CLI -> PARSE : new CLISchemaParser(settings, projectDir)
+activate PARSE
+PARSE --> CLI : schemaParser
+deactivate PARSE
+
+loop for each schemaFile
+    CLI -> PARSE : parse(schemaFile)
+    activate PARSE
+    
+    alt EA Project (.eap, .eapx, .qea, .qeax)
+        PARSE -> PARSE : parseEAProject()
+        note right of PARSE
+            Uses EAProjectParser
+            Loads optional files:
+            - .annotation
+            - .stereotype-extensions
+            - .namespace-prefixes
+        end note
+    else XMI file
+        PARSE -> PARSE : parseXMI()
+    end
+    
+    PARSE -> SET : getSchemaNamespace(file)
+    activate SET
+    SET --> PARSE : namespace
+    deactivate SET
+    
+    PARSE -> SET : isMergeShadowExtensions(file)
+    activate SET
+    SET --> PARSE : boolean
+    deactivate SET
+    
+    PARSE --> CLI : OntModel schema
+    deactivate PARSE
+    
+    CLI -> CLI : merge schemas
+end
+
+== Profile Transformation ==
+
+alt Directory Mode (multiple profiles)
+    
+    loop for each .owl file in profilesDir
+        CLI -> TRANS : new CLIProfileTransformer(builderPrefs)
+        activate TRANS
+        
+        CLI -> TRANS : setProfile(profileFile)
+        CLI -> TRANS : addSchema(mergedSchema)
+        CLI -> TRANS : setOutputDirectory(outputDir)
+        CLI -> TRANS : configureCopyright()
+        
+        alt explicit builder specified
+            CLI -> TRANS : setBuilder(builderName)
+            CLI -> TRANS : transform()
+        else explicit XSLT specified
+            CLI -> TRANS : setXslt(xsltFile, ext)
+            CLI -> TRANS : transform()
+        else use flagged builders
+            CLI -> TRANS : getFlaggedBuilders()
+            TRANS --> CLI : builders list
+            CLI -> TRANS : transformFlagged()
+            note right of TRANS
+                For each flagged builder:
+                1. setBuilder(name)
+                2. transform()
+                
+                Flagged = profile contains:
+                Buildlet#ext rdf:type Message#Flag
+            end note
+        end
+        
+        TRANS --> CLI : output file(s)
+        deactivate TRANS
+    end
+    
+else Single File Mode
+    
+    CLI -> TRANS : new CLIProfileTransformer(builderPrefs)
+    activate TRANS
+    
+    CLI -> TRANS : setProfile(profileFile)
+    CLI -> TRANS : addSchema(mergedSchema)
+    CLI -> TRANS : setOutputDirectory(outputDir)
+    CLI -> TRANS : configureCopyright()
+    
+    alt explicit builder
+        CLI -> TRANS : setBuilder(builderName)
+        CLI -> TRANS : transform()
+    else flagged builders
+        CLI -> TRANS : transformFlagged()
+    end
+    
+    TRANS --> CLI : output file(s)
+    deactivate TRANS
+end
+
+CLI --> CLI : return exit code
+deactivate CLI
+
+@enduml

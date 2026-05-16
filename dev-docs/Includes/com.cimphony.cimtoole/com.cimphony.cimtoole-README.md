@@ -1,0 +1,115 @@
+# com.cimphony.cimtoole
+
+An Eclipse plugin that extends CIMTool with Eclipse Modeling Framework (EMF)
+Ecore support. It contributes Ecore model parsers, an Ecore profile buildlet,
+and import/export wizards via the CIMToolPlugin extension points, enabling
+CIMTool to read `.ecore` and `.ecore-registry` model files and generate Ecore
+output from CIM profiles.
+
+
+
+## Overview
+
+`com.cimphony.cimtoole` is a pure extension plugin — it contributes no new
+extension points of its own and carries no application state. All of its
+functionality is exposed through the two extension points defined by
+`CIMToolPlugin`:
+
+- `au.com.langdale.cimtoole.model_parser` — registers two Ecore model parsers
+- `au.com.langdale.cimtoole.profile_buildlet` — registers the Ecore buildlet
+
+It also contributes standard Eclipse UI extension points for import and export
+wizards and for associating the `Model Browser` editor with Ecore file types.
+
+The plugin was originally developed by CIMPHONY and donated to the CIMTool
+open-source project. Its vendor declaration in `MANIFEST.MF` reflects this
+origin (`Bundle-Vendor: CIMPHONY`).
+
+
+## Project Structure
+
+```
+com.cimphony.cimtoole/
+├── META-INF/
+│   └── MANIFEST.MF              ← OSGi bundle manifest and dependency declarations
+├── build.properties             ← PDE build configuration
+├── plugin.xml                   ← Extension point contributions
+├── icons/
+│   └── package-ecore.png        ← Icon used in wizard entries and editor registration
+└── src/com/cimphony/cimtoole/
+    ├── CimphonyCIMToolPlugin.java       ← Bundle activator
+    ├── buildlet/
+    │   └── EcoreBuildlet.java           ← Profile buildlet — generates .ecore from a CIM profile
+    ├── ecore/
+    │   ├── EcoreExtractor.java          ← Model parser for .ecore files
+    │   ├── EcoreRegistryExtractor.java  ← Model parser for .ecore-registry files
+    │   └── EcoreGenerator.java          ← Core Ecore generation logic
+    ├── util/
+    │   └── CIMToolEcoreUtil.java        ← Shared Ecore utility methods
+    └── wizards/
+        ├── ExportEcore.java             ← Export wizard — exports merged schema as Ecore
+        ├── ImportRegistrySchema.java    ← Import wizard — imports schema from EMF registry
+        ├── RegistrySchemaWizardPage.java ← Wizard page for registry schema selection
+        └── EPackageSelectionDialog.java  ← Dialog for selecting an EPackage from the registry
+```
+
+
+
+## Dependencies on Other Projects
+
+| Bundle | Type | What this plugin uses from it |
+| --- | --- | --- |
+| `au.com.langdale.cimtoole` | `Require-Bundle` | CIMToolPlugin extension points (`model_parser`, `profile_buildlet`) and base editor class (`InfoModelEditor`) reused for Ecore file types |
+| `au.com.langdale.cimutil` | `Require-Bundle` | Profile model classes and Kena graph API used by `EcoreExtractor` and `EcoreBuildlet` to read and write CIM profile OWL models |
+| `au.com.langdale.kena` | `Require-Bundle` | RDF graph API — `OntModel`, `Resource`, graph traversal |
+| `au.com.langdale.rcputil` | `Require-Bundle` | Eclipse RCP UI utilities used by wizard base classes |
+| `org.eclipse.emf.ecore` | `Require-Bundle` | EMF core Ecore metamodel — `EPackage`, `EClass`, `EAttribute`, `EReference` |
+| `org.eclipse.emf.ecore.xmi` | `Require-Bundle` | EMF XMI serialization — reading and writing `.ecore` resource files |
+| `org.eclipse.emf` | `Require-Bundle` | EMF runtime — `ResourceSet`, `Resource`, URI handling |
+| `org.eclipse.ui`, `org.eclipse.ui.forms` | `Require-Bundle` | Eclipse workbench and forms UI APIs for wizards and dialogs |
+| `org.eclipse.core.resources`, `org.eclipse.core.runtime` | `Require-Bundle` | Eclipse workspace resources and runtime platform APIs |
+
+
+
+## Extension Point Contributions
+
+All contributions are declared in `plugin.xml`.
+
+### au.com.langdale.cimtoole.model_parser
+
+Registers two model parsers that allow CIMTool to import Ecore models as CIM schema sources:
+
+| Parser ID | File Extension | Implementation |
+| --- | --- | --- |
+| `com.cimphony.cimtoole.ecore_parser` | `.ecore` | `EcoreExtractor` — reads an EMF `.ecore` file and converts it to a Kena `OntModel` representing the CIM schema |
+| `com.cimphony.cimtoole.ecore_registry_parser` | `.ecore-registry` | `EcoreRegistryExtractor` — reads schema from the EMF `EPackage.Registry` (the runtime registry of all loaded Ecore packages) rather than from a file |
+
+### au.com.langdale.cimtoole.profile_buildlet
+
+Registers one profile buildlet that adds Ecore output to the CIMBuilder:
+
+| Buildlet ID | What it produces |
+| --- | --- |
+| `com.cimphony.cimtoole.ecore_buildlet` | `EcoreBuildlet` — transforms a CIM profile OWL model into an `.ecore` file using EMF serialization, producing an Ecore metamodel corresponding to the profiled subset of the CIM |
+
+### org.eclipse.ui.importWizards
+
+Registers **Import Schema from Registry** (`ImportRegistrySchema`) under the CIMTool wizard category — allows importing an EMF registry-registered Ecore package directly as a CIM schema without requiring a `.ecore` file on disk.
+
+### org.eclipse.ui.exportWizards
+
+Registers **Export merged schema as Ecore** (`ExportEcore`) under the CIMTool wizard category — exports the merged CIM schema (background model) from a CIMTool project as an `.ecore` file.
+
+### org.eclipse.ui.editors
+
+Associates the existing `InfoModelEditor` (defined in `CIMToolPlugin`) with `.ecore` and `.ecore-registry` file extensions, so opening these files in a CIMTool project uses the Model Browser editor.
+
+
+
+## Relationship to Other Projects
+
+- **CIMToolPlugin** — the host plugin. `com.cimphony.cimtoole` depends on `au.com.langdale.cimtoole` both for its extension points and for reusing `InfoModelEditor` as the editor for Ecore files. It cannot be loaded without `CIMToolPlugin` present.
+- **CIMUtil** — provides the profile model (`ProfileModel`, `OntModel`) that `EcoreExtractor` and `EcoreBuildlet` operate on. The Ecore generation logic in `EcoreGenerator` reads the profile's OWL classes and properties and maps them to EMF `EClass` and `EAttribute` / `EReference` equivalents.
+- **Kena** — the `OntModel` and related RDF graph API types used by `EcoreExtractor` and `EcoreGenerator` come from Kena via `Import-Package` declarations.
+- **CIMToolFeature** — lists `com.cimphony.cimtoole` as one of the plugins in its feature. The feature is currently dormant (see `CIMToolFeature-README.adoc`), but this plugin itself is fully active.
+- **CIMToolProduct** — `CIMTool.product` includes `com.cimphony.cimtoole` in its plugin list, so it is shipped in every CIMTool distribution.
