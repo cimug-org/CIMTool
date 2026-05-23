@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMToolTest Fragment
 Bundle-SymbolicName: CIMToolTest
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.2.0
 Fragment-Host: au.com.langdale.cimtoole;bundle-version="0.0.0"
 Require-Bundle: org.junit;bundle-version="4.0.0",
  au.com.langdale.kena,

@@ -4,11 +4,10 @@
  */
 package au.com.langdale.profiles;
 
-import au.com.langdale.xmi.UML;
-
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Resource;
+import au.com.langdale.xmi.UML;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -64,7 +63,7 @@ public class OWLGenerator extends RDFSBasedGenerator {
 	}
 
 	@Override
-	protected void emitDatatypeProperty(String uri, String base, String domain, String type, String xsdtype, boolean required) {
+	protected void emitDatatypeProperty(String uri, OntResource baseProp, String domain, String type, String xsdtype, boolean required) {
 		emit(uri, OWL.DatatypeProperty);
 		emit(uri, RDFS.subPropertyOf, type);
 		if( ! useRestrictions) {

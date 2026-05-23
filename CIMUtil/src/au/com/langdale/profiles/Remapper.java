@@ -4,27 +4,30 @@
  */
 package au.com.langdale.profiles;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
-
-import com.hp.hpl.jena.graph.FrontsNode;
-import com.hp.hpl.jena.graph.Node;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
 import au.com.langdale.util.NSMapper;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Transform a profile model to match a base model.  An <code>NSMapper</code> is
  * used to map references in profile to entities in the base model.
  */
 public class Remapper implements Runnable {
+	private static final Logger log = LoggerFactory.getLogger(Remapper.class);
 	private OntModel profileModel, baseModel;
 	private NSMapper mapper;
 
@@ -231,6 +234,6 @@ public class Remapper implements Runnable {
 	}
 	
 	private void log(String item) {
-		System.out.println(item);
+		log.debug("{}", item);
 	}
 }

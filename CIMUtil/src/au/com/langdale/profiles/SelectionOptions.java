@@ -1,3 +1,7 @@
+/*
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
+ * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ */
 package au.com.langdale.profiles;
 
 import java.util.EnumSet;
@@ -52,6 +56,10 @@ public class SelectionOptions {
 	
 	public boolean includeAllAssociations() {
 		return SelectionOption.hasOption(selectionOptions, SelectionOption.IncludeAllAssociations);
+	}
+	
+	public boolean isDescriptor() {
+		return SelectionOption.hasOption(selectionOptions, SelectionOption.Descriptor);
 	}
 
 	public SelectionOptions cloneAndRemove(SelectionOption... optionsToRemove) {

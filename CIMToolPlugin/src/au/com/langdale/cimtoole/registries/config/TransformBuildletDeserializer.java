@@ -28,7 +28,7 @@ public class TransformBuildletDeserializer<T extends TransformBuildlet> implemen
 				? DateTime.parse(json.getAsJsonObject().get("datetime").getAsString())
 				: null;
 		String ext = jsonObject.has("ext") ? jsonObject.get("ext").getAsString() : null;
-		String importFile = jsonObject.has("importFile") ? jsonObject.get("importFile").getAsString() : null;
+		String importFile = jsonObject.has("includeFile") ? jsonObject.get("includeFile").getAsString() : null;
 
 		// Ensure required fields exist
 		if (style == null || typeValue == null || datetime == null) {

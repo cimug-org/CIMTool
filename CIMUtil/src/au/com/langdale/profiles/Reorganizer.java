@@ -4,20 +4,21 @@
  */
 package au.com.langdale.profiles;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.xmi.UML;
-
 import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.ResourceFactory;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.xmi.UML;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * Transform a profile model to conform with CIM/XML RDFS schema rules as defined
@@ -43,6 +44,25 @@ public class Reorganizer extends SchemaGenerator {
 	
 	public OntModel getResult() {
 		return result;
+	}
+	
+	@Override
+	public void run() {
+		super.run();
+		removeThing();
+	}
+	
+	private void removeThing() {
+		// In some rare instances, reorgs can result in a profile containing a profile 
+		// class define as a subClassof OWL's "http://www.w3.org/2002/07/owl#Thing". 
+		// Therefore, here a check is performed and the extraneous profile class removed.
+		ResIterator ri = result.listSubjectsWithProperty(RDFS.label, "Thing");
+		if (ri.hasNext()) {
+			OntResource thingResource = ri.nextResource();
+			String thingURI = getOntURI() + "#Thing";
+			if (thingResource.getURI().equals(thingURI))
+				thingResource.remove();
+		}
 	}
 	
 	@Override
@@ -88,9 +108,9 @@ public class Reorganizer extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitDatatypeProperty(String uri, String base, String domain,
+	protected void emitDatatypeProperty(String uri, OntResource baseProp, String domain,
 			String type, String xsdtype, boolean required) {
-		OntResource prop = model.createResource(base);
+		OntResource prop = model.createResource(baseProp.getURI());
 		ProfileClass profile = (ProfileClass) classes.get(domain);
 		
 		SelectionOptions options = new SelectionOptions((required ? SelectionOption.PropertyRequired : SelectionOption.NoOp));

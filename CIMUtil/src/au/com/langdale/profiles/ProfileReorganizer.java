@@ -9,11 +9,13 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.xmi.UML;
 
+import java.util.Iterator;
+
 /**
  * Transform a profile model to conform with CIM/XML RDFS schema rules as defined
  * in IEC 61970-501 Ed 1.0 with the caveat that the min and max cardinalities of
- * properties will be reorganized to confirm to that as already defined in the 
- * profile. Meaning, the cardinality will not be reset to 
+ * properties will be reorganized to conform to that as already defined in the 
+ * profile. Meaning, the cardinality will not be reset to 0..* or 0..1.
  * 
  * In the resulting profile model, each base class or property is represented
  * by at most one profile class or property.
@@ -47,6 +49,21 @@ public class ProfileReorganizer extends Reorganizer {
 		ProfileClass range_profile = (ProfileClass) classes.get(range);
 		if(useRefs && ! range_profile.isEnumerated())
 			proxy.addProperty(UML.hasStereotype, UML.byreference);
+	}
+	
+	protected boolean scanProperties(ProfileClass profile) {
+		Iterator it = profile.getProperties();
+		boolean some = it.hasNext();
+		
+		while( it.hasNext()) {
+			OntResource prop = (OntResource) it.next();
+			PropertyInfo info = profile.getPropertyInfo(prop);
+			ProfileClass range_profile = props.add( info );
+			if( range_profile != null)
+				work.add(range_profile);
+		}
+		
+		return some;
 	}
 
 }

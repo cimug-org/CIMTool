@@ -185,22 +185,10 @@
         "datetime": "2026-04-01T00:00:00Z",
         "ext": "csharp-ef-rdfs.cs"
     },
-    "apache-avro-schema": {
+    "apache-avro-schema-beta": {
 		"type": "TEXT",
-        "style": "apache-avro-schema",
+        "style": "apache-avro-schema-beta",
         "datetime": "2025-12-01T00:00:00Z",
-        "ext": "avsc"
-    },
-    "json-ld-context-json-beta": {
-		"type": "TEXT",
-		"style": "json-ld-context-json-beta",
-        "datetime": "2026-04-01T00:00:00Z",
-        "ext": "context-json-beta.jsonld"
-    },
-    "json-ld-context-rdfs": {
-		"type": "TEXT",
-		"style": "json-ld-context-rdfs-beta",
-        "datetime": "2026-04-01T00:00:00Z",
-        "ext": "context-rdfs-beta.jsonld"
+        "ext": "beta.avsc"
     }
 }

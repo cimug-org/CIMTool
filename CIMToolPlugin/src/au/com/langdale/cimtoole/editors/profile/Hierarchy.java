@@ -31,6 +31,7 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.profiles.HierarchyModel;
 import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileModel;
+import au.com.langdale.profiles.ProfileModel.BidirectionalCardinality;
 import au.com.langdale.profiles.ProfileModel.Cardinality;
 import au.com.langdale.profiles.ProfileModel.GeneralTypeNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode;
@@ -229,10 +230,10 @@ public class Hierarchy extends FurnishedEditor {
 										CheckBox("reference", "By Reference")
 									)
 								),
-							    Span(
-									Label("card", "Min"), 
+								Span(
+									Label("card-min", "Min"), 
 									Row(Field("minimum")),
-									Label("Max"), 
+									Label("card-max", "Max"), 
 									Row(Field("maximum")),
 									Row(
 									    CheckBox("require", "At least one"), 
@@ -245,10 +246,26 @@ public class Hierarchy extends FurnishedEditor {
 										CheckboxTreeViewer("bases")
 									),
 									Column(
+										Label("inverse-label", "Inverse:"),
+									    Span(
+											Label("inverse-card-min", "Min"), 
+											Row(Field("inverse-minimum")),
+											Label("inverse-card-max","Max"), 
+											Row(Field("inverse-maximum")),
+											Row(
+											    CheckBox("inverse-require", "At least one"), 
+												CheckBox("inverse-single", "At most one"),
+												CheckBox("inverse-unbounded", "Unbounded"))
+											),
 										Label("Select Associated Class or Classes:"),
 										CheckboxTreeViewer("assoc", true)
 									),
-									Label("datatype", "Datatype")
+									Column(
+										Span(Label("datatype", "Datatype")),
+										Span(Label("default", "Initial:")),
+										Span(Label("unit", "Unit:")),
+										Span(Label("multiplier", "Mult:"))
+									)
 								)
 							),
 							Span(
@@ -292,7 +309,22 @@ public class Hierarchy extends FurnishedEditor {
 					showStackLayer("prop");
 					ElementNode enode = (ElementNode)node;
 					if(enode.isDatatype() ) {
-						setTextValue("datatype", "Datatype is " + TreeModelBase.label(enode.getBase().getRange()));
+						OntResource range = enode.getBase().getRange();
+						setTextValue("datatype", "Datatype is " + TreeModelBase.label(range));
+						if (range.hasProperty(UML.hasStereotype, UML.cimdatatype)) {
+							setTextValue("datatype", "Datatype is " + TreeModelBase.label(range));
+							setTextValue("default", "Initial:  " + (range.hasProperty(UML.hasInitialValue) ? range.getString(UML.hasInitialValue) : ""));
+							setTextValue("unit", "Unit:  " + (range.hasProperty(UML.hasUnits) ? range.getString(UML.hasUnits) : ""));
+							setTextValue("multiplier", "Mult:  " + (range.hasProperty(UML.hasMultiplier) ? range.getString(UML.hasMultiplier) : ""));
+						} else {
+							if (enode.getBase().hasProperty(UML.hasInitialValue)) {
+								setTextValue("default", "Initial Value:  " + enode.getBase().getString(UML.hasInitialValue));
+							} else {
+								setTextValue("default", "");
+							}
+							setTextValue("unit", "");
+							setTextValue("multiplier", "");
+						}
 						showStackLayer("datatype");
 					}
 					else {
@@ -300,11 +332,10 @@ public class Hierarchy extends FurnishedEditor {
 					}
 					setButtonValue("reference", enode.isReference()).setEnabled(! enode.isDatatype());
 					refreshCardinality(enode);
-					
 				}
 				else if( node instanceof GeneralTypeNode ) {
 					GeneralTypeNode tnode = (GeneralTypeNode)node;
-					if( ! tnode.isEnumerated()) {
+					if( !tnode.isEnumerated() && !tnode.isCompound()) {
 						showStackLayer("class");
 						showStackLayer("bases");
 						boolean concrete = tnode.hasStereotype(UML.concrete);
@@ -312,8 +343,7 @@ public class Hierarchy extends FurnishedEditor {
 						setButtonValue("concrete", concrete).setEnabled(tnode.getSubject().isURIResource());
 						setButtonValue("description", description).setEnabled(concrete);
 						refreshCardinality(tnode);
-					}
-					else
+					} else
 						showStackLayer("nothing");
 				}
 				else
@@ -355,6 +385,36 @@ public class Hierarchy extends FurnishedEditor {
 				setButtonValue("unbounded", (cnode.getMaxCardinality() == Integer.MAX_VALUE)).setEnabled(cnode.isMaxVariable());
 				setTextValue("minimum", ProfileModel.cardString(cnode.getMinCardinality())).setEnabled(cnode.isMinVariable());
 				setTextValue("maximum", ProfileModel.cardString(cnode.getMaxCardinality())).setEnabled(cnode.isMaxVariable());
+				//
+				setButtonValue("inverse-single", false).setEnabled(false);
+				setButtonValue("inverse-require", false).setEnabled(false);
+				setButtonValue("inverse-unbounded", false).setEnabled(false);
+				setTextValue("inverse-minimum", "").setEnabled(false);
+				setTextValue("inverse-maximum", "").setEnabled(false);
+			}
+			
+			private void refreshCardinality(BidirectionalCardinality cnode) {
+				setButtonValue("single", (cnode.getMaxCardinality() == 1)).setEnabled(cnode.isMaxVariable());
+				setButtonValue("require", (cnode.getMinCardinality() > 0)).setEnabled(cnode.isMinVariable());
+				setButtonValue("unbounded", (cnode.getMaxCardinality() == Integer.MAX_VALUE)).setEnabled(cnode.isMaxVariable());
+				setTextValue("minimum", ProfileModel.cardString(cnode.getMinCardinality())).setEnabled(cnode.isMinVariable());
+				setTextValue("maximum", ProfileModel.cardString(cnode.getMaxCardinality())).setEnabled(cnode.isMaxVariable());
+				//
+				if (cnode.hasInverse()) {
+					getLabel("inverse-label").setText(String.format("Inverse cardinality on the %s side role end:", cnode.getInverse().getRange().getLabel()));
+					setButtonValue("inverse-single", (cnode.getInverseMaxCardinality() == 1)).setEnabled(cnode.isInverseMaxVariable());
+					setButtonValue("inverse-require", (cnode.getInverseMinCardinality() > 0)).setEnabled(cnode.isInverseMinVariable());
+					setButtonValue("inverse-unbounded", (cnode.getInverseMaxCardinality() == Integer.MAX_VALUE)).setEnabled(cnode.isInverseMaxVariable());
+					setTextValue("inverse-minimum", ProfileModel.cardString(cnode.getInverseMinCardinality())).setEnabled(cnode.isInverseMinVariable());
+					setTextValue("inverse-maximum", ProfileModel.cardString(cnode.getInverseMaxCardinality())).setEnabled(cnode.isInverseMaxVariable());
+				} else {
+					getLabel("inverse-label").setText("Inverse:");
+					setButtonValue("inverse-single", false).setEnabled(false);
+					setButtonValue("inverse-require", false).setEnabled(false);
+					setButtonValue("inverse-unbounded", false).setEnabled(false);
+					setTextValue("inverse-minimum", "").setEnabled(false);
+					setTextValue("inverse-maximum", "").setEnabled(false);					
+				}
 			}
 
 			private void updateCardinality(Cardinality node) {
@@ -372,7 +432,6 @@ public class Hierarchy extends FurnishedEditor {
 				}
 
 				if( newMax == max ) {
-
 					if(getButton("single").getSelection()) 
 						newMax = 1;
 					else if( max == 1 ) 
@@ -395,6 +454,87 @@ public class Hierarchy extends FurnishedEditor {
 				
 				node.setMaxCardinality(newMax);
 				node.setMinCardinality(newMin);
+			}
+			
+			private void updateCardinality(BidirectionalCardinality node) {
+				int max = node.getMaxCardinality();
+				int min = node.getMinCardinality();
+
+				int newMax, newMin;
+
+				try {
+					newMax = ProfileModel.cardInt(getText("maximum").getText());
+					newMin = ProfileModel.cardInt(getText("minimum").getText());
+				}
+				catch( NumberFormatException e) {
+					return;
+				}
+
+				if( newMax == max ) {
+					if(getButton("single").getSelection()) 
+						newMax = 1;
+					else if( max == 1 ) 
+						newMax = Integer.MAX_VALUE;
+				}
+				
+				if( newMax == max ) {
+					if(getButton("unbounded").getSelection())
+						newMax = Integer.MAX_VALUE;
+					else if (max == Integer.MAX_VALUE)
+						newMax = 1;
+				}
+				
+				if( newMin == min ) {
+				   if(! getButton("require").getSelection())
+					   newMin = 0;
+				   else if( min == 0 )
+					   newMin = 1;
+				}
+				
+				node.setMaxCardinality(newMax);
+				node.setMinCardinality(newMin);
+				
+				// Handle inverse cardinality		
+				if (node.hasInverse()) {
+					int inverseMax = node.getInverseMaxCardinality();
+					int inverseMin = node.getInverseMinCardinality();
+	
+					int newInverseMax, newInverseMin;
+	
+					try {
+						newInverseMax = ProfileModel.cardInt(getText("inverse-maximum").getText());
+						newInverseMin = ProfileModel.cardInt(getText("inverse-minimum").getText());
+					}
+					catch( NumberFormatException e) {
+						return;
+					}
+					
+					if( newInverseMax == inverseMax ) {
+						if(getButton("inverse-single").getSelection()) 
+							newInverseMax = 1;
+						else if( inverseMax == 1 ) 
+							newInverseMax = Integer.MAX_VALUE;
+					}
+					
+					// Yes, this conditional may look redundent but it is intentional
+					// and is retesting against the result of the prior condition...
+					if( newInverseMax == inverseMax ) {
+						if(getButton("inverse-unbounded").getSelection())
+							newInverseMax = Integer.MAX_VALUE;
+						else if (inverseMax == Integer.MAX_VALUE)
+							newInverseMax = 1;
+					}
+					
+					if( newInverseMin == inverseMin) {
+					   if(! getButton("inverse-require").getSelection())
+						   newInverseMin = 0;
+					   else if( inverseMin == 0 )
+						   newInverseMin = 1;
+					}
+					
+					node.setInverseMaxCardinality(newInverseMax);
+					node.setInverseMinCardinality(newInverseMin);
+				}
 			}
 		};
 	}

@@ -52,8 +52,8 @@ info@healthmarketscience redistributed under the LGPL version 2.1.
    </license>
 
    <url>
-      <update label="CIMTool Update Site" url="http://files.cimtool.org"/>
-      <discovery label="CIMTool Update Site" url="http://files.cimtool.org"/>
+      <update label="CIMTool Update Site" url="http://cimtool.ucaiug.io"/>
+      <discovery label="CIMTool Update Site" url="http://cimtool.ucaiug.io"/>
    </url>
 
    <requires>

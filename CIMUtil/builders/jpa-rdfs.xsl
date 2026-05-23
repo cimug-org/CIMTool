@@ -1415,8 +1415,10 @@
                 <xsl:variable name="assocName"      select="cimtool:capitalize(@name, '')"/>
                 <xsl:variable name="parentType"     select="string(parent::*/@name)"/>
                 <xsl:variable name="inversePropRaw"
-                    select="tokenize(@inverseBaseProperty, '[\.#]')[last()]"/>
-                <xsl:variable name="inverseField"   select="cimtool:uncapitalize($inversePropRaw)"/>
+                    select="if (@inverseBaseProperty)
+                            then tokenize(string(@inverseBaseProperty), '[\.#]')[last()]
+                            else ''"/>
+                <xsl:variable name="inverseField"   select="if ($inversePropRaw != '') then cimtool:uncapitalize($inversePropRaw) else ''"/>
                 <xsl:variable name="orderByField"
                     select="if (cimtool:has-mrid-ancestor(parent::*)) then 'mRID' else 'id'"/>
                 <item></item>

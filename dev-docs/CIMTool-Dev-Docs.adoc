@@ -36,9 +36,9 @@ include::{includedir}/CIMToolPlugin/CIMToolPlugin-README.adoc[]
 
 include::{includedir}/CIMUtil/CIMUtil-README.adoc[]
 
-include::{rootdir}/Kena/Kena-README.adoc[] +
+include::{includedir}/Kena/Kena-README.adoc[] +
 
-include::{rootdir}/RCPUtil/RCPUtil-README.adoc[] + +
+include::{includedir}/RCPUtil/RCPUtil-README.adoc[] + +
 
 include::{includedir}/CIMToolHelp/CIMToolHelp-README.adoc[]
 

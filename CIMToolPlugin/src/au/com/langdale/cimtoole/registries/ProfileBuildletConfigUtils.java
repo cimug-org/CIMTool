@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -29,6 +31,10 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.joda.time.DateTime;
 import org.osgi.framework.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
@@ -37,15 +43,13 @@ import au.com.langdale.cimtoole.registries.config.JodaDateTimeSerializer;
 import au.com.langdale.cimtoole.registries.config.TransformBuildletDeserializer;
 import au.com.langdale.cimtoole.registries.config.TransformBuildletSerializer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
 /**
  * Utility class to handle specific functionality centered around the
  * configuration of profile buildlets of various types.
  */
 public final class ProfileBuildletConfigUtils {
+
+	private static final String CIMUTIL_PLUGIN_ID = "au.com.langdale.cimutil";
 
 	private static Type typeOfHashMap = new TypeToken<Map<String, TransformBuildlet>>() {
 	}.getType();
@@ -88,8 +92,9 @@ public final class ProfileBuildletConfigUtils {
 				if (!dataAreaBuilderConfigFile.exists()) {
 					dataAreaBuilderConfigFile.createNewFile();
 					
-					Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
-					URL buildersConfURL = cimtooleBundle.getEntry(CONFIG_DIR + "/" + CONFIG_DEFAULTS_FILE);
+					// Load builders from CIMUtil bundle where builders are located
+					Bundle bundle = Platform.getBundle(CIMUTIL_PLUGIN_ID);
+					URL buildersConfURL = bundle.getEntry(CONFIG_DIR + "/" + CONFIG_DEFAULTS_FILE);
 					URL buildersConfFileURL = FileLocator.toFileURL(buildersConfURL);
 					
 					InputStream is = null;
@@ -116,7 +121,7 @@ public final class ProfileBuildletConfigUtils {
 
 							String xslFileName = buildlet.getStyle() + XSL;
 
-							URL xslUrl = cimtooleBundle.getEntry(CONFIG_DIR + "/" + xslFileName);
+							URL xslUrl = bundle.getEntry(CONFIG_DIR + "/" + xslFileName);
 							URL xslFileUrl = FileLocator.toFileURL(xslUrl);
 							File dataAreaXslFile = new File(dataAreaDir, xslFileName);
 							dataAreaXslFile.createNewFile();
@@ -124,7 +129,7 @@ public final class ProfileBuildletConfigUtils {
 							File dataAreaXslIncludesFile = null;
 							URL xslIncludesFileURL = null;
 							if (buildlet.getIncludesFile() != null && !"".equals(buildlet.getIncludesFile())) {
-								URL xslIncludesUrl = cimtooleBundle.getEntry(CONFIG_DIR + "/" + INCLUDES_DIR + "/" + buildlet.getIncludesFile());
+								URL xslIncludesUrl = bundle.getEntry(CONFIG_DIR + "/" + INCLUDES_DIR + "/" + buildlet.getIncludesFile());
 								xslIncludesFileURL = FileLocator.toFileURL(xslIncludesUrl);
 								dataAreaXslIncludesFile = new File(dataAreaIncludesDir, buildlet.getIncludesFile());
 								dataAreaXslIncludesFile.createNewFile();
@@ -221,6 +226,17 @@ public final class ProfileBuildletConfigUtils {
 			}
 		}
 		return null;
+	}
+
+	public static List<String> getPlantUMLBuildletStyles() {
+		List<String> styles = new LinkedList<String>();
+		Map<String, TransformBuildlet> buildlets = ProfileBuildletConfigUtils.getTransformBuildlets();
+		for (TransformBuildlet buildlet : buildlets.values()) {
+			if (buildlet.getFileExt().toLowerCase().endsWith(".puml")) {
+				styles.add(buildlet.getStyle());
+			}
+		}
+		return styles;
 	}
 
 	public static InputStream getTransformBuildletInputStream(String builderKey) {

@@ -77,22 +77,49 @@ public class Validators {
 	};
 
 	public static final Validator OptionalFileWithExt(final String ext) {
-		return SimpleFile(new String[] { ext }, false, true);
+		return SimpleFile(new String[] { ext }, false, true, false);
 	}
 
 	public static final Validator OptionalFileAnyExt() {
-		return SimpleFile(new String[0], false, false);
+		return SimpleFile(new String[0], false, false, false);
 	}
 
 	public static final Validator SimpleFile(String ext, boolean required) {
-		return SimpleFile(new String[] { ext }, required, false);
+		return SimpleFile(new String[] { ext }, required, false, false);
+	}
+	
+	public static final Validator SimpleFile(String ext, boolean required, boolean allowSpacesInFileNames) {
+		return SimpleFile(new String[] { ext }, required, false, allowSpacesInFileNames);
 	}
 
 	public static final Validator SimpleFile(final String[] exts, boolean required) {
-		return SimpleFile(exts, required, true);
+		return SimpleFile(exts, required, true, false);
+	}
+	
+	public static final Validator SimpleFile(final String[] exts, boolean required, boolean allowSpacesInFileNames) {
+		return SimpleFile(exts, required, true, allowSpacesInFileNames);
 	}
 
-	public static final Validator SimpleFile(final String[] exts, final boolean required, final boolean requireExt) {
+	public static final Validator SimpleFile(final String[] exts, final boolean required, final boolean requireExt, final boolean allowSpacesInFileNames) {
+		final String extsList;
+
+		StringBuffer extensions = new StringBuffer("");
+		if (exts.length > 0) {
+			extensions.append("(");
+			for (int ix = 0; ix < exts.length; ix++) {
+				String ext = exts[ix];
+				if (ext.startsWith("*.")) {
+					ext = ext.substring(2);
+				}
+				if (ix > 0) {
+					extensions.append(((ix < exts.length - 1) ? ", " : (exts.length > 1 ? " or " : "")));
+				}
+				extensions.append((ext.startsWith(".") ? "" : ".")).append(ext);
+			}
+			extensions.append(")");
+		}
+		extsList = extensions.toString();
+		
 		return new Validator() {
 			@Override
 			public String validate(String value) {
@@ -101,7 +128,7 @@ public class Validators {
 						return "A project resource name is required";
 					else
 						return null;
-				if (value.contains("/") || value.contains("\\") || value.contains(" "))
+				if (value.contains("/") || value.contains("\\") || (value.contains(" ") && !allowSpacesInFileNames))
 					return "A simple project resource name with no folders is required";
 				for (int ix = 0; ix < exts.length; ix++) {
 					String ext = exts[ix];
@@ -111,7 +138,7 @@ public class Validators {
 						return null;
 				}
 				if (requireExt)
-					return "A project resource name with a valid extension is required";
+					return "Resource name must have a valid extension " + extsList;
 				if (value.contains("."))
 					return "If given, the extension of the project resource must be valid";
 				return null;

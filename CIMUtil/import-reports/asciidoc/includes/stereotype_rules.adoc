@@ -1,0 +1,119 @@
+[[Stereotype_Rules]]
+==== Stereotype Rules [Section 5.11]
+
+===== General and «deprecated» Stereotype Rules [Section 5.11.1]
+
+This stereotype is recognised by the CIM UML validation and document generation tool and can be applied to any of the UML concepts defined below. The typical usage of the *«deprecated»* stereotype is for the purpose of preserving backwards compatibility for the normative, already published content, during a release or two, while indicating to the users that the item is likely to actually be removed in the future. This is a graceful means of phasing out obsolete or re-factored elements, and leaving some time to the users to provide implementation in terms of the new features replacing those marked with *«deprecated»*.
+
+It is possible and supported by the CIM UML tool to have multiple stereotypes on an element (e.g. *«deprecated, CIMDatatype»*).
+
+[[Multiple-Stereotypes-Figure]]
+.Multiple Stereotypes
+[plantuml,multiple-stereotypes-diagram,svg,width=35%,align=center]
+----
+@startuml
+top to bottom direction
+
+' option gradient background to simulate EA 16.x diagrams
+' skinparam BackgroundColor #FBFBFB-#D6D2CE
+
+' Hide class icons
+hide circle
+hide empty methods
+
+' This hides the attribute icons
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #454645
+skinparam shadowing true
+
+' skinning for notes
+skinparam note {
+  'BackgroundColor #f0f0f0
+  BackgroundColor #fcf8e3
+  BorderColor #454645
+  FontColor #333333
+  FontName Arial
+  FontSize 12
+  BorderThickness 1
+  Shadowing true
+}
+
+skinparam class {
+  BackgroundColor #FEFCF9|#F9EDE1
+  AttributeFontColor #5A404C
+  FontColor #000000
+  FontStyle bold
+  StereotypeFontColor #000000
+  HeaderFontColor #000000
+  HeaderFontStyle bold
+  BorderColor #454645
+  BorderThickness 1
+  
+  ' ShadowExtension classes style definition
+  BackgroundColor<<ShadowExtension>> #EFEFEF|#lightgray
+  
+  ' Enumerations style definition
+  BackgroundColor<<enumeration>> #E9FFE5|#D0FAC6
+
+  ' Errors classes style definition
+  BackgroundColor<<error>> #FFF3F5|#FFC0CB
+  FontColor<<Error>> #000000
+  AttributeFontColor<<Error>> #000000
+}
+
+hide <<Error>> stereotype
+
+class ReactivePower <<deprecated,CIMDatatype>> {
+	+multiplier : UnitMultiplier [0..1]
+	+unit : UnitSymbol [0..1]  = WPerA {readOnly}
+	+value : Float [0..1]
+}
+
+@enduml
+----
+
+The *«deprecated»* strereotype may be used on attributes, associations, classes, packages, and diagrams in the UML model. It is recommended when deprecating a package to deprecate all its contained classes as well. When deprecating a class it is recommended to deprecate all associations in which it is involved and all its native attributes. Inheritance from a deprecated class is less clear and no general guidance is given, except to avoid this situation if possible.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule120]]Rule120 | CIM elements may have multiple stereotypes.
+| [[Rule121]]Rule121 | The *«deprecated»* stereotype may be used on attributes, associations, classes, packages, and diagrams in the CIM.
+| [[Rule122]]Rule122 | The *«deprecated»* stereotype should be used when it is desired to deprecate a package and all its contained classes as well.
+| [[Rule123]]Rule123 | The *«deprecated»* stereotype should be used when it is desired to deprecate a class and all associations in which it is involved and all its native attributes.
+| [[Rule124]]Rule124 | Usage of the *«deprecated»* stereotype should be for the purpose of preserving backwards compatibility for normative, already published content.
+| [[Rule125]]Rule125 | The *«deprecated»* stereotype should be used for no more than two (2) releases of the CIM.
+|===
+
+===== Package Stereotype Rules [Section 5.11.2]
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule126]]Rule126 | A package stereotype may be used temporarily to describe the development state of the package, e.g. *«Work in progress»*. Once the package is fully incorporated in the normative CIM model the stereotype shall be removed.
+|===
+
+===== Class Stereotype Rules [Section 5.11.3]
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule127]]Rule127 | The *«CIMDatatype»* stereotype shall be used to extend the semantics of the UML class element to represent an electric utility domain data type.
+| [[Rule128]]Rule128 | The *«Primitive»* stereotype shall be used to extend the semantics of the UML class element to represent the following data types: 
+
+1. Boolean
+2. Date
+3. DateTime
+4. Decimal 
+5. Duration
+6. Float
+7. Integer
+8. MonthDay
+9. String
+10. Time
+11. URI
+
+| [[Rule129]]Rule129 | The *«Compound»* stereotype shall be used to extend the semantics of the UML class element to represent an electric utility domain datatype that is a collection of related class attributes.
+| [[Rule130]]Rule130 | The *«enumeration»* stereotype shall be used to extend the semantics of the UML class element to represent a data type whose instances form a list of named literal values.
+| [[Rule131]]Rule131 | A CIM class that represents a domain object that participates in inheritance and / or association relationships shall not use a stereotype with the exception of the *«deprecated»* stereotype specified in [Rule 124].
+|===

@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 import au.com.langdale.cimtoole.builder.CIMBuilder;
+
 /**
  * The eclipse nature for a CIMTool project.
  */
@@ -22,12 +23,7 @@ public class CIMNature implements IProjectNature {
 	public static final String NATURE_ID = "au.com.langdale.cimtoole.CIMNature";
 
 	private IProject project;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#configure()
-	 */
+	
 	public void configure() throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
@@ -46,12 +42,7 @@ public class CIMNature implements IProjectNature {
 		desc.setBuildSpec(newCommands);
 		project.setDescription(desc, null);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
-	 */
+	
 	public void deconfigure() throws CoreException {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
@@ -66,23 +57,13 @@ public class CIMNature implements IProjectNature {
 			}
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#getProject()
-	 */
+	
 	public IProject getProject() {
 		return project;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
-	 */
+	
 	public void setProject(IProject project) {
 		this.project = project;
 	}
-
+	
 }

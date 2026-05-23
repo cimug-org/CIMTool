@@ -10,15 +10,16 @@ import static au.com.langdale.ui.builder.Templates.Field;
 import static au.com.langdale.ui.builder.Templates.FileField;
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.HRule;
 import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.RadioButton;
 
-import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Button;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Button;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
+import au.com.langdale.cimtoole.reporting.ReportGenerationSettings;
 import au.com.langdale.ui.binding.CheckBoxBinding;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.binding.Validator;
@@ -37,24 +39,70 @@ import au.com.langdale.workspace.ResourceUI.LocalFileBinding;
 import au.com.langdale.workspace.ResourceUI.ProjectBinding;
 
 public class SchemaWizardPage extends FurnishedWizardPage {
-	private final boolean expectNewProject;
+
+	protected final boolean expectNewProject;
+
 	/**
 	 * These booleans are only used when importing a schema for an existing project.
 	 */
 	private Boolean mergeShadowExtensionsEnabled;
 	private Boolean selfHealingOnScheamImportEnabled;
 
-	public SchemaWizardPage(boolean expectNewProject) {
+	public SchemaWizardPage(final boolean expectNewProject) {
 		super("schema");
 		this.expectNewProject = expectNewProject;
+		//
+		mergeShadowExtensionsEnabled = Info.getPreferenceOption(Info.MERGE_SHADOW_EXTENSIONS);
+		selfHealingOnScheamImportEnabled = Info.getPreferenceOption(Info.SELF_HEAL_ON_IMPORT);
+		//
 		if (this.expectNewProject) {
-			mergeShadowExtensionsEnabled = Info.getPreferenceOption(Info.MERGE_SHADOW_EXTENSIONS);
 			mergeShadowExtensions = new CheckBoxBinding(mergeShadowExtensionsEnabled);
-			//
-			selfHealingOnScheamImportEnabled = Info.getPreferenceOption(Info.SELF_HEAL_ON_IMPORT);
 			selfHealingOnScheamImport = new CheckBoxBinding(selfHealingOnScheamImportEnabled);
 		}
-		filename = new LocalFileBinding(getExtSources(), false);
+		//
+		shouldGenerateReport = new DependentCheckBoxBinding() {
+
+			@Override
+			public void refreshDependentCheckBoxes() {
+				boolean isGenerateReportSelected = getCheckBox().getSelection();
+				boolean isNormativeSelected = getContent().getButton("include-normative").getSelection();
+				//
+				getContent().getButton("include-extensions").setEnabled(isGenerateReportSelected);
+				getContent().getButton("include-normative").setEnabled(isGenerateReportSelected);
+				if (!isGenerateReportSelected) {
+					getContent().getButton("include-grid").setEnabled(false);
+					getContent().getButton("include-enterprise").setEnabled(false);
+					getContent().getButton("include-market").setEnabled(false);
+				} else {
+					getContent().getButton("include-grid").setEnabled(isNormativeSelected);
+					getContent().getButton("include-enterprise").setEnabled(isNormativeSelected);
+					getContent().getButton("include-market").setEnabled(isNormativeSelected);
+				}
+			}
+		};
+		includeExtensions = new CheckBoxBinding(this.expectNewProject);
+		includeNormative = new DependentCheckBoxBinding(this.expectNewProject) {
+			@Override
+			public void refreshDependentCheckBoxes() {
+				boolean isNormativeSelected = getCheckBox().getSelection();
+				boolean isGenerateReportSelected = getContent().getButton("generate-report").getSelection();
+				//
+				if (!isGenerateReportSelected) {
+					getContent().getButton("include-grid").setEnabled(false);
+					getContent().getButton("include-enterprise").setEnabled(false);
+					getContent().getButton("include-market").setEnabled(false);
+				} else {
+					getContent().getButton("include-grid").setEnabled(isNormativeSelected);
+					getContent().getButton("include-enterprise").setEnabled(isNormativeSelected);
+					getContent().getButton("include-market").setEnabled(isNormativeSelected);
+				}
+			}
+		};
+		includeGrid = new CheckBoxBinding(this.expectNewProject);
+		includeEnterprise = new CheckBoxBinding(this.expectNewProject);
+		includeMarket = new CheckBoxBinding(this.expectNewProject);
+
+		filename = new LocalFileBinding(getExtSources(), false, true);
 	}
 
 	public SchemaWizardPage() {
@@ -62,8 +110,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	}
 
 	private String NAMESPACE = Info.getPreference(Info.SCHEMA_NAMESPACE);
-	private static String[] sources = { "*.xmi;*.owl;*.eap;*.eapx;*.feap;*.qea;*.qeax", "*.xmi", "*.owl", "*.eap",
-			"*.eapx", "*.feap", "*.qea", "*.qeax" };
+	private static String[] sources = { "*.xmi;*.owl;*.eap;*.eapx;*.qea;*.qeax", "*.xmi", "*.owl", "*.eap",
+			"*.eapx", "*.qea", "*.qeax" };
 
 	private IFile file;
 	boolean importing;
@@ -73,6 +121,44 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	private RadioTextBinding namespace = new RadioTextBinding(Validators.NAMESPACE, NAMESPACE);
 	private CheckBoxBinding mergeShadowExtensions;
 	private CheckBoxBinding selfHealingOnScheamImport;
+	private DependentCheckBoxBinding shouldGenerateReport;
+	private CheckBoxBinding includeExtensions;
+	private DependentCheckBoxBinding includeNormative;
+	private CheckBoxBinding includeGrid;
+	private CheckBoxBinding includeEnterprise;
+	private CheckBoxBinding includeMarket;
+
+	public class DependentCheckBoxBinding extends CheckBoxBinding {
+
+		public DependentCheckBoxBinding() {
+			super();
+		}
+
+		public DependentCheckBoxBinding(boolean initialState) {
+			super(initialState);
+		}
+
+		public void reset() {
+			super.reset();
+			refreshDependentCheckBoxes();
+		}
+
+		public void update() {
+			super.update();
+			refreshDependentCheckBoxes();
+		}
+
+		public void refresh() {
+			if (getCheckBox().getSelection() != getChecked()) {
+				super.refresh();
+				refreshDependentCheckBoxes();
+			}
+		}
+
+		public void refreshDependentCheckBoxes() {
+		}
+
+	}
 
 	private class RadioTextBinding extends TextBinding {
 
@@ -119,8 +205,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 	}
 
-	private String[] presets = new String[] { "cim16", "http://iec.ch/TC57/2012/CIM-schema-cim16#", "cim17",
-			"http://iec.ch/TC57/CIM100#", "cim18", "http://iec.ch/TC57/CIM101#", "existing", "", "preset", NAMESPACE };
+	private String[] presets = new String[] { "cim16", "http://iec.ch/TC57/2013/CIM-schema-cim16#", "cim17",
+			"http://iec.ch/TC57/CIM100#", "cim18", "http://cim.ucaiug.io/ns#", "existing", "", "preset", NAMESPACE };
 
 	private ProjectBinding projects = new ProjectBinding();
 	private IProject newProject;
@@ -128,18 +214,18 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 	public void setSelected(IStructuredSelection selection) {
 		// Set the selected project.
 		projects.setSelected(selection);
-		
+
 		// Then determine if merging shadow extensions is enabled.
 		if (projects.getProject() != null) {
 			mergeShadowExtensionsEnabled = Info.isMergeShadowExtensionsEnabled(projects.getProject());
 		}
-		
+
 		// Then determine if self healing on import is enabled.
 		if (projects.getProject() != null) {
 			selfHealingOnScheamImportEnabled = Info.isSelfHealingOnSchemaImportEnabled(projects.getProject());
 		}
 	}
-	
+
 	public void setNewProject(IProject newProject) {
 		this.newProject = newProject;
 	}
@@ -154,16 +240,32 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 	public Boolean isMergeShadowExtensionsEnabled() {
 		if (expectNewProject)
-			return mergeShadowExtensions.getChecked(); 
-		else 
+			return mergeShadowExtensions.getChecked();
+		else
 			return mergeShadowExtensionsEnabled;
 	}
-	
+
 	public Boolean isSelfHealingOnImportEnabled() {
 		if (expectNewProject)
-			return selfHealingOnScheamImport.getChecked(); 
-		else 
+			return selfHealingOnScheamImport.getChecked();
+		else
 			return selfHealingOnScheamImportEnabled;
+	}
+
+	public ReportGenerationSettings getReportGenerationSettings() {
+		return new ReportGenerationSettings.Builder() //
+				.schemaFile(file) //
+				.isMergeShadowExtensionsEnabled(
+						(expectNewProject ? mergeShadowExtensions.getChecked() : mergeShadowExtensionsEnabled)) //
+				.isSelfHealingOnSchemaImportEnabled(
+						(expectNewProject ? selfHealingOnScheamImport.getChecked() : selfHealingOnScheamImportEnabled)) //
+				.shouldGenerateReport(shouldGenerateReport.getChecked()) //
+				.includeExtensions(getContent().getButton("include-extensions").getSelection()) //
+				.includeNormative(getContent().getButton("include-normative").getSelection()) //
+				.includeGrid(getContent().getButton("include-grid").getSelection()) //
+				.includeEnterprise(getContent().getButton("include-enterprise").getSelection()) //
+				.includeMarket(getContent().getButton("include-market").getSelection()) //
+				.build();
 	}
 
 	public String getPathname() {
@@ -178,22 +280,39 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 			protected Template define() {
 				String[] sources = getExtSources();
 				return Grid(Group(FileField("source", "File to import:", sources)),
-						Group(RadioButton("cim16", "CIM 16 (2012)"), RadioButton("cim17", "CIM 17 (CIM100)"),
+						Group(RadioButton("cim16", "CIM 16 (2013)"), RadioButton("cim17", "CIM 17 (CIM100)"),
 								RadioButton("cim18", "CIM 18 (CIM101)"), RadioButton("existing", "Current Schema NS"),
 								RadioButton("preset", "Preference*")),
 						Group(Label("Namespace URI:"), Field("namespace")),
 						(expectNewProject
 								? Group(CheckBox(Info.MERGE_SHADOW_EXTENSIONS.getLocalName(),
-										"During import merge shadow class extensions into the CIM classes they shadow"))
+										"During import merge shadow/mixin extensions into the CIM classes that inherit from them"))
 								: null),
 						(expectNewProject
 								? Group(CheckBox(Info.SELF_HEAL_ON_IMPORT.getLocalName(),
-										"Enable self-healing when importing EA projects (.eap or .qeap) as schema"))
+										"Enable self-healing when importing EA projects (.eap, .qea, etc.) as schema"))
 								: null),
-						Group(Label("Project")), expectNewProject ? null : Group(CheckboxTableViewer("projects")),
+						Group(Label(expectNewProject ? "" : "Project")), expectNewProject ? null : Group(CheckboxTableViewer("projects")),
 						Group(Label("Schema name:"), Field("filename")),
 						Group(CheckBox("replace", "Replace existing schema.")),
-						Group(Label("* Set this under Windows > Preferences > CIMTool")));
+						Group(Label("* Set this under Windows > Preferences > CIMTool")), Group(Label("")),
+						Group(HRule()),
+						Group(Grid(Group(Label("CIMTool Model Integrity Reporting:")),
+								Group(CheckBox("generate-report",
+										"Generate a 'CIM Modeling Guide' validation report during import", false)),
+								Group(Label("    "), Grid(
+										Group(CheckBox("include-extensions",
+												"Include custom extensions in the model validation report", false)),
+										Group(CheckBox("include-normative",
+												"Include the following normative CIM packages in the model validation report",
+												false)),
+										Group(Label("    "), Grid(Group(CheckBox("include-grid",
+												"Include the top-level Grid (formerly IEC61970) package", false)),
+												Group(CheckBox("include-enterprise",
+														"Include the top-level Enterprise (formerly IEC61968)", false)),
+												Group(CheckBox("include-market",
+														"Include the top-level Market (formerly IEC62325) package",
+														false)))))))));
 			}
 
 			@Override
@@ -213,11 +332,60 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 						}
 					}
 				}
+				shouldGenerateReport.bind("generate-report", this);
+				includeNormative.bind("include-normative", this);
+				includeExtensions.bind("include-extensions", this);
+				includeGrid.bind("include-grid", this);
+				includeEnterprise.bind("include-enterprise", this);
+				includeMarket.bind("include-market", this);
 				source.bind("source", this);
 				filename.bind("filename", this, source);
 				namespace.bind("namespace", presets, this);
+				//
+				if (expectNewProject) {
+					getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setSelection(false);
+					getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setSelection(false);
+					getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setEnabled(false);
+					getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setEnabled(false);
+					// The next two must be initialized to disabled...
+					getButton("include-extensions").setEnabled(false);
+					getButton("include-normative").setEnabled(false);
+				}
 			}
-			
+
+			@Override
+			public void refresh() {
+				if (expectNewProject) {
+					if (filename.getFile(Info.getSchemaFolder(newProject)) != null) {
+						IFile theFile = filename.getFile(Info.getSchemaFolder(newProject));
+						boolean isEAProject = Info.isEAProject(theFile);
+						boolean isCurrentStateEnabled = getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName())
+								.getEnabled();
+						if (!isCurrentStateEnabled & isEAProject) {
+							getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setEnabled(true);
+							getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setEnabled(true);
+							getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setSelection(true);
+							getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setSelection(true);
+						} else if (isCurrentStateEnabled && !isEAProject) {
+							getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setEnabled(false);
+							getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setEnabled(false);
+							getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setSelection(false);
+							getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setSelection(false);
+						}
+
+						if (getButton("generate-report").isEnabled() && !isEAProject) {
+							getButton("generate-report").setSelection(false);
+							getButton("generate-report").setEnabled(false);
+						} else if (!getButton("generate-report").isEnabled() && isEAProject) {
+							getButton("generate-report").setEnabled(true);
+							getButton("generate-report").setSelection(true);
+						}
+						
+						shouldGenerateReport.refreshDependentCheckBoxes();
+					}
+				}
+			}
+
 			@Override
 			public String validate() {
 				if (source.getText().length() == 0) {
@@ -225,7 +393,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 						return null;
 					} else {
 						populateCurrentSchemaNS(projects.getProject());
-						return "A schema XMI, OWL, EA Project or other valid schema file is required";
+						return "An XMI, OWL, EA Project or other valid schema file is required.";
 					}
 				}
 				IProject project = expectNewProject ? newProject : projects.getProject();
@@ -235,15 +403,20 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 				boolean exists = file.exists();
 				getButton("replace").setEnabled(exists);
-				populateCurrentSchemaNS(project);
+				
+				if (exists) 
+					populateCurrentSchemaNS(file);
+				else
+					populateCurrentSchemaNS(project);
+				
 				if (exists && !getButton("replace").getSelection()) {
-					return "A schema named " + filename.getText() + " already exists. " + "Check option to replace.";
+					return "The selected schema already exists in the project. Check 'Replace existing schema' to proceed.";
 				}
 
 				String check = null;
 				if (source.getText().toLowerCase().endsWith(".eap")
 						|| source.getText().toLowerCase().endsWith(".eapx")) {
-					check = Info.checkValidEAProject(new File(source.getText()));
+					check = Info.checkValidEAProject(new java.io.File(source.getText()));
 				}
 
 				if (check != null)
@@ -254,6 +427,18 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 			private void populateCurrentSchemaNS(IProject project) {
 				try {
 					String existingSchemaNamespace = Task.getSchemaNamespace(project);
+					if (namespace.radios[3].getSelection()) {
+						namespace.setText(existingSchemaNamespace);
+					}
+					namespace.setExistingSchemaNSPreset(existingSchemaNamespace);
+				} catch (CoreException e) {
+					namespace.setExistingSchemaNSPreset("");
+				}
+			}
+			
+			private void populateCurrentSchemaNS(IFile schemaFile) {
+				try {
+					String existingSchemaNamespace = Task.getSchemaNamespace(schemaFile);
 					if (namespace.radios[3].getSelection()) {
 						namespace.setText(existingSchemaNamespace);
 					}
@@ -285,5 +470,5 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 		}
 		return sources;
 	}
-	
+
 }

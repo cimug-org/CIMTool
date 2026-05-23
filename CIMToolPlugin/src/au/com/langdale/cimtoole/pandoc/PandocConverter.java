@@ -8,7 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PandocConverter {
+
+	private static final Logger log = LoggerFactory.getLogger(PandocConverter.class);
 
 	/**
 	 * Converts a file from one format to another using Pandoc.
@@ -41,7 +46,7 @@ public class PandocConverter {
 			}
 		});
 		
-		System.out.println(String.format("Executing Pandoc command line:  %s", command.toString()));
+		log.debug("Executing Pandoc command line:  {}", command.toString());
 
 		// Start the Pandoc process...
 		Process process = processBuilder.start();
@@ -50,8 +55,8 @@ public class PandocConverter {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
 
-			// Print any standard output from Pandoc
-			reader.lines().forEach(System.out::println);
+			// Log any standard output from Pandoc
+			reader.lines().forEach(line -> log.debug("{}", line));
 
 			// Since we want to reference any error output later  
 			// we are processing it as a list first...
@@ -63,13 +68,8 @@ public class PandocConverter {
 				}
 			});
 			
-			// Print any errors that occurred to standard err
-			errors.forEach(new Consumer<String>() {
-					@Override
-					public void accept(String error) {
-						System.err.println(error);
-					}
-				});
+			// Log any errors that occurred
+			errors.forEach(error -> log.error("{}", error));
 			
 			// Wait for the process to complete
 			int exitCode = process.waitFor();
@@ -84,19 +84,19 @@ public class PandocConverter {
 					}
 				});
 				switch (exitCode) {
-					case 1: // 1 — General Errors
+					case 1: // 1 - General Errors
 						throw new IOException(String.format("A general error has occurred while running Pandoc. This may be due to command syntax issues, missing files, or other unspecified problems. [Error Message: %s]", errorMsg));
-					case 2: // 2 — Parse Error
+					case 2: // 2 - Parse Error
 						throw new IOException(String.format("The input file or command contains syntax that Pandoc could not parse. [Error Message: %s]", errorMsg));
-					case 3: // 3 — Option Parsing Error
+					case 3: // 3 - Option Parsing Error
 						throw new IOException(String.format("An error occurred while parsing options or arguments passed to Pandoc. This is often due to an unrecognized command-line option or argument. [Error Message: %s]", errorMsg));
-					case 4: // 4 — File Handling Error
+					case 4: // 4 - File Handling Error
 						throw new IOException(String.format("An error occurred in reading or writing of the files specified in the command line. This can happen if the specified file does not exist, there are permission issues, or a file path is invalid. [Error Message: %s]", errorMsg));
-					case 5: // 5 — Unsupported Feature
+					case 5: // 5 - Unsupported Feature
 						throw new IOException(String.format("The input format or feature requested is not supported by Pandoc. This might occur if a feature has been requested that isn’t implemented for the input/output format specified. [Error Message: %s]", errorMsg));
-					case 6: // 6 — Pandoc Resource Error
+					case 6: // 6 - Pandoc Resource Error
 						throw new IOException(String.format("An error occurred due to a resource limitation, such as running out of memory during the conversion process. [Error Message: %s]", errorMsg));
-					case 21: // 21 — Unrecognized Input or Output Format
+					case 21: // 21 - Unrecognized Input or Output Format
 						throw new IOException(String.format("The format specified for input or output (-f or -t) was not recognized by Pandoc. [Error Message: %s]", errorMsg));
 				}
 			}

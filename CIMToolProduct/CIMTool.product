@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 2.3.0.RC8" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.3.0.RC8" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="CIMTool 2.3.0.RC10" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.3.0.RC10" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="cimtool-about.png"/>
@@ -14,9 +14,9 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xms40m -Xmx4G -Djava.util.logging.config.file=./logging.properties
+      <vmArgs>-Xms40m -Xmx4G -Djava.util.logging.config.file=./logging.properties -Dlogback.configurationFile=./logback.xml
       </vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.logging.config.file=./logging.properties
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Djava.util.logging.config.file=./logging.properties -Dlogback.configurationFile=./logback.xml
       </vmArgsMac>
    </launcherArgs>
 
@@ -78,6 +78,7 @@ See the GNU Lesser General Public License for more details.
       <plugin id="bcprov"/>
       <plugin id="ch.qos.logback.classic"/>
       <plugin id="ch.qos.logback.core"/>
+      <plugin id="io.ucaiug.slf4j.logback.binding" fragment="true"/>
       <plugin id="com.cimphony.cimtoole"/>
       <plugin id="com.google.gson"/>
       <plugin id="com.google.guava"/>
@@ -237,7 +238,6 @@ See the GNU Lesser General Public License for more details.
       <plugin id="org.eclipse.m2e.archetype.common"/>
       <plugin id="org.eclipse.m2e.core"/>
       <plugin id="org.eclipse.m2e.core.ui"/>
-      <plugin id="org.eclipse.m2e.logback" fragment="true"/>
       <plugin id="org.eclipse.m2e.maven.runtime"/>
       <plugin id="org.eclipse.m2e.model.edit"/>
       <plugin id="org.eclipse.m2e.workspace.cli"/>

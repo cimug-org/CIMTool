@@ -87,6 +87,9 @@ public class Detail extends FurnishedEditor {
 				if (master.getNode() instanceof ElementNode) 
 					enode = (ElementNode) master.getNode();
 				
+				/**
+				 * "base-notes" corresponds to the "Schema Description" text area...
+				 */
 				if( mnode != null && mnode.getBase() != null && mnode.getBase() != mnode.getSubject()) {
 					setTextValue("base-notes", mnode.getBase().getComment(null)).setEnabled(true);
 				}
@@ -94,6 +97,9 @@ public class Detail extends FurnishedEditor {
 					setTextValue("base-notes", "").setEnabled(false);
 				}
 
+				/**
+				 * "base-notes" corresponds to the "Schema Description" text area...
+				 */
 				if( snode != null) {
 					setTextValue("name", snode.getName()).setEnabled(true);
 					setTextValue("notes", snode.getSubject().getComment(null)).setEnabled(true);

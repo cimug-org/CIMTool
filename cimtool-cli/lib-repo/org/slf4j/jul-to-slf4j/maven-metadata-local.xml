@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.slf4j</groupId>
+  <artifactId>jul-to-slf4j</artifactId>
+  <versioning>
+    <release>2.0.17</release>
+    <versions>
+      <version>2.0.17</version>
+    </versions>
+    <lastUpdated>20260511212000</lastUpdated>
+  </versioning>
+</metadata>

@@ -4,6 +4,10 @@
  */
 package au.com.langdale.profiles;
 
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.util.MultiMap;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,10 +17,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.util.MultiMap;
-
-import au.com.langdale.kena.OntResource;
 import com.hp.hpl.jena.vocabulary.OWL;
 
 /**

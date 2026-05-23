@@ -789,6 +789,10 @@ public class Templates {
 	public static Template Row(Template a, Template b, Template c, Template d, Template e, Template f, Template g) {
 		return new RowTemplate(SWT.HORIZONTAL, new Template[] { a, b, c, d, e, f, g });
 	}
+	
+	public static Template Row(Template a, Template b, Template c, Template d, Template e, Template f, Template g, Template h) {
+		return new RowTemplate(SWT.HORIZONTAL, new Template[] { a, b, c, d, e, f, g, h });
+	}
 
 	public static Template Column(Template a, Template b) {
 		return new GridTemplate(new GroupTemplate[] { Group(a), Group(b) });

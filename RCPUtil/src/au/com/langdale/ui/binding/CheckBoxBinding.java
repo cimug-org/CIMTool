@@ -19,12 +19,16 @@ public class CheckBoxBinding implements Binding {
 	
 	public CheckBoxBinding() {
 	}
-	
+
 	public CheckBoxBinding(boolean initialState) {
 		this.initialState = initialState;
 		this.checked = this.initialState;
 	}
-	
+
+	protected Button getCheckBox() {
+		return checkbox;
+	}
+
 	public boolean getChecked() {
 		return checked;
 	}
@@ -35,24 +39,20 @@ public class CheckBoxBinding implements Binding {
 	}
 
 	public void reset() {
-		System.out.println("CheckBoxBinding.reset() ");
 		checkbox.setSelection(initialState);
 	}
 
 	public void refresh() {
-		System.out.println("CheckBoxBinding.refresh() ");
 		if(checkbox.getSelection() != checked)
 			checkbox.setSelection(checked);
 	}
 
 	public void update() {
-		System.out.println("CheckBoxBinding.update() ");
 		checked = checkbox.getSelection();
 	}
 
 	@Override
 	public String validate() {
-		System.out.println("CheckBoxBinding.validate() ");
 		return null;
 	}
 

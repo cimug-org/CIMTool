@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  CIMTool Logback Configuration
+  ==============================
+  This file controls all logging output for the CIMTool application. It is
+  bundled inside the CIMTool plugin and extracted to the installation root
+  directory alongside CIMTool.exe on first startup. The JVM argument
+  -Dlogback.configurationFile=./logback.xml in CIMTool.ini tells Logback to
+  load this file from the installation root.
+
+  SLF4J is wired to Logback via the io.ucaiug.slf4j.logback.binding fragment
+  bundle, which attaches to slf4j.api and provides the META-INF/services/
+  registration that makes LogbackServiceProvider visible through slf4j.api's
+  classloader. This approach requires no bytecode weaving.
+
+  All three logging pipelines converge into logs/cimtool.log via this file:
+    - SLF4J API calls    ->  direct (Saxon, m2e, UCanAccess, etc.)
+    - Log4j 1.x API      ->  routed via log4j-over-slf4j bridge (Jena/Kena)
+    - JUL                ->  bridged via SLF4JBridgeHandler installed in
+                            CIMToolPlugin.configureLogging() at startup
+
+  This is the single log output target. logging.properties is retained only to
+  configure JUL's pre-bridge filtering (handlers= empty, .level=ALL) and is no
+  longer the primary log output destination.
+
+  Changing log levels for diagnostics
+  =====================================
+  When investigating a reported issue, change the root level from WARN to
+  DEBUG or TRACE and ask the user to restart CIMTool and reproduce the
+  problem. The log file will then contain detailed output from all subsystems.
+  Remember to restore the level to WARN when diagnostics are complete.
+
+  Changes to this file take effect on the next restart of CIMTool.
+-->
+<configuration>
+
+    <!--
+        Rolling file appender.
+        Writes to logs/cimtool.log under the installation root, rotating by
+        date and size. Up to 5 x 10MB files are retained before older ones
+        are deleted.
+    -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/cimtool.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/cimtool-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-7level [%logger{36}] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Suppress UCanAccess JDBC driver reserved-word noise -->
+    <logger name="net.ucanaccess" level="ERROR"/>
+
+    <!-- Suppress HSQLDB verbose output (used internally by UCanAccess) -->
+    <logger name="org.hsqldb" level="ERROR"/>
+
+    <!--
+        Console stream capture logger.
+        In production mode CIMToolPlugin redirects both System.out and System.err
+        through a single JUL logger named "CIMTool.console". That logger is
+        bridged to SLF4J by SLF4JBridgeHandler, so this declaration ensures
+        console output passes the WARN root threshold and is captured in the
+        rolling log file.
+    -->
+    <logger name="CIMTool.console" level="INFO"/>
+
+    <!--
+        Root logger.
+        WARN is appropriate for production use. Change to DEBUG or TRACE
+        when diagnosing a reported issue, then restore to WARN afterwards.
+    -->
+    <root level="WARN">
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

@@ -22,7 +22,6 @@ public abstract class ProjectModelFollower extends SelectionFollower implements 
 
 	public void selectProject(IProject project) {
 		if( activeProject == null || ! project.equals(activeProject)) {
-			//System.out.println("ProjectModelView switching to " + project);
 			activeProject = project;
 			viewActiveProject();
 		}

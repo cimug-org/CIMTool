@@ -23,7 +23,7 @@ public class TransformBuildletSerializer<T extends TransformBuildlet> implements
 		jsonObject.add("datetime", new JsonPrimitive(buildlet.getDateTimeCreated().toString()));
 		jsonObject.add("ext", new JsonPrimitive(buildlet.getFileExt()));
         if (buildlet.getIncludesFile() != null) {
-            jsonObject.add("importFile", new JsonPrimitive(buildlet.getIncludesFile().toString()));
+            jsonObject.add("includeFile", new JsonPrimitive(buildlet.getIncludesFile().toString()));
         }
 		
 		return jsonObject;

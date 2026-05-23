@@ -4,50 +4,39 @@
  */
 package au.com.langdale.cimtoole.preferences;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.project.Info;
+import au.com.langdale.cimtoole.project.QualifiedNames;
 
 /**
  * Class used to initialize default preference values.
  */
-public class PreferenceInitializer extends AbstractPreferenceInitializer {
+public class PreferenceInitializer extends AbstractPreferenceInitializer implements QualifiedNames {
 
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CIMToolPlugin.getDefault().getPreferenceStore();
-		store.setDefault(Info.INSTANCE_NAMESPACE.getLocalName(), "http://www.ucaiug.org/network#");
-		store.setDefault(Info.PROFILE_NAMESPACE.getLocalName(), "http://www.ucaiug.org/profile#");
-		store.setDefault(Info.MAPPING_NAMESPACE.getLocalName(), "http://langdale.com.au/2010/schema-mapping#");
-		store.setDefault(Info.MAPPING_LABEL.getLocalName(), "Mappings");
-		store.setDefault(Info.SCHEMA_NAMESPACE.getLocalName(), CIM.NS);
-		store.setDefault(Info.MERGE_SHADOW_EXTENSIONS.getLocalName(), false);
-		store.setDefault(Info.SELF_HEAL_ON_IMPORT.getLocalName(), false);
-		store.setDefault(Info.PROFILE_ENVELOPE.getLocalName(), "Profile");
-		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);
-		store.setDefault(Info.PROBLEM_PER_SUBJECT.getLocalName(), true);
-		store.setDefault(Info.USE_PACKAGE_NAMES.getLocalName(), false);
-		store.setDefault(Info.PLANTUML_THEME.getLocalName(), "_none_");
-		store.setDefault(Info.DOCROOT_CLASSES_COLOR.getLocalName(), "#D3FBFE");
-		store.setDefault(Info.CONCRETE_CLASSES_COLOR.getLocalName(), "#FFFFE0");
-		store.setDefault(Info.ABSTRACT_CLASSES_COLOR.getLocalName(), "#D3D3D3");
-		store.setDefault(Info.ENUMERATIONS_COLOR.getLocalName(), "#90EE90");
-		store.setDefault(Info.CIMDATATYPES_COLOR.getLocalName(), "#FFEBCD");
-		store.setDefault(Info.COMPOUNDS_COLOR.getLocalName(), "#FFEBCD");
-		store.setDefault(Info.PRIMITIVES_COLOR.getLocalName(), "#E6E6FF");
-		store.setDefault(Info.ERRORS_COLOR.getLocalName(), "#FFC0CB");
-		store.setDefault(Info.ENABLE_DARK_MODE.getLocalName(), false);
-		store.setDefault(Info.ENABLE_SHADOWING.getLocalName(), true);
-		store.setDefault(Info.HIDE_ENUMERATIONS.getLocalName(), false);
-		store.setDefault(Info.HIDE_CIMDATATYPES.getLocalName(), true);
-		store.setDefault(Info.HIDE_COMPOUNDS.getLocalName(), true);
-		store.setDefault(Info.HIDE_PRIMITIVES.getLocalName(), true);
-		store.setDefault(Info.HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES.getLocalName(), false);
-		store.setDefault(Info.HORIZONTAL_SPACING.getLocalName(), "20");
-		store.setDefault(Info.VERTICAL_SPACING.getLocalName(), "30");
+		Map<String, Object> defaults = getPreferenceDefaults();
+		for (Map.Entry<String, Object> entry : defaults.entrySet()) {
+			Object value = entry.getValue();
+			if (value instanceof Boolean b) {
+				store.setDefault(entry.getKey(), b);
+			} else if (value instanceof Float f) {
+				store.setDefault(entry.getKey(), f);
+			} else if (value instanceof Double d) {
+				store.setDefault(entry.getKey(), d);
+			} else if (value instanceof Long l) {
+				store.setDefault(entry.getKey(), l);
+			} else if (value instanceof Integer i) {
+				store.setDefault(entry.getKey(), i);
+			} else {
+				store.setDefault(entry.getKey(), value.toString());
+			}
+		}
 	}
 
 }

@@ -362,7 +362,7 @@
 		<xsl:call-template name="annotate" />
 		<item>
 		    CREATE TABLE <xsl:call-template name="ident"/>
-		    ( "name" VARCHAR(100) UNIQUE );
+		    ( "name" VARCHAR(100) PRIMARY KEY );
 		</item>    
 
 		<xsl:variable name="name" select="@name"/>

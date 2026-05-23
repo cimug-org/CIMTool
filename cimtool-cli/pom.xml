@@ -6,7 +6,7 @@
 
     <groupId>au.com.langdale</groupId>
     <artifactId>cimtool-cli</artifactId>
-    <version>2.3.0.RC7</version>
+    <version>2.3.0</version>
     <packaging>jar</packaging>
 
     <name>CIMTool CLI</name>
@@ -50,6 +50,15 @@
 		    <releases>
 		        <enabled>true</enabled>
 		        <updatePolicy>never</updatePolicy>
+		        <!--
+		            Suppress checksum validation warnings for this local file repository.
+		            The JARs here are committed to source control and were installed by
+		            install-jars.bat. Maven 3.9 logs a ChecksumFailureException stack
+		            trace when checksum files are absent, even though the build succeeds.
+		            Checksum validation is not meaningful for a local file repository
+		            that the project itself owns and manages.
+		        -->
+		        <checksumPolicy>ignore</checksumPolicy>
 		    </releases>
 		    <snapshots>
 		        <enabled>false</enabled>
@@ -58,185 +67,14 @@
     </repositories>
 
     <!--
-        JAR Signing Profile
-        ===================
-        Activated by passing -Psign on the Maven command line:
-
-            mvn clean package -Psign
-
-        All sensitive keystore values are read from an external properties file
-        that lives OUTSIDE the repository and is never committed to source control.
-        The default expected location is the user's home directory:
-
-            %USERPROFILE%\.cimtool\cimtool-signing.properties  (Windows)
-            ~/.cimtool/cimtool-signing.properties               (Mac/Linux)
-
-        Override the location by setting the system property at build time:
-
-            mvn clean package -Psign -Dsigning.properties=C:\keys\my-signing.properties
-
-        Required properties in cimtool-signing.properties:
-            signing.keystore  = absolute path to the keystore file
-            signing.alias     = alias of the key entry to sign with
-            signing.storepass = keystore password
-            signing.keypass   = key password (may be same as storepass)
-
-        To generate a self-signed keystore see create-keystore.bat / create-keystore.sh.
-        When a CA-issued certificate is obtained, replace the keystore file and update
-        cimtool-signing.properties accordingly — no changes to pom.xml are required.
+        JAR signing for official releases is handled externally by
+        CIMToolProduct/release-cimtool.bat using the UCA Users Group
+        EV certificate on the IdenTrust SafeNet hardware token. The Maven
+        build produces an unsigned uber JAR via: mvn clean package
+        The signing script handles invocation of this build, signing of the
+        resulting target/cimtool-cli.jar, deployment to dist/, and SHA-256
+        checksum generation. No Maven signing profile is used.
     -->
-    <profiles>
-        <profile>
-            <id>sign</id>
-            <build>
-                <plugins>
-                    <!--
-                        properties-maven-plugin: Load signing credentials from the
-                        external properties file before jarsigner runs.
-                        The file path defaults to:
-                          %USERPROFILE%\.cimtool\cimtool-signing.properties (Windows)
-                          ~/.cimtool/cimtool-signing.properties               (Mac/Linux)
-                        Override with: -Dsigning.properties=<absolute path>
-                    -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>load-signing-properties</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>read-project-properties</goal>
-                                </goals>
-                                <configuration>
-                                    <files>
-                                        <file>${signing.properties}</file>
-                                    </files>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jarsigner-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <executions>
-
-                            <execution>
-                                <id>sign-uber-jar</id>
-                                <!--
-                                    Must run after the Shade plugin (package phase) has
-                                    produced the uber JAR. jarPath directly targets the
-                                    shaded uber JAR by name, bypassing the thin jar.
-                                -->
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <!--
-                                        Target the uber JAR directly by path. Using jarPath
-                                        instead of archiveDirectory+includes ensures only
-                                        cimtool-cli.jar is signed, not the thin jar.
-                                    -->
-                                    <archive>${project.build.directory}/cimtool-cli.jar</archive>
-
-                                    <!-- Keystore details — loaded from external properties file -->
-                                    <keystore>${signing.keystore}</keystore>
-                                    <alias>${signing.alias}</alias>
-                                    <storepass>${signing.storepass}</storepass>
-                                    <keypass>${signing.keypass}</keypass>
-
-                                    <!--
-                                        Embed a trusted timestamp from DigiCert's free public
-                                        TSA server. This ensures the signature remains
-                                        verifiable after the signing certificate expires —
-                                        critical when upgrading from self-signed to CA cert.
-                                        Remove this element if building in an offline environment.
-                                    -->
-                                    <tsa>http://timestamp.digicert.com</tsa>
-
-                                    <!--
-                                        Verbose output shows each file signed and the
-                                        certificate details — useful for confirming the
-                                        correct key was used.
-                                    -->
-                                    <verbose>true</verbose>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>verify-uber-jar</id>
-                                <!--
-                                    Verify the signature immediately after signing to
-                                    catch any keystore or configuration issues before
-                                    the JAR is distributed.
-                                -->
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>verify</goal>
-                                </goals>
-                                <configuration>
-                                    <archive>${project.build.directory}/cimtool-cli.jar</archive>
-                                    <verbose>true</verbose>
-                                </configuration>
-                            </execution>
-
-                        </executions>
-                    </plugin>
-
-                    <!--
-                        maven-antrun-plugin: Deploy the signed uber JAR to dist/.
-
-                        Runs in the install phase — after signing (package) and
-                        signature verification (verify) have both completed
-                        successfully. Copies the signed JAR to the dist/ directory
-                        at the cimtool-cli project root, creating the directory if
-                        it does not already exist. This is the distribution-ready
-                        artifact for inclusion in official CIMTool releases.
-                    -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>deploy-to-dist</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <mkdir dir="${project.basedir}/dist"/>
-                                        <copy
-                                            file="${project.build.directory}/cimtool-cli.jar"
-                                            todir="${project.basedir}/dist"
-                                            overwrite="true"/>
-                                        <echo message="Deployed: dist/cimtool-cli.jar"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                </plugins>
-            </build>
-
-            <!--
-                Default path to the signing properties file.
-                Override at build time with: -Dsigning.properties=<absolute path>
-                The properties-maven-plugin reads this file during initialize phase
-                and injects signing.keystore, signing.alias, signing.storepass,
-                and signing.keypass as Maven properties.
-            -->
-            <properties>
-                <signing.properties>${user.home}/.cimtool/cimtool-signing.properties</signing.properties>
-            </properties>
-        </profile>
-    </profiles>
 
     <dependencies>
 
@@ -246,7 +84,7 @@
         <!-- IMPORTANT: These version numbers must match the versions     -->
         <!-- extracted by install-jars.bat from the plugin folder names   -->
         <!-- in the PDE export plugins/ directory (e.g.                   -->
-        <!-- au.com.langdale.kena_3.3.4 -> 3.3.4). When a new CIMTool    -->
+        <!-- au.com.langdale.kena_3.4.0 -> 3.4.0). When a new CIMTool    -->
         <!-- release is built, update these versions to match the plugin  -->
         <!-- folder names, then run install-jars.bat and mvn package.     -->
         <!-- ============================================================ -->
@@ -254,7 +92,7 @@
         <dependency>
             <groupId>au.com.langdale</groupId>
             <artifactId>kena</artifactId>
-            <version>3.3.4</version> <!-- UPDATE to match au.com.langdale.kena_<version> folder in PDE export -->
+            <version>3.4.0</version> <!-- UPDATE to match au.com.langdale.kena_<version> folder in PDE export -->
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -282,7 +120,9 @@
         <!--   jena-2.6.3-tests.jar  — test-only artifact                -->
         <!--   iri-0.8-sources.jar   — source artifact                   -->
         <!--   junit-4.5.jar         — test framework                    -->
-        <!--   slf4j-api-1.5.8.jar   — superseded by CIMUtil 1.7.36      -->
+        <!--                                                              -->
+        <!-- log4j-1.2.13 and slf4j-log4j12-1.5.8 have been replaced by -->
+        <!-- log4j-over-slf4j-2.0.17. See Kena-README for details.      -->
         <!-- ============================================================ -->
 
         <dependency>
@@ -382,9 +222,9 @@
         </dependency>
 
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.13</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>2.0.17</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -393,16 +233,33 @@
             </exclusions>
         </dependency>
 
+        <!--
+            Logback — SLF4J 2.x logging provider. Receives all log events
+            routed through SLF4J (Saxon-HE, Jena/Kena via log4j-over-slf4j,
+            JUL via jul-to-slf4j) and writes to the console appender configured
+            in src/main/resources/logback.xml.
+        -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.32</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.5.32</version>
+        </dependency>
+
+        <!--
+            JUL-to-SLF4J bridge — redirects java.util.logging events into
+            the SLF4J pipeline. SLF4JBridgeHandler.install() must be called
+            at startup in CIMToolCLI to activate the bridge.
+        -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.8</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>2.0.17</version>
         </dependency>
 
         <!-- ============================================================ -->
@@ -457,14 +314,10 @@
             <version>3.45.2.0</version>
         </dependency>
 
-        <!--
-            Using CIMUtil's newer slf4j-api 1.7.36 — backward-compatible
-            with Kena's usage compiled against 1.5.8.
-        -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.17</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -472,7 +325,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.healthmarketscience.jackcess</groupId>
             <artifactId>jackcess</artifactId>

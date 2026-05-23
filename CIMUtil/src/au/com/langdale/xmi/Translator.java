@@ -4,28 +4,36 @@
  */
 package au.com.langdale.xmi;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import org.apache.xerces.util.XMLChar;
-
-import com.hp.hpl.jena.graph.FrontsNode;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.Resource;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.xerces.util.XMLChar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.graph.impl.LiteralLabelFactory;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  * A translator which produces a OWL model with CIM/XML standard naming from a
  * OWL model derived from CIM UML.
  */
 public class Translator implements Runnable {
+	private static final Logger log = LoggerFactory.getLogger(Translator.class);
 
 	private OntModel model;
 	private OntModel result;
@@ -36,11 +44,13 @@ public class Translator implements Runnable {
 
 	/**
 	 * Construct from input model and the namespace for renamed resources.
-	 * @param stereotypedNamespaces 
 	 * 
-	 * @param input the model to be translated.
+	 * @param stereotypedNamespaces
+	 * 
+	 * @param input                 the model to be translated.
 	 */
-	public Translator(OntModel model, StereotypedNamespaces stereotypedNamespaces, String namespace, boolean usePackageNames) {
+	public Translator(OntModel model, StereotypedNamespaces stereotypedNamespaces, String namespace,
+			boolean usePackageNames) {
 		this.model = model;
 		this.stereotypedNamespaces = stereotypedNamespaces;
 		OntResource ont = model.getValidOntology();
@@ -68,27 +78,36 @@ public class Translator implements Runnable {
 	 * some resources substituted.
 	 */
 	public void run() {
-
 		pass1.run();
 
-		System.out.println("Stage 2 XMI model size: " + getModel().size());
+		log.debug("Stage 2 XMI model size: {}", getModel().size());
 
 		propagateAnnotation(UML.baseuri);
+
 		pass2.run();
 	}
 
 	private abstract class Pass implements Runnable {
+
+		protected Resource baseuri = UML.baseuri; // Default resource
+		protected Resource baseprefix = UML.baseprefix; // Default resource
+		protected Resource uriHasPrefix = UML.uriHasPrefix; // Default resource
+
 		protected abstract FrontsNode renameResource(OntResource r, String l);
-		
-		protected HashMap<OntResource, String> primitiveToCIMDatatypeMap = new HashMap<OntResource, String>();
-		
+
+		protected HashMap<OntResource, String> primitiveToCanonicalCIMTypeMap = new HashMap<OntResource, String>();
+		protected HashMap<String, OntResource> canonicalCIMTypeToPrimitiveMap = new HashMap<String, OntResource>();
+
 		/**
 		 * Pass over every statement and apply renameResource() to each resource.
 		 */
 		public void run() {
-			
+
 			result = ModelFactory.createMem();
-			Iterator triples = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
+
+			preprocess();
+
+			Iterator<Triple> triples = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
 			while (triples.hasNext()) {
 				Triple triple = (Triple) triples.next();
 				//
@@ -102,7 +121,98 @@ public class Translator implements Runnable {
 				//
 				add(renamedSubject, renamedPredicate, renamedObject);
 			}
+
 			model = result;
+		}
+
+		/**
+		 * Default no-op implementation. Should be overridden if preprocessing is
+		 * needed.
+		 */
+		protected void preprocess() {
+		}
+
+		/**
+		 * Discover the base URI, if given, for a model element.
+		 * 
+		 * @param r an untranslated resource
+		 * @return a URI
+		 */
+		protected String findBaseURI(OntResource r) {
+			String b = null;
+			if (stereotypedNamespaces.hasNamespaces()) {
+				b = stereotypedNamespaces.getNamespace(r);
+			} else {
+				b = r.getString(baseuri);
+			}
+
+			if (b != null) {
+				return b;
+			}
+
+			// If the resource itself does not have a baseuri we then check the domain
+			if (r.getDomain() != null) {
+				if (stereotypedNamespaces.hasNamespaces()) {
+					b = stereotypedNamespaces.getNamespace(r.getDomain());
+				} else {
+					b = r.getDomain().getString(baseuri);
+				}
+				if (b != null) {
+					return b;
+				}
+			}
+
+			// This additional code is only relevant for when baseuri/baseprefix
+			// tag values are used to define namespaces. Here we check to ensure
+			// that no namespaces have been loaded from a *.namespaces mapping file.
+			// If not then we need to do the additional check for a baseprefix tag
+			// value...
+			if (!stereotypedNamespaces.hasNamespaces()) {
+				String x = r.getString(baseprefix);
+				if (x != null) {
+					ResIterator it = model.listSubjectsWithProperty(uriHasPrefix, x);
+					if (it.hasNext()) {
+						b = it.nextResource().getURI();
+						if (!b.contains("#"))
+							b += "#";
+						return b;
+					}
+				}
+			}
+
+			OntResource p = r.getResource(RDFS.isDefinedBy);
+			if (p != null) {
+				// Here we navigate up the package hierarchy checking for a namespace (either
+				// via a stereotype or baseuri tag value - whichever mode is in play)
+				OntResource aPackage = p;
+				while (aPackage != null) {
+					if (stereotypedNamespaces.hasNamespaces()) {
+						b = stereotypedNamespaces.getNamespace(p);
+					} else {
+						b = aPackage.getString(baseuri);
+					}
+					if (b != null) {
+						return b;
+					} else {
+						if (aPackage.hasProperty(RDFS.isDefinedBy)) {
+							aPackage = aPackage.getResource(RDFS.isDefinedBy);
+							if (aPackage.equals(UML.global_package))
+								aPackage = null;
+						} else {
+							aPackage = null;
+						}
+					}
+				}
+				// "Fall through" processing is to utilize the namespace of the immediate
+				// package containing the resource...
+				if (uniqueNamespaces)
+					if (extraDecoration)
+						return p.getNameSpace();
+					else
+						return stripHash(p.getNameSpace()) + "/" + p.getLocalName() + "#";
+			}
+
+			return defaultNamespace;
 		}
 
 		/**
@@ -153,6 +263,33 @@ public class Translator implements Runnable {
 	 * These are then available in later passes.
 	 */
 	Runnable pass1 = new Pass() {
+
+		/**
+		 * During pass 1 we must preprocess baseuri, baseprefix, and hasBasePrefix
+		 * annotations as they are used in the findBaseURI() method. Without this step
+		 * packages are not mapped to their proper namespaces and extension packages
+		 * will be incorrectly assigned the default CIM namespaces. This is because at
+		 * this stage in translation the baseuri annotation is still only identifiable
+		 * by its EAID and not yet by its UML.baseuri property.
+		 */
+		protected void preprocess() {
+			Iterator triples = model.getGraph().find(Node.ANY, RDF.type.asNode(), OWL.AnnotationProperty.asNode());
+			while (triples.hasNext()) {
+				Triple triple = (Triple) triples.next();
+				//
+				OntResource subject = model.createResource(triple.getSubject());
+				if (subject.getLabel() != null) {
+					if (subject.getLabel().equals(UML.baseuri.getLocalName())) {
+						baseuri = subject;
+					} else if (subject.getLabel().equals(UML.baseprefix.getLocalName())) {
+						baseprefix = subject;
+					} else if (subject.getLabel().equals(UML.uriHasPrefix.getLocalName())) {
+						uriHasPrefix = subject;
+					}
+				}
+			}
+		}
+
 		/**
 		 * Substitute a a single resource.
 		 * 
@@ -170,17 +307,19 @@ public class Translator implements Runnable {
 				return annotationResource(l);
 			} else if (r.hasProperty(RDF.type, UML.Package)) {
 				// there are three strategies evolved over time to assign package URI's
+				String packageNamespace = findBaseURI(r);
 				if (uniqueNamespaces) {
 					if (extraDecoration)
 						return result.createResource(
-								stripHash(defaultNamespace) + "/Global" + pathName(r) + "#Package_" + l);
+								stripHash(packageNamespace) + "/Global" + pathName(r) + "#Package_" + l);
 					else
-						return result.createResource(stripHash(defaultNamespace) + prefixPath(r) + "#" + l);
+						return result.createResource(stripHash(packageNamespace) + prefixPath(r) + "#" + l);
 				} else
-					return result.createResource(defaultNamespace + "Package_" + l);
+					return result.createResource(packageNamespace + "Package_" + l);
 			} else
 				return r;
 		}
+
 	};
 
 	public static String stripHash(String uri) {
@@ -192,25 +331,72 @@ public class Translator implements Runnable {
 	public static boolean powercc = true;;
 
 	/**
-	 * Determine whether we are interested in a UML tag of given name and return an
-	 * annotation resource for it.
+	 * Determine whether we are interested in a UML tag of the given name and return
+	 * an annotation resource for it if so.
 	 */
-	public static FrontsNode annotationResource(String l) {
-		if (l.equals("documentation") || l.equals("description"))
+	public static FrontsNode annotationResource(String tag) {
+		if (tag.equals("documentation") || tag.equals("description"))
 			return RDFS.comment;
-		else if (l.equals(UML.baseuri.getLocalName()))
+		else if (tag.equals(UML.baseuri.getLocalName()))
 			return UML.baseuri;
-		else if (l.equals(UML.baseprefix.getLocalName()))
+		else if (tag.equals(UML.baseprefix.getLocalName()))
 			return UML.baseprefix;
+		else if (tag.equals(UML.baseType.getLocalName()))
+			return UML.baseType;
+		else if (tag.equals(XSDFacets.length.getLocalName()))
+			return XSDFacets.length;
+		else if (tag.equals(XSDFacets.minLength.getLocalName()))
+			return XSDFacets.minLength;
+		else if (tag.equals(XSDFacets.maxLength.getLocalName()))
+			return XSDFacets.maxLength;
+		else if (tag.equals(XSDFacets.minInclusive.getLocalName()))
+			return XSDFacets.minInclusive;
+		else if (tag.equals(XSDFacets.maxInclusive.getLocalName()))
+			return XSDFacets.maxInclusive;
+		else if (tag.equals(XSDFacets.minExclusive.getLocalName()))
+			return XSDFacets.minExclusive;
+		else if (tag.equals(XSDFacets.maxExclusive.getLocalName()))
+			return XSDFacets.maxExclusive;
+		else if (tag.equals(XSDFacets.whiteSpace.getLocalName()))
+			return XSDFacets.whiteSpace;
+		else if (tag.equals(XSDFacets.pattern.getLocalName()))
+			return XSDFacets.pattern;
+		else if (tag.equals(XSDFacets.enumeration.getLocalName()))
+			return XSDFacets.enumeration;
+		else if (tag.equals(XSDFacets.totalDigits.getLocalName()))
+			return XSDFacets.totalDigits;
+		else if (tag.equals(XSDFacets.fractionDigits.getLocalName()))
+			return XSDFacets.fractionDigits;
 		else if (powercc) {
-			if (l.equals("RationalRose$PowerCC:RdfRoleA"))
+			if (tag.equals("RationalRose$PowerCC:RdfRoleA"))
 				return UML.roleALabel;
-			else if (l.equals("RationalRose$PowerCC:RdfRoleB"))
+			else if (tag.equals("RationalRose$PowerCC:RdfRoleB"))
 				return UML.roleBLabel;
-			else if (l.equals("RationalRose$PowerCC:Namespace"))
+			else if (tag.equals("RationalRose$PowerCC:Namespace"))
 				return UML.baseprefix;
 		}
 		return null; // omit other annotations eg 'transient' defined in the UML
+	}
+
+	/**
+	 * Set's an appropriate tag value.
+	 */
+	public static void addTagValue(OntResource subject, FrontsNode tag, String value) {
+		// XSD facet tag values...
+		if (tag.equals(UML.baseType.getLocalName())) {
+			OntModel model = subject.getOntModel();
+			OntResource uri = model.createResource(XSD.xstring.toString());
+			subject.addProperty(tag, uri);
+		} else if (tag.equals(XSDFacets.length.getLocalName()) || tag.equals(XSDFacets.minLength.getLocalName())
+				|| tag.equals(XSDFacets.maxLength.getLocalName()) || tag.equals(XSDFacets.minInclusive.getLocalName())
+				|| tag.equals(XSDFacets.maxInclusive.getLocalName())
+				|| tag.equals(XSDFacets.minExclusive.getLocalName())
+				|| tag.equals(XSDFacets.maxExclusive.getLocalName()) || tag.equals(XSDFacets.totalDigits.getLocalName())
+				|| tag.equals(XSDFacets.fractionDigits.getLocalName())) {
+			subject.addProperty(tag, Node.createLiteral(LiteralLabelFactory.create(Integer.valueOf(value))));
+		} else {
+			subject.addProperty(tag, value);
+		}
 	}
 
 	private static String pathName(OntResource r) {
@@ -242,22 +428,31 @@ public class Translator implements Runnable {
 	 * apply to classes, properties and enumeration members.
 	 */
 	Runnable pass2 = new Pass() {
-		
+
 		@Override
 		public void run() {
+
 			super.run();
-			
+
 			/**
 			 * Once all renaming has completed for pass 2, the final step is to add the
 			 * UML.cimdatatypeMapping to each of the primitives. This is executed after
-			 * rename processing as
+			 * rename processing
 			 */
 			ResIterator it = result.listSubjectsBuffered(UML.hasStereotype, UML.primitive);
 			while (it.hasNext()) {
 				OntResource primitive = it.nextResource();
-				String cimdatatypeMapping = primitiveToCIMDatatypeMap.get(primitive);
+				String cimdatatypeMapping = primitiveToCanonicalCIMTypeMap.get(primitive);
 				if (cimdatatypeMapping != null)
 					primitive.addProperty(UML.cimdatatypeMapping, cimdatatypeMapping);
+			}
+
+			it = result.listSubjectsBuffered(UML.hasStereotype, UML.constrainedprimitive);
+			while (it.hasNext()) {
+				OntResource constrainedPrimitive = it.nextResource();
+				String cimdatatypeMapping = primitiveToCanonicalCIMTypeMap.get(constrainedPrimitive);
+				if (cimdatatypeMapping != null)
+					constrainedPrimitive.addProperty(UML.cimdatatypeMapping, cimdatatypeMapping);
 			}
 		}
 
@@ -271,16 +466,23 @@ public class Translator implements Runnable {
 		@Override
 		protected FrontsNode renameResource(OntResource r, String l) {
 			String namespace = findBaseURI(r);
+
 			if (r.hasProperty(RDF.type, OWL.Class)) {
 				if ((r.hasProperty(UML.hasStereotype, UML.datatype) || r.hasProperty(UML.hasStereotype, UML.cimdatatype)
-						|| r.hasProperty(UML.hasStereotype, UML.primitive))
+						|| r.hasProperty(UML.hasStereotype, UML.primitive)
+						|| r.hasProperty(UML.hasStereotype, UML.constrainedprimitive))
 						&& !r.hasProperty(UML.hasStereotype, UML.enumeration)) {
-					FrontsNode x = XSDTypeUtils.selectXSDType(l);
+					FrontsNode x = XSDTypeUtils.selectXSDType(r, l);
 					if (x != null) {
 						OntResource resource = result.createResource(x.toString());
-						if (r.hasProperty(UML.hasStereotype, UML.primitive)) {
-							if (!primitiveToCIMDatatypeMap.containsKey(resource))
-								primitiveToCIMDatatypeMap.put(resource, namespace + l);
+						if (r.hasProperty(UML.hasStereotype, UML.primitive)
+								|| r.hasProperty(UML.hasStereotype, UML.constrainedprimitive)) {
+							if (!primitiveToCanonicalCIMTypeMap.containsKey(resource)) {
+								primitiveToCanonicalCIMTypeMap.put(resource, namespace + l);
+							}
+							if (!canonicalCIMTypeToPrimitiveMap.containsKey(namespace + l)) {
+								canonicalCIMTypeToPrimitiveMap.put(namespace + l, resource);
+							}
 						}
 						return resource;
 					}
@@ -312,10 +514,7 @@ public class Translator implements Runnable {
 				}
 			}
 
-			// System.out.println("Unrecognised UML element name: " + l + " uri: " +
-			// r.getURI());
-			// this is almost certainly a top level datatype declaration
-			FrontsNode x = XSDTypeUtils.selectXSDType(l);
+			FrontsNode x = XSDTypeUtils.selectXSDType(r, l);
 			if (x != null) {
 				return x;
 			}
@@ -352,75 +551,7 @@ public class Translator implements Runnable {
 			result.insert(0, '_');
 		return result.toString();
 	}
-
-	/**
-	 * Discover the base URI, if given, for a model element.
-	 * 
-	 * @param r an untranslated resource
-	 * @return a URI
-	 */
-	protected String findBaseURI(OntResource r) {
-		String b = null;
-		if (stereotypedNamespaces.hasNamespaces()) {
-			b = stereotypedNamespaces.getNamespace(r);
-		} else {
-			b = r.getString(UML.baseuri);
-		}
-
-		if (b != null) {
-			return b;
-		}
-
-		// If the resource itself does not have a baseuri we then check the domain
-		if (r.getDomain() != null) {
-			if (stereotypedNamespaces.hasNamespaces()) {
-				b = stereotypedNamespaces.getNamespace(r.getDomain());
-			} else {
-				b = r.getDomain().getString(UML.baseuri);
-			}
-			if (b != null) {
-				return b;
-			}
-		}
-
-		// This additional code is only relevant for when baseuri/baseprefix 
-		// tagged values are used to define namespaces. Here we checked to 
-		// ensure that no namespaces have been loaded from a *.namespaces 
-		// mapping file. If not then we need to do the additional check for
-		// a baseprefix tagged value...
-		if (!stereotypedNamespaces.hasNamespaces()) {
-			String x = r.getString(UML.baseprefix);
-			if (x != null) {
-				ResIterator it = model.listSubjectsWithProperty(UML.uriHasPrefix, x);
-				if (it.hasNext()) {
-					b = it.nextResource().getURI();
-					if (!b.contains("#"))
-						b += "#";
-					return b;
-				}
-			}
-		}
-		
-		OntResource p = r.getResource(RDFS.isDefinedBy);
-		if (p != null) {
-			if (stereotypedNamespaces.hasNamespaces()) {
-				b = stereotypedNamespaces.getNamespace(p);
-			} else {
-				b = p.getString(UML.baseuri);
-			}
-			if (b != null) {
-				return b;
-			}
-			if (uniqueNamespaces)
-				if (extraDecoration)
-					return p.getNameSpace();
-				else
-					return stripHash(p.getNameSpace()) + "/" + p.getLocalName() + "#";
-		}
-
-		return defaultNamespace;
-	}
-
+	
 	/**
 	 * Propagate a given annotation property to descendants.
 	 *

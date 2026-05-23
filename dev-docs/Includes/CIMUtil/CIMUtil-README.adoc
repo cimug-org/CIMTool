@@ -492,7 +492,7 @@ by `cimtool-cli`. Key classes:
 
 The following sequence diagram documents the full CLI transform pipeline architecture.
 
-image::readme-images/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.svg[CIMTool CLI Profile Transformation Sequence Diagram]
+image::{cimutil-imagesdir}/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.svg[CIMTool CLI Profile Transformation Sequence Diagram]
 
 
 

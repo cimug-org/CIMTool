@@ -42,6 +42,7 @@ if "%SCRIPT_DIR:~-1%"=="\" set SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
 set REPO=%SCRIPT_DIR%\lib-repo
 set KENA_LIB=%SCRIPT_DIR%\..\Kena\lib
 set CIMUTIL_LIB=%SCRIPT_DIR%\..\CIMUtil\lib
+set CIMTOOLE_LIB=%SCRIPT_DIR%\..\CIMToolPlugin\lib
 
 REM -----------------------------------------------------------------------
 REM Resolve the export root — from argument or interactive prompt
@@ -184,8 +185,10 @@ if /i not "%INSTALL_VENDOR%"=="Y" goto :skip_vendor
 
 REM -----------------------------------------------------------------------
 REM Kena\lib
-REM Note: jena-2.6.3-tests.jar, iri-0.8-sources.jar, junit-4.5.jar, and
-REM       slf4j-api-1.5.8.jar are intentionally omitted. See pom.xml.
+REM Note: jena-2.6.3-tests.jar, iri-0.8-sources.jar, and junit-4.5.jar
+REM       are intentionally omitted. See pom.xml.
+REM       log4j-1.2.13.jar and slf4j-log4j12-1.5.8.jar have been replaced
+REM       by log4j-over-slf4j-2.0.17.jar. See pom.xml.
 REM -----------------------------------------------------------------------
 echo --- Kena\lib -------------------------------------------------------
 echo.
@@ -270,24 +273,71 @@ echo   OK
 :icu4j_done
 echo.
 
-echo   Installing log4j:1.2.13
-if not exist "%KENA_LIB%\log4j-1.2.13.jar" (
-    echo   [MISSING] %KENA_LIB%\log4j-1.2.13.jar -- skipping
-    goto :log4j_done
+echo   Installing log4j-over-slf4j:2.0.17
+if not exist "%KENA_LIB%\log4j-over-slf4j-2.0.17.jar" (
+    echo   [MISSING] %KENA_LIB%\log4j-over-slf4j-2.0.17.jar -- skipping
+    goto :log4j_over_slf4j_done
 )
-call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="log4j" -DartifactId="log4j" -Dversion="1.2.13" -Dfile="%KENA_LIB%\log4j-1.2.13.jar" --quiet
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="log4j-over-slf4j" -Dversion="2.0.17" -Dfile="%KENA_LIB%\log4j-over-slf4j-2.0.17.jar" --quiet
 echo   OK
-:log4j_done
+:log4j_over_slf4j_done
 echo.
 
-echo   Installing slf4j-log4j12:1.5.8
-if not exist "%KENA_LIB%\slf4j-log4j12-1.5.8.jar" (
-    echo   [MISSING] %KENA_LIB%\slf4j-log4j12-1.5.8.jar -- skipping
-    goto :slf4j_log4j12_done
+REM -----------------------------------------------------------------------
+REM SLF4J 2.x / Logback / JUL bridge
+REM Sourced from the PDE product export plugins\ directory (wildcard match
+REM on bundle version qualifier) and from CIMToolPlugin\lib\.
+REM -----------------------------------------------------------------------
+echo --- SLF4J 2.x / Logback / JUL bridge ------------------------------
+echo.
+
+echo   Installing slf4j-api:2.0.17
+set SLF4J_API_JAR=
+for %%F in ("%PLUGINS_DIR%\slf4j.api_2.0.17*.jar") do set SLF4J_API_JAR=%%F
+if "%SLF4J_API_JAR%"=="" (
+    echo   [MISSING] No slf4j.api_2.0.17*.jar found under %PLUGINS_DIR% -- skipping
+    goto :slf4j_api_done
 )
-call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-log4j12" -Dversion="1.5.8" -Dfile="%KENA_LIB%\slf4j-log4j12-1.5.8.jar" --quiet
+echo   Found: %SLF4J_API_JAR%
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-api" -Dversion="2.0.17" -Dfile="%SLF4J_API_JAR%" --quiet
 echo   OK
-:slf4j_log4j12_done
+:slf4j_api_done
+echo.
+
+echo   Installing logback-core:1.5.32
+set LOGBACK_CORE_JAR=
+for %%F in ("%PLUGINS_DIR%\ch.qos.logback.core_1.5.32*.jar") do set LOGBACK_CORE_JAR=%%F
+if "%LOGBACK_CORE_JAR%"=="" (
+    echo   [MISSING] No ch.qos.logback.core_1.5.32*.jar found under %PLUGINS_DIR% -- skipping
+    goto :logback_core_done
+)
+echo   Found: %LOGBACK_CORE_JAR%
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="ch.qos.logback" -DartifactId="logback-core" -Dversion="1.5.32" -Dfile="%LOGBACK_CORE_JAR%" --quiet
+echo   OK
+:logback_core_done
+echo.
+
+echo   Installing logback-classic:1.5.32
+set LOGBACK_CLASSIC_JAR=
+for %%F in ("%PLUGINS_DIR%\ch.qos.logback.classic_1.5.32*.jar") do set LOGBACK_CLASSIC_JAR=%%F
+if "%LOGBACK_CLASSIC_JAR%"=="" (
+    echo   [MISSING] No ch.qos.logback.classic_1.5.32*.jar found under %PLUGINS_DIR% -- skipping
+    goto :logback_classic_done
+)
+echo   Found: %LOGBACK_CLASSIC_JAR%
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="ch.qos.logback" -DartifactId="logback-classic" -Dversion="1.5.32" -Dfile="%LOGBACK_CLASSIC_JAR%" --quiet
+echo   OK
+:logback_classic_done
+echo.
+
+echo   Installing jul-to-slf4j:2.0.17
+if not exist "%CIMTOOLE_LIB%\jul-to-slf4j-2.0.17.jar" (
+    echo   [MISSING] %CIMTOOLE_LIB%\jul-to-slf4j-2.0.17.jar -- skipping
+    goto :jul_to_slf4j_done
+)
+call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="jul-to-slf4j" -Dversion="2.0.17" -Dfile="%CIMTOOLE_LIB%\jul-to-slf4j-2.0.17.jar" --quiet
+echo   OK
+:jul_to_slf4j_done
 echo.
 
 REM -----------------------------------------------------------------------
@@ -376,16 +426,6 @@ echo   OK
 :sqlite_done
 echo.
 
-echo   Installing slf4j-api:1.7.36
-if not exist "%CIMUTIL_LIB%\slf4j-api-1.7.36.jar" (
-    echo   [MISSING] %CIMUTIL_LIB%\slf4j-api-1.7.36.jar -- skipping
-    goto :slf4j_api_done
-)
-call mvn install:install-file -Daether.checksums.algorithms=SHA-256,SHA-1,MD5 -DlocalRepositoryPath="%REPO%" -DcreateChecksum=true -Dpackaging=jar -DgroupId="org.slf4j" -DartifactId="slf4j-api" -Dversion="1.7.36" -Dfile="%CIMUTIL_LIB%\slf4j-api-1.7.36.jar" --quiet
-echo   OK
-:slf4j_api_done
-echo.
-
 echo   Installing jackcess:2.2.3
 if not exist "%CIMUTIL_LIB%\jackcess-2.2.3.jar" (
     echo   [MISSING] %CIMUTIL_LIB%\jackcess-2.2.3.jar -- skipping
@@ -427,6 +467,7 @@ echo   OK
 echo.
 
 :skip_vendor
+
 :end
 echo =======================================================================
 echo   Installation complete.

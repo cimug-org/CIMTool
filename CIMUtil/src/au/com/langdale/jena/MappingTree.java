@@ -1,11 +1,11 @@
 package au.com.langdale.jena;
 
-import com.hp.hpl.jena.vocabulary.OWL2;
-import com.hp.hpl.jena.vocabulary.RDFS;
-
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.xmi.UML;
+
+import com.hp.hpl.jena.vocabulary.OWL2;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class MappingTree extends JenaTreeModelBase {
 

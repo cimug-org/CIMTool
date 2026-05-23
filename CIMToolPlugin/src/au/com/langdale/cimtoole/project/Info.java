@@ -8,14 +8,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 //import org.apache.commons.lang3.CharEncoding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -31,87 +37,21 @@ import org.osgi.framework.Bundle;
 
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 
+import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
-import au.com.langdale.ui.builder.ColorUtils;
+import au.com.langdale.colors.util.ColorUtils;
 import au.com.langdale.util.Jobs;
 
 /**
  * A set of utilities that define the file locations, file types, properties and
  * preferences used in a CIMTool project.
  */
-public class Info {
+public class Info implements QualifiedNames {
+
+	protected static final String CIMUTIL_PLUGIN_ID = "au.com.langdale.cimutil";
 
 	private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
-
-	// properties and preferences
-	public static final QualifiedName PROFILE_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_path");
-	public static final QualifiedName BASE_MODEL_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "base_model_path");
-	public static final QualifiedName SCHEMA_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "schema_namespace");
-	public static final QualifiedName MERGE_SHADOW_EXTENSIONS = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"merge_shadow_extensions");
-	public static final QualifiedName SELF_HEAL_ON_IMPORT = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"self_heal_on_import");
-	public static final QualifiedName INSTANCE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"instance_namespace");
-	public static final QualifiedName MERGED_SCHEMA_PATH = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"merged_schema_path");
-	public static final QualifiedName PRESERVE_NAMESPACES = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"preserve_namespaces");
-	public static final QualifiedName USE_PACKAGE_NAMES = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"user_package_names");
-	public static final QualifiedName PROBLEM_PER_SUBJECT = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"problem_per_subject");
-
-	// these are preferences only: use as file properties is deprecated
-	public static final QualifiedName PROFILE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"profile_namespace");
-	public static final QualifiedName PROFILE_ENVELOPE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "profile_envelope");
-
-	public static final QualifiedName MAPPING_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"mapping_namespace");
-	public static final QualifiedName MAPPING_LABEL = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "mapping_label");
-
-	/**
-	 * PlantUML preferences below. When adding a new QualifiedName to the list here
-	 * be sure to also add the new entry to the Info.getPlantUMLParameters() method
-	 * to be passed along to the ProfileSerializer class.
-	 */
-	public static final QualifiedName PLANTUML_THEME = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "plantuml_theme");
-	public static final QualifiedName DOCROOT_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_docroot_classes_color");
-	public static final QualifiedName CONCRETE_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_concrete_classes_color");
-	public static final QualifiedName ABSTRACT_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_abstract_classes_color");
-	public static final QualifiedName ENUMERATIONS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_enumerations_color");
-	public static final QualifiedName CIMDATATYPES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_cimdatatypes_color");
-	public static final QualifiedName COMPOUNDS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_compounds_color");
-	public static final QualifiedName PRIMITIVES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_primitives_color");
-	public static final QualifiedName ERRORS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_errors_color");
-	public static final QualifiedName ENABLE_DARK_MODE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_enable_dark_mode");
-	public static final QualifiedName ENABLE_SHADOWING = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_enable_shadowing");
-	public static final QualifiedName HIDE_ENUMERATIONS = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_hide_enumerations");
-	public static final QualifiedName HIDE_CIMDATATYPES = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_hide_cimdatatypes");
-	public static final QualifiedName HIDE_COMPOUNDS = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_hide_compounds");
-	public static final QualifiedName HIDE_PRIMITIVES = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_hide_primitives");
-	public static final QualifiedName HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES = new QualifiedName(
-			CIMToolPlugin.PLUGIN_ID, "plantuml_hide_cardinality_for_required_attributes");
-	public static final QualifiedName HORIZONTAL_SPACING = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_nodesep_horizontal_spacing");
-	public static final QualifiedName VERTICAL_SPACING = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
-			"plantuml_ranksep_vertical_spacing");
 
 	public static final List<String> themes = new LinkedList<String>();
 	static {
@@ -162,8 +102,26 @@ public class Info {
 	}
 
 	public static final String SETTINGS_EXTENSION = "cimtool-settings";
+	public static final String BUILDER_PREFERENCES_EXTENSION = "builder-preferences";
+	public static final String GLOBAL_PREFERENCES_EXTENSION = "cimtool-global-preferences";
 	public static final String COPYRIGHT_MULTI_LINE_EXTENSION = "copyright-multi-line";
 	public static final String COPYRIGHT_SINGLE_LINE_EXTENSION = "copyright-single-line";
+
+	public static boolean isCIMToolProject(IProject project) {
+		try {
+			if (project == null || !project.isOpen()) {
+				return false;
+			}
+			// Check for nature first (preferred)
+			if (project.hasNature(CIMNature.NATURE_ID)) {
+				return true;
+			}
+			// Fall back to settings file for legacy projects
+			return getSettings(project).exists();
+		} catch (CoreException e) {
+			return false;
+		}
+	}
 
 	public static boolean isProfile(IResource resource) {
 		return isFile(resource, "Profiles", "owl", "n3");
@@ -182,14 +140,37 @@ public class Info {
 	}
 
 	public static boolean isSchema(IResource resource) {
-		return isFile(resource, "Schema", "owl", "xmi", "eap", "eapx", "qea", "qeax", "feap")
+		return isFile(resource, "Schema", "owl", "xmi", "eap", "eapx", "qea", "qeax")
 				|| isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
+	}
+
+	public static boolean isEAProject(IResource resource) {
+		return isFile(resource, "Schema", "eap", "eapx", "qea", "qeax");
+	}
+
+	public static boolean isEAProject(IFile file) {
+		String[] eaExts = new String[] { "eap", "eapx", "qea", "qeax" };
+		String ext = file.getFileExtension();
+		if (ext == null)
+			return false;
+		ext = ext.toLowerCase();
+		for (String anExt : eaExts) {
+			if (ext.equals(anExt))
+				return true;
+		}
+		return false;
 	}
 
 	public static boolean isSettings(IResource resource) {
 		String extension = resource.getFileExtension();
 		boolean isSettings = (extension != null ? SETTINGS_EXTENSION.equals(extension) : false);
 		return isSettings;
+	}
+
+	public static boolean isBuilderPreferences(IResource resource) {
+		String extension = resource.getFileExtension();
+		boolean isBuilderPreferences = (extension != null ? BUILDER_PREFERENCES_EXTENSION.equals(extension) : false);
+		return isBuilderPreferences;
 	}
 
 	public static boolean isSchemaFolder(IResource resource) {
@@ -238,11 +219,13 @@ public class Info {
 		return (resource instanceof IFolder) && path.segmentCount() == 2 && path.segment(0).equals(location);
 	}
 
-
-	 public static boolean isXMI(IFile file) { 
-		 String ext = file.getFileExtension(); if( ext == null) return false; ext = ext.toLowerCase(); 
-		 return ext.equals("xmi"); 
-	 }
+	public static boolean isXMI(IFile file) {
+		String ext = file.getFileExtension();
+		if (ext == null)
+			return false;
+		ext = ext.toLowerCase();
+		return ext.equals("xmi");
+	}
 
 	public static boolean isParseable(IFile file) {
 		String ext = file.getFileExtension();
@@ -251,9 +234,9 @@ public class Info {
 		ext = ext.toLowerCase();
 
 		return ext.equals("xmi") || ext.equals("eap") || ext.equals("eapx") || ext.equals("qea") || ext.equals("qeax")
-				|| ext.equals("feap") || ext.equals("owl") || ext.equals("n3") || ext.equals("simple-owl")
-				|| ext.equals("merged-owl") || ext.equals("diagnostic") || ext.equals("cimtool-settings")
-				|| ext.equals("repair") || ext.equals("mapping-ttl") || ext.equals("mapping-owl")
+				|| ext.equals("owl") || ext.equals("n3") || ext.equals("simple-owl") || ext.equals("merged-owl")
+				|| ext.equals("diagnostic") || ext.equals("cimtool-settings") || ext.equals("repair")
+				|| ext.equals("mapping-ttl") || ext.equals("mapping-owl")
 				|| ModelParserRegistry.INSTANCE.hasParserForExtension(ext);
 	}
 
@@ -262,7 +245,7 @@ public class Info {
 		if (ext != null && ext.equalsIgnoreCase("annotation")) {
 			IFile master = null;
 
-			String[] schemaExt = new String[] { "xmi", "eap", "eapx", "qea", "qeax", "feap" };
+			String[] schemaExt = new String[] { "xmi", "eap", "eapx", "qea", "qeax" };
 			for (String s : schemaExt) {
 				master = getRelated(file, s);
 				if (master.exists())
@@ -316,28 +299,33 @@ public class Info {
 		return project != null ? project.getFolder("Documentation") : (IFolder) null;
 	}
 
-	public static IFolder getDocumentationImages(IProject project) {
+	public static IFolder getDocumentationImagesFolder(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Images") : (IFolder) null;
 	}
 
-	public static IFolder getDocumentationIncludes(IProject project) {
+	public static IFolder getDocumentationIncludesFolder(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Includes") : (IFolder) null;
 	}
 
-	public static IFolder getDocumentationStyles(IProject project) {
+	public static IFolder getDocumentationStylesFolder(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Styles") : (IFolder) null;
 	}
 
-	public static IFolder getDocumentationThemes(IProject project) {
+	public static IFolder getDocumentationThemesFolder(IProject project) {
 		IFolder documentation = getDocumentationFolder(project);
 		return documentation != null ? documentation.getFolder("Themes") : (IFolder) null;
 	}
 
 	public static IFolder getSchemaFolder(IProject project) {
 		return project != null ? project.getFolder("Schema") : null;
+	}
+
+	public static IFolder getSchemaImportReportFolder(IProject project) {
+		IFolder schema = getSchemaFolder(project);
+		return schema != null ? schema.getFolder(".import-reports") : (IFolder) null;
 	}
 
 	public static IFolder getProfileFolder(IProject project) {
@@ -352,8 +340,30 @@ public class Info {
 		return project != null ? project.getFolder("Incremental") : null;
 	}
 
+	public static boolean doesFolderExistOnDiskEFS(IFolder folder) {
+		try {
+			URI uri = folder.getLocationURI(); // null for virtual/unmapped
+			if (uri == null)
+				return false;
+			IFileStore store = EFS.getStore(uri);
+			IFileInfo info = store.fetchInfo();
+			return info.exists() && info.isDirectory();
+		} catch (CoreException e) {
+			// log appropriately
+			return false;
+		}
+	}
+
 	public static IFile getSettings(IProject project) {
 		return project != null ? project.getFile("." + SETTINGS_EXTENSION) : null;
+	}
+
+	public static IFile getBuilderPreferences(IProject project) {
+		return project != null ? project.getFile("." + BUILDER_PREFERENCES_EXTENSION) : null;
+	}
+
+	public static IFile getGlobalPreferences(IProject project) {
+		return project != null ? project.getFile("." + GLOBAL_PREFERENCES_EXTENSION) : null;
 	}
 
 	public static IFile getMultiLineCopyrightFile(IProject project) {
@@ -366,17 +376,19 @@ public class Info {
 		return file;
 	}
 
-	private static InputStream openBundledFile(final String pathWithinBundle) throws CoreException {
-		// Below attempts to load a file located within a bundle shipped as part of the
-		// CIMTool product.
+	/**
+	 * Opens an input stream to a file from the bundle associated with the specified
+	 * pluginID. Used for resources such as builders and copyright templates.
+	 */
+	protected static InputStream openBundledFile(String pluginID, final String pathWithinBundle) throws CoreException {
 		InputStream source;
 		try {
-			Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
-			URL url = cimtooleBundle.getEntry(pathWithinBundle);
+			Bundle bundle = Platform.getBundle(pluginID);
+			URL url = bundle.getEntry(pathWithinBundle);
 			URL fileUrl = FileLocator.toFileURL(url);
 			source = fileUrl.openStream();
 		} catch (IOException e) {
-			throw error("can't load file from within CIMTool bundle:  " + pathWithinBundle, e);
+			throw error("Unable to load file from within bundle:  " + pathWithinBundle, e);
 		}
 		return source;
 	}
@@ -389,7 +401,7 @@ public class Info {
 
 		InputStream source = null;
 		try {
-			source = openBundledFile("builders/default-copyright-template-empty.txt");
+			source = openBundledFile(CIMUTIL_PLUGIN_ID, "builders/empty-copyright-template.txt");
 			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			// We currently do nothing on error. This should typically not occur...
@@ -418,7 +430,7 @@ public class Info {
 
 		InputStream source = null;
 		try {
-			source = openBundledFile("builders/default-copyright-template-multi-line.txt");
+			source = openBundledFile(CIMUTIL_PLUGIN_ID, "builders/default-copyright-template-multi-line.txt");
 			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			// We currently do nothing on error. This should typically not occur...
@@ -447,7 +459,7 @@ public class Info {
 
 		InputStream source = null;
 		try {
-			source = openBundledFile("builders/default-copyright-template-single-line.txt");
+			source = openBundledFile(CIMUTIL_PLUGIN_ID, "builders/default-copyright-template-single-line.txt");
 			copyright = new String(IOUtils.toByteArray(new InputStreamReader(source), Charset.forName("UTF-8")));
 		} catch (IOException e) {
 			// We currently do nothing on error. This should typically not occur...
@@ -718,18 +730,16 @@ public class Info {
 		return value;
 	}
 
-	public static String getBuilderSpecificParameter(IResource resource, QualifiedName symbol) {
-		String value = "";
-		if (resource.exists()) {
-			Settings settings = CIMToolPlugin.getSettings();
-			value = settings.getSetting(resource, symbol);
-			if (value == null) {
-				value = getPreference(symbol);
-			}
-		} else {
+	public static String getBuilderPreference(IResource resource, QualifiedName symbol) {
+		String value = CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+		if (value == null) {
 			value = getPreference(symbol);
 		}
 		return value;
+	}
+
+	public static void putBuilderPreference(IResource resource, QualifiedName symbol, String value) {
+		CIMToolPlugin.getBuilderPreferences().putPreference(resource, symbol, value);
 	}
 
 	public static void putProperty(IResource resource, QualifiedName symbol, String value) {
@@ -740,15 +750,90 @@ public class Info {
 		return CIMToolPlugin.getDefault().getPluginPreferences().getString(symbol.getLocalName());
 	}
 
+	public static String getBuilderPreference(QualifiedName symbol) {
+		// Note that the call to CIMToolPlugin.getDefault().getPluginPreferences() is
+		// intentional.
+		return CIMToolPlugin.getDefault().getPluginPreferences().getString(symbol.getLocalName());
+	}
+
 	public static boolean getPreferenceOption(QualifiedName symbol) {
 		return CIMToolPlugin.getDefault().getPluginPreferences().getBoolean(symbol.getLocalName());
 	}
 
-	public static String getSchemaNamespace(IResource resource) throws CoreException {
-		IResource[] schemas = getSchemaFolder(resource.getProject()).members();
+	/**
+	 * Method that applied hierarchical precedence for preference setting can be
+	 * configured to hierarchically override:
+	 * 
+	 * <pre>
+	 * global default preferences -> project-level preference -> profile-level preference
+	 * </pre>
+	 * 
+	 * @param resource The resource to determine the default for.
+	 * @param symbol   The QualifedName for the preference.
+	 * @return The preference value.
+	 */
+	public static String getHierarchicalBuilderPreference(IResource resource, QualifiedName symbol) {
+		String style = null;
+		if (isProfile(resource)) {
+			// Step 1: Check first at the profile-level to determine if the preference is
+			// specified...
+			style = CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+			if (style == null || style.isEmpty()) {
+				// Step 2: When not, we next check to see if the preference is specified at the
+				// project-level...
+				IProject project = resource.getProject();
+				style = CIMToolPlugin.getBuilderPreferences().getPreference(project, symbol);
+				if (style == null || style.isEmpty()) {
+					// Step 3: If not, then the preference's global default is used...
+					style = getPreference(symbol);
+				}
+			}
+		}
+		return style;
+	}
+
+	/**
+	 * Note for this method we do not resort to a "fallback" default value as we
+	 * intentionally want to know if a value is explicitly set at the level
+	 * (profile, project or global) of the resource passed in.
+	 * 
+	 * @param resource The resource to retrieve a builder preference value for.
+	 * @param symbol   The QualifedName for the preference.
+	 * @return The preference value.
+	 */
+	public static String getHierarchicalBuilderPreferenceWithoutDefault(IResource resource, QualifiedName symbol) {
+		if (isProfile(resource)) {
+			// Resource is a profile so we get the profile-level preference and return it.
+			// Note for this method we do not resort to a "fallback" default hierarchically
+			// as we intentionally want to know if a value is explicitly set or not.
+			return CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+		} else if (resource instanceof IProject) {
+			// Resource is a profile so we get the profile-level preference and return it.
+			return CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+		} else {
+			return getPreference(symbol);
+		}
+	}
+
+	public static String getSchemaNamespace(IProject project) throws CoreException {
+		IResource[] schemas = getSchemaFolder(project.getProject()).members();
 		for (int ix = 0; ix < schemas.length; ix++) {
 			IResource schema = schemas[ix];
 			if (isSchema(schema)) {
+				Settings settings = CIMToolPlugin.getSettings();
+				String ns = settings.getSetting(schema, SCHEMA_NAMESPACE);
+				if (ns != null)
+					return ns;
+			}
+		}
+		return getPreference(SCHEMA_NAMESPACE);
+	}
+
+	public static String getSchemaNamespace(IResource schemaFile) throws CoreException {
+		IResource[] schemas = getSchemaFolder(schemaFile.getProject()).members();
+		for (int ix = 0; ix < schemas.length; ix++) {
+			IResource schema = schemas[ix];
+			if (isSchema(schema) && schema.getName().equals(schemaFile.getName())) {
 				Settings settings = CIMToolPlugin.getSettings();
 				String ns = settings.getSetting(schema, SCHEMA_NAMESPACE);
 				if (ns != null)
@@ -795,69 +880,87 @@ public class Info {
 		}
 	}
 
-	public static String getBuilderSpecificParameters(IFile file) {
-		StringBuffer builderSpecificParameters = new StringBuffer();
-		// Currently we only have PlantUML builder specific parameters...
-		if (isFile(file, "Profiles", "puml")) {
+	public static String getBuilderParameters(IFile file) {
+		StringBuffer builderParameters = new StringBuffer();
+		// Currently we only have PlantUML builder parameters...
+		if (isFile(file, "Profiles", "puml") || isFile(file, "Profiles", "adoc") || isProfile(file)) {
 			//
 			// Set diagram preferences used by any PlantUML diagram builders...
-			builderSpecificParameters
-					.append("plantUMLTheme=" + Info.getBuilderSpecificParameter(file, PLANTUML_THEME) + "|");
-			builderSpecificParameters.append(
-					"docRootClassesColor=" + Info.getBuilderSpecificParameter(file, DOCROOT_CLASSES_COLOR) + "|");
-			builderSpecificParameters.append("docRootClassesFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, DOCROOT_CLASSES_COLOR)) + "|");
-			builderSpecificParameters.append(
-					"concreteClassesColor=" + Info.getBuilderSpecificParameter(file, CONCRETE_CLASSES_COLOR) + "|");
-			builderSpecificParameters.append("concreteClassesFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, CONCRETE_CLASSES_COLOR)) + "|");
-			builderSpecificParameters.append(
-					"abstractClassesColor=" + Info.getBuilderSpecificParameter(file, ABSTRACT_CLASSES_COLOR) + "|");
-			builderSpecificParameters.append("abstractClassesFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, ABSTRACT_CLASSES_COLOR)) + "|");
-			builderSpecificParameters
-					.append("enumerationsColor=" + Info.getBuilderSpecificParameter(file, ENUMERATIONS_COLOR) + "|");
-			builderSpecificParameters.append("enumerationsFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, ENUMERATIONS_COLOR)) + "|");
-			builderSpecificParameters
-					.append("cimDatatypesColor=" + Info.getBuilderSpecificParameter(file, CIMDATATYPES_COLOR) + "|");
-			builderSpecificParameters.append("cimDatatypesFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, CIMDATATYPES_COLOR)) + "|");
-			builderSpecificParameters
-					.append("compoundsColor=" + Info.getBuilderSpecificParameter(file, COMPOUNDS_COLOR) + "|");
-			builderSpecificParameters.append("compoundsFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, COMPOUNDS_COLOR)) + "|");
-			builderSpecificParameters
-					.append("primitivesColor=" + Info.getBuilderSpecificParameter(file, PRIMITIVES_COLOR) + "|");
-			builderSpecificParameters.append("primitivesFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, PRIMITIVES_COLOR)) + "|");
-			builderSpecificParameters
-					.append("errorsColor=" + Info.getBuilderSpecificParameter(file, ERRORS_COLOR) + "|");
-			builderSpecificParameters.append("errorsFontColor="
-					+ ColorUtils.getHexFontColor(Info.getBuilderSpecificParameter(file, ERRORS_COLOR)) + "|");
-			builderSpecificParameters.append("enableDarkMode="
-					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, ENABLE_DARK_MODE)) + "|");
-			builderSpecificParameters.append("enableShadowing="
-					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, ENABLE_SHADOWING)) + "|");
-			builderSpecificParameters.append("hideEnumerations="
-					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_ENUMERATIONS)) + "|");
-			builderSpecificParameters.append("hideCIMDatatypes="
-					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_CIMDATATYPES)) + "|");
-			builderSpecificParameters.append("hideCompounds="
-					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_COMPOUNDS)) + "|");
-			builderSpecificParameters.append("hidePrimitives="
-					+ Boolean.parseBoolean(Info.getBuilderSpecificParameter(file, HIDE_PRIMITIVES)) + "|");
-			builderSpecificParameters
-					.append("hideCardinalityForRequiredAttributes="
-							+ Boolean.parseBoolean(
-									Info.getBuilderSpecificParameter(file, HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES))
-							+ "|");
-			builderSpecificParameters
-					.append("horizontalSpacing=" + Info.getBuilderSpecificParameter(file, HORIZONTAL_SPACING) + "|");
-			builderSpecificParameters
-					.append("verticalSpacing=" + Info.getBuilderSpecificParameter(file, VERTICAL_SPACING) + "|");
+			builderParameters.append("plantUMLTheme=" + Info.getBuilderPreference(file, PLANTUML_THEME) + "|");
+			builderParameters
+					.append("docRootClassesColor=" + Info.getBuilderPreference(file, DOCROOT_CLASSES_COLOR) + "|");
+			builderParameters.append("anonymousCompoundsColor="
+					+ ColorUtils.lighten(Info.getBuilderPreference(file, COMPOUNDS_COLOR), 60f) + "|");
+			builderParameters.append("anonymousEnumerationsColor="
+					+ ColorUtils.lighten(Info.getBuilderPreference(file, ENUMERATIONS_COLOR), 60f) + "|");
+			builderParameters.append("anonymousComplexTypesColor="
+					+ ColorUtils.lighten(Info.getBuilderPreference(file, CONCRETE_CLASSES_COLOR), 60f) + "|");
+			builderParameters.append("docRootClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, DOCROOT_CLASSES_COLOR)) + "|");
+			builderParameters
+					.append("concreteClassesColor=" + Info.getBuilderPreference(file, CONCRETE_CLASSES_COLOR) + "|");
+			builderParameters.append("concreteClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, CONCRETE_CLASSES_COLOR)) + "|");
+			builderParameters
+					.append("abstractClassesColor=" + Info.getBuilderPreference(file, ABSTRACT_CLASSES_COLOR) + "|");
+			builderParameters.append("abstractClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, ABSTRACT_CLASSES_COLOR)) + "|");
+			builderParameters.append("enumerationsColor=" + Info.getBuilderPreference(file, ENUMERATIONS_COLOR) + "|");
+			builderParameters.append("enumerationsFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, ENUMERATIONS_COLOR)) + "|");
+			builderParameters.append("cimDatatypesColor=" + Info.getBuilderPreference(file, CIMDATATYPES_COLOR) + "|");
+			builderParameters.append("cimDatatypesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, CIMDATATYPES_COLOR)) + "|");
+			builderParameters.append("compoundsColor=" + Info.getBuilderPreference(file, COMPOUNDS_COLOR) + "|");
+			builderParameters.append("compoundsFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, COMPOUNDS_COLOR)) + "|");
+			builderParameters.append("primitivesColor=" + Info.getBuilderPreference(file, PRIMITIVES_COLOR) + "|");
+			builderParameters.append("primitivesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, PRIMITIVES_COLOR)) + "|");
+			builderParameters.append("choicesColor=" + Info.getBuilderPreference(file, CHOICES_COLOR) + "|");
+			builderParameters.append("choicesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, CHOICES_COLOR)) + "|");
+			builderParameters.append("refsColor=" + Info.getBuilderPreference(file, REFS_COLOR) + "|");
+			builderParameters.append(
+					"refsFontColor=" + ColorUtils.getHexFontColor(Info.getBuilderPreference(file, REFS_COLOR)) + "|");
+			builderParameters.append("errorsColor=" + Info.getBuilderPreference(file, ERRORS_COLOR) + "|");
+			builderParameters.append("errorsFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, ERRORS_COLOR)) + "|");
+			builderParameters.append("setAnonymousClassesColorWhite="
+					+ Boolean.parseBoolean(Info.getBuilderPreference(file, ANONYMOUS_CLASSES_COLOR_WHITE)) + "|");
+			builderParameters.append(
+					"enableDarkMode=" + Boolean.parseBoolean(Info.getBuilderPreference(file, ENABLE_DARK_MODE)) + "|");
+			builderParameters.append(
+					"enableShadowing=" + Boolean.parseBoolean(Info.getBuilderPreference(file, ENABLE_SHADOWING)) + "|");
+			builderParameters.append("hideEnumerations="
+					+ Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_ENUMERATIONS)) + "|");
+			builderParameters.append("hideCIMDatatypes="
+					+ Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_CIMDATATYPES)) + "|");
+			builderParameters.append(
+					"hideCompounds=" + Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_COMPOUNDS)) + "|");
+			builderParameters.append(
+					"hidePrimitives=" + Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_PRIMITIVES)) + "|");
+			builderParameters.append(
+					"errorAssistance=" + isProfile(file) + "|");
+			builderParameters.append("hideCardinalityForRequiredAttributes="
+					+ Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES))
+					+ "|");
+			builderParameters.append("horizontalSpacing=" + Info.getBuilderPreference(file, HORIZONTAL_SPACING) + "|");
+			builderParameters.append("verticalSpacing=" + Info.getBuilderPreference(file, VERTICAL_SPACING) + "|");
 		}
 
-		return builderSpecificParameters.toString();
+		return builderParameters.toString();
 	}
+
+	public static String getNamespacePrefixesBuilderParameter(Map<String, String> prefix2NSMap) {
+		StringBuffer namespacePrefixesBuilderParameter = new StringBuffer("");
+		Iterator<String> prefixes = prefix2NSMap.keySet().iterator();
+		while (prefixes.hasNext()) {
+			String prefix = prefixes.next();
+			namespacePrefixesBuilderParameter.append(prefix2NSMap.get(prefix)).append("=").append(prefix)
+					.append(prefixes.hasNext() ? "|" : "");
+		}
+		return namespacePrefixesBuilderParameter.toString(); // Empty parameter
+	}
+
 }

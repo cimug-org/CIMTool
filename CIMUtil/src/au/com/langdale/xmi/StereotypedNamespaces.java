@@ -1,13 +1,17 @@
+/*
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
+ * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ */
 package au.com.langdale.xmi;
+
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
 
 /**
  * Simple support for namespace specifications via stereotypes on packages,
@@ -25,18 +29,18 @@ public class StereotypedNamespaces {
 	// Map for Namespace -> OntResource
 	private Map<String, OntResource> ns2ResourceMap = new HashMap<>();
 
-	private static boolean hasNamespaces = false;
+	private boolean hasNamespaces = false;
 
 	public StereotypedNamespaces() {
 	}
-	
+
 	public StereotypedNamespaces(File file, Map<String, OntResource> namedStereotypes) {
 		init(file, namedStereotypes);
 	}
 
 	/**
 	 * <pre>
-	 * Based on UML 2.5 specifications, UML stereotypes are considered
+	 * Based on UML 2.5 specification, UML stereotypes are considered
 	 * case-insensitive.
 	 * 
 	 * While the convention is for Stereotype names to start with
@@ -75,14 +79,13 @@ public class StereotypedNamespaces {
 				stereo2ResourceMap.put(lowercaseKey, namedStereotypes.get(stereotypeKey));
 			}
 		}
-		
+
 		Properties props = new Properties();
 
 		try (FileInputStream fis = new FileInputStream(file)) {
 			props.load(fis);
 
 			Map<String, String> s2nMap = new HashMap<>();
-			s2nMap = new HashMap<>();
 			Map<String, OntResource> s2rMap = new HashMap<>();
 			Map<String, OntResource> n2rMap = new HashMap<>();
 
@@ -110,7 +113,7 @@ public class StereotypedNamespaces {
 	}
 
 	/**
-	 * Accepts an ontological resource object and processes any stereotypes that are
+	 * Accepts an ontological resource and processes any stereotypes that are
 	 * associated with the resource looking for which one may have a mapping entry
 	 * to a namespace and if so returns the namespace.
 	 * 
@@ -121,7 +124,7 @@ public class StereotypedNamespaces {
 		ResIterator stereotypes = resource.listProperties(UML.hasStereotype);
 		while (stereotypes.hasNext()) {
 			OntResource stereotype = stereotypes.nextResource();
-			if (stereo2NSMap.containsKey(stereotype.getLabel().toLowerCase()))
+			if (stereotype.getLabel() != null && stereo2NSMap.containsKey(stereotype.getLabel().toLowerCase()))
 				return stereo2NSMap.get(stereotype.getLabel().toLowerCase());
 		}
 		return null;
@@ -142,8 +145,8 @@ public class StereotypedNamespaces {
 	}
 
 	/**
-	 * Convenience method to determine if a specific namespace is a mapped
-	 * namespaced by the end-user.
+	 * Convenience method to determine if a specific namespace is defined as a
+	 * mapped namespace by the end-user.
 	 * 
 	 * @param namespace The case-sensitive namespace to be tested.
 	 * 
@@ -154,10 +157,10 @@ public class StereotypedNamespaces {
 	}
 
 	/**
-	 * Convenience method to determine whether or not this class has been initialed
-	 * with a namespace mappings. If not then CIMTool will revert to checking for the
-	 * use of baseuri tagged value definitions in the UML model to determine extension
-	 * namespaces. 
+	 * Convenience method to determine whether or not this class has been
+	 * initialized with a namespace mappings. If not then CIMTool will revert to
+	 * checking for the use of baseuri tagged value definitions in the UML model to
+	 * determine what the namespace may be for an extension defined in the model.
 	 * 
 	 * @return
 	 */

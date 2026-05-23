@@ -1,4 +1,7 @@
-
+/*
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
+ * Langdale Consultants can be contacted at: http://www.langdale.com.au
+ */
 package au.com.langdale.profiles;
 
 import java.util.EnumSet;
@@ -11,14 +14,15 @@ import java.util.EnumSet;
 public enum SelectionOption {
 
 	// Do not change ordering, but append new options at the end of the list.
-	NoOp(0 << 0), // 0000000 (initialized to 0)
-	Concrete(1 << 0), // 0000001 (initialized to 1)
-	PropertyRequired(1 << 1), // 0000010 (initialized to 2)
-	UseSchemaCardinality(1 << 2), // 0000100 (initialized to 4)
-	UseProfileCardinality(1 << 3), // 0001000 (initialized to 8)
-	IncludeOnlySourceSideAssociations(1 << 4),  // 0010000 (initialized to 16)
-	IncludeAllAssociations(1 << 5),  // 0100000 (initialized to 32)
-	ByReference(1 << 6);  // 1000000 (initialized to 64)
+	NoOp(0 << 0), // 00000000 (initialized to 0)
+	Concrete(1 << 0), // 00000001 (initialized to 1)
+	PropertyRequired(1 << 1), // 00000010 (initialized to 2)
+	UseSchemaCardinality(1 << 2), // 00000100 (initialized to 4)
+	UseProfileCardinality(1 << 3), // 00001000 (initialized to 8)
+	IncludeOnlySourceSideAssociations(1 << 4),  // 00010000 (initialized to 16)
+	IncludeAllAssociations(1 << 5),  // 00100000 (initialized to 32)
+	ByReference(1 << 6),  // 01000000 (initialized to 64)
+	Descriptor(1 << 7);  // 10000000 (initialized to 128)
 	
 	private final int value;
 

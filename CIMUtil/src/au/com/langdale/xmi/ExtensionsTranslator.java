@@ -4,21 +4,23 @@
  */
 package au.com.langdale.xmi;
 
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.xerces.util.XMLChar;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-
-import au.com.langdale.kena.ModelFactory;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
 
 /**
  * A translator which produces a new OWL model from an existing OWL model that
@@ -76,21 +78,19 @@ public class ExtensionsTranslator implements Runnable {
 		 * Pass over every statement and apply renameResource() to each resource.
 		 */
 		public void run() {
-			resultModel = ModelFactory.createMem();
-			Iterator it = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
 			
-			while (it.hasNext()) {
-				Triple s = (Triple) it.next();
+			resultModel = ModelFactory.createMem();
+			
+			Iterator triples = model.getGraph().find(Node.ANY, Node.ANY, Node.ANY);
+			while (triples.hasNext()) {
+				Triple triple = (Triple) triples.next();
 				//
-				Node subject = s.getSubject();
-				Node predicate = s.getPredicate();
-				Node object = s.getObject();
+				OntResource subject = model.createResource(triple.getSubject());
+				OntResource predicate = model.createResource(triple.getPredicate());
+				Node object = triple.getObject();
 				//
-				OntResource newSubject = model.createResource(subject);
-				OntResource newPredicate = model.createResource(predicate);
-				//
-				FrontsNode renamedSubject = renameResource(newSubject);
-				FrontsNode renamedPredicate = renameResource(newPredicate);
+				FrontsNode renamedSubject = renameResource(subject);
+				FrontsNode renamedPredicate = renameResource(predicate);
 				Node renamedObject = renameObject(object);
 				//
 				add(renamedSubject, renamedPredicate, renamedObject);
@@ -109,7 +109,8 @@ public class ExtensionsTranslator implements Runnable {
 			if (n.isLiteral()) {
 				return n;
 			} else {
-				FrontsNode r = renameResource(model.createResource(n));
+				OntResource newResource = model.createResource(n);
+				FrontsNode r = renameResource(newResource);
 				return r == null ? null : r.asNode();
 			}
 		}
@@ -275,7 +276,8 @@ public class ExtensionsTranslator implements Runnable {
 				!r.hasProperty(RDF.type, UML.Package) && //
 				!r.hasProperty(UML.hasStereotype, UML.cimdatatype) && //
 				!r.hasProperty(UML.hasStereotype, UML.primitive) && //
-				!r.hasProperty(UML.hasStereotype, UML.enumeration) ) {
+				!r.hasProperty(UML.hasStereotype, UML.constrainedprimitive) && //
+				!r.hasProperty(UML.hasStereotype, UML.enumeration)) {
 				ResIterator types = r.listRDFTypes(false);
 				if (types.hasNext()) {
 					OntResource type = types.nextResource();

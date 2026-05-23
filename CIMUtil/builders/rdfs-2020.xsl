@@ -171,7 +171,7 @@
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
@@ -197,7 +197,7 @@
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>
@@ -221,7 +221,7 @@
 			<xsl:call-template name="stereotypes"/>
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<!-- Note: this is intentionally using the @name attribute to source the label for an 
 				 association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
@@ -247,7 +247,7 @@
 			<xsl:call-template name="stereotypes"/>	
 			<rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
 			<xsl:if test="a:Comment|a:Note"><rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"><xsl:apply-templates select="." mode="comments"/></rdfs:comment></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<rdfs:range rdf:resource="{if (starts-with(@baseClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@baseClass, '#')) else @baseClass }"/>
 		</rdf:Description>

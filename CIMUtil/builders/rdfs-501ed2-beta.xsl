@@ -144,7 +144,7 @@
 			<!-- Note: this is intentionally using the @name attribute to source the label for an association or attribute within the class. -->
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<xsl:if test="a:Comment|a:Note"><skos:definition xml:lang="en"><xsl:apply-templates select="." mode="comments"/></skos:definition></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:range rdf:resource="#{@type}"/>
 			<xsl:if test="@inverseBaseProperty">
 				<owl:inverseOf rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
@@ -159,7 +159,7 @@
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<xsl:if test="a:Comment|a:Note"><skos:definition xml:lang="en"><xsl:apply-templates select="." mode="comments"/></skos:definition></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:range rdf:resource="#{@type}"/>
 			<xsl:if test="@inverseBaseProperty">
 				<owl:inverseOf rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
@@ -183,7 +183,7 @@
 				 association or attribute within the class. -->
 			<rdfs:label><xsl:value-of select="@name"/></rdfs:label>
 			<xsl:if test="a:Comment|a:Note"><skos:definition xml:lang="en"><xsl:apply-templates select="." mode="comments"/></skos:definition></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:range rdf:resource="#{@type}"/>
 			<xsl:if test="@inverseBaseProperty">
 				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>
@@ -197,7 +197,7 @@
 			<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
 			<rdfs:label xml:lang="en"><xsl:value-of select="@name"/></rdfs:label>
 			<xsl:if test="a:Comment|a:Note"><skos:definition xml:lang="en"><xsl:apply-templates select="." mode="comments"/></skos:definition></xsl:if>
-			<rdfs:domain rdf:resource="{if (starts-with(@inverseBasePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBasePropertyClass, '#')) else @inverseBasePropertyClass }"/>
+			<rdfs:domain rdf:resource="{if (starts-with(@basePropertyClass, concat($ontologyURI, '#'))) then concat('#', substring-after(@basePropertyClass, '#')) else @basePropertyClass }"/>
 			<rdfs:range rdf:resource="#{@type}"/>
 			<xsl:if test="@inverseBaseProperty">
 				<cims:inverseRoleName rdf:resource="{if (starts-with(@inverseBaseProperty, concat($ontologyURI, '#'))) then concat('#', substring-after(@inverseBaseProperty, '#')) else @inverseBaseProperty }"/>

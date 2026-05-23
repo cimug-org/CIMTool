@@ -10,7 +10,6 @@ import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
 import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.PushButton;
-import static au.com.langdale.ui.builder.Templates.RadioButton;
 import static au.com.langdale.ui.builder.Templates.Right;
 import static au.com.langdale.ui.builder.Templates.Row;
 import static au.com.langdale.ui.builder.Templates.Span;
@@ -38,16 +37,15 @@ import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.LeftBinding;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.RightBinding;
 import au.com.langdale.cimtoole.wizards.SearchWizard;
-import au.com.langdale.cimtoole.wizards.ImportCopyrightTemplatesPage.Option;
 import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.jena.TreeModelBase.Node;
-import au.com.langdale.profiles.SelectionOption;
-import au.com.langdale.profiles.SelectionOptions;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.profiles.ProfileModel.SortedNode;
+import au.com.langdale.profiles.SelectionOption;
+import au.com.langdale.profiles.SelectionOptions;
 import au.com.langdale.ui.builder.FurnishedEditor;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.ui.util.IconCache;
@@ -102,9 +100,10 @@ public class Populate extends FurnishedEditor {
 										ViewCheckBox("required", "Set selected attributes/associations to required when added to the profile"),
 										ViewCheckBox("by-reference", "Set selected associations to 'By Reference' when added to the profile")),
 								Column(
+										ViewCheckBox("description", "Set concrete classes as descriptors when added to the profile"),
 										ViewCheckBox("use-schema-cardinality", "Set cardinality of selected attributes/associations to that defined in the schema"),
-										ViewCheckBox("include-only-source-side-associations", "Add only source-side associations when added to the profile"),
-										ViewCheckBox("include-all-associations", "Add all associations when added to the profile")))), 
+										ViewCheckBox("include-only-source-side-associations", "Add only source-side associations when added to the profile")))), 
+										// ViewCheckBox("include-all-associations", "Add all associations when added to the profile")))), 
 						Group(
 								Right(Row(PushButton("all-left",
 										"Add the selected classes to the profile including members", "leftfast"),
@@ -144,8 +143,9 @@ public class Populate extends FurnishedEditor {
 				public void widgetSelected(SelectionEvent e) {
 					ITreeSelection selected = (ITreeSelection) viewer.getSelection();
 					TreePath[] paths = selected.getPaths();
-					for (int ix = 0; ix < paths.length; ix++)
+					for (int ix = 0; ix < paths.length; ix++) {
 						handle((Node) paths[ix].getLastSegment());
+					}
 					fireUpdate();
 					resetSelectionButtonStates();
 				}
@@ -165,30 +165,36 @@ public class Populate extends FurnishedEditor {
 				List<SelectionOption> options = new LinkedList<SelectionOption>();
 				if (getButton("concrete").getSelection())
 					options.add(SelectionOption.Concrete);
+				if (getButton("description").getSelection())
+					options.add(SelectionOption.Descriptor);
 				if (getButton("required").getSelection())
 					options.add(SelectionOption.PropertyRequired);
 				if (getButton("use-schema-cardinality").getSelection())
 					options.add(SelectionOption.UseSchemaCardinality);
 				if (getButton("include-only-source-side-associations").getSelection())
 					options.add(SelectionOption.IncludeOnlySourceSideAssociations);
-				if (getButton("include-all-associations").getSelection())
-					options.add(SelectionOption.IncludeAllAssociations);
+//				if (getButton("include-all-associations").getSelection())
+//					options.add(SelectionOption.IncludeAllAssociations);
 				if (getButton("by-reference").getSelection())
 					options.add(SelectionOption.ByReference);
 				return new SelectionOptions(SelectionOption.encodeOptions(options.toArray(new SelectionOption[] {})));
 			}
 			
 			private void resetSelectionButtonStates() {
-				if (getButton("concrete").getSelection())
-					getButton("concrete").setSelection(false);	
+				if (getButton("concrete").getSelection()) {
+					getButton("concrete").setSelection(false);
+					getButton("description").setEnabled(false);
+				}
+				if (getButton("description").getSelection())
+					getButton("description").setSelection(false);
 				if (getButton("required").getSelection())
 					getButton("required").setSelection(false);				
 				if (getButton("use-schema-cardinality").getSelection())
 					getButton("use-schema-cardinality").setSelection(false);	
 				if (getButton("include-only-source-side-associations").getSelection())
 					getButton("include-only-source-side-associations").setSelection(false);	
-				if (getButton("include-all-associations").getSelection())
-					getButton("include-all-associations").setSelection(false);	
+				//if (getButton("include-all-associations").getSelection())
+				//	getButton("include-all-associations").setSelection(false);	
 				if (getButton("by-reference").getSelection())
 					getButton("by-reference").setSelection(false);
 			}
@@ -278,6 +284,10 @@ public class Populate extends FurnishedEditor {
 					}
 				} else {
 					showStackLayer("nothing");
+				}
+				getButton("description").setEnabled(getButton("concrete").getSelection());
+				if (!getButton("concrete").getSelection() && getButton("description").getSelection()) {
+					setButtonValue("description", false);
 				}
 			}
 		};

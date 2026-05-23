@@ -1,7 +1,10 @@
-/**
- * 
+/*
+ * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
+ * Langdale Consultants can be contacted at: http://www.langdale.com.au
  */
 package au.com.langdale.xmi;
+
+import au.com.langdale.kena.OntResource;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -35,7 +38,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
  * 					NOTATION			Yes				Yes				Legacy from DTDs
  * </pre>
  * 
-
+ * 
  * 
  * <pre>
  * XSD 1.0 and 1.1 Derived Types:
@@ -79,157 +82,258 @@ public final class XSDTypeUtils {
 	 * @param l A simple name for the datatype received from the UML.
 	 * @return A resource representing one of the XSD datatypes recommended for OWL.
 	 */
-	public static FrontsNode selectXSDType(String l) {
+	public static FrontsNode selectXSDType(OntResource resource, String l) {
 		// TODO: add more XSD datatypes here
-		if (l.equalsIgnoreCase("integer"))
-			return XSD.integer;
-		else if (l.equalsIgnoreCase("int"))
-			return XSD.xint;
-		else if (l.equalsIgnoreCase("unsigned"))
-			return XSD.unsignedInt;
-		else if (l.equalsIgnoreCase("ulong") || l.equalsIgnoreCase("ulonglong"))
-			return XSD.unsignedLong;
-		else if (l.equalsIgnoreCase("short"))
-			return XSD.xshort;
-		else if (l.equalsIgnoreCase("long") || l.equalsIgnoreCase("longlong"))
-			return XSD.xlong;
-		else if (l.equalsIgnoreCase("string") || l.equalsIgnoreCase("char"))
-			return XSD.xstring;
-		else if (l.equalsIgnoreCase("float"))
-			return XSD.xfloat;
-		else if (l.equalsIgnoreCase("double") || l.equalsIgnoreCase("longdouble"))
-			return XSD.xdouble;
-		else if (l.equalsIgnoreCase("boolean") || l.equalsIgnoreCase("bool"))
-			return XSD.xboolean;
-		else if (l.equalsIgnoreCase("decimal"))
-			return XSD.decimal;
-		else if (l.equalsIgnoreCase("nonNegativeInteger"))
-			return XSD.nonNegativeInteger;
-		else if (l.equalsIgnoreCase("date"))
-			return XSD.date;
-		else if (l.equalsIgnoreCase("time"))
-			return XSD.time;
-		else if (l.equalsIgnoreCase("datetime"))
-			return XSD.dateTime;
-		else if (l.equalsIgnoreCase("absolutedatetime"))
-			return XSD.dateTime;
-		else if (l.equalsIgnoreCase("duration"))
-			return XSD.duration;
-		else if (l.equalsIgnoreCase("monthday"))
-			return XSD.gMonthDay;
-		else if (l.equalsIgnoreCase("uri"))
-			return XSD.anyURI;
-		/**
-		 * Below reflects the introduction of the IRI primitive domain type in CIM18.
-		 * 
-		 * 1. IRI in XSD 1.0
-		 * 
-		 * XSD 1.0 does not define a separate type for IRIs.
-		 * 
-		 * However, IRIs can be used with anyURI, but they must be converted to a valid
-		 * URI using percent-encoding.
-		 * 
-		 * This is because anyURI follows RFC 2396 (URIs), which only allows ASCII
-		 * characters.
-		 * 
-		 * 2. XSD 1.1 and IRI Support
-		 * 
-		 * In XSD 1.1, anyURI aligns with IRI (RFC 3987), allowing Unicode characters.
-		 * 
-		 * This means in XSD 1.1, anyURI can accept both URIs and IRIs, making explicit
-		 * IRI support unnecessary.
-		 * 
-		 * Here is a basic XSD 1.0 example validating IRI values using xs:string with a pattern:
-		 * 
-		 * <pre>
-		 * <xs:element name="resourceIRI" type="iriType"/>
-		 * 
-		 * <xs:simpleType name="iriType">
-		 *    <xs:restriction base="xxs:string">
-		 *       <!-- Basic pattern matching IRI-style strings (e.g., http/https) -->
-		 *       xs:pattern value="https?://.+"/>
-		 *    </xs:restriction>
-		 * </xs:simpleType>
-		 * </pre>
-		 * 
-		 * Here is a basic XSD 1.1 example validating IRI values using xs:anyURI with a pattern:
-		 * 
-		 * <pre>
-		 * <xs:element name="resourceIRI" type="iriType"/>
-		 * 
-		 * <xs:simpleType name="iriType">
-		 *    <xs:restriction base="xs:anyURI">
-		 *       <!-- Optional: Basic IRI pattern using Unicode ranges -->
-		 *       <xs:pattern value="[\i-[:]][\c-[:]]*"/>
-		 *    </xs:restriction>
-		 * </xs:simpleType>
-		 * </pre>
-		 */
-		else if (l.equalsIgnoreCase("iri"))
-			// For XSD 1.0 - for now treated as a string (apply facet
-			return XSD.xstring;
+		if (resource.hasProperty(UML.baseType) && resource.getString(UML.baseType) != null && !"".equals(resource.getString(UML.baseType).trim())) {
+			String baseType = resource.getString(UML.baseType);
+			l = (baseType.contains(":") ? baseType.substring(baseType.indexOf(":")) : baseType);
+			//
+			if (l.equalsIgnoreCase("float"))
+				return XSD.xfloat;
+			else if (l.equalsIgnoreCase("double"))
+				return XSD.xdouble;
+			else if (l.equalsIgnoreCase("int"))
+				return XSD.xint;
+			else if (l.equalsIgnoreCase("long"))
+				return XSD.xlong;
+			else if (l.equalsIgnoreCase("short"))
+				return XSD.xshort;
+			else if (l.equalsIgnoreCase("byte"))
+				return XSD.xbyte;
+			else if (l.equalsIgnoreCase("boolean"))
+				return XSD.xboolean;
+			else if (l.equalsIgnoreCase("string"))
+				return XSD.xstring;
+			else if (l.equalsIgnoreCase("unsignedByte"))
+				return XSD.unsignedByte;
+			else if (l.equalsIgnoreCase("unsignedShort"))
+				return XSD.unsignedShort;
+			else if (l.equalsIgnoreCase("unsignedInt"))
+				return XSD.unsignedInt;
+			else if (l.equalsIgnoreCase("unsignedLong"))
+				return XSD.unsignedLong;
+			else if (l.equalsIgnoreCase("decimal"))
+				return XSD.decimal;
+			else if (l.equalsIgnoreCase("integer"))
+				return XSD.integer;
+			else if (l.equalsIgnoreCase("nonPositiveInteger"))
+				return XSD.nonPositiveInteger;
+			else if (l.equalsIgnoreCase("nonNegativeInteger"))
+				return XSD.nonNegativeInteger;
+			else if (l.equalsIgnoreCase("positiveInteger"))
+				return XSD.positiveInteger;
+			else if (l.equalsIgnoreCase("negativeInteger"))
+				return XSD.negativeInteger;
+			else if (l.equalsIgnoreCase("normalizedString"))
+				return XSD.normalizedString;
+			else if (l.equalsIgnoreCase("anyURI"))
+				return XSD.anyURI;
+			else if (l.equalsIgnoreCase("token"))
+				return XSD.token;
+			else if (l.equalsIgnoreCase("Name"))
+				return XSD.Name;
+			else if (l.equalsIgnoreCase("QName"))
+				return XSD.QName;
+			else if (l.equalsIgnoreCase("language"))
+				return XSD.language;
+			else if (l.equalsIgnoreCase("NMTOKEN"))
+				return XSD.NMTOKEN;
+			else if (l.equalsIgnoreCase("ENTITIES"))
+				return XSD.ENTITIES;
+			else if (l.equalsIgnoreCase("NMTOKENS"))
+				return XSD.NMTOKENS;
+			else if (l.equalsIgnoreCase("ENTITY"))
+				return XSD.ENTITY;
+			else if (l.equalsIgnoreCase("ID"))
+				return XSD.ID;
+			else if (l.equalsIgnoreCase("NCName"))
+				return XSD.NCName;
+			else if (l.equalsIgnoreCase("IDREF"))
+				return XSD.IDREF;
+			else if (l.equalsIgnoreCase("IDREFS"))
+				return XSD.IDREFS;
+			else if (l.equalsIgnoreCase("NOTATION"))
+				return XSD.NOTATION;
+			else if (l.equalsIgnoreCase("hexBinary"))
+				return XSD.hexBinary;
+			else if (l.equalsIgnoreCase("base64Binary"))
+				return XSD.base64Binary;
+			else if (l.equalsIgnoreCase("date"))
+				return XSD.date;
+			else if (l.equalsIgnoreCase("time"))
+				return XSD.time;
+			else if (l.equalsIgnoreCase("dateTime"))
+				return XSD.dateTime;
+			else if (l.equalsIgnoreCase("duration"))
+				return XSD.duration;
+			else if (l.equalsIgnoreCase("gDay"))
+				return XSD.gDay;
+			else if (l.equalsIgnoreCase("gMonth"))
+				return XSD.gMonth;
+			else if (l.equalsIgnoreCase("gYear"))
+				return XSD.gYear;
+			else if (l.equalsIgnoreCase("gYearMonth"))
+				return XSD.gYearMonth;
+			else if (l.equalsIgnoreCase("gMonthDay"))
+				return XSD.gMonthDay;
+			else {
+				return null;
+			}
+		} else {
+			if (l.equalsIgnoreCase("integer"))
+				return XSD.integer;
+			else if (l.equalsIgnoreCase("int"))
+				return XSD.xint;
+			else if (l.equalsIgnoreCase("unsigned"))
+				return XSD.unsignedInt;
+			else if (l.equalsIgnoreCase("ulong") || l.equalsIgnoreCase("ulonglong"))
+				return XSD.unsignedLong;
+			else if (l.equalsIgnoreCase("short"))
+				return XSD.xshort;
+			else if (l.equalsIgnoreCase("long") || l.equalsIgnoreCase("longlong"))
+				return XSD.xlong;
+			else if (l.equalsIgnoreCase("string") || l.equalsIgnoreCase("char"))
+				return XSD.xstring;
+			else if (l.equalsIgnoreCase("float"))
+				return XSD.xfloat;
+			else if (l.equalsIgnoreCase("double") || l.equalsIgnoreCase("longdouble"))
+				return XSD.xdouble;
+			else if (l.equalsIgnoreCase("boolean") || l.equalsIgnoreCase("bool"))
+				return XSD.xboolean;
+			else if (l.equalsIgnoreCase("decimal"))
+				return XSD.decimal;
+			else if (l.equalsIgnoreCase("nonNegativeInteger"))
+				return XSD.nonNegativeInteger;
+			else if (l.equalsIgnoreCase("date"))
+				return XSD.date;
+			else if (l.equalsIgnoreCase("time"))
+				return XSD.time;
+			else if (l.equalsIgnoreCase("datetime"))
+				return XSD.dateTime;
+			else if (l.equalsIgnoreCase("absolutedatetime"))
+				return XSD.dateTime;
+			else if (l.equalsIgnoreCase("duration"))
+				return XSD.duration;
+			else if (l.equalsIgnoreCase("monthday"))
+				return XSD.gMonthDay;
+			else if (l.equalsIgnoreCase("uri"))
+				return XSD.anyURI;
+			/**
+			 * Below reflects the introduction of the IRI primitive domain type in CIM18.
+			 * 
+			 * 1. IRI in XSD 1.0
+			 * 
+			 * XSD 1.0 does not define a separate type for IRIs.
+			 * 
+			 * However, IRIs can be used with anyURI, but they must be converted to a valid
+			 * URI using percent-encoding.
+			 * 
+			 * This is because anyURI follows RFC 2396 (URIs), which only allows ASCII
+			 * characters.
+			 * 
+			 * 2. XSD 1.1 and IRI Support
+			 * 
+			 * In XSD 1.1, anyURI aligns with IRI (RFC 3987), allowing Unicode characters.
+			 * 
+			 * This means in XSD 1.1, anyURI can accept both URIs and IRIs, making explicit
+			 * IRI support unnecessary.
+			 * 
+			 * Here is a basic XSD 1.0 example validating IRI values using xs:string with a
+			 * pattern:
+			 * 
+			 * <pre>
+			 * <xs:element name="resourceIRI" type="iriType"/>
+			 * 
+			 * <xs:simpleType name="iriType">
+			 *    <xs:restriction base="xxs:string">
+			 *       <!-- Basic pattern matching IRI-style strings (e.g., http/https) -->
+			 *       xs:pattern value="https?://.+"/>
+			 *    </xs:restriction>
+			 * </xs:simpleType>
+			 * </pre>
+			 * 
+			 * Here is a basic XSD 1.1 example validating IRI values using xs:anyURI with a
+			 * pattern:
+			 * 
+			 * <pre>
+			 * <xs:element name="resourceIRI" type="iriType"/>
+			 * 
+			 * <xs:simpleType name="iriType">
+			 *    <xs:restriction base="xs:anyURI">
+			 *       <!-- Optional: Basic IRI pattern using Unicode ranges -->
+			 *       <xs:pattern value="[\i-[:]][\c-[:]]*"/>
+			 *    </xs:restriction>
+			 * </xs:simpleType>
+			 * </pre>
+			 */
+			else if (l.equalsIgnoreCase("iri"))
+				// For XSD 1.0 - for now treated as a string (apply pattern facet to restrict if needed)
+				return XSD.xstring;
 			// For future XSD 1.1 where anyURI was loosened to accept Unicode characters
-			//return XSD.anyURI; 
-		
-		/**
-		 * Below reflects the introduction of the UUID primitive domain type in CIM18.
-		 * 
-		 * We are using XSD.xstring and not XSD:ID datatype here. This is due to the
-		 * fact that xsd:ID in XML Schema Definition (XSD) is not suitable for
-		 * representing a UUID. Here's why:
-		 * 
-		 * Purpose and Constraints:
-		 * 
-		 * - xsd:ID is intended to represent a unique identifier within an XML document.
-		 * It must be unique within the document and is generally used for linking with
-		 * xsd:IDREF.
-		 * 
-		 * - xsd:ID must follow the rules for XML names, meaning it must start with a
-		 * letter or underscore and cannot contain certain characters, such as hyphens
-		 * (-) or numbers at the beginning. This makes it incompatible with the typical
-		 * structure of UUIDs, which are typically in the form 8-4-4-4-12 hexadecimal
-		 * digits separated by hyphens.
-		 * 
-		 * UUID Format:
-		 * 
-		 * - A UUID (Universally Unique Identifier) is typically represented as a
-		 * 36-character string, including 32 hexadecimal digits and 4 hyphens. This
-		 * format does not conform to the XML name rules required by xsd:ID.
-		 * 
-		 * Alternative:
-		 * 
-		 * - Instead of using xsd:ID, we need to use xsd:string with a pattern (i.e.
-		 * facet) or define a custom type with a pattern that matches the UUID format
-		 * such as in this example:
-		 * 
-		 * <pre>
-		 * <xs:simpleType name="UUID">
-		 *    <xs:restriction base="xs:string">
-		 *       <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
-		 *    </xs:restriction> 
-		 * </xs:simpleType>
-		 * </pre>
-		 * 
-		 * or in OWL or OWL2 (it is compatible with both):
-		 * 
-		 * <pre>
-		 * @prefix : <http://example.org#> .
-		 * @prefix owl: <http://www.w3.org/2002/07/owl#> .
-		 * @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-		 * @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-		 * 
-		 * :UUID a rdfs:Datatype ;
-		 *     owl:equivalentClass [
-		 *         a rdfs:Datatype ;
-		 *         owl:onDatatype xsd:string ;
-		 *         owl:withRestrictions ( [ xsd:pattern "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" ] )
-		 *     ] .
-		 * </pre>
-		 */
-		//else if (l.equalsIgnoreCase("uuid"))
-		//	return XSD.xstring;
-		else
-			return null;
+			// return XSD.anyURI;
+
+			/**
+			 * Below reflects the introduction of the UUID primitive domain type in CIM18.
+			 * 
+			 * We are using XSD.xstring and not XSD:ID datatype here. This is due to the
+			 * fact that xsd:ID in XML Schema Definition (XSD) is not suitable for
+			 * representing a UUID. Here's why:
+			 * 
+			 * Purpose and Constraints:
+			 * 
+			 * - xsd:ID is intended to represent a unique identifier within an XML document.
+			 * It must be unique within the document and is generally used for linking with
+			 * xsd:IDREF.
+			 * 
+			 * - xsd:ID must follow the rules for XML names, meaning it must start with a
+			 * letter or underscore and cannot contain certain characters, such as hyphens
+			 * (-) or numbers at the beginning. This makes it incompatible with the typical
+			 * structure of UUIDs, which are typically in the form 8-4-4-4-12 hexadecimal
+			 * digits separated by hyphens.
+			 * 
+			 * UUID Format:
+			 * 
+			 * - A UUID (Universally Unique Identifier) is typically represented as a
+			 * 36-character string, including 32 hexadecimal digits and 4 hyphens. This
+			 * format does not conform to the XML name rules required by xsd:ID.
+			 * 
+			 * Alternative:
+			 * 
+			 * - Instead of using xsd:ID, we need to use xsd:string with a pattern (i.e.
+			 * facet) or define a custom type with a pattern that matches the UUID format
+			 * such as in this example:
+			 * 
+			 * <pre>
+			 * <xs:simpleType name="UUID">
+			 *    <xs:restriction base="xs:string">
+			 *       <xs:pattern value=
+			"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+			 *    </xs:restriction> 
+			 * </xs:simpleType>
+			 * </pre>
+			 * 
+			 * or in OWL or OWL2 (it is compatible with both):
+			 * 
+			 * <pre>
+			 * &#64;prefix : <http://example.org#> .
+			 * &#64;prefix owl: <http://www.w3.org/2002/07/owl#> .
+			 * &#64;prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+			 * @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+			 * 
+			 * :UUID a rdfs:Datatype ;
+			 *     owl:equivalentClass [
+			 *         a rdfs:Datatype ;
+			 *         owl:onDatatype xsd:string ;
+			 *         owl:withRestrictions ( [ xsd:pattern "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" ] )
+			 *     ] .
+			 * </pre>
+			 */
+			// else if (l.equalsIgnoreCase("uuid"))
+			// return XSD.xstring;
+			else {
+				return null;
+			}
+		}
 	}
 
 }

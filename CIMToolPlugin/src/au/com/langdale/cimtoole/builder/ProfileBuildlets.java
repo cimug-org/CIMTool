@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -43,16 +45,17 @@ import au.com.langdale.profiles.ProfileSerializer;
 import au.com.langdale.profiles.RDFSBasedGenerator;
 import au.com.langdale.profiles.RDFSGenerator;
 import au.com.langdale.ui.binding.BooleanModel;
-import au.com.langdale.ui.builder.ColorUtils;
 import au.com.langdale.workspace.ResourceOutputStream;
 
 /**
  * A series of <code>Buildlet</code>s for building profile artifacts.
  */
 public class ProfileBuildlets extends Task {
+	private static final Logger log = LoggerFactory.getLogger(ProfileBuildlets.class);
 
 	private static ProfileBuildlet[] availableBuildlets;
 
+	
 	/**
 	 * Buildlet for a profile artifact.
 	 * 
@@ -230,7 +233,8 @@ public class ProfileBuildlets extends Task {
 				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
 				// Set builder specific preferences passed to the serializer as parameters.
-				serializer.setBuilderSpecificParameters(Info.getBuilderSpecificParameters(result));
+				serializer.setBuilderParameters(Info.getBuilderParameters(result));
+				serializer.setNamespacePrefixesBuilderParameter(Info.getNamespacePrefixesBuilderParameter(tree.getNsPrefixMap()));
 			
 				// TODO: make this better
 				serializer.setVersion("Beta");
@@ -244,9 +248,9 @@ public class ProfileBuildlets extends Task {
 					try {
 						/**
 						 * We attempt to first load in any custom XSLT transform
-						 * builders. If is == null it means none are available at 
-						 * which point we "fallback" to an alternate invocation to
-						 * setStyleSheet(style) method.
+						 * builders. If is == null means that none are available  
+						 * at which point we "fallback" to an alternate invocation 
+						 * to setStyleSheet(style) method.
 						 */
 						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 						if (is != null) {
@@ -283,6 +287,10 @@ public class ProfileBuildlets extends Task {
 
 		public String getStyle() {
 			return style;
+		}
+
+		protected void setStyle(String style) {
+			this.style = style;
 		}
 
 		/**
@@ -426,7 +434,7 @@ public class ProfileBuildlets extends Task {
 			RDFSBasedGenerator generator = getGenerator(profileModel, backgroundModel, preserveNS);
 			generator.run();
 			OntModel resultModel = generator.getResult();
-			System.out.println("Generated ontology size: " + resultModel.size());
+			log.debug("Generated ontology size: {}", resultModel.size());
 
 			Task.write(resultModel, generator.getOntURI(), true, result, lang, monitor);
 			result.setDerived(true);

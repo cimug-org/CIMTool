@@ -28,6 +28,9 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.XSD;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class is the driver for a number of profile model transformation and 
  * conversion utilities.  It traverses a profile model and fires events (defined 
@@ -36,6 +39,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
  * TODO: this class has not been updated to handle OWL unions in the profile.
  */
 public abstract class SchemaGenerator extends ProfileUtility implements Runnable {
+	private static final Logger log = LoggerFactory.getLogger(SchemaGenerator.class);
 	protected OntModel model;
 	protected OntModel profileModel;
 	protected Catalog catalog;
@@ -220,8 +224,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		// emit properties
 		Iterator lt = props.getGroups().iterator();
 		while( lt.hasNext()) {
-			PropertyGroup pg = (PropertyGroup)lt.next();
-			generateProperty(pg);
+			generateProperty((PropertyGroup)lt.next());
 		}
 		
 		// emit superclass relationships
@@ -354,14 +357,14 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	private void generateProperty(PropertyGroup group) {
+	protected void generateProperty(PropertyGroup group) {
 		PropertySpec info = group.getSummary();
 		OntResource prop = group.getProperty();
 		String uri = constructURI(prop); 
 		String domain = catalog.getURI(info.base_domain);
 		if(prop.isDatatypeProperty()) {
 			TypeInfo range = new TypeInfo( prop.getRange(), this);
-			emitDatatypeProperty(uri, prop.getURI(), domain, range.type, range.xsdtype, info.required);
+			emitDatatypeProperty(uri, prop, domain, range.type, range.xsdtype, info.required);
 		}
 		else {
 			String range = catalog.getURI(info.base_range);
@@ -490,7 +493,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	protected abstract void emitClass(String uri, String base) ;
 	protected abstract void emitInstance(String uri, String base, String type);
 	protected abstract void emitDatatype(String uri, String xsdtype) ;
-	protected abstract void emitDatatypeProperty(String uri, String base, String domain, String type, String xsdtype, boolean required) ;
+	protected abstract void emitDatatypeProperty(String uri, OntResource prop, String domain, String type, String xsdtype, boolean required) ;
 	protected abstract void emitObjectProperty(String uri, OntResource prop, String domain, String range, PropertySpec info) ;
 	protected abstract void emitRestriction(String uri, String domain, String range);
 	protected abstract void emitRestriction(String uri, String domain, boolean required, boolean functional, int minCard, int maxCard) ;
@@ -508,6 +511,6 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	}
 	
 	protected void log(String item) {
-		System.out.println(item);
+		log.debug("{}", item);
 	}
 }

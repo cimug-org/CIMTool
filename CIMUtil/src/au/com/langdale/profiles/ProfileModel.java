@@ -4,6 +4,19 @@
  */
 package au.com.langdale.profiles;
 
+import au.com.langdale.inference.LOG;
+import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.UMLTreeModel.PackageNode;
+import au.com.langdale.jena.UMLTreeModel.PropertyNode;
+import au.com.langdale.jena.UMLTreeModel.SubClassNode;
+import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
+import au.com.langdale.kena.Composition;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.xmi.UML;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -11,25 +24,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.reasoner.InfGraph;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-
-import au.com.langdale.inference.LOG;
-import au.com.langdale.jena.JenaTreeModelBase;
-import au.com.langdale.jena.UMLTreeModel.PackageNode;
-import au.com.langdale.jena.UMLTreeModel.SubClassNode;
-import au.com.langdale.jena.UMLTreeModel.SuperClassNode;
-import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.xmi.UML;
-
-import au.com.langdale.kena.Composition;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.Resource;
 
 public class ProfileModel extends JenaTreeModelBase {
 
@@ -54,10 +55,50 @@ public class ProfileModel extends JenaTreeModelBase {
 		initModels();
 	}
 
+	/**
+	 * Returns the background (canonical CIM) model as set by
+	 * {@link #setBackgroundModel(OntModel)}.
+	 *
+	 * <p>
+	 * This accessor is provided for subclasses (e.g.
+	 * {@code FullModelProfileModel}) that need direct access to the background
+	 * model without going through the merged full model returned by
+	 * {@link #getOntModel()}.
+	 * </p>
+	 *
+	 * @return the background ontology model, or {@code null} if not yet set
+	 */
+	public OntModel getBackgroundModel() {
+		return backgroundModel;
+	}
+
+	/**
+	 * Directly sets the underlying tree model's ontology model to the supplied
+	 * model without triggering the profile+background merge that
+	 * {@link #setOntModel(OntModel)} and {@link #setBackgroundModel(OntModel)}
+	 * normally perform.
+	 *
+	 * <p>
+	 * This method is intended exclusively for subclasses (e.g.
+	 * {@code FullModelProfileModel}) that operate without a profile OWL file and
+	 * therefore have no profile model to merge. Calling it sets the model that
+	 * {@link #getOntModel()} will return, which is what drives tree population.
+	 * </p>
+	 *
+	 * @param model the ontology model to use directly as the tree's model
+	 */
+	protected void initAsFullModel(OntModel model) {
+		super.setOntModel(model);
+	}
+
 	public String getOntologyNamespace() {
 		return (this.backgroundModel != null && this.backgroundModel.getValidOntology() != null
 				? this.backgroundModel.getValidOntology().getURI()
 				: "");
+	}
+	
+	public Map<String, String> getNsPrefixMap() {
+		return this.profileModel.getNsPrefixMap().getNsPrefixMap();
 	}
 
 	@Override
@@ -85,12 +126,16 @@ public class ProfileModel extends JenaTreeModelBase {
 	@Override
 	protected List findResourcePathTo(FrontsNode symbol) {
 		OntResource target = profileModel.createResource(symbol.asNode());
-		if (getRoot() == null || target == null)
+		if (getRoot() == null || target == null) {
+			// Must return null and not List.of() as null is significant to the caller...
 			return null;
+		}
 
 		OntResource start = getRoot().getSubject();
-		if (start == null)
+		if (start == null) {
+			// Must return null and not List.of() as null is significant to the caller...
 			return null;
+		}
 
 		ArrayList path = new ArrayList(6);
 		path.add(target);
@@ -104,8 +149,10 @@ public class ProfileModel extends JenaTreeModelBase {
 				while (parent != null && !parent.hasRDFType(OWL.Class))
 					parent = findParent(parent);
 			}
-			if (parent == null)
+			if (parent == null) {
+				// Must return null and not List.of() as null is significant to the caller...
 				return null;
+			}
 			path.add(parent);
 			target = parent;
 		}
@@ -152,6 +199,24 @@ public class ProfileModel extends JenaTreeModelBase {
 		public boolean isMaxVariable();
 	}
 
+	public interface BidirectionalCardinality extends Cardinality {
+		public boolean hasInverse();
+		
+		public int getInverseMaxCardinality();
+
+		public int getInverseMinCardinality();
+
+		public boolean setInverseMaxCardinality(int max);
+
+		public boolean setInverseMinCardinality(int min);
+
+		public boolean isInverseMinVariable();
+
+		public boolean isInverseMaxVariable();
+		
+		public OntResource getInverse();
+	}
+
 	public abstract class SortedNode extends ModelNode {
 
 		public ProfileModel getProfileModel() {
@@ -171,7 +236,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		public void setComment(String text) {
 			getSubject().setComment(text, null);
 		}
-		
+
 		public void setAsciiDoc(String text) {
 			getSubject().setProperty(UML.asciidoc, text, null);
 		}
@@ -207,8 +272,9 @@ public class ProfileModel extends JenaTreeModelBase {
 		}
 
 		public void profileAddAllDeep(Collection args, SelectionOptions selectionOptions) {
-			for (Iterator it = args.iterator(); it.hasNext();)
+			for (Iterator it = args.iterator(); it.hasNext();) {
 				createDeep((Node) it.next(), selectionOptions);
+			}
 			getRoot().structureChanged();
 		}
 
@@ -377,12 +443,20 @@ public class ProfileModel extends JenaTreeModelBase {
 			super.structureChanged();
 		}
 
+		public boolean isRestrictedClass() {
+			return profile.isRestrictedClass();
+		}
+		
 		public boolean isEnumerated() {
 			return profile.isEnumerated();
 		}
 
 		public boolean isCompound() {
 			return profile.isCompound();
+		}
+		
+		public boolean isConstrainedPrimitive() {
+			return profile.isConstrainedPrimitive();
 		}
 
 		public ProfileClass getProfile() {
@@ -395,7 +469,7 @@ public class ProfileModel extends JenaTreeModelBase {
 		/**
 		 * A subordinate element in a message.
 		 */
-		public class ElementNode extends ProfileNode implements Cardinality {
+		public class ElementNode extends ProfileNode implements BidirectionalCardinality {
 			/**
 			 * A union member
 			 */
@@ -420,6 +494,8 @@ public class ProfileModel extends JenaTreeModelBase {
 
 			private OntResource prop;
 			private PropertyInfo info;
+			private OntResource inverseProp;
+			private PropertyInfo inverseInfo;
 
 			/**
 			 * The element is defined by a property and the collection of restrictions
@@ -429,8 +505,13 @@ public class ProfileModel extends JenaTreeModelBase {
 				super(info.createProfileClass());
 				this.info = info;
 				prop = info.getProperty();
+				//
+				if (prop.getInverseOf() != null) {
+					this.inverseInfo = this.profile.getPropertyInfo(prop.getInverseOf());
+					this.inverseProp = this.inverseInfo.getProperty();
+				}
 			}
-
+			
 			/**
 			 * Override in concrete nodes to control sort order.
 			 * 
@@ -452,12 +533,17 @@ public class ProfileModel extends JenaTreeModelBase {
 
 			@Override
 			public Class getIconClass() {
-				if (prop.isDatatypeProperty())
-					return AttributeNode.class;
-				else if (profile.isReference())
+				if (prop.isDatatypeProperty()) {
+					if (prop.getRange() != null && prop.getRange().hasProperty(UML.hasStereotype, UML.constrainedprimitive)) {
+						return ConstrainedPrimitiveElementNode.class;
+					} else {
+						return AttributeNode.class;
+					}
+				} else if (profile.isReference()) {
 					return ReferenceNode.class;
-				else
+				} else {
 					return ElementNode.class;
+				}
 			}
 
 			@Override
@@ -494,9 +580,23 @@ public class ProfileModel extends JenaTreeModelBase {
 			public boolean isMaxVariable() {
 				return !info.isAlwaysFunctional();
 			}
+			
+			@Override
+			public boolean isInverseMaxVariable() {
+				if (inverseInfo != null)
+					return !inverseInfo.isAlwaysFunctional();
+				return false;
+			}
 
 			public boolean isMinVariable() {
 				return info.canBeRequired();
+			}
+			
+			@Override
+			public boolean isInverseMinVariable() {
+				if (inverseInfo != null)
+					return inverseInfo.canBeRequired();
+				return false;
 			}
 
 			public int getMaxCardinality() {
@@ -531,6 +631,15 @@ public class ProfileModel extends JenaTreeModelBase {
 				changed();
 				return true;
 			}
+			
+			public boolean setInverseMaxCardinality(int card) {
+				if (getInverseMaxCardinality() == card || card < getInverseMinCardinality() || !isInverseMaxVariable())
+					return false;
+
+				inverseInfo.setMaxCardinality(card);
+				changed();
+				return true;
+			}
 
 			public boolean setMinCardinality(int card) {
 				if (getMinCardinality() == card || card > getMaxCardinality() || !isMinVariable())
@@ -540,7 +649,16 @@ public class ProfileModel extends JenaTreeModelBase {
 				changed();
 				return true;
 			}
+			
+			public boolean setInverseMinCardinality(int card) {
+				if (getInverseMinCardinality() == card || card > getInverseMaxCardinality() || !isInverseMinVariable())
+					return false;
 
+				inverseInfo.setMinCardinality(card);
+				changed();
+				return true;
+			}
+			
 			@Override
 			protected void populate() {
 				populateUnion();
@@ -578,8 +696,40 @@ public class ProfileModel extends JenaTreeModelBase {
 				super.destroy();
 				NaturalNode.this.getProfile().remove(getBase());
 			}
-		}
+			
 
+			@Override
+			public boolean hasInverse() {
+				return (inverseProp != null);
+			}
+			
+			@Override
+			public int getInverseMaxCardinality() {
+				if (inverseInfo != null)
+					return inverseInfo.getMaxCardinality();
+				return -1;
+			}
+
+			@Override
+			public int getInverseMinCardinality() {
+				if (inverseInfo != null)
+					return inverseInfo.getMinCardinality();
+				return -1;
+			}
+			
+			public boolean isInverseAlwaysFunctional() {
+				if (inverseProp != null)
+					return inverseProp.isFunctionalProperty() || inverseProp.isDatatypeProperty();
+				return false;
+			}
+
+			@Override
+			public OntResource getInverse() {
+				return inverseProp;
+			}
+			
+		}
+		
 		/**
 		 * A supertype of a root element or other supertype in a message
 		 */
@@ -675,7 +825,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			OntResource prop = node.getSubject();
 			if (prop.isProperty()) {
 				profile.createAllValuesFrom(prop, selectionOptions);
-				getRefactory().createDefaultRange(profile, prop);
+				getRefactory().createDefaultRange(profile, prop, selectionOptions);
 			}
 		}
 
@@ -700,7 +850,8 @@ public class ProfileModel extends JenaTreeModelBase {
 			Iterator it = profile.getProperties();
 
 			while (it.hasNext()) {
-				PropertyInfo info = profile.getPropertyInfo((OntResource) it.next());
+				OntResource prop = (OntResource) it.next();
+				PropertyInfo info = profile.getPropertyInfo(prop);
 
 				// only add the child if a restriction identified its range class.
 				if (info.getRange() != null)
@@ -726,7 +877,9 @@ public class ProfileModel extends JenaTreeModelBase {
 
 		@Override
 		public Class getIconClass() {
-			if (hasStereotype(UML.compound))
+			if (hasStereotype(UML.constrainedprimitive))
+				return ConstrainedPrimitiveElementNode.class;
+			else if (hasStereotype(UML.compound))
 				return CompoundElementNode.class;
 			else if (hasStereotype(UML.enumeration))
 				return EnumElementNode.class;
@@ -847,14 +1000,12 @@ public class ProfileModel extends JenaTreeModelBase {
 
 	/**
 	 * A marker class returned by getIconClass() is the node is attribute-like;
-	 *
 	 */
 	public interface AttributeNode {
 	}
 
 	/**
 	 * A marker class returned by getIconClass() is the node is reference-like;
-	 *
 	 */
 	public interface ReferenceNode {
 	}
@@ -862,28 +1013,30 @@ public class ProfileModel extends JenaTreeModelBase {
 	/**
 	 * A marker class returned for concrete type nodes that also are marked as
 	 * 'descriptors';
-	 *
 	 */
 	public interface DescriptorRootElementNode {
 	}
 
 	/**
 	 * A marker class returned for concrete type nodes;
-	 *
 	 */
 	public interface RootElementNode {
 	}
 
 	/**
 	 * A marker class returned for compound type nodes;
-	 *
 	 */
 	public interface CompoundElementNode {
+	}
+	
+	/**
+	 * A marker class returned for constrained primitive type nodes;
+	 */
+	public interface ConstrainedPrimitiveElementNode {
 	}
 
 	/**
 	 * A marker class returned for enumerated property nodes;
-	 *
 	 */
 	public interface EnumElementNode {
 	}

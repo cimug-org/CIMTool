@@ -31,6 +31,7 @@ public class ProjectTest extends WorkspaceTest {
 	public static final String SAMPLE_COPYRIGHT_SINGLE_LINE = "copyright-single-line.txt";
 	public static final String ALT_XSD_RULES = "alternative.xsd-xslt";
 	public static final String SCHEMA_NS = "http://iec.ch/TC57/2007/CIM-schema-cim12#";
+	public static final String SCHEMA_CIM100_NS = "http://iec.ch/TC57/CIM100#";
 	public static final Boolean MERGE_SHADOW_EXTENSIONS = Boolean.TRUE;
 	public static final Boolean SELF_HEAL_ON_IMPORT = Boolean.TRUE;
 	public static final String PROFILE_NS = "http://example.com/profile#";
@@ -76,14 +77,15 @@ public class ProjectTest extends WorkspaceTest {
 	protected String getSchemaForTesting() {
 		return SAMPLE_SCHEMA_XMI;
 	}
-	
+
 	/**
-	 * Default schema namespace for testing.
+	 * Default schema namespace for testing. Should be overridden by subclasses if
+	 * not testing the default schema configuration.
 	 */
 	protected String getSchemaNSForTesting() {
 		return SCHEMA_NS;
 	}
-	
+
 	protected void createReader() throws IOException {
 		reader = new SplitReader(model.getLocation().toOSString());
 	}
@@ -114,11 +116,11 @@ public class ProjectTest extends WorkspaceTest {
 	}
 
 	protected void setupSchema() throws CoreException {
-		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + getSchemaForTesting(), getSchemaNSForTesting(),
-				MERGE_SHADOW_EXTENSIONS, SELF_HEAL_ON_IMPORT);
+		IWorkspaceRunnable task = Task.importSchema(schema, getSamplesFolder() + getSchemaForTesting(),
+				getSchemaNSForTesting(), MERGE_SHADOW_EXTENSIONS, SELF_HEAL_ON_IMPORT);
 		task.run(monitor);
 	}
-	
+
 	/**
 	 * Should be overridden in subclasses if needed.
 	 * 
@@ -127,7 +129,7 @@ public class ProjectTest extends WorkspaceTest {
 	protected void setupProfile() throws CoreException {
 		setupProfile(getSamplesFolder() + SAMPLE_PROFILE);
 	}
-	
+
 	protected void setupProfile(final String path) throws CoreException {
 		IWorkspaceRunnable task = Task.importProfile(profile, path);
 		task.run(monitor);

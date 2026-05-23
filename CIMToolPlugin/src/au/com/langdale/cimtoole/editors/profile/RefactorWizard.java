@@ -48,7 +48,7 @@ public class RefactorWizard extends Wizard  {
 	BooleanValue remap = new BooleanValue("Repair and remap profile to schema");
 	BooleanValue reorg = new BooleanValue("Reorganise profile per RDFS rules");
 	BooleanValue useProfileCardinality = new BooleanValue("Reorganise profile per RDFS rules but keep profile cardinalities as currently defined in the profile");
-	BooleanValue useSchemaCardinality = new BooleanValue("Reorganise profile per RDFS rules but override profile cardinalities with those defined in the base schema");
+	BooleanValue useSchemaCardinality = new BooleanValue("Reorganise profile per RDFS rules but override profile cardinalities with those defined in the canonical schema");
 
 	BooleanBinding options = new BooleanBinding() {
 		@Override

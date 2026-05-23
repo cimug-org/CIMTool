@@ -62,10 +62,7 @@ public class Documentation extends FurnishedEditor {
 						if (master.getNode() instanceof SortedNode) { 
 							String documentation;
 							if (getText("asciidoc").getText() != null && !getText("asciidoc").getText().endsWith(CRLF)) {
-								/** 
-								 * For GitHub comparisons and resolving GitHub merge conflicts
-								 * of profile descriptions we need to have a CRLF at the end.
-								 */
+								// We must have a CRLF at the end...
 								documentation = getText("asciidoc").getText() + CRLF;
 							} else {
 								documentation = getText("asciidoc").getText();
@@ -117,6 +114,8 @@ public class Documentation extends FurnishedEditor {
 							setTextValue("selected-type", "Association Documentation");
 					} else if (base.isFunctionalProperty()) {
 						setTextValue("selected-type", "Attribute Documentation");
+					} else if (base.listRDFTypes(true).hasNext() && base.listRDFTypes(true).nextResource().hasProperty(UML.hasStereotype, UML.enumeration)) {
+						setTextValue("selected-type", "Enum Literal Documentation");
 					} else {
 						setTextValue("selected-type", "Documentation");
 					}
@@ -124,8 +123,7 @@ public class Documentation extends FurnishedEditor {
 			
 				if( snode != null) {
 					setTextValue("asciidoc", snode.getSubject().getString(UML.asciidoc, null)).setEnabled(true);
-					boolean readOnly = !(snode instanceof EnumValueNode);
-					getText("asciidoc").setEditable(readOnly);
+					getText("asciidoc").setEditable(true);
 				} else {
 					setTextValue("asciidoc", "").setEnabled(false);
 				}
