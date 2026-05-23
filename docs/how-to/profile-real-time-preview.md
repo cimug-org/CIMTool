@@ -559,4 +559,4 @@ There are two valid resolutions, as the note callout itself states:
 After saving the profile the diagram refreshes automatically. `Location` now
 renders as a **yellow** concrete class with its two fields displayed and no
 note callout. It is now correctly defined as a directly instantiable class
-whose instances can participate in a data exchange.
+whose instances can participate in a data exchange.
