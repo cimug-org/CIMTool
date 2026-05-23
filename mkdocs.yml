@@ -30,6 +30,7 @@ nav:
     - 'how-to/exchange-a-project.md'
     - 'how-to/search-schemas-profiles.md'
     - 'how-to/generate-database-schema.md'
+    - 'how-to/profile-real-time-preview.md'
     - 'how-to/profile-maintenance.md'
     - 'how-to/comparing-profiles-schemas.md'
     - 'how-to/associations-anonymous-classes.md'
@@ -44,5 +45,5 @@ nav:
   - 'Developers':
     - 'developers/dev-env-setup.md'
     - 'developers/package-deploy.md'
-  - 'SchemaOps Integration':
+  - 'SchemaOps Automation & Integration':
     - 'schemaops/cimtool-cli.md'
