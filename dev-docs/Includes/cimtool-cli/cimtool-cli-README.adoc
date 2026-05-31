@@ -411,10 +411,11 @@ These options are standalone — they print output and exit immediately without 
 | `--project-dir <path>`
 | `-pd`
 | Yes
-| Root directory of the CIMTool project. Must contain `.cimtool-settings`, `.builder-preferences`, and
-  `.cimtool-global-preferences`. The CLI reads schema file locations from `.cimtool-settings`, builder
-  configurations from `.builder-preferences`, and global preference values (e.g. PlantUML diagram style
-  settings) from `.cimtool-global-preferences`.
+| Root directory of the CIMTool project. Must contain `.cimtool-settings` and `.builder-preferences`, and
+  may optionally contain `.cimtool-global-preferences`. The CLI reads schema file locations from
+  `.cimtool-settings`, builder configurations from `.builder-preferences`, and — when present — global
+  preference values (e.g. PlantUML diagram style settings) from `.cimtool-global-preferences`; built-in
+  defaults are used if that file is absent.
 
 | `--profile <path>`
 | `-p`

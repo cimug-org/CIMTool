@@ -316,7 +316,7 @@ These options are standalone — they print output and exit immediately without 
 
 | Option | Short form | Required | Description |
 | ------ | ---------- | -------- | ----------- |
-| `--project-dir <path>` | `-pd` | Yes | Root directory of the CIMTool project. Must contain `.cimtool-settings`, `.builder-preferences`, and `.cimtool-global-preferences`. The CLI reads schema file locations from `.cimtool-settings`, builder configurations from `.builder-preferences`, and global preference values (e.g. PlantUML diagram style settings) from `.cimtool-global-preferences`. |
+| `--project-dir <path>` | `-pd` | Yes | Root directory of the CIMTool project. Must contain `.cimtool-settings` and `.builder-preferences`, and may optionally contain `.cimtool-global-preferences`. The CLI reads schema file locations from `.cimtool-settings`, builder configurations from `.builder-preferences`, and — when present — global preference values (e.g. PlantUML diagram style settings) from `.cimtool-global-preferences`; built-in defaults are used if that file is absent. |
 | `--profile <path>` | `-p` | No | Single `.owl` profile file to transform. If omitted, all `.owl` files in `<project-dir>/Profiles` are processed. |
 | `--output <path>` | `-o` | Optional when `--project-dir` is specified | Output directory for generated artifacts. Defaults to `<project-dir>/Profiles` when not specified. |
 | `--builder <name>` | `-b` | No | Builder name from the bundled catalog (e.g. `xsd`, `json-schema-draft-07`, `legacy-rdfs`). Overrides the builders configured on each profile. Works for all builder types — both XSLT-based (`TEXT`, `XSD`, `TRANSFORM`) and Java-based (`JAVA`). Mutually exclusive with `--xslt`. |
