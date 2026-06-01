@@ -886,6 +886,15 @@ public class Info implements QualifiedNames {
 		if (isFile(file, "Profiles", "puml") || isFile(file, "Profiles", "adoc") || isProfile(file)) {
 			//
 			// Set diagram preferences used by any PlantUML diagram builders...
+			/**
+			 * IMPORTANT:
+			 * 
+			 * To properly support the CIMTool CLI, it requires that we maintain two
+			 * instances of this method. This one and another located in the
+			 * CLIBuilderPreference class in the CIMUtil project. Whenever any type of
+			 * update is made here the parallel instance must be updated as well to ensure
+			 * it matches in the CLI.
+			 */
 			builderParameters.append("plantUMLTheme=" + Info.getBuilderPreference(file, PLANTUML_THEME) + "|");
 			builderParameters
 					.append("docRootClassesColor=" + Info.getBuilderPreference(file, DOCROOT_CLASSES_COLOR) + "|");
@@ -923,6 +932,10 @@ public class Info implements QualifiedNames {
 			builderParameters.append("refsColor=" + Info.getBuilderPreference(file, REFS_COLOR) + "|");
 			builderParameters.append(
 					"refsFontColor=" + ColorUtils.getHexFontColor(Info.getBuilderPreference(file, REFS_COLOR)) + "|");
+			builderParameters
+					.append("shadowClassesColor=" + Info.getBuilderPreference(file, SHADOW_CLASSES_COLOR) + "|");
+			builderParameters.append("shadowClassesFontColor="
+					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, SHADOW_CLASSES_COLOR)) + "|");
 			builderParameters.append("errorsColor=" + Info.getBuilderPreference(file, ERRORS_COLOR) + "|");
 			builderParameters.append("errorsFontColor="
 					+ ColorUtils.getHexFontColor(Info.getBuilderPreference(file, ERRORS_COLOR)) + "|");
@@ -940,8 +953,7 @@ public class Info implements QualifiedNames {
 					"hideCompounds=" + Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_COMPOUNDS)) + "|");
 			builderParameters.append(
 					"hidePrimitives=" + Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_PRIMITIVES)) + "|");
-			builderParameters.append(
-					"errorAssistance=" + isProfile(file) + "|");
+			builderParameters.append("errorAssistance=" + isProfile(file) + "|");
 			builderParameters.append("hideCardinalityForRequiredAttributes="
 					+ Boolean.parseBoolean(Info.getBuilderPreference(file, HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES))
 					+ "|");

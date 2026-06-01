@@ -194,8 +194,8 @@ public class CIMToolCLI {
 			}
 		}
 
-		if (options.isDirectoryMode()) {
-			return executeDirectoryTransform(options, settings, builderPrefs, mergedSchema);
+		if (options.isProjectMode()) {
+			return executeProjectTransform(options, settings, builderPrefs, mergedSchema);
 		} else {
 			return executeSingleFileTransform(options, settings, builderPrefs, mergedSchema);
 		}
@@ -279,11 +279,11 @@ public class CIMToolCLI {
 	}
 
 	/**
-	 * Execute transformation for all profile files in a directory.
+	 * Execute transformation for all profile files in the project's Profiles directory.
 	 */
-	private static int executeDirectoryTransform(CLIOptions options, CLISettings settings,
+	private static int executeProjectTransform(CLIOptions options, CLISettings settings,
 			CLIBuilderPreferences builderPrefs, OntModel schema) throws Exception {
-		File profilesDir = options.getProfilesDir();
+		File profilesDir = new File(options.getProjectDir(), "Profiles");
 
 		// Find all .owl files in the directory
 		File[] profileFiles = profilesDir.listFiles(new FilenameFilter() {

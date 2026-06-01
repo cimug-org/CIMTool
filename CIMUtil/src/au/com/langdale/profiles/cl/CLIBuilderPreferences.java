@@ -261,6 +261,16 @@ public class CLIBuilderPreferences implements GlobalPreferences {
 	}
 
 	/**
+	 * Get the shadow classes color preference.
+	 * 
+	 * @param file the file
+	 * @return the color value, or null if not set
+	 */
+	public String getShadowClassesColor(File file) {
+		return getPreference(file, PREF_SHADOW_CLASSES_COLOR);
+	}
+
+	/**
 	 * Get the errors color preference.
 	 * 
 	 * @param file the file
@@ -423,6 +433,14 @@ public class CLIBuilderPreferences implements GlobalPreferences {
 		if (isFile(file, "Profiles", "puml") || isFile(file, "Profiles", "adoc")) {
 			//
 			// Set diagram preferences used by any PlantUML diagram builders...
+			/**
+			 * IMPORTANT:
+			 * 
+			 * To properly support the CIMTool CLI, it requires that we maintain two
+			 * instances of this method. This one and another located in the Info class
+			 * defined in the CIMToolPlugin project. Whenever any type of update is made
+			 * there this parallel instance must be updated as well to ensure it matches.
+			 */
 			builderParameters.append("plantUMLTheme=" + getPreference(file, PREF_PLANTUML_THEME) + "|");
 			builderParameters.append("docRootClassesColor=" + getPreference(file, PREF_DOCROOT_CLASSES_COLOR) + "|");
 			builderParameters.append("anonymousCompoundsColor="
@@ -457,6 +475,9 @@ public class CLIBuilderPreferences implements GlobalPreferences {
 			builderParameters.append("refsColor=" + getPreference(file, PREF_REFS_COLOR) + "|");
 			builderParameters
 					.append("refsFontColor=" + ColorUtils.getHexFontColor(getPreference(file, PREF_REFS_COLOR)) + "|");
+			builderParameters.append("shadowClassesColor=" + getPreference(file, PREF_SHADOW_CLASSES_COLOR) + "|");
+			builderParameters.append("shadowClassesFontColor="
+					+ ColorUtils.getHexFontColor(getPreference(file, PREF_SHADOW_CLASSES_COLOR)) + "|");
 			builderParameters.append("errorsColor=" + getPreference(file, PREF_ERRORS_COLOR) + "|");
 			builderParameters.append(
 					"errorsFontColor=" + ColorUtils.getHexFontColor(getPreference(file, PREF_ERRORS_COLOR)) + "|");

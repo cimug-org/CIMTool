@@ -73,6 +73,7 @@ public class BuilderPreferences extends Task {
 			PRIMITIVES_COLOR, //
 			CHOICES_COLOR, //
 			REFS_COLOR, //
+			SHADOW_CLASSES_COLOR, //
 			ERRORS_COLOR, //
 			ANONYMOUS_CLASSES_COLOR_WHITE, //
 			ENABLE_DARK_MODE, //

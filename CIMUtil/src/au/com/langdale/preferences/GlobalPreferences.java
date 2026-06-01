@@ -55,6 +55,7 @@ public interface GlobalPreferences {
 	String PREF_PRIMITIVES_COLOR = "plantuml_primitives_color";
 	String PREF_CHOICES_COLOR = "plantuml_choices_color";
 	String PREF_REFS_COLOR = "plantuml_refs_color";
+	String PREF_SHADOW_CLASSES_COLOR = "plantuml_shadow_classes_color";
 	String PREF_ERRORS_COLOR = "plantuml_errors_color";
 	String PREF_ANONYMOUS_CLASSES_COLOR_WHITE = "plantuml_set_anonymous_classes_color_to_white";
 	String PREF_ENABLE_DARK_MODE = "plantuml_enable_dark_mode";
@@ -105,6 +106,7 @@ public interface GlobalPreferences {
 		defaults.put(PREF_PRIMITIVES_COLOR, "#E6E6FF");
 		defaults.put(PREF_CHOICES_COLOR, "#E6E6FF");
 		defaults.put(PREF_REFS_COLOR, "#FFDBDB");
+		defaults.put(PREF_SHADOW_CLASSES_COLOR, "#C0C0C0");
 		defaults.put(PREF_ERRORS_COLOR, "#FFC0CB");
 		defaults.put(PREF_ANONYMOUS_CLASSES_COLOR_WHITE, false);
 		defaults.put(PREF_ENABLE_DARK_MODE, false);

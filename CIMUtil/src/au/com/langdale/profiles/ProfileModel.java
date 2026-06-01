@@ -521,7 +521,7 @@ public class ProfileModel extends JenaTreeModelBase {
 			protected String collation() {
 				String base = toString();
 				String key = base.toLowerCase() + base;
-				if (isDatatype() || isEnumerated()) {
+				if (isDatatype() || isEnumerated() || isCompound()) {
 					if (getName().equals("mRID"))
 						return "1" + key;
 					else

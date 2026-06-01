@@ -90,9 +90,10 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 
 	private static final String PREVIEW_UNAVAILABLE_HTML = "<html><body style='font-family:sans-serif;color:#555;padding:16px'>"
 			+ "<p><b>Profile Preview Unavailable</b></p>"
-			+ "<p>The profile could not be rendered as a diagram. This typically indicates "
-			+ "an unusual construct or an unresolved error in the underlying profile definition.</p>"
-			+ "<p>Upon resolving the issue, the diagram will render.</p>"
+			+ "<p>The profile could not be rendered. This most commonly indicates that the real-time 'Display Style' setting set at either the project-level or at "
+			+ "the profile-level is set to a style that does not match the type of profile being defined. Please verify that the setting in the project and/or "
+			+ "OWL profile preferences page is correctly configured. If set to empty at the profile-level then the project-level setting will be honored.</p>"
+			+ "<p>If the setting is found to be correct, it may indicate an invalid construct in the underlying profile definition.</p>"
 			+ "</body></html>";
 
 	private Browser browser;

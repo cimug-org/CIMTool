@@ -18,6 +18,8 @@ import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
 import au.com.langdale.profiles.ProfileModel.TypeNode;
 import au.com.langdale.sax.AbstractReader;
+import au.com.langdale.saxon.functions.NewUUIDFunction;
+import au.com.langdale.saxon.functions.UUIDFromKeyFunction;
 import au.com.langdale.xmi.ShadowClassUtils;
 import au.com.langdale.xmi.UML;
 
@@ -119,6 +121,13 @@ public class ProfileSerializer extends AbstractReader {
 	 */
 	public ProfileSerializer(ProfileModel model) {
 		this.model = model;
+		registerExtensionFunctions();
+	}
+
+	final protected void registerExtensionFunctions() {
+		net.sf.saxon.Configuration config = ((net.sf.saxon.TransformerFactoryImpl) factory).getConfiguration();
+		config.registerExtensionFunction(new NewUUIDFunction());
+		config.registerExtensionFunction(new UUIDFromKeyFunction());
 	}
 
 	/**
@@ -728,7 +737,6 @@ public class ProfileSerializer extends AbstractReader {
 					elem.set("type", range.getLocalName());
 					elem.set("baseClass", range.getURI());
 				}
-				
 				emit(node, elem);
 
 				OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
@@ -825,9 +833,9 @@ public class ProfileSerializer extends AbstractReader {
 		if ((inverse != null) && (inverse.getDomain() != null)) {
 			elem.set("inverseBasePropertyClass", inverse.getDomain().getURI());
 		} else if (node.isRestrictedClass()) {
-			// Technically, restricted classes (e.g. enumerations, compounds, etc.) 
-			// do not have inverses yet to properly display errors in PlantUML diagrams 
-			// we minimally provide the below property (mapped from domain) so that the 
+			// Technically, restricted classes (e.g. enumerations, compounds, etc.)
+			// do not have inverses yet to properly display errors in PlantUML diagrams
+			// we minimally provide the below property (mapped from domain) so that the
 			// error association can be rendered via PlantUML.
 			if (node.getBaseProperty().getDomain() != null) {
 				elem.set("inverseBasePropertyClass", node.getBaseProperty().getDomain().getURI());
@@ -1040,14 +1048,41 @@ public class ProfileSerializer extends AbstractReader {
 			return;
 		}
 
-		if (node.hasStereotype(UML.concrete))
+		/** Only Root, ComplexType and EnumeratedType(s) can be shadow classes **/
+		if (node.hasStereotype(UML.concrete)) {
 			elem = new Element("Root");
-		else if (node.isEnumerated())
+			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
+			if (isShadowClass) {
+				elem.set("isShadowClass", Boolean.toString(isShadowClass));
+				OntResource classBeingShadowed = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
+						node.getBaseClass());
+				if (classBeingShadowed != null)
+					elem.set("classBeingShadowed", classBeingShadowed.getURI());
+			}
+		} else if (node.isEnumerated()) {
 			elem = new Element("EnumeratedType");
-		else if (node.hasStereotype(UML.compound))
+			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
+			if (isShadowClass) {
+				elem.set("isShadowClass", Boolean.toString(isShadowClass));
+				OntResource classBeingShadowed = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
+						node.getBaseClass());
+				if (classBeingShadowed != null)
+					elem.set("classBeingShadowed", classBeingShadowed.getURI());
+			}
+		} else if (node.hasStereotype(UML.compound)) {
 			elem = new Element("CompoundType");
-		else
+		} else {
 			elem = new Element("ComplexType");
+			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
+			if (isShadowClass) {
+				elem.set("isShadowClass", Boolean.toString(isShadowClass));
+				OntResource classBeingShadowed = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
+						node.getBaseClass());
+				if (classBeingShadowed != null)
+					elem.set("classBeingShadowed", classBeingShadowed.getURI());
+			}
+		}
+
 		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
 				: Boolean.FALSE.toString()));
 		elem.set("name", node.getName());

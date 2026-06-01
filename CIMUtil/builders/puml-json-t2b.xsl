@@ -63,6 +63,8 @@
 	<xsl:param name="choicesFontColor" select="map:get($paramMap, 'choicesFontColor')"/>
 	<xsl:param name="refsColor" select="map:get($paramMap, 'refsColor')"/>
 	<xsl:param name="refsFontColor" select="map:get($paramMap, 'refsFontColor')"/>
+	<xsl:param name="shadowClassesColor" select="map:get($paramMap, 'shadowClassesColor')"/>
+	<xsl:param name="shadowClassesFontColor" select="map:get($paramMap, 'shadowClassesFontColor')"/>
 	<xsl:param name="errorsColor" select="map:get($paramMap, 'errorsColor')"/>
 	<xsl:param name="errorsFontColor" select="map:get($paramMap, 'errorsFontColor')"/>
 	<xsl:param name="plantUMLTheme" select="map:get($paramMap, 'plantUMLTheme')"/>
@@ -78,6 +80,62 @@
 	<xsl:param name="hideCompounds" as="xs:boolean" select="map:get($paramMap, 'hideCompounds') = 'true'"/>
 	<xsl:param name="hideEnumerations" as="xs:boolean" select="map:get($paramMap, 'hideEnumerations') = 'true'"/>
 	<xsl:param name="hidePrimitives" as="xs:boolean" select="map:get($paramMap, 'hidePrimitives') = 'true'"/>
+	<xsl:param name="errorAssistance" as="xs:boolean" select="map:get($paramMap, 'errorAssistance') = 'true'"/>
+	
+	<!--
+	  Function: cimtool:puml-safe-name
+	  Purpose: Produce a unique, PlantUML-safe name for the specified element.
+	  Parameters:
+		$name - the name of the class to
+	  Returns:
+		xs:string - the PlantUML safe class name
+	  Algorithm:
+		1) Process the name passed in and normalize it to contain only PlantUML safe characters.
+	-->
+	<xsl:function name="cimtool:puml-safe-name" as="xs:string">
+		<xsl:param name="name" as="xs:string"/>
+		<xsl:variable name="result" select="replace($name, '[\s:.,\[\]{}\(\)&lt;&gt;\-\+#\*=]', '_')"/>
+		<xsl:sequence select="$result"/>
+	</xsl:function>
+	
+	<!--
+	  Function: cimtool:unique-id
+	  Purpose: Produce a unique, PlantUML-safe identifier for the specified element.
+	  Parameters:
+		$element - the element (Complex, SimpleEnumerated, SimpleCompound, Choice or Reference) to generate an identifier for.
+	  Returns:
+		xs:string - unique identifier for the supplied element.
+	  Algorithm:
+		1) Determine the id prefix based upon the element type.
+		2) Normalize this element's @name to [A-Za-z0-9_].
+		3) Build a normalized '::'-joined chain of ancestor @name values (also normalized).
+		4) Compute an occurrence index k among preceding a:Complex elements with the same @name
+		   (document-order tie-breaker).
+		5) Concatenate into: <prefix>__<ancestorNames>__<thisName>__n<k>
+	-->
+	<xsl:function name="cimtool:unique-id" as="xs:string">
+		<xsl:param name="element" as="element()"/>
+		<xsl:variable name="prefix">
+			<xsl:choose>
+				<xsl:when test="$element/self::a:Complex|$element/self::a:SimpleEnumerated|$element/self::a:SimpleCompound">
+					<xsl:value-of select="'Anon'"/>
+				</xsl:when>
+				<xsl:when test="$element/self::a:Reference">
+					<xsl:value-of select="'Ref'"/>
+				</xsl:when>
+				<xsl:when test="$element/self::a:Choice">
+					<xsl:value-of select="'Choice'"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="'Root'"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:variable name="thisName" select="replace($element/@name, '[^A-Za-z0-9_]', '_')"/>
+		<xsl:variable name="ancestorNames" select="string-join($element/ancestor::*[@name]/replace(@name,'[^A-Za-z0-9_]', '_'), '::')"/>
+		<xsl:variable name="k" select="count($element/preceding::a:Complex[@name = $element/@name]) + 1"/>
+		<xsl:sequence select="concat($prefix, '::', if ($ancestorNames) then $ancestorNames else 'ROOT', '::', $thisName, '::n', $k)"/>
+	</xsl:function>
 	
 	<xsl:template match="a:Catalog">
 		<document>
@@ -250,6 +308,16 @@
 							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
 							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
 							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
+							<!-- Shadow classes <<ShadowExtension>> definition -->
+							<item>' Shadow classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/>#454645</item>
+							<item>BorderThickness<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/> 1</item>
+							<item></item>
 						</list>
 					</xsl:when>
 					<xsl:when test="$plantUMLTheme and not($plantUMLTheme = '') and not($plantUMLTheme = '_none_')">
@@ -364,6 +432,17 @@
 							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
 							<item>BorderColor<xsl:value-of select="'&lt;&lt;error&gt;&gt; '"/>#454645</item>
 							<item>BorderThickness<xsl:value-of select="'&lt;&lt;error&gt;&gt; '"/> 1</item>
+							<item></item>
+							<!-- Shadow classes <<ShadowExtension>> definition -->
+							<item>' Shadow classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/>#454645</item>
+							<item>BorderThickness<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/> 1</item>
+							<item></item>
 						</list>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -391,7 +470,7 @@
 							<!-- We filter out character in a class or note name now allowed by PlantUML. This was need      -->
 							<!-- after discovering scenarios where end-users had profile names (i.e. $envelope) with dashes  -->
 							<!-- (-) in them leading to have to parse out such character.                                    -->
-							<xsl:variable name="envelope-name" select="fn:replace($envelope, '[\s:.,\[\]{}\(\)&lt;&gt;\-\+#\*=]', '_')" />
+							<xsl:variable name="envelope-name" select="cimtool:puml-safe-name($envelope)" />
 							<item><xsl:value-of select="concat($envelope-name, ' --&gt;  &quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', @name)"/></item>
 						</xsl:for-each>		
 					</list>
@@ -413,17 +492,55 @@
 					</xsl:if>
 					<item></item>
 				</xsl:if>
-				<xsl:apply-templates select="a:Root|a:ComplexType|a:EnumeratedType|a:CompoundType|a:SimpleType|a:PrimitiveType"/>
+				<xsl:apply-templates select="a:PrimitiveType|a:SimpleType|a:EnumeratedType|a:CompoundType|a:ComplexType|a:Root"/>
 				<xsl:apply-templates select="//a:Complex|//a:SimpleEnumerated|//a:SimpleCompound" mode="anonymous"/>	
 				<!-- Finally, we process all associations: -->
-				<xsl:apply-templates select="//a:Complex|//a:Choice|//a:Reference|//a:Instance" mode="associations"/>
+				<xsl:apply-templates select="//a:Complex|//a:Choice|//a:Reference[@type]|//a:Instance" mode="associations"/>
 				<item></item>
 			</list>
 		</document>
 	</xsl:template>
-
+	
+	<xsl:template match="a:PrimitiveType">
+		<xsl:if test="not($hidePrimitives) and not(@hideInDiagrams = 'true')">
+			<xsl:variable name="className" select="substring-after(@dataType, '#')"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
+			<list begin="" indent="" delim="" end="">
+				<list begin="{concat('class ', $className, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">		
+				</list>
+			</list>
+			<item>hide "<xsl:value-of select="$className"/>" attributes</item>
+			<item></item>
+		</xsl:if>
+	</xsl:template>	
+	
+	<xsl:template match="a:SimpleType">
+		<xsl:if test="not($hideCIMDatatypes) and not(@hideInDiagrams = 'true')">
+			<xsl:variable name="className" select="substring-after(@dataType, '#')"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
+			<list begin="" indent="" delim="" end="">
+				<list begin="{concat('class ', $className, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+					<xsl:choose>
+						<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
+							<xsl:apply-templates select="a:Simple|a:Enumerated"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<item>[Attributes hidden]</item>
+						</xsl:otherwise>
+					</xsl:choose>							
+				</list>
+			</list>
+		</xsl:if>
+	</xsl:template>
+	
 	<xsl:template match="a:EnumeratedType">
-		<xsl:if test="not($hideEnumerations) and not(@hideInDiagrams = 'true')">
+		<!-- 
+			Note that the second conditional clause is for when enumerations are hidden via preferences 
+			configuration BUT we have an ill-defined enumeration that we want to display purely for the 
+			purposes of presenting the error for the end user.
+		-->
+		<xsl:variable name="baseClass" select="@baseClass"/>
+		<xsl:if test="(not($hideEnumerations) and not(@hideInDiagrams = 'true')) or (($hideEnumerations or @hideInDiagrams = 'true') and $errorAssistance and //a:Reference[@baseClass = $baseClass])">
 			<!-- 
 				In XSD or JSON style profiling it can be convention to rename the element name so 
 				we derive the enumeration name from the @name attribute and not from the @baseClass
@@ -443,63 +560,48 @@
 					</xsl:if>
 				</list>
 			</list>
+			<!-- Purely for the purposes of extensions the enumeration can inherit from a shadow class enumeration -->
+			<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'true']">
+				<xsl:variable name="parentBaseEnum" select="@baseClass"/>
+				<xsl:variable name="parentEnum" as="element()?" select="(//a:EnumeratedType[@baseClass = $parentBaseEnum])[1]"/>
+				<xsl:if test="exists($parentEnum) and not($parentEnum/@hideInDiagrams = 'true')">
+					<item><xsl:value-of select="concat($parentEnum/@name, ' &lt;|-- ', $enumName)"/></item>
+					<item></item>
+				</xsl:if>
+			</xsl:for-each>
 		</xsl:if>
 	</xsl:template>
 	
-	<!--
-	  Function: cimtool:puml-safe-name
-	  Purpose: Produce a unique, PlantUML-safe name for the specified element.
-	  Parameters:
-		$name - the name of the class to
-	  Returns:
-		xs:string - the PlantUML safe class name
-	  Algorithm:
-		1) Process the name passed in and normalize it to contain only PlantUML safe characters.
-	-->
-	<xsl:function name="cimtool:puml-safe-name" as="xs:string">
-		<xsl:param name="name" as="xs:string"/>
-		<xsl:variable name="result" select="replace($name, '[\s:.,\[\]{}\(\)&lt;&gt;\-\+#\*=]', '_')"/>
-		<xsl:sequence select="$result"/>
-	</xsl:function>
-	
-	<!--
-	  Function: cimtool:unique-id
-	  Purpose: Produce a unique, PlantUML-safe identifier for the specified element.
-	  Parameters:
-		$element - the element (Complex, SimpleEnumerated, SimpleCompound, Choice or Reference) to generate an identifier for.
-	  Returns:
-		xs:string - unique identifier for the supplied element.
-	  Algorithm:
-		1) Determine the id prefix based upon the element type.
-		2) Normalize this element's @name to [A-Za-z0-9_].
-		3) Build a normalized '::'-joined chain of ancestor @name values (also normalized).
-		4) Compute an occurrence index k among preceding a:Complex elements with the same @name
-		   (document-order tie-breaker).
-		5) Concatenate into: <prefix>__<ancestorNames>__<thisName>__n<k>
-	-->
-	<xsl:function name="cimtool:unique-id" as="xs:string">
-		<xsl:param name="element" as="element()"/>
-		<xsl:variable name="prefix">
-			<xsl:choose>
-				<xsl:when test="$element/self::a:Complex|$element/self::a:SimpleEnumerated|$element/self::a:SimpleCompound">
-					<xsl:value-of select="'Anon'"/>
-				</xsl:when>
-				<xsl:when test="$element/self::a:Reference">
-					<xsl:value-of select="'Ref'"/>
-				</xsl:when>
-				<xsl:when test="$element/self::a:Choice">
-					<xsl:value-of select="'Choice'"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="'Root'"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:variable>
-		<xsl:variable name="thisName" select="replace($element/@name, '[^A-Za-z0-9_]', '_')"/>
-		<xsl:variable name="ancestorNames" select="string-join($element/ancestor::*[@name]/replace(@name,'[^A-Za-z0-9_]', '_'), '::')"/>
-		<xsl:variable name="k" select="count($element/preceding::a:Complex[@name = $element/@name]) + 1"/>
-		<xsl:sequence select="concat($prefix, '::', if ($ancestorNames) then $ancestorNames else 'ROOT', '::', $thisName, '::n', $k)"/>
-	</xsl:function>
+	<xsl:template match="a:CompoundType">
+		<!-- 
+			Note that the second conditional clause is for when compounds are hidden via preferences 
+			configuration BUT we have an ill-defined compound that we want to display purely for the 
+			purposes of presenting the error for the end user.
+		-->
+		<xsl:variable name="baseClass" select="@baseClass"/>
+		<xsl:if test="(not($hideCompounds) and not(@hideInDiagrams = 'true')) or (($hideCompounds or @hideInDiagrams = 'true') and $errorAssistance and //a:Reference[@baseClass = $baseClass])">
+			<!-- 
+				JSON profiling is different than RDFS-based in that we can define multiple (duplicate)
+				classes in the profile that are derived from the same canonical type. In that case we  
+				derive the class name from the @name attribute as opposed to how in RDFS profile builders
+				we derive it from the @baseClass attribute. 
+			-->
+			<xsl:variable name="className" select="@name"/>
+			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
+			<list begin="" indent="" delim="" end="">
+				<list begin="{concat('class ', $className, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+					<xsl:choose>
+						<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
+							<xsl:apply-templates select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<item>[Attributes hidden]</item>
+						</xsl:otherwise>
+					</xsl:choose>							
+				</list>
+			</list>
+		</xsl:if>
+	</xsl:template>
 		
 	<!--
 	This template is to generate an anonymous complex type. To differentiate an anonymous complex from a
@@ -584,82 +686,78 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template match="a:SimpleType">
-		<xsl:if test="not($hideCIMDatatypes) and not(@hideInDiagrams = 'true')">
-			<xsl:variable name="className" select="substring-after(@dataType, '#')"/>
-			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
-			<list begin="" indent="" delim="" end="">
-				<list begin="{concat('class ', $className, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
-					<xsl:choose>
-						<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
-							<xsl:apply-templates select="a:Simple|a:Enumerated"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<item>[Attributes hidden]</item>
-						</xsl:otherwise>
-					</xsl:choose>							
-				</list>
-			</list>
-		</xsl:if>
-	</xsl:template>
-	
-	<xsl:template match="a:PrimitiveType">
-		<xsl:if test="not($hidePrimitives) and not(@hideInDiagrams = 'true')">
-			<xsl:variable name="className" select="substring-after(@dataType, '#')"/>
-			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
-			<list begin="" indent="" delim="" end="">
-				<list begin="{concat('class ', $className, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">		
-				</list>
-			</list>
-			<item>hide "<xsl:value-of select="$className"/>" attributes</item>
-			<item></item>
-		</xsl:if>
-	</xsl:template>
-
-	<xsl:template match="a:CompoundType">
-		<xsl:if test="not($hideCompounds) and not(@hideInDiagrams = 'true')">
-			<!-- 
-				JSON profiling is different than RDFS based in that we can define multiple (duplicate)
-				classes in the profile that are derived from the same canonical type. In that case we  
-				derive the class name from the @name attribute as opposed to how in RDFS profile builders
-				we derive it from the @baseClass attribute. 
-			-->
-			<xsl:variable name="className" select="@name"/>
-			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
-			<list begin="" indent="" delim="" end="">
-				<list begin="{concat('class ', $className, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
-					<xsl:choose>
-						<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
-							<xsl:apply-templates select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<item>[Attributes hidden]</item>
-						</xsl:otherwise>
-					</xsl:choose>							
-				</list>
-			</list>
-		</xsl:if>
-	</xsl:template>
-	
 	<xsl:template match="a:Root|a:ComplexType">
 		<xsl:if test="not(@hideInDiagrams = 'true')">
 			<xsl:variable name="className" select="@name"/>
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
 			<xsl:choose>
-				<xsl:when test="a:SuperType">
-					<xsl:variable name="superClassName" select="a:SuperType/@name"/>
+				<xsl:when test="a:SuperType[@baseClassIsShadowExtension = 'false']">
+					<xsl:variable name="superClassName" select="a:SuperType[@baseClassIsShadowExtension = 'false']/@name"/>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/> inherits from <xsl:value-of select="$superClassName"/></item>
 						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
-									<xsl:apply-templates select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain"/>
+									<xsl:for-each select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
+										<xsl:choose>
+											<xsl:when test="self::a:Reference">
+												<!-- 
+													Now process the specific ill-defined enumeration or compound attributes that appear as <Reference/>.
+													elements. By definition, any <Reference/> that has an 'attribute' stereotype is an ill-defined attribute 
+													in the profile that could be, for example, an enumeration or compound in the model. By "ill-defined" what 
+													is meant is that the user has pulled into the profile an attribute for a class (whose declared type in the
+													model is either an enumeration or compound) but for which they have not completed the profiling process
+													by then additionally bringing over the Enumeration or Compound class itself as part of the attribute 
+													definition for the profile. This last step can be executed by the user via either the "shallow copy" button
+													(indicated by the single arrow) or the "deep copy" button (indicated by the double arrow). When this last 
+													step is either missed or when done using the "shallow copy" button without the enumeration or compound
+													already defined in the profile, the result is that these attributes get generated as <Reference/>-s and 
+													not as <Compound/> or <Enumerated/> in the XML intermediary format used as input into the XSLT. This is the 
+													reason for the speciailized "edge case handling" throughout the PlantUML builders. 
+													One final area to highlight is <Reference/>-s that NOT have an @type attribute indicate that the range of 
+													the attribute is not available within the profile and therefore the error must be rendered differently.
+												-->
+												<xsl:choose>
+													<xsl:when test="$errorAssistance and not(@type) and (a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound')])">
+														<xsl:if test="not(@hideInDiagrams = 'true') ">
+															<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
+															<item><xsl:value-of select="'&lt;$empty_icon&gt;'"/><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="concat(@name, ': ', if (@type) then @type else '&lt;Unknown&gt;', ' [0..1]')"/></item>
+														</xsl:if>
+													</xsl:when>
+													<xsl:when test="not($errorAssistance) and a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound')]">
+														<xsl:if test="not(@hideInDiagrams = 'true')">
+															<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
+															<item><xsl:value-of select="'&lt;$empty_icon&gt;'"/><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="concat(@name, ': ', if (@type) then @type else '&lt;Unknown&gt;', ' [0..1]')"/></item>
+														</xsl:if>
+													</xsl:when>
+												</xsl:choose>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:apply-templates select="."/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:for-each>
 								</xsl:when>
 								<xsl:otherwise>
 									<item>[Attributes hidden]</item>
 								</xsl:otherwise>
 							</xsl:choose>
 						</list>
+						<xsl:if test="$errorAssistance">
+							<!-- 
+								For ill-defined enumeration or compound attributes that appear as <Reference/> but without a
+								@type attribute, we render the error as a note directly attached to the attribute itself. 
+								This is distinctly different than ill-defined enumeration or compound attributes with @type(s).
+							-->
+							<xsl:for-each select="a:Reference[not(@type) and (a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound')])]">
+								<list begin="note right of {substring-after(@basePropertyClass, '#')}::{@name} #pink" indent="   " delim="" end="end note">
+									<item>The declared type for this attribute is currently</item>
+									<item>undefined. This should be fixed within either the</item>
+									<item>model and/or profile where required.</item>
+								</list>
+								<item></item>
+							</xsl:for-each>	
+						</xsl:if>	
 						<xsl:if test="not(//node()[@name = $superClassName]/@hideInDiagrams = 'true')">
 							<item><xsl:value-of select="concat($superClassName, ' &lt;|-- ', $className)"/></item>
 						</xsl:if>
@@ -671,13 +769,66 @@
 						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
-									<xsl:apply-templates select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain"/>
+									<xsl:for-each select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
+										<xsl:choose>
+											<xsl:when test="self::a:Reference">
+												<!-- 
+													Now process the specific ill-defined enumeration or compound attributes that appear as <Reference/>.
+													elements. By definition, any <Reference/> that has an 'attribute' stereotype is an ill-defined attribute 
+													in the profile that could be, for example, an enumeration or compound in the model. By "ill-defined" what 
+													is meant is that the user has pulled into the profile an attribute for a class (whose declared type in the
+													model is either an enumeration or compound) but for which they have not completed the profiling process
+													by then additionally bringing over the Enumeration or Compound class itself as part of the attribute 
+													definition for the profile. This last step can be executed by the user via either the "shallow copy" button
+													(indicated by the single arrow) or the "deep copy" button (indicated by the double arrow). When this last 
+													step is either missed or when done using the "shallow copy" button without the enumeration or compound
+													already defined in the profile, the result is that these attributes get generated as <Reference/>-s and 
+													not as <Compound/> or <Enumerated/> in the XML intermediary format used as input into the XSLT. This is the 
+													reason for the speciailized "edge case handling" throughout the PlantUML builders. 
+													One final area to highlight is <Reference/>-s that NOT have an @type attribute indicate that the range of 
+													the attribute is not available within the profile and therefore the error must be rendered differently.
+												-->
+												<xsl:choose>
+													<xsl:when test="$errorAssistance and not(@type) and (a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound')])">
+														<xsl:if test="not(@hideInDiagrams = 'true') ">
+															<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
+															<item><xsl:value-of select="'&lt;$empty_icon&gt;'"/><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="concat(@name, ': ', if (@type) then @type else '&lt;Unknown&gt;', ' [0..1]')"/></item>
+														</xsl:if>
+													</xsl:when>
+													<xsl:when test="not($errorAssistance) and a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound')]">
+														<xsl:if test="not(@hideInDiagrams = 'true')">
+															<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
+															<item><xsl:value-of select="'&lt;$empty_icon&gt;'"/><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="concat(@name, ': ', if (@type) then @type else '&lt;Unknown&gt;', ' [0..1]')"/></item>
+														</xsl:if>
+													</xsl:when>
+												</xsl:choose>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:apply-templates select="."/>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:for-each>
 								</xsl:when>
 								<xsl:otherwise>
 									<item>[Attributes hidden]</item>
 								</xsl:otherwise>
 							</xsl:choose>							
 						</list>
+						<xsl:if test="$errorAssistance">
+							<!-- 
+								For ill-defined enumeration or compound attributes that appear as <Reference/> but without a
+								@type attribute, we render the error as a note directly attached to the attribute itself. 
+								This is distinctly different than ill-defined enumeration or compound attributes with @type(s).
+							-->
+							<xsl:for-each select="a:Reference[not(@type) and (a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound')])]">
+								<list begin="note right of {substring-after(@basePropertyClass, '#')}::{@name} #pink" indent="   " delim="" end="end note">
+									<item>The declared type for this attribute is currently</item>
+									<item>undefined. This should be fixed within either the</item>
+									<item>model and/or profile where required.</item>
+								</list>
+								<item></item>
+							</xsl:for-each>	
+						</xsl:if>	
 					</list>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -750,11 +901,11 @@
 							</xsl:when>
 							<xsl:when test="//a:EnumeratedType[@name = $type]">
 								<xsl:variable name="theEnumeration" select="//a:EnumeratedType[@name = $type]"/>
-								<xsl:value-of select="if ($hideEnumerations or ($theEnumeration/@hideInDiagrams = 'true')) then concat(cimtool:unique-id($theEnumeration), '::', cimtool:unique-id(.)) else $type"/>
+								<xsl:value-of select="if (not($errorAssistance) and ($hideEnumerations or ($theEnumeration/@hideInDiagrams = 'true'))) then concat(cimtool:unique-id($theEnumeration), '::', cimtool:unique-id(.)) else $type"/>
 							</xsl:when>
 							<xsl:when test="//a:CompoundType[@name = $type]">
 								<xsl:variable name="theCompound" select="//a:CompoundType[@name = $type]"/>
-								<xsl:value-of select="if ($hideCompounds or ($theCompound/@hideInDiagrams = 'true')) then concat(cimtool:unique-id($theCompound), '::', cimtool:unique-id(.)) else $type"/>
+								<xsl:value-of select="if (not($errorAssistance) and ($hideCompounds or ($theCompound/@hideInDiagrams = 'true'))) then concat(cimtool:unique-id($theCompound), '::', cimtool:unique-id(.)) else $type"/>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="$type"/>
@@ -805,65 +956,22 @@
 							<item></item>
 						</list>
 					</xsl:when>
-					<!-- 
-						The below two scenarios are invalid profiling errors where an end user has included the enumeration or compound type definition within
-						the profile but they have not properly 'pulled it in' as the declared type on the attribute. These appear as a:Reference rather than as
-						an a:Enumerated or an a:Compound. Here the PlantUML builder should render it as a red association to the enumeration to indicate it should
-						be fixed in the profile. Below further addresses the situation where the enumeration/compound is flagged as hidden and therefore is not 
-						defined earlier in the PlantUML diagram and therefore will be auto-generated by PlantUML as a class if not explicitly defined. Therefore,
-						instead of letting PlantUML incorrectly define a default class we define a "one-off" definition for the a:EnumerationType or a:CompoundType
-						so that the association links to an appropriate representation which better informs the end user of what the issue is.
-					-->
-					<xsl:when test="//a:EnumeratedType[@name = $type]">
-						<xsl:variable name="theEnumeration" select="//a:EnumeratedType[@name = $type]"/>
-						<xsl:variable name="anonymousId" select="cimtool:unique-id($theEnumeration)"/>
-						<xsl:if test="$hideEnumerations or ($theEnumeration/@hideInDiagrams = 'true')">
-							<xsl:variable name="name" select="$theEnumeration/@name"/>
-							<xsl:variable name="count" select="count($theEnumeration/a:EnumeratedValue)"/>
-							<list begin="" indent="" delim="" end="">
-								<list begin="enum {concat($targetClass, ' as &quot;', $name, '&quot; &lt;&lt;enumeration&gt;&gt; ', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
-									<xsl:for-each select="$theEnumeration">
-										<xsl:for-each select="a:EnumeratedValue[position() &lt;= 20]">
-											<xsl:variable name="stereotypes"><xsl:call-template name="attribute-stereotypes"/></xsl:variable>
-											<item><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat($stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose><xsl:value-of select="substring-after(substring-after(@baseResource, '#'), '.')" /></item>
-										</xsl:for-each>
-									</xsl:for-each>
-									<xsl:if test="$count > 20">
-										<item>[Remaining <xsl:value-of select="$count - 20"/> literals hidden]</item>
-									</xsl:if>
-								</list>
-							</list>
-						</xsl:if>
-					</xsl:when>
-					<xsl:when test="//a:CompoundType[@name = $type]">
-						<xsl:variable name="theCompound" select="//a:CompoundType[@name = $type]"/>
-						<xsl:if test="$hideCompounds or ($theCompound/@hideInDiagrams = 'true')">
-							<xsl:variable name="name" select="$theCompound/@name"/>
-							<list begin="" indent="" delim="" end="">
-								<list begin="class {concat($targetClass, ' as &quot;', $name, '&quot; &lt;&lt;Compound&gt;&gt; ', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
-									<xsl:choose>
-										<xsl:when test="not($theCompound/a:Stereotype[contains(., '#diagramshideallattributes')])">
-											<xsl:for-each select="$theCompound">
-												<xsl:apply-templates select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain"/>
-											</xsl:for-each>
-										</xsl:when>
-										<xsl:otherwise>
-											<item>[Attributes hidden]</item>
-										</xsl:otherwise>
-									</xsl:choose>							
-								</list>
-							</list>
-						</xsl:if>
-					</xsl:when>
 				</xsl:choose>
 			</xsl:if>
-			
+
 			<!-- Output the association -->
-			<item><xsl:value-of select="concat($sourceClass, ' ', $associationType, ' &quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', $targetClass)"/><xsl:if test="a:Stereotype[contains(., '#enumeration')] or a:Stereotype[contains(., '#compound')] or a:Stereotype[contains(., '#cimdatatype')] or a:Stereotype[contains(., '#primitive')] or (self::a:Reference and not (parent::a:Choice) and not(a:Stereotype[contains(., '#byreference')]))"><xsl:value-of select="if ($enableDarkMode) then '#FF2D2D' else ' #red'"/></xsl:if></item>
+			<xsl:choose>
+				<xsl:when test="$errorAssistance">
+					<item><xsl:value-of select="concat($sourceClass, ' ', $associationType, ' &quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', $targetClass)"/><xsl:if test="a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound') or contains(., '#cimdatatype') or contains(., '#constrainedprimitive') or contains(., '#primitive')] or (self::a:Reference and not (parent::a:Choice) and not(a:Stereotype[contains(., '#byreference')]))"><xsl:value-of select="if ($enableDarkMode) then '#FF2D2D' else '#red'"/></xsl:if><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat(' : ', $stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose></item>
+				</xsl:when>
+				<xsl:when test="not(a:Stereotype[contains(., '#attribute') or contains(., '#enumeration') or contains(., '#compound') or contains(., '#cimdatatype') or contains(., '#constrainedprimitive') or contains(., '#primitive')] or (self::a:Reference and not (parent::a:Choice) and not(a:Stereotype[contains(., '#byreference')])))">
+					<item><xsl:value-of select="concat($sourceClass, ' ', $associationType, ' &quot;', $targetRoleEndName, ' ', $targetCardinality, '&quot;', ' ', $targetClass)"/><xsl:choose><xsl:when test="not($stereotypes = '')"><xsl:value-of select="concat(' : ', $stereotypes, ' ')"/></xsl:when><xsl:otherwise></xsl:otherwise></xsl:choose></item>
+				</xsl:when>
+			</xsl:choose>
 			
 			<!-- If none of the below four types of elements is defined as a top level class for $targetClass then it means that the class has 
 				 not yet been pulled into the profile and therefore should be flagged as an error (i.e. expressed as a class in light red) -->
-			<xsl:if test="not(//a:ComplexType[@name = $type]|//a:Root[@name = $type]|//a:CompoundType[@name = $type]|//a:EnumeratedType[@name = $type]|//a:PrimitiveType[@name = $type])">
+			<xsl:if test="not(//a:ComplexType[@name = $type]|//a:Root[@name = $type]|//a:CompoundType[@name = $type]|//a:EnumeratedType[@name = $type]|//a:ConstrainedPrimitiveType[@name = $type]|//a:PrimitiveType[@name = $type])">
 				<xsl:variable name="stereotype">
 					<xsl:choose>
 						<xsl:when test="a:Stereotype[contains(., '#enumeration')]"><xsl:value-of select="'&lt;&lt;enumeration&gt;&gt;'"/></xsl:when>
@@ -874,20 +982,34 @@
 						<xsl:otherwise><xsl:text></xsl:text></xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				<xsl:variable name="classType">
-					<xsl:choose>
-						<xsl:when test="a:Stereotype[contains(., '#enumeration')]"><xsl:value-of select="'enum'"/></xsl:when>
-						<xsl:otherwise><xsl:value-of select="'class'"/></xsl:otherwise>
-					</xsl:choose>
-				</xsl:variable>
-				<item></item>
-				<list begin="" indent="" delim="" end="">
-					<item>' This class represents an "orphan" reference on an invalid Reference/Instance that must be fixed in the profile</item>
-					<item>' We highlight it by generating a color indicating it is invalid and that the user should add in the orphaned type</item>
-					<list begin="{concat($classType, ' ', $targetClass, ' &lt;&lt;error&gt;&gt; ', (if (not($stereotype = null)) then $stereotype else ''), $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
-						<item>' nothing to generate</item>
-					</list>
-				</list>
+				<xsl:choose>
+					<xsl:when test="$errorAssistance">
+						<xsl:variable name="classType">
+							<xsl:choose>
+								<xsl:when test="a:Stereotype[contains(., '#enumeration')]"><xsl:value-of select="'enum'"/></xsl:when>
+								<xsl:otherwise><xsl:value-of select="'class'"/></xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<item></item>
+						<list begin="" indent="" delim="" end="">
+							<item>' This class represents an "orphan" reference on an invalid Reference/Instance that must be fixed in the profile</item>
+							<item>' We highlight it by generating a color indicating it is invalid and that the user should add in the orphaned type</item>
+							<list begin="{concat($classType, ' ', $targetClass, ' &lt;&lt;error&gt;&gt; ', (if (not($stereotype = null)) then $stereotype else ''), $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+								<item>' nothing to generate</item>
+							</list>
+						</list>
+					</xsl:when>
+					<xsl:when test="$stereotype = null or $stereotype = ''">
+						<item></item>
+						<list begin="" indent="" delim="" end="">
+							<item>' This class represents an "orphan" reference on an invalid Reference/Instance </item>
+							<item>' Here we do NOT generate a different color to indicate it is invalid as we are not in error assist mode.</item>
+							<list begin="{concat('class ', $targetClass, ' ', $stereotypes, ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+								<item>' nothing to generate</item>
+							</list>
+						</list>
+					</xsl:when>
+				</xsl:choose>
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>
@@ -926,9 +1048,9 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<!-- ============================================================================================================ -->
-	<!-- START SECTION:  (Simple, Domain, Enumerated, and Compound attributes templates)                               -->
-	<!-- ============================================================================================================ -->
+	<!-- ========================================================================================================================= -->
+	<!-- START SECTION:  (Simple, Domain, Compound, Enumerated, SimpleEnumerated, Complex, and SimpleCompound attribute templates) -->
+	<!-- ========================================================================================================================= -->
 	
 	<xsl:template match="a:Simple">	
 		<xsl:if test="not(@hideInDiagrams = 'true')">
@@ -986,9 +1108,9 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<!-- ============================================================================================================ -->
-	<!-- END SECTION:  (Simple, Domain, and Enumerated attributes templates)                           -->
-	<!-- ============================================================================================================ -->
+	<!-- ========================================================================================================================= -->
+	<!-- END SECTION:  (Simple, Domain, Compound, Enumerated, SimpleEnumerated, Complex, and SimpleCompound attribute templates)   -->
+	<!-- ========================================================================================================================= -->
 	
 	<xsl:template name="stereotypes">
 		<xsl:if test="a:Stereotype">

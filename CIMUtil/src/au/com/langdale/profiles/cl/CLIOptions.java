@@ -13,7 +13,6 @@ import java.io.File;
  * <ul>
  *   <li>{@code --project-dir <dir>} - CIMTool project directory (required)</li>
  *   <li>{@code --profile <file>} - Single input profile OWL file</li>
- *   <li>{@code --profiles-dir <dir>} - Directory containing profile OWL files (mutually exclusive with --profile)</li>
  *   <li>{@code --builder <n>} - The builder name from builders.json (e.g., "xsd", "json-schema-draft-07")</li>
  *   <li>{@code --xslt <file>} - Path to a custom XSLT stylesheet (alternative to --builder)</li>
  *   <li>{@code --output <dir>} - The output directory</li>
@@ -26,9 +25,9 @@ import java.io.File;
  * <p>The project directory must contain .cimtool-settings and .builder-preferences files.
  * Schema files are read from the Schema/ subdirectory as specified in .cimtool-settings.</p>
  * 
- * <p>If neither --profile nor --profiles-dir is specified, defaults to the Profiles/
- * subdirectory of the project directory. If --output is not specified in 
- * directory mode, output is written to the same directory as the profiles.</p>
+ * <p>If --profile is not specified, the CLI operates in project mode and processes all
+ * profile OWL files in the Profiles/ subdirectory of the project directory. If --output
+ * is not specified, output defaults to the project's Profiles/ subdirectory.</p>
  */
 public class CLIOptions {
 
@@ -51,7 +50,6 @@ public class CLIOptions {
 	}
 
 	private File profileFile;
-	private File profilesDir;
 	private File projectDir;
 	private String builderName;
 	private File xsltFile;
@@ -96,11 +94,6 @@ public class CLIOptions {
 				case "--profile":
 				case "-p":
 					options.profileFile = new File(requireArg(args, ++i, "--profile"));
-					break;
-				
-				case "--profiles-dir":
-				case "-pf":
-					options.profilesDir = new File(requireArg(args, ++i, "--profiles-dir"));
 					break;
 				
 				case "--project-dir":
@@ -184,29 +177,10 @@ public class CLIOptions {
 			throw new IllegalArgumentException("Builder preferences file not found: " + builderPrefsFile.getAbsolutePath());
 		}
 		
-		// Validate profile options - mutually exclusive
-		if (profileFile != null && profilesDir != null) {
-			throw new IllegalArgumentException("Cannot specify both --profile and --profiles-dir");
-		}
-		
-		// If neither profile nor profiles-dir specified, default to project's Profiles subdirectory
-		if (profileFile == null && profilesDir == null) {
-			profilesDir = new File(projectDir, "Profiles");
-		}
-		
-		// Validate profile file if specified
+		// Validate profile file if specified. When --profile is omitted the CLI
+		// operates in project mode, processing all .owl files in <project-dir>/Profiles.
 		if (profileFile != null && !profileFile.exists()) {
 			throw new IllegalArgumentException("Profile file not found: " + profileFile.getAbsolutePath());
-		}
-		
-		// Validate profiles directory if specified
-		if (profilesDir != null) {
-			if (!profilesDir.exists()) {
-				throw new IllegalArgumentException("Profiles directory not found: " + profilesDir.getAbsolutePath());
-			}
-			if (!profilesDir.isDirectory()) {
-				throw new IllegalArgumentException("--profiles-dir must be a directory: " + profilesDir.getAbsolutePath());
-			}
 		}
 		
 		if (builderName != null && xsltFile != null) {
@@ -221,13 +195,12 @@ public class CLIOptions {
 			throw new IllegalArgumentException("--output-ext is required when using --xslt");
 		}
 		
-		// If output not specified in directory mode, default to profiles directory
+		// If output not specified, default to the project's Profiles subdirectory.
+		// This applies in all modes (single-profile and project), matching the
+		// desktop application, which writes generated artifacts alongside the
+		// source profiles.
 		if (outputDir == null) {
-			if (profilesDir != null) {
-				outputDir = profilesDir;
-			} else {
-				throw new IllegalArgumentException("Missing required option: --output");
-			}
+			outputDir = new File(projectDir, "Profiles");
 		}
 		
 		if (copyrightDefaultsRequested && (copyrightMultiLineFile != null || copyrightSingleLineFile != null)) {
@@ -264,12 +237,11 @@ public class CLIOptions {
 			"                                 .cimtool-settings and .builder-preferences\n" +
 			"                                 (schema from Schema/, profiles from Profiles/)\n" +
 			"\n" +
-			"Profile options (mutually exclusive - if neither specified, uses <project>/Profiles/):\n" +
+			"Profile option (if omitted, all .owl files in <project>/Profiles/ are processed):\n" +
 			"  --profile, -p <file>       Single input profile OWL file\n" +
-			"  --profiles-dir, -pf <dir>  Directory containing profile OWL files\n" +
 			"\n" +
 			"Output options:\n" +
-			"  --output, -o <dir>         Output directory (defaults to profiles directory)\n" +
+			"  --output, -o <dir>         Output directory (defaults to <project>/Profiles/)\n" +
 			"\n" +
 			"Transform options (optional - if omitted, uses builders flagged in profile):\n" +
 			"  --builder, -b <n>       Builder name from builders.json\n" +
@@ -283,7 +255,6 @@ public class CLIOptions {
 			"  --copyright-defaults                 Use bundled default UCAIug Apache 2.0 copyright templates\n" +
 			"\n" +
 			"Other options:\n" +
-			"  --param <key=value>        Additional XSLT parameter (can specify multiple)\n" +
 			"  --list-builders, -l        List available builders\n" +
 			"  --version, -v              Show version information\n" +
 			"  --help, -h                 Show this help message\n" +
@@ -312,20 +283,17 @@ public class CLIOptions {
 		return profileFile;
 	}
 	
-	public File getProfilesDir() {
-		return profilesDir;
-	}
-	
 	public File getProjectDir() {
 		return projectDir;
 	}
 	
 	/**
-	 * Check if operating in directory mode (processing multiple profiles).
-	 * @return true if processing a directory of profiles, false if processing a single profile
+	 * Check if operating in project mode (processing all profiles in the project's
+	 * Profiles directory) rather than single-profile mode.
+	 * @return true if no single profile was specified (project mode), false if a single profile was specified
 	 */
-	public boolean isDirectoryMode() {
-		return profilesDir != null;
+	public boolean isProjectMode() {
+		return profileFile == null;
 	}
 	
 	public String getBuilderName() {

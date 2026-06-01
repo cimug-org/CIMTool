@@ -63,6 +63,8 @@
 	<xsl:param name="choicesFontColor" select="map:get($paramMap, 'choicesFontColor')"/>
 	<xsl:param name="refsColor" select="map:get($paramMap, 'refsColor')"/>
 	<xsl:param name="refsFontColor" select="map:get($paramMap, 'refsFontColor')"/>
+	<xsl:param name="shadowClassesColor" select="map:get($paramMap, 'shadowClassesColor')"/>
+	<xsl:param name="shadowClassesFontColor" select="map:get($paramMap, 'shadowClassesFontColor')"/>
 	<xsl:param name="errorsColor" select="map:get($paramMap, 'errorsColor')"/>
 	<xsl:param name="errorsFontColor" select="map:get($paramMap, 'errorsFontColor')"/>
 	<xsl:param name="plantUMLTheme" select="map:get($paramMap, 'plantUMLTheme')"/>
@@ -251,6 +253,16 @@
 							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
 							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
 							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
+							<!-- Shadow classes <<ShadowExtension>> definition -->
+							<item>' Shadow classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/>#454645</item>
+							<item>BorderThickness<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/> 1</item>
+							<item></item>
 						</list>
 					</xsl:when>
 					<xsl:when test="$plantUMLTheme and not($plantUMLTheme = '') and not($plantUMLTheme = '_none_')">
@@ -365,6 +377,17 @@
 							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;error&gt;&gt; ', $errorsFontColor)"/></item>
 							<item>BorderColor<xsl:value-of select="'&lt;&lt;error&gt;&gt; '"/>#454645</item>
 							<item>BorderThickness<xsl:value-of select="'&lt;&lt;error&gt;&gt; '"/> 1</item>
+							<item></item>
+							<!-- Shadow classes <<ShadowExtension>> definition -->
+							<item>' Shadow classes style definition</item>
+							<item>BackgroundColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesColor)"/></item>
+							<item>FontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>AttributeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>StereotypeFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>HeaderFontColor<xsl:value-of select="concat('&lt;&lt;ShadowExtension&gt;&gt; ', $shadowClassesFontColor)"/></item>
+							<item>BorderColor<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/>#454645</item>
+							<item>BorderThickness<xsl:value-of select="'&lt;&lt;ShadowExtension&gt;&gt; '"/> 1</item>
+							<item></item>
 						</list>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -435,6 +458,15 @@
 					</xsl:if>
 				</list>
 			</list>
+			<!-- Purely for the purposes of extensions the enumeration can inherit from a shadow class enumeration -->
+			<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'true']">
+				<xsl:variable name="parentBaseEnum" select="@baseClass"/>
+				<xsl:variable name="parentEnum" as="element()?" select="(//a:EnumeratedType[@baseClass = $parentBaseEnum])[1]"/>
+				<xsl:if test="exists($parentEnum) and not($parentEnum/@hideInDiagrams = 'true')">
+					<item><xsl:value-of select="concat($parentEnum/@name, ' &lt;|-- ', $enumName)"/></item>
+					<item></item>
+				</xsl:if>
+			</xsl:for-each>
 		</xsl:if>
 	</xsl:template>
 	
@@ -523,29 +555,30 @@
 		<xsl:if test="not(@hideInDiagrams = 'true')">
 			<!-- ================================================================================================================= -->
 			<!-- This next set of variables is purely for determining whether a:ComplexType (i.e. an abstract class) should be     -->
-			<!-- tagged with the <<error>> stereotype.                                                                             -->			
+			<!-- tagged with the <<error>> stereotype.                                                                             -->		
+			<xsl:variable name="isShadowClass" select="@isShadowClass"/>	
 			<xsl:variable name="currentClass" select="@baseClass"/>
 			<xsl:variable name="fieldsCount">
 				<xsl:call-template name="count_fields">
 					<xsl:with-param name="count" select="0"/>
 				</xsl:call-template>
 			</xsl:variable>
-			<xsl:variable name="superCount" select="count(a:SuperType)"/>
-			<xsl:variable name="subCount" select="count(//a:Root[a:SuperType[@baseClass = $currentClass]]|//a:ComplexType[a:SuperType[@baseClass = $currentClass]])"/>
+			<xsl:variable name="superCount" select="count(a:SuperType[@baseClassIsShadowExtension = 'false'])"/>
+			<xsl:variable name="subCount" select="count(//a:Root[a:SuperType[@baseClassIsShadowExtension = 'false' and @baseClass = $currentClass]]|//a:ComplexType[a:SuperType[@baseClassIsShadowExtension = 'false' and @baseClass = $currentClass]])"/>
 			<xsl:variable name="refsCount" select="count(//a:Root[@baseClass != $currentClass and (a:Instance|a:Reference)[@baseClass = $currentClass]]|//a:ComplexType[@baseClass != $currentClass and (a:Instance|a:Reference)[@baseClass = $currentClass]])"/>
-			<xsl:variable name="error" select="if ((self::a:ComplexType and (($subCount = 0 and $superCount = 0 and $refsCount > 0 and $fieldsCount > 0) or ($subCount = 0 and $superCount = 0 and $refsCount = 0) or ($subCount = 0 and $superCount > 0 and $refsCount = 0))) or (self::a:Root and ($subCount = 0 and $superCount = 0 and $refsCount > 0 and $fieldsCount = 0))) then true() else false()" />
+			<xsl:variable name="error" select="if ((self::a:ComplexType and not($isShadowClass) and (($subCount = 0 and $superCount = 0 and $refsCount > 0 and $fieldsCount > 0) or ($subCount = 0 and $superCount = 0 and $refsCount = 0) or ($subCount = 0 and $superCount > 0 and $refsCount = 0))) or (self::a:Root and ($subCount = 0 and $superCount = 0 and $refsCount > 0 and $fieldsCount = 0))) then true() else false()" />
 			<!-- ================================================================================================================= -->
 			<xsl:variable name="className" select="substring-after(@baseClass, '#')"/>
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
 			<xsl:choose>
-				<xsl:when test="a:SuperType">
-					<xsl:variable name="superClassName" select="substring-after(a:SuperType/@baseClass, '#')"/>
+				<xsl:when test="a:SuperType[@baseClassIsShadowExtension = 'false']">
+					<xsl:variable name="superClassName" select="substring-after(a:SuperType[@baseClassIsShadowExtension = 'false']/@baseClass, '#')"/>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/> inherits from <xsl:value-of select="$superClassName"/></item>
 						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, if ($error and $errorAssistance) then ' &lt;&lt;error&gt;&gt; ' else ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
-									<xsl:for-each select="a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
+									<xsl:for-each select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
 										<xsl:choose>
 											<xsl:when test="self::a:Reference">
 												<!-- 
@@ -604,10 +637,15 @@
 								</list>
 								<item></item>
 							</xsl:for-each>	
-						</xsl:if>					
-						<xsl:if test="not(//node()[@name = $superClassName]/@hideInDiagrams = 'true')">
-							<item><xsl:value-of select="concat($superClassName, ' &lt;|-- ', $className)"/></item>
 						</xsl:if>
+						<xsl:for-each select="a:SuperType">
+							<xsl:variable name="parentBaseClass" select="@baseClass"/>
+							<xsl:variable name="parentClass" as="element()?" select="(//a:Root[@baseClass = $parentBaseClass]|//a:ComplexType[@baseClass = $parentBaseClass])[1]"/>
+							<xsl:if test="exists($parentClass) and not($parentClass/@hideInDiagrams = 'true')">
+								<item><xsl:value-of select="concat($parentClass/@name, ' &lt;|-- ', $className)"/></item>
+								<item></item>
+							</xsl:if>
+						</xsl:for-each>
 						<!-- 
 							Now process all associations (note here that all ill-defined <Reference/> elements that HAVE a @type  
 							attributee are included in the select). For ill-defined enumeration or compound attributes with a @type 
@@ -629,7 +667,7 @@
 						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, if ($error) then ' &lt;&lt;error&gt;&gt; ' else ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
-									<xsl:for-each select="a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
+									<xsl:for-each select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
 										<xsl:choose>
 											<xsl:when test="self::a:Reference">
 												<!-- 
@@ -689,6 +727,14 @@
 								<item></item>
 							</xsl:for-each>	
 						</xsl:if>
+						<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'true']">
+							<xsl:variable name="parentBaseClass" select="@baseClass"/>
+							<xsl:variable name="parentClass" as="element()?" select="(//a:Root[@baseClass = $parentBaseClass]|//a:ComplexType[@baseClass = $parentBaseClass])[1]"/>
+							<xsl:if test="exists($parentClass) and not($parentClass/@hideInDiagrams = 'true')">
+								<item><xsl:value-of select="concat($parentClass/@name, ' &lt;|-- ', $className)"/></item>
+								<item></item>
+							</xsl:if>
+						</xsl:for-each>
 						<!-- 
 							Now process all associations (note here that all ill-defined <Reference/> elements that HAVE a @type  
 							attributee are included in the select). For ill-defined enumeration or compound attributes with a @type 
@@ -843,7 +889,7 @@
 	</xsl:template>
 	
 	<!-- ============================================================================================================ -->
-	<!-- START SECTION:  (Simple, Domain, Enumerated, and Compound attributes templates)                               -->
+	<!-- START SECTION:  (Simple, Domain, Enumerated, and Compound attributes templates)                              -->
 	<!-- ============================================================================================================ -->
 	
 	<xsl:template match="a:Simple">	
@@ -869,15 +915,15 @@
 	</xsl:template>
 	
 	<!-- ============================================================================================================ -->
-	<!-- END SECTION:  (Simple, Domain, and Enumerated attributes templates)                           -->
+	<!-- END SECTION:  (Simple, Domain, Enumerated, and Compound attributes templates)                           -->
 	<!-- ============================================================================================================ -->
 
 	<xsl:template name="count_fields">
 		<xsl:param name="count"/>
 		<xsl:variable name="total_count" select="$count + count(a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice)"/>
 		<xsl:choose>
-			<xsl:when test="a:SuperType">
-				<xsl:variable name="baseClass" select="a:SuperType/@baseClass"/>
+			<xsl:when test="a:SuperType[@baseClassIsShadowExtension = 'false']">
+				<xsl:variable name="baseClass" select="a:SuperType[@baseClassIsShadowExtension = 'false']/@baseClass"/>
 				<xsl:for-each select="/*/node()[@baseClass = $baseClass]">
 					<xsl:call-template name="count_fields">
 						<xsl:with-param name="count" select="$total_count"/>

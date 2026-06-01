@@ -45,6 +45,7 @@ public interface QualifiedNames extends GlobalPreferences {
 	QualifiedName PRIMITIVES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_PRIMITIVES_COLOR);
 	QualifiedName CHOICES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_CHOICES_COLOR);
 	QualifiedName REFS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_REFS_COLOR);
+	QualifiedName SHADOW_CLASSES_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_SHADOW_CLASSES_COLOR);
 	QualifiedName ERRORS_COLOR = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_ERRORS_COLOR);
 	QualifiedName ANONYMOUS_CLASSES_COLOR_WHITE = new QualifiedName(CIMToolPlugin.PLUGIN_ID,
 			PREF_ANONYMOUS_CLASSES_COLOR_WHITE);
@@ -88,6 +89,7 @@ public interface QualifiedNames extends GlobalPreferences {
 			PRIMITIVES_COLOR, //
 			CHOICES_COLOR, //
 			REFS_COLOR, //
+			SHADOW_CLASSES_COLOR, //
 			ERRORS_COLOR, //
 			ANONYMOUS_CLASSES_COLOR_WHITE, //
 			ENABLE_DARK_MODE, //

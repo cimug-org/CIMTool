@@ -310,4 +310,46 @@ public final class ShadowClassUtils {
 		return false;
 	}
 
+	/**
+	 * Check if the the potential shadow class passed in is indeed a shadow class.
+	 * There are currently three potential ways that a shadow class can be defined:
+	 * 
+	 * <pre>
+	 * 1. If there is an explicit <<ShadowExtension>> stereotype defined on the class.
+	 * 
+	 * 2. If there is a <<MixIn>> or <<CIMExtension>> stereotype defined as an OWL
+	 *    axiom on the class. Note, that this appears in the UML as one of these 
+	 *    respective stereotypes declared on the generalizaton relationship that is 
+	 *    defined between the shadow class and the normative class it shadows. When
+	 *    importing, CIMTool converts such stereotypes into OWL Axioms defined  
+	 *    specifically on the shadow class itself.
+	 *    
+	 * 3. If the class is in a namespace other than the normative CIM namespace, has 
+	 *    none of the three stereotype explicitly assigned, and extends a subclass 
+	 *    that is in the normative CIM namespace and which has the same name it has.
+	 *    i.e. this, by definition, is an implied shadow class.
+	 * </pre>
+	 * 
+	 * @param baseURI     The normative CIM namespace URI associated with the
+	 *                    canonical CIM.
+	 * @param shadowClass The shadow class for which to retrieve the normative class
+	 *                    that it is shadowing.
+	 * @return OntResource The normative class that is being shadowed.
+	 */
+	public static OntResource getClassBeingShadowed(String baseURI, OntResource shadowClass) {
+		OntResource normativeClass = null;
+		if (isShadowClass(baseURI, shadowClass)) {
+			if (shadowClass.hasProperty(RDFS.subClassOf)) {
+				ResIterator it = shadowClass.listSubClasses(true);
+				while (it.hasNext()) {
+					OntResource aSubClass = it.nextResource();
+					if (aSubClass.getURI() != null && aSubClass.getURI().startsWith(baseURI)) {
+						return normativeClass = aSubClass;
+					}
+				}
+			}
+		}
+		return normativeClass;
+	}
+
 }
