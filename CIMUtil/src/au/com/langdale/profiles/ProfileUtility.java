@@ -4,10 +4,6 @@
  */
 package au.com.langdale.profiles;
 
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.util.MultiMap;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +13,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.util.MultiMap;
+
+import au.com.langdale.kena.OntResource;
 import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
@@ -190,9 +190,6 @@ public class ProfileUtility {
 		public final boolean required, functional, reference, compound;
 		public final OntResource base_range, base_domain; // FIXME: base_range should be OntResource
 		public final String label, comment;
-		public final int min;
-		public final int max;
-		
 
 		public PropertySpec(PropertyInfo info, ProfileClass range_profile) {
 			prop = info.getProperty();
@@ -200,8 +197,6 @@ public class ProfileUtility {
 			functional = info.isFunctional();
 			reference = range_profile != null && range_profile.isReference();
 			compound = range_profile != null && range_profile.isCompound();
-			min = info.getMinCardinality();
-			max = info.getMaxCardinality();
 
 			// repair domain and range
 			base_domain = selectType(prop.getDomain(), info.getDomainProfile().getBaseClass());
@@ -225,8 +220,6 @@ public class ProfileUtility {
 			base_range = selectType(prop.getRange(), range);
 			label = prop.getLabel(null);
 			comment = "";
-			min = (required ? 1 : 0);
-			max = (functional ? 1 : Integer.MAX_VALUE);
 		}
 
 		/**
@@ -250,41 +243,6 @@ public class ProfileUtility {
 				label = prop.getLabel(null);
 			
 			comment = "";
-			
-			// initialize min
-			if (!required) {
-				min = 0;
-			} else if (lhs.min == rhs.min) {
-				if (lhs.min > 1) {
-					min = lhs.min; // a required property can have a minimum card > 1 (e.g. 3)
-				} else {
-					min = 1;
-				} 
-			} else {
-				// we know lhs.min != rhs.min so determine which is greater and assign min to that...
-				if (lhs.min > 1 || rhs.min > 1) {
-					min = (lhs.min > rhs.min ? lhs.min : rhs.min);
-				} else {
-					min = 1;
-				}
-			}
-			
-			// initialize max
-			if (functional) {
-				max = 1;
-			} else if (lhs.max == rhs.max) {
-				if (lhs.max > 1 && lhs.max < Integer.MAX_VALUE) {
-					max = lhs.max;
-				} else {
-					max = Integer.MAX_VALUE;
-				} 
-			} else {
-				if ((lhs.max > 1 && lhs.max < Integer.MAX_VALUE) || (rhs.max > 1 && rhs.max < Integer.MAX_VALUE)) {
-					max = Integer.MAX_VALUE;
-				} else {
-					max = Integer.MAX_VALUE;
-				}
-			}
 		}
 
 		private PropertySpec selectDominant(PropertySpec other) {
@@ -300,17 +258,13 @@ public class ProfileUtility {
 		}
 
 		public void create(ProfileClass profile) {
-			SelectionOptions options = new SelectionOptions( //
-					(required ? SelectionOption.PropertyRequired : SelectionOption.NoOp));
-			profile.createAllValuesFrom(prop, options);
+			profile.createAllValuesFrom(prop, required);
 			
 			profile.setReference(reference);// FIXME: is this right?
 			
 			PropertyInfo info = profile.getPropertyInfo(prop);
-			info.setMinCardinality(min); // New...
-			//if(functional)
-			//	info.setMaxCardinality(1);
-			info.setMaxCardinality(max); // Commented out above and replaced with this 08-Mar-2025
+			if(functional)
+				info.setMaxCardinality(1);
 			if( label != null )
 				info.getRange().setLabel(label, null);
 			if( comment != null )

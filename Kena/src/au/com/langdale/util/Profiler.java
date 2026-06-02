@@ -9,15 +9,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Intrusive profiler.   
  */
 public class Profiler {
-	private static final Logger log = LoggerFactory.getLogger(Profiler.class);
 	private static final double MS = 1.0e-6;
 	private static final int CALIBRATION_SAMPLE = 1000;
 	
@@ -107,8 +102,8 @@ public class Profiler {
 	public static void print() {
 		MultiMap summary = summarize();
 		
-		log.info("=====================================================");
-		log.info("Task: Total (ms), Count, Ave (ms), Min (ms), Max (ms)");
+		System.out.println("=====================================================");
+		System.out.println("Task: Total (ms), Count, Ave (ms), Min (ms), Max (ms)");
 		
 		Object[] keys = summary.keySet().toArray();
 		Arrays.sort(keys);
@@ -128,13 +123,13 @@ public class Profiler {
 				count += 1;
 			}
 			
-			log.info("{}: {}, {}, {}, {}, {}",
-					keys[ix],
-					total*MS,
-					count,
-					total*MS/count,
-					min*MS,
-					max*MS);
+			System.out.println( 
+					keys[ix] + ": " 
+					+ total*MS + ", " 
+					+ count + ", " 
+					+ total*MS/count + ", "  
+					+ min*MS + ", " 
+					+ max*MS);
 		}
 	}
 
@@ -151,6 +146,6 @@ public class Profiler {
 			}
 			res += t2 - t1;
 		}
-		log.info("Profile resolution (ns): {}", (res + 0.5)/CALIBRATION_SAMPLE);
+		System.out.println("Profile resolution (ns): " + (res + 0.5)/CALIBRATION_SAMPLE );
 	}
 }

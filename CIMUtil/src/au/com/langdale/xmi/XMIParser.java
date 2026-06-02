@@ -4,12 +4,6 @@
  */
 package au.com.langdale.xmi;
 
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
-import au.com.langdale.sax.XMLElement;
-import au.com.langdale.sax.XMLInterpreter;
-import au.com.langdale.sax.XMLMode;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -30,53 +24,14 @@ import org.xml.sax.XMLReader;
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.sax.XMLElement;
+import au.com.langdale.sax.XMLInterpreter;
+import au.com.langdale.sax.XMLMode;
 
 public class XMIParser extends XMIModel {
-	private static final Logger log = LoggerFactory.getLogger(XMIParser.class);
-	
-	private static final String STEREOTYPE = "Stereotype";
-	private static final String DIAGRAM = "Diagram";
-	private static final String SUBSYSTEM = "Subsystem";
-	private static final String TAG_DEFINITION = "TagDefinition";
-	private static final String GENERALIZATION = "Generalization";
-	private static final String COMPONENT = "Component";
-	private static final String CLASSIFIER_ROLE = "ClassifierRole";
-	private static final String ENUMERATION = "Enumeration";
-	private static final String PACKAGE = "Package";
-	private static final String ATTRIBUTE = "Attribute";
-	private static final String ASSOCIATION = "Association";
-	private static final String MULTIPLICITY = "Multiplicity";
-	private static final String ASSOCIATION_END = "AssociationEnd";
-	private static final String CLASS = "Class";
-	private static final String EXPRESSION = "Expression";
-	private static final String DATA_TYPE = "DataType";
-	private static final String CLASSIFIER = "Classifier";
-	private static final String ASSOCIATION_CLASS = "AssociationClass";
-	private static final String OPERATION = "Operation";
-	private static final String COMMENT = "Comment";
-	private static final String TAGGED_VALUE = "TaggedValue";
-	private static final String MODEL_ELEMENT = "ModelElement";
-	private static final String MULTIPLICITY_RANGE = "MultiplicityRange";
-	private static final String ENUMERATION_LITERAL = "EnumerationLiteral";
-	private static final String UPPER = "upper";
-	private static final String LOWER = "lower";
-	private static final String BODY = "body";
-	private static final String PARENT = "parent";
-	private static final String CHILD = "child";
-	private static final String GENERALIZATION_PARENT = "Generalization.parent";
-	private static final String GENERALIZATION_CHILD = "Generalization.child";
-	private static final String NAME = "name";
-	private static final String TAG = "tag";
-	private static final String VALUE = "value";
-	private static final String XMI_ID = "xmi.id";
-	private static final String XMI_IDREF = "xmi.idref";
-	private static final String TAGGED_VALUE_VALUE = "TaggedValue.value";
-	private static final String TAGGED_VALUE_DATAVALUE = "TaggedValue.dataValue";
-	private static final String EXTENDED_ELEMENT = "extendedElement";
-	private static final String model_Element = "modelElement";
-	
+
 	/**
 	 * Parse the given file as XMI producing an OWL model.
 	 */
@@ -131,42 +86,36 @@ public class XMIParser extends XMIModel {
 			enter();
 		}
 
-		protected final void enter() {
+		protected void enter() {
 			if (debug) {
 				indentLevel++;
-				if (log.isDebugEnabled()) {
-					StringBuilder spaces = new StringBuilder();
-					for (int i = 1; i < indentLevel; i++)
-						spaces.append("   ");
-					String name = getClass().getName().contains("$")
-							? getClass().getName().substring(getClass().getName().lastIndexOf("$") + 1)
-							: getClass().getName();
-					log.debug("{}Start: {}", spaces, name);
-				}
+				String spaces = "";
+				for (int i = 1; i < indentLevel; i++)
+					spaces += "   ";
+				System.out.println(spaces + "Start: "
+						+ (getClass().getName().contains("$")
+								? getClass().getName().substring(getClass().getName().lastIndexOf("$") + 1)
+								: getClass().getName()));
 			}
 		}
 
 		protected void exit() {
 			if (debug) {
-				if (log.isDebugEnabled()) {
-					StringBuilder spaces = new StringBuilder();
-					for (int i = 1; i < indentLevel; i++)
-						spaces.append("   ");
-					String name = getClass().getName().contains("$")
-							? getClass().getName().substring(getClass().getName().lastIndexOf("$") + 1)
-							: getClass().getName();
-					appendText(spaces + "End: " + name + "  ");
-				}
+				String spaces = "";
+				for (int i = 1; i < indentLevel; i++)
+					spaces += "   ";
+				System.out.print(spaces + "End: "
+						+ (getClass().getName().contains("$")
+								? getClass().getName().substring(getClass().getName().lastIndexOf("$") + 1)
+								: getClass().getName())
+						+ "  ");
+				appendText();
 				indentLevel--;
 			}
 		}
 
 		protected void appendText() {
-			// default is just a carriage return — subclasses override to append text content
-		}
-
-		protected void appendText(String message) {
-			log.debug("{}", message);
+			System.out.println(); // default is just a carriage return...
 		}
 
 		/**
@@ -175,16 +124,16 @@ public class XMIParser extends XMIModel {
 		 */
 		protected XMLMode visit(XMLElement element, OntResource resource) {
 
-			if (element.matches(TAGGED_VALUE)) {
+			if (element.matches("TaggedValue")) {
 				return new TaggedValueMode(element, resource);
-			} else if (element.matches(STEREOTYPE)) {
+			} else if (element.matches("Stereotype")) {
 				return new StereotypeMode(element, resource);
-			} else if (element.matches(COMMENT)) {
-				String comment = element.getAttributes().getValue(BODY);
+			} else if (element.matches("Comment")) {
+				String comment = element.getAttributes().getValue("body");
 				if (comment != null)
 					resource.addComment(comment, null);
 				return null;
-			} else if (element.matches(OPERATION))
+			} else if (element.matches("Operation"))
 				return null;
 			else
 				return this;
@@ -207,14 +156,14 @@ public class XMIParser extends XMIModel {
 		String name;
 
 		ClassifierRoleMode(XMLElement element) {
-			name = element.getAttributes().getValue(NAME);
+			name = element.getAttributes().getValue("name");
 			if (name != null && !packageTaggedValues.containsKey(name))
 				packageTaggedValues.put(name, new HashMap<OntResource, String>());
 		}
 
 		@Override
 		public XMLMode visit(XMLElement element) {
-			if (element.matches(TAGGED_VALUE)) {
+			if (element.matches("TaggedValue")) {
 				return new TaggedValueMode(element, (OntResource) null);
 			} else
 				return visit(element, (OntResource) null);
@@ -225,7 +174,6 @@ public class XMIParser extends XMIModel {
 		}
 
 		private class TaggedValueMode extends BaseMode {
-			
 			OntResource subject;
 			String tagValue;
 			FrontsNode property;
@@ -237,31 +185,29 @@ public class XMIParser extends XMIModel {
 			TaggedValueMode(XMLElement element, OntResource resource) {
 				super();
 				subject = resource;
-				tagValue = element.getAttributes().getValue(VALUE);
+				tagValue = element.getAttributes().getValue("value");
 
 				// in UML 1.3 documentation tags carry the comments
-				String type = element.getAttributes().getValue(TAG);
+				String type = element.getAttributes().getValue("tag");
 
 				// in UML 1.4 the type is in the name attribute
 				if (type == null)
-					type = element.getAttributes().getValue(NAME);
+					type = element.getAttributes().getValue("name");
 
 				if (type != null)
 					property = Translator.annotationResource(type);
 
 				// we override the default subject here and in visit()
-				OntResource ref = createUnknown(element.getAttributes().getValue(model_Element));
+				OntResource ref = createUnknown(element.getAttributes().getValue("modelElement"));
 				if (ref != null)
 					subject = ref;
 			}
 
 			public XMLMode visit(XMLElement element) {
 				// handle a tag definition or a reference to one
-				if (element.matches(TAG_DEFINITION)) {
+				if (element.matches("TagDefinition")) {
 					OntResource prop = createAnnotationProperty(element);
-					/**
-					 * The call to Translator.annotationResource() filters out unused tagged values.
-					 */
+					/** The call to Translator.annotationResource() filters out unused tagged values. */
 					if (prop != null) {
 						if (prop.getLabel() != null) {
 							if (Translator.annotationResource(prop.getLabel()) != null)
@@ -271,10 +217,10 @@ public class XMIParser extends XMIModel {
 						}
 					}
 					return null;
-				} else if (element.matches(TAGGED_VALUE_DATAVALUE) || element.matches(TAGGED_VALUE_VALUE)) {
+				} else if (element.matches("TaggedValue.dataValue") || element.matches("TaggedValue.value")) {
 					return new TaggedValueDataValueMode();
-				} else if (element.matches(MODEL_ELEMENT)) {
-					subject = createUnknown(element.getAttributes().getValue(XMI_IDREF));
+				} else if (element.matches("ModelElement")) {
+					subject = createUnknown(element.getAttributes().getValue("xmi.idref"));
 					return null;
 				} else
 					return this;
@@ -327,20 +273,20 @@ public class XMIParser extends XMIModel {
 		TaggedValueMode(XMLElement element, OntResource resource) {
 			super();
 			subject = resource;
-			tagValue = element.getAttributes().getValue(VALUE);
+			tagValue = element.getAttributes().getValue("value");
 
 			// in UML 1.3 documentation tags carry the comments
-			String type = element.getAttributes().getValue(TAG);
+			String type = element.getAttributes().getValue("tag");
 
 			// in UML 1.4 the type is in the name attribute
 			if (type == null)
-				type = element.getAttributes().getValue(NAME);
+				type = element.getAttributes().getValue("name");
 
 			if (type != null)
 				property = Translator.annotationResource(type);
 
 			// we override the default subject here and in visit()
-			OntResource ref = createUnknown(element.getAttributes().getValue(model_Element));
+			OntResource ref = createUnknown(element.getAttributes().getValue("modelElement"));
 			if (ref != null)
 				subject = ref;
 		}
@@ -348,12 +294,9 @@ public class XMIParser extends XMIModel {
 		public XMLMode visit(XMLElement element) {
 
 			// handle a tag definition or a reference to one
-			if (element.matches(TAG_DEFINITION)) {
+			if (element.matches("TagDefinition")) {
 				OntResource prop = createAnnotationProperty(element);
-				/**
-				 * The call to translator.annotationResource() filters out unneeded tagged
-				 * values.
-				 */
+				/** The call to Translator.annotationResource() filters out unneeded tagged values. */
 				if (prop != null) {
 					if (prop.getLabel() != null) {
 						if (Translator.annotationResource(prop.getLabel()) != null)
@@ -363,10 +306,10 @@ public class XMIParser extends XMIModel {
 					}
 				}
 				return null;
-			} else if (element.matches(TAGGED_VALUE_DATAVALUE) || element.matches(TAGGED_VALUE_VALUE)) {
+			} else if (element.matches("TaggedValue.dataValue") || element.matches("TaggedValue.value")) {
 				return new TaggedValueDataValueMode();
-			} else if (element.matches(MODEL_ELEMENT)) {
-				subject = createUnknown(element.getAttributes().getValue(XMI_IDREF));
+			} else if (element.matches("ModelElement")) {
+				subject = createUnknown(element.getAttributes().getValue("xmi.idref"));
 				return null;
 			} else
 				return this;
@@ -391,7 +334,7 @@ public class XMIParser extends XMIModel {
 		@Override
 		public void leave() {
 			if (subject != null && property != null && tagValue != null) {
-				Translator.addTagValue(subject, property, tagValue.trim());
+				subject.addProperty(property, tagValue.trim());
 			}
 			super.leave();
 		}
@@ -418,8 +361,8 @@ public class XMIParser extends XMIModel {
 		/**
 		 * Multiple stereotyped elements
 		 */
-		protected final void extend(XMLElement element) {
-			String list = element.getAttributes().getValue(EXTENDED_ELEMENT);
+		protected void extend(XMLElement element) {
+			String list = element.getAttributes().getValue("extendedElement");
 			if (stereo != null && list != null) {
 				subject = null; // forget subject
 
@@ -434,9 +377,9 @@ public class XMIParser extends XMIModel {
 		}
 
 		public XMLMode visit(XMLElement element) {
-			if (element.matches(MODEL_ELEMENT)) {
+			if (element.matches("ModelElement")) {
 				subject = null; // forget the given subject
-				OntResource given = createUnknown(element.getAttributes().getValue(XMI_IDREF));
+				OntResource given = createUnknown(element.getAttributes().getValue("xmi.idref"));
 				if (stereo != null && given != null) {
 					given.addProperty(UML.hasStereotype, stereo);
 				}
@@ -457,7 +400,7 @@ public class XMIParser extends XMIModel {
 
 		protected void appendText() {
 			if (stereo != null && subject != null) {
-				log.debug("{}:  stereotype -> {}", subject.getLabel(), stereo);
+				System.err.println(String.format("%s:  stereotype -> %s", subject.getLabel(), stereo));
 			}
 		}
 
@@ -467,7 +410,7 @@ public class XMIParser extends XMIModel {
 	 * Parse a UML package and the classes and associations it contains.
 	 */
 	private class PackageMode extends BaseMode {
-		
+
 		OntResource packResource;
 
 		/**
@@ -492,50 +435,57 @@ public class XMIParser extends XMIModel {
 			}
 		}
 
-		final void packageDefines(OntResource res) {
+		void packageDefines(OntResource res) {
 			if (!packResource.equals(UML.global_package))
 				res.addIsDefinedBy(packResource);
 		}
 
 		public XMLMode visit(XMLElement element) {
-			if (element.matches(CLASSIFIER_ROLE)) {
+			if (element.matches("ClassifierRole")) {
 				return new ClassifierRoleMode(element);
-			} else if (element.matches(ASSOCIATION)) {
+			} else if (element.matches("Association")) {
 				return new AssociationMode(element);
-			} else if (matchDef(element, CLASS)) {
+			} else if (matchDef(element, "Class")) {
 				return new ClassMode(element);
-			} else if (matchDef(element, ENUMERATION)) {
+			} else if (matchDef(element, "Enumeration")) {
 				return new EnumerationMode(element);
-			} else if (matchDef(element, PACKAGE)) {
+			} else if (matchDef(element, "Package")) {
 				return new PackageMode(element, this);
-			} else if (matchDef(element, COMPONENT)) {
+			} else if (matchDef(element, "Component")) {
 				createUnknown(element);
 				return null;
-			} else if (matchDef(element, ASSOCIATION_CLASS)) {
+			} else if (matchDef(element, "AssociationClass")) {
 				// TODO: implement association classes
 				return null;
-			} else if (matchDef(element, DATA_TYPE)) {
+			} else if (matchDef(element, "DataType")) {
 				if (packResource.equals(UML.global_package)) {
 					createUnknown(element); // top level datatypes are generally garbage
 					return null;
 				} else
 					return new DatatypeMode(element);
-			} else if (element.matches(GENERALIZATION)) {
+			} else if (element.matches("Generalization")) {
 				return new GeneralizationMode(element);
-			} else if (matchDef(element, TAG_DEFINITION)) {
+			} else if (matchDef(element, "TagDefinition")) {
 				OntResource prop = createAnnotationProperty(element);
-				String name = element.getAttributes().getValue(NAME);
+				String name = element.getAttributes().getValue("name");
 				if (name != null && Translator.annotationResource(name) != null) {
 					if (!taggedValueNamesMap.containsKey(name))
 						taggedValueNamesMap.put(name, prop);
 				}
 				return null;
-			} else if (element.matches(STEREOTYPE)) {
-				// pick up stereotype and apply to package
-				return new StereotypeMode(element, packResource);
-			} else if (element.matches(DIAGRAM)) {
+			} else if (element.matches("Stereotype")) {
+				return new StereotypeMode(element); // pick up stereotype but don't apply to package
+				/**
+				 * Should we ever need to add support for Stereotypes on Packages simply comment 
+				 * out the line above and uncomment the line below to add them to the package.
+				 * Additionally, the AbstractEAProjectDBExtractor.extractPackages() method
+				 * should have the call to addStereotypes(subject, rs.getString(COL_ea_guid)) 
+				 * uncommented.
+				 */
+				// return new StereotypeMode(element, packResource); // pick up stereotype but don't apply to package
+			} else if (element.matches("Diagram")) {
 				return null; // chop off any diagrams
-			} else if (element.matches(SUBSYSTEM)) {
+			} else if (element.matches("Subsystem")) {
 				return null; // chop off subsystem definitions
 			} else
 				return visit(element, packResource);
@@ -551,7 +501,7 @@ public class XMIParser extends XMIModel {
 					if (map != null && map.size() > 0) {
 						map.forEach((property, tagValue) -> {
 							if (property.getLabel() != null) {
-								Translator.addTagValue(aPackage, property, tagValue);
+								aPackage.addProperty(property, tagValue);
 							} else {
 								property.setLabel(tagValue, LANG);
 							}
@@ -570,14 +520,14 @@ public class XMIParser extends XMIModel {
 			OntResource ontParent;
 
 			GeneralizationMode(XMLElement element) {
-				ontChild = findClass(element, CHILD);
-				ontParent = findClass(element, PARENT);
+				ontChild = findClass(element, "child");
+				ontParent = findClass(element, "parent");
 			}
 
 			public XMLMode visit(XMLElement element) {
-				if (element.matches(GENERALIZATION_CHILD))
+				if (element.matches("Generalization.child"))
 					return new GeneralizationChildMode();
-				else if (element.matches(GENERALIZATION_PARENT))
+				else if (element.matches("Generalization.parent"))
 					return new GeneralizationParentMode();
 				else
 					return this;
@@ -585,7 +535,7 @@ public class XMIParser extends XMIModel {
 
 			private class GeneralizationChildMode extends BaseMode {
 				public XMLMode visit(XMLElement element) {
-					if (element.matches(CLASS)) {
+					if (element.matches("Class")) {
 						ontChild = findClass(element);
 						return null;
 					}
@@ -596,7 +546,7 @@ public class XMIParser extends XMIModel {
 			private class GeneralizationParentMode extends BaseMode {
 
 				public XMLMode visit(XMLElement element) {
-					if (element.matches(CLASS)) {
+					if (element.matches("Class")) {
 						ontParent = findClass(element);
 						return null;
 					}
@@ -623,23 +573,30 @@ public class XMIParser extends XMIModel {
 			OntResource assoc;
 
 			public AssociationMode(XMLElement element) {
-				associd = element.getAttributes().getValue(XMI_ID);
+				associd = element.getAttributes().getValue("xmi.id");
 				assoc = createAssocation(associd);
 			}
 
 			public XMLMode visit(XMLElement element) {
-				if (element.matches(TAGGED_VALUE)) {
+				if (element.matches("TaggedValue")) {
 					return new TaggedValueMode(element, assoc) {
 						@Override
 						public void leave() {
 							if (subject != null && property != null && tagValue != null) {
-								Translator.addTagValue(subject, property, tagValue.trim());
+								subject.addProperty(property, tagValue.trim());
+								if (UML.baseuri.getLocalName().equals(((OntResource) property).getLabel())) {
+									subject.addProperty(UML.baseuri, tagValue.trim());
+								} else if (UML.baseprefix.getLocalName().equals(((OntResource) property).getLabel())) {
+										subject.addProperty(UML.baseuri, tagValue.trim());
+								} else {
+									subject.addProperty(property, tagValue.trim());
+								}
 							}
 							super.leave();
 						}
 					};
-				} else if (element.matches(ASSOCIATION_END)) {
-					AssociationEndMode mode = new AssociationEndMode(element, endA != null);
+				} else if (element.matches("AssociationEnd")) {
+					AssociationEndMode mode = new AssociationEndMode(element, endA == null);
 					if (endA == null)
 						endA = mode;
 					else
@@ -678,7 +635,6 @@ public class XMIParser extends XMIModel {
 				Role role = new Role();
 
 				AssociationEndMode(XMLElement element, boolean sideA) {
-					role.sideA = sideA;
 					role.property = createObjectProperty(element);
 					if (role.property == null)
 						role.property = createObjectProperty(element, associd, sideA);
@@ -699,10 +655,10 @@ public class XMIParser extends XMIModel {
 				}
 
 				public XMLMode visit(XMLElement element) {
-					if (element.matches(MULTIPLICITY))
+					if (element.matches("Multiplicity"))
 						return new MultiplicityMode();
 
-					else if (element.matches(CLASS)) {
+					else if (element.matches("Class")) {
 						role.range = findClass(element);
 						return null;
 					} else if (role.property != null)
@@ -716,13 +672,28 @@ public class XMIParser extends XMIModel {
 				 */
 				private class MultiplicityMode extends BaseMode {
 					public XMLMode visit(XMLElement element) {
-						if (element.matches(MULTIPLICITY_RANGE)) {
+						if (element.matches("MultiplicityRange")) {
 							Attributes attrs = element.getAttributes();
-							role.lower = numberLowerBound(attrs, "lower");
-							role.upper = numberUpperBound(attrs, "upper");
+							role.lower = number(attrs, "lower");
+							role.upper = number(attrs, "upper");
 							return null;
 						}
 						return this;
+					}
+
+					/**
+					 * Interpret a multiplicity attribute as a decimal.
+					 */
+					int number(Attributes atts, String name) {
+						String value = atts.getValue(name);
+						if (value != null) {
+							try {
+								return Integer.parseInt(value);
+							} catch (NumberFormatException e) {
+								return -1;
+							}
+						} else
+							return -1;
 					}
 				}
 			}
@@ -741,7 +712,7 @@ public class XMIParser extends XMIModel {
 			}
 
 			public XMLMode visit(XMLElement element) {
-				if (matchDef(element, ENUMERATION_LITERAL))
+				if (matchDef(element, "EnumerationLiteral"))
 					return new IndividualMode(element);
 
 				else
@@ -765,7 +736,6 @@ public class XMIParser extends XMIModel {
 		 * Interpret a UML class as an OWL class.
 		 */
 		private class ClassMode extends BaseMode {
-			
 			OntResource classResource;
 
 			ClassMode(XMLElement element) {
@@ -779,10 +749,10 @@ public class XMIParser extends XMIModel {
 			}
 
 			public XMLMode visit(XMLElement element) {
-				if (matchDef(element, ATTRIBUTE))
+				if (matchDef(element, "Attribute"))
 					return new AttributeMode(element);
 
-				else if (element.matches(GENERALIZATION))
+				else if (element.matches("Generalization"))
 					return new GeneralizationMode(element);
 
 				else
@@ -797,7 +767,6 @@ public class XMIParser extends XMIModel {
 			 * processing.
 			 */
 			private class AttributeMode extends BaseMode {
-				
 				OntResource attrResource;
 
 				AttributeMode(XMLElement element) {
@@ -810,15 +779,15 @@ public class XMIParser extends XMIModel {
 				}
 
 				public XMLMode visit(XMLElement element) {
-					if (element.matches(CLASS) || element.matches(CLASSIFIER) || element.matches(DATA_TYPE)) {
+					if (element.matches("Class") || element.matches("Classifier") || element.matches("DataType")) {
 						OntResource type = findResource(element);
 						if (type != null)
 							attrResource.addRange(type);
-						if (element.matches(DATA_TYPE))
+						if (element.matches("DataType"))
 							attrResource.convertToDatatypeProperty();
 						return null;
-					} else if (element.matches(EXPRESSION)) {
-						String value = element.getAttributes().getValue(BODY);
+					} else if (element.matches("Expression")) {
+						String value = element.getAttributes().getValue("body");
 						if (value != null) {
 							value = value.trim();
 							while (value.startsWith("\"") && value.endsWith("\"")
@@ -829,57 +798,8 @@ public class XMIParser extends XMIModel {
 								attrResource.addProperty(UML.hasInitialValue, value);
 						}
 						return null;
-					} else if (element.matches(MULTIPLICITY)) {
-						return new MultiplicityMode();
 					} else
 						return visit(element, attrResource);
-				}
-				
-				/**
-				 * Collect multiplicity information for one association end.
-				 */
-				private class MultiplicityMode extends BaseMode {
-					public XMLMode visit(XMLElement element) {
-						if (element.matches(MULTIPLICITY_RANGE)) {
-							Attributes attrs = element.getAttributes();
-							int lower = numberLowerBound(attrs, LOWER);
-							int upper = numberUpperBound(attrs, UPPER);
-							attrResource.addProperty(UML.schemaMin, lower);
-							attrResource.addProperty(UML.schemaMax, upper);
-							return null;
-						}
-						return this;
-					}
-
-					/**
-					 * Interpret lower bound multiplicity attribute as an integer.
-					 */
-					int numberLowerBound(Attributes atts, String name) {
-						String value = atts.getValue(name);
-						if (value != null) {
-							try {
-								return Integer.parseInt(value);
-							} catch (NumberFormatException e) {
-								return 0;
-							}
-						} else
-							return 0;
-					}
-
-					/**
-					 * Interpret upper bound multiplicity attribute as a decimal.
-					 */
-					int numberUpperBound(Attributes atts, String name) {
-						String value = atts.getValue(name);
-						if (value != null) {
-							try {
-								return Integer.parseInt(value);
-							} catch (NumberFormatException e) {
-								return 1;
-							}
-						} else
-							return 1;
-					}
 				}
 			}
 		}

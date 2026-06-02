@@ -7,7 +7,6 @@ import static au.com.langdale.ui.builder.Templates.DisplayFileField;
 import static au.com.langdale.ui.builder.Templates.Field;
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
-import static au.com.langdale.ui.builder.Templates.HRule;
 import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.ReadOnlyComboViewer;
 
@@ -37,15 +36,12 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 	private static String[] extensions = new String[] { "*.xsl" };
 
 	private LocalFileBinding filename = new LocalFileBinding(extensions, Validators.NONE);
-	private LocalFileBinding includesFilename = new LocalFileBinding(extensions, Validators.NONE);
 	private BuildersBinding builders;
 	private TextBinding source = new TextBinding(Validators.OPTIONAL_EXTANT_FILE);
-	private TextBinding includesFileSource = new TextBinding(Validators.OPTIONAL_EXTANT_FILE);
 	private TextBinding ext = new TextBinding(Validators.NONE);
 	private ComboBinding type;
 
 	private File file;
-	private File includesFile;
 
 	private TransformBuildlet currentSelection;
 
@@ -112,10 +108,6 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 	public File getXslFile() {
 		return file;
 	}
-	
-	public File getXslIncludesFile() {
-		return includesFile;
-	}
 
 	@Override
 	protected Content createContent() {
@@ -124,28 +116,18 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 			@Override
 			protected Template define() {
 				return Grid(Group(DisplayFileField("source", "XSLT transform file:", extensions)),
-						Group(DisplayFileField("includesfilesource", "XSLT include file:", extensions)),
 						Group(Label("Existing XSLT Transform Builders")), Group(CheckboxTableViewer("builders")),
 						Group(Label("Builder XSLT name:"), DisplayField("filename")),
-						Group(Label("Includes file name:"), DisplayField("includesfilename")),
 						Group(Label("Transform builder type:"), ReadOnlyComboViewer("type")),
 						Group(Label("File extension of generated files:"), Field("ext")),
-						Group(CheckBox("replace", "Replace existing builder")),
-						Group(Label("")), //
-						Group(HRule()), //
-						Group(Label("note", 
-								"No new XSL includes file has been specified where one had previously existed. Either\n" + 
-							    "add an XSLT includes file or if one is no longer needed, delete the existing builder\n" + 
-							    "using the 'Manage XSLT Transform Builders' dialog and then reimport again here.")));
+						Group(CheckBox("replace", "Replace existing builder")));
 			}
 
 			@Override
 			protected void addBindings() {
 				source.bind("source", this);
-				includesFileSource.bind("includesfilesource", this);
 				builders.bind("builders", this, source);
 				filename.bind("filename", this, source);
-				includesFilename.bind("includesfilename", this, includesFileSource);
 				type.bind("type", this);
 				ext.bind("ext", this);
 				addVerifyListener("ext", verifyListener);
@@ -153,32 +135,14 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 
 			@Override
 			public String validate() {
-				if (source.getText().length() == 0) {
-					getLabel("note").setVisible(false);
+				if (source.getText().length() == 0)
 					return "Please select an XSLT transform file to import (*.xsl)";
-				}
 
 				file = new File(source.getText());
-				if (!file.exists()) {
+				if (!file.exists())
 					return "The XSL file entered does not exist at the specified location on the file system ["
 							+ file.getAbsolutePath() + "]";
-				} else {
-					if (includesFileSource.getText() != null && !"".equals(includesFileSource.getText())) {
-						includesFile = new File(includesFileSource.getText());
-						if (!includesFile.exists()) {
-							return "The XSL includes file entered does not exist at the specified location on the file system ["
-									+ includesFile.getAbsolutePath() + "]";
-						} else {
-							getLabel("note").setVisible(false);
-						}
-					} else if ( //
-							(includesFileSource.getText() == null || "".equals(includesFileSource.getText())) && //
-							currentSelection != null && //
-							currentSelection.getIncludesFile() != null) {
-						getLabel("note").setVisible(true);
-					}
-				}
-				
+
 				if (type.getValue() == null)
 					return "An builder type must be selected from the drop down.";
 
@@ -208,12 +172,10 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 				if (buildlet == null || !buildlet.equals(currentSelection)) {
 					if (buildlet != null) {
 						filename.setValue(buildlet.getStyle() + ".xsl");
-						includesFilename.setValue(buildlet.getIncludesFile());
 						type.setValue(TransformType.toTransformType(buildlet));
 						ext.setValue(buildlet.getFileExt());
 						//
 						filename.refresh();
-						includesFilename.refresh();
 						type.refresh();
 						ext.refresh();
 						//
@@ -229,12 +191,10 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 									+ ".xsl";
 						}
 						filename.setValue(xslFileName);
-						includesFilename.setValue(currentSelection.getIncludesFile());
 						type.setValue(null);
 						ext.setValue(null);
 						//
 						filename.refresh();
-						includesFilename.refresh();
 						type.refresh();
 						ext.refresh();
 						//
@@ -277,17 +237,16 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 	public TransformBuildlet getTranformBuildlet() {
 		TransformBuildlet buildlet = null;
 		try {
-			String includesFileName = (includesFile != null && !"".equals(includesFile.getName()) ? includesFile.getName() : null);
 			TransformType transformType = (TransformType) type.getValue();
 			switch (transformType) {
 			case TEXT:
-				buildlet = new TextBuildlet(getBuilderKey(), ext.getText(), includesFileName);
+				buildlet = new TextBuildlet(getBuilderKey(), ext.getText());
 				break;
 			case XSD:
-				buildlet = new XSDBuildlet(getBuilderKey(), ext.getText(), includesFileName);
+				buildlet = new XSDBuildlet(getBuilderKey(), ext.getText());
 				break;
 			case TRANSFORM:
-				buildlet = new TransformBuildlet(getBuilderKey(), ext.getText(), includesFileName);
+				buildlet = new TransformBuildlet(getBuilderKey(), ext.getText());
 				break;
 			}
 		} catch (Exception e) {

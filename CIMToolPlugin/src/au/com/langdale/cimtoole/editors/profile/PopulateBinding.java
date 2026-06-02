@@ -25,7 +25,6 @@ import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.jena.UMLTreeModel;
 import au.com.langdale.jena.UMLTreeModel.ClassNode;
-import au.com.langdale.jena.UMLTreeModel.CompoundClassNode;
 import au.com.langdale.jena.UMLTreeModel.DatatypeNode;
 import au.com.langdale.jena.UMLTreeModel.EnumClassNode;
 import au.com.langdale.jena.UMLTreeModel.ExtensionNode;
@@ -177,8 +176,7 @@ public class PopulateBinding  {
 			public boolean typeCheck(Node value) {
 				return value instanceof ClassNode 
 	    			|| value instanceof EnumClassNode
-					|| value instanceof SubClassNode
-	    			|| value instanceof CompoundClassNode;
+					|| value instanceof SubClassNode;
 			}
 
 			@Override
@@ -217,7 +215,6 @@ public class PopulateBinding  {
 			public boolean typeCheck(Node value) {
 				return value instanceof ClassNode
 				    || value instanceof EnumClassNode
-				    || value instanceof CompoundClassNode
 					|| value instanceof PackageNode;
 			}
 			

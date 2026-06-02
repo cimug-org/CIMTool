@@ -94,11 +94,11 @@ public class Basic extends BaseXMLWriter {
 		final Property predicate = stmt.getPredicate();
 		final RDFNode object = stmt.getObject();
 
-		String fullyQualifiedPredicate = startElementTag(predicate.getNameSpace(), predicate.getLocalName());
 		writer.print(space
 				+ space
 				+ "<"
-				+ fullyQualifiedPredicate + ("rdfs:comment".equals(fullyQualifiedPredicate) ? " xml:space=" + attributeQuoted("preserve") : ""));
+				+ startElementTag(predicate.getNameSpace(),
+						predicate.getLocalName()));
 
 		if (object instanceof Resource) {
 			writer.print(" ");

@@ -27,14 +27,10 @@ import com.hp.hpl.jena.n3.turtle.ParserTurtle;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A query processor for split models.
  */
 public class SplitReader extends SplitBase implements AsyncModel {
-	private static final Logger log = LoggerFactory.getLogger(SplitReader.class);
 	
 	private static class Query {
 		protected Triple pattern; 
@@ -191,12 +187,14 @@ public class SplitReader extends SplitBase implements AsyncModel {
 			if(graph == null) {
 				graph = read(getFile(index));
 				load_count++;
+				// System.out.println("Loaded bucket: " + index + ", loads: " + load_count + ", queries: " + query_count);
 				cache.add(this);
 			}
 		}
 
 		public void unload() {
 			graph = null;
+			// System.out.println("Unloaded bucket: " + index + ", loads: " + load_count + ", queries: " + query_count);
 		}
 
 		public int getModulus() throws IOException {
@@ -340,14 +338,14 @@ public class SplitReader extends SplitBase implements AsyncModel {
 	}
 
 	private void printStats() {
-		log.debug("-----------------------------");
-		log.debug("Bucket: Loads");
+		System.out.println("-----------------------------");
+		System.out.println("Bucket: Loads");
 		int total = 0;
 		for (int ix = 0; ix < buckets.length; ix++) {
-			log.debug("{}: {}", ix, buckets[ix].load_count);
+			System.out.println(ix + ": " + buckets[ix].load_count);
 			total += buckets[ix].load_count;
 		}
-		log.debug("Total: {}", total);
+		System.out.println("Total: " + total);
 	}
 
 	private void createBuckets(Bucket boot) {
@@ -369,6 +367,7 @@ public class SplitReader extends SplitBase implements AsyncModel {
 		Bucket bucket = selectBucket(pattern);
 		
 //		if( running && (bucket == null || bucket.getGraph() == null))
+//			System.out.println("Query to non resident bucket: " + pattern);
 
 		if( bucket != null) {
 			bucket.push(new Query(pattern, results, 1));

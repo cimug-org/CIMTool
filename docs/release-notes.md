@@ -3,133 +3,6 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
-### Release 2.3.0 [01-Jun-2026]
-
-**CIMTool 2.3.0** is a release with significant enhancements focused on documentation generation, usability enhancements, real-time preview, diagram customization, enhanced profiling capabilities, and important defect fixes.
-
-Enhancement [Issue #24](https://github.com/cimug-org/CIMTool/issues/24):
-Eight new **AsciiDoc** builders have been introduced to provide flexible documentation generation options. These builders support both standalone article documents and inline content for integration into larger documentation systems, with variants for RDFS, XSD, and JSON schema types, and options to include or exclude profile mapping columns.
-
-| Builder Name | Document Type | Schema Type | Mappings Column | Description |
-|---|---|---|---|---|
-| adoc-article-rdfs.xsl | Standalone | RDFS | No | Generates a complete AsciiDoc article document for RDFS profiles without mapping information |
-| adoc-article-rdfs-mappings.xsl | Standalone | RDFS | Yes | Generates a complete AsciiDoc article document for RDFS profiles with mapping information |
-| adoc-article-xsd.xsl | Standalone | XSD | No | Generates a complete AsciiDoc article document for XSD profiles without mapping information |
-| adoc-article-json.xsl | Standalone | JSON | No | Generates a complete AsciiDoc article document for JSON Schema profiles without mapping information |
-| adoc-inline-rdfs.xsl | Inline | RDFS | No | Generates inline AsciiDoc content for RDFS profiles to be included in larger documents |
-| adoc-inline-rdfs-mappings.xsl | Inline | RDFS | Yes | Generates inline AsciiDoc content for RDFS profiles with mapping information |
-| adoc-inline-xsd.xsl | Inline | XSD | No | Generates inline AsciiDoc content for XSD profiles to be included in larger documents |
-| adoc-inline-json.xsl | Inline | JSON | No | Generates inline AsciiDoc content for JSON Schema profiles to be included in larger documents |
-
-Enhancement [Issue #172](https://github.com/cimug-org/CIMTool/issues/172):
-**CIMTool** now provides user-configurable preferences for **PlantUML** diagram generation through the Preferences dialog. Users can customize layout direction (left-to-right or top-to-bottom), control relationship label positioning, and configure various visual aspects of generated UML class diagrams. These preferences apply globally to all **PlantUML** diagram builders, giving users fine-grained control over diagram appearance while maintaining consistency across profile documentation.
-
-Enhancement [Issue #173](https://github.com/cimug-org/CIMTool/issues/173):
-**CIMTool's** user interface now features intelligent Dark Mode support with dynamic font color selection. The system analyzes the relative luminance of background colors and automatically selects appropriate foreground colors (black or white) to ensure optimal readability. This enhancement applies throughout the application, providing a comfortable viewing experience in both light and dark theme configurations without compromising text legibility.
-
-Enhancement [Issue #176](https://github.com/cimug-org/CIMTool/issues/176):
-Two new **PlantUML** builders have been introduced specifically for XSD profiles: `puml-xsd-l2r.xsl` (left-to-right layout) and `puml-xsd-t2b.xsl` (top-to-bottom layout). The original **PlantUML** builders (previously named `puml-l2r.xsl` and `puml-t2b.xsl`) have been renamed to `puml-rdfs-l2r.xsl` and `puml-rdfs-t2b.xsl` to clarify their purpose for RDFS profiles. Together these builders enable comprehensive diagram generation for both RDFS and XSD profile types, supporting visualization needs across different schema formats.
-
-Enhancement [Issue #184](https://github.com/cimug-org/CIMTool/issues/184):
-An integrated **AsciiDoc** editor from the Eclipse Marketplace has been added to **CIMTool**, providing syntax highlighting, live preview, and editing capabilities for AsciiDoc documents. This integration streamlines the workflow for users creating profile documentation, allowing them to edit generated AsciiDoc content directly within **CIMTool** without switching to external editors. The editor supports standard AsciiDoc features and enhances the overall documentation development experience.
-
-Enhancement [Issue #185](https://github.com/cimug-org/CIMTool/issues/185):
-**Pandoc** has been embedded within **CIMTool** to enable direct generation of Microsoft Word documents from AsciiDoc profiles. Users can now convert AsciiDoc documentation to `.docx` format without installing external tools or dependencies. This enhancement particularly benefits users who need to deliver profile documentation in Word format for stakeholder review or standards body submission, providing a seamless path from profile creation to final document delivery.
-
-Enhancement [Issue #188](https://github.com/cimug-org/CIMTool/issues/188):
-The **CIMantic Graphs** builders (`cimantic-graphs.xsl` and `cimantic-graphs-init.xsl`) have been updated with the latest changes provided by **PNNL**, adding support for `Identity.identifier`.
-
-Enhancement [Issue #195](https://github.com/cimug-org/CIMTool/issues/195):
-The artefact builders have been decoupled from the Eclipse desktop application so they can be run standalone and maintained independently. A new command-line interface, **cimtool-cli**, packages the **CIMTool** transform engine into a self-contained executable JAR that runs profile transformations and generates artefacts headlessly — without launching the Eclipse workbench — enabling **CIMTool** builders to be incorporated into automated and continuous-integration pipelines.
-
-Enhancement [Issue #202](https://github.com/cimug-org/CIMTool/issues/202):
-A new C# Entity Framework builder (`csharp-ef-rdfs.xsl`) has been added to **CIMTool's** builder library. This builder generates C# entity classes for Microsoft's Entity Framework Core — an open-source object-relational mapper (ORM) for .NET that lets developers work with a database through C# objects rather than writing raw SQL. Entity relationships and constraints are configured using the Entity Framework Core **Fluent API**, giving precise control over table mappings, foreign keys, and cascade behaviours, and the generated classes support LINQ-based querying of CIM profile instances.
-
-Enhancement [Issue #203](https://github.com/cimug-org/CIMTool/issues/203):
-**CIMTool** now supports per-diagram **PlantUML** configuration overrides through `.pumlconfig` files. While global preferences control default diagram generation behavior, users can place diagram-specific configuration files in the same directory as the profile to override settings for individual diagrams. This allows fine-tuned control over layout, styling, and rendering options on a per-diagram basis, supporting complex documentation scenarios where different diagrams require different visual treatments.
-
-Enhancement [Issue #204](https://github.com/cimug-org/CIMTool/issues/204):
-**CIMTool** now supports shadow class (also called "mix-in") extensions when profiling directly from Enterprise Architect project files (`.eap`, `.qea`, `.qeax`). Shadow classes are a lightweight EA extension mechanism that lets modelers add attributes to existing classes without modifying the original class definition. **CIMTool** now recognizes these extensions during profiling and includes them according to the profile's configuration, enabling extension-modeling workflows where organizations can layer additional attributes onto standard CIM classes while maintaining clear separation between normative and extended content.
-
-Enhancement [Issue #207](https://github.com/cimug-org/CIMTool/issues/207):
-The intermediary XML format that **CIMTool** generates as input to its XSLT builders has been enhanced with `PrimitiveType` and `Compound` elements, providing richer semantic information about CIM datatypes. Builders — including custom user-defined XSLT builders — can now distinguish simple primitives (such as String or Integer) from compound types (such as ActivePower, with its value, unit, and multiplier components), enabling more accurate, type-aware code generation and documentation.
-
-Enhancement [Issue #217](https://github.com/cimug-org/CIMTool/issues/217):
-The SQL builder (`sql.xsl`) has been significantly enhanced to support `<<Compound>>` types with dedicated tables and proper foreign key relationships. When generating database schemas, the builder now creates separate tables for compound types (such as ActivePower, Voltage, etc.) and establishes foreign key constraints from classes that use these compounds. For example, a class with an ActivePower attribute will have a foreign key to the ActivePower compound table. Additionally, foreign key indexes are automatically generated to optimize query performance. This enhancement enables full relational database representation of CIM profiles with proper normalization of compound types.
-
-Example SQL DDL for compound type:
-```sql
-CREATE TABLE "TelephoneNumber"
-(
-    "id" VARCHAR(36) PRIMARY KEY,
-    "areaCode" VARCHAR(255),
-    "cityCode" VARCHAR(255),
-    "countryCode" VARCHAR(255),
-    "dialOut" VARCHAR(255),
-    "extension" VARCHAR(255),
-    "internationalPrefix" VARCHAR(255),
-    "ituPhone" VARCHAR(255),
-    "localNumber" VARCHAR(255)
-);
-
-CREATE INDEX "idx_TelephoneNumber_id" ON "TelephoneNumber"("id");
-```
-
-Enhancement [Issue #220](https://github.com/cimug-org/CIMTool/issues/220):
-**CIMTool** previously relied solely on UML `baseuri` tagged values to specify namespaces for extensions, while **CimConteXtor/CimSyntaxGen** used stereotype-based namespace mappings. To improve alignment between profiling tools, **CIMTool** now supports `*.namespaces` mapping files that associate UML stereotypes with namespaces. When present in the `../Schema` directory (e.g., `CDPSM-68968-13-ed2.namespaces`), these files override `baseuri` tagged values and apply namespace precedence rules for packages, classes, attributes, and associations. This functionality brings **CIMTool** into closer alignment with **CimConteXtor/CimSyntaxGen** and supports industry conventions for modeling CIM extensions.
-
-Enhancement [Issue #221](https://github.com/cimug-org/CIMTool/issues/221):
-**CIMTool** now includes self-healing capabilities during schema import that automatically detect and correct common modeling issues. When importing schemas, the system identifies problems such as missing stereotypes, incorrect multiplicities, malformed associations, and other structural issues that could prevent proper profile generation. Rather than failing the import or generating invalid profiles, **CIMTool** applies corrective transformations to normalize the schema, logs the corrections made, and proceeds with import. This feature significantly improves usability when working with schemas from various sources and reduces the manual cleanup effort required before profiling.
-
-Enhancement [Issue #223](https://github.com/cimug-org/CIMTool/issues/223):
-The "Add/Remove" tab in **CIMTool** has been enhanced with two new bulk operation checkboxes. The first allows users to add associations from both source and target sides concurrently, addressing long-standing requests from users who generate source code requiring both association end definitions. The second checkbox enables setting selected associations to 'By Reference' without navigating to the "Restrictions" tab for each association individually. These enhancements significantly reduce the number of mouse clicks required when building profiles and improve overall profiling efficiency.
-
-Enhancement [Issue #225](https://github.com/cimug-org/CIMTool/issues/225):
-**CIMTool** now integrates the [Easy Rules](https://github.com/j-easy/easy-rules) engine to provide a structured, scalable approach for enforcing modeling standards defined in the [CIM Modeling Guide](https://cim-mg.ucaiug.io/latest/). Rather than embedding validation logic as hardcoded checks throughout the codebase, the rules engine externalizes validation policies into modular, maintainable components. Easy Rules' lightweight, annotation-based API supports multiple rule expression formats (Java annotations, MVEL, JEXL, SpEL) and enables rule composition with priorities and conditions. This integration allows domain experts to define or modify validation rules without deep code changes, providing flexibility as CIM standards evolve.
-
-Enhancement [Issue #243](https://github.com/cimug-org/CIMTool/issues/243):
-**CIMTool's** user interface constraints for property cardinalities have been relaxed to support more flexible profiling scenarios. The UI previously enforced strict cardinality patterns, but now allows users to specify cardinalities such as 0..n, 1..n, and other patterns required for advanced profiling use cases. This enhancement accommodates modeling scenarios where variable cardinalities are essential, particularly when profiling for code generation frameworks that need flexible collection handling or when modeling optional repeated elements.
-
-Enhancement [Issue #246](https://github.com/cimug-org/CIMTool/issues/246):
-**CIMTool** now supports profiling `<<Compound>>` classes as anonymous inner type definitions, similar to existing enumeration support. Additionally, compounds can now be duplicated when the "Allow multiple profiles per class" checkbox is enabled. The UI has been updated to display compounds in both the right-hand pane and the multiple profiles panel. The internal XML format now includes a new `a:SimpleCompound` element representing anonymous compound definitions. All relevant builders (including PlantUML XSD builders) have been updated to support this new element type, with corresponding documentation updates to the CIMTool Builders companion site.
-
-Enhancement [Issue #247](https://github.com/cimug-org/CIMTool/issues/247):
-**CIMTool** and its XSD schema builders now support generating CIM properties as XSD attributes (in addition to the default XSD elements) and XSD attribute groups. A property can be tagged with the new `XSDattribute` stereotype on the "Stereotypes" tab — enabled for properties whose type is an enumeration or a CIM primitive — to emit it as an XSD attribute, while the new `XSDattributeGroup` stereotype on a class emits its properties as a named XSD attribute group. The `xsd.xsl` and `xsd-part100-ed2.xsl` builders and the XSD **PlantUML** diagram builders have been updated accordingly. This capability was driven by collaboration with **WG 61850** toward automating generation of **IEC 61850-6** SCL XSD schemas.
-
-Enhancement [Issue #250](https://github.com/cimug-org/CIMTool/issues/250):
-The XSD and JSON schema builders now support generating **CodeLists** as defined in **IEC 62361-100** (XSD) and **IEC 62361-104** (JSON Schema). A new `CodeList` stereotype, assignable to an enumeration on the "Stereotypes" tab, instructs the `xsd.xsl`, `xsd-part100-ed2.xsl`, `json-schema-draft-07.xsl`, and `json-schema-draft-2020-12.xsl` builders to emit a CodeList in preference to a standard enumeration. The **PlantUML** diagram builders have been updated to visualize CodeList-tagged enumerations.
-
-Enhancement [Issue #252](https://github.com/cimug-org/CIMTool/issues/252):
-**CIMTool** now provides a real-time **Profile Preview** that renders a live **PlantUML** class diagram of the OWL profile currently being edited. As changes are made, the preview updates automatically, giving modelers immediate visual feedback on profile structure and relationships. The preview supports pan and zoom and is bundled to work in air-gapped environments without external network access.
-
-Enhancement [Issue #253](https://github.com/cimug-org/CIMTool/issues/253):
-**CIMTool's** Windows release binaries are now signed with an Extended Validation (EV) code-signing certificate. EV-signed executables are trusted by Microsoft Windows SmartScreen and satisfy enterprise software-installation policies, eliminating the "unknown publisher" warnings users previously encountered when installing **CIMTool**.
-
-Security [Issue #200](https://github.com/cimug-org/CIMTool/issues/200):
-As a proactive security-hardening measure, the vulnerable Apache Log4j 1.2.13 library has been removed from the **Kena** plugin and replaced with the `log4j-over-slf4j` bridge, which routes all legacy Log4j API calls into **CIMTool's** existing SLF4J/Logback logging pipeline. Because no Log4j 1.x implementation remains on the classpath, **CIMTool** is no longer exposed to the known Log4j 1.x vulnerabilities [CVE-2019-17571](https://nvd.nist.gov/vuln/detail/CVE-2019-17571), [CVE-2022-23302](https://nvd.nist.gov/vuln/detail/CVE-2022-23302), [CVE-2022-23303](https://nvd.nist.gov/vuln/detail/CVE-2022-23303), and [CVE-2022-23305](https://nvd.nist.gov/vuln/detail/CVE-2022-23305). This is particularly relevant for utility and critical-infrastructure organizations whose security policies require dependency scanning.
-
-Defect [Issue #170](https://github.com/cimug-org/CIMTool/issues/170):
-The `.owl` profile builder was generating non-portable profiles when exporting from **CIMTool** projects using Enterprise Architect schema files (`.eap`, `.qea`, `.qeax`, `.feap`). The issue stemmed from incorrect `ea_guid` generation in the intermediary XML format, where **CIMTool** was generating new random GUIDs rather than using the native EA GUIDs from the source schema. This caused profile elements to have different identifiers than their corresponding schema elements, breaking portability. The fix ensures that when EA project files are used as schemas, **CIMTool** extracts and preserves the native `{EA-GUID}` values, making `.owl` profiles fully portable across projects that share the same EA-based CIM schema.
-
-Defect [Issue #171](https://github.com/cimug-org/CIMTool/issues/171):
-The RDFS2020 builder has been updated to generate "unflattened" CIMDatatypes in RDFS schemas. Previously, the builder generated "flattened" representations where value, unit, and multiplier attributes were not explicitly defined within the RDFS. The updated builder now generates the complete, unflattened representation with all compound datatype components properly defined, bringing **CIMTool's** RDFS2020 output into full alignment with **CimConteXtor** and industry standards for representing CIM datatypes in RDFS format.
-
-Defect [Issue #214](https://github.com/cimug-org/CIMTool/issues/214):
-**CIMTool** was applying AsciiDoc formatting (headers, bold text, italics) globally across all builders, causing unexpected formatting in non-documentation builders like SQL, Java, and C# generators. This resulted in AsciiDoc markup appearing in generated code and schema files. A new "Documentation" tab has been added to the Profile Summary interface, consolidating all documentation-specific builders in one location. Non-documentation builders no longer process AsciiDoc formatting directives, ensuring clean output for code generation and schema builders while maintaining rich formatting for documentation builders.
-
-Defect [Issue #240](https://github.com/cimug-org/CIMTool/issues/240):
-The "Import Schema" dialog's radio button choices for CIM16 (2012), CIM 17 (CIM100), and CIM 18 (CIM101) previously generated Namespace URIs containing references to `iec.ch/TC57`. Following guidance from UCA, these have been replaced with `ucaiug.org` references to properly reflect the community ownership of these specifications. This correction ensures that **CIMTool**-generated artifacts use appropriate namespace URIs aligned with UCAIug governance.
-
-Defect [Issue #241](https://github.com/cimug-org/CIMTool/issues/241):
-The SQL builder was generating DDL with inconsistent quoting in CHECK constraints. Column names were quoted (e.g., `"isStrandFill"`), but the same identifiers within CHECK constraint expressions were unquoted, causing PostgreSQL to interpret them as case-insensitive and resulting in errors. The `sql.xsl` builder has been corrected to consistently quote all column references within CHECK constraints, ensuring proper case-sensitive identifier matching across all database systems that support quoted identifiers.
-
-Defect [Issue #244](https://github.com/cimug-org/CIMTool/issues/244):
-The `profile-doc-rtf.xsl` Word document builder had two critical issues affecting output quality. First, the builder was consuming carriage return/line feed characters from UML documentation, causing separate paragraphs to concatenate incorrectly in type definitions and table cells. Second, legacy `.eap` and `.xmi` schemas containing non-ASCII symbols (such as the degree symbol °) were not properly encoded, resulting in corrupted documentation. The builder has been corrected to preserve paragraph breaks and properly handle character encoding for all symbols, ensuring accurate documentation generation from any CIM schema version.
-
-Defect [Issue #249](https://github.com/cimug-org/CIMTool/issues/249):
-When a base CIM XMI and an extension XMI were imported together, extension attributes and associations added to a base CIM class were incorrectly tagged with the CIM namespace rather than the extension namespace — both in the profile properties shown in **CIMTool** and in generated artefacts such as XSD. (SimpleType definitions were already tagged correctly.) This has been corrected so that all extension elements carry the extension namespace.
-
-
 ### Release 2.2.0 [01-Oct-2024]
 
 **CIMTool 2.2.0** is a minor release with both enhancements and important defect fixes.
@@ -268,14 +141,11 @@ Import Copyright Templates (OLD) | Import Copyright Templates (NEW)
 
 CIMTool 1.11.0 is a minor release with some UI enhancements in usability and select defect fixes.
 
-Defect [Issue #47](https://github.com/cimug-org/CIMTool/issues/47):
-Custom copyrights were not being imported properly in the "New Project Wizard" for the custom copyright template option.
+Defect [Issue #47](https://github.com/cimug-org/CIMTool/issues/47): Custom copyrights were not being imported properly in the "New Project Wizard" for the custom copyright template option.
 
-Defect [Issue #48](https://github.com/cimug-org/CIMTool/issues/48):
-Copyright headers fail to update in OWL profiles on import of new headers in the "Import" Wizard.
+Defect [Issue #48](https://github.com/cimug-org/CIMTool/issues/48): Copyright headers fail to update in OWL profiles on import of new headers in the "Import" Wizard.
 
-Enhancement [Issue #49](https://github.com/cimug-org/CIMTool/issues/49):
-Screens introduced in release 1.10.0 to the "Import" and "New CIMTool Project" wizards have been redesigned.  
+Enhancement [Issue #49](https://github.com/cimug-org/CIMTool/issues/49): Screens introduced in release 1.10.0 to the "Import" and "New CIMTool Project" wizards have been redesigned.  
 
 In the "New CIMTool Project" wizard the previous Steps 2 and 3 have been consolidated into the single screen shown below (click on the image to present a larger view).  This removes ambiguity and improves usability for end users when creating projects.
 
@@ -301,11 +171,9 @@ Within the CIMCheck sub project it was discovered that when the upgrade to ICU4J
 
 This is the production release of CIMTool 1.10.0
 
-Enhancement [Issue #3](https://github.com/cimug-org/CIMTool/issues/3):
-As of release 1.10.0.RC1 CIMTool's internal XSLT transform builders "engine" has be made public to end users with new screens added to import custom profile builders.  The internal XSLT processor in CIMTool was the [Apache Xalan](https://xalan.apache.org/) project.  However, Apache Xalan is a W3C XSLT 1.0 compliant XSLT processor.  To support the much richer feature set defined in the [XSLT 3.0 specification](https://www.w3.org/TR/xslt-30/) the XSLT engine has been replaced by [Saxon HE 10.8](https://saxonica.com/html/documentation10/about/index.html).  Saxon is XSLT 1.0, 2.0, and 3.0 compliant.
+Enhancement [Issue #3](https://github.com/cimug-org/CIMTool/issues/3):  As of release 1.10.0.RC1 CIMTool's internal XSLT transform builders "engine" has be made public to end users with new screens added to import custom profile builders.  The internal XSLT processor in CIMTool was the [Apache Xalan](https://xalan.apache.org/) project.  However, Apache Xalan is a W3C XSLT 1.0 compliant XSLT processor.  To support the much richer feature set defined in the [XSLT 3.0 specification](https://www.w3.org/TR/xslt-30/) the XSLT engine has been replaced by [Saxon HE 10.8](https://saxonica.com/html/documentation10/about/index.html).  Saxon is XSLT 1.0, 2.0, and 3.0 compliant.
 
-Enhancement [Issue #27](https://github.com/cimug-org/CIMTool/issues/27):
-A new builder for auto-generation of profile documentation has been added to the set shipped OOTB.  This builder produces a Microsoft Word compatible RTF (Rich Text Format) document when selected in the **Profile Summary Tab**.  Click on the images to present a larger view.
+Enhancement [Issue #27](https://github.com/cimug-org/CIMTool/issues/27):  A new builder for auto-generation of profile documentation has been added to the set shipped OOTB.  This builder produces a Microsoft Word compatible RTF (Rich Text Format) document when selected in the **Profile Summary Tab**.  Click on the images to present a larger view.
 
 <style>
 table th,td:first-of-type {
@@ -326,11 +194,9 @@ Profile Summary Tab | Example RTF Word Document
 ---------|---------
 [![name](https://user-images.githubusercontent.com/63370413/186780037-89c8c350-ed90-4675-a519-71912190294c.png)](https://user-images.githubusercontent.com/63370413/186780037-89c8c350-ed90-4675-a519-71912190294c.png) | [![image](https://user-images.githubusercontent.com/63370413/186780526-4a1a7c74-1db9-4a89-8ba5-014f7e161525.png)](https://user-images.githubusercontent.com/63370413/186780526-4a1a7c74-1db9-4a89-8ba5-014f7e161525.png)
 
-Enhancement [Issue #30](https://github.com/cimug-org/CIMTool/issues/30):
-The new copyright templates are are now also applied to the headers of the profile definitions themselves (i.e. *.owl files).
+Enhancement [Issue #30](https://github.com/cimug-org/CIMTool/issues/30):  The new copyright templates are are now also applied to the headers of the profile definitions themselves (i.e. *.owl files).
 
-Enhancement [Issue #28](https://github.com/cimug-org/CIMTool/issues/28):
-Additional screens have been added to the "New CIMTool Project" wizard used when creating a new CIMTool project.  These screens now appear as Steps 2 and 3 in the create project process.  Below provides an overview of the Wizard (click on the images to present a larger view).
+Enhancement [Issue #28](https://github.com/cimug-org/CIMTool/issues/28):  Additional screens have been added to the "New CIMTool Project" wizard used when creating a new CIMTool project.  These screens now appear as Steps 2 and 3 in the create project process.  Below provides an overview of the Wizard (click on the images to present a larger view).
 
 <style>
 table th,td:first-of-type {
@@ -359,17 +225,13 @@ Step 3 (NEW) | Step 4
 
 This is the third release candidate for CIMTool 1.10.0
 
-Fix [Issue #21](https://github.com/cimug-org/CIMTool/issues/21):
-Eliminated superfluous namespaces that are being generated by the **IEC 62361-100** compliant XSD schema builder that ships with CIMTool.
+Fix [Issue #21](https://github.com/cimug-org/CIMTool/issues/21):  Eliminated superfluous namespaces that are being generated by the **IEC 62361-100** compliant XSD schema builder that ships with CIMTool.
 
-Enhancement [Issue #23](https://github.com/cimug-org/CIMTool/issues/23):
-CIMTool's internal message model definition has been extended with the addition of two new attributes for **Choice** elements that can be used by CIMTool builders. The purpose of the new attributes is to make easily available to XSLT-based builders the topmost class in a type hierarchy for a union defined in a profile.  
+Enhancement [Issue #23](https://github.com/cimug-org/CIMTool/issues/23):  CIMTool's internal message model definition has been extended with the addition of two new attributes for **Choice** elements that can be used by CIMTool builders. The purpose of the new attributes is to make easily available to XSLT-based builders the topmost class in a type hierarchy for a union defined in a profile.  
 
-Enhancement [Issue #20](https://github.com/cimug-org/CIMTool/issues/20):
-All builders that generate RDFS and OWL profiles were updated to utilize the new custom copyright template capabilities.
+Enhancement [Issue #20](https://github.com/cimug-org/CIMTool/issues/20):  All builders that generate RDFS and OWL profiles were updated to utilize the new custom copyright template capabilities.
 
-Enhancement [Issue #22](https://github.com/cimug-org/CIMTool/issues/22):
-Custom copyright templates are now supported in CIMTool.  A copyright template is defined as an external file containing the text of either a multi-line or single-line copyright to be used by builders for inclusion in the artifacts that they generated (e.g. XSD schema, RDFS, or JSON schema profiles).  A template must include a ${year} substitution variable which is recognized by CIMTool and substituted with the current year at the time a builder is executed.  A UCAIug Apache 2.0 copyright template is bundled out-of-the-box with CIMTool and used as the default copyright template if an alternate is not set after a project is created.  Both multi-line and single-line copyright templates are supported and can be imported/assigned using new import screens introduced in this release and shown below.  
+Enhancement [Issue #22](https://github.com/cimug-org/CIMTool/issues/22):  Custom copyright templates are now supported in CIMTool.  A copyright template is defined as an external file containing the text of either a multi-line or single-line copyright to be used by builders for inclusion in the artifacts that they generated (e.g. XSD schema, RDFS, or JSON schema profiles).  A template must include a ${year} substitution variable which is recognized by CIMTool and substituted with the current year at the time a builder is executed.  A UCAIug Apache 2.0 copyright template is bundled out-of-the-box with CIMTool and used as the default copyright template if an alternate is not set after a project is created.  Both multi-line and single-line copyright templates are supported and can be imported/assigned using new import screens introduced in this release and shown below.  
 
 <style>
 table th,td:first-of-type {
@@ -394,20 +256,15 @@ New CIMTool Import Options | Copyright Template Import
 
 This is the second release candidate for CIMTool 1.10.0
 
-Feature [Issue #16](https://github.com/cimug-org/CIMTool/issues/16):
-Support for the new IEC 62361-104 draft standard for JSON schema profiles has been updated from that introduced in the RC1 release.  The builder now reflects the most recent changes to the JSON draft specification.  However, this does not yet include namespace support for custom extensions to be included in the published standard.  Updates to the builder for namespace support is planned for RC3.
+Feature [Issue #16](https://github.com/cimug-org/CIMTool/issues/16):  Support for the new IEC 62361-104 draft standard for JSON schema profiles has been updated from that introduced in the RC1 release.  The builder now reflects the most recent changes to the JSON draft specification.  However, this does not yet include namespace support for custom extensions to be included in the published standard.  Updates to the builder for namespace support is planned for RC3.
 
-Feature [Issue #7](https://github.com/cimug-org/CIMTool/issues/7):
-A new out-of-the-box builder has been introduced to generate XSD profiles that are compliant with the newly published 2nd Edition of the **IEC 61968-100** international standard.
+Feature [Issue #7](https://github.com/cimug-org/CIMTool/issues/7):  A new out-of-the-box builder has been introduced to generate XSD profiles that are compliant with the newly published 2nd Edition of the **IEC 61968-100** international standard.
 
-Feature [Issue #15](https://github.com/cimug-org/CIMTool/issues/15):
-XSD and JSON schema builders in CIMTool have been updated to include an official UCAIug Apache 2.0 copyright header in their output.
+Feature [Issue #15](https://github.com/cimug-org/CIMTool/issues/15):  XSD and JSON schema builders in CIMTool have been updated to include an official UCAIug Apache 2.0 copyright header in their output.
 
-Fix [Issue #14](https://github.com/cimug-org/CIMTool/issues/14):
-CIMTool failed on startup when using the latest releases of the Java 8 JRE/JDK.  It was determined that at some point in the release history of these JRE/JDKs that the ICU4J project utilized for internationalization support was upgraded in the JRE/JDK. Therefore, the ICU4J jar file originally included in the release of CIMTool has been upgraded to the latest release of jar file for the ICU4J project.
+Fix [Issue #14](https://github.com/cimug-org/CIMTool/issues/14):  CIMTool failed on startup when using the latest releases of the Java 8 JRE/JDK.  It was determined that at some point in the release history of these JRE/JDKs that the ICU4J project utilized for internationalization support was upgraded in the JRE/JDK. Therefore, the ICU4J jar file originally included in the release of CIMTool has been upgraded to the latest release of jar file for the ICU4J project.
 
-Fix [Issue #6](https://github.com/cimug-org/CIMTool/issues/6):
-Fix for a regression issue in the xsd.xsl builder.
+Fix [Issue #6](https://github.com/cimug-org/CIMTool/issues/6):  Fix for a regression issue in the xsd.xsl builder.
 
 ### Release 1.10.0.RC1 [06-May-2020]
 

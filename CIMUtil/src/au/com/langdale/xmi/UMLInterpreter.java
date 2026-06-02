@@ -4,18 +4,13 @@
  */
 package au.com.langdale.xmi;
 
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
-import au.com.langdale.logging.SchemaImportLogger;
-import au.com.langdale.logging.SchemaImportLoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -24,21 +19,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class UMLInterpreter {
 
-	private static final Logger log = LoggerFactory.getLogger(UMLInterpreter.class);
-
-	protected SchemaImportLogger logger = SchemaImportLoggerFactory.getLogger(UMLInterpreter.class);
-	protected StereotypedNamespaces stereotypedNamespaces = new StereotypedNamespaces();
-
 	protected OntModel model;
-
-	public UMLInterpreter() {
-	}
-
-	public UMLInterpreter(StereotypedNamespaces stereotypedNamespaces) {
-		if (stereotypedNamespaces != null)
-			this.stereotypedNamespaces = stereotypedNamespaces;
-	}
-
 	/**
 	 * Set the Jena OWL model to be interpreted.
 	 */
@@ -47,18 +28,19 @@ public class UMLInterpreter {
 	}
 
 	/**
-	 * Return the underlying Jena OWL model.
+	 * Return the underlying Jena OWL model. 
 	 */
 	public OntModel getModel() {
 		return model;
 	}
 
 	/**
-	 * Adjust incomplete definitions and remove all packages that are empty or
-	 * contain only other packages..
+	 * Adjust incomplete definitions and 
+	 * remove all packages that are empty or contain 
+	 * only other packages..
 	 */
 	public void pruneIncomplete() {
-
+		
 //		// assume any untyped range is a Class
 //		Iterator it = model.listOntProperties();
 //		while(it.hasNext()) {
@@ -67,27 +49,27 @@ public class UMLInterpreter {
 //			if( range != null && ! range.hasProperty(RDF.type)) 
 //				model.createClass(range.getURI());
 //		}
-
+	
 		// repeatedly scan packages
-		for (;;) {
-
+		for(;;) {
+			
 			// build list of empty packages
 			List packages = new ArrayList();
 			ResIterator nt = model.listSubjectsWithProperty(RDF.type, UML.Package);
-			while (nt.hasNext()) {
+			while(nt.hasNext()) {
 				OntResource pack = nt.nextResource();
-				if (!model.listSubjectsWithProperty(RDFS.isDefinedBy, pack).hasNext()) {
+				if( ! model.listSubjectsWithProperty(RDFS.isDefinedBy, pack).hasNext()) {
 					packages.add(pack);
-				}
+				}	
 			}
-
+			
 			// no more empty packages
-			if (packages.isEmpty())
+			if(packages.isEmpty())
 				break;
-
+			
 			// remove each package in this batch
 			Iterator ot = packages.iterator();
-			while (ot.hasNext()) {
+			while( ot.hasNext()) {
 				OntResource pack = (OntResource) ot.next();
 				pack.remove();
 			}
@@ -95,84 +77,47 @@ public class UMLInterpreter {
 	}
 
 	/**
-	 * Utility to remove any untyped nodes from the model.
+	 * Utility to remove any untyped nodes from the model. 
 	 *
 	 */
 	public void removeUntyped() {
 		// find every typed node in the model
 		ResIterator lt = model.listSubjectsWithNoProperty(RDF.type);
-		while (lt.hasNext()) {
+		while(lt.hasNext()) {
 			OntResource res = lt.nextResource();
-
+			
 			// only the resources originating from UML definitions are affected
-			if (res.getNameSpace().equals(XMI.NS))
+			if(res.getNameSpace().equals(XMI.NS)) 
 				res.remove();
 		}
 	}
-
+	
 	/**
-	 * Find all attributes and convert them to OWL DataTypeProperty or
-	 * FunctionalProperty depending on their range. This utilily must be applied
-	 * after standard naming for some XMI derived models.
+	 * Find all attributes and convert them to OWL DataTypeProperty or FunctionalProperty
+	 * depending on their range.  This utilily must be applied after standard naming 
+	 * for some XMI derived models.
 	 */
 	public void classifyAttributes() {
 		ResIterator it = model.listSubjectsWithProperty(UML.hasStereotype, UML.attribute);
-		while (it.hasNext()) {
+		while(it.hasNext()) {
 			OntResource attrib = it.nextResource();
 			OntResource type = attrib.getResource(RDFS.range);
-			if (type != null) {
-				// attrib.removeAll(RDF.type);
-				if ((type.hasRDFType(RDFS.Datatype) || type.getNameSpace().equals(XSD.getURI()))
-						&& !type.hasProperty(UML.hasStereotype, UML.enumeration)) {
-					attrib.addRDFType(OWL.DatatypeProperty);
-					log.debug("classifyAttributes: '{}' -> DatatypeProperty (range '{}' has rdfs:Datatype or is XSD)",
-							attrib.getLabel() != null ? attrib.getLabel() : attrib.getLocalName(),
-							type.getLabel() != null ? type.getLabel() : type.getLocalName());
-				} else if (!type.hasRDFType()) {
+			if( type != null ) {
+				//attrib.removeAll(RDF.type);
+				if( (type.hasRDFType(RDFS.Datatype) 
+						|| type.getNameSpace().equals(XSD.getURI())) 
+							&& ! type.hasProperty(UML.hasStereotype, UML.enumeration))
+					attrib.addRDFType( OWL.DatatypeProperty);
+				else if( ! type.hasRDFType()) {
 					type.addRDFType(RDFS.Datatype);
-					attrib.addRDFType(OWL.DatatypeProperty);
-					log.info("Inferring that {} is a Datatype", type);
-				} else if (type.hasProperty(UML.hasStereotype, UML.constrainedprimitive)) {
-					type.addRDFType(RDFS.Datatype);
-					attrib.addRDFType(OWL.DatatypeProperty);
-					log.debug("classifyAttributes: '{}' -> DatatypeProperty (range '{}' has <<constrainedprimitive>>)",
-							attrib.getLabel() != null ? attrib.getLabel() : attrib.getLocalName(),
-							type.getLabel() != null ? type.getLabel() : type.getLocalName());
-				} else {
-					attrib.addRDFType(OWL.ObjectProperty);
-					if (log.isDebugEnabled()) {
-						log.debug(
-								"classifyAttributes: '{}' -> ObjectProperty (range '{}' rdf:type=[OWL.Class={}, rdfs:Datatype={}])",
-								attrib.getLabel() != null ? attrib.getLabel() : attrib.getLocalName(),
-								type.getLabel() != null ? type.getLabel() : type.getLocalName(),
-								type.hasRDFType(OWL.Class), type.hasRDFType(RDFS.Datatype));
-					}
+					attrib.addRDFType( OWL.DatatypeProperty);
+					System.out.println("Inferring that " + type + " is a Datatype");
 				}
-				int maxCard = attrib.getInteger(UML.schemaMax);
-				if (maxCard == 1)
-					attrib.addRDFType(OWL.FunctionalProperty);
-			} else {
-				OntResource domain = attrib.getDomain();
-				String attrURI = attrib.getURI();
-				String qualifiedAttribute = attrURI.contains("#") ? attrURI.substring(attrURI.indexOf("#") + 1)
-						: attrURI;
-				String className = qualifiedAttribute.substring(0, qualifiedAttribute.indexOf("."));
-				String attributeName = qualifiedAttribute.substring(qualifiedAttribute.indexOf(".") + 1);
-				log.debug("classifyAttributes: '{}' -> no range type (will log missing range)", attrib.getLabel());
-				logger.logAttributeMissingRange(getPackageHierarchy(domain.getIsDefinedBy()), className, attributeName);
+				else
+					attrib.addRDFType( OWL.ObjectProperty);
+				attrib.addRDFType(OWL.FunctionalProperty);
 			}
 		}
-	}
-
-	protected String getPackageHierarchy(OntResource parent) {
-		String packageHierarchy = null;
-		while (parent != null && !parent.equals(UML.global_package)) {
-			String parentPackageName = parent.getLabel();
-			packageHierarchy = (packageHierarchy != null ? parentPackageName + "::" + packageHierarchy
-					: parentPackageName);
-			parent = parent.getIsDefinedBy();
-		}
-		return (packageHierarchy == null ? "<Unknown Package>::" : packageHierarchy + "::");
 	}
 
 }

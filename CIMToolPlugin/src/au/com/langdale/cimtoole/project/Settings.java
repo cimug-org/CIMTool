@@ -7,9 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -37,75 +34,71 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.util.Jobs;
 
 public class Settings extends Task {
-	private static final Logger log = LoggerFactory.getLogger(Settings.class);
-
 	public Settings() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(new ResourceListener(),
-				IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				new ResourceListener(), IResourceChangeEvent.POST_CHANGE);
 	}
-
 	/**
-	 * The session property used to cache models.
+	 * The session property used to cache models. 
 	 */
 	public static final QualifiedName SETTINGS = new QualifiedName(CIMToolPlugin.PLUGIN_ID, "settings");
-
-	public static final QualifiedName[] MIGRATED_SYMBOLS = new QualifiedName[] { //
-			PROFILE_PATH, //
-			BASE_MODEL_PATH, //
-			PROFILE_ENVELOPE, //
-			SCHEMA_NAMESPACE, //
-			MERGE_SHADOW_EXTENSIONS, //
-			SELF_HEAL_ON_IMPORT, //
-			PROFILE_NAMESPACE, //
-			INSTANCE_NAMESPACE, //
-			MERGED_SCHEMA_PATH //
+	
+	public static final QualifiedName[] MIGRATED_SYMBOLS = new QualifiedName[] {
+		PROFILE_PATH,
+		BASE_MODEL_PATH,
+		PROFILE_ENVELOPE,
+		SCHEMA_NAMESPACE,
+		PROFILE_NAMESPACE,
+		INSTANCE_NAMESPACE,
+		MERGED_SCHEMA_PATH
 	};
-
+	
 	private OntModel migrateSettings(IProject project) throws CoreException {
 		Migrator visitor = new Migrator();
 		project.accept(visitor);
 		OntModel store = visitor.getStore();
 		project.setSessionProperty(SETTINGS, store);
-
-		log.info("Saving migrated settings for {}", project.getName());
+		
+		System.out.println("Saving migrated settings for " + project.getName());
 		Jobs.runJob(saveSettings(project, store), project, "Migrating CIMTool settings");
 		return store;
 	}
-
+	
 	private class Migrator implements IResourceVisitor {
 		private OntModel store = ModelFactory.createMem();
-
+		
 		public OntModel getStore() {
 			return store;
 		}
 
 		public boolean visit(IResource resource) throws CoreException {
 			Map props = resource.getPersistentProperties();
-			if (!props.isEmpty()) {
+			if( ! props.isEmpty()) {
 				OntResource subject = createSubject(resource.getProjectRelativePath(), store);
-				for (int ix = 0; ix < MIGRATED_SYMBOLS.length; ix++) {
-					Property prop = createSettingsProperty(MIGRATED_SYMBOLS[ix]);
+				for(int ix = 0; ix < MIGRATED_SYMBOLS.length; ix++) {
+					Property prop = createProperty(MIGRATED_SYMBOLS[ix]);
 					String value = (String) props.get(MIGRATED_SYMBOLS[ix]);
-					if (value != null)
+					if( value != null )
 						subject.addProperty(prop, value);
 				}
 			}
 			return true;
 		}
 	}
-
+	
+	
 	public String getSetting(IResource resource, QualifiedName symbol) {
 		try {
-			return createSubject(resource.getProjectRelativePath(), getSettingsStore(resource.getProject()))
-					.getString(createSettingsProperty(symbol));
+			return createSubject(resource.getProjectRelativePath(), getSettingsStore(resource.getProject())).getString(createProperty(symbol));
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected Property createSettingsProperty(QualifiedName symbol) {
+
+	private Property createProperty(QualifiedName symbol) {
 		String qualifier = symbol.getQualifier();
-		if (qualifier == null || CIMToolPlugin.PLUGIN_ID.equals(qualifier))
+		if( qualifier == null || CIMToolPlugin.PLUGIN_ID.equals(qualifier))
 			qualifier = CIMToolPlugin.SETTING_NS;
 		else
 			qualifier += "#";
@@ -115,8 +108,7 @@ public class Settings extends Task {
 
 	private OntResource createSubject(IPath path, OntModel store) {
 		try {
-			return store.createResource(
-					CIMToolPlugin.PROJECT_NS + new URI(null, path.toPortableString(), null).toASCIIString());
+			return store.createResource(CIMToolPlugin.PROJECT_NS + new URI(null, path.toPortableString(), null).toASCIIString());
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
@@ -124,36 +116,37 @@ public class Settings extends Task {
 
 	private OntModel getSettingsStore(IProject project) throws CoreException {
 		OntModel store = (OntModel) project.getSessionProperty(SETTINGS);
-		if (store == null) {
+		if( store == null ) {
 			IFile settings = getSettings(project);
-			if (settings.exists()) {
-				log.info("Loading settings for {}", project.getName());
+			if( settings.exists()) {
+				System.out.println("Loading settings for " + project.getName());
 				store = Task.parse(settings);
 				project.setSessionProperty(SETTINGS, store);
-			} else
+			}
+			else
 				store = migrateSettings(project);
 		}
 		return store;
 	}
-
+	
 	private void replaceSettingsStore(IProject project, OntModel store) throws CoreException {
 		IFile settings = getSettings(project);
 		project.setSessionProperty(SETTINGS, store);
 
-		log.info("Saving modified settings for {}", project.getName());
+		System.out.println("Saving modified settings for " + project.getName());
 		Jobs.runJob(saveSettings(project, store), settings, "Saving CIMTool settings");
 	}
-
+	
 	public void putSetting(IResource resource, QualifiedName symbol, String value) {
 
 		try {
 			IProject project = resource.getProject();
 			OntModel store = getSettingsStore(project);
-			Property prop = createSettingsProperty(symbol);
+			Property prop = createProperty(symbol);
 			IPath path = resource.getProjectRelativePath();
 			String extant = createSubject(path, store).getString(prop);
-
-			if (extant == null || !extant.equals(value)) {
+			
+			if( extant == null || ! extant.equals(value)) {
 				OntModel revised = Composition.copy(store);
 				createSubject(path, revised).setProperty(prop, value, null);
 				replaceSettingsStore(project, revised);
@@ -163,7 +156,7 @@ public class Settings extends Task {
 		}
 
 	}
-
+	
 	private class ResourceListener implements IResourceChangeListener {
 
 		public void resourceChanged(IResourceChangeEvent event) {
@@ -176,12 +169,12 @@ public class Settings extends Task {
 			} catch (CoreException e) {
 				throw new RuntimeException(e);
 			}
-
+			
 			Iterator it = visitor.getRevised().entrySet().iterator();
-			while (it.hasNext()) {
+			while( it.hasNext()) {
 				Entry entry = (Entry) it.next();
 				try {
-					replaceSettingsStore((IProject) entry.getKey(), (OntModel) entry.getValue());
+					replaceSettingsStore((IProject)entry.getKey(), (OntModel)entry.getValue());
 				} catch (CoreException e) {
 					throw new RuntimeException(e);
 				}
@@ -191,29 +184,31 @@ public class Settings extends Task {
 
 	private class DeltaVisitor implements IResourceDeltaVisitor {
 		private Map revised = new HashMap();
-
+		
 		public Map getRevised() {
 			return revised;
 		}
 
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			if (delta.getResource().getType() == IResource.PROJECT
-					&& (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.REMOVED))
+			if( delta.getResource().getType() == IResource.PROJECT 
+					&& (delta.getKind() == IResourceDelta.ADDED 
+							|| delta.getKind() == IResourceDelta.REMOVED))
 				return false;
-
-			if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0)
+			
+			if((delta.getFlags()&IResourceDelta.MOVED_TO) != 0)
 				copySettings(delta.getResource().getFullPath(), delta.getMovedToPath());
-			if ((delta.getFlags() & IResourceDelta.MOVED_FROM) != 0)
+			if((delta.getFlags()&IResourceDelta.MOVED_FROM) != 0)
 				copySettings(delta.getMovedFromPath(), delta.getResource().getFullPath());
-			if (delta.getKind() == IResourceDelta.REMOVED)
+			if( delta.getKind() == IResourceDelta.REMOVED) {
 				removeSettings(delta.getResource().getFullPath());
 
+			}
 			return true;
 		}
-
+		
 		private OntModel getRevised(IProject project) throws CoreException {
 			OntModel result = (OntModel) revised.get(project);
-			if (result == null) {
+			if( result == null ) {
 				result = Composition.copy(getSettingsStore(project));
 				revised.put(project, result);
 			}
@@ -224,8 +219,8 @@ public class Settings extends Task {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fullPath.segment(0));
 			OntModel store = getSettingsStore(project);
 			OntResource subject = createSubject(fullPath.removeFirstSegments(1), store);
-
-			if (store.contains(subject)) {
+			
+			if( store.contains(subject)) {
 				OntModel target = getRevised(project);
 				target.removeSubject(subject);
 			}
@@ -236,18 +231,18 @@ public class Settings extends Task {
 			IProject project = root.getProject(patha.segment(0));
 			OntModel store = getSettingsStore(project);
 			OntResource subject = createSubject(patha.removeFirstSegments(1), store);
-
+			
 			Iterator it = store.getGraph().find(subject.asNode(), Node.ANY, Node.ANY);
-			if (it.hasNext()) {
-				IProject target_project = root.getProject(pathb.segment(0));
-				OntModel target_store = getRevised(target_project);
-				OntResource target_subject = createSubject(pathb.removeFirstSegments(1), target_store);
-				do {
-					Triple t = (Triple) it.next();
-					Property prop = ResourceFactory.createProperty(t.getPredicate());
-					target_subject.addProperty(prop, t.getObject());
-				} while (it.hasNext());
-			}
+ 			if( it.hasNext()) {
+ 				IProject target_project = root.getProject(pathb.segment(0));
+ 				OntModel target_store = getRevised(target_project);
+ 				OntResource target_subject = createSubject(pathb.removeFirstSegments(1),target_store);
+ 				do {
+ 					Triple t = (Triple) it.next();
+ 					Property prop = ResourceFactory.createProperty(t.getPredicate());
+ 					target_subject.addProperty(prop, t.getObject());
+ 				} while( it.hasNext());
+ 			}
 		}
 	}
 }

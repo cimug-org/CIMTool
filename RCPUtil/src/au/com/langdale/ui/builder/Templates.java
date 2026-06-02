@@ -82,17 +82,10 @@ public class Templates {
 	private static abstract class ButtonTemplate extends SubjectTemplate {
 
 		private Object image;
-		private boolean readOnly = false;
 
 		ButtonTemplate(int style, String name, String text, Object image) {
 			super(style, name, text);
 			this.image = image;
-		}
-		
-		ButtonTemplate(int style, String name, String text, Object image, boolean readOnly) {
-			super(style, name, text);
-			this.image = image;
-			this.readOnly = readOnly;
 		}
 
 		protected abstract void listen(Button widget, Assembly assembly);
@@ -106,9 +99,6 @@ public class Templates {
 			} else {
 				widget = assembly.getToolkit().createButton(parent, text, style);
 			}
-			
-			if (readOnly)
-				widget.setEnabled(false);
 
 			register(widget, assembly);
 			listen(widget, assembly);
@@ -227,15 +217,12 @@ public class Templates {
 
 		ImageTemplate(int style, String name, Object image) {
 			super(style, name, null);
+			this.image = image;
 		}
 
 		public Control realise(Composite parent, Assembly assembly) {
 			Label widget = assembly.getToolkit().createLabel(parent, null, style);
-			if (image instanceof org.eclipse.swt.graphics.Image) {
-				widget.setImage((org.eclipse.swt.graphics.Image) image);
-			} else {
-				widget.setImage(IconCache.getIcons().get(image));
-			}
+			widget.setImage(IconCache.getIcons().get(image));
 			register(widget, assembly);
 			return widget;
 		}
@@ -259,28 +246,6 @@ public class Templates {
 			register(widget, assembly);
 			if ((style & SWT.READ_ONLY) == 0)
 				widget.addModifyListener(assembly.modifyListener);
-			return widget;
-		}
-	}
-	
-	private static class TextTemplateNoListener extends SubjectTemplate {
-		private int lines;
-
-		TextTemplateNoListener(int style, String name, String text, int lines) {
-			super(style, name, text);
-			this.lines = lines;
-		}
-
-		public Control realise(Composite parent, Assembly assembly) {
-			Text widget = assembly.getToolkit().createText(parent, text, style);
-			if (lines > 0) {
-				Point size = widget.getSize();
-				size.y = widget.getLineHeight() * lines;
-				widget.setSize(size);
-			}
-			register(widget, assembly);
-			//if ((style & SWT.READ_ONLY) == 0)
-			//	widget.addModifyListener(assembly.modifyListener);
 			return widget;
 		}
 	}
@@ -363,7 +328,6 @@ public class Templates {
 			register(viewer, assembly);
 			viewer.addSelectionChangedListener(assembly.selectionChangedlistener);
 			viewer.setContentProvider(new DefaultContentProvider());
-
 			return combo;
 		}
 	}
@@ -453,10 +417,10 @@ public class Templates {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-
+	
 	private static class MyFileFieldEditor extends FileFieldEditor {
 		private Button button;
-
+		
 		public MyFileFieldEditor(String name, String text, Composite area) {
 			super(name, text, area);
 		}
@@ -471,7 +435,7 @@ public class Templates {
 			return button;
 		}
 	}
-
+	
 	private static class FileFieldTemplate extends SubjectTemplate {
 		private String[] extensions;
 
@@ -489,18 +453,18 @@ public class Templates {
 				}
 			}
 		}
-
+		
 		public Control realise(Composite parent, Assembly assembly) {
 			Composite area = new Composite(parent, SWT.NONE);
-
+			
 			MyFileFieldEditor editor = new MyFileFieldEditor(name, text, area);
-
+			
 			editor.setFileExtensions(extensions);
 
 			Text field = editor.getTextControl(area);
 			field.addModifyListener(assembly.modifyListener);
 			register(field, assembly);
-
+			
 			Button button = editor.getButton();
 			register(button, assembly);
 
@@ -789,10 +753,6 @@ public class Templates {
 	public static Template Row(Template a, Template b, Template c, Template d, Template e, Template f, Template g) {
 		return new RowTemplate(SWT.HORIZONTAL, new Template[] { a, b, c, d, e, f, g });
 	}
-	
-	public static Template Row(Template a, Template b, Template c, Template d, Template e, Template f, Template g, Template h) {
-		return new RowTemplate(SWT.HORIZONTAL, new Template[] { a, b, c, d, e, f, g, h });
-	}
 
 	public static Template Column(Template a, Template b) {
 		return new GridTemplate(new GroupTemplate[] { Group(a), Group(b) });
@@ -812,11 +772,6 @@ public class Templates {
 
 	public static Template Column(Template a, Template b, Template c, Template d, Template e, Template f) {
 		return new GridTemplate(new GroupTemplate[] { Group(a), Group(b), Group(c), Group(d), Group(e), Group(f) });
-	}
-
-	public static Template Column(Template a, Template b, Template c, Template d, Template e, Template f, Template g) {
-		return new GridTemplate(
-				new GroupTemplate[] { Group(a), Group(b), Group(c), Group(d), Group(e), Group(f), Group(g) });
 	}
 
 	public static Template Span(Template a) {
@@ -870,14 +825,6 @@ public class Templates {
 	public static Template TextArea(String name) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP, name, "", 0);
 	}
-	
-	public static Template TextArea(String name, boolean scroll) {
-		return new TextTemplate(SWT.MULTI | SWT.WRAP | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name, "", 0);
-	}
-	
-	public static Template TextAreaNoListener(String name, boolean scroll) {
-		return new TextTemplateNoListener(SWT.MULTI | SWT.WRAP | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name, "", 0);
-	}
 
 	public static Template TextArea(String name, int lines) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP, name, "", lines);
@@ -890,21 +837,17 @@ public class Templates {
 	public static Template DisplayArea(String name) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY, name, "", 0);
 	}
-
+	
 	public static Template DisplayArea(String name, boolean scroll) {
-		return new TextTemplate(
-				SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name,
-				"", 0);
+		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name, "", 0);
 	}
 
 	public static Template DisplayArea(String name, int lines) {
 		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY, name, "", lines);
 	}
-
+	
 	public static Template DisplayArea(String name, int lines, boolean scroll) {
-		return new TextTemplate(
-				SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name,
-				"", lines);
+		return new TextTemplate(SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | (scroll ? SWT.V_SCROLL : 0) | (scroll ? SWT.H_SCROLL : 0), name, "", lines);
 	}
 
 	public static Template Label(String text) {
@@ -916,10 +859,6 @@ public class Templates {
 	}
 
 	public static Template Image(String name, Object image) {
-		return new ImageTemplate(SWT.NONE, name, image);
-	}
-
-	public static Template Image(String name, org.eclipse.swt.graphics.Image image) {
 		return new ImageTemplate(SWT.NONE, name, image);
 	}
 
@@ -969,10 +908,6 @@ public class Templates {
 	}
 
 	public static Template CheckBox(String name, String text) {
-		return new CheckBoxTemplate(SWT.CHECK, name, text, null);
-	}
-	
-	public static Template CheckBox(String name, String text, boolean initial) {
 		return new CheckBoxTemplate(SWT.CHECK, name, text, null);
 	}
 
@@ -1039,7 +974,7 @@ public class Templates {
 	public static Template Grid(GroupTemplate... groups) {
 		return new GridTemplate(groups);
 	}
-
+	
 	public static Template GridArray(GroupTemplate[] groups) {
 		return new GridTemplate(groups);
 	}

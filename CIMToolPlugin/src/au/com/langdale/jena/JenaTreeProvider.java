@@ -133,12 +133,15 @@ public class JenaTreeProvider implements ITreeContentProvider {
 
 		private void saveState() {
 			TreeState state = new TreeState(viewer);
+//			System.out.println("Save: " + currentRootType + "\n" + state);
 			states.put(currentRootType, state);
 		}
 
 		private void restoreState() {
 			TreeState state = (TreeState) states.get(currentRootType);
+//			System.out.println("Restore: " + currentRootType);
 			if( state != null) {
+//				System.out.println(state);
 				state.applyTo(viewer);
 			}
 		}

@@ -5,20 +5,20 @@
 package au.com.langdale.validation;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
 import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.GraphAdapter;
 import au.com.langdale.inference.LOG;
 import au.com.langdale.inference.RepairLibrary;
 import au.com.langdale.inference.RuleParser;
-import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.inference.StandardFunctorActions;
+import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.reasoner.InfGraph;
@@ -105,5 +105,6 @@ public class ProfileValidator {
 		extractor.run();
 		log = ModelFactory.createMem(extractor.getResult());
 	}
-
+	
+	
 }

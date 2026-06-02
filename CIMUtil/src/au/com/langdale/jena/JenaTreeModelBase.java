@@ -6,9 +6,9 @@ package au.com.langdale.jena;
 
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResourceFactory;
 
 import com.hp.hpl.jena.graph.FrontsNode;
+import au.com.langdale.kena.ResourceFactory;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
@@ -125,6 +125,7 @@ abstract public class JenaTreeModelBase extends TreeModelBase {
 
 	/**
 	 * Called after the model or rootResource has changed.
+	 *
 	 */
 	private void init() {
 		if( ontModel != null && rootResource != null ) 

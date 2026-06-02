@@ -28,9 +28,6 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class is the driver for a number of profile model transformation and 
  * conversion utilities.  It traverses a profile model and fires events (defined 
@@ -39,7 +36,6 @@ import org.slf4j.LoggerFactory;
  * TODO: this class has not been updated to handle OWL unions in the profile.
  */
 public abstract class SchemaGenerator extends ProfileUtility implements Runnable {
-	private static final Logger log = LoggerFactory.getLogger(SchemaGenerator.class);
 	protected OntModel model;
 	protected OntModel profileModel;
 	protected Catalog catalog;
@@ -224,7 +220,8 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		// emit properties
 		Iterator lt = props.getGroups().iterator();
 		while( lt.hasNext()) {
-			generateProperty((PropertyGroup)lt.next());
+			PropertyGroup pg = (PropertyGroup)lt.next();
+			generateProperty(pg);
 		}
 		
 		// emit superclass relationships
@@ -357,18 +354,18 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		}
 	}
 
-	protected void generateProperty(PropertyGroup group) {
+	private void generateProperty(PropertyGroup group) {
 		PropertySpec info = group.getSummary();
 		OntResource prop = group.getProperty();
 		String uri = constructURI(prop); 
 		String domain = catalog.getURI(info.base_domain);
 		if(prop.isDatatypeProperty()) {
 			TypeInfo range = new TypeInfo( prop.getRange(), this);
-			emitDatatypeProperty(uri, prop, domain, range.type, range.xsdtype, info.required);
+			emitDatatypeProperty(uri, prop.getURI(), domain, range.type, range.xsdtype, info.required);
 		}
 		else {
 			String range = catalog.getURI(info.base_range);
-			emitObjectProperty(uri, prop, domain, range, info);
+			emitObjectProperty(uri, prop.getURI(), domain, range, info.required, info.functional);
 			
 			OntResource inverse = prop.getInverse();
 			if( inverse != null && props.containsKey(inverse)) {
@@ -392,24 +389,6 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 		for (Iterator it = group.getRestrictions().iterator(); it.hasNext();) {
 			PropertySpec rest = (PropertySpec) it.next();
 			String domain = catalog.getURI(rest.base_domain);
-
-			int minCard = 0; // Default min
-			int maxCard = Integer.MAX_VALUE; // Default max
-			
-			/**
-			 * Set any min or max cardinality restrictions that may exist.
-			 * It is possible that none are specified and in that case the 
-			 * defaults are used.
-			 */ 
-			ResIterator resources = model.listSubjectsWithProperty(OWL.onProperty, rest.prop);
-			while (resources.hasNext()) {
-				OntResource resource = resources.nextResource();
-				if (resource.hasProperty(OWL.minCardinality))
-					minCard = resource.getMinCardinality();
-				if (resource.hasProperty(OWL.maxCardinality))
-					maxCard = resource.getMaxCardinality();
-			}
-			
 			if(rest.prop.isDatatypeProperty()) {
 				TypeInfo range = new TypeInfo( rest.prop.getRange(), this);
 				if( range.xsdtype != null)
@@ -419,9 +398,7 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 				emitRestriction(uri, domain, catalog.getURI(rest.base_range));
 			}
 			if( rest.required || rest.functional ) {
-				emitRestriction(uri, domain, rest.required, rest.functional, minCard, maxCard);
-			} else if (minCard >= 1 || maxCard != Integer.MAX_VALUE) {
-				emitRestriction(uri, domain, rest.required, rest.functional, minCard, maxCard);
+				emitRestriction(uri, domain, rest.required, rest.functional);
 			}
 		}
 	}
@@ -493,10 +470,10 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	protected abstract void emitClass(String uri, String base) ;
 	protected abstract void emitInstance(String uri, String base, String type);
 	protected abstract void emitDatatype(String uri, String xsdtype) ;
-	protected abstract void emitDatatypeProperty(String uri, OntResource prop, String domain, String type, String xsdtype, boolean required) ;
-	protected abstract void emitObjectProperty(String uri, OntResource prop, String domain, String range, PropertySpec info) ;
+	protected abstract void emitDatatypeProperty(String uri, String base, String domain, String type, String xsdtype, boolean required) ;
+	protected abstract void emitObjectProperty(String uri, String base, String domain, String range, boolean required, boolean functional) ;
 	protected abstract void emitRestriction(String uri, String domain, String range);
-	protected abstract void emitRestriction(String uri, String domain, boolean required, boolean functional, int minCard, int maxCard) ;
+	protected abstract void emitRestriction(String uri, String domain, boolean required, boolean functional) ;
 	protected abstract void emitInverse(String uri, String iuri) ;
 	protected abstract void emitStereotype(String uri, String stereo) ;
 	protected abstract void emitBaseStereotype(String uri, String stereo) ;
@@ -511,6 +488,6 @@ public abstract class SchemaGenerator extends ProfileUtility implements Runnable
 	}
 	
 	protected void log(String item) {
-		log.debug("{}", item);
+		System.out.println(item);
 	}
 }

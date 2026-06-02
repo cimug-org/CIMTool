@@ -22,15 +22,11 @@ import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.SpreadsheetParser;
 import au.com.langdale.profiles.SpreadsheetParser.AssocCellSpec;
-import au.com.langdale.profiles.SpreadsheetParser.AssocCellSpecV2;
 import au.com.langdale.profiles.SpreadsheetParser.AttribCellSpec;
-import au.com.langdale.profiles.SpreadsheetParser.AttribCellSpecV2;
 import au.com.langdale.profiles.SpreadsheetParser.CellSpec;
 import au.com.langdale.profiles.SpreadsheetParser.ClassCellSpec;
-import au.com.langdale.profiles.SpreadsheetParser.ClassCellSpecV2;
 import au.com.langdale.profiles.SpreadsheetParser.ColNum;
 import au.com.langdale.profiles.SpreadsheetParser.IndexNum;
-import au.com.langdale.profiles.SpreadsheetParser.ParseProblem;
 import au.com.langdale.util.Logger;
 import au.com.langdale.workspace.ResourceOutputStream;
 
@@ -86,62 +82,6 @@ public class SpreadsheetImporter {
 		}
 	}
 	
-	public static class ClassSpecV2 extends ClassCellSpecV2 {
-		public ClassSpecV2() {
-			sheetNo.set("1");
-			firstRow.set("2");
-			classCol.set("C");
-			concreteCol.set("D");
-			descriptorCol.set("E");
-			nsCol.set("G");
-			docCol.set("H");
-			flagCol.set("I");
-		}
-	}
-	
-	public static class AttribSpecV2 extends AttribCellSpecV2 {
-		public AttribSpecV2() {
-			sheetNo.set("2");
-			firstRow.set("2");
-			classCol.set("C");
-			propCol.set("E");
-			requiredCol.set("F");
-			nsCol.set("I");
-			docCol.set("J");
-			flagCol.set("K");
-		}
-	}
-	
-	public static class AssocASpecV2 extends AssocCellSpecV2 {
-		public AssocASpecV2() {
-			sheetNo.set("3");
-			firstRow.set("2");
-			classCol.set("B");
-			inversePropCol.set("E");
-			propCol.set("F");
-			inverseCardCol.set("G");
-			cardCol.set("H");
-			flagCol.set("K");
-			nsCol.set("J");
-		}
-	}
-	
-	public static class AssocBSpecV2 extends AssocCellSpecV2 {
-		public AssocBSpecV2() {
-			sheetNo.set("3");
-			firstRow.set("2");
-			classCol.set("D");
-			propCol.set("E");
-			cardCol.set("G");
-			flagCol.set("K");
-			nsCol.set("J");
-		}
-		
-		public void handleRow(SpreadsheetParser context, HSSFRow row) throws ParseProblem {
-			// Here we override the handleRow processing in the super class as 
-			// we don't want an inverse association created...
-		}
-	}
 	private HSSFWorkbook book;
 	private String path;
 	
@@ -200,13 +140,8 @@ public class SpreadsheetImporter {
 		};
 	}
 	
-	public static CellSpec[] getStandardCells(int offset, boolean useV2ImportColumnFormat) {
-		CellSpec[] specs;
-		if (useV2ImportColumnFormat) {
-			specs = new CellSpec[] {new ClassSpecV2(), new AssocASpecV2(), new AssocBSpecV2(), new AttribSpecV2()};
-		} else {
-			specs = new CellSpec[] {new ClassSpec(), new AssocASpec(), new AssocBSpec(), new AttribSpec()};
-		}
+	public static CellSpec[] getStandardCells(int offset) {
+		CellSpec[] specs = new CellSpec[] {new ClassSpec(), new AssocASpec(), new AssocBSpec(), new AttribSpec()};
 		for( int ix = 0; ix < specs.length; ix++) {
 			ColNum flagCol = specs[ix].flagCol;
 			flagCol.set(flagCol.toShort() + offset);
@@ -239,7 +174,6 @@ public class SpreadsheetImporter {
 				}
 				
 				parser.reorganize();
-				result = parser.getResult();
 				monitor.worked(1);
 				
 				Task.writeProfile(destin, result, monitor);

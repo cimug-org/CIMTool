@@ -36,7 +36,6 @@ public abstract class Buildlet {
 	 * @throws CoreException
 	 */
 	protected abstract void build(IFile result, IProgressMonitor monitor) throws CoreException;
-	
 	/**
 	 * Remove the given build output.  The default implementation simply deletes the 
 	 * resource.  
@@ -48,7 +47,6 @@ public abstract class Buildlet {
 		if( result.exists())
 			result.delete(false, monitor);
 	}
-	
 	/**
 	 * Execute the build task or clean build outputs depending on a flag.
 	 * @param result: the build output
@@ -62,6 +60,7 @@ public abstract class Buildlet {
 		else
 			build( result, monitor );				
 	}
+	
 	
 	public IWorkspaceRunnable asRunnable(final IFile result, final boolean cleanup) {
 		return new IWorkspaceRunnable() {

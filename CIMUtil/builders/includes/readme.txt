@@ -1,1 +1,0 @@
-All standard XSLT files designed to be used as imports/includes should be located here and not under the builders folder.

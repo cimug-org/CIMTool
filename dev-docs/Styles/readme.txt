@@ -1,1 +1,0 @@
-Any custom Asciidoc CSS styles sheets (*.css) should be located here.

@@ -44,7 +44,7 @@ public class ModelMinder implements CacheListener {
 	/**
 	 * Get a cached union model and subscribe for updates.
 	 * @param folder: the folder defining the union
-	 * @return: the model or null if not yet cached.
+	 * @return: the model or null if not yest cached.
 	 */
 	public OntModel getProjectOntology( IFolder folder ) {
 		add(folder);

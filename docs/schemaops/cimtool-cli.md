@@ -81,7 +81,7 @@ Point this to the root directory of your **CIMTool** project — the folder that
 --project-dir .\MyProject
 ```
 
-Your project directory must contain `.cimtool-settings` and `.builder-preferences` files, and may optionally contain a `.cimtool-global-preferences` file. All of these are created automatically by **CIMTool** when a project is created, loaded, or imported in the desktop application. The CLI reads your schema file locations from `.cimtool-settings`, your builder configurations from `.builder-preferences`, and — when present — any global preference values (such as PlantUML diagram style settings) from `.cimtool-global-preferences`. If `.cimtool-global-preferences` is absent, built-in defaults are used for those values.
+Your project directory must contain `.cimtool-settings`, `.builder-preferences`, and `.cimtool-global-preferences` files. These are created automatically by **CIMTool** when a project is created, loaded, or imported in the desktop application. The CLI reads your schema file locations from `.cimtool-settings`, your builder configurations from `.builder-preferences`, and any global preference values (such as PlantUML diagram style settings) from `.cimtool-global-preferences`.
 
 !!! note
 
@@ -193,7 +193,7 @@ java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar [optio
 
 | Option | Short | Required | Notes |
 |---|---|---|---|
-| `--project-dir` | `-pd` | Yes | Root directory of your **CIMTool** project; must contain `.cimtool-settings` and `.builder-preferences` (`.cimtool-global-preferences` is optional — built-in defaults are used if it is absent) |
+| `--project-dir` | `-pd` | Yes | Root directory of your **CIMTool** project; must contain `.cimtool-settings`, `.builder-preferences`, and `.cimtool-global-preferences` |
 | `--profile` | `-p` | No | Single profile to process; if omitted, all `.owl` files in `<project-dir>/Profiles` are processed |
 | `--output` | `-o` | Optional when `--project-dir` is specified | Output directory; defaults to `<project-dir>/Profiles` when not specified |
 | `--builder` | `-b` | No | Overrides profile-configured builders; mutually exclusive with `--xslt` |

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.IO;
 import au.com.langdale.kena.Format;
 import au.com.langdale.validation.ProfileValidator;
 

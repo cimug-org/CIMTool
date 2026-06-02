@@ -4,39 +4,31 @@
  */
 package au.com.langdale.xmi;
 
-import au.com.langdale.kena.ModelFactory;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.logging.SchemaImportLogger;
-import au.com.langdale.logging.SchemaImportLoggerFactory;
-import au.com.langdale.sax.XMLElement;
-
 import org.xml.sax.Attributes;
 
+import au.com.langdale.sax.XMLElement;
 import com.hp.hpl.jena.graph.FrontsNode;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntResource;
 
 /**
- * A base for the XMI2OWL interpretor that wraps a Jena OWL model and provides
- * the low level operations for interpreting XMI elements as resource in that
- * model.
+ * A base for the XMI2OWL interpretor that wraps a Jena OWL model
+ * and provides the low level operations for interpreting XMI elements
+ * as resource in that model.
  */
 public class XMIModel {
-
-	protected SchemaImportLogger importLogger = SchemaImportLoggerFactory.getLogger(XMIModel.class);
 
 	public static final String LANG = null; // if changed, review the SearchWizard code
 
 	/** the ontology under construction */
 	protected OntModel model = ModelFactory.createMem();
-
+	
 	/** a debug flag that causes xmi:id's to be preserved as annotations */
 	public boolean keepID = true;
 
-	public XMIModel() {
-	}
-
 	/**
-	 * Return the underlying Jena OWL model.
+	 * Return the underlying Jena OWL model. 
 	 */
 	public OntModel getModel() {
 		return model;
@@ -58,14 +50,15 @@ public class XMIModel {
 	 * @param element in XMI referring to a class.
 	 * @return resource representing the class or null.
 	 */
-	protected final OntResource findClass(XMLElement element, String refattr) {
+	protected OntResource findClass(XMLElement element, String refattr) {
 		String xuid = element.getAttributes().getValue(refattr);
-		if (xuid != null && xuid.length() != 0) {
+		if( xuid != null && xuid.length() != 0) {
 			OntResource subject = model.createClass(XMI.NS + xuid);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
-		} else
+		}
+		else
 			return null;
 	}
 
@@ -73,30 +66,28 @@ public class XMIModel {
 	 * Utility to find OWL resource for XMI reference.
 	 * 
 	 * @param element the element containing the reference
-	 * @param name    the name of attribute containing the reference
+	 * @param name the name of attribute containing the reference
 	 * @return resource in the model or null.
 	 */
-	protected final OntResource findResource(XMLElement element, String name) {
+	protected OntResource findResource(XMLElement element, String name) {
 		return createUnknown(element.getAttributes().getValue(name));
 	}
 
 	/**
 	 * Utility to find OWL resource for XMI reference.
-	 * 
 	 * @param element the element containing the reference
 	 * @return resource in the model or null.
 	 */
-	protected final OntResource findResource(XMLElement element) {
+	protected OntResource findResource(XMLElement element) {
 		return findResource(element, "xmi.idref");
 	}
 
 	/**
 	 * Utility to create and label an OWL class for an XMI declaration.
-	 * 
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the class or null.
 	 */
-	protected final OntResource createClass(XMLElement element) {
+	protected OntResource createClass(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
@@ -104,10 +95,10 @@ public class XMIModel {
 	}
 
 	protected OntResource createClass(String xuid, String name) {
-		if (xuid != null && name != null) {
+		if( xuid != null && name != null ) { 
 			OntResource subject = model.createClass(XMI.NS + xuid);
 			subject.addLabel(name, LANG);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
 		}
@@ -134,25 +125,25 @@ public class XMIModel {
 //	}
 
 	/**
-	 * Utility to create and label an OWL object property for an XMI association end
-	 * declaration.
+	 * Utility to create and label an OWL object property for an XMI 
+	 * association end declaration.
 	 * 
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the property or null.
 	 */
-	protected final OntResource createObjectProperty(XMLElement element) {
+	protected OntResource createObjectProperty(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
 		return createObjectProperty(xuid, name);
 	}
 
-	protected final OntResource createObjectProperty(String xuid, String name) {
-		if (xuid != null) {
+	protected OntResource createObjectProperty(String xuid, String name) {
+		if( xuid != null ) { 
 			OntResource subject = model.createObjectProperty(XMI.NS + xuid);
-			if (name != null)
+			if(name != null)
 				subject.addLabel(name, LANG);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
 		}
@@ -160,34 +151,35 @@ public class XMIModel {
 	}
 
 	/**
-	 * Utility to create and label an OWL object property for an XMI association end
-	 * declaration, where the latter has no id. An id is synthesised from the parent
-	 * element's id and the role name.
+	 * Utility to create and label an OWL object property for an XMI 
+	 * association end declaration, where the latter has no id.  An
+	 * id is synthesised from the parent element's id and the role name.
 	 * 
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the property or null.
 	 */
-	protected final OntResource createObjectProperty(XMLElement element, String xuid, boolean sideA) {
+	protected OntResource createObjectProperty(XMLElement element, String xuid, boolean sideA) {
 		Attributes atts = element.getAttributes();
 		String name = atts.getValue("name");
 		return createObjectProperty(xuid, sideA, name);
 	}
 
-	protected final OntResource createObjectProperty(String xuid, boolean sideA, String name) {
-		if (xuid != null) {
-			String synth = xuid + "-" + (sideA ? "A" : "B");
+	protected OntResource createObjectProperty(String xuid, boolean sideA, String name) {
+		if( xuid != null ) { 
+			String synth = xuid + "-" + (sideA? "A": "B");
 			OntResource subject = model.createObjectProperty(XMI.NS + synth);
-			if (name != null)
-				subject.addLabel(name, LANG);
-			if (keepID)
+			if( name != null)
+				subject.addLabel(name, LANG);	
+			if(keepID)
 				subject.addProperty(UML.id, synth);
 			return subject;
 		}
 		return null;
 	}
-
+	
 	/**
-	 * Create and label an OWL annotation property for an XMI tag declaration.
+	 * Create and label an OWL annotation property 
+	 * for an XMI tag declaration.
 	 * 
 	 * @param element in XMI declaring the property.
 	 * @return resource representing the property or null.
@@ -197,61 +189,61 @@ public class XMIModel {
 
 		// handle a reference
 		String tagXuid = atts.getValue("xmi.idref");
-		if (tagXuid != null)
-			return model.createAnnotationProperty(XMI.NS + tagXuid);
+        if( tagXuid != null )
+        	return model.createAnnotationProperty(XMI.NS + tagXuid);
 
-		// create a new annotation property
+        // create a new annotation property
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
-		if (xuid != null && name != null) {
+		if( xuid != null && name != null ) { 
 			OntResource subject = model.createAnnotationProperty(XMI.NS + xuid);
 			subject.addLabel(name, LANG);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Create or reference a stereotype
 	 */
-	protected final OntResource createStereotype(XMLElement element) {
+	protected OntResource createStereotype(XMLElement element) {
 		String xuid = element.getAttributes().getValue("xmi.idref");
-		if (xuid != null) {
-			return createStereotype(xuid);
-		} else
-			return createIndividual(element, UML.Stereotype);
+        if( xuid != null ) {
+         	return createStereotype(xuid); 
+        }
+        else
+        	return createIndividual(element, UML.Stereotype);
 	}
 
 	/**
 	 * Reference a stereotype by id string.
 	 */
-	protected final OntResource createStereotype(String xuid) {
-		OntResource subject = model.createIndividual(XMI.NS + xuid, UML.Stereotype);
-		if (keepID)
+	protected OntResource createStereotype(String xuid) {
+       	OntResource subject = model.createIndividual(XMI.NS + xuid, UML.Stereotype);
+		if(keepID)
 			subject.addProperty(UML.id, xuid);
-		return subject;
+    	return subject; 
 	}
-
+	
 	/**
 	 * Create or reference a stereotype by name.
 	 */
 	protected OntResource createStereotypeByName(String name) {
-		OntResource stereotype = model.createIndividual(UML.NS + name.toLowerCase().replaceAll("\\s", ""),
-				UML.Stereotype);
+		OntResource stereotype =  model.createIndividual(UML.NS + name.toLowerCase().replaceAll("\\s", ""), UML.Stereotype);
 		stereotype.addLabel(name, LANG);
 		return stereotype;
 	}
-
+	
 	/**
-	 * Utility to create and label a generic OWL property for an XMI tag
-	 * declaration.
+	 * Utility to create and label a generic OWL property 
+	 * for an XMI tag declaration.
 	 * 
 	 * @param element in XMI declaring property.
 	 * @return resource representing the property or null.
 	 */
-	protected final OntResource createAttributeProperty(XMLElement element) {
+	protected OntResource createAttributeProperty(XMLElement element) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
@@ -259,11 +251,11 @@ public class XMIModel {
 	}
 
 	protected OntResource createAttributeProperty(String xuid, String name) {
-		if (xuid != null && name != null) {
+		if( xuid != null && name != null ) { 
 			OntResource subject = model.createOntProperty(XMI.NS + xuid);
 			subject.addProperty(UML.hasStereotype, UML.attribute);
 			subject.addLabel(name, LANG);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
 		}
@@ -272,12 +264,11 @@ public class XMIModel {
 
 	/**
 	 * Utility to create an OWL resource of given typefor XMI element.
-	 * 
 	 * @param element the element containing the reference
-	 * @param type    the class of the resource
+	 * @param type the class of the resource
 	 * @return resource in the model or null.
 	 */
-	protected final OntResource createIndividual(XMLElement element, FrontsNode type) {
+	protected OntResource createIndividual(XMLElement element, FrontsNode type) {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
@@ -285,10 +276,10 @@ public class XMIModel {
 	}
 
 	protected OntResource createIndividual(String xuid, String name, FrontsNode type) {
-		if (xuid != null && name != null) {
+		if( xuid != null && name != null ) { 
 			OntResource subject = model.createIndividual(XMI.NS + xuid, type);
 			subject.addLabel(name, LANG);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
 			return subject;
 		}
@@ -302,51 +293,54 @@ public class XMIModel {
 		Attributes atts = element.getAttributes();
 		String xuid = atts.getValue("xmi.id");
 		String name = atts.getValue("name");
-		if (xuid != null && name != null) {
+		if( xuid != null && name != null ) { 
 			OntResource subject = model.createResource(XMI.NS + xuid);
 			subject.addLabel(name, LANG);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
-			return subject;
+				return subject; 
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Utility to create a resource of (as yet) unknown species.
 	 */
-	protected final OntResource createUnknown(String xuid) {
-		if (xuid != null && xuid.length() > 0) {
+	protected OntResource createUnknown(String xuid) {
+		if( xuid != null && xuid.length() > 0) {
 			OntResource subject = model.createResource(XMI.NS + xuid);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
-			return subject;
-		} else
+			return subject; 
+		}
+		else
 			return null;
 	}
-
+	
 	/**
-	 * Utility to create a resource representing a UML association. The association
-	 * links two Object Properties (the roles) during model interpretation but is
-	 * not required in the final model.
+	 * Utility to create a resource representing a UML association. 
+	 * The association links two Object Properties (the roles) during
+	 * model interpretation but is not required in the final model. 
 	 */
-	protected final OntResource createAssocation(String xuid) {
-		if (xuid != null && xuid.length() > 0) {
+	protected OntResource createAssocation(String xuid) {
+		if( xuid != null && xuid.length() > 0) {
 			OntResource subject = model.createResource(XMI.NS + xuid);
-			if (keepID)
+			if(keepID)
 				subject.addProperty(UML.id, xuid);
-			return subject;
-		} else
+			return subject; 
+		}
+		else
 			return null;
 	}
 
 	/**
-	 * Utility to create and label an resource for an XMI package declaration.
+	 * Utility to create and label an resource for an XMI 
+	 * package declaration.
 	 * 
 	 * @param element in XMI declaring a class.
 	 * @return resource representing the package or null.
 	 */
-	protected final OntResource createPackage(XMLElement element) {
+	protected OntResource createPackage(XMLElement element) {
 		return createIndividual(element, UML.Package);
 	}
 
@@ -354,160 +348,68 @@ public class XMIModel {
 	 * Recognise an model declaration.
 	 * 
 	 * @param element candidate element
-	 * @param type    the element type name
-	 * @return true if the element is the correct type and has the required
-	 *         attributes.
+	 * @param type the element type name
+	 * @return true if the element is the correct type 
+	 * and has the required attributes.
 	 */
 	protected boolean matchDef(XMLElement element, String type) {
 		Attributes atts = element.getAttributes();
-		return element.matches(type) && atts.getValue("xmi.id") != null && atts.getValue("name") != null;
+		return element.matches(type) 
+				&& atts.getValue("xmi.id") != null 
+				&& atts.getValue("name") != null;
 	}
 
-	protected final OntResource createGlobalPackage() {
+	protected OntResource createGlobalPackage() {
 		OntResource packResource = model.createIndividual(UML.global_package.getURI(), UML.Package);
 		packResource.addLabel("Global", LANG);
 		return packResource;
 	}
-
+	
 	/**
 	 * Description of an association role.
 	 *
 	 */
 	public class Role {
 		public OntResource range;
-		public OntResource property;
-		public int lower = 0, upper = Integer.MAX_VALUE;
+		public  OntResource property;
+		public int lower =-1, upper=-1;
 		public boolean composite;
 		public boolean aggregate;
-		public boolean sideA;
 		public String baseuri;
 		public String baseprefix;
-
+		
 		/**
-		 * Method to interpret this association role in the context of its mate.
-		 * Responsible for Establishing the OWL domain and range and interpreting the
-		 * UML multiplicity as OWL functional and inverse functional property types.
-		 * 
-		 * Next, is a view into the aggregation and composite attributes defined for a
-		 * role and how these ultimately are to be used to assigned respective
-		 * "ofAggregate", "aggregateOf", "ofComposite" and "compositeOf" stereotypes.
-		 * 
-		 * AGGREGATION RELATIONSHIPS:
-		 * 
-		 * In the UML, suppose we have an aggregation relationship between EventSchedule
-		 * and EventTimePoint (the relationship notation below indicates which side the
-		 * white aggregation diamond is on):
-		 * 
-		 * EventSchedule ◇-- EventTimePoint
-		 * 
-		 * ...where EventSchedule is the aggregate (whole) and EventTimePoint is the
-		 * part. In this scenario, the stereotypes "ofAggregate" and "aggregateOf" are
-		 * handled as follows:
-		 * 
-		 * - "ofAggregate" refers to the direction pointing from the part
-		 * (EventTimePoint) to the whole (EventSchedule). This implies that an
-		 * EventTimePoint is part of an EventSchedule.
-		 * 
-		 * - "aggregateOf" refers to the direction pointing from the whole
-		 * (EventSchedule) to the part (EventTimePoint). This means that an
-		 * EventSchedule is an aggregate of multiple EventTimePoint instances.
-		 * 
-		 * In summary:
-		 * 
-		 * - EventTimePoint is "ofAggregate" EventSchedule.
-		 * 
-		 * - EventSchedule is "aggregateOf" EventTimePoint.
-		 * 
-		 * This relationship indicates that an EventSchedule aggregates multiple
-		 * EventTimePoint objects, but each EventTimePoint belongs to exactly one
-		 * EventSchedule.
-		 * 
-		 * COMPOSITE RELATIONSHIPS:
-		 * 
-		 * In the UML, suppose we have a composite relationship between EventSchedule
-		 * and EventTimePoint (the relationship notation below indicates which side the
-		 * black aggregation diamond is on):
-		 * 
-		 * EventSchedule ◆-- EventTimePoint
-		 * 
-		 * ...where EventSchedule is the composite (whole) and EventTimePoint is the
-		 * part. In this scenario, the stereotypes "ofComposite" and "compositeOf" are
-		 * handled as follows:
-		 * 
-		 * - "compositeOf" refers to the direction from the whole (EventSchedule) to the
-		 * part (EventTimePoint). This means that an EventSchedule is a composite of
-		 * multiple EventTimePoint instances, and their lifecycle is tightly bound.
-		 * 
-		 * - "ofComposite" refers to the direction from the part (EventTimePoint) to the
-		 * whole (EventSchedule). This indicates that an EventTimePoint is part of an
-		 * EventSchedule and cannot exist independently.
-		 * 
-		 * In summary:
-		 * 
-		 * - EventTimePoint is "ofComposite" EventSchedule.
-		 * 
-		 * - EventSchedule is "compositeOf" EventTimePoint.
-		 * 
+		 * Interpret this association role in the context of its mate.
+		 * Establish the OWL domain and range.  Interpret the UML
+		 * multiplicity as OWL functional and inverse functional
+		 * property types.
 		 */
 		public void mate(Role other) {
-			if (property == null)
+			if( property == null)
 				return;
-			if (composite)
-				property.addProperty(UML.hasStereotype, UML.ofComposite);
-			if (aggregate)
-				property.addProperty(UML.hasStereotype, UML.ofAggregate);
-			if (other.range != null)
+    		if( composite )
+    			property.addProperty(UML.hasStereotype, UML.ofComposite);
+    		if( aggregate )
+    			property.addProperty(UML.hasStereotype, UML.ofAggregate);
+			if( other.range != null)
 				property.addDomain(other.range);
-			if (range != null)
+			if( range != null ) 
 				property.addRange(range);
-			if (other.property != null)
+			if( other.property != null )
 				property.addInverseOf(other.property);
-			if (upper == 1)
+			if( upper == 1 )
 				property.convertToFunctionalProperty();
-			if (other.upper == 1)
+			if( other.upper == 1)
 				property.convertToInverseFunctionalProperty();
-			if (other.composite)
-				property.addProperty(UML.hasStereotype, UML.compositeOf);
-			if (other.aggregate)
-				property.addProperty(UML.hasStereotype, UML.aggregateOf);
+    		if( other.composite )
+    			property.addProperty(UML.hasStereotype, UML.compositeOf);
+    		if( other.aggregate )
+    			property.addProperty(UML.hasStereotype, UML.aggregateOf);
 			if (baseuri != null && !"".equals(baseuri))
 				property.addProperty(UML.baseuri, baseuri);
 			if (baseprefix != null && !"".equals(baseprefix))
 				property.addProperty(UML.baseprefix, baseprefix);
-			//
-			property.addProperty(UML.schemaMin, lower);
-			property.addProperty(UML.schemaMax, upper);
 		}
-
-	}
-	
-	/**
-	 * Interpret lower bound multiplicity attribute as an integer.
-	 */
-	protected int numberLowerBound(Attributes atts, String name) {
-		String value = atts.getValue(name);
-		if (value != null) {
-			try {
-				return Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				return 0;
-			}
-		} else
-			return 0;
-	}
-
-	/**
-	 * Interpret upper bound multiplicity attribute as a decimal.
-	 */
-	protected int numberUpperBound(Attributes atts, String name) {
-		String value = atts.getValue(name);
-		if (value != null) {
-			try {
-				return Integer.parseInt(value);
-			} catch (NumberFormatException e) {
-				return 1;
-			}
-		} else
-			return 1;
+		
 	}
 }

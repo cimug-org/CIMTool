@@ -4,22 +4,22 @@
  */
 package au.com.langdale.validation;
 
-import au.com.langdale.inference.Extractor;
-import au.com.langdale.inference.ProxyRegistry;
-import au.com.langdale.inference.RuleParser.ParserException;
-import au.com.langdale.inference.StandardFunctorActions;
-import au.com.langdale.inference.ValidationBuiltins;
-import au.com.langdale.kena.ModelFactory;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.splitmodel.SplitBase;
-import au.com.langdale.splitmodel.SplitReader;
-import au.com.langdale.util.Logger;
-import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import au.com.langdale.inference.Extractor;
+import au.com.langdale.inference.ProxyRegistry;
+import au.com.langdale.inference.StandardFunctorActions;
+import au.com.langdale.inference.ValidationBuiltins;
+import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.splitmodel.SplitBase;
+import au.com.langdale.splitmodel.SplitReader;
+import au.com.langdale.util.Logger;
+import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;

@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -51,11 +49,9 @@ import au.com.langdale.workspace.ResourceOutputStream;
  * A series of <code>Buildlet</code>s for building profile artifacts.
  */
 public class ProfileBuildlets extends Task {
-	private static final Logger log = LoggerFactory.getLogger(ProfileBuildlets.class);
 
 	private static ProfileBuildlet[] availableBuildlets;
 
-	
 	/**
 	 * Buildlet for a profile artifact.
 	 * 
@@ -178,34 +174,19 @@ public class ProfileBuildlets extends Task {
 
 		private String style;
 		private DateTime datetime;
-		private String includesFile;
-		
+
 		public TransformBuildlet(String style, String ext) {
 			super(ext);
 			this.style = style;
 			this.datetime = DateTime.now(DateTimeZone.UTC);
 		}
-		
-		public TransformBuildlet(String style, String ext, String includesFile) {
-			super(ext);
-			this.style = style;
-			this.datetime = DateTime.now(DateTimeZone.UTC);
-			this.includesFile = includesFile;
-		}
-		
+
 		public TransformBuildlet(String style, String ext, DateTime datetime) {
 			super(ext);
 			this.style = style;
 			this.datetime = (datetime == null ? DateTime.now(DateTimeZone.UTC) : datetime);
 		}
-		
-		public TransformBuildlet(String style, String ext, DateTime datetime, String includesFile) {
-			super(ext);
-			this.style = style;
-			this.datetime = (datetime == null ? DateTime.now(DateTimeZone.UTC) : datetime);
-			this.includesFile = includesFile;
-		}
-		
+
 		@Override
 		protected Collection getOutputs(IResource file) throws CoreException {
 			if (isProfile(file) || isRuleSet(file, style + "-xslt") && isProfile(getRelated(file, "owl")))
@@ -213,18 +194,16 @@ public class ProfileBuildlets extends Task {
 			else
 				return Collections.EMPTY_LIST;
 		}
-		
+
 		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
 		}
-		
+
 		@Override
 		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
 			IFile file = getRelated(result, "owl");
 			ProfileModel tree = getMessageModel(file);
 			ProfileSerializer serializer = new ProfileSerializer(tree);
 			try {
-				String fileName = result.getName().substring(0, result.getName().indexOf('.'));
-				serializer.setFileName(fileName);
 				serializer.setBaseURI(tree.getNamespace());
 				serializer.setOntologyURI(tree.getOntologyNamespace());
 				
@@ -232,10 +211,6 @@ public class ProfileBuildlets extends Task {
 				serializer.setCopyrightMultiLine(Info.getMultiLineCopyrightText(file.getProject()));
 				serializer.setCopyrightSingleLine(Info.getSingleLineCopyrightText(file.getProject()));
 
-				// Set builder specific preferences passed to the serializer as parameters.
-				serializer.setBuilderParameters(Info.getBuilderParameters(result));
-				serializer.setNamespacePrefixesBuilderParameter(Info.getNamespacePrefixesBuilderParameter(tree.getNsPrefixMap()));
-			
 				// TODO: make this better
 				serializer.setVersion("Beta");
 
@@ -248,9 +223,9 @@ public class ProfileBuildlets extends Task {
 					try {
 						/**
 						 * We attempt to first load in any custom XSLT transform
-						 * builders. If is == null means that none are available  
-						 * at which point we "fallback" to an alternate invocation 
-						 * to setStyleSheet(style) method.
+						 * builders. If is == null it means none are available at 
+						 * which point we "fallback" to an alternate invocation to
+						 * setStyleSheet(style) method.
 						 */
 						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 						if (is != null) {
@@ -267,9 +242,9 @@ public class ProfileBuildlets extends Task {
 						serializer.setStyleSheet(style);
 					}
 				}
-				
+
 				setupPostProcessors(serializer);
-				
+
 			} catch (TransformerConfigurationException e) {
 				error("error parsing XSLT script", e);
 			}
@@ -287,10 +262,6 @@ public class ProfileBuildlets extends Task {
 
 		public String getStyle() {
 			return style;
-		}
-
-		protected void setStyle(String style) {
-			this.style = style;
 		}
 
 		/**
@@ -340,10 +311,6 @@ public class ProfileBuildlets extends Task {
 			return this.datetime;
 		}
 
-		public String getIncludesFile() {
-			return this.includesFile;
-		}
-
 	}
 
 	/**
@@ -356,17 +323,9 @@ public class ProfileBuildlets extends Task {
 		public XSDBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-		
-		public XSDBuildlet(String style, String ext, String includesFile) {
-			super(style, ext, includesFile);
-		}
 
 		public XSDBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
-		}
-		
-		public XSDBuildlet(String style, String ext, DateTime datetime, String includesFile) {
-			super(style, ext, datetime, includesFile);
 		}
 
 		@Override
@@ -391,17 +350,9 @@ public class ProfileBuildlets extends Task {
 		public TextBuildlet(String style, String ext) {
 			super(style, ext);
 		}
-		
-		public TextBuildlet(String style, String ext, String includesFile) {
-			super(style, ext, includesFile);
-		}
 
 		public TextBuildlet(String style, String ext, DateTime datetime) {
 			super(style, ext, datetime);
-		}
-		
-		public TextBuildlet(String style, String ext, DateTime datetime, String includesFile) {
-			super(style, ext, datetime, includesFile);
 		}
 
 		@Override
@@ -434,7 +385,7 @@ public class ProfileBuildlets extends Task {
 			RDFSBasedGenerator generator = getGenerator(profileModel, backgroundModel, preserveNS);
 			generator.run();
 			OntModel resultModel = generator.getResult();
-			log.debug("Generated ontology size: {}", resultModel.size());
+			System.out.println("Generated ontology size: " + resultModel.size());
 
 			Task.write(resultModel, generator.getOntURI(), true, result, lang, monitor);
 			result.setDerived(true);

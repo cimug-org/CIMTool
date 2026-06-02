@@ -58,8 +58,7 @@ public class Cache extends Info {
 		public void modelCached(IResource key);
 		/**
 		 * Indicates that a model has been removed from the cache
-		 * because the model file has been deleted or the model needed
-		 * to be re-parsed/loaded. 
+		 * because the model file has been deleted. 
 		 * @param key: the file for the model
 		 */
 		public void modelDropped(IResource key);

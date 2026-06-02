@@ -4,17 +4,18 @@
  */
 package au.com.langdale.validation;
 
-import au.com.langdale.inference.RuleParser.ParserException;
-import au.com.langdale.inference.SimpleReasoner;
-import au.com.langdale.inference.ValidationBuiltins;
-import au.com.langdale.kena.Format;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.util.Logger;
-import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import au.com.langdale.inference.SimpleReasoner;
+import au.com.langdale.inference.ValidationBuiltins;
+import au.com.langdale.inference.RuleParser.ParserException;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.Format;
+
+import au.com.langdale.util.Logger;
+import au.com.langdale.validation.ValidatorUtil.ValidatorProtocol;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.rdf.model.InfModel;

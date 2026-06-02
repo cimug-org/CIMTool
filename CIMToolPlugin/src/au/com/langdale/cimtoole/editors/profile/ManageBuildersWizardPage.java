@@ -40,7 +40,6 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 
 	private BuildersBinding builders;
 	private TextBinding filename = new TextBinding(Validators.NONE);
-	private TextBinding includesFilename = new TextBinding(Validators.NONE);
 	private ComboBinding type;
 	private TextBinding ext = new TextBinding(Validators.NONE);
 
@@ -124,7 +123,6 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 				return Grid( //
 						Group(Label("Existing XSLT Transform Builders:")), Group(CheckboxTableViewer("builders")),
 						Group(Label("Builder XSLT name:"), DisplayField("filename")),
-						Group(Label("XSLT includes file name:"), DisplayField("includesfilename")),
 						Group(Label("Transform builder type:"), ReadOnlyComboViewer("type")),
 						Group(Label("File extension of generated files:"), Field("ext")),
 						Group(RadioButton(Action.UNSELECTED.name(), "No action selected")),
@@ -140,7 +138,6 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 			protected void addBindings() {
 				builders.bind("builders", this);
 				filename.bind("filename", this);
-				includesFilename.bind("includesfilename", this);
 				type.bind("type", this);
 				ext.bind("ext", this);
 				addVerifyListener("ext", verifyListener);
@@ -152,7 +149,7 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 			@Override
 			public String validate() {
 				if (type.getValue() == null)
-					return "A builder type must be selected from the drop down.";
+					return "An builder type must be selected from the drop down.";
 
 				if ((ext.getText().length() == 0) || ext.getText().startsWith(".")) {
 					return "An extension without a leading period must be specified (e.g. xsd or draft-07.json)";
@@ -176,12 +173,10 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 				if (buildlet != currentSelection) {
 					if (buildlet != null) {
 						filename.setValue(buildlet.getStyle() + ".xsl");
-						includesFilename.setValue(buildlet.getIncludesFile());
 						type.setValue(TransformType.toTransformType(buildlet));
 						ext.setValue(buildlet.getFileExt());
 						//
 						filename.refresh();
-						includesFilename.refresh();
 						type.refresh();
 						ext.refresh();
 						//
@@ -192,12 +187,10 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 						currentSelection = buildlet;
 					} else {
 						filename.setValue(null);
-						includesFilename.setValue(null);
 						type.setValue(null);
 						ext.setValue(null);
 						//
 						filename.refresh();
-						includesFilename.refresh();
 						type.refresh();
 						ext.refresh();
 						//
@@ -250,13 +243,13 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 			TransformType transformType = (TransformType) type.getValue();
 			switch (transformType) {
 			case TEXT:
-				buildlet = new TextBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated(), currentSelection.getIncludesFile());
+				buildlet = new TextBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated());
 				break;
 			case XSD:
-				buildlet = new XSDBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated(), currentSelection.getIncludesFile());
+				buildlet = new XSDBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated());
 				break;
 			case TRANSFORM:
-				buildlet = new TransformBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated(), currentSelection.getIncludesFile());
+				buildlet = new TransformBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated());
 				break;
 			}
 		} catch (Exception e) {

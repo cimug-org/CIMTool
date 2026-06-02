@@ -8,9 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -44,8 +41,6 @@ import au.com.langdale.kena.Format;
  */
 public class CIMBuilder extends IncrementalProjectBuilder {
 
-	private static final Logger log = LoggerFactory.getLogger(CIMBuilder.class);
-
 	public static final String BUILDER_ID = "au.com.langdale.cimtoole.CIMBuilder";
 
 	private static final String MARKER_TYPE = "au.com.langdale.cimtoole.problem";
@@ -68,7 +63,6 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				new ValidationBuildlet(), //
 				new SplitValidationBuildlet(), //
 				new IncrementalValidationBuildlet(), //
-				new PlantUMLRealTimePreviewBuildlet(), //
 		};
 
 		ProfileBuildlet[] registered = ProfileBuildletRegistry.INSTANCE.getBuildlets();
@@ -210,9 +204,9 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 				while (outputs.hasNext()) {
 					IFile output = (IFile) outputs.next();
 					if (work.remove(output) != null)
-						log.debug("CIMBuilder: push down in build order: {}", output.getName());
+						System.out.println("CIMBuilder: push down in build order: " + output.getName());
 					else
-						log.debug("CIMBuilder: adding to build: {}", output.getName());
+						System.out.println("CIMBuilder: adding to build: " + output.getName());
 					work.put(output, buildlet);
 					collect(output); // not efficient since we might encounter an output many times
 				}
@@ -224,7 +218,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 			while (outputs.hasNext()) {
 				IFile output = (IFile) outputs.next();
 				Buildlet buildlet = (Buildlet) work.get(output);
-				log.debug("CIMBuilder: building: {}", output.getName());
+				System.out.println("CIMBuilder: building: " + output.getName());
 				buildlet.run(output, cleanup, monitor);
 			}
 		}

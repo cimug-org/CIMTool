@@ -13,15 +13,10 @@ import au.com.langdale.kena.Resource;
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Common support for the simple owl and legacy rdfs <code>SchemaGenerator</code>s.
  */
 public abstract class RDFSBasedGenerator extends SchemaGenerator {
-
-	private static final Logger log = LoggerFactory.getLogger(RDFSBasedGenerator.class);
 
 	public RDFSBasedGenerator(OntModel profileModel, OntModel backgroundModel, boolean preserveNamespaces, boolean withInverses) {
 		super(profileModel, backgroundModel, preserveNamespaces, withInverses);
@@ -37,7 +32,7 @@ public abstract class RDFSBasedGenerator extends SchemaGenerator {
 		if( subject != null && object != null)
 			result.createResource(subject).addProperty(prop, result.createResource(object));
 		else
-			log.warn("Null statement with predicate {}", prop);
+			System.out.println("Null statement with predicate " + prop);
 	}
 	
 	protected Resource emit(String uri, FrontsNode type) {

@@ -19,9 +19,6 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import au.com.langdale.inference.Extractor.FunctorActions;
 import au.com.langdale.inference.Extractor.RuleState;
 import au.com.langdale.inference.Extractor.TerminateExtractor;
@@ -39,7 +36,6 @@ import au.com.langdale.splitmodel.SplitReader;
  * asynchronous design of <code>Extractor</code> and <code>SplitReader</code>. 
  */
 public class StandardFunctorActions extends Reporting {
-	private static final Logger log = LoggerFactory.getLogger(StandardFunctorActions.class);
 	public static final String ARGS = "incorrect number of arguments";
 	public static final String SUBJECT = "no subject supplied";
 	public static final String INT_ARG = "first argument must be an integer";
@@ -305,7 +301,7 @@ public class StandardFunctorActions extends Reporting {
 			
 			int size = model.size()/STATEMENTS_PER_PROBLEM;
 			if( size % 100 == 0)
-				log.info("Result count: {}", size);
+				System.out.println("Result count: " + size);
 			
 			if( size >= MAX_REPORT_SIZE) {
 				createReport(model, null, FINAL_MESSAGE, new Node[0], 0, 0);
@@ -369,26 +365,29 @@ public class StandardFunctorActions extends Reporting {
 	public static class Debug implements FunctorActions {
 
 		public void apply(Node[] nodes, Graph model, Graph axioms, RuleState state) {
-			if (log.isDebugEnabled()) {
-				String name = state.getRule().getName();
-				log.debug("fired:{}:{}", name != null ? name : "", format(nodes));
+			System.out.print("fired:");
+			String name = state.getRule().getName();
+			if(name != null) {
+				System.out.print( name + ":" );
 			}
+			print(nodes);
 		}
 
 		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
-			if (log.isDebugEnabled()) {
-				String name = state.getRule().getName();
-				log.debug("matched:{}:{}:{}", name != null ? name : "", state.getClause(), format(nodes));
+			System.out.print("matched:");
+			String name = state.getRule().getName();
+			if(name != null) {
+				System.out.print( name + ":" + state.getClause());
 			}
+			print(nodes);
 			state.dispatch();
 		}
 
-		private String format(Node[] nodes) {
-			StringBuilder sb = new StringBuilder();
+		private void print(Node[] nodes) {
 			for (int ix = 0; ix < nodes.length; ix++) {
-				sb.append(" ").append(PrintUtil.print(nodes[ix]));
+				System.out.print(" " + PrintUtil.print(nodes[ix]));
 			}
-			return sb.toString();
+			System.out.println();
 		}
 	}
 	

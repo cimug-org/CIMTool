@@ -5,53 +5,37 @@
 package au.com.langdale.cimtoole.project;
 
 import static au.com.langdale.ui.builder.Templates.CheckBox;
-import static au.com.langdale.ui.builder.Templates.DisplayField;
 import static au.com.langdale.ui.builder.Templates.Field;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.jface.preference.ColorFieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 
-import au.com.langdale.colors.util.ColorUtils;
-import au.com.langdale.ui.binding.AnyModel;
 import au.com.langdale.ui.binding.Validator;
 import au.com.langdale.ui.builder.Assembly;
 import au.com.langdale.ui.builder.Template;
-import au.com.langdale.ui.builder.Templates.DefaultContentProvider;
 import au.com.langdale.ui.plumbing.Binding;
 import au.com.langdale.ui.plumbing.Observer;
 
 /**
- * A preference or property page provided with a Assembly and a set of templates
- * for various property and preference types.
+ * A preference or property page provided with a Assembly and
+ * a set of templates for various property and preference types.
  */
-public abstract class FurnishedPropertyPage extends PreferencePage
-		implements Observer, IWorkbenchPreferencePage, IWorkbenchPropertyPage {
-
+public abstract class FurnishedPropertyPage extends PreferencePage 
+			implements Observer, IWorkbenchPreferencePage, IWorkbenchPropertyPage {
+	
 	private Content content;
 	private Control body;
 	private IResource resource;
-
+	
 	public FurnishedPropertyPage(String title, ImageDescriptor image) {
 		super(title, image);
 	}
@@ -65,10 +49,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 	}
 
 	public FurnishedPropertyPage() {
-	}
-
-	public IPreferenceStore getPreferenceStore() {
-		return super.getPreferenceStore();
 	}
 
 	public static abstract class TextBinding implements Template, Binding {
@@ -99,181 +79,7 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 			return Field(symbol.getLocalName()).realise(parent, assembly);
 		}
 	}
-
-	public static abstract class ReadOnlyComboBinding implements Template, Binding, AnyModel {
-		public final QualifiedName symbol;
-		private ComboViewer viewer;
-		public final Validator validator;
-		private Assembly assembly;
-		private Object data;
-		private Object initialSelection;
-
-		public ReadOnlyComboBinding(QualifiedName symbol, Validator validator) {
-			this(symbol, validator, (Object) null, null);
-		}
-
-		public ReadOnlyComboBinding(QualifiedName symbol, Validator validator, Object data) {
-			this(symbol, validator, data, null);
-		}
-
-		public ReadOnlyComboBinding(QualifiedName symbol, Validator validator, Object data, Object initialSelection) {
-			super();
-			this.symbol = symbol;
-			this.validator = validator;
-			this.data = data;
-			this.initialSelection = initialSelection;
-		}
-
-		public String getValue() {
-			String selection = (String) this.viewer.getStructuredSelection().getFirstElement();
-			return selection;
-		}
-
-		public void setValue(Object value) {
-			if (value != null && !"".equals(value)) {
-				this.viewer.setSelection(new StructuredSelection(value));
-			}
-		}
-
-		public String validate() {
-			return this.validator.validate(getValue());
-		}
-
-		public Control realise(Composite parent, Assembly assembly) {
-			assembly.addBinding(this);
-
-			Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			combo.setLayoutData(gd);
-
-			assembly.getToolkit().adapt(combo, true, true);
-			this.viewer = new ComboViewer(combo);
-			assembly.putViewer(this.symbol.getLocalName(), this.viewer);
-			this.viewer.addSelectionChangedListener(assembly.selectionChangedlistener);
-			this.viewer.setContentProvider(new DefaultContentProvider());
-			if (this.data != null) {
-				this.viewer.setInput(this.data);
-				if (this.initialSelection != null) {
-					this.viewer.setSelection(new StructuredSelection(this.initialSelection));
-				}
-			}
-
-			combo.addSelectionListener(new SelectionListener() {
-				@Override
-				public void widgetSelected(SelectionEvent event) {
-					System.err.println(event.toString());
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent event) {
-					System.err.println(event.toString());
-				}
-			});
-
-			return combo;
-		}
-	}
-
-	private static class CustomColorFieldEditor extends ColorFieldEditor {
-		private Button button;
-
-		public CustomColorFieldEditor(String name, String text, Composite area) {
-			super(name, text, area);
-		}
-
-		protected Button getChangeControl(Composite parent) {
-			if (button == null)
-				button = super.getChangeControl(parent);
-			return button;
-		}
-
-	}
-
-	public static abstract class ColorDisplayBinding implements Template, Binding {
-		public final QualifiedName symbol;
-		private String text;
-		private String initialColor;
-		private CustomColorFieldEditor editor;
-
-		public ColorDisplayBinding(QualifiedName symbol, String text, String initialColor) {
-			this.symbol = symbol;
-			this.text = text;
-			this.initialColor = initialColor;
-		}
-
-		protected String getValue() {
-			RGB rgb = editor.getColorSelector().getColorValue();
-			return ColorUtils.parseRGBColor(new int[] {rgb.red, rgb.green, rgb.blue});
-		}
-
-		protected void setValue(String color) {
-			if (color != null) {
-				int[] rgb = ColorUtils.parseHexColor(color);
-				editor.getColorSelector().setColorValue(new RGB(rgb[0], rgb[1],rgb[2]));
-			}
-		}
-
-		public String validate() {
-			return null;
-		}
-
-		public Control realise(Composite parent, Assembly assembly) {
-			assembly.addBinding(this);
-
-			Composite area = new Composite(parent, SWT.NONE);
-			this.editor = new CustomColorFieldEditor(symbol.getLocalName() + "-editor", text, area);
-			int[] rgb = ColorUtils.parseHexColor(initialColor);
-			editor.getColorSelector().setColorValue(new RGB(rgb[0], rgb[1], rgb[2]));
-
-			Button button = editor.getChangeControl(area);
-			assembly.putControl(symbol.getLocalName() + "-button", button); // register button with the assembly
-
-			button.addListener(SWT.Selection, event -> {
-				String selectedColor = initialColor;
-
-				if (editor.getColorSelector().getColorValue() != null) {
-					RGB color = editor.getColorSelector().getColorValue();
-					selectedColor = ColorUtils.parseRGBColor(new int[] {color.red, color.green, color.blue});
-				}
-
-				if (selectedColor != null) {
-					Label label = assembly.getLabel(symbol.getLocalName() + "-label");
-					if (label != null)
-						label.setText(selectedColor);
-				}
-			});
-
-			return area;
-		}
-	}
-
-	public static abstract class DisplayTextBinding implements Template, Binding {
-		public final QualifiedName symbol;
-		private Assembly assembly;
-
-		public DisplayTextBinding(QualifiedName symbol) {
-			this.symbol = symbol;
-		}
-
-		protected String getValue() {
-			return assembly.getText(symbol.getLocalName()).getText().trim();
-		}
-
-		protected void setValue(String value) {
-			assembly.setTextValue(symbol.getLocalName(), value);
-		}
-
-		public String validate() {
-			return null;
-		}
-
-		public Control realise(Composite parent, Assembly assembly) {
-			this.assembly = assembly;
-			assembly.addBinding(this);
-			return DisplayField(symbol.getLocalName()).realise(parent, assembly);
-		}
-	}
-
+	
 	public static abstract class OptionBinding implements Template, Binding {
 		public final QualifiedName symbol;
 		public final String label;
@@ -302,183 +108,17 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 			return CheckBox(symbol.getLocalName(), label).realise(parent, assembly);
 		}
 	}
-
-	public class PropertyOption extends OptionBinding {
-		public PropertyOption(QualifiedName symbol, String label) {
-			super(symbol, label);
-		}
-
-		public void refresh() {
-			setValue(Boolean.valueOf(Info.getPropertyNoException(getResource(), symbol)));
-		}
-
-		public void update() {
-			Info.putProperty(getResource(), symbol, Boolean.valueOf(getValue()).toString());
-		}
-
-		public void reset() {
-			setValue(Boolean.valueOf(Info.getPreference(symbol)));
-		}
-
-	}
-
-	public class HierarchicalBuilderPreferenceOption extends OptionBinding {
-		public HierarchicalBuilderPreferenceOption(QualifiedName symbol, String label) {
-			super(symbol, label);
-		}
-
-		public void refresh() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(getResource(), symbol)));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, Boolean.valueOf(getValue()).toString());
-		}
-
-		public void reset() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(symbol)));
-		}
-	}
 	
-	public class BuilderPreferenceOption extends OptionBinding {
-		public BuilderPreferenceOption(QualifiedName symbol, String label) {
-			super(symbol, label);
-		}
-
-		public void refresh() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(getResource(), symbol)));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, Boolean.valueOf(getValue()).toString());
-		}
-
-		public void reset() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(symbol)));
-		}
-	}
-
-	public class ColorProperty extends ColorDisplayBinding {
-
-		public ColorProperty(String text, QualifiedName symbol) {
-			super(symbol, text, Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putProperty(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getPreference(symbol));
-		}
-
-	}
-
-	public class BuilderColorPreference extends ColorDisplayBinding {
-
-		public BuilderColorPreference(String text, QualifiedName symbol) {
-			super(symbol, text, Info.getBuilderPreference(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getBuilderPreference(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
-		}
-
-	}
-
-	public class PropertyReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public PropertyReadOnlyCombo(QualifiedName symbol, Validator validator) {
-			super(symbol, validator, null, Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public PropertyReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
-			super(symbol, validator, data, Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putProperty(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getPreference(symbol));
-		}
-
-	}
-
-	public class HierarchicalBuilderPreferenceReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public HierarchicalBuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
-			super(symbol, validator, null, Info.getHierarchicalBuilderPreference(getResource(), symbol));
-		}
-
-		public HierarchicalBuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
-			super(symbol, validator, data, Info.getHierarchicalBuilderPreference(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getHierarchicalBuilderPreference(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
-		}
-
-	}
-	
-	public class BuilderPreferenceReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public BuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
-			super(symbol, validator, null, Info.getBuilderPreference(getResource(), symbol));
-		}
-
-		public BuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
-			super(symbol, validator, data, Info.getBuilderPreference(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getBuilderPreference(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
-		}
-
-	}
-
-	public class Property extends TextBinding {
+	protected class Property extends TextBinding {
 		public Property(QualifiedName symbol, Validator validator) {
-			super(symbol, validator);
+			super( symbol, validator );
 		}
 
 		public void refresh() {
 			try {
 				setValue(Info.getProperty(getResource(), symbol));
 			} catch (CoreException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -488,117 +128,39 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 
 		public void reset() {
-			setValue(Info.getPreference(symbol));
+			setValue(getPreferenceStore().getString(symbol.getLocalName()));				
 		}
 	}
-
-	public class BuilderPreference extends TextBinding {
-		public BuilderPreference(QualifiedName symbol, Validator validator) {
-			super(symbol, validator);
-		}
-
-		public void refresh() {
-			setValue(Info.getBuilderPreference(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
-		}
-	}
-
-	public class Preference extends TextBinding {
+	
+	protected class Preference extends TextBinding {
 		public Preference(QualifiedName symbol, Validator validator) {
 			super(symbol, validator);
 		}
 
 		public void refresh() {
-			setValue(getPreferenceStore().getString(symbol.getLocalName()));
+			setValue(getPreferenceStore().getString(symbol.getLocalName()));		
 		}
 
 		public void reset() {
-			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
+			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));		
 		}
 
 		public void update() {
 			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
 		}
 	}
-
-	public class PreferenceReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public PreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
-			super(symbol, validator, null, getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public PreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
-			super(symbol, validator, data, getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void refresh() {
-			setValue(getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void reset() {
-			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
-		}
-
-		public void update() {
-			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
-		}
-	}
-
-	public class ColorPreference extends ColorDisplayBinding {
-
-		public ColorPreference(String text, QualifiedName symbol) {
-			super(symbol, text, getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void refresh() {
-			setValue(getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void reset() {
-			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
-		}
-
-		public void update() {
-			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
-		}
-	}
-
-	public class DisplayPreference extends DisplayTextBinding {
-		public DisplayPreference(QualifiedName symbol) {
-			super(symbol);
-		}
-
-		public void refresh() {
-			setValue(getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void reset() {
-			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
-		}
-
-		public void update() {
-			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
-		}
-	}
-
-	public class PreferenceOption extends OptionBinding {
+	
+	protected class PreferenceOption extends OptionBinding {
 		public PreferenceOption(QualifiedName symbol, String label) {
 			super(symbol, label);
 		}
 
 		public void refresh() {
-			setValue(getPreferenceStore().getBoolean(symbol.getLocalName()));
+			setValue(getPreferenceStore().getBoolean(symbol.getLocalName()));		
 		}
 
 		public void reset() {
-			setValue(getPreferenceStore().getDefaultBoolean(symbol.getLocalName()));
+			setValue(getPreferenceStore().getDefaultBoolean(symbol.getLocalName()));		
 		}
 
 		public void update() {
@@ -606,17 +168,16 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 	}
 
-	public abstract class Content extends Assembly {
+	
+	protected abstract class Content extends Assembly {
 		public Content() {
 			super(createDialogToolkit(), FurnishedPropertyPage.this, false);
 		}
-
+		
 		protected abstract Template define();
-
-		protected void addBindings() {
-		}
+		protected void addBindings() {}
 	}
-
+	
 	protected abstract Content createContent();
 
 	@Override
@@ -624,7 +185,7 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		content = createContent();
 		body = content.realise(parent, content.define());
 		content.addBindings();
-		content.doRefresh();
+		content.doRefresh(); 
 		return body;
 	}
 
@@ -637,11 +198,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		setErrorMessage(null);
 		setValid(true);
 	}
-
+	
 	public void markDirty() {
-
+		
 	}
-
+	
 	@Override
 	public boolean performOk() {
 		content.fireUpdate();
@@ -664,6 +225,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 	public void setElement(IAdaptable element) {
 		resource = (IResource) element;
-
+		
 	}
 }

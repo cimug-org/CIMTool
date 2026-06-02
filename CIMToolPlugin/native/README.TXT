@@ -1,1 +1,0 @@
-Pandoc 3.5 is the current version of Pandoc packaged in the ZIP archives

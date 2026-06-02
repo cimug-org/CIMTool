@@ -4,39 +4,16 @@
  */
 package au.com.langdale.profiles;
 
-import au.com.langdale.jena.JenaTreeModelBase;
-import au.com.langdale.jena.TreeModelBase.Node;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
-import au.com.langdale.profiles.ProfileClass.PropertyInfo;
-import au.com.langdale.profiles.ProfileModel.CatalogNode;
-import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
-import au.com.langdale.profiles.ProfileModel.EnvelopeNode.MessageNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
-import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
-import au.com.langdale.profiles.ProfileModel.TypeNode;
-import au.com.langdale.sax.AbstractReader;
-import au.com.langdale.saxon.functions.NewUUIDFunction;
-import au.com.langdale.saxon.functions.UUIDFromKeyFunction;
-import au.com.langdale.xmi.ShadowClassUtils;
-import au.com.langdale.xmi.UML;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import javax.xml.transform.ErrorListener;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
@@ -51,8 +28,6 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -60,6 +35,23 @@ import org.xml.sax.SAXParseException;
 
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
+
+import au.com.langdale.jena.JenaTreeModelBase;
+import au.com.langdale.jena.TreeModelBase.Node;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
+import au.com.langdale.kena.Resource;
+import au.com.langdale.profiles.ProfileClass.PropertyInfo;
+import au.com.langdale.profiles.ProfileModel.CatalogNode;
+import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
+import au.com.langdale.profiles.ProfileModel.EnvelopeNode.MessageNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
+import au.com.langdale.profiles.ProfileModel.TypeNode;
+import au.com.langdale.sax.AbstractReader;
+import au.com.langdale.xmi.UML;
 
 /**
  * Convert a message model to XML. The form of the XML is designed to be easily
@@ -75,59 +67,23 @@ import com.hp.hpl.jena.vocabulary.XSD;
  * schema according to the given templates.
  */
 public class ProfileSerializer extends AbstractReader {
-	private static final Logger log = LoggerFactory.getLogger(ProfileSerializer.class);
-
 	public static final String XSDGEN = "http://langdale.com.au/2005/xsdgen";
-
-	TransformerFactory factory = TransformerFactory.newInstance();
-	private List<Templates> templates = new ArrayList();
-	private final String xsd = XSD.anyURI.getNameSpace();
 	private JenaTreeModelBase model;
-
-	// Each instance of a ProfileSerializer that is executed
-	private SortedMap<String, OntResource> packages = new TreeMap<String, OntResource>();
-
-	/** The following are parameters to be passed into XSLT builders */
-	private String fileName = "";
 	private String baseURI = "";
 	private String ontologyURI = "";
 	private String version = "";
 	private String copyrightMultiLine = "";
 	private String copyrightSingleLine = "";
-	// Builder specific parameters...
-	private String builderParameters = "";
-	private String namespacePrefixesBuilderParameter = "";
-
-	// Error handling for XSLT transformations
-	private ErrorListener transformErrorListener;
-	private boolean transformationErrors = false;
-
-	private TreeSet primitivesDeferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
-		@Override
-		public int compare(OntResource o1, OntResource o2) {
-			return o1.getURI().compareTo(o2.getURI());
-		}
-	});
-
-	private TreeSet cimDatatypesDeferred = new TreeSet<OntResource>(new Comparator<OntResource>() {
-		@Override
-		public int compare(OntResource o1, OntResource o2) {
-			return o1.getURI().compareTo(o2.getURI());
-		}
-	});
+	private ArrayList templates = new ArrayList();
+	TransformerFactory factory = TransformerFactory.newInstance();
+	private final String xsd = XSD.anyURI.getNameSpace();
+	private HashSet deferred = new HashSet();
 
 	/**
 	 * Construct a serializer for the given MessageModel.
 	 */
 	public ProfileSerializer(ProfileModel model) {
 		this.model = model;
-		registerExtensionFunctions();
-	}
-
-	final protected void registerExtensionFunctions() {
-		net.sf.saxon.Configuration config = ((net.sf.saxon.TransformerFactoryImpl) factory).getConfiguration();
-		config.registerExtensionFunction(new NewUUIDFunction());
-		config.registerExtensionFunction(new UUIDFromKeyFunction());
 	}
 
 	/**
@@ -224,9 +180,9 @@ public class ProfileSerializer extends AbstractReader {
 	 * 
 	 * When the name is null it indicates that no stylesheets are to be applied. In
 	 * this scenario the output of a call to the ProfileSerializer's write() method
-	 * will simply be the output of CIMTool's internal message model as a formatted
-	 * XML document. Therefore, any existing templates are "cleared" and only the
-	 * "indent-xml.xsl" stylesheet will be applied in order to format the XML when
+	 * will simply be the output of CIMTool's internal message model as a formatted 
+	 * XML document. Therefore, any existing templates are "cleared" and only the  
+	 * "indent-xml.xsl" stylesheet will be applied in order to format the XML when 
 	 * written out. This stylesheet is for internal purposes only.
 	 */
 	public void setStyleSheet(String name) throws TransformerConfigurationException {
@@ -300,171 +256,6 @@ public class ProfileSerializer extends AbstractReader {
 	}
 
 	/**
-	 * Enable console error output for XSLT transformations.
-	 * 
-	 * <p>
-	 * This method configures the serializer to output XSLT transformation errors
-	 * directly to the console (stdout for warnings, stderr for errors). It also
-	 * tracks whether any errors occurred, which can be checked via
-	 * {@link #hasTransformationErrors()}.
-	 * </p>
-	 * 
-	 * <h3>CLI Usage:</h3>
-	 * <p>
-	 * This method is intended for command-line interface (CLI) usage where errors
-	 * should be reported directly to the console. Call this method once after
-	 * creating the serializer and before calling {@link #write(OutputStream)}.
-	 * </p>
-	 * 
-	 * <pre>
-	 * ProfileSerializer serializer = new ProfileSerializer(model);
-	 * serializer.enableConsoleErrorOutput();
-	 * // ... set parameters ...
-	 * serializer.write(outputStream);
-	 * if (serializer.hasTransformationErrors()) {
-	 * 	// Handle error condition
-	 * }
-	 * </pre>
-	 * 
-	 * <h3>Eclipse UI Usage:</h3>
-	 * <p>
-	 * For the Eclipse UI, this method should generally NOT be called. Instead, use
-	 * {@link #setErrorHandler(ErrorHandler)} to integrate with Eclipse's error
-	 * reporting mechanisms, or let errors propagate as exceptions to be handled by
-	 * the Eclipse workbench.
-	 * </p>
-	 * 
-	 * @see #hasTransformationErrors()
-	 * @see #resetTransformationErrors()
-	 * @see #setTransformErrorListener(ErrorListener)
-	 */
-	public void enableConsoleErrorOutput() {
-		this.transformErrorListener = new ErrorListener() {
-			@Override
-			public void warning(TransformerException e) throws TransformerException {
-				log.warn("XSLT Warning: {}", formatException(e));
-			}
-
-			@Override
-			public void error(TransformerException e) throws TransformerException {
-				log.error("XSLT Error: {}", formatException(e));
-				transformationErrors = true;
-			}
-
-			@Override
-			public void fatalError(TransformerException e) throws TransformerException {
-				log.error("XSLT Fatal Error: {}", formatException(e));
-				transformationErrors = true;
-				throw e;
-			}
-
-			private String formatException(TransformerException e) {
-				SourceLocator loc = e.getLocator();
-				if (loc != null) {
-					return String.format("[%s line %d col %d] %s",
-							loc.getSystemId() != null ? loc.getSystemId() : "unknown", loc.getLineNumber(),
-							loc.getColumnNumber(), e.getMessage());
-				}
-				return e.getMessage();
-			}
-		};
-	}
-
-	/**
-	 * Set a custom ErrorListener for XSLT transformations.
-	 * 
-	 * <p>
-	 * This method allows setting a custom {@link ErrorListener} implementation for
-	 * more fine-grained control over error handling during XSLT transformations.
-	 * The listener will be applied to each transformer created during
-	 * {@link #write(OutputStream)}.
-	 * </p>
-	 * 
-	 * <h3>CLI Usage:</h3>
-	 * <p>
-	 * For typical CLI usage, prefer {@link #enableConsoleErrorOutput()} which
-	 * provides a pre-configured listener that writes to stdout/stderr.
-	 * </p>
-	 * 
-	 * <h3>Eclipse UI Usage:</h3>
-	 * <p>
-	 * For Eclipse UI integration, a custom listener can be provided that routes
-	 * errors to Eclipse's logging or problem view mechanisms.
-	 * </p>
-	 * 
-	 * @param listener the error listener to use, or null to disable custom error
-	 *                 handling
-	 * @see #enableConsoleErrorOutput()
-	 */
-	public void setTransformErrorListener(ErrorListener listener) {
-		this.transformErrorListener = listener;
-	}
-
-	/**
-	 * Check whether any XSLT transformation errors occurred.
-	 * 
-	 * <p>
-	 * This method returns true if any errors (non-fatal or fatal) were reported
-	 * during the most recent {@link #write(OutputStream)} call when using
-	 * {@link #enableConsoleErrorOutput()}.
-	 * </p>
-	 * 
-	 * <h3>CLI Usage:</h3>
-	 * <p>
-	 * After calling {@link #write(OutputStream)}, check this method to determine if
-	 * the CLI should exit with an error code:
-	 * </p>
-	 * 
-	 * <pre>
-	 * serializer.write(outputStream);
-	 * if (serializer.hasTransformationErrors()) {
-	 * 	throw new TransformerException("Transformation completed with errors");
-	 * }
-	 * </pre>
-	 * 
-	 * <h3>Eclipse UI Usage:</h3>
-	 * <p>
-	 * For Eclipse UI, this method is typically not needed as errors are handled via
-	 * the error handler or thrown as exceptions.
-	 * </p>
-	 * 
-	 * @return true if transformation errors occurred, false otherwise
-	 * @see #enableConsoleErrorOutput()
-	 * @see #resetTransformationErrors()
-	 */
-	public boolean hasTransformationErrors() {
-		return transformationErrors;
-	}
-
-	/**
-	 * Reset the transformation errors flag.
-	 * 
-	 * <p>
-	 * Call this method to reset the error tracking state before reusing a
-	 * serializer instance for multiple transformations.
-	 * </p>
-	 * 
-	 * <h3>CLI Usage:</h3>
-	 * <p>
-	 * When processing multiple profiles in a loop with the same serializer
-	 * instance, call this method before each transformation to ensure accurate
-	 * error tracking per transformation.
-	 * </p>
-	 * 
-	 * <h3>Eclipse UI Usage:</h3>
-	 * <p>
-	 * Generally not needed for Eclipse UI as serializers are typically created
-	 * fresh for each build operation.
-	 * </p>
-	 * 
-	 * @see #hasTransformationErrors()
-	 * @see #enableConsoleErrorOutput()
-	 */
-	public void resetTransformationErrors() {
-		this.transformationErrors = false;
-	}
-
-	/**
 	 * Generate a schema from the message definition and write it to the given
 	 * stream.
 	 */
@@ -474,37 +265,17 @@ public class ProfileSerializer extends AbstractReader {
 		if (!templates.isEmpty()) {
 			tx = new Transformer[templates.size()];
 			for (int ix = 0; ix < templates.size(); ix++) {
-				Transformer ti = templates.get(ix).newTransformer();
-				ti.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); // Added in CIMTool 2.3.0
+				Transformer ti = ((Templates) templates.get(ix)).newTransformer();
 				ti.setParameter("baseURI", baseURI);
 				ti.setParameter("ontologyURI", ontologyURI);
 				ti.setParameter("version", version);
 				ti.setParameter("envelope", model.getRoot().getName());
 				ti.setParameter("copyright", copyrightMultiLine);
 				ti.setParameter("copyright-single-line", copyrightSingleLine);
-				ti.setParameter("fileName", fileName);
-				ti.setParameter("namespacePrefixes", this.namespacePrefixesBuilderParameter);
-				/**
-				 * The follow line sets any builder-specific parameters. These types of
-				 * parameters are defined as preferences in CIMTool that have default values
-				 * defined. Such parameters are further designed to be overridable via a
-				 * PropertyPage accessed via the right mouse menu selected on a specific
-				 * generated artifact and selecting the "Properties". For an example, refer to
-				 * the PlantUML preferences/properties..
-				 */
-				ti.setParameter("builderParameters", this.builderParameters);
-				// Apply error listener if configured (e.g., for CLI usage)
-				if (transformErrorListener != null) {
-					ti.setErrorListener(transformErrorListener);
-				}
 				tx[ix] = ti;
 			}
 		} else {
-			Transformer t = factory.newTransformer();
-			if (transformErrorListener != null) {
-				t.setErrorListener(transformErrorListener);
-			}
-			tx = new Transformer[] { t };
+			tx = new Transformer[] { factory.newTransformer() };
 		}
 
 		Result result = new StreamResult(ostream);
@@ -521,8 +292,8 @@ public class ProfileSerializer extends AbstractReader {
 		emit(model.getRoot());
 	}
 
-	private void emitPackages(CatalogNode node, TreeSet<OntResource> cimDatatypes, TreeSet<OntResource> primitives)
-			throws SAXException {
+	private void emitPackages(CatalogNode node) throws SAXException {
+		SortedMap<String, OntResource> packages = new TreeMap<String, OntResource>();
 		Iterator it = node.iterator();
 		while (it.hasNext()) {
 			Node nextNode = (Node) it.next();
@@ -536,33 +307,6 @@ public class ProfileSerializer extends AbstractReader {
 				}
 			}
 		}
-		//
-		if (!cimDatatypes.isEmpty()) {
-			it = cimDatatypes.descendingIterator();
-			while (it.hasNext()) {
-				OntResource cimDatatype = (OntResource) it.next();
-				OntResource aPackage = cimDatatype.getIsDefinedBy();
-				while (aPackage != null) {
-					if (!packages.containsKey(aPackage.getURI()))
-						packages.put(aPackage.getURI(), aPackage);
-					aPackage = aPackage.getIsDefinedBy();
-				}
-			}
-		}
-		//
-		if (!primitives.isEmpty()) {
-			it = primitives.descendingIterator();
-			while (it.hasNext()) {
-				OntResource primitive = (OntResource) it.next();
-				OntResource aPackage = primitive.getIsDefinedBy();
-				while (aPackage != null) {
-					if (!packages.containsKey(aPackage.getURI()))
-						packages.put(aPackage.getURI(), aPackage);
-					aPackage = aPackage.getIsDefinedBy();
-				}
-			}
-		}
-		//
 		for (OntResource aPackage : packages.values()) {
 			emitPackage(aPackage);
 		}
@@ -591,42 +335,32 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emitChildren(Node node) throws SAXException {
 		Iterator it = node.iterator();
-		while (it.hasNext()) {
-			Node child = (Node) it.next();
-			emit(child);
-		}
+		while (it.hasNext())
+			emit((Node) it.next());
 	}
 
 	private void emit(CatalogNode node) throws SAXException {
 		Element elem = new Element("Catalog", MESSAGE.NS);
-		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
+		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? "true" : "false"));
 		elem.set("ontologyURI", ontologyURI);
 		elem.set("baseURI", baseURI);
 		elem.set("xmlns:m", baseURI);
 		elem.set("name", node.getName());
 		emitNote(node);
-		emitAsciiDoc(node);
-		emitStereotypes(node.getSubject());
+		emitPackages(node);
 		emitChildren(node);
 
-		Iterator it = cimDatatypesDeferred.iterator();
+		Iterator it = deferred.iterator();
 		while (it.hasNext()) {
-			emitCIMDatatype((OntResource) it.next());
+			emit((OntResource) it.next());
 		}
-
-		it = primitivesDeferred.iterator();
-		while (it.hasNext()) {
-			emitPrimitive((OntResource) it.next());
-		}
-
-		emitPackages(node, cimDatatypesDeferred, primitivesDeferred);
 		elem.close();
 	}
 
 	private void emit(EnvelopeNode node) throws SAXException {
 		Element elem = new Element("Message", MESSAGE.NS);
-		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
+		elem.set("hideInDiagrams", (isHidden(node.getSubject()) ? "true" : "false"));
 		emitChildren(node);
 		elem.close();
 	}
@@ -635,27 +369,18 @@ public class ProfileSerializer extends AbstractReader {
 		Element elem = new Element("SuperType");
 		elem.set("name", node.getName());
 		elem.set("baseClass", node.getBaseClass().getURI());
-		boolean isShadowExtension = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
-		elem.set("baseClassIsShadowExtension", Boolean.toString(isShadowExtension));
 		elem.close();
 	}
 
 	private void emit(SubTypeNode node) throws SAXException {
 		Element elem = select(node);
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-				: Boolean.FALSE.toString()));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 		elem.set("name", node.getName());
-		if (node.getBase().hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBase().getString(UML.id)));
 		elem.set("minOccurs", "1");
 		elem.set("maxOccurs", "1");
-		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
-		emitAsciiDoc(node);
-		emitStereotypes(node.getSubject());
-		if (node.getSubject().isAnon()) {
+		if (node.getSubject().isAnon())
 			emitChildren(node);
-		}
 		elem.close();
 	}
 
@@ -667,15 +392,10 @@ public class ProfileSerializer extends AbstractReader {
 				elem = new Element("SimpleEnumerated");
 			else
 				elem = new Element("Enumerated");
-		} else if (node.isCompound()) {
-			if (anon)
-				elem = new Element("SimpleCompound");
-			else
-				elem = new Element("Compound");
 		} else {
-			if (anon) {
+			if (anon)
 				elem = new Element("Complex");
-			} else {
+			else {
 				if (node.getParent() instanceof ElementNode && ((ElementNode) node.getParent()).isReference())
 					elem = new Element("Reference");
 				else
@@ -684,9 +404,8 @@ public class ProfileSerializer extends AbstractReader {
 		}
 
 		elem.set("baseClass", node.getBaseClass().getURI());
-		if (!anon) {
+		if (!anon)
 			elem.set("type", node.getName());
-		}
 
 		return elem;
 	}
@@ -698,30 +417,16 @@ public class ProfileSerializer extends AbstractReader {
 			OntResource range = node.getBaseProperty().getRange();
 			if (range == null)
 				range = model.getOntModel().createResource(XSD.xstring.asNode());
-			if (range.hasProperty(UML.hasStereotype, UML.primitive)
-					|| range.hasProperty(UML.hasStereotype, UML.constrainedprimitive)
-					|| range.getNameSpace().equals(xsd)) {
+			if (range.getNameSpace().equals(xsd)) {
 				elem = new Element("Simple");
-				elem.set("hideInDiagrams",
-						(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-								: Boolean.FALSE.toString()));
-				elem.set("name", node.getName());
-				elem.set("xstype", xstype(range));
-				elem.set("dataType", range.getURI());
-				String cimDatatype = range.getString(UML.cimdatatypeMapping);
-				elem.set("cimDatatype", (cimDatatype != null ? cimDatatype : ""));
-				primitivesDeferred.add(range);
 			} else {
 				elem = new Element("Domain");
-				elem.set("hideInDiagrams",
-						(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-								: Boolean.FALSE.toString()));
-				elem.set("name", node.getName());
 				elem.set("type", range.getLocalName());
-				elem.set("xstype", xstype(range));
-				elem.set("dataType", range.getURI());
-				cimDatatypesDeferred.add(range);
+				deferred.add(range);
 			}
+			elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+			elem.set("dataType", range.getURI());
+			elem.set("xstype", xstype(range));
 			emit(node, elem);
 		} else {
 			int size = node.getChildren().size();
@@ -729,39 +434,32 @@ public class ProfileSerializer extends AbstractReader {
 			if (size == 0) {
 				OntResource range = node.getBaseProperty().getRange();
 				elem = new Element("Reference");
-				elem.set("hideInDiagrams",
-						(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-								: Boolean.FALSE.toString()));
-				elem.set("name", node.getName());
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 				if (range != null && range.isURIResource()) {
-					elem.set("type", range.getLocalName());
 					elem.set("baseClass", range.getURI());
+					elem.set("type", range.getLocalName());
 				}
-				emit(node, elem);
+				emit(node, elem, true);
 
 				OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
 				if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
 					elem.close(); // First, close "Reference" ...
 					elem = new Element("InverseReference");
-					elem.set("hideInDiagrams",
-							(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-									: Boolean.FALSE.toString()));
+					elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 					emitInverse(node, elem);
 				}
 			} else if (size == 1) {
 				SubTypeNode child = (SubTypeNode) node.getChildren().get(0);
 				elem = select(child);
-				elem.set("hideInDiagrams",
-						(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-								: Boolean.FALSE.toString()));
-				elem.set("name", node.getName());
-				emit(node, elem);
+				elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
+				emit(node, elem, (!child.getSubject().isAnon() && !child.isEnumerated()));
 				if (child.getSubject().isAnon()) {
 					emitChildren(child);
-				} else if (!child.isRestrictedClass()) {
+				} else if (!child.isEnumerated()) {
 					// If child is not an enumeration and not anonymous it indicates it is an
-					// Instance or Reference element and an InverseInstance or InverseReference
-					// must be created...
+					// Instance
+					// or Reference element and an InverseInstance or InverseReference must be
+					// created...
 					OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
 					if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
 						elem.close(); // First, close out the "Reference" or "Instance" element...
@@ -771,9 +469,7 @@ public class ProfileSerializer extends AbstractReader {
 						} else {
 							elem = new Element("InverseInstance");
 						}
-						elem.set("hideInDiagrams",
-								(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-										: Boolean.FALSE.toString()));
+						elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 						emitInverse(node, elem);
 					}
 				}
@@ -789,22 +485,18 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emitInverse(ElementNode node, Element elem) throws SAXException {
 		OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
-		if (inverse != null) {
+		if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
+			elem.set("baseClass", inverse.getRange().getURI());
+			if (inverse.hasProperty(UML.id))
+				elem.set("ea_guid", inverse.getString(UML.id));	
+			elem.set("type", inverse.getRange().getLocalName());
 			if (inverse.getLabel() != null)
 				elem.set("name", inverse.getLabel());
-			elem.set("type", inverse.getRange().getLocalName());
-			if (inverse.hasProperty(UML.id))
-				elem.set("ea_guid", EAGuidUtils.fixEAGuid(inverse.getString(UML.id)));
-			elem.set("baseClass", inverse.getRange().getURI());
 			if (inverse.getURI() != null)
 				elem.set("baseProperty", inverse.getURI());
 			if (inverse.getDomain() != null)
 				elem.set("basePropertyClass", inverse.getDomain().getURI());
-			elem.set("inverseBaseProperty", node.getBaseProperty().getURI());
-			if (node.getBaseProperty() != null && node.getBaseProperty().getDomain() != null) {
-				elem.set("inverseBasePropertyClass", node.getBaseProperty().getDomain().getURI());
-			}
-
+			
 			PropertyInfo info = node.getProfile().getPropertyInfo(inverse);
 			if (!info.getProperty().isDatatypeProperty()) {
 				int min = info.getMinCardinality();
@@ -813,50 +505,48 @@ public class ProfileSerializer extends AbstractReader {
 				elem.set("maxOccurs", ProfileModel.cardString(max, "unbounded"));
 			}
 
+			elem.set("inverseBasePropertyClass", node.getBaseClass().getURI());
+			elem.set("inverseBaseProperty", node.getBaseProperty().getURI());
+
 			emitComment(info.getProperty().getComment(null));
 			emitStereotypes(info.getProperty());
 		}
 	}
 
 	private void emit(ElementNode node, Element elem) throws SAXException {
+		emit(node, elem, false);
+	}
+
+	private void emit(ElementNode node, Element elem, boolean includeInverseBaseClass) throws SAXException {
+		elem.set("name", node.getName());
 		if (node.getBase().hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBase().getString(UML.id)));
+			elem.set("ea_guid", node.getBase().getString(UML.id));	
 		elem.set("baseProperty", node.getBaseProperty().getURI());
 		if (node.getBaseProperty().getDomain() != null) {
 			elem.set("basePropertyClass", node.getBaseProperty().getDomain().getURI());
 		}
-
-		OntResource inverse = node.getBaseProperty().getInverse();
-		if ((inverse != null) && (inverse.getURI() != null)) {
-			elem.set("inverseBaseProperty", inverse.getURI());
-		}
-		if ((inverse != null) && (inverse.getDomain() != null)) {
-			elem.set("inverseBasePropertyClass", inverse.getDomain().getURI());
-		} else if (node.isRestrictedClass()) {
-			// Technically, restricted classes (e.g. enumerations, compounds, etc.)
-			// do not have inverses yet to properly display errors in PlantUML diagrams
-			// we minimally provide the below property (mapped from domain) so that the
-			// error association can be rendered via PlantUML.
-			if (node.getBaseProperty().getDomain() != null) {
-				elem.set("inverseBasePropertyClass", node.getBaseProperty().getDomain().getURI());
-			}
-		}
-
 		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
 
+		if (includeInverseBaseClass) {
+			OntResource inverseBaseClass = (node.getParent() != null ? node.getParent().getBase() : null);
+			if ((inverseBaseClass != null) && (inverseBaseClass.getURI() != null)) {
+				elem.set("inverseBasePropertyClass", inverseBaseClass.getURI());
+			}
+		}
+
+		OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
+		if ((inverse != null) && (inverse.getURI() != null)) {
+			elem.set("inverseBaseProperty", inverse.getURI());
+		}
+
 		emitComment(node.getBaseProperty().getComment(null));
 		emitNote(node);
-		emitAsciiDoc(node);
-		emitStereotypes(node.getSubject());
 	}
 
 	private void emitChoice(ElementNode node, Element elem) throws SAXException {
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-				: Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
-		if (node.getBase().hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBase().getString(UML.id)));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 		elem.set("baseProperty", node.getBaseProperty().getURI());
 		elem.set("minOccurs", ProfileModel.cardString(node.getMinCardinality()));
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
@@ -883,8 +573,6 @@ public class ProfileSerializer extends AbstractReader {
 
 		emitComment(node.getBaseProperty().getComment(null));
 		emitNote(node);
-		emitAsciiDoc(node);
-		emitStereotypes(node.getSubject());
 	}
 
 	private void emitComment(String comment) throws SAXException {
@@ -906,24 +594,7 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emitNote(Node node) throws SAXException {
 		emit("Note", node.getSubject().getComment(null));
-	}
-
-	private void emitAsciiDoc(Node node) throws SAXException {
-		String asciiDoc = node.getSubject().getString(UML.asciidoc, null);
-		if (asciiDoc == null)
-			return;
-		Stream<String> lines = asciiDoc.lines();
-		lines.forEach(line -> {
-			Element elem;
-			try {
-				elem = new Element("AsciiDoc");
-				elem.set("xml:space", "preserve");
-				elem.append(line);
-				elem.close();
-			} catch (SAXException e) {
-				e.printStackTrace();
-			}
-		});
+		emitStereotypes(node.getSubject());
 	}
 
 	private boolean isHidden(OntResource subject) throws SAXException {
@@ -933,13 +604,12 @@ public class ProfileSerializer extends AbstractReader {
 			OntResource stereo = it.nextResource();
 			if (!stereo.isURIResource())
 				continue;
-			if ((UML.hideOnDiagrams.getURI().equals(stereo.getURI())) || (stereo.getLocalName() != null
-					&& stereo.getLocalName().equals(UML.hideOnDiagrams.getLocalName())))
-				return true;
+			if ((UML.hideOnDiagrams.getURI().equals(stereo.getURI())) || (stereo.getLocalName() != null && stereo.getLocalName().equals(UML.hideOnDiagrams.getLocalName())))
+				return true; 
 		}
 		return isHidden;
 	}
-
+	
 	private void emitStereotypes(OntResource subject) throws SAXException {
 		ResIterator it = subject.listProperties(UML.hasStereotype);
 		while (it.hasNext()) {
@@ -951,8 +621,7 @@ public class ProfileSerializer extends AbstractReader {
 	private void emitStereotype(OntResource stereo) throws SAXException {
 		if (!stereo.isURIResource())
 			return;
-		if ((UML.hideOnDiagrams.getURI().equals(stereo.getURI()))
-				|| (stereo.getLocalName() != null && stereo.getLocalName().equals(UML.hideOnDiagrams.getLocalName())))
+		if ((UML.hideOnDiagrams.getURI().equals(stereo.getURI())) || (stereo.getLocalName() != null && stereo.getLocalName().equals(UML.hideOnDiagrams.getLocalName())))
 			return;
 		Element elem = new Element("Stereotype");
 		if (stereo.getLabel() != null) {
@@ -968,24 +637,6 @@ public class ProfileSerializer extends AbstractReader {
 	}
 
 	private String xstype(OntResource type) {
-		/**
-		 * NEW code is temporarily commented out below...OLD code is after it...
-		 * 
-		 * if (type.getNameSpace().equals(xsd)) return type.getLocalName();
-		 * 
-		 * if (type.hasProperty(UML.hasStereotype, UML.primitive)) { OntResource xsdType
-		 * = type.getEquivalentClass();
-		 * 
-		 * if (xsdType != null && xsdType.getNameSpace().equals(xsd)) return
-		 * xsdType.getLocalName(); } else if (type.hasProperty(UML.hasStereotype,
-		 * UML.cimdatatype)) { OntResource cimPrimitive = type.getEquivalentClass(); if
-		 * (cimPrimitive != null) { OntResource xsdType =
-		 * cimPrimitive.getEquivalentClass(); if (xsdType != null &&
-		 * xsdType.getNameSpace().equals(xsd)) { return xsdType.getLocalName(); } } }
-		 * System.out.println("Warning: undefined datatype: " + type); return "string";
-		 * 
-		 */
-
 		if (type.getNameSpace().equals(xsd))
 			return type.getLocalName();
 
@@ -993,7 +644,7 @@ public class ProfileSerializer extends AbstractReader {
 		if (xtype != null && xtype.getNameSpace().equals(xsd))
 			return xtype.getLocalName();
 
-		log.warn("Undefined datatype: {}", type);
+		System.out.println("Warning: undefined datatype: " + type);
 		return "string";
 	}
 
@@ -1002,7 +653,7 @@ public class ProfileSerializer extends AbstractReader {
 			Element elem = new Element("Package");
 			elem.set("name", aPackage.getLabel());
 			if (aPackage.hasProperty(UML.id))
-				elem.set("ea_guid", EAGuidUtils.fixPackageEAGuid(aPackage.getString(UML.id)));
+				elem.set("ea_guid", aPackage.getString(UML.id));		
 			elem.set("basePackage", aPackage.getURI());
 			emitComment(aPackage.getComment(null));
 			emitStereotypes(aPackage);
@@ -1020,71 +671,18 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emit(TypeNode node) throws SAXException {
 		Element elem;
-
-		if (node.isConstrainedPrimitive()) {
-			elem = new Element("ConstrainedPrimitiveType");
-			OntResource constrainedPrimitive = node.getSubject();
-			elem.set("hideInDiagrams",
-					(constrainedPrimitive != null && isHidden(constrainedPrimitive) ? Boolean.TRUE.toString()
-							: Boolean.FALSE.toString()));
-			elem.set("dataType", constrainedPrimitive.getString(UML.cimdatatypeMapping));
-			elem.set("name", constrainedPrimitive.getLabel());
-			if (constrainedPrimitive.hasProperty(UML.id))
-				elem.set("ea_guid", EAGuidUtils.fixEAGuid(constrainedPrimitive.getString(UML.id)));
-			OntResource defin = constrainedPrimitive.getResource(RDFS.isDefinedBy);
-			if (defin != null) {
-				elem.set("package", defin.getLabel());
-				elem.set("packageURI", defin.getURI());
-			}
-			elem.set("xstype", xstype(constrainedPrimitive));
-
-			// emitComment(node.getBaseClass().getComment(null));
-			emitComment(constrainedPrimitive.getComment(null));
-			emitNote(node);
-			emitAsciiDoc(node);
-
-			emitStereotypes(constrainedPrimitive);
-			elem.close();
-			return;
-		}
-
-		/** Only Root, ComplexType and EnumeratedType(s) can be shadow classes **/
-		if (node.hasStereotype(UML.concrete)) {
+		if (node.hasStereotype(UML.concrete))
 			elem = new Element("Root");
-			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
-			if (isShadowClass) {
-				OntResource classShadowedByThisType = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
-						node.getBaseClass());
-				if (classShadowedByThisType != null)
-					elem.set("classShadowedByThisType", classShadowedByThisType.getURI());
-			}
-		} else if (node.isEnumerated()) {
+		else if (node.isEnumerated())
 			elem = new Element("EnumeratedType");
-			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
-			if (isShadowClass) {
-				OntResource classShadowedByThisType = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
-						node.getBaseClass());
-				if (classShadowedByThisType != null)
-					elem.set("classShadowedByThisType", classShadowedByThisType.getURI());
-			}
-		} else if (node.hasStereotype(UML.compound)) {
+		else if (node.hasStereotype(UML.compound))
 			elem = new Element("CompoundType");
-		} else {
+		else
 			elem = new Element("ComplexType");
-			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
-			if (isShadowClass) {
-				OntResource classShadowedByThisType = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
-						node.getBaseClass());
-				if (classShadowedByThisType != null)
-					elem.set("classShadowedByThisType", classShadowedByThisType.getURI());
-			}
-		}
-
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-				: Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 		if (node.getBaseClass().hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBaseClass().getString(UML.id)));
+			elem.set("ea_guid", node.getBaseClass().getString(UML.id));		
 		elem.set("baseClass", node.getBaseClass().getURI());
 		elem.set("package", node.getPackageName());
 		if (node.getPackage() != null) {
@@ -1094,8 +692,6 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("maxOccurs", ProfileModel.cardString(node.getMaxCardinality(), "unbounded"));
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
-		emitAsciiDoc(node);
-		emitStereotypes(node.getSubject());
 
 		emitChildren(node);
 		elem.close();
@@ -1103,187 +699,47 @@ public class ProfileSerializer extends AbstractReader {
 
 	private void emit(MessageNode node) throws SAXException {
 		Element elem = new Element("Root");
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-				: Boolean.FALSE.toString()));
 		elem.set("name", node.getName());
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 		if (node.getBaseClass().hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBaseClass().getString(UML.id)));
+			elem.set("ea_guid", node.getBaseClass().getString(UML.id));		
 		elem.set("baseClass", node.getBaseClass().getURI());
 
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
-		emitAsciiDoc(node);
-		emitStereotypes(node.getSubject());
 
 		emitChildren(node);
 		elem.close();
 	}
 
-	private void emitCIMDatatype(OntResource type) throws SAXException {
+	private void emit(OntResource type) throws SAXException {
 		Element elem = new Element("SimpleType");
-		elem.set("hideInDiagrams",
-				(type != null && isHidden(type) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
-		elem.set("name", type.getLocalName());
-		elem.set("xstype", xstype(type));
 		elem.set("dataType", type.getURI());
+		elem.set("name", type.getLocalName());
 		if (type.hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(type.getString(UML.id)));
+			elem.set("ea_guid", type.getString(UML.id));	
 		OntResource defin = type.getResource(RDFS.isDefinedBy);
-		if (defin != null) {
-			String defLabel = defin.getLabel();
-			elem.set("package", defLabel != null ? defLabel : "");
-			elem.set("packageURI", defin.getURI());
-		}
-
-		emitComment(type.getComment(null));
-		emitStereotypes(type);
-
-		Element valueElem = new Element("Simple");
-		valueElem.set("hideInDiagrams", Boolean.FALSE.toString());
-		valueElem.set("name", "value");
-		valueElem.set("xstype", xstype(type));
-		valueElem.set("dataType", (type.getEquivalentClass() != null ? type.getEquivalentClass().getURI()
-				: ontologyURI + "#" + type.getLabel()));
-		valueElem.set("cimDatatype", getOntologyURI() + "#Float");
-		String valueEAGUID = type.hasProperty(UML.valueEAGUID) ? type.getString(UML.valueEAGUID) : "";
-		valueElem.set("ea_guid", valueEAGUID);
-		valueElem.set("baseProperty", type.getURI() + ".value");
-		valueElem.set("basePropertyClass", type.getURI());
-		valueElem.set("minOccurs", "0");
-		valueElem.set("maxOccurs", "1");
-		String valueComment = type.hasProperty(UML.valueComment) ? type.getString(UML.valueComment) : "";
-		emitComment(valueComment);
-		Element stereoElem = new Element("Stereotype");
-		stereoElem.set("label", "Attribute");
-		stereoElem.append(UML.NS + "attribute");
-		stereoElem.close();
-		valueElem.close();
-
-		Element unitElem = new Element("Enumerated");
-		unitElem.set("hideInDiagrams", Boolean.FALSE.toString());
-		unitElem.set("name", "unit");
-		unitElem.set("type", "UnitSymbol");
-		String unitConstant = type.hasProperty(UML.hasUnits) ? type.getString(UML.hasUnits) : "";
-		unitElem.set("constant", unitConstant);
-		String unitEAGUID = type.hasProperty(UML.unitEAGUID) ? type.getString(UML.unitEAGUID) : "";
-		unitElem.set("ea_guid", unitEAGUID);
-		unitElem.set("baseClass", "http://iec.ch/TC57/CIM100#UnitSymbol");
-		unitElem.set("baseProperty", type.getURI() + ".unit");
-		unitElem.set("basePropertyClass", type.getURI());
-		unitElem.set("minOccurs", "0");
-		unitElem.set("maxOccurs", "1");
-		String unitComment = type.hasProperty(UML.unitComment) ? type.getString(UML.unitComment) : "";
-		emitComment(unitComment);
-		stereoElem = new Element("Stereotype");
-		stereoElem.set("label", "enumeration");
-		stereoElem.append(UML.NS + "enumeration");
-		stereoElem.close();
-		stereoElem = new Element("Stereotype");
-		stereoElem.set("label", "Attribute");
-		stereoElem.append(UML.NS + "attribute");
-		stereoElem.close();
-		unitElem.close();
-
-		Element multiplierElem = new Element("Enumerated");
-		multiplierElem.set("hideInDiagrams", Boolean.FALSE.toString());
-		multiplierElem.set("name", "multiplier");
-		multiplierElem.set("type", "UnitMultiplier");
-		String multiplierConstant = type.hasProperty(UML.hasMultiplier) ? type.getString(UML.hasMultiplier) : "";
-		multiplierElem.set("constant", multiplierConstant);
-		String multiplierEAGUID = type.hasProperty(UML.multiplierEAGUID) ? type.getString(UML.multiplierEAGUID) : "";
-		multiplierElem.set("ea_guid", multiplierEAGUID);
-		multiplierElem.set("baseClass", "http://iec.ch/TC57/CIM100#UnitMultiplier");
-		multiplierElem.set("baseProperty", type.getURI() + ".multiplier");
-		multiplierElem.set("basePropertyClass", type.getURI());
-		multiplierElem.set("minOccurs", "0");
-		multiplierElem.set("maxOccurs", "1");
-		String multiplierComment = type.hasProperty(UML.multiplierComment) ? type.getString(UML.multiplierComment) : "";
-		emitComment(multiplierComment);
-		stereoElem = new Element("Stereotype");
-		stereoElem.set("label", "enumeration");
-		stereoElem.append(UML.NS + "enumeration");
-		stereoElem.close();
-		stereoElem = new Element("Stereotype");
-		stereoElem.set("label", "Attribute");
-		stereoElem.append(UML.NS + "attribute");
-		stereoElem.close();
-		multiplierElem.close();
-
-		elem.close();
-	}
-
-	private void emitConstrainedPrimitive(OntResource constrainedPrimitive) throws SAXException {
-		Element elem = new Element("ConstrainedPrimitiveType");
-		elem.set("hideInDiagrams",
-				(constrainedPrimitive != null && isHidden(constrainedPrimitive) ? Boolean.TRUE.toString()
-						: Boolean.FALSE.toString()));
-		elem.set("dataType", constrainedPrimitive.getString(UML.cimdatatypeMapping));
-		elem.set("name", constrainedPrimitive.getLabel());
-		if (constrainedPrimitive.hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(constrainedPrimitive.getString(UML.id)));
-		OntResource defin = constrainedPrimitive.getResource(RDFS.isDefinedBy);
 		if (defin != null) {
 			elem.set("package", defin.getLabel());
 			elem.set("packageURI", defin.getURI());
 		}
-		elem.set("xstype", xstype(constrainedPrimitive));
+		elem.set("xstype", xstype(type));
 
-		emitComment(constrainedPrimitive.getComment(null));
-		emitStereotypes(constrainedPrimitive);
-		elem.close();
-	}
+		emitComment(type.getComment(null));
 
-	private void emitPrimitive(OntResource primitive) throws SAXException {
-		Element elem = new Element("PrimitiveType");
-		elem.set("hideInDiagrams",
-				(primitive != null && isHidden(primitive) ? Boolean.TRUE.toString() : Boolean.FALSE.toString()));
-
-		String label = primitive.getLabel();
-		elem.set("name", label != null ? label : "");
-
-		elem.set("xstype", xstype(primitive));
-		String dataType = primitive.getString(UML.cimdatatypeMapping);
-		elem.set("dataType", dataType != null ? dataType : "");
-
-		if (primitive.hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(primitive.getString(UML.id)));
-		OntResource defin = primitive.getResource(RDFS.isDefinedBy);
-		if (defin != null) {
-			String defLabel = defin.getLabel();
-			elem.set("package", defLabel != null ? defLabel : "");
-			elem.set("packageURI", defin.getURI());
-		}
-
-		emitComment(primitive.getComment(null));
-		emitStereotypes(primitive);
 		elem.close();
 	}
 
 	private void emit(EnumValueNode node) throws SAXException {
 		OntResource value = node.getSubject();
 		Element elem = new Element("EnumeratedValue");
-		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
-				: Boolean.FALSE.toString()));
+		elem.set("hideInDiagrams", (node.getSubject() != null && isHidden(node.getSubject()) ? "true" : "false"));
 		elem.set("name", node.getName());
 		if (node.getBase().hasProperty(UML.id))
-			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBase().getString(UML.id)));
+			elem.set("ea_guid", node.getBase().getString(UML.id));	
 		elem.set("baseResource", node.getBase().getURI());
-		if (value.hasProperty(UML.hasInitialValue)) {
-			elem.set("code", value.getString(UML.hasInitialValue));
-		} else {
-			elem.set("code", "");
-		}
 		emitComment(value.getComment(null));
-		emitAsciiDoc(node);
 		elem.close();
-	}
-
-	public String getFileName() {
-		return this.fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
 	}
 
 	public String getVersion() {
@@ -1292,22 +748,6 @@ public class ProfileSerializer extends AbstractReader {
 
 	public void setVersion(String version) {
 		this.version = version;
-	}
-
-	public String getBuilderParameters(String builderParameters) {
-		return this.builderParameters;
-	}
-
-	public void setBuilderParameters(String builderParameters) {
-		this.builderParameters = builderParameters;
-	}
-
-	public String getNamespacePrefixesBuilderParameter() {
-		return this.namespacePrefixesBuilderParameter;
-	}
-
-	public void setNamespacePrefixesBuilderParameter(String namespacePrefixesBuilderParameter) {
-		this.namespacePrefixesBuilderParameter = namespacePrefixesBuilderParameter;
 	}
 
 }

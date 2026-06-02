@@ -1,13 +1,13 @@
 package au.com.langdale.validation;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import au.com.langdale.inference.RepairFunctors.RepairAction;
 import au.com.langdale.kena.Composition;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.Renamer;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class RepairMan {
 	private Map actions = new HashMap();

@@ -19,9 +19,6 @@ import com.hp.hpl.jena.mem.GraphMem;
 import com.hp.hpl.jena.reasoner.TriplePattern;
 import com.hp.hpl.jena.reasoner.rulesys.ClauseEntry;
 import com.hp.hpl.jena.reasoner.rulesys.Functor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 /**
  * A rule-directed graph transformer.  
  * 
@@ -32,7 +29,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class Extractor {
-	private static final Logger log = LoggerFactory.getLogger(Extractor.class);
 	/**
 	 * Defines the effect of a functor when it appears as a rule clause.
 	 */
@@ -148,9 +144,9 @@ public class Extractor {
 			if( rule.isFunction() ) {
 				ClauseEntry key = rule.getBodyElement(0);
 				if(functions.put(key, rule) != null)
-					log.warn("Multiple definitions for {}", key);
+					System.out.println("Multiple definitions for " + key);
 				if(functors.containsKey(((Functor)key).getName()))
-					log.warn("Builtin conflicts with function definition {}", key);
+					System.out.println("Builtin conflicts with function definition " + key);
 						
 			}
 		}
@@ -419,3 +415,4 @@ public class Extractor {
 		}
 	}
 }
+

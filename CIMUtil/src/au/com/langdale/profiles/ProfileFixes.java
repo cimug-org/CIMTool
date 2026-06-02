@@ -1,9 +1,10 @@
 package au.com.langdale.profiles;
 
-import au.com.langdale.jena.TreeModelBase;
+import java.util.Iterator;
+
 import au.com.langdale.kena.OntResource;
 
-import java.util.Iterator;
+import au.com.langdale.jena.TreeModelBase;
 
 public class ProfileFixes extends TreeModelBase {
 	

@@ -1,11 +1,4 @@
-/*
- * This software is Copyright 2005,2006,2007,2008 Langdale Consultants.
- * Langdale Consultants can be contacted at: http://www.langdale.com.au
- */
 package au.com.langdale.profiles;
-
-import au.com.langdale.kena.ModelFactory;
-import au.com.langdale.kena.OntModel;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -13,6 +6,9 @@ import java.util.Map;
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
+
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
 
 public abstract class Renamer {
 	protected OntModel model;

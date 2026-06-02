@@ -3,14 +3,7 @@ package au.com.langdale.inference;
 import static au.com.langdale.inference.StandardFunctorActions.check;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.graph.Graph;
-import com.hp.hpl.jena.graph.Node;
 
 import au.com.langdale.inference.Extractor.FunctorActions;
 import au.com.langdale.inference.Extractor.RuleState;
@@ -19,10 +12,10 @@ import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 
+import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
+
 public class RepairFunctors {
-
-	private static final Logger log = LoggerFactory.getLogger(RepairFunctors.class);
-
 	public static final String NS = "http://langdale.com.au/2009/Repair#";
 	public static final String ARGS = "incorrect number of arguments";
 	public static final String SUBJECT = "no subject supplied";
@@ -33,21 +26,21 @@ public class RepairFunctors {
 		public String getLabel() {
 			String name = getClass().getSimpleName();
 			int ix = name.lastIndexOf("$");
-			if (ix >= 0 && ix < name.length() - 1)
+			if( ix >= 0 && ix < name.length() - 1)
 				name = name.substring(ix + 1);
 			return name.substring(0, 1).toLowerCase() + name.substring(1);
 		}
-
-		public void apply(Node[] nodes, Graph graph, Graph axioms, RuleState state) {
+		
+		public void apply(Node[] nodes, Graph graph, Graph axioms,	RuleState state) {
 			check(nodes.length > 0, ARGS);
-
+			
 			Node parent = nodes[0];
 			Node[] args = new Node[nodes.length - 1];
-			for (int ix = 1; ix < nodes.length; ix++)
-				args[ix - 1] = nodes[ix];
-
+			for(int ix = 1; ix < nodes.length; ix ++ )
+				args[ix-1] = nodes[ix];
+			
 			checkArgs(args);
-
+			
 			OntModel model = ModelFactory.createMem(graph);
 			OntResource repair = model.createIndividual(LOG.Repair);
 			OntResource problem = model.createResource(parent);
@@ -57,27 +50,27 @@ public class RepairFunctors {
 			repair.addProperty(LOG.repairArgs, model.createList(args));
 		}
 
-		public void match(Node[] nodes, AsyncModel model, Graph axioms, RuleState state) {
+		public void match(Node[] nodes, AsyncModel model, Graph axioms,	RuleState state) {
 			check(false, BODY);
 		}
-
+		
 		protected abstract void checkArgs(Node[] args);
-
+		
 		protected abstract void repair(Node[] args, Graph graph, Map renames);
-
+		
 		public abstract String getDescription(Node[] args);
-
+		
 		public abstract String getComment();
 
 		public abstract int getPriority();
 	}
-
+	
 	public static class RepairAction {
 		private RepairFunctor func;
 		private Node problem;
 		private Node ref;
 		private Node[] args;
-
+		
 		public RepairAction(RepairFunctor func, Node problem, Node ref, Node[] args) {
 			this.func = func;
 			this.problem = problem;
@@ -85,28 +78,28 @@ public class RepairFunctors {
 			this.args = args;
 			func.checkArgs(args);
 		}
-
+		
 		public Node getProblem() {
 			return problem;
 		}
 
-		public Node getRef() {
-			return ref;
+		public Node getRef() { 
+			return ref; 
 		}
-
+		
 		public String getDescription() {
 			return func.getDescription(args);
 		}
-
+		
 		public void repair(Graph graph, Map renames) {
 			func.repair(args, graph, renames);
 		}
-
+		
 		@Override
 		public boolean equals(Object obj) {
-			return (obj instanceof RepairAction) && ((RepairAction) obj).getRef().equals(ref);
+			return (obj instanceof RepairAction) && ((RepairAction)obj).getRef().equals(ref);
 		}
-
+		
 		@Override
 		public int hashCode() {
 			return ref.hashCode();
@@ -115,12 +108,12 @@ public class RepairFunctors {
 		public int getPriority() {
 			return func.getPriority();
 		}
-
+		
 		public String getComment() {
 			return func.getComment();
 		}
 	}
-
+	
 //	private static Node getSubject(Node repair, Graph graph) {
 //		OntModel model = ModelFactory.createMem(graph);
 //		OntResource ref = model.createResource(repair);
@@ -156,7 +149,7 @@ public class RepairFunctors {
 
 	private static Node[] getArgs(OntResource ref) {
 		OntResource args = ref.getResource(LOG.repairArgs);
-		if (args != null)
+		if( args != null )
 			return args.toElementArray();
 		else
 			return new Node[0];
@@ -164,17 +157,17 @@ public class RepairFunctors {
 
 	private static RepairFunctor getFunctor(OntResource ref) {
 		ResIterator it = ref.listRDFTypes(false);
-		while (it.hasNext()) {
+		while( it.hasNext()) {
 			OntResource kind = it.nextResource();
-			if (kind.getNameSpace().equals(NS)) {
+			if( kind.getNameSpace().equals(NS)) {
 				RepairFunctor func = (RepairFunctor) map.get(kind.getLocalName());
-				if (func != null)
+				if( func != null)
 					return func;
 			}
 		}
 		return null;
 	}
-
+	
 	public static RepairAction getAction(OntResource ref) {
 		RepairFunctor func = getFunctor(ref);
 		OntResource problem = ref.getSubject(LOG.hasRepairs);
@@ -182,21 +175,21 @@ public class RepairFunctors {
 	}
 
 	private static Map map = new HashMap();
-
+	
 	public static void add(RepairFunctor func) {
 		map.put(func.getLabel(), func);
 	}
-
+	
 	public static Map getFunctorMap() {
-		log.trace("----");
-		for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-			log.debug("Profile Functor {}", it.next());
-		}
-		log.trace("----");
+//		System.out.println("----");
+//		for(Iterator it = map.keySet().iterator(); it.hasNext(); ) {
+//			System.out.println( "Profile Functor " + it.next());
+//		}
+//		System.out.println("----");
 
 		return map;
 	}
-
+	
 	static {
 		RepairLibrary.addAll();
 	}

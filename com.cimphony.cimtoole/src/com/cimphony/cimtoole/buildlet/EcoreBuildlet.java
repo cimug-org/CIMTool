@@ -12,12 +12,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
 import com.cimphony.cimtoole.CimphonyCIMToolPlugin;
 import com.cimphony.cimtoole.ecore.EcoreGenerator;
+import com.cimphony.cimtoole.ecore.EcoreGenerator.Index;
 
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.project.Task;
@@ -33,7 +36,7 @@ public class EcoreBuildlet extends ProfileBuildlet {
     protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
         IFile file = Task.getRelated(result, "owl");
         boolean preserveNS = Task.getPreferenceOption(Task.PRESERVE_NAMESPACES);
-        String namespace = preserveNS ? Task.getSchemaNamespace(file.getProject()) : Task.getProperty(file, Task.PROFILE_NAMESPACE);
+        String namespace = preserveNS? Task.getSchemaNamespace(file): Task.getProperty(file, Task.PROFILE_NAMESPACE);
         EcoreGenerator generator = getGenerator(Task.getProfileModel(file), Task.getBackgroundModel(file), namespace, Task.getProperty(file, Task.PROFILE_NAMESPACE), preserveNS, result.getProject());
         generator.run();
         // Use file name for top level package name.

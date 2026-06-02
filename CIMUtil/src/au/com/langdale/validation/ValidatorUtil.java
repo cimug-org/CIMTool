@@ -4,22 +4,22 @@
  */
 package au.com.langdale.validation;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+
 import au.com.langdale.inference.LOG;
 import au.com.langdale.inference.Reporting;
 import au.com.langdale.inference.RuleParser;
-import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.inference.SimpleInfGraph;
 import au.com.langdale.inference.SimpleReasoner;
+import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.util.Logger;
 import au.com.langdale.util.Profiler.TimeSpan;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 
 import com.hp.hpl.jena.graph.Graph;
 import com.hp.hpl.jena.graph.Node;
@@ -132,14 +132,14 @@ public abstract class ValidatorUtil extends Reporting {
 	}
 
 	public static Node getSubject(Graph graph, Node prop, Node object, Node alt) {
-		Node subject = alt; // subject defaults to the alternate Node passed...
 		ExtendedIterator it = graph.find(Node.ANY, prop, object);
-		if (it.hasNext()) {
+		while (it.hasNext()) {
 			Triple t = (Triple) it.next();
-			subject = t.getSubject();
+			Node n = t.getSubject();
 			it.close();
+			return n;
 		}
-		return subject;
+		return alt;
 	}
 
 	public static Node cons(Graph graph, Node first, Node rest) {

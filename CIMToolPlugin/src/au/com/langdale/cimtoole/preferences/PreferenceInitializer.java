@@ -4,39 +4,35 @@
  */
 package au.com.langdale.cimtoole.preferences;
 
-import java.util.Map;
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.project.QualifiedNames;
+import au.com.langdale.cimtoole.project.Info;
 
 /**
  * Class used to initialize default preference values.
  */
-public class PreferenceInitializer extends AbstractPreferenceInitializer implements QualifiedNames {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CIMToolPlugin.getDefault().getPreferenceStore();
-		Map<String, Object> defaults = getPreferenceDefaults();
-		for (Map.Entry<String, Object> entry : defaults.entrySet()) {
-			Object value = entry.getValue();
-			if (value instanceof Boolean b) {
-				store.setDefault(entry.getKey(), b);
-			} else if (value instanceof Float f) {
-				store.setDefault(entry.getKey(), f);
-			} else if (value instanceof Double d) {
-				store.setDefault(entry.getKey(), d);
-			} else if (value instanceof Long l) {
-				store.setDefault(entry.getKey(), l);
-			} else if (value instanceof Integer i) {
-				store.setDefault(entry.getKey(), i);
-			} else {
-				store.setDefault(entry.getKey(), value.toString());
-			}
-		}
+		store.setDefault(Info.INSTANCE_NAMESPACE.getLocalName(), "http://iec.ch/TC57/2007/network#");
+		store.setDefault(Info.PROFILE_NAMESPACE.getLocalName(), "http://iec.ch/TC57/2007/profile#");
+		store.setDefault(Info.MAPPING_NAMESPACE.getLocalName(), "http://langdale.com.au/2010/schema-mapping#");
+		store.setDefault(Info.MAPPING_LABEL.getLocalName(), "Mappings");
+		store.setDefault(Info.SCHEMA_NAMESPACE.getLocalName(), CIM.NS);
+		store.setDefault(Info.PROFILE_ENVELOPE.getLocalName(), "Profile");
+		store.setDefault(Info.PRESERVE_NAMESPACES.getLocalName(), true);
+		store.setDefault(Info.PROBLEM_PER_SUBJECT.getLocalName(), true);
+		store.setDefault(Info.USE_PACKAGE_NAMES.getLocalName(), false);
 	}
 
 }

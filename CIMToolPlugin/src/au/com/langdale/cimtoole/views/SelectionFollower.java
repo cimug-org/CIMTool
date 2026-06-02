@@ -37,6 +37,7 @@ public abstract class SelectionFollower extends ViewPart implements ISelectionLi
 			IStructuredSelection struct = (IStructuredSelection) selection;
 			if( struct.getFirstElement() instanceof ModelNode) {
 				ModelNode node = (ModelNode) struct.getFirstElement();
+				//System.out.println("ProjectModelView saw a " + node);
 				
 				if( ignoreNode(node))
 					return;
@@ -55,6 +56,7 @@ public abstract class SelectionFollower extends ViewPart implements ISelectionLi
 			}
 			else if( struct.getFirstElement() instanceof IResource) {
 				IResource target = (IResource) struct.getFirstElement();
+				//System.out.println("ProjectModelView saw " + target.getFullPath());
 				selectProject(target.getProject());
 			}
 		}
