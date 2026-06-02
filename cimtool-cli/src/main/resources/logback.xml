@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  CIMTool CLI Logback Configuration
+  ===================================
+  Controls all SLF4J-based logging output for the cimtool-cli standalone tool.
+  This file is packaged into the uber JAR via src/main/resources/ and is loaded
+  automatically by Logback at startup.
+
+  To override this configuration at runtime, pass:
+    -Dlogback.configurationFile=/path/to/your/logback.xml
+
+  The following logging pipelines route through this file:
+    - SLF4J API calls    -> direct (Saxon-HE and other vendored libraries)
+    - Log4j 1.x API      -> routed via log4j-over-slf4j bridge (Jena/Kena)
+    - JUL                -> routed via SLF4JBridgeHandler if installed at startup
+
+  Changing log levels for diagnostics
+  =====================================
+  To see verbose output from a specific subsystem, override at runtime:
+    -Dlogback.configurationFile=/path/to/logback-debug.xml
+
+  Or change the root level below from WARN to DEBUG before rebuilding.
+-->
+<configuration>
+
+    <!--
+        Console appender writing to stderr.
+        Warnings and errors are written to stderr so they do not interfere
+        with any structured output the CLI writes to stdout.
+    -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-7level [%logger{36}] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Suppress UCanAccess JDBC driver reserved-word noise -->
+    <logger name="net.ucanaccess" level="ERROR"/>
+
+    <!-- Suppress HSQLDB verbose output (used internally by UCanAccess) -->
+    <logger name="org.hsqldb" level="ERROR"/>
+
+    <!--
+        Root logger.
+        WARN is appropriate for normal CLI use. Change to DEBUG or TRACE
+        when diagnosing an issue, then restore to WARN afterwards.
+    -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

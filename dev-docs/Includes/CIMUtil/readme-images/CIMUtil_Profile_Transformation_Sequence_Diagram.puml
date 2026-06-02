@@ -1,0 +1,187 @@
+@startuml Profiles Subsystem Sequence Diagram
+
+title CIMUtil - Profile Transformation Sequence
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+participant "ProfileBuildlets\n[CIMToolPlugin]" as ORCH #LightSteelBlue
+participant "ProfileModel" as PM #LightBlue
+participant "Refactory" as REF #LightGreen
+participant "ProfileClass" as PC #LightGreen
+participant "ProfileSerializer" as SER #LightCoral
+participant "Saxon Transformer\n[XSLT Engine]" as SAX #LightYellow
+
+== Profile Loading ==
+
+activate ORCH
+ORCH -> ORCH : loadOntModel(profileFile)
+note right of ORCH
+    Reads the .owl profile file
+    into a Kena OntModel using
+    IO.read() (Turtle format)
+end note
+ORCH -> ORCH : loadOntModel(schemaFile(s))
+note right of ORCH
+    Reads the background schema
+    OntModel (merged if multiple).
+    In the CLI path (CLIProfileTransformer)
+    this is the pre-parsed schema from
+    CLISchemaParser.
+end note
+
+== Profile Model Construction ==
+
+ORCH -> PM : new ProfileModel()
+activate PM
+ORCH -> PM : setOntModel(profileModel)
+note right of PM
+    Stores the profile OWL model.
+    Constructs a Refactory over it
+    which becomes the bridge between
+    the OWL graph and the ProfileClass
+    domain object layer.
+end note
+ORCH -> PM : setBackgroundModel(backgroundModel)
+PM -> REF : new Refactory(profileModel, backgroundModel)
+activate REF
+note right of REF
+    Refactory is the central profile
+    editing facade. It holds references
+    to both the profile OntModel and the
+    full background schema OntModel, and
+    provides operations to add/remove
+    classes and properties in the profile.
+end note
+PM --> ORCH : messageModel
+deactivate REF
+
+== ProfileSerializer Setup ==
+
+ORCH -> SER : new ProfileSerializer(messageModel)
+activate SER
+note right of SER
+    ProfileSerializer extends AbstractReader
+    (a SAX XMLReader). It wraps the
+    ProfileModel tree and emits SAX events
+    when Saxon calls parse() during the
+    XSLT transformation.
+end note
+ORCH -> SER : setBaseURI(namespace)
+ORCH -> SER : setOntologyURI(ontologyURI)
+ORCH -> SER : setCopyrightMultiLine(text)
+ORCH -> SER : setCopyrightSingleLine(text)
+ORCH -> SER : setBuilderParameters(params)
+ORCH -> SER : setNamespacePrefixesBuilderParameter(map)
+
+ORCH -> SER : setStyleSheet(xsltStream, XSDGEN)
+note right of SER
+    Compiles the XSLT stylesheet into
+    a cached Templates object via Saxon's
+    TransformerFactory. For TEXT builders
+    an additional "indent" post-processor
+    stylesheet is chained via addStyleSheet().
+end note
+
+== XSLT Transformation ==
+
+ORCH -> SER : write(outputStream)
+activate SER
+
+SER -> SER : build SAXSource(this, InputSource)
+note right of SER
+    ProfileSerializer IS the SAX source.
+    Saxon will call parse() on it to pull
+    XML events rather than reading from
+    a file or string.
+end note
+
+SER -> SAX : transformer.transform(saxSource, streamResult)
+activate SAX
+
+note right of SAX
+    Saxon drives the transformation by
+    calling ProfileSerializer.parse() which
+    triggers emit() to walk the ProfileModel
+    tree and fire SAX events:
+    - startDocument / endDocument
+    - startElement / endElement
+    - characters (for string values)
+    The XSLT stylesheet processes these
+    events and writes the output format
+    (XSD, JSON Schema, HTML, RDFS, etc.)
+    to the StreamResult (output file).
+end note
+
+SAX -> SER : parse() [SAX pull]
+activate SER
+SER -> SER : emit(model.getRoot())
+note right of SER
+    Walks the ProfileModel node tree:
+    CatalogNode → EnvelopeNode →
+      MessageNode → ElementNode →
+        SubTypeNode / SuperTypeNode /
+        EnumValueNode
+    Each node type emits its corresponding
+    XML element structure as SAX events.
+end note
+
+SER -> PM : getRoot() / iterate nodes
+activate PM
+
+loop for each node in ProfileModel tree
+    PM -> PC : getProfileClasses(profileModel)
+    activate PC
+    note right of PC
+        ProfileClass wraps an OntResource
+        and exposes the profile-level view:
+        - getBaseClass() — the CIM class being profiled
+        - getProperties() — restricted properties
+        - getPropertyInfo() — cardinality, type info
+        - getSuperClasses() / getSubClasses()
+        - isRestrictedEnum() / isUnion()
+        These are read by ProfileSerializer
+        to generate the SAX event stream.
+    end note
+    PC --> PM : properties, cardinalities, supertypes
+    deactivate PC
+    PM --> SER : SAX events for node
+    deactivate PM
+end
+
+SER --> SAX : SAX event stream complete
+deactivate SER
+
+SAX --> SER : transformed output written\nto OutputStream
+deactivate SAX
+SER --> ORCH : output file written
+deactivate SER
+deactivate SER
+
+== SchemaGenerator Path (direct OWL/RDFS output) ==
+
+note over ORCH, PC
+    A separate path exists for RDFS and OWL schema output builders that do not use
+    the SAX + XSLT pipeline above. SchemaGenerator subclasses (OWLGenerator,
+    RDFSGenerator, RDFSBasedGenerator) traverse ProfileClass objects directly and
+    emit OWL/RDFS triples into a result OntModel:
+
+        SchemaGenerator.run()
+            scanProfiles()    — iterates ProfileClass.getProfileClasses()
+            scanProperties()  — reads ProfileClass.getProperties() / PropertyInfo
+            generateClass()   — emits OWL class triples
+            generateProperty() — emits OWL property triples
+            generateLattice() — emits rdfs:subClassOf triples
+
+    The resulting OntModel is then serialized to RDF/XML directly, bypassing
+    ProfileSerializer entirely. Reorganizer subclasses (ProfileReorganizer,
+    SchemaReorganizer) apply a structural normalization pass over the profile
+    OntModel before either pipeline runs, ensuring cardinalities and class
+    hierarchies conform to IEC 61970-501 rules.
+end note
+
+deactivate PM
+deactivate ORCH
+
+@enduml

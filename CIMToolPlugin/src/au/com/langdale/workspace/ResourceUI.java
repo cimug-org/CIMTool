@@ -234,6 +234,11 @@ public class ResourceUI {
 			super(Validators.SimpleFile(ext, required));
 			this.ext = ext;
 		}
+		
+		public LocalFileBinding(String ext, boolean required, boolean allowSpacesInFileName) {
+			super(Validators.SimpleFile(ext, required, allowSpacesInFileName));
+			this.ext = ext;
+		}
 
 		public LocalFileBinding(String ext, Validator validator) {
 			super(validator);
@@ -242,6 +247,10 @@ public class ResourceUI {
 
 		public LocalFileBinding(String[] exts, boolean required) {
 			super(Validators.SimpleFile(exts, required));
+		}
+		
+		public LocalFileBinding(String[] exts, boolean required, boolean allowSpacesInFileName) {
+			super(Validators.SimpleFile(exts, required, allowSpacesInFileName));
 		}
 
 		public LocalFileBinding(String[] exts, Validator validator) {

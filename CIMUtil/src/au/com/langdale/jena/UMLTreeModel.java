@@ -4,22 +4,21 @@
  */
 package au.com.langdale.jena;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import au.com.langdale.xmi.UML;
-
-import com.hp.hpl.jena.graph.FrontsNode;
-
 import au.com.langdale.inference.LOG;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
+import au.com.langdale.xmi.UML;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -41,8 +40,12 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		else if( child.isClass()) {
 			if( child.hasProperty(UML.hasStereotype, UML.enumeration))
 				return new EnumClassNode(child);
+			else if( child.hasProperty(UML.hasStereotype, UML.compound))
+				return new CompoundClassNode(child);
+			else if( child.hasProperty(UML.hasStereotype, UML.constrainedprimitive))
+				return new ConstrainedPrimitiveClassNode(child);
 			else
-				return new ClassNode( child );
+				return new ClassNode(child);
 		}
 		else if( child.isDatatypeProperty()) {
 			return new DatatypeNode(child); // used for the SubClassModel
@@ -57,11 +60,15 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	@Override
 	protected List findResourcePathTo(FrontsNode symbol) {
 		OntResource target = asOntResource(symbol);
-		if( getRoot() == null || target == null) 
+		if( getRoot() == null || target == null) {
+			// Must return null and not List.of()as null is significant to the caller...
 			return null;
+		}
 		OntResource start = getRoot().getSubject();
-		if( start == null)
+		if( start == null) {
+			// Must return null and not List.of() as null is significant to the caller...
 			return null;
+		}
 		
 		ArrayList path = new ArrayList(6);
 		path.add(target);
@@ -69,8 +76,10 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		while( ! target.equals(start)) {
 			if( target.isProperty()) {
 				target = target.getDomain();
-				if( target == null )
+				if( target == null ) {
+					// Must return null and not List.of() as null is significant to the caller...
 					return null;
+				}
 			}
 			else {
 				ResIterator it = target.listRDFTypes(false);
@@ -94,8 +103,10 @@ public class UMLTreeModel extends JenaTreeModelBase {
 						target = pack;
 				}
 			}
-			if( path.contains(target))
+			if( path.contains(target)) {
+				// Must return null and not List.of() as null is significant to the caller...
 				return null;
+			}
 			path.add(target);
 		}
 		Collections.reverse(path);
@@ -143,6 +154,10 @@ public class UMLTreeModel extends JenaTreeModelBase {
 				if( ! isDefinedBy(clss, packages)) {
 					if( clss.hasProperty(UML.hasStereotype, UML.enumeration))
 						add(new EnumClassNode(clss));
+					else if( clss.hasProperty(UML.hasStereotype, UML.compound))
+						add(new CompoundClassNode(clss));
+					else if( clss.hasProperty(UML.hasStereotype, UML.constrainedprimitive))
+						add(new ConstrainedPrimitiveClassNode(clss));
 					else
 						add(new ClassNode(clss));
 				}
@@ -197,10 +212,12 @@ public class UMLTreeModel extends JenaTreeModelBase {
 				else if( child.isClass()){
 					if( child.hasProperty(UML.hasStereotype, UML.enumeration))
 						add(new EnumClassNode(child));
-					else if( child.hasProperty(UML.hasStereotype, UML.extension))
-						add(new ExtensionClassNode(child));
 					else if( child.hasProperty(UML.hasStereotype, UML.compound))
 						add(new CompoundClassNode(child));
+					else if( child.hasProperty(UML.hasStereotype, UML.constrainedprimitive))
+						add(new ConstrainedPrimitiveClassNode(child));
+					else if( child.hasProperty(UML.hasStereotype, UML.extension))
+						add(new ExtensionClassNode(child));
 					else
 						add(new ClassNode( child ));
 				}
@@ -289,20 +306,27 @@ public class UMLTreeModel extends JenaTreeModelBase {
 				Iterator it = listProperties(inherited);
 				while( it.hasNext()) {
 					OntResource pt = (OntResource) it.next();
-					if( pt.isDatatypeProperty())
-						add( new DatatypeNode(pt));
-					else if( pt.getRange() != null && pt.getRange().hasProperty(UML.hasStereotype, UML.enumeration))
+					if( pt.isDatatypeProperty()) {
+						if( pt.getRange() != null && pt.getRange().hasProperty(UML.hasStereotype, UML.constrainedprimitive)) {
+							add( new ConstrainedPrimitivePropertyNode(pt));
+						} else {
+							add( new DatatypeNode(pt));
+						}
+					} else if( pt.getRange() != null && pt.getRange().hasProperty(UML.hasStereotype, UML.enumeration)) {
 						add( new EnumPropertyNode(pt));
-					else if(pt.hasProperty(UML.hasStereotype, UML.aggregateOf)) 
+					} else if( pt.getRange() != null && pt.getRange().hasProperty(UML.hasStereotype, UML.compound)) {
+						add( new CompoundPropertyNode(pt));
+					} else if(pt.hasProperty(UML.hasStereotype, UML.aggregateOf)) {
 						add( new AggregateNode(pt));
-					else if(pt.hasProperty(UML.hasStereotype, UML.compositeOf)) 
+					} else if(pt.hasProperty(UML.hasStereotype, UML.compositeOf)) {
 						add( new CompositeNode(pt));
-					else if( pt.isFunctionalProperty()) 
+					} else if( pt.isFunctionalProperty()) {
 						add( new FunctionalNode(pt));
-					else if( pt.isInverseFunctionalProperty())
+					} else if( pt.isInverseFunctionalProperty()) {
 						add( new InverseNode(pt));
-					else 
+					} else  {
 						add( new PropertyNode(pt));
+					}
 				}
 			}
 			
@@ -373,17 +397,8 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		
 	}
 	
-	public class CompoundClassNode extends ClassBaseNode {
-
-		public CompoundClassNode(OntResource clss) {
-			super(clss);
-		}
-		
-	}
-	
 	/**
 	 * A class to be shown as a sub-class of the parent node.
-	 * 
 	 */
 	public class SubClassNode extends ClassBaseNode {
 		public SubClassNode(OntResource clss) {
@@ -412,7 +427,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	}
 	/**
 	 * A class to be shown as a super-class of the parent node.
-	 * 
 	 */
 	public class SuperClassNode extends ClassBaseNode {
 		public SuperClassNode(OntResource clss) {
@@ -479,9 +493,48 @@ public class UMLTreeModel extends JenaTreeModelBase {
 		}
 		
 		@Override
+		public String toString() {
+			return "Enumeration: " + label(subject);
+		}
+		
+		@Override
 		protected void populate() {
 			populate(false, true, true);
 		}
+	}
+	
+	/**
+	 * A compound class.
+	 */
+	public class CompoundClassNode extends ClassBaseNode {
+		public CompoundClassNode(OntResource clss) {
+			super(clss);
+		}
+		
+		@Override
+		public String toString() {
+			return "Compound: " + label(subject);
+		}
+	}
+	
+	/**
+	 * A constrained primitive class.
+	 */
+	public class ConstrainedPrimitiveClassNode extends ClassBaseNode {
+		public ConstrainedPrimitiveClassNode(OntResource clss) {
+			super(clss);
+		}
+		
+		@Override
+		protected void populate() {
+			populate(false, false, false);
+		}
+		
+		@Override
+		public String toString() {
+			return "Constrained Primitive: " + label(subject);
+		}
+		
 	}
 	
 	/**
@@ -582,7 +635,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	/**
 	 * A general object property.
-	 * 
 	 */
 	public class PropertyNode extends ModelNode {
 		OntResource subject;
@@ -625,7 +677,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	/**
 	 * A aggregate object property.
-	 * 
 	 */
 	public class AggregateNode extends PropertyNode {
 		public AggregateNode(OntResource prop) {
@@ -635,7 +686,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	/**
 	 * A composite object property.
-	 * 
 	 */
 	public class CompositeNode extends PropertyNode {
 		public CompositeNode(OntResource prop) {
@@ -645,7 +695,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	/**
 	 * A functional object property.
-	 * 
 	 */
 	public class FunctionalNode extends PropertyNode {
 		public FunctionalNode(OntResource prop) {
@@ -655,7 +704,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	/**
 	 * An inverse functional object property.
-	 * 
 	 */
 	public class InverseNode extends PropertyNode {
 		public InverseNode(OntResource prop) {
@@ -665,8 +713,6 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	
 	/**
 	 * A functional property whose object is an enumeration.
-	 * 
-	 *
 	 */
 	public class EnumPropertyNode extends PropertyNode {
 		public EnumPropertyNode(OntResource prop) {
@@ -686,9 +732,47 @@ public class UMLTreeModel extends JenaTreeModelBase {
 	}
 	
 	/**
+	 * A functional property whose object is an compound.
+	 */
+	public class CompoundPropertyNode extends PropertyNode {
+		public CompoundPropertyNode(OntResource prop) {
+			super(prop);
+		}
+		
+		@Override
+		protected void populate() {
+			OntResource range = subject.getRange();
+			adopt(new CompoundClassNode(range));
+		}
+		
+		@Override
+		protected String collation() {
+			return "3" + toString();
+		}
+	}
+	
+	/**
+	 * A functional property whose object is an constrained primitive.
+	 */
+	public class ConstrainedPrimitivePropertyNode extends PropertyNode {
+		public ConstrainedPrimitivePropertyNode(OntResource prop) {
+			super(prop);
+		}
+		
+		@Override
+		protected void populate() {
+			OntResource range = subject.getRange();
+			adopt(new ConstrainedPrimitivePropertyNode(range));
+		}
+		
+		@Override
+		protected String collation() {
+			return "3" + toString();
+		}
+	}
+	
+	/**
 	 * An instance (individual) of an enumerated class.
-	 * 
-	 *
 	 */
 	public class IndividualNode extends ModelNode {
 		OntResource subject;

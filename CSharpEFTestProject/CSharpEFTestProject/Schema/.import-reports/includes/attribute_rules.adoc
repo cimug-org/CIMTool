@@ -1,0 +1,59 @@
+[[Attribute_Rules]]
+==== Attribute Rules [Section 5.5]
+
+The following UML attribute features (i.e. available in the "Properties" Pane in Sparx EA) are used in CIM:
+
+- Name, is always used and must be unique among all levels of specialisation.
+- Type that is one of the stereotyped classes (*«Primitive»*, *«CIMDatatype»*, *«Compound»*, *«enumeration»*). When choosing type, ensure you select it from the list of existing types rather than simply type the text into Enterprise Architect. Attention on Primitives: use CIM Primitive datatypes (e.g., String, Boolean), not default UML ones (string, boolean).
+- Scope is always public
+- Multiplicity is always [0..1]
+- Initial Value, if used, always denotes a constant for all instances of the class where the attribute belongs, and the attribute has to be set as both static and constant.
+- Documentation (i.e. the Notes pane in Sparx EA). The documentation should not use or rely upon special formatting. Plain text is assumed. It is suggested to avoid special characters here also.
+- Stereotype, where applicable, can temporarily be used to describe the development state of the attribute or use case that initiated the creation of the attribute. Once the attribute is fully incorporated in the model the stereotype is removed.
+
+Attribute names are unique within a classifier and Enterprise Architect will enforce this.
+
+The attribute order should normally be alphabetical unless there is some clear reason to group like attributes together. We do not enforce alphabetic ordering in the UML tool.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule049]]Rule049 | Names for attributes shall use the Lower Camel Case naming convention
+| [[Rule050]]Rule050 | Names for attributes shall be British English names.
+| [[Rule051]]Rule051 | Attribute names shall be singular form concepts.
+| [[Rule052]]Rule052 | The "value" attribute of a CIM class that has the *«CIMDatatype»* stereotype shall be a Primitive data type.
+| [[Rule053]]Rule053 | The "unit" attribute of a CIM class that has the *«CIMDatatype»* stereotype shall be an enumeration data type.
+| [[Rule054]]Rule054 | The "multiplier" attribute of a CIM class that has the *«CIMDatatype»* stereotype shall be an enumeration data type.
+| [[Rule055]]Rule055 | Attribute data types shall be one of the stereotyped CIM classes (i.e. shall not be one of the Enterprise Architect native data types).
+| [[Rule056]]Rule056 | In instances where an attribute of a CIM class has an initial value, it shall denote a constant for all instance of the class to which the attribute belongs.
+| [[Rule057]]Rule057 | In instances where an attribute of a CIM class has an initial value, it shall be set as both static and constant.
+| [[Rule058]]Rule058 | Attribute multiplicity shall always be [0..1] (i.e. all CIM attributes are optional).
+| [[Rule059]]Rule059 | For attributes that correspond to power system related measurements as listed below the attribute name must use the symbol, in lower camel case (e.g. ratedU), instead of the name or unit of measurement.
+
+- Active Power (p)
+- Reactive Power (q)
+- Apparent Power (s)
+- Resistance (r)
+- Reactance (x)
+- Conductance (g)
+- Susceptance (b)
+- Power Factor (pf)
+- Voltage (u)
+- Current (i)
+- Frequency (f)
+- Inductance (l)
+- Capacitance (c)
+- Impedance (z)
+- Admittance (y)
+
+For the properties mentioned in the above list, the symbol is to be appended with "2" for negative-sequence and "0" for zero-sequence properties.
+
+Where properties mentioned in the list are used in a compound term (e.g. maximum voltage, nominal apparent power, natural impedance), the value name should be written in full (e.g. maximumVoltage, nominalApparentPower, naturalImpedance respectively). The attribute name as a whole must also comply with Rule049.
+
+NOTE: This rule was introduced as of CIM18. Pre-existing attributes that do not comply with this rule may be left as-is to reduce breaking changes; however, moving forward all new attributes that fall into this category must comply.)
+
+| [[Rule060]]Rule060 | Attribute names shall be unique among all levels of specialisation.
+| [[Rule061]]Rule061 | The scope of a CIM attribute shall be "Public".
+| [[Rule062]]Rule062 | Datatypes used for attributes in cross-working group dependencies shall be coordinated among the affected working groups.
+
+|===

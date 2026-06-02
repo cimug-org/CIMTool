@@ -1,0 +1,235 @@
+# CIMToolTest
+
+An Eclipse plugin fragment that provides the JUnit test suite for the CIMTool
+application. It tests the core build system, validation engine, Kena RDF layer,
+profile transforms, topology processing, and UI wizards.
+
+> **Note:** The unit tests in this project are currently in the process of being
+> brought up to date. Some tests may not pass or may require additional setup
+> against the current codebase. Contributions to expand and modernise the test
+> suite are welcome.
+
+
+
+## Overview
+
+CIMToolTest is structured as an Eclipse **plugin fragment** — its `MANIFEST.MF`
+declares `Fragment-Host: au.com.langdale.cimtoole`, which means it attaches
+directly to the `CIMToolPlugin` bundle at runtime and has access to all of its
+packages without requiring explicit exports. This is the standard Eclipse pattern
+for test fragments: the tests run inside the same OSGi bundle as the code under
+test, giving them access to package-private and internal APIs.
+
+The test suite is divided into two main categories:
+
+- **Headless tests** — run without a UI, exercising the core model, validation, schema processing, Kena RDF layer, and incremental build logic
+- **UI tests** — exercise the Eclipse wizard and workbench UI components using the Eclipse workbench testing infrastructure
+
+A set of CIM/XML and Turtle validation fixture files in `src/ValidationCases/`
+provides the test data used by the validation and schema test classes.
+
+
+
+## Project Structure
+
+```
+CIMToolTest/
+├── META-INF/
+│   └── MANIFEST.MF                          ← Fragment manifest — declares Fragment-Host
+├── build.properties                         ← Source and bin.includes configuration
+├── builders/
+│   ├── builders.json                        ← Builder configuration for JUnit test builder
+│   ├── junit-test.xsl                       ← XSLT transform for JUnit test output (format 1)
+│   └── junit-test2.xsl                      ← XSLT transform for JUnit test output (format 2)
+├── CIMToolTestFiles/                        ← Test data ZIPs loaded at runtime by the test framework
+│   ├── CIMToolTestFiles.zip                 ← Primary test fixture archive — extracted programmatically
+│   │                                           on setUp() by ProjectTest.setUpTestData() via the OSGi
+│   │                                           classloader; contains schema XMI/EAP/QEA files, OWL
+│   │                                           profiles, rules files, and other inputs used by all
+│   │                                           tests that extend ProjectTest
+│   └── IOP10Kit.zip                         ← Split model test fixture archive — contains the
+│                                               ABB40BusIOP10_rev7 folder used by SplitReaderTest
+│                                               and ExtractorTest; programmatic extraction (following
+│                                               the same pattern as CIMToolTestFiles.zip) is
+│                                               pending implementation
+└── src/
+    ├── ValidationCases/                     ← CIM/XML and Turtle test fixture files
+    │   ├── cpsm2007.owl                     ← CPSM profile with topology (used by TopologyTests)
+    │   ├── cpsm2007_no_topol.owl            ← CPSM profile without topology (used by SchemaTests)
+    │   ├── base_case.xml / .ttl             ← Base validation case
+    │   ├── base_voltages.xml / .ttl         ← Base voltages validation case
+    │   ├── topology_case.xml / .ttl         ← Topology validation case
+    │   ├── abstract_class.xml / .ttl
+    │   ├── association_case.xml / .ttl
+    │   ├── domain_of_property.xml / .ttl
+    │   ├── literal_value_for_object.xml / .ttl
+    │   ├── loop_created.xml / .ttl
+    │   ├── minimum_cardinality_*.xml / .ttl ← Cardinality constraint cases (3 variants each)
+    │   ├── maximum_cardinality_*.xml / .ttl
+    │   ├── undefined_class.xml / .ttl
+    │   ├── undefined_property.xml / .ttl
+    │   ├── duplicate_property.xml
+    │   ├── missing_property.xml
+    │   ├── failed_precondition.xml
+    │   ├── missing_terminal_*.xml / .ttl    ← Terminal connectivity cases (3 variants each)
+    │   ├── extra_terminals_*.xml / .ttl     ← (2 variants each)
+    │   ├── isolated_node_*.xml / .ttl       ← (2 variants each)
+    │   ├── untyped_object.xml / .ttl
+    │   ├── untyped_subject.xml / .ttl
+    │   ├── range_of_datatype_*.xml / .ttl   ← Range constraint cases (2 variants each)
+    │   ├── range_of_object.xml / .ttl
+    │   ├── add_case.xml / remove_case.xml   ← Incremental model change cases
+    │   ├── add_undefined_class.xml          ← Incremental add — undefined class case
+    │   ├── add_undefined_property.xml       ← Incremental add — undefined property case
+    │   ├── copyright-*.txt                  ← Copyright template fixtures
+    │   └── build.sh / run.sh                ← Shell scripts for standalone fixture execution
+    └── au/com/langdale/cimtoole/
+        ├── Convert.java                     ← Utility for converting test fixture formats
+        ├── test/
+        │   ├── ProjectTest.java             ← Base class — sets up an Eclipse test workspace project
+        │   ├── WorkspaceTest.java           ← Base class for workspace-level tests
+        │   ├── WorkbenchTest.java           ← Base class for workbench UI tests
+        │   ├── TestUtility.java             ← Shared test helper methods
+        │   ├── ValidationTest.java          ← Base class for validation tests — runs CIMBuilder and asserts problem markers
+        │   ├── SplitModelTest.java          ← Tests for split CIM/XML model import
+        │   └── headless/                    ← Headless test classes (no UI required)
+        │       ├── KenaTests.java           ← Tests for the Kena RDF/OWL layer
+        │       ├── SchemaTests.java         ← Validation tests using CPSM profile (no topology)
+        │       ├── TopologyTests.java       ← Validation tests using CPSM profile (with topology)
+        │       ├── IncrementalTests.java    ← Tests for incremental model change handling
+        │       ├── SplitReaderTest.java     ← Tests for split CIM/XML reader
+        │       ├── ExtractorTest.java       ← Tests for XMI/EA model extraction
+        │       ├── ProfileBuildletConfigUtilsTest.java ← Tests for buildlet config serialization
+        │       ├── ProfileTasks.java        ← Profile-level task test helpers
+        │       ├── TransformTasks.java      ← Transform execution test helpers
+        │       └── CreateProject.java       ← Test helper for programmatic project creation
+        └── test/ui/                         ← UI test classes (require Eclipse workbench)
+            ├── ModelWizards.java            ← Tests for model import wizards
+            ├── ProfileWizards.java          ← Tests for profile creation wizards
+            ├── SchemaWizards.java           ← Tests for schema import wizards
+            ├── RuleWizards.java             ← Tests for ruleset wizards
+            └── CustomBuildersWizards.java   ← Tests for custom builder configuration wizards
+```
+
+
+
+## Dependencies on Other Projects
+
+CIMToolTest is an OSGi fragment of `CIMToolPlugin` and inherits all of its
+dependencies implicitly. It additionally declares direct `Require-Bundle`
+dependencies on:
+
+| Bundle | Role in tests |
+| --- | --- |
+| `org.junit` (4.x) | JUnit 4 test framework — `@Test`, `assertEquals`, `TestCase` base class |
+| `au.com.langdale.kena` | Used directly in `KenaTests` to test the RDF/OWL graph API independently |
+| `au.com.langdale.rcputil` | Eclipse UI utilities needed by workbench-level test base classes |
+| `org.eclipse.core.resources` | Workspace and project resource APIs used to set up test projects and assert the presence or absence of problem markers |
+| `org.eclipse.core.runtime` | OSGi runtime utilities — `IProgressMonitor`, `CoreException`, `IPath` |
+| `org.eclipse.ui` | Workbench APIs used by the UI test base classes |
+
+
+
+## Test Categories
+
+### Headless Tests
+
+These tests run without a display and exercise the core CIMTool logic:
+
+| Test Class | What it tests |
+| --- | --- |
+| `KenaTests` | Kena RDF/OWL model creation, traversal, resource lookup, and serialization |
+| `SchemaTests` | CIM/XML validation against the CPSM profile without topology constraints — exercises cardinality, type, range, and domain checks across all validation fixture cases |
+| `TopologyTests` | CIM/XML validation against the CPSM profile with topology constraints — exercises terminal connectivity, isolated node, and loop detection cases |
+| `IncrementalTests` | Incremental model change processing — add and remove cases, delta handling |
+| `SplitReaderTest` | Split CIM/XML file reader — multi-file model assembly |
+| `ExtractorTest` | XMI/EA model extraction and parsing |
+| `ProfileBuildletConfigUtilsTest` | JSON serialization and deserialization of buildlet configuration objects |
+
+### UI Tests
+
+These tests require a running Eclipse workbench and exercise the wizard UI:
+
+| Test Class | What it tests |
+| --- | --- |
+| `ModelWizards` | Model import wizard flows — XMI, EA project, and schema import |
+| `ProfileWizards` | Profile creation wizard — new profile, namespace setup |
+| `SchemaWizards` | Schema import wizard flows |
+| `RuleWizards` | Ruleset creation and import wizard flows |
+| `CustomBuildersWizards` | Custom transform builder configuration wizard |
+
+
+
+## Validation Test Fixtures
+
+The `src/ValidationCases/` directory contains paired CIM/XML (`.xml`) and
+Turtle (`.ttl`) files that together constitute the validation test corpus. Each
+pair represents a specific validation scenario:
+
+- The `.xml` file is the CIM/XML instance document under test
+- The `.ttl` file is the expected validation output expressed as RDF Turtle
+
+Two OWL profile files drive the validation:
+
+- `cpsm2007.owl` — the CPSM profile including topology constraints, used by `TopologyTests`
+- `cpsm2007_no_topol.owl` — the CPSM profile without topology, used by `SchemaTests`
+
+The `build.sh` and `run.sh` scripts in `ValidationCases/` support standalone
+execution of the validation fixtures outside of the Eclipse test runner.
+
+
+
+## Test Data ZIPs
+
+The `CIMToolTestFiles/` folder at the project root contains two ZIP archives
+that provide test fixture data at runtime.
+
+### CIMToolTestFiles.zip — Fully Implemented
+
+This is the primary test data archive. `ProjectTest.setUpTestData()` loads it
+automatically via the OSGi classloader on every `setUp()` call:
+
+```java
+InputStream is = Thread.currentThread().getContextClassLoader()
+    .getResourceAsStream("CIMToolTestFiles/CIMToolTestFiles.zip");
+unzip(is, getSamplesFolder());
+```
+
+The extracted folder is placed adjacent to the test workspace root and torn
+down after each test in `tearDown()`. It contains the schema files, OWL
+profiles, rules files, and other inputs referenced by the constants in
+`ProjectTest` — `SAMPLE_SCHEMA_XMI`, `SAMPLE_SCHEMA_EAP`, `SAMPLE_SCHEMA_QEA`,
+`SAMPLE_PROFILE`, `SAMPLE_RULES`, etc. All tests that extend `ProjectTest`
+(the majority of the test suite) depend on this ZIP being present and correctly
+bundled.
+
+### IOP10Kit.zip — Pending Implementation
+
+This archive contains the `ABB40BusIOP10_rev7` split model folder used by
+`SplitReaderTest` and `ExtractorTest`. Currently these tests locate the folder
+via a relative path at the working directory:
+
+```java
+reader = new SplitReader(SAMPLE_FILES + SPLIT_MODEL);  // SAMPLE_FILES = "./"
+```
+
+Programmatic extraction from `IOP10Kit.zip` following the same classloader
+pattern as `CIMToolTestFiles.zip` is pending implementation. Until it is
+complete, `SplitReaderTest` and `ExtractorTest` require the `ABB40BusIOP10_rev7`
+folder to be manually extracted to the working directory before they can run.
+
+
+
+## Running the Tests
+
+CIMToolTest is an Eclipse plugin fragment and must be run via the Eclipse
+PDE JUnit launcher, not the standard Maven/command-line JUnit runner:
+
+1. In Eclipse, right-click a test class or the project
+2. Select **Run As > JUnit Plug-in Test**
+3. Eclipse launches a nested workbench instance with the fragment attached to `CIMToolPlugin` and executes the selected tests
+
+> **Note:** UI tests require a display and cannot be run in headless CI
+> environments without additional setup (e.g. a virtual framebuffer). Headless
+> tests in the `headless/` package can be run in a headless environment using
+> the Eclipse headless application launcher.

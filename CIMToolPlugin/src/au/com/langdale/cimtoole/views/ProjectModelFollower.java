@@ -1,19 +1,12 @@
 package au.com.langdale.cimtoole.views;
 
-import java.util.TreeMap;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
-import com.hp.hpl.jena.vocabulary.OWL2;
-import com.hp.hpl.jena.vocabulary.RDF;
 
 import au.com.langdale.cimtoole.project.Cache.CacheListener;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.ModelMinder;
 import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.kena.ResIterator;
 
 public abstract class ProjectModelFollower extends SelectionFollower implements CacheListener {
 	private ModelMinder models = new ModelMinder(this);
@@ -29,7 +22,6 @@ public abstract class ProjectModelFollower extends SelectionFollower implements 
 
 	public void selectProject(IProject project) {
 		if( activeProject == null || ! project.equals(activeProject)) {
-			//System.out.println("ProjectModelView switching to " + project);
 			activeProject = project;
 			viewActiveProject();
 		}

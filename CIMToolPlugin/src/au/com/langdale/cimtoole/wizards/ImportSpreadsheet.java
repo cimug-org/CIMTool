@@ -11,6 +11,7 @@ import static au.com.langdale.ui.builder.Templates.FileField;
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
 import static au.com.langdale.ui.builder.Templates.Label;
+import static au.com.langdale.ui.builder.Templates.RadioButton;
 
 import java.io.File;
 
@@ -37,7 +38,8 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 	private IFile destin;
 	private String pathname;
 	private SpreadsheetImporter importer= new SpreadsheetImporter();
-	
+	private boolean useV2ImportColumnFormat;
+
 	private ProjectBinding projects = new ProjectBinding();
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -61,9 +63,19 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 				protected Template define() {
 					return Grid(
 						Group(FileField("source", "Spreadsheet file:", new String[]{"*.xls", "*.xlsx"})),
+						Group(RadioButton("v1", "Use legacy import format"), RadioButton("v2", "Use newer import format")),
 						Group(Label("Profiles Found in Spreadsheet")),
 						Group(CheckboxTableViewer("profiles"))
 					);
+				}
+
+				@Override
+				protected void addBindings() {
+					getButton("v1").setSelection(true);		
+					// WIP TODO: Remove the next two line post 2.3.0 when ready to add enhanced spreadsheet import feature.
+					getButton("v1").setVisible(false);
+					getButton("v2").setVisible(false);
+					//
 				}
 
 				@Override
@@ -71,6 +83,8 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 					// TODO: replace with TextBinding.
 					pathname = getText("source").getText().trim();
 
+					useV2ImportColumnFormat = getButton("v2").getSelection();
+					
 					// the source file
 					if( pathname.length() == 0)
 						return "A source spreadsheet is required";
@@ -92,7 +106,7 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 					profileChoice = (Choice) profiles[0];
 					return null;
 				}
-				
+
 			};
 		}
 	};
@@ -100,7 +114,7 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 	private FurnishedWizardPage create = new FurnishedWizardPage("create", "Create Profile", null) {
 		{
 			setDescription(
-				"Create a new OWL profile definition in the selected CIMTool project. "
+				"Create a new OWL profile definition in the selected CIMTool project."
 			);
 		}
 
@@ -123,7 +137,7 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 				}
 
 				@Override
-				protected void addBindings() {
+				protected void addBindings() {			
 					projects.bind("projects", this);
 				}
 
@@ -164,7 +178,7 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 
 	@Override
 	public boolean performFinish() {
-		CellSpec[] standardCells = SpreadsheetImporter.getStandardCells(profileChoice.index);
+		CellSpec[] standardCells = SpreadsheetImporter.getStandardCells(profileChoice.index, useV2ImportColumnFormat);
 		return Jobs.runInteractive(importer.getInterpreter(destin, namespace, standardCells), null, getContainer(), getShell());
 	}
 }

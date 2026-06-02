@@ -1,0 +1,27 @@
+@prefix msg:     <http://langdale.com.au/2005/Message#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix uml:     <http://langdale.com.au/2005/UML#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix project:  <http://cimtoole.langdale.com.au/2009/project/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tool:    <http://cimtoole.langdale.com.au/2009/setting#> .
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+
+project:
+      tool:merge_shadow_extensions
+              "true" ;
+      tool:merged_schema_path
+              "" ;
+      tool:self_heal_on_import
+              "true" .
+
+<http://cimtoole.langdale.com.au/2009/project/Profiles/SampleProfile.owl>
+      tool:profile_envelope
+              "Profile" ;
+      tool:profile_namespace
+              "http://www.ucaiug.org/profile#" .
+
+<http://cimtoole.langdale.com.au/2009/project/Schema/iec61970cim17v40_iec61968cim13v13b_iec62325cim03v17b_CIM100.1.1.1.qea>
+      tool:schema_namespace
+              "http://iec.ch/TC57/CIM100#" .

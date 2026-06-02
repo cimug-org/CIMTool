@@ -31,6 +31,10 @@ public abstract class ComboBinding implements Binding, AnyModel {
 		configureViewer(viewer);
 		plumbing.addBinding(this, parent);
 	}
+	
+	protected ComboViewer getComboViewer() {
+		return viewer;
+	}
 	/**
 	 * Bind to the ComboViewer
 	 * @param name: the name of the viewer
@@ -57,8 +61,9 @@ public abstract class ComboBinding implements Binding, AnyModel {
 
 	protected void resetInput(StructuredViewer viewer) {
 		Object input = getInput();
-		if( input == null || ! input.equals(viewer.getInput()))
+		if ((viewer != null) && (input == null || !input.equals(viewer.getInput()))) {
 			viewer.setInput(input);
+		}
 	}
 	/**
 	 * @return: the value selected from the combo viewer.
@@ -72,8 +77,8 @@ public abstract class ComboBinding implements Binding, AnyModel {
 	}
 
 	public void refresh() {
-		resetInput(viewer);
-		if(viewer.getInput() != null ) {
+		if (viewer != null && viewer.getInput() != null) {
+			resetInput(viewer);
 			if( value != null) {
 				StructuredSelection proposed = new StructuredSelection(value);
 				if( ! proposed.equals(viewer.getSelection()))

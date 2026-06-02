@@ -1,0 +1,46 @@
+[[Class_Rules]]
+==== Class Rules [Section 5.4]
+
+The following UML class features are used in CIM:
+
+- Name
+- Documentation
+- Stereotype
+
+In CIM, a class is used to describe either domain entities or various data types specific to the CIM domain:
+
+- *«Primitive»* Primitive data types as Booleans, Float, String etc. Primitive cannot have attributes.
+
+- *«CIMDatatype»* Simple data types specific for the CIM, e.g. ActivePower, Resistance etc. CIMDatatype has at least three attributes: value, unit and multiplier. The “value” attribute is of Primitive type, and unit and multiplier are of an enumeration type. When required additional attributes can be defined to describe for example “demoninatorUnit” and “denominatorMultiplier”, but only one “value” attribute is allowed.
+
+- *«Compound»* Compound data types specific for the CIM, e.g.StreetAddress etc. Compound has no identity and is a simple group of related attributes, Compound may have attributes whose types are Primitive, enumeration, CIMDatatype or Compound. A circular dependency among Compound types is to be avoided.
+
+- *«enumeration»* Enumerations, e.g. UnitSymbol, UnitMultiplier, Currency, etc.
+
+- None of the above stereotypes. A domain object that participates in inheritance and/or association relationships with other domain objects. Most of domain objects inherit from the class IdentifiedObject and thus get the identifier and one or multiple names.
+
+CIM classes with a stereotype other than *«deprecated»* are types that never participate in relationships (i.e., no associations, no inheritance), but are used as types for attributes.
+
+CIM does not use abstract classes, because CIM is in itself an abstract model. In contrast, profiles may distinguish between concrete and abstract classes.
+
+CIM does not use association classes, for the sake of keeping the used subset of UML to the minimum that is well supported by tools and well understood by the wide community.
+
+CIM class names are unique among all classes residing within the CIM top-level package without consideration of the package hierarchy.
+
+Classes should be ordered alphabetically or in order of importance or by logical grouping. We do not enforce alphabetically ordering automatically in the UML tool. The order of classes in the UML tool with be the order of classes printed in the IEC document.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule038]]Rule038 | Names for classes shall use the Upper Camel Case naming convention.
+| [[Rule039]]Rule039 | Names for classes shall be British English names.
+| [[Rule040]]Rule040 | All classes shall have unique names. The package containment hierarchy shall not be used in uniquely identifying a class.
+| [[Rule041]]Rule041 | A CIM class shall be used to describe either an electric utility domain entity or an information entity used in the electric utility domain.
+| [[Rule042]]Rule042 | All class names shall be the singular form of a utility domain concept.
+| [[Rule043]]Rule043 | A CIM class that has the «CIMDatatype» stereotype shall have at minimum, the following attributes: 1. value; 2. unit; and 3. multiplier.
+| [[Rule044]]Rule044 | A CIM class shall not be an abstract class.
+| [[Rule045]]Rule045 | A CIM class shall not be an association class.
+| [[Rule046]]Rule046 | CIM classes with a stereotype other than «deprecated» shall never participate in relationships with other classes (i.e., no associations, no inheritance).
+| [[Rule047]]Rule047 | CIM classes with a stereotype other than «deprecated» shall only be used as datatypes for attributes.
+| [[Rule048]]Rule048 | CIM classes should be ordered alphabetically or in order of importance or by logical grouping within a package.
+|===

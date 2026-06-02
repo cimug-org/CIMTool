@@ -1,0 +1,223 @@
+# io.ucaiug.slf4j.logback.binding
+
+A minimal OSGi fragment bundle that wires SLF4J 2.x to Logback as its logging
+provider in the CIMTool Eclipse RCP product. Without this bundle, SLF4J permanently
+binds to its built-in NOP implementation and all SLF4J-native log events from
+vendored libraries (Saxon-HE, m2e/Aether, UCanAccess, and others) are silently
+discarded — `logs/cimtool.log` is created by Logback but remains empty. With this
+bundle in place those events flow through Logback into `logs/cimtool.log`,
+completing the unified single-file logging pipeline together with the JUL bridge
+(`jul-to-slf4j`) installed by `CIMToolPlugin`.
+
+
+
+## The Problem It Solves
+
+CIMTool runs as an Eclipse RCP application on the Equinox OSGi framework. The
+application uses three distinct logging APIs:
+
+| API | Source | Version |
+| --- | --- | --- |
+| `java.util.logging` (JUL) | CIMTool's own code, JDK internals | JDK built-in |
+| SLF4J | Saxon-HE, m2e/Aether, UCanAccess, and other vendored libraries | 2.x (platform bundle) |
+| Log4j 1.x | Apache Jena (via Kena) | 1.2.x (intercepted by `log4j-over-slf4j`) |
+
+JUL is bridged to SLF4J at startup by `SLF4JBridgeHandler` installed in
+`CIMToolPlugin.configureLogging()` — all three logging sources therefore flow
+through SLF4J → Logback into `logs/cimtool.log`. Log4j 1.x calls are intercepted
+by `log4j-over-slf4j` in Kena's `Bundle-ClassPath` and routed into SLF4J.
+
+SLF4J 2.x provider discovery fails silently in OSGi due to classloader isolation.
+SLF4J uses `ServiceLoader` to discover its logging provider at runtime. On a standard
+flat classpath this works transparently — `ServiceLoader` scans all
+`META-INF/services/` files reachable from a single classloader and finds Logback's
+registration. In OSGi, every bundle has its own isolated classloader and can only see
+packages it explicitly imports. When SLF4J calls `ServiceLoader.load()` to find its
+provider, the calling classloader is `slf4j.api`'s own bundle classloader — which has
+no visibility into the `ch.qos.logback.classic` bundle. `ServiceLoader` finds nothing,
+and SLF4J permanently binds to its built-in NOP (no-operation) implementation — all
+SLF4J-native log events are silently discarded for the lifetime of the JVM. This
+bundle solves the problem by attaching as an OSGi fragment to `slf4j.api`, which
+merges its `META-INF/services/` registration directly into `slf4j.api`'s classloader
+so `ServiceLoader` finds `LogbackServiceProvider` at the moment SLF4J initialises.
+
+
+## Why a Fragment Bundle?
+
+The solution mirrors the approach used by Eclipse's own `org.eclipse.m2e.logback`
+bundle, which solves the identical problem for m2e's internal logging.
+
+An OSGi **fragment bundle** shares its host bundle's classloader. By declaring
+`Fragment-Host: slf4j.api`, this bundle's contents become part of `slf4j.api`'s
+classloader. This means the `META-INF/services/org.slf4j.spi.SLF4JServiceProvider`
+file inside this fragment is visible when `ServiceLoader` scans `slf4j.api`'s
+classloader — so it finds `LogbackServiceProvider` and SLF4J binds to Logback
+correctly.
+
+`DynamicImport-Package: ch.qos.logback.classic.spi` allows the classloader to
+resolve `LogbackServiceProvider`'s class at runtime without creating static package
+wiring that could introduce split-package conflicts with other bundles. Specifically,
+a static `Import-Package: ch.qos.logback.classic.spi` would create a wiring conflict
+on the `org.xml.sax` package — both `slf4j.api` and the Logback classic bundle export
+it, and a static import would cause OSGi to fail to resolve the bundle entirely,
+breaking `XMIModel` initialisation at startup.
+
+This approach:
+
+- Requires **no bytecode weaving** — unlike Apache Aries SPI Fly, no class
+  modification at runtime occurs
+- Has **no impact on security scanning tools** — the bundle contains only metadata
+  files, no executable code
+- Is **self-contained** — two metadata files and no JAR dependencies
+- Is **version-controlled** as part of the CIMTool repo alongside all other
+  dependencies
+
+
+
+## Why Not Apache Aries SPI Fly?
+
+Apache Aries SPI Fly is the OSGi Service Loader Mediator specification
+implementation and is the "official" solution to this class of problem. It was
+evaluated and rejected for CIMTool for one practical reason: SPI Fly uses ASM
+bytecode weaving to intercept `ServiceLoader.load()` calls at class-load time.
+Security tools including Malwarebytes flag this behavior as a
+`Malware.Ransom.Agent.Generic` threat because the behavioral signature — an
+application that loads and modifies bytecodes dynamically at runtime — is
+indistinguishable from ransomware to a heuristic scanner. Since CIMTool is
+deployed in utility companies with enterprise security policies, this is not
+acceptable.
+
+The fragment bundle approach achieves the same result without any bytecode
+manipulation.
+
+
+
+## Project Structure
+
+```
+io.ucaiug.slf4j.logback.binding/
+├── META-INF/
+│   ├── MANIFEST.MF                              ← OSGi fragment manifest
+│   └── services/
+│       └── org.slf4j.spi.SLF4JServiceProvider   ← ServiceLoader registration
+└── build.properties                             ← PDE build configuration
+```
+
+This project contains no Java source and no JAR files. It is entirely metadata.
+
+
+
+## MANIFEST.MF Explained
+
+```
+Fragment-Host: slf4j.api
+DynamicImport-Package: ch.qos.logback.classic.spi
+```
+
+**`Fragment-Host: slf4j.api`** — declares this as a fragment of the `slf4j.api`
+OSGi bundle. The fragment's classpath contents (including `META-INF/services/`)
+are merged into `slf4j.api`'s classloader at framework startup. When SLF4J calls
+`ServiceLoader.load(SLF4JServiceProvider.class)` the services file is now visible
+and `LogbackServiceProvider` is discovered.
+
+**`DynamicImport-Package: ch.qos.logback.classic.spi`** — allows the classloader
+to load `ch.qos.logback.classic.spi.LogbackServiceProvider` at runtime when
+ServiceLoader attempts to instantiate it. Dynamic imports are resolved lazily at
+class-load time rather than at bundle resolution time, so they do not affect the
+OSGi package wiring graph. A static `Import-Package` here would create a
+split-package conflict on `org.xml.sax` — both `slf4j.api` and the Logback classic
+bundle export it — which would prevent bundle resolution entirely and break
+`XMIModel` initialisation at CIMTool startup.
+
+
+
+## The `META-INF/services/` File
+
+The file `META-INF/services/org.slf4j.spi.SLF4JServiceProvider` contains a single
+line:
+
+```
+ch.qos.logback.classic.spi.LogbackServiceProvider
+```
+
+This is standard Java `ServiceLoader` registration. In a flat classpath environment
+this file would be picked up automatically from Logback's JAR. In OSGi it is
+invisible across bundle boundaries — this fragment makes it visible by placing it
+on `slf4j.api`'s classloader.
+
+
+
+## Integration with CIMTool.product
+
+The fragment is declared in `CIMToolProduct/CIMTool.product` in the `<plugins>`
+section:
+
+```xml
+<plugin id="io.ucaiug.slf4j.logback.binding" fragment="true"/>
+```
+
+The `fragment="true"` attribute tells the PDE exporter to include this bundle as
+a fragment in the exported product. No start level configuration is needed —
+fragment bundles attach to their host automatically at framework startup before
+any bundle activators run, which ensures SLF4J finds Logback before any other
+bundle triggers SLF4J initialization.
+
+No changes to the `<configurations>` section of `CIMTool.product` are needed.
+
+
+
+## Dependencies on Other Projects
+
+This project has no in-repository plugin dependencies and declares no `Require-Bundle`
+entries in its MANIFEST. It wires to two platform bundles via OSGi manifest headers:
+
+| Bundle | Symbolic Name | Relationship |
+| --- | --- | --- |
+| SLF4J API | `slf4j.api` | `Fragment-Host` — this bundle is a fragment of `slf4j.api` and shares its classloader |
+| Logback Classic | `ch.qos.logback.classic` | `DynamicImport-Package: ch.qos.logback.classic.spi` — resolved lazily at class-load time to instantiate `LogbackServiceProvider` |
+
+Both bundles are Eclipse platform bundles resolved from the active target platform
+at export time. Neither is vendored in this project.
+
+### Vendored Third-Party Libraries
+
+This project vendors **no third-party libraries**. It contains no JAR files and
+declares no `Bundle-ClassPath` entries. The project consists entirely of OSGi
+metadata — `META-INF/MANIFEST.MF`, `META-INF/services/org.slf4j.spi.SLF4JServiceProvider`,
+and `build.properties`.
+
+
+
+## The Complete Logging Pipeline
+
+With this bundle in place, combined with `SLF4JBridgeHandler` installed by
+`CIMToolPlugin`, CIMTool's full logging architecture converges into a single file:
+
+```
+Saxon-HE / m2e / UCanAccess / other SLF4J-native libraries
+      ↓
+SLF4J 2.x API  ← wired to Logback by this fragment
+      ↓
+ch.qos.logback.classic
+      ↓
+logback.xml → logs/cimtool.log   (rolling, 5 × 10 MB)
+
+Apache Jena / Kena (Log4j 1.x API calls)
+      ↓
+log4j-over-slf4j  (in Kena/lib/, wired to platform SLF4J via Import-Package)
+      ↓
+SLF4J 2.x → Logback → logs/cimtool.log   (same pipeline as above)
+
+CIMTool own code / JDK internals / System.out / System.err (production mode)
+      ↓
+java.util.logging (JUL)
+      ↓
+SLF4JBridgeHandler  (installed by CIMToolPlugin.configureLogging())
+      ↓
+SLF4J 2.x → Logback → logs/cimtool.log   (same pipeline as above)
+```
+
+All three logging sources converge into the single file `logs/cimtool.log`.
+`logging.properties` is retained only to configure JUL pre-bridge filtering
+(`handlers=` empty, `.level=ALL`) — it no longer writes any log output itself.
+`logback.xml` is the single source of truth for all logging configuration.

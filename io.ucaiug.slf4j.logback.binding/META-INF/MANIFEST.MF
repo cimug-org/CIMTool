@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CIMTool SLF4J Logback Binding
+Bundle-SymbolicName: io.ucaiug.slf4j.logback.binding
+Bundle-Version: 1.0.0
+Bundle-Vendor: UCAIug
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Fragment-Host: slf4j.api
+DynamicImport-Package: ch.qos.logback.classic.spi

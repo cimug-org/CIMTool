@@ -1,0 +1,71 @@
+{
+    "xml": {
+        "type": "JAVA",
+        "style": "xml",
+        "javaGenerator": "PROFILE_SERIALIZER",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "xml"
+    },
+    "simple-flat-owl": {
+        "type": "JAVA",
+        "style": "simple-flat-owl",
+        "javaGenerator": "OWL",
+        "format": "RDF/XML",
+        "withInverses": false,
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "simple-flat-owl"
+    },
+    "simple-owl": {
+        "type": "JAVA",
+        "style": "simple-owl",
+        "javaGenerator": "OWL",
+        "format": "RDF/XML-ABBREV",
+        "withInverses": false,
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "simple-owl"
+    },
+    "legacy-rdfs": {
+        "type": "JAVA",
+        "style": "legacy-rdfs",
+        "javaGenerator": "RDFS",
+        "format": "RDF/XML",
+        "withInverses": false,
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "legacy-rdfs"
+    },
+    "simple-flat-owl-augmented": {
+        "type": "JAVA",
+        "style": "simple-flat-owl-augmented",
+        "javaGenerator": "OWL",
+        "format": "RDF/XML",
+        "withInverses": true,
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "simple-flat-owl-augmented"
+    },
+    "simple-owl-augmented": {
+        "type": "JAVA",
+        "style": "simple-owl-augmented",
+        "javaGenerator": "OWL",
+        "format": "RDF/XML-ABBREV",
+        "withInverses": true,
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "simple-owl-augmented"
+    },
+    "legacy-rdfs-augmented": {
+        "type": "JAVA",
+        "style": "legacy-rdfs-augmented",
+        "javaGenerator": "RDFS",
+        "format": "RDF/XML",
+        "withInverses": true,
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "legacy-rdfs-augmented"
+    },
+    "ttl": {
+        "type": "JAVA",
+        "style": "ttl",
+        "javaGenerator": "COPY",
+        "format": "TURTLE",
+        "datetime": "2020-05-01T00:00:00Z",
+        "ext": "ttl"
+    }
+}

@@ -6,11 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import au.com.langdale.kena.IO;
-import au.com.langdale.kena.Format;
-
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+import au.com.langdale.kena.Format;
 
 public class Convert {
 

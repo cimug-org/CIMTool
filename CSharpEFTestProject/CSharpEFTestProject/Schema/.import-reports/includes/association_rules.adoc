@@ -1,0 +1,68 @@
+[[Association_Rules]]
+==== Association Rules [Section 5.6]
+
+Associations describe how classes are related. Only classes describing domain objects (i.e. classes without data type stereotypes such as *«enumeration»*, *«Primitive»*, *«Compound»*, or *«CIMDatatype»*) may participate in associations.
+
+An association has two ends referred to as association ends. CIM associations have unspecified direction but have both ends specified which means they are implicitly bi-directional (i.e., it is possible, through end names, to navigate from A to B and from B to A).
+
+The association description and association name are not specified. These become a maintenance problem if specified and also show up on diagrams by default. Instead, we specify the association end names and descriptions.
+
+The UML association features used in CIM are as follows:
+
+Stereotype *«informative»*, only in case the association is informative. No other stereotypes are allowed.
+
+The UML association end features used in CIM are:
+
+- Association end name;
+- Association end multiplicity;
+- Association end description.
+
+No other options should be used, although some association ends in CIM are defined as aggregation (= shared).
+
+Note that, depending on local user settings for EA tool:
+
+it may happen to create by default a directed association, so ensure that the direction for association and both its ends is “Unspecified”;
+
+if using aggregation from the toolbox, the diamond may be on unexpected side of relationship, so always create first a simple association.
+
+Furthermore, to facilitate the correct dependency processing (see 2.2.2), draw an association from a class in the depending package (source end) towards a class in the dependent package (target end). For example, an association between a class in "Enterprise" (formerly the "IEC61968" package) and a class within "Grid" (formerly the "IEC61970" package) would be drawn from (the source end of) the class defined within "Enterprise" towards (the target end of) the class within "Grid". This since "Enterprise" depends upon the "Grid" package.
+
+There appears to be no clear manner to control the association end ordering (within the context of a class) in the Enterprise Architect tool so this is an unmanaged aspect of the UML model. In fact, UML does not specify association ends are owned by the class, they are by default owned by the association itself.
+
+Association end names should be unique among all specialisations of a class. For example, if IdentifiedObject associates to the Name class with an end name of “Name”, no specialisation of IdentifiedObject may create another association whose end name is “Name” regardless of the class to which it associates. Note that any number of associations from other classes may use the same name (e.g. “IdentifiedObject”) as the association end name on the IdentifiedObject end of the association, as long as the prior rule of uniqueness among specializations is respected.
+
+Multiplicities are used to describe the number of expected objects at each end of an association as well as if an attribute is optional or mandatory. The following multiplicities are common for association ends in CIM:
+
+- 0..1 - an object may or may not exist,
+- 1 - an object always exists,
+- 0..* - any number of objects may exist,
+- 1..* - at least one object exists.
+
+Multiplicities shall be chosen to specify what can be expected in the domain. Multiplicity minimum does not mean all profiles must include the association, but if a profile does include the association it should respect the minimum. Note that minimum multiplicities are normally not enforced by implementations at all times. For example in the middle of a transaction one may require violation of minimum multiplicities.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule065]]Rule065 | Associations shall not have names.
+| [[Rule066]]Rule066 | Associations shall not have descriptions.
+| [[Rule067]]Rule067 | Association ends shall have role names.
+| [[Rule068]]Rule068 | Names for association roles shall use the Upper Camel Case naming convention.
+| [[Rule069]]Rule069 | Names for association roles shall be British English names.
+| [[Rule070]]Rule070 | Association ends shall have descriptions.
+| [[Rule071]]Rule071 | Association ends shall have specified multiplicity.
+| [[Rule072]]Rule072 | The CIM shall not include composition associations between classes.
+| [[Rule073]]Rule073 | Associations shall implicitly be bi-directional (i.e. the ‘Navigability’ property of the association ends is unspecified).
+| [[Rule074]]Rule074 | Multiplicities for association ends shall be chosen to specify what is expected in the domain.
+| [[Rule075]]Rule075 | Only CIM classes without datatype stereotypes shall participate in associations.
+| [[Rule076]]Rule076 | When associations span working group packages, both working groups shall be made aware of the association once models are combined.
+| [[Rule077]]Rule077 | Cross-working group associations shall be discussed among affected working groups to ensure inappropriate cross-working group associations are not established.
+| [[Rule078]]Rule078 | Any change that impacts cross-working group associations shall be agreed upon by the affected working groups
+| [[Rule079]]Rule079 | Any change to potentially inherited associations and attributes due to cross-working group associations shall be discussed among affected working groups to ensure inappropriate cross-working group associations are not established.
+| [[Rule080]]Rule080 | Any change to potentially inherited associations and attributes due to cross-working group associations shall be agreed upon by the affected working groups
+| [[Rule081]]Rule081 | Aggregation associations involving IEC 61968 classes should be avoided.
+| [[Rule082]]Rule082 | Enterprise Architect should be configured by the user so the default value of the navigability property of an association is “Unspecified” to ensure compliance with Rule073.
+| [[Rule083]]Rule083 | Associations should be drawn from the dependent (source) class to the target class in Enterprise Architect to facilitate correct dependency processing.
+
+NOTE: If the source and target classes of the association are incorrect (i.e. class roles are incorrect), the direction of the association can be reversed through the Enterprise Architect user interface.
+
+|===

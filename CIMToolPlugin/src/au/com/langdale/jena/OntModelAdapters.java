@@ -6,8 +6,12 @@ package au.com.langdale.jena;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import org.eclipse.core.resources.IProject;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -18,6 +22,8 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.ui.binding.BooleanModel;
+import au.com.langdale.util.ProjectUtils;
+import au.com.langdale.xmi.StereotypeExtensions;
 import au.com.langdale.xmi.UML;
 /**
  * A set of BooleanModel's that reflect the contents of an ontology model.
@@ -71,6 +77,8 @@ public class OntModelAdapters  {
 
 		private static final List<String> NON_EDITABLE_IDENT = new ArrayList<String>();
 		private static final List<String> EDITABLE_CLASS_IDENT = new ArrayList<String>();
+		private static final List<String> EDITABLE_ENUM_IDENT = new ArrayList<String>();
+		private static final List<String> EDITABLE_ATTRIBUTE_IDENT = new ArrayList<String>();
 		private static final List<String> EDITABLE_ASSOCIATION_IDENT = new ArrayList<String>();
 		private static final List<String> EDITABLE_ROOT_IDENT = new ArrayList<String>();
 
@@ -84,6 +92,7 @@ public class OntModelAdapters  {
 			 * of an XMI or EAP file.
 			 */
 			NON_EDITABLE_IDENT.add(UML.primitive.getURI());
+			NON_EDITABLE_IDENT.add(UML.constrainedprimitive.getURI());
 			NON_EDITABLE_IDENT.add(UML.datatype.getURI());
 			NON_EDITABLE_IDENT.add(UML.cimdatatype.getURI());
 			NON_EDITABLE_IDENT.add(UML.enumeration.getURI());
@@ -97,9 +106,16 @@ public class OntModelAdapters  {
 			NON_EDITABLE_IDENT.add(UML.aggregateOf.getURI());
 			NON_EDITABLE_IDENT.add(UML.ofAggregate.getURI());
 			
-			/** Stereotypes editable only for top-level Classes in the tree. This doesn't include enumerations. */
+			/** Stereotypes editable only for top-level Classes in the tree. This doesn't include enumerations or compounds. */
 			EDITABLE_CLASS_IDENT.add(UML.concrete.getURI());
 			EDITABLE_CLASS_IDENT.add(UML.description.getURI());
+			EDITABLE_CLASS_IDENT.add(UML.xsdattributegroup.getURI());
+
+			/** Stereotypes editable only for top-level enumerations in the tree. This doesn't include classes. */
+			EDITABLE_ENUM_IDENT.add(UML.codelist.getURI());
+			
+			/** Stereotypes editable only for attributes in the tree. */
+			EDITABLE_ATTRIBUTE_IDENT.add(UML.xsdattribute.getURI());
 			
 			/** Stereotypes editable only for associations in the tree. */
 			EDITABLE_ASSOCIATION_IDENT.add(UML.byreference.getURI());
@@ -107,6 +123,22 @@ public class OntModelAdapters  {
 			/** Stereotypes editable for the top-level "Root" of the entire profile (note this "root of the profile" element does not exist in the UML). */
 			EDITABLE_ROOT_IDENT.add(UML.hideOnDiagrams.getURI());
 		}
+		
+		/**
+		 * Loads stereotypes that are end-user defined extensions (not in the UML) and  
+		 * specified via a *.stereotype-extensions file under the ..\Schema folder. Such 
+		 * stereotypes are "editable", meaning they can be assigned to a class or attribute 
+		 * in the profile in order to annotate it. This can be useful for either documentation 
+		 * purposes or in PlantUML diagrams.
+		 */
+	    private static Set<String> getStereotypeExtensions() {
+	    	IProject project = ProjectUtils.getCurrentSelectedProject();
+	    	
+	    	if (project == null)
+	    		return Collections.emptySet();
+	    		
+	    	return StereotypeExtensions.getStereotypesURIs(project.getName());
+	    }
 		
 		public Annotation(FrontsNode ident, FrontsNode prop, String comment, OntModelProvider context) {
 			super(comment, context);
@@ -137,24 +169,30 @@ public class OntModelAdapters  {
 		 */
 		public boolean isEditable() {
 			OntResource subject = context.getSubject();
+			
+			if (getStereotypeExtensions().contains(ident.asNode().getURI()))
+				return true;
+			
 			boolean isNonStandardStereotype = !UML.stereotypes.containsKey((ident.asNode().getLocalName() != null ? ident.asNode().getLocalName() : null));
 			if((subject == null) || NON_EDITABLE_IDENT.contains(ident.asNode().getURI()) || isNonStandardStereotype || //
 					((subject != null) && //
 							// Indicates it is the profile envelope that is selected...nothing is editable
 							(!subject.isClass() && !subject.isDatatype() && !EDITABLE_ROOT_IDENT.contains(ident.asNode().getURI())) ||
 							// A subject that is a datatype indicates that a attribute of type primitive is currently selected...
-							(subject.isDatatype() && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()))) || //
+							(subject.isDatatype() && (EDITABLE_ENUM_IDENT.contains(ident.asNode().getURI()) || EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()))) || //
+							// This is relevant for a top-level compound that is selected... 
+							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && !subject.hasProperty(OWL.unionOf) && subject.hasProperty(UML.hasStereotype, UML.compound) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ATTRIBUTE_IDENT.contains(ident.asNode().getURI()))) || //
 							// This is relevant for a top-level class that is selected... 
-							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && !subject.hasProperty(OWL.unionOf) && !subject.hasProperty(UML.hasStereotype, UML.enumeration) && EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI())) || //
+							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && !subject.hasProperty(OWL.unionOf) && !subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_ENUM_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ATTRIBUTE_IDENT.contains(ident.asNode().getURI()))) || //
 							// This is relevant for a top-level enumeration that is selected... 
-							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && !subject.hasProperty(OWL.unionOf) && subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()))) || //
+							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && !subject.hasProperty(OWL.unionOf) && subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ATTRIBUTE_IDENT.contains(ident.asNode().getURI()))) || //
 							// This is relevant for an association that is selected... 
-							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && subject.hasProperty(OWL.unionOf) && !subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI())) && !EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI())) || //
+							(subject.isClass() && !subject.hasProperty(UML.hasStereotype, UML.attribute) && subject.hasProperty(OWL.unionOf) && (EDITABLE_ENUM_IDENT.contains(ident.asNode().getURI()) || EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ATTRIBUTE_IDENT.contains(ident.asNode().getURI())) && !EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI())) || //
 							// Remaining checks are for a non-primitive attribute...
 							(subject.isClass() && subject.hasProperty(UML.hasStereotype, UML.attribute) && //
 									(EDITABLE_CLASS_IDENT.contains(ident.asNode().getURI()) || 
 									// The presence of an 'enumeration' stereotype on an attribute indicates that an attribute of that enumeration type is currently selected...
-									(subject.hasProperty(UML.hasStereotype, UML.enumeration) && EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI())))))) {
+									(subject.hasProperty(UML.hasStereotype, UML.enumeration) && (EDITABLE_ASSOCIATION_IDENT.contains(ident.asNode().getURI()) || EDITABLE_ATTRIBUTE_IDENT.contains(ident.asNode().getURI()))))))) {
 				return false;
 			}
 			return true;

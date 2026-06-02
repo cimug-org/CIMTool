@@ -23,7 +23,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.NamespaceSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class AbstractReader extends XMLReaderBase {
+
+	private static final Logger log = LoggerFactory.getLogger(AbstractReader.class);
 
 	/** Optimisation provides a single copy of the empty atts */
 	private final Attributes empty = new AttributesImpl();
@@ -153,10 +158,11 @@ public abstract class AbstractReader extends XMLReaderBase {
 		}
 
 		public void print(String message) {
-			if (printing) {
+			if (log.isDebugEnabled() && printing) {
+				StringBuilder indent = new StringBuilder();
 				for (int i = 0; i < depth; i++)
-					System.out.print("  ");
-				System.out.println(message);
+					indent.append("  ");
+				log.debug("{}{}", indent, message);
 			}
 		}
 	}
