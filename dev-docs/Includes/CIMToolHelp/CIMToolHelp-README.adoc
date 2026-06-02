@@ -105,6 +105,9 @@ The `toc.xml` table of contents defines 21 top-level help topics covering:
 |===
 | Topic | Description
 
+| Download
+| How to obtain and install CIMTool
+
 | Getting Started
 | How to create a CIMTool project
 
@@ -161,9 +164,6 @@ The `toc.xml` table of contents defines 21 top-level help topics covering:
 
 | Generating a Database Schema
 | Using profiles as a template for a database
-
-| CIMCheck / CIMCheck API
-| CIMCheck validation tool and its API
 
 | Change Log
 | A summary of changes and new features

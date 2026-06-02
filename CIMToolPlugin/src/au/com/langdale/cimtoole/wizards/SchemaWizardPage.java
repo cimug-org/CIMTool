@@ -61,12 +61,12 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 		}
 		//
 		shouldGenerateReport = new DependentCheckBoxBinding() {
-
 			@Override
 			public void refreshDependentCheckBoxes() {
 				boolean isGenerateReportSelected = getCheckBox().getSelection();
 				boolean isNormativeSelected = getContent().getButton("include-normative").getSelection();
 				//
+				/**  Remove the comments around this section once reports are ready post the 2.3.0
 				getContent().getButton("include-extensions").setEnabled(isGenerateReportSelected);
 				getContent().getButton("include-normative").setEnabled(isGenerateReportSelected);
 				if (!isGenerateReportSelected) {
@@ -78,6 +78,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					getContent().getButton("include-enterprise").setEnabled(isNormativeSelected);
 					getContent().getButton("include-market").setEnabled(isNormativeSelected);
 				}
+				*/
 			}
 		};
 		includeExtensions = new CheckBoxBinding(this.expectNewProject);
@@ -87,6 +88,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 				boolean isNormativeSelected = getCheckBox().getSelection();
 				boolean isGenerateReportSelected = getContent().getButton("generate-report").getSelection();
 				//
+				/**  Remove the comments around this section once reports are ready post 2.3.0
 				if (!isGenerateReportSelected) {
 					getContent().getButton("include-grid").setEnabled(false);
 					getContent().getButton("include-enterprise").setEnabled(false);
@@ -96,6 +98,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					getContent().getButton("include-enterprise").setEnabled(isNormativeSelected);
 					getContent().getButton("include-market").setEnabled(isNormativeSelected);
 				}
+				*/
 			}
 		};
 		includeGrid = new CheckBoxBinding(this.expectNewProject);
@@ -332,12 +335,22 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 						}
 					}
 				}
-				shouldGenerateReport.bind("generate-report", this);
-				includeNormative.bind("include-normative", this);
-				includeExtensions.bind("include-extensions", this);
-				includeGrid.bind("include-grid", this);
-				includeEnterprise.bind("include-enterprise", this);
-				includeMarket.bind("include-market", this);
+				//=================================================================================
+				// This next lines to be removed post 2.3.0 release once reports are ready
+				getButton("generate-report").setEnabled(false);
+				getButton("include-extensions").setEnabled(false);
+				getButton("include-normative").setEnabled(false);
+				getButton("include-grid").setEnabled(false);
+				getButton("include-enterprise").setEnabled(false);
+				getButton("include-market").setEnabled(false);
+				//=================================================================================
+				// Uncomment this next line at the time the the reports are ready...
+				//shouldGenerateReport.bind("generate-report", this);
+				//includeNormative.bind("include-normative", this);
+				//includeExtensions.bind("include-extensions", this);
+				//includeGrid.bind("include-grid", this);
+				//includeEnterprise.bind("include-enterprise", this);
+				//includeMarket.bind("include-market", this);
 				source.bind("source", this);
 				filename.bind("filename", this, source);
 				namespace.bind("namespace", presets, this);
@@ -348,8 +361,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setEnabled(false);
 					getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setEnabled(false);
 					// The next two must be initialized to disabled...
-					getButton("include-extensions").setEnabled(false);
-					getButton("include-normative").setEnabled(false);
+					//getButton("include-extensions").setEnabled(false);
+					//getButton("include-normative").setEnabled(false);
 				}
 			}
 
@@ -374,14 +387,16 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 						}
 
 						if (getButton("generate-report").isEnabled() && !isEAProject) {
-							getButton("generate-report").setSelection(false);
-							getButton("generate-report").setEnabled(false);
+							// uncomment when reports are ready after 2.3.
+							//getButton("generate-report").setSelection(false);
+							//getButton("generate-report").setEnabled(false);
 						} else if (!getButton("generate-report").isEnabled() && isEAProject) {
-							getButton("generate-report").setEnabled(true);
-							getButton("generate-report").setSelection(true);
+							// uncomment when reports are ready after 2.3.
+							//getButton("generate-report").setEnabled(true);
+							//getButton("generate-report").setSelection(true);
 						}
-						
-						shouldGenerateReport.refreshDependentCheckBoxes();
+						// uncomment when reports are ready after 2.3.0
+						//shouldGenerateReport.refreshDependentCheckBoxes();
 					}
 				}
 			}

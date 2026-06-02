@@ -71,7 +71,11 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 
 				@Override
 				protected void addBindings() {
-					getButton("v1").setSelection(true);				
+					getButton("v1").setSelection(true);		
+					// WIP TODO: Remove the next two line post 2.3.0 when ready to add enhanced spreadsheet import feature.
+					getButton("v1").setVisible(false);
+					getButton("v2").setVisible(false);
+					//
 				}
 
 				@Override

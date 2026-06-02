@@ -346,6 +346,10 @@ version in `cimtool-cli/pom.xml` must also be updated to match before running
 | CIMToolTest
 | `1.2.0`
 | Test suite; only increment when tests or test infrastructure are changed or added
+
+| io.ucaiug.slf4j.logback.binding
+| `1.0.0`
+| OSGi fragment bundle that wires SLF4J 2.x to Logback (see the *Dependencies on Other Projects* section); pure OSGi metadata with no Java source, versioned independently of the core product — increment only when the fragment's `MANIFEST.MF` or `META-INF/services` registration changes
 |===
 
 ===== Dormant Projects

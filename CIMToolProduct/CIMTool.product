@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="CIMTool 2.3.0.RC11" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.3.0.RC11" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="CIMTool 2.3.0" uid="au.com.langdale.cimtool.deployment" id="au.com.langdale.cimtool.product.ide" application="org.eclipse.ui.ide.workbench" version="2.3.0" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="cimtool-about.png"/>
@@ -317,7 +317,7 @@ See the GNU Lesser General Public License for more details.
    </plugins>
 
    <features>
-      <feature id="au.com.langdale.cimtoole.feature" version="1.9.1.qualifier"/>
+      <feature id="au.com.langdale.cimtoole.feature" version="2.3.0"/>
       <feature id="org.eclipse.emf" version="2.6.1.v20100914-1218"/>
       <feature id="org.eclipse.emf.codegen" version="2.6.0.v20100914-1218"/>
       <feature id="org.eclipse.emf.codegen.ecore" version="2.6.1.v20100914-1218"/>

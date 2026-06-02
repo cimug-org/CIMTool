@@ -243,6 +243,7 @@ The following projects maintain their own version lifecycle and should only be u
 | Kena | `3.4.0` | RDF/OWL abstraction library; versioned on its own API contract independent of the CIMTool release cycle. **When Kena's version changes, the `kena` dependency version in `cimtool-cli/pom.xml` must also be updated to match before running `install-jars.bat`.** |
 | com.cimphony.cimtoole | `1.1.0` | CIMphony extensions; versioned independently of the core product |
 | CIMToolTest | `1.2.0` | Test suite; only increment when tests or test infrastructure are changed or added |
+| io.ucaiug.slf4j.logback.binding | `1.0.0` | OSGi fragment bundle that wires SLF4J 2.x to Logback (see the **Dependencies on Other Projects** section); pure OSGi metadata with no Java source, versioned independently of the core product — increment only when the fragment's `MANIFEST.MF` or `META-INF/services` registration changes |
 
 #### Dormant Projects
 

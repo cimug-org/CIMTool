@@ -556,7 +556,7 @@
 			<!-- ================================================================================================================= -->
 			<!-- This next set of variables is purely for determining whether a:ComplexType (i.e. an abstract class) should be     -->
 			<!-- tagged with the <<error>> stereotype.                                                                             -->		
-			<xsl:variable name="isShadowClass" select="@isShadowClass"/>	
+			<xsl:variable name="isShadowClass" select="exists(@classShadowedByThisType)"/>	
 			<xsl:variable name="currentClass" select="@baseClass"/>
 			<xsl:variable name="fieldsCount">
 				<xsl:call-template name="count_fields">

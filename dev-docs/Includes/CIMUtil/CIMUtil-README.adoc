@@ -39,7 +39,7 @@ The key functional areas are:
 * *Profile model* - the CIM profile object model (`ProfileClass`, `ProfileModel`,
   `HierarchyModel`) and profile manipulation operations (reorganize, refactor,
   rename, remap, repair)
-* *XSLT transform engine* - 34 XSLT builders in `builders/` that generate
+* *XSLT transform engine* - 32 XSLT builders in `builders/` that generate
   diverse output artefacts (XSD, RDFS, OWL, JSON Schema, HTML, RTF, SQL, Java,
   Scala, C#, Avro, LinkML, PlantUML, AsciiDoc, and more) from a CIM profile
 * *Validation* - CIM/XML and Turtle instance document validation against a
@@ -61,10 +61,11 @@ CIMUtil/
 ├── build.properties                   ← PDE build configuration - source JAR, bin.includes
 ├── lib/                               ← Vendored third-party JARs (see Dependencies section)
 ├── builders/                          ← XSLT stylesheets and supporting resources
-│   ├── builders.json                  ← Builder registry - maps builder IDs to XSLT styles and output extensions
+│   ├── builders.json                  ← XSLT builder registry - maps the 32 registered XSLT builders to styles and output extensions
+│   ├── java-builders.json             ← JAVA builder registry - maps the 8 JAVA-based builders executed by cimtool-cli (see Builder Stylesheets section)
 │   ├── includes/                      ← Shared XSLT includes (e.g. namespace definitions)
 │   ├── adoc-themes/                   ← AsciiDoc theme files for report generation
-│   ├── *.xsl                          ← 34 XSLT builder stylesheets (see Builder Stylesheets section)
+│   ├── *.xsl                          ← XSLT builder stylesheets - the 32 builders registered in builders.json plus additional experimental/legacy stylesheets that are not registered
 │   └── default-copyright-template-*.txt ← Default copyright header templates
 ├── import-reports/                    ← AsciiDoc templates for the CIM Modelling Guide
 │   │                                     audit/compliance report generated into /Schema
@@ -238,12 +239,23 @@ Three additional Easy Rules extension JARs are physically present in `lib/` but 
 
 === Builder Stylesheets
 
-The `builders/` directory contains 34 XSLT builders registered in `builders.json`.
+The `builders/` directory contains 32 XSLT builders registered in `builders.json`.
 Each transforms a CIM profile's internal XML representation into a specific output
 artefact format. The builders are executed by Saxon HE 10.8 and are all XSLT 3.0
 compliant unless otherwise noted. For detailed documentation on individual builders,
 their NTE (Name/Type/Extension) settings, and usage guidance see the
 https://cimtool-builders.ucaiug.io/[CIMTool Builders Library].
+
+The directory also contains additional experimental and legacy `.xsl` stylesheets
+that are not registered in `builders.json`. These are not active builders and are
+not documented here.
+
+A second registry, `java-builders.json`, declares 8 *JAVA*-type builders that are
+implemented directly by CIMUtil Java generator classes rather than by XSLT
+stylesheets. They produce the OWL, RDFS, Turtle, and canonical profile-XML
+serializations and are registered for execution by `cimtool-cli`; see the
+link:../cimtool-cli/cimtool-cli-README.adoc[cimtool-cli README] for details. Because
+they are not XSLT, they are not listed in the stylesheet table below.
 
 [cols="2,2,4", options="header"]
 |===
@@ -301,20 +313,8 @@ draft-07.
 the JSON Schema draft-2020-12 specification. Use this builder when your toolchain
 supports the newer 2020-12 vocabulary.
 
-| `json-ld-context-json-beta.xsl`
-| `.context-json-beta.jsonld`
-| Generates a JSON-LD context document derived from a JSON Schema profile, enabling
-RDF-compatible JSON serialization of CIM instance data. Beta release targeting
-IEC 62361-104 JSON-LD serialization requirements.
-
-| `json-ld-context-rdfs.xsl`
-| `.context-rdfs-beta.jsonld`
-| Generates a JSON-LD context document derived from an RDFS profile, enabling
-RDF-compatible JSON serialization of CIM instance data. Beta release targeting
-IEC 62361-104 JSON-LD serialization requirements.
-
-| `apache-avro-schema.xsl`
-| `.avsc`
+| `apache-avro-schema-beta.xsl`
+| `.beta.avsc`
 | Generates an Apache Avro schema for a profile, enabling compact binary
 serialization of CIM instance data in high-throughput data pipeline contexts.
 Suitable for use with Kafka, Spark, and other Avro-compatible data platforms.
@@ -474,8 +474,10 @@ by `cimtool-cli`. Key classes:
 | Main entry point - initialises JUL logging suppression, delegates to `run()`
 
 | `CLIOptions`
-| Parses and validates command-line arguments (`--project-dir`, `--builder`,
-  `--output`, `--schema`, `--namespace`, `--help`, `--version`, `--list-builders`)
+| Parses and validates command-line arguments (`--project-dir`, `--profile`,
+  `--builder`, `--xslt`, `--output`, `--output-ext`, `--copyright-defaults`,
+  `--copyright-single-line`, `--copyright-multi-line`, `--help`, `--version`,
+  `--list-builders`)
 
 | `CLIProfileTransformer`
 | Orchestrates the headless transform pipeline - loads schema, loads profile,

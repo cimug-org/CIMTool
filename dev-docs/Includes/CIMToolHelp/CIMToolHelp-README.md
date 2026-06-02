@@ -94,6 +94,7 @@ The `toc.xml` table of contents defines 21 top-level help topics covering:
 
 | Topic | Description |
 | --- | --- |
+| Download | How to obtain and install CIMTool |
 | Getting Started | How to create a CIMTool project |
 | Browsing the CIM | Explore the CIM in CIMTool's browsing perspective |
 | Using CIMTool with Enterprise Architect | How to transfer a model from EA to CIMTool |
@@ -113,7 +114,6 @@ The `toc.xml` table of contents defines 21 top-level help topics covering:
 | Validation Cases | A full suite of CIM/XML validation test cases |
 | Validation Rules | The rule language used for CIM/XML validation and how to customise it |
 | Generating a Database Schema | Using profiles as a template for a database |
-| CIMCheck / CIMCheck API | CIMCheck validation tool and its API |
 | Change Log | A summary of changes and new features |
 
 

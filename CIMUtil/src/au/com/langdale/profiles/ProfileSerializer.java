@@ -1053,21 +1053,19 @@ public class ProfileSerializer extends AbstractReader {
 			elem = new Element("Root");
 			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
 			if (isShadowClass) {
-				elem.set("isShadowClass", Boolean.toString(isShadowClass));
-				OntResource classBeingShadowed = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
+				OntResource classShadowedByThisType = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
 						node.getBaseClass());
-				if (classBeingShadowed != null)
-					elem.set("classBeingShadowed", classBeingShadowed.getURI());
+				if (classShadowedByThisType != null)
+					elem.set("classShadowedByThisType", classShadowedByThisType.getURI());
 			}
 		} else if (node.isEnumerated()) {
 			elem = new Element("EnumeratedType");
 			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
 			if (isShadowClass) {
-				elem.set("isShadowClass", Boolean.toString(isShadowClass));
-				OntResource classBeingShadowed = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
+				OntResource classShadowedByThisType = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
 						node.getBaseClass());
-				if (classBeingShadowed != null)
-					elem.set("classBeingShadowed", classBeingShadowed.getURI());
+				if (classShadowedByThisType != null)
+					elem.set("classShadowedByThisType", classShadowedByThisType.getURI());
 			}
 		} else if (node.hasStereotype(UML.compound)) {
 			elem = new Element("CompoundType");
@@ -1075,11 +1073,10 @@ public class ProfileSerializer extends AbstractReader {
 			elem = new Element("ComplexType");
 			boolean isShadowClass = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
 			if (isShadowClass) {
-				elem.set("isShadowClass", Boolean.toString(isShadowClass));
-				OntResource classBeingShadowed = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
+				OntResource classShadowedByThisType = ShadowClassUtils.getClassBeingShadowed(ontologyURI + "#",
 						node.getBaseClass());
-				if (classBeingShadowed != null)
-					elem.set("classBeingShadowed", classBeingShadowed.getURI());
+				if (classShadowedByThisType != null)
+					elem.set("classShadowedByThisType", classShadowedByThisType.getURI());
 			}
 		}
 

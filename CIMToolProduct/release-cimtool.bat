@@ -54,7 +54,7 @@ REM  -----
 REM  release-cimtool.bat <export-root> <version-string>
 REM
 REM  Example:
-REM  release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0-RC11
+REM  release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0
 REM =============================================================================
 
 REM =============================================================================
@@ -114,7 +114,7 @@ if "%EXPORT_ROOT%"=="" (
     echo ERROR: Export root directory not specified.
     echo.
     echo Usage:   release-cimtool.bat ^<export-root^> ^<version-string^>
-    echo Example: release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0-RC11
+    echo Example: release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0
     exit /b 1
 )
 
@@ -122,7 +122,7 @@ if "%VERSION%"=="" (
     echo ERROR: Version string not specified.
     echo.
     echo Usage:   release-cimtool.bat ^<export-root^> ^<version-string^>
-    echo Example: release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0-RC11
+    echo Example: release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0
     exit /b 1
 )
 
