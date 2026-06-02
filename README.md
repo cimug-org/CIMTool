@@ -4,11 +4,11 @@
 
 ![image](https://github.com/user-attachments/assets/a89eff0d-deae-4541-be58-d59a8806a27e)
 
+## Project Corporate Sponsorship
 
-## Project Supporters
+[![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   
 
-[![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   [![image](docs/logos/project-supporter-statnett-logo.png)](https://www.statnett.no/en/)   [![image](docs/logos/project-supporter-ogs-logo.png)](https://www.opengrid.com/)
-
+AspenTech serves at the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug.  
 
 ## CIMTool Discussion Forums
 
@@ -33,6 +33,10 @@ For further details on how to use CIMTool to create and edit profiles based on t
   Instructions on packaging and deployment of **CIMTool** as an **Eclipse Product** can be  found at [CIMTool Packaging & Deployment Guide](https://cimtool.ucaiug.io/developers/package-deploy/)
 
   Note that these instructions are purely for those interested in participating in the development of **CIMTool**. They do not describe standard use of the tool for creating profiles.
+
+## Product Roadmap
+
+The CIMTool public roadmap is maintained on GitHub Projects. View the current release plan and backlog at [CIMTool Roadmap](https://github.com/orgs/cimug-org/projects/17).
 
 ## Latest Release
 
