@@ -22,6 +22,9 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A collection of small utilites for pretty printing nodes, triples
  * and associated things. The core functionality here is a static
@@ -34,6 +37,7 @@ import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
  * @version $Revision: 1.21 $ on $Date: 2007/01/02 11:52:14 $
  */
 public class Formater {
+	private static final Logger log = LoggerFactory.getLogger(Formater.class);
 	
 	public static final String NCNAME_REGEX = "[A-Za-z_][A-Za-z0-9-_.]*";
     
@@ -152,7 +156,7 @@ public class Formater {
      */
     public void printOut(Iterator it) {
         while (it.hasNext()) {
-            System.out.println("   " + print(it.next()));
+            log.debug("   {}", print(it.next()));
         }
     }
 }

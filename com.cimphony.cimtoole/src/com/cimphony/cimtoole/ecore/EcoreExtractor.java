@@ -1,8 +1,6 @@
 package com.cimphony.cimtoole.ecore;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,16 +23,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.Resource.Factory.Descriptor;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-
-import au.com.langdale.cimtoole.registries.ModelParser;
-import au.com.langdale.kena.ModelFactory;
-import au.com.langdale.kena.OntModel;
-import au.com.langdale.kena.OntResource;
-import au.com.langdale.xmi.UML;
-import au.com.langdale.xmi.XMIModel;
 
 import com.cimphony.cimtoole.CimphonyCIMToolPlugin;
 import com.cimphony.cimtoole.util.CIMToolEcoreUtil;
@@ -42,6 +32,13 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.OWL2;
 import com.hp.hpl.jena.vocabulary.XSD;
+
+import au.com.langdale.cimtoole.registries.ModelParser;
+import au.com.langdale.kena.ModelFactory;
+import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.xmi.UML;
+import au.com.langdale.xmi.XMIModel;
 
 public class EcoreExtractor extends XMIModel implements ModelParser{
 
@@ -121,7 +118,7 @@ public class EcoreExtractor extends XMIModel implements ModelParser{
 		OntResource parent = packageMap.get(p.getESuperPackage());
 		
 		String ns = p.getNsURI();
-		if( ns != null && ! ns.isEmpty()) {
+		if( ns != null && ! ns.isBlank()) {
 			if( ! ns.contains("#")) {
 				ns = ns + "#";
 			}

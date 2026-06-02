@@ -1,0 +1,46 @@
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +  Initial AsciiDoc editor configuration file - V1.0  +
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// 
+// Did not find any configuration files, so creating this at project root level.
+// If you do not like those files to be generated - you can turn it off inside Asciidoctor Editor preferences.
+// 
+// You can define editor specific parts here.
+// For example: with next line you could set imagesdir attribute to subfolder "images" relative to the folder where this config file is located.
+// :imagesdir: {asciidoctorconfigdir}/images
+:cimtool-cli-imagesdir: {asciidoctorconfigdir}/Includes/cimtool-cli/readme-images/
+:cimtoolfeature-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolFeature/readme-images/
+:cimtoolhelp-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolHelp/readme-images/
+:cimtoolplugin-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolPlugin/readme-images/
+:cimtoolproduct-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolProduct/readme-images/
+:cimtooltest-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolTest/readme-images/
+:cimtoolupdate-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolUpdate/readme-images/
+:cimutil-imagesdir: {asciidoctorconfigdir}/Includes/CIMUtil/readme-images/
+:com.cimphony.cimtoole-imagesdir: {asciidoctorconfigdir}/Includes/com.cimphony.cimtoole/readme-images/
+:csharpeftestproject-imagesdir: {asciidoctorconfigdir}/Includes/CSharpEFTestProject/readme-images/
+:io.ucaiug.slf4j.logback.binding-imagesdir: {asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
+:kena-imagesdir: {asciidoctorconfigdir}/Includes/Kena/readme-images/
+:rcputil-imagesdir: {asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
+//
+// A "debugging trick" is to remove the space between the variable name and the directory.
+// This will then explicitly display in the document what the path is that the variable
+// resolves to at whatever level in a directory hierarchy that the document it is at. 
+// Very useful when working with modularized documents that we want to correctly render
+// at the level the modularized adoc file is located. Simply uncomment one of the below
+// lines to render a debug of the full resolved directory...
+//
+//:debug-cimtool-cli-imagesdir:{asciidoctorconfigdir}/Includes/cimtool-cli/readme-images/
+//:debug-cimtoolfeature-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolFeature/readme-images/
+//:debug-cimtoolhelp-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolHelp/readme-images/
+//:debug-cimtoolplugin-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolPlugin/readme-images/
+//:debug-cimtoolproduct-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolProduct/readme-images/
+//:debug-cimtooltest-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolTest/readme-images/
+//:debug-cimtoolupdate-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolUpdate/readme-images/
+//:debug-cimutil-imagesdir:{asciidoctorconfigdir}/Includes/CIMUtil/readme-images/
+//:debug-com.cimphony.cimtoole-imagesdir:{asciidoctorconfigdir}/Includes/com.cimphony.cimtoole/readme-images/
+//:debug-csharpeftestproject-imagesdir:{asciidoctorconfigdir}/Includes/CSharpEFTestProject/readme-images/
+//:debug-io.ucaiug.slf4j.logback.binding-imagesdir:{asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
+//:debug-kena-imagesdir:{asciidoctorconfigdir}/Includes/Kena/readme-images/
+//:debug-rcputil-imagesdir:{asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
+// 
+// For more information please take a look at https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles

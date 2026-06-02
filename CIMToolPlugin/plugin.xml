@@ -173,6 +173,16 @@
             id="au.com.langdale.cimtoole.wizards.IncImportRuleset"
             name="Import Incremental Validation Rules">
       </wizard>
+      <wizard
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.wizards.ImportCIMToolProjects"
+            icon="icons/cimtool-icon.bmp"
+            id="au.com.langdale.cimtoole.wizards.ImportCIMToolProjects"
+            name="Import CIMTool Projects">
+         <description>
+            Import CIMTool projects into the workspace.
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -228,7 +238,7 @@
       <wizard
             category="au.com.langdale.cimtoole"
             class="au.com.langdale.cimtoole.wizards.NewProject"
-            icon="icons/icon.png"
+            icon="icons/cimtool-icon.bmp"
             id="au.com.langdale.cimtoole.wizards.NewProject"
             name="CIMTool Project"
             project="true">
@@ -276,14 +286,21 @@
             name="CIMTool Mappings">
       </wizard>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
+	<extension point="org.eclipse.ui.preferencePages">
+	  <!-- Top-level Parent node "CIMTool" -->
       <page
             name="CIMTool"
-            class="au.com.langdale.cimtoole.preferences.PreferencePage"
-            id="au.com.langdale.cimtoole.preferences.PreferencePage">
+            class="au.com.langdale.cimtoole.preferences.GeneralPreferencesPage"
+            id="au.com.langdale.cimtoole.preferences.GeneralPreferencesPage">
       </page>
-   </extension>
+	  <!-- Child Page under the top-level parent node. The "category" attribute references the "id" attribute of the parent. -->
+	  <page
+	  		name="PlantUML Builder Preferences"
+	        id="au.com.langdale.cimtoole.preferences.PlantUMLBuildersPreferencesPage"
+	        class="au.com.langdale.cimtoole.preferences.PlantUMLBuildersPreferencesPage"
+	        category="au.com.langdale.cimtoole.preferences.GeneralPreferencesPage">
+	  </page>
+	</extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
@@ -328,6 +345,22 @@
             id="au.com.langdale.cimtoole.views.Documentation"
             name="Documentation"
             restorable="true">
+      </view>
+      <view
+            name="CIMTool PlantUML Svg"
+            icon="platform:/plugin/net.sourceforge.plantuml.eclipse/icons/p5.gif"
+            category="au.com.langdale.cimtoole"
+            class="net.sourceforge.plantuml.eclipse.svg.PlantUmlSvgView"
+            id="net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView"
+            allowMultiple="true">
+      </view>
+      <view
+            name="Profile Preview"
+            icon="icons/cimtool-icon.bmp"
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.views.CurrentProfilePlantUmlSvgView"
+            id="au.com.langdale.cimtoole.views.CurrentProfilePlantUmlSvgView"
+            allowMultiple="false">
       </view>
    </extension>
    <extension

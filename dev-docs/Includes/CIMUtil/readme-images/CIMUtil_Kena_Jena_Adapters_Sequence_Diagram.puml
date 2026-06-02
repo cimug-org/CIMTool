@@ -1,0 +1,237 @@
+@startuml Kena Jena Adapters Sequence Diagram
+
+title CIMUtil/Kena - Jena Adapter Layer Sequence
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+participant "CIMTool\nApplication Code" as APP #LightSalmon
+participant "ModelFactory" as MF #LightBlue
+participant "OntModel" as OM #LightBlue
+participant "Jena Graph\n(Graph / MultiUnion\n/ InfGraph)" as GRAPH #LightYellow
+participant "Filter\n(Subjects / Wrapper\n/ UniqueSubjects etc.)" as FILT #LightGreen
+participant "OntResource\n/ Resource" as RES #LightBlue
+participant "Composition" as COMP #LightGreen
+participant "IO" as IO #LightCoral
+
+note over APP, IO
+    All CIMTool subsystems (xmi, profiles, validation, easyrules, CLI) interact with RDF data
+    exclusively through the Kena API. No subsystem calls Apache Jena directly. This layer
+    insulates the codebase from Jena's complexity and from potential future Jena version changes.
+end note
+
+== Model Creation ==
+
+APP -> MF : ModelFactory.createMem()
+activate MF
+MF -> GRAPH : Factory.createDefaultGraph()
+activate GRAPH
+GRAPH --> MF : plain in-memory Graph
+deactivate GRAPH
+MF -> OM : new OntModel(graph)
+activate OM
+OM --> APP : OntModel
+deactivate OM
+deactivate MF
+
+APP -> MF : ModelFactory.createTransInf()
+activate MF
+note right of MF
+    Used when transitive subclass/subproperty
+    inference is required. Wraps the plain
+    Graph in a TransitiveReasoner InfGraph.
+    Called by Composition.merge() to produce
+    the merged profile+schema model used
+    throughout the build pipeline.
+end note
+MF -> GRAPH : Factory.createDefaultGraph()
+activate GRAPH
+GRAPH --> MF : plain Graph
+deactivate GRAPH
+MF -> GRAPH : TransitiveReasoner.bind(graph)
+activate GRAPH
+note right of GRAPH
+    Produces an InfGraph that intercepts
+    find() calls to add transitive closure
+    results for rdfs:subClassOf and
+    rdfs:subPropertyOf triples.
+end note
+GRAPH --> MF : InfGraph (with transitive closure)
+deactivate GRAPH
+MF -> OM : new OntModel(infGraph)
+activate OM
+OM --> APP : OntModel (with inference)
+deactivate OM
+deactivate MF
+
+== Model Composition (merge) ==
+
+APP -> COMP : Composition.merge(modelA, modelB)
+activate COMP
+note right of COMP
+    Deliberately avoids growing the Graph
+    hierarchy on repeated merges. It first
+    decomposes both models by peeling off
+    any existing InfGraph or MultiUnion
+    layers to reach the raw underlying
+    Graphs before composing them.
+end note
+COMP -> COMP : add(union, modelA.getGraph())
+note right of COMP
+    Recursive decomposition:
+    - MultiUnion → extract base + sub-graphs
+    - InfGraph → getRawGraph()
+    - Plain Graph → addGraph() to union
+end note
+COMP -> COMP : add(union, modelB.getGraph())
+COMP -> MF : ModelFactory.createTransInf(multiUnion)
+activate MF
+MF -> GRAPH : TransitiveReasoner.bind(multiUnion)
+activate GRAPH
+GRAPH --> MF : InfGraph over union
+deactivate GRAPH
+MF --> COMP : merged OntModel
+deactivate MF
+COMP --> APP : merged OntModel\n(transitive inference over both graphs)
+deactivate COMP
+
+== Graph Query Pipeline (filter chain) ==
+
+note over APP, RES
+    This is the core architectural pattern of the Kena layer. OntModel query methods
+    delegate to Jena's Graph.find() which returns a raw Triple iterator. Kena's filter
+    classes transform that iterator into a typed OntResource iterator without copying data.
+end note
+
+APP -> OM : listSubjectsWithProperty(prop, value)
+activate OM
+OM -> GRAPH : graph.find(Node.ANY, prop.asNode(), value.asNode())
+activate GRAPH
+note right of GRAPH
+    Jena Graph.find() returns an
+    ExtendedIterator<Triple> — a lazy
+    iterator over all matching triples
+    in the store. No data is copied.
+end note
+GRAPH --> OM : ExtendedIterator<Triple>
+deactivate GRAPH
+OM -> FILT : new Subjects(tripleIterator)
+activate FILT
+note right of FILT
+    Subjects maps each Triple to
+    triple.getSubject() — extracting
+    just the subject Node.
+    UniqueSubjects additionally
+    de-duplicates via a HashSet.
+end note
+OM -> FILT : new Wrapper(this, subjectsIterator)
+note right of FILT
+    Wrapper implements ResIterator.
+    On each nextResource() call it
+    takes the next Node from the inner
+    iterator and calls
+    model.createResource(node) to
+    produce a bound OntResource.
+end note
+FILT --> OM : ResIterator (lazy, bound to model)
+deactivate FILT
+OM --> APP : ResIterator
+deactivate OM
+
+loop while resIterator.hasNext()
+    APP -> RES : resIterator.nextResource()
+    activate RES
+    RES -> FILT : inner.next() → Node
+    activate FILT
+    FILT --> RES : Node
+    deactivate FILT
+    RES -> OM : model.createResource(node)
+    activate OM
+    OM -> RES : new OntResource(node, this)
+    activate RES
+    RES --> OM : OntResource
+    deactivate RES
+    OM --> RES : OntResource bound to model
+    deactivate OM
+    RES --> APP : OntResource
+    deactivate RES
+end
+
+== Resource Property Access ==
+
+APP -> RES : ontResource.hasProperty(prop)
+activate RES
+note right of RES
+    OntResource delegates all property
+    access back to its bound OntModel
+    via triple pattern queries on the
+    underlying Graph. No property values
+    are cached — each call issues a fresh
+    graph.find() or graph.contains().
+end note
+RES -> GRAPH : graph.contains(node, prop.asNode(), Node.ANY)
+activate GRAPH
+GRAPH --> RES : boolean
+deactivate GRAPH
+RES --> APP : boolean
+deactivate RES
+
+APP -> RES : ontResource.getLabel() / getComment()
+activate RES
+RES -> GRAPH : graph.find(node, RDFS.label / RDFS.comment, ANY)
+activate GRAPH
+GRAPH --> RES : Triple (if present)
+deactivate GRAPH
+RES --> APP : String literal value (or null)
+deactivate RES
+
+APP -> RES : ontResource.getDomain() / getRange()
+activate RES
+RES -> GRAPH : graph.find(node, RDFS.domain / RDFS.range, ANY)
+activate GRAPH
+GRAPH --> RES : Triple
+deactivate GRAPH
+RES -> OM : model.createResource(triple.getObject())
+activate OM
+OM --> RES : OntResource (domain/range)
+deactivate OM
+RES --> APP : OntResource (domain or range class)
+deactivate RES
+
+== IO — Reading RDF into an OntModel ==
+
+APP -> IO : IO.read(model, inputStream, namespace, syntax)
+activate IO
+alt syntax is RDF_XML_WITH_NODEIDS
+    note right of IO
+        Custom path used to preserve blank
+        node identifiers across read/write
+        cycles (needed for split model I/O).
+        Uses the CIMTool RDFParser which
+        bridges Jena ARP to the Injector
+        interface, directing triples into
+        the OntModel graph directly.
+    end note
+    IO -> IO : new RDFParser(stream, ...,\nnew GraphInjector(model.getGraph()))
+    IO -> IO : rdfParser.run()
+    IO -> GRAPH : graph.add(triple) [per triple]
+    activate GRAPH
+    GRAPH --> IO
+    deactivate GRAPH
+else all other syntaxes (Turtle, RDF/XML, N3)
+    note right of IO
+        Standard path: wraps the OntModel's
+        underlying Graph in a Jena Model
+        adapter and delegates to Jena's
+        built-in reader for the syntax.
+    end note
+    IO -> GRAPH : ModelFactory.createModelForGraph\n(model.getGraph()).read(stream, namespace, syntax)
+    activate GRAPH
+    GRAPH --> IO
+    deactivate GRAPH
+end
+IO --> APP : (model populated in-place)
+deactivate IO
+
+@enduml

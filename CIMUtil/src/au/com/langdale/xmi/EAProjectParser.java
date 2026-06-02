@@ -4,12 +4,19 @@
  */
 package au.com.langdale.xmi;
 
+import au.com.langdale.easyrules.rules.RuleViolation;
 import au.com.langdale.kena.OntModel;
 
+import java.util.List;
+
 public interface EAProjectParser {
-	
+
 	public void parse() throws EAProjectParserException;
 
 	public OntModel getModel();
 	
+	public StereotypedNamespaces getStereotypedNamespaces();
+
+	public List<RuleViolation> getRuleViolations();
+
 }

@@ -1,0 +1,41 @@
+[[Enumeration_Rules]]
+==== Enumeration Rules [Section 5.7]
+
+Enumeration literals are attributes within an *«enumeration»* type
+
+The following UML attribute features are used in CIM:
+
+- Name, always used and must be unique among all levels of specialisation.
+- UML stereotype *«enum»*.
+- (enumeration literal has no type by definition).
+- (enumeration literal scope is public by definition).
+- (enumeration literal has no multiplicity by definition).
+- Initial value, if used, denotes a code that has semantic binding. If used, the code must be unique among all the codes for literals within the containing enumeration type. Also, either all or no literals within an enumeration type have a code.
+- Documentation. The documentation should not use or rely upon special formatting. Plain text is assumed. It is suggested to avoid special characters here also.
+
+Other than *«enum»* or *«deprecated»* attribute stereotype can temporarily be used to describe the development state of the attribute or use case that initiated the creation of the attribute. Once the literal is fully incorporated in the model, the stereotype is removed.
+
+Like for attributes, literal names are unique within a classifier and Enterprise Architect will enforce this.
+
+There is no ordering required or reinforced; the order found in the UML model will be the order of printing.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule084]]Rule084 | A CIM enumeration shall be a UML class with the *«enumeration»* stereotype.
+| [[Rule085]]Rule085 | All enumeration classes shall have unique names.
+| [[Rule086]]Rule086 | Names for enumeration literals shall use the Lower Camel Case naming convention.
+| [[Rule087]]Rule087 | Names for enumeration literals shall be British English names.
+| [[Rule088]]Rule088 | Enumeration literal names must always be used.
+| [[Rule089]]Rule089 | Enumeration literals must be unique among all levels of specialisation.
+| [[Rule090]]Rule090 | All enumeration literals shall use the stereotype *«enum»*.
+| [[Rule091]]Rule091 | Enumeration literals shall have no datatype (by UML definition).
+| [[Rule092]]Rule092 | Enumeration literals scope is public (by UML definition).
+| [[Rule093]]Rule093 | Enumeration literals have no multiplicity (by UML definition).
+| [[Rule094]]Rule094 | In instances where an initial value for enumeration literals is used, they shall denote a code that has semantic binding.
+| [[Rule095]]Rule095 | In instances where an initial value for enumeration literals is used, the code must be unique among all the codes for enumeration literals within the containing CIM class.
+| [[Rule096]]Rule096 | Either all or no enumeration literals within a CIM type shall have a code.
+
+NOTE: Some of the existing CIM UML enumerations do not comply with this rule because changes would break existing integrations.
+
+|===

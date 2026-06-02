@@ -1,0 +1,40 @@
+[[Element_Description_Rules]]
+==== Element Description Rules [Section 5.9]
+
+Make sure to add a description to the UML elements (package, diagram, class, attribute, association ends etc.) when creating them. The description shall explain the meaning of the entity as clearly as possible. It is often useful to search dictionaries and the web for good descriptions.
+
+Use full sentences with proper upper case start and ending period. These get put into IEC documents and must conform to standard editing of such a document. Any references to standards should be specified in a manner compatible with inclusion in IEC documents. The same is true of units, variable names, or other IEC editorial policies.
+
+Make sure to update the description every time you do a modification to existing element (e.g., when changing name of an association end or a class, do extended search in the overall model and ensure to update the in-text references to the element whose name changes).
+
+Document the element itself, not its related or contained elements. Details of attributes should be documented on the attributes themselves, rather than on the class that contains them.
+
+Document the purpose of the attribute. Avoid "This attribute is used ..." or similar.
+
+Document the purpose of association end. Avoid "A is related to one or more B" since UML shows it already.
+
+Avoid using CIM class names in the description/notes. For example, prefer “usage point” over “UsagePoint”. In some rare cases an explicit reference to an attribute may be required for clarity (e.g., “phase information is available in ‘Terminal.phases’.”), but such references create a maintenence problem.
+
+Avoid using mark-up in the documentation (e.g., bold, lists, superscripts). Note this means avoid using variable names in equations in the text to also conform to the IEC documentation rules which require italic type for variable names.
+
+[%header,width=100%,cols="10%a,90%a"]
+|===
+| RuleID | Description
+| [[Rule104]]Rule104 | All CIM packages, classes, and attributes shall contain a description in the 'Element Notes' field in Enterprise Architect (i.e. the 'Element Notes' field shall not be blank).
+| [[Rule105]]Rule105 | The description shall explain the meaning of the model element as clearly as possible. +
+
+NOTE: If the existing description is ambiguous or unclear, immediately file a CIM issue.
+| [[Rule106]]Rule106 | Element descriptions shall use full sentences with proper uppercase words and ending with a period.
+| [[Rule107]]Rule107 | Any references to standards should be specified in a manner compatible with inclusion in IEC documents. The same is true of units, variable names, or other IEC editorial policies.
+| [[Rule108]]Rule108 | Element descriptions shall be updated every time a modification is made to existing model elements (e.g., when changing name of an association end or a class, do extended search in the overall model and ensure to update the in-text references to the element whose name changes).
+| [[Rule109]]Rule109 | Element descriptions shall describe the element itself, not its related or contained elements (e.g., descriptions of attributes should be documented with the attributes themselves, rather than with the description of the class that contains them).
+| [[Rule110]]Rule110 | Attribute descriptions shall describe the purpose of the attribute. Avoid describing how the attribute is used.
+| [[Rule111]]Rule111 | Association descriptions shall describe the purpose of association ends. Avoid "A is related to one or more B" since the diagrams already show the relationship.
+| [[Rule112]]Rule112 | The use of CIM class names in element descriptions shall be avoided. For example, use “usage point” instead of “UsagePoint”.
+| [[Rule113]]Rule113 | In some rare cases an explicit reference to an attribute may be required for clarity (e.g., “phase information is available in ‘Terminal.phases’.”), but such references create data synchronization challenges.
+| [[Rule114]]Rule114 | Avoid using mark-up in element descriptions (e.g., bold, lists, superscripts). 
+
+NOTE: This means avoid using variable names in equations in the text to also conform to the IEC documentation rules which require italic type for variable names.
+
+|===
+

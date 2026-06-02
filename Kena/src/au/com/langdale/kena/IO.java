@@ -21,29 +21,30 @@ import com.hp.hpl.jena.util.FileUtils;
 
 public class IO {
 
-	public static void read(OntModel model, InputStream contents, String namespace,	String syntax) {
-		if( syntax.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())){
-			RDFParser parser = new RDFParser(contents, null, namespace, new GraphInjector(model.getGraph()), null, false);
+	public static void read(OntModel model, InputStream contents, String namespace, String syntax) {
+		if (syntax.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
+			RDFParser parser = new RDFParser(contents, null, namespace, new GraphInjector(model.getGraph()), null,
+					false);
 			parser.run();
-		}
-		else
+		} else {
 			ModelFactory.createModelForGraph(model.getGraph()).read(contents, namespace, syntax);
+		}
 	}
 
 	public static void write(OntModel model, OutputStream contents, String namespace, String syntax, Map style) {
 		Model stage = ModelFactory.createModelForGraph(model.getGraph());
 		stage.setNsPrefixes(model.getNsPrefixMap());
-		
+
 		RDFWriter writer;
-		
-		if( syntax.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
+
+		if (syntax.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
 			writer = stage.getWriter(Format.RDF_XML.toFormat());
 			writer.setProperty("longid", Boolean.TRUE);
-		}
-		else 
+		} else {
 			writer = stage.getWriter(syntax);
-		
-		if( style != null ) {
+		}
+
+		if (style != null) {
 			for (Iterator it = style.keySet().iterator(); it.hasNext();) {
 				String key = (String) it.next();
 				writer.setProperty(key, style.get(key));
@@ -51,49 +52,54 @@ public class IO {
 		}
 		writer.write(stage, contents, namespace);
 	}
-	
-	public static void write(OntModel model, OutputStream contents, String namespace, String format, Map style, String copyright) {
-		
+
+	public static void write(OntModel model, OutputStream contents, String namespace, String format, Map style,
+			String copyright) {
+
 		/**
-		 *  Given that a copyright has been provided this method handles the showXmlDeclaration style
-		 *  setting in a slightly different manner. If this setting is both specified in the style map
-		 *  and has a value of "true" we handle the printing of both the XML declaration header and the 
-		 *  copyright outside of the normal writer.write() call. Note that we always set the parameter 
-		 *  to "false" as we intentionally want to ensure that Jena's RDFWriter does not also add a 
-		 *  second instance of the XML declaration in the output that is written.
+		 * Given that a copyright has been provided this method handles the
+		 * showXmlDeclaration style setting in a slightly different manner. If this
+		 * setting is both specified in the style map and has a value of "true" we
+		 * handle the printing of both the XML declaration header and the copyright
+		 * outside of the normal writer.write() call. Note that we always set the
+		 * parameter to "false" as we intentionally want to ensure that Jena's RDFWriter
+		 * does not also add a second instance of the XML declaration in the output that
+		 * is written.
 		 */
-		Boolean showXmlDeclaration = Boolean.valueOf((style != null && style.containsKey("showXmlDeclaration") ? (String) style.get("showXmlDeclaration") : "false"));
+		Boolean showXmlDeclaration = Boolean.valueOf(
+				(style != null && style.containsKey("showXmlDeclaration") ? (String) style.get("showXmlDeclaration")
+						: "false"));
 		style.put("showXmlDeclaration", "false"); // We set to false
-		
+
 		Model stage = ModelFactory.createModelForGraph(model.getGraph());
 		stage.setNsPrefixes(model.getNsPrefixMap());
-		
+
 		RDFWriter writer;
-		if( format.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
+		if (format.equals(Format.RDF_XML_WITH_NODEIDS.toFormat())) {
 			writer = stage.getWriter(Format.RDF_XML.toFormat());
 			writer.setProperty("longid", Boolean.TRUE);
-		}
-		else 
+		} else {
 			writer = stage.getWriter(format);
-		
-		if( style != null ) {
+		}
+
+		if (style != null) {
 			for (Iterator it = style.keySet().iterator(); it.hasNext();) {
 				String key = (String) it.next();
 				writer.setProperty(key, style.get(key));
 			}
 		}
-		
+
 		Writer out = FileUtils.asUTF8(contents);
-		PrintWriter pw = (out instanceof PrintWriter ? (PrintWriter) out : new PrintWriter( out ));
-		
+		PrintWriter pw = (out instanceof PrintWriter ? (PrintWriter) out : new PrintWriter(out));
+
 		// For an RDFWRiter we only included the copyright for XML-based output...
 		if (showXmlDeclaration && Format.isXML(format)) {
 			StringBuffer declaration = new StringBuffer();
-			declaration.append("<?xml version=" + "\"1.0\"" + "?>").append("\n");
-			
+			declaration.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>").append("\n");
+
 			/**
-			 * Since this is specifically a copyright for an RDF XML profile we utilize
-			 * a standard XML compliant comment to "host" the copyright notice.
+			 * Since this is specifically a copyright for an RDF XML profile we utilize a
+			 * standard XML compliant comment to "host" the copyright notice.
 			 */
 			if (copyright != null && !"".equals(copyright)) {
 				declaration.append("<!-- ").append("\n");
@@ -102,7 +108,7 @@ public class IO {
 			}
 			pw.println(declaration);
 		}
-		
+
 		writer.write(stage, pw, namespace);
 	}
 
@@ -118,15 +124,15 @@ public class IO {
 		}
 
 		public void addObjectProperty(Object subj, String pred, Object obj) {
-			graph.add(Triple.create((Node)subj, Node.createURI(pred), (Node)obj));
+			graph.add(Triple.create((Node) subj, Node.createURI(pred), (Node) obj));
 		}
 
 		public void addDatatypeProperty(Object subj, String pred, Object obj) {
-			graph.add(Triple.create((Node)subj, Node.createURI(pred), (Node)obj));
+			graph.add(Triple.create((Node) subj, Node.createURI(pred), (Node) obj));
 		}
 
 		public Object createAnon(String id) {
-			if(id != null)
+			if (id != null)
 				return Node.createAnon(AnonId.create(id));
 			else
 				return Node.createAnon();
@@ -137,27 +143,24 @@ public class IO {
 		}
 
 		public Injector createQuote(Object node) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		public Object createLiteral(String value, String lang, String type, boolean isXML) {
-	        String dtURI = type;
-	        if (dtURI == null)
-	            return Node.createLiteral(value, lang, false);
+			String dtURI = type;
+			if (dtURI == null)
+				return Node.createLiteral(value, lang, false);
 
-	        if (isXML) 
-	            return Node.createLiteral(value, null, true);
+			if (isXML)
+				return Node.createLiteral(value, null, true);
 
-	        RDFDatatype dt = TypeMapper.getInstance().getSafeTypeByName(dtURI);
-	        return Node.createLiteral(value, null, dt);	
+			RDFDatatype dt = TypeMapper.getInstance().getSafeTypeByName(dtURI);
+			return Node.createLiteral(value, null, dt);
 		}
 
 		public void setPrefix(String prefix, String namespace) {
-			// TODO Auto-generated method stub
-			
 		}
-		
+
 		public void close() throws IOException {
 			// the graph is ready
 		}

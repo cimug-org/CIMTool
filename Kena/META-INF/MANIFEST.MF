@@ -2,24 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
-Bundle-Version: 3.3.3
+Bundle-Version: 3.4.0
 Bundle-Vendor: Langdale Consultants
-Bundle-RequiredExecutionEnvironment: JavaSE-20
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: kena.jar,
  lib/arq-2.8.4.jar,
  lib/icu4j-71.1.jar,
- lib/iri-0.8-sources.jar,
  lib/iri-0.8.jar,
- lib/jena-2.6.3-tests.jar,
  lib/jena-2.6.3.jar,
- lib/junit-4.5.jar,
- lib/log4j-1.2.13.jar,
  lib/lucene-core-2.3.1.jar,
- lib/slf4j-api-1.5.8.jar,
- lib/slf4j-log4j12-1.5.8.jar,
  lib/stax-api-1.0.1.jar,
  lib/wstx-asl-3.2.9.jar,
- lib/xercesImpl-2.7.1.jar
+ lib/xercesImpl-2.7.1.jar,
+ lib/log4j-over-slf4j-2.0.17.jar
+Import-Package: org.slf4j
 Export-Package: au.com.langdale.inference,
  au.com.langdale.kena,
  au.com.langdale.sax,
@@ -145,5 +141,3 @@ Export-Package: au.com.langdale.inference,
  com.hp.hpl.jena.xmloutput.impl,
  org.apache.xerces.util
 Automatic-Module-Name: au.com.langdale.kena
-Import-Package: org.eclipse.core.runtime,
- org.eclipse.swt.graphics

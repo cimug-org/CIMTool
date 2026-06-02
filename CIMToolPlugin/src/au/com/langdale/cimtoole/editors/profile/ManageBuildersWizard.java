@@ -36,7 +36,7 @@ public class ManageBuildersWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		setWindowTitle("Mangage XSLT Transform Builders");
+		setWindowTitle("Manage XSLT Transform Builders");
 		page = new ManageBuildersWizardPage();
 		addPage(page);
 	}
@@ -54,10 +54,10 @@ public class ManageBuildersWizard extends Wizard {
 		};
 	}
 
-	public static IWorkspaceRunnable deleteTransformBuilder(final String buildletKey) {
+	public static IWorkspaceRunnable deleteTransformBuilder(final TransformBuildlet buildlet) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				ProfileBuildletConfigUtils.deleteTransformBuilderConfigEntry(buildletKey);
+				ProfileBuildletConfigUtils.deleteTransformBuilderConfigEntry(buildlet);
 				/**
 				 * Given that we've imported a new buildlet, we need to reset the "cached"
 				 * available profile buildlets.
@@ -72,7 +72,7 @@ public class ManageBuildersWizard extends Wizard {
 
 		switch (page.getSelectedAction()) {
 		case DELETE:
-			Jobs.runInteractive(deleteTransformBuilder(page.getTranformBuildlet().getStyle()), null, getContainer(),
+			Jobs.runInteractive(deleteTransformBuilder(page.getTranformBuildlet()), null, getContainer(),
 					getShell());
 			ProfileBuildletRegistryManager.fireBuildersChanged();
 			break;

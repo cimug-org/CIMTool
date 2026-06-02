@@ -27,6 +27,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 
+import com.cimphony.cimtoole.util.CIMToolEcoreUtil;
+
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
@@ -35,8 +37,6 @@ import au.com.langdale.profiles.ProfileClass;
 import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.profiles.SchemaGenerator;
 import au.com.langdale.xmi.UML;
-
-import com.cimphony.cimtoole.util.CIMToolEcoreUtil;
 
 public class EcoreGenerator extends SchemaGenerator {
 
@@ -411,7 +411,7 @@ public class EcoreGenerator extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitDatatypeProperty(String uri, String base, String domain,
+	protected void emitDatatypeProperty(String uri, OntResource baseProp, String domain, 
 			String type, String xsdtype, boolean required) {
 		EAttribute attr = coreFactory.createEAttribute();
 		if (index.eDataTypes.containsKey(type)) {
@@ -531,8 +531,10 @@ public class EcoreGenerator extends SchemaGenerator {
 	}
 
 	@Override
-	protected void emitObjectProperty(String uri, String base, String domain,
-			String range, boolean required, boolean functional) {
+	protected void emitObjectProperty(String uri, OntResource prop, String domain,
+			String range, PropertySpec info) {
+		boolean required = info.required;
+		boolean functional = info.functional;
 		if (index.eClasses.containsKey(domain) && index.eClasses.containsKey(range)) {
 			EReference ref = coreFactory.createEReference();
 			EClass klass = index.eClasses.get(domain);
@@ -591,7 +593,7 @@ public class EcoreGenerator extends SchemaGenerator {
 
 	@Override
 	protected void emitRestriction(String uri, String domain, boolean required,
-			boolean functional) {
+			boolean functional, int minCard, int maxCard) {
 		//Do nothing
 	}
 

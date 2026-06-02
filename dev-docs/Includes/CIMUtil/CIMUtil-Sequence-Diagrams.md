@@ -1,0 +1,381 @@
+# CIMUtil - Architecture & Sequence Diagram Reference
+
+This document provides a guided architectural overview of the six major subsystems
+within `CIMUtil`, each illustrated by a sequence diagram showing the key runtime
+interactions between classes. The diagrams are intended to help new developers
+quickly build a mental model of how the subsystems fit together and how control
+flows through each one.
+
+The six subsystems are not independent - they form a layered pipeline. At the
+bottom is the **Kena/Jena Adapter** layer, which all other subsystems use for RDF
+graph operations. Above it sits the **XMI Import** subsystem that reads EA project
+and XMI files into an `OntModel`. The **EasyRules** compliance engine fires during
+and after import. The **Profiles** subsystem operates on the resulting schema model
+to build, manipulate, and transform CIM profiles. The **CLI** subsystem provides a
+headless entry point into the profiles pipeline. The **Validation** subsystem
+applies rule-based inference engines to validate CIM/XML instance documents and
+profile consistency.
+
+> **Note:** All sequence diagram SVG files are located in the `readme-images/`
+> subfolder under the `CIMUtil/` project root. The corresponding `.puml` PlantUML
+> source files are also present in `readme-images/` and serve as the editable
+> source of truth for each diagram.
+
+The diagram source files and their rendered SVGs are paired as follows:
+
+| PlantUML Source | Rendered SVG |
+| --- | --- |
+| `readme-images/CIMUtil_XMI_Import_Sequence_Diagram.puml` | `readme-images/CIMUtil_XMI_Import_Sequence_Diagram.svg` |
+| `readme-images/CIMUtil_EasyRules_CIM_Modelling_Guide_Compliance_Sequence_Diagram.puml` | `readme-images/CIMUtil_EasyRules_CIM_Modelling_Guide_Compliance_Sequence_Diagram.svg` |
+| `readme-images/CIMUtil_Profile_Transformation_Sequence_Diagram.puml` | `readme-images/CIMUtil_Profile_Transformation_Sequence_Diagram.svg` |
+| `readme-images/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.puml` | `readme-images/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.svg` |
+| `readme-images/CIMUtil_Validation_Sequence_Diagram.puml` | `readme-images/CIMUtil_Validation_Sequence_Diagram.svg` |
+| `readme-images/CIMUtil_Kena_Jena_Adapters_Sequence_Diagram.puml` | `readme-images/CIMUtil_Kena_Jena_Adapters_Sequence_Diagram.svg` |
+
+
+
+## 1. XMI / EA Project Import
+
+The XMI import subsystem is responsible for reading CIM schema sources - Sparx
+Enterprise Architect project files (`.eap`, `.eapx`, `.qea`, `.qeax`) and XMI
+exports - and producing a raw `OntModel` that the rest of the pipeline can work
+with.
+
+### Key Classes
+
+**`EAProjectParserFactory`** — Selects the concrete parser implementation based on
+file extension. `.eap` / `.eapx` files use `EAPParser` (UCanAccess JDBC over MS
+Access); `.qea` / `.qeax` files use `QEAParser` (SQLite JDBC).
+
+**`AbstractEAProjectParsor`** — The abstract base for all EA database parsers. Extends
+`XMIModel` and implements `EAProjectParser`. Its `parse()` method drives the full
+EA database read sequence: `dbInit`, `loadStereotypesCache`,
+`initializeDBModelRulesValidator`, `loadTagValuesCaches`, `gatherPackageIDs`,
+`parsePackages`, `parseClasses`, `parseAssociations`, `parseAttributes`.
+
+**`XMIModel`** — The low-level OWL graph builder. Receives calls from the
+`parseXxx()` methods and emits RDF triples into the Kena `OntModel` being
+assembled.
+
+**`CIMInterpreterImpl`** — Post-processes the raw `OntModel` produced by the
+EA parser through a four-stage pipeline: Stage 1 (prune and label), Stage 3
+(URI translation via `Translator`), Stage 3 post-processing (stereotypes,
+attributes, comments), and Stage 4 (optional shadow extension merging via
+`ExtensionsTranslator`).
+
+**`Translator`** — Renames all XMI-internal resource URIs (e.g. `EAID_xxxx` or
+`xuid#nnn`) to proper CIM namespace URIs. Runs in two passes to handle both
+forward and back-references.
+
+**`CIMInterpreterResult`** — The value object returned by `CIMInterpreterImpl`. Holds
+the final translated `OntModel` and the combined list of `RuleViolation` instances
+from both the EA database validation phase and the OWL model validation phase.
+
+### Two Import Paths
+
+**Path A - EA Project** (`.eap`, `.eapx`, `.qea`, `.qeax`) — The EA database is
+read via JDBC. The `AbstractEAProjectParsor` queries the EA internal tables
+(`t_package`, `t_object`, `t_connector`, `t_attribute`) to build the raw
+`OntModel`. `CIMInterpreterImpl` then post-processes it. This is the primary
+path for real CIM model work.
+
+**Path B - XMI file** (`.xmi`) — The EA database path is bypassed entirely.
+`XMIParser` drives a SAX-based parse using the `XMLMode` / `XMLInterpreter`
+framework from Kena's `sax` package. `LegacyCIMInterpreterImpl` applies a
+simplified post-processing pipeline without the EA-specific namespace resolution.
+
+> **Tip:** Right-click the diagram and select **Open image in new tab** to view it
+> at full size with browser zoom support.
+
+![XMI Import Sequence Diagram](readme-images/CIMUtil_XMI_Import_Sequence_Diagram.svg)
+
+
+
+## 2. EasyRules - CIM Modelling Guide Compliance
+
+The EasyRules subsystem implements the IEC CIM Modelling Guide compliance checker.
+It contains over 100 rules organised into categories matching the IEC standard
+document structure. It operates in two distinct phases during import, each firing
+against a different data representation.
+
+### Key Classes
+
+**`CIMModellingGuideDBRulesValidator`** — Fires during EA database parsing
+(`AbstractEAProjectParsor`). Validates JDBC `ResultSet` rows combined with
+`OntResource` facts. Contains four specialised rule engines targeting packages,
+classes/enumerations, attributes/enum literals, and associations. Rules at this
+phase can also perform optional self-healing corrections when the **self heal on
+import** project setting is enabled.
+
+**`CIMModellingGuideRulesValidator`** — Fires after `CIMInterpreterImpl` has
+completed Stage 3 post-processing, before shadow extension merging. Validates the
+fully translated OWL `OntModel`. Contains nine specialised rule engines targeting
+all model element categories. Each engine carries a `DefaultRuleListener` that
+collects invocation statistics.
+
+**`DBBaseRule` / `OntResourceBaseRule`** — Abstract base classes for the two rule
+families. Both extend `BaseRule` which provides access to `@RuleMetadata`
+annotations, placeholder value resolution for error message templates, and
+AsciiDoc styling helpers for the generated compliance report.
+
+**`RuleViolation`** — The immutable value object produced by every fired rule.
+Carries the rule ID, composite rule ID, type, category, error message, resource
+URI, package hierarchy, severity, and a map of placeholder values used to
+render the message into the compliance report.
+
+### Two-Phase Validation Sequence
+
+**Phase 1 (DB Validation)** — `AbstractEAProjectParsor.parse()` fires
+`CIMModellingGuideDBRulesValidator` as each EA element is read from the database.
+Violations are accumulated on the parser and returned via `getRuleViolations()`.
+
+**Phase 2 (OWL Validation)** — `CIMInterpreterImpl.postProcess()` fires
+`CIMModellingGuideRulesValidator` against the translated `OntModel`.
+
+**Phase 3 (Merge)** — `Task.parseEAProject()` merges DB violations from Phase 1 into
+the `CIMInterpreterResult` alongside OWL violations from Phase 2. The combined
+list is passed to `CIMModellingGuideViolationsReportGenerator.generateReport()` to
+produce the AsciiDoc compliance report written to the project's `/Schema` folder.
+
+> **Tip:** Right-click the diagram and select **Open image in new tab** to view it
+> at full size with browser zoom support.
+
+![EasyRules Compliance Sequence Diagram](readme-images/CIMUtil_EasyRules_CIM_Modelling_Guide_Compliance_Sequence_Diagram.svg)
+
+
+
+## 3. Profiles - Profile Model and XSLT Transform Pipeline
+
+The profiles subsystem provides the CIM profile domain object model and the
+two pipelines for generating output artefacts from a profile: the XSLT transform
+pipeline (the primary path for all 41 builders) and the direct `SchemaGenerator`
+path (for RDFS and OWL output).
+
+### Key Classes
+
+**`ProfileModel`** — The root model object that holds the profile `OntModel` and the
+background schema `OntModel`. Constructs a `Refactory` internally and exposes the
+profile tree as a hierarchy of typed node classes (`CatalogNode`, `EnvelopeNode`,
+`MessageNode`, `ElementNode`, etc.) for serialization.
+
+**`Refactory`** — The central profile editing facade. Wraps both the profile and
+background `OntModel` instances and provides all operations for adding, removing,
+and reorganising classes and properties in the profile. Acts as the bridge between
+the raw OWL graph and the `ProfileClass` domain object layer.
+
+**`ProfileClass`** — Wraps an `OntResource` and exposes the profile-level view of a
+CIM class: `getBaseClass()`, `getProperties()`, `getPropertyInfo()` (cardinality,
+type), `getSuperClasses()` / `getSubClasses()`, `isRestrictedEnum()`, `isUnion()`.
+Central to both the XSLT and `SchemaGenerator` pipelines.
+
+**`ProfileSerializer`** — Extends `AbstractReader` - it *is* the SAX `XMLReader`
+that Saxon uses as its input source. When Saxon calls `parse()` during the XSLT
+transformation, `ProfileSerializer` walks the `ProfileModel` tree and emits SAX
+events that the XSLT stylesheet processes to produce the output format.
+
+**`SchemaGenerator`** — Abstract base for the direct RDFS/OWL output path
+(`OWLGenerator`, `RDFSGenerator`). Traverses `ProfileClass` objects directly via
+`scanProfiles()` / `scanProperties()` and emits OWL/RDFS triples into a result
+`OntModel`, bypassing the SAX + XSLT pipeline entirely.
+
+**`Reorganizer` / `ProfileReorganizer` / `SchemaReorganizer`** — Apply a structural
+normalisation pass over the profile `OntModel` before either pipeline runs,
+ensuring cardinalities and class hierarchies conform to IEC 61970-501 rules.
+
+### XSLT Transform Pipeline
+
+The primary artefact generation pipeline works as follows:
+
+1. `ProfileBuildlets` loads the `.owl` profile file and the background schema into `OntModel` instances.
+2. A `ProfileModel` is constructed and given both models, triggering internal `Refactory` creation.
+3. A `ProfileSerializer` is configured with base URI, copyright text, builder parameters, namespace prefixes, and the compiled XSLT stylesheet.
+4. `ProfileSerializer.write(outputStream)` is called. Saxon drives the transformation by calling `parse()` on the serializer as its SAX source.
+5. `ProfileSerializer.emit()` walks the `ProfileModel` node tree, reading `ProfileClass` properties and cardinalities, firing SAX events that the XSLT processes to produce the output file.
+
+> **Tip:** Right-click the diagram and select **Open image in new tab** to view it
+> at full size with browser zoom support.
+
+![Profile Transformation Sequence Diagram](readme-images/CIMUtil_Profile_Transformation_Sequence_Diagram.svg)
+
+
+
+## 4. CLI - Command-Line Profile Transformation
+
+The CLI subsystem provides a headless entry point into the profiles transform
+pipeline, enabling CIMTool profile transformations to run outside Eclipse - for
+example in CI/CD pipelines or batch processing scripts. It is packaged as a
+standalone uber JAR by the `cimtool-cli` Maven project.
+
+### Key Classes
+
+**`CIMToolCLI`** — Main entry point. Suppresses verbose UCanAccess / HSQLDB logging,
+delegates to `run()`, and calls `System.exit()` with the result code.
+
+**`CLIOptions`** — Parses and validates all command-line arguments. Supports
+`--project-dir`, `--profile` / `--profiles-dir`, `--builder` / `--xslt`,
+`--output`, `--copyright-*`, `--list-builders`, `--version`, `--help`.
+`isDirectoryMode()` returns `true` when `--profiles-dir` is used (or defaulted)
+to drive the directory-mode transform loop.
+
+**`CLISettings`** — Adapts the CLI project directory structure to the `Settings`
+interface expected by the profile model. Loads `.cimtool-settings` (Turtle format)
+and extracts schema file paths from their URI representations.
+
+**`CLIBuilderPreferences`** — Loads `.builder-preferences` (Turtle format) and
+exposes builder-specific XSLT parameter maps used by `ProfileSerializer`.
+
+**`CLISchemaParser`** — Headless schema parser wrapping `EAPParser` / `QEAParser` for
+use outside the Eclipse workspace. Returns a parsed `OntModel` that is merged into
+the background schema model passed to `CLIProfileTransformer`.
+
+**`CLIProfileTransformer`** — Orchestrates the headless transform pipeline. Loads the
+profile `.owl` file, merges schema models, configures `ProfileModel` and
+`ProfileSerializer`, loads the XSLT stylesheet, and writes the output file. Supports
+three transform modes: explicit `--builder`, explicit `--xslt`, and
+flagged-builder mode (builders marked in the profile OWL via
+`Buildlet#ext rdf:type Message#Flag`).
+
+> **Tip:** Right-click the diagram and select **Open image in new tab** to view it
+> at full size with browser zoom support.
+
+![CLI Profile Transformation Sequence Diagram](readme-images/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.svg)
+
+
+
+## 5. Validation - CIM/XML Instance and Profile Consistency Validation
+
+The validation subsystem provides three distinct pipelines for validating CIM
+data: single-file CIM/XML instance validation, partitioned split-model validation,
+and profile-against-schema consistency checking. All three share a common
+rule-expansion infrastructure built on CIMTool's custom rule engine.
+
+### Key Classes
+
+**`ValidatorUtil`** — Abstract base shared by all validators. Provides
+`openStandardRules(name)` to load bundled `.rules` files from the classpath, and
+the two-phase `expandRules(schema, ruleText, registry)` method that parses raw
+rule text and expands generic templates into schema-specific backward-chaining
+rules (`brules`) using the schema `OntModel`.
+
+**`RuleParser`** — Parses CIMTool's triple-pattern rule language into `Rule` objects.
+Resolves the CIM topology namespace prefix from the schema before parsing.
+
+**`SimpleReasoner` / `SimpleInfGraph`** — CIMTool's custom Jena `Reasoner`
+implementation. Distinct from Jena's built-in OWL/RDFS reasoners. `bind(graph)`
+produces a `SimpleInfGraph` whose `prepare()` fires Stage 1 forward-chaining:
+schema triples expand generic rule templates into concrete schema-specific rules.
+The resulting `brules` are then applied to instance data.
+
+**`ModelValidator`** — Validates a single CIM/XML or Turtle instance document. Reads
+the document into a Jena `InfModel` backed by `SimpleReasoner`, calls `prepare()`
+to fire the expanded rules against the instance triples, then iterates the
+deductions graph for `LOG.Problem` triples and logs each as an Eclipse `IMarker`
+(or stderr in CLI mode).
+
+**`SplitValidator`** — Validates a partitioned CIM/XML dataset. Uses `SplitReader` to
+stream triples part-by-part and `Extractor` to apply the `brules` without loading
+the full dataset into memory. Supports additional topology-specific options via
+`ProxyRegistry` and `ValidationBuiltins`.
+
+**`ProfileValidator`** — Checks a CIM profile for consistency with its background
+schema. Wraps the schema in a `TransitiveReasoner` for inheritance-aware checking,
+then applies profile-validation rules via `Extractor`. Produces a deductions graph
+of `LOG.Problem` triples.
+
+**`DiagnosisModel` / `RepairMan`** — `DiagnosisModel` wraps the deductions graph as a
+JFace tree model for the Eclipse `DiagnosisEditor` and `RepairEditor` views. It
+groups `LOG.Problem` nodes by the instance resource they apply to via
+`LOG.hasProblems`. `RepairMan` holds `RepairAction` entries that can apply
+automatic fixes to the profile OWL model when the user accepts a repair suggestion.
+
+### Three Validation Paths
+
+The three paths share Phase 1 (rule expansion) and then diverge:
+
+**Path A - Single-File CIM/XML** — `ValidationBuildlet` -> `ModelValidator`. Uses
+standard Jena `InfModel` + `prepare()` over a single input file. Bundled rule
+set: `cimtool-simple.rules`.
+
+**Path B - Split Model** — `SplitValidationBuildlet` or
+`IncrementalValidationBuildlet` -> `SplitValidator`. Streams the partitioned
+dataset via `SplitReader` through `Extractor`. Bundled rule sets:
+`cimtool-split.rules` / `cimtool-inc.rules`.
+
+**Path C - Profile Consistency** — `ConsistencyChecks.ProfileChecker` ->
+`ProfileValidator`. Applies profile-validation rules against the profile graph
+using a transitively-reasoned schema. Results are written to a `.repair` file and
+displayed in the `RepairEditor`.
+
+> **Tip:** Right-click the diagram and select **Open image in new tab** to view it
+> at full size with browser zoom support.
+
+![Validation Sequence Diagram](readme-images/CIMUtil_Validation_Sequence_Diagram.svg)
+
+
+
+## 6. Kena / Jena Adapters
+
+The Kena layer is the foundational RDF infrastructure on which all other
+subsystems are built. It wraps Apache Jena 2.6.3 behind a stable, simplified API
+that is purpose-built for CIMTool's use cases. No other subsystem calls Apache
+Jena directly - all RDF graph operations go through the Kena API.
+
+### Design Rationale
+
+The Kena API (`au.com.langdale.kena`) is a deliberate simplification of the Apache
+Jena API. Key design decisions:
+
+- `OntModel` is **not** a subclass of `com.hp.hpl.jena.ontology.OntModel` - it wraps a Jena `Graph` directly and exposes only the operations CIMTool needs.
+- All iterators (`ResIterator`, `NodeIterator`) are typed Java iterators rather than Jena's `ExtendedIterator`, making them simpler to compose with the `filters/` package.
+- `Resource`, `Property`, and `OntResource` are thin typed wrappers over Jena's `Node` and `FrontsNode` - they provide a stable API that does not change if Jena is upgraded.
+- `OntResource` holds no cached state. Every property access (`hasProperty`, `getLabel`, `getDomain`, `getRange`) issues a fresh `graph.find()` or `graph.contains()` directly against the underlying `Graph`.
+
+This design means that upgrading Apache Jena only requires changing Kena's
+internal implementation - the rest of the codebase is fully insulated.
+
+### Key Classes
+
+**`ModelFactory`** — Factory methods for creating `OntModel` instances.
+`createMem()` produces a plain in-memory graph. `createTransInf()` wraps the
+graph in a Jena `TransitiveReasoner` `InfGraph` for rdfs:subClassOf /
+rdfs:subPropertyOf transitive closure queries.
+
+**`OntModel`** — The central graph model. Wraps a Jena `Graph` directly. All query
+methods (`listSubjectsWithProperty`, `listObjectsOfProperty`, etc.) delegate to
+`graph.find()` and compose the results through the `filters/` package to produce
+typed `OntResource` iterators.
+
+**`OntResource` / `Resource` / `Property`** — Typed wrappers over Jena `Node`.
+`OntResource` carries a reference to its owning `OntModel` so it can issue
+property access queries back against the graph.
+
+**`Composition`** — Graph composition utilities. `merge(a, b)` creates a
+`MultiUnion` of both graphs' raw underlying `Graph` instances (recursively
+decomposing any existing `InfGraph` or `MultiUnion` layers to prevent hierarchy
+growth) and wraps the result in a `TransitiveReasoner`. `simpleMerge()` does the
+same without the inferencer.
+
+**`IO`** — RDF serialization and deserialization. `read()` has two paths: the custom
+`RDFParser` / `GraphInjector` path for `RDF_XML_WITH_NODEIDS` syntax (which
+preserves blank node identifiers for split model I/O), and the standard Jena
+delegation path for all other syntaxes (Turtle, RDF/XML, N3).
+
+**`filters/` package** — Iterator filter implementations that sit between raw Jena
+`Triple` iterators and typed `OntResource` iterators. `Subjects` / `Objects`
+extract the subject or object `Node` from each `Triple`. `UniqueSubjects` /
+`UniqueObjects` additionally de-duplicate via a `HashSet`. `Wrapper` is the
+final filter that converts `Node` instances into bound `OntResource` instances
+by calling `model.createResource(node)`.
+
+### Jena Patches
+
+The `com/hp/hpl/jena/` source files in Kena's `src/` directory are targeted
+patches to specific Jena internal classes. PDE compiles these into `kena.jar`,
+which takes precedence over the vendored `jena-2.6.3.jar` on the classpath. They
+fix specific bugs and add behaviour - including RDF reification support and quoted
+statement handling - not available in the vendored Jena version.
+
+> **Tip:** Right-click the diagram and select **Open image in new tab** to view it
+> at full size with browser zoom support.
+
+![Kena Jena Adapters Sequence Diagram](readme-images/CIMUtil_Kena_Jena_Adapters_Sequence_Diagram.svg)

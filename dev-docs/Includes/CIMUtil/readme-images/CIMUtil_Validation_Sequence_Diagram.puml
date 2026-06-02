@@ -1,0 +1,286 @@
+@startuml Validation Sequence Diagram
+
+title CIMUtil - CIM/XML Instance & Profile Validation Sequence
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+participant "Validation\nBuildlet\n[CIMToolPlugin]" as VB #LightSalmon
+participant "ValidatorUtil" as VU #LightGreen
+participant "RuleParser" as RP #LightBlue
+participant "SimpleReasoner\n/ SimpleInfGraph" as SR #LightBlue
+participant "ModelValidator\nor SplitValidator" as MV #LightGreen
+participant "SplitReader" as SPLIT #LightCoral
+participant "Extractor" as EXT #LightBlue
+participant "DiagnosisModel\n/ RepairMan" as DM #LightPink
+participant "ConsistencyChecks\n[CIMToolPlugin]" as CC #LightSalmon
+participant "ProfileValidator" as PV #LightGreen
+
+== Phase 1: Rule Expansion (shared by all validation paths) ==
+
+note over VB, SR
+    All three validation paths — CIM/XML instance, split model, and profile consistency —
+    begin with the same two-phase rule expansion step in ValidatorUtil.expandRules().
+    The schema OntModel is used to resolve namespace prefixes and expand schema-specific
+    rule templates before the rules are applied to instance data.
+end note
+
+activate VB
+VB -> VU : ValidatorUtil.openStandardRules(name)
+activate VU
+note right of VU
+    Loads a bundled .rules file from the
+    classpath as an InputStream:
+    - "cimtool-simple"  - single CIM/XML file
+    - "cimtool-split"   - split model dataset
+    - "cimtool-inc"     - incremental split validation
+    Rule files use CIMTool's triple-pattern
+    rule language (parsed by RuleParser).
+end note
+VU --> VB : InputStream (rules text)
+deactivate VU
+
+VB -> VU : ValidatorUtil.expandRules(schema, ruleText, registry)
+activate VU
+
+VU -> RP : new RuleParser(ruleText, registry)
+activate RP
+note right of RP
+    Lexes and parses the rule language.
+    Registers the CIM topology namespace
+    prefix (guessed from the schema OntModel)
+    so rules can reference topology properties
+    without hard-coded URIs.
+end note
+RP -> RP : parse()
+RP --> VU : List<Rule> (initial rules)
+deactivate RP
+
+VU -> SR : new SimpleReasoner(rules)
+activate SR
+note right of SR
+    CIMTool's custom Jena Reasoner
+    implementation (not Jena's built-in
+    OWL/RDFS reasoners). Wraps the parsed
+    rule list and implements the Jena
+    Reasoner interface.
+end note
+SR --> VU
+VU -> SR : bind(schema graph)
+activate SR
+note right of SR
+    Binds the schema graph to produce a
+    SimpleInfGraph. Calling prepare() fires
+    Stage 1 forward-chaining: schema triples
+    are used to specialise generic rule
+    templates into schema-specific backward-
+    chaining rules (brules). For example,
+    a generic "check domain" rule expands
+    into a concrete rule for each OWL
+    ObjectProperty in the schema.
+end note
+SR --> VU : SimpleInfGraph
+deactivate SR
+VU -> VU : extract expanded brules from deductions
+VU --> VB : List<Rule> expanded brules
+deactivate SR
+deactivate VU
+
+== Path A: CIM/XML Single-File Validation ==
+
+VB -> MV : new ModelValidator(schema, ruleText)
+activate MV
+note right of MV
+    Stores the expanded brules and schema.
+    Registered as a ValidatorProtocol so
+    it can be called once per instance file
+    that triggers a build.
+end note
+MV --> VB : validator
+deactivate MV
+
+VB -> MV : validator.run(source, base, namespace, logger)
+activate MV
+
+MV -> MV : read instance file into Jena Model
+note right of MV
+    Reads the CIM/XML (or Turtle) instance
+    document using the appropriate Jena reader.
+    The data model is a plain Jena Model
+    (not a Kena OntModel) at this stage.
+end note
+
+MV -> SR : ModelFactory.createInfModel(reasoner, data)
+activate SR
+note right of SR
+    Creates a Jena InfModel backed by the
+    SimpleReasoner and the instance data.
+    The reasoner applies the expanded brules
+    to the combined schema + instance graph.
+end note
+SR --> MV : InfModel
+deactivate SR
+
+MV -> MV : infModel prepare()
+note right of MV
+    Triggers forward-chaining: the brules
+    fire against the instance triples and
+    produce deduction triples representing
+    validation problems. Each deduction is
+    a LOG.Problem triple:
+      _:p rdf:type LOG:Problem
+      _:p LOG:hasProblems <instanceResource>
+      _:p rdfs:comment "error message"
+end note
+
+MV -> MV : result = infModel deductions
+
+MV -> VU : ValidatorUtil.logProblems(logger, deductions graph)
+activate VU
+note right of VU
+    Iterates deductions graph for triples
+    with rdf:type = LOG.Problem and logs
+    each one via the Logger. In the Eclipse
+    build path this creates Eclipse IMarkers
+    on the instance file. In CLI this prints
+    to stderr.
+end note
+VU --> MV
+deactivate VU
+
+MV --> VB : OntModel (diagnosis graph)
+deactivate MV
+
+== Path B: Split Model Validation ==
+
+VB -> MV : new SplitValidator(schema, ruleText)
+activate MV
+note right of MV
+    Same rule expansion as Path A but
+    configured with additional options
+    for split model topology (e.g. proxy
+    node handling via ProxyRegistry).
+end note
+MV --> VB : validator
+deactivate MV
+
+VB -> MV : validator.run(source, base, namespace, logger)
+activate MV
+
+MV -> SPLIT : new SplitReader(source)
+activate SPLIT
+note right of SPLIT
+    Locates the partitioned CIM/XML dataset
+    on disk using SplitBase's hash-based
+    directory structure. Opens each part
+    file as it is needed during rule firing.
+end note
+SPLIT --> MV : SplitReader
+deactivate SPLIT
+
+MV -> EXT : new Extractor(GraphAdapter(splitReader),\ntransGraph, brules, functors)
+activate EXT
+note right of EXT
+    Extractor applies the brules to the
+    split model graph. It uses an AsyncModel
+    interface (backed by SplitReader) to
+    stream triples part-by-part rather than
+    loading the entire dataset into memory.
+    ValidationBuiltins provide built-in
+    functor implementations for CIM-specific
+    checks (e.g. topology connectivity rules).
+end note
+EXT -> EXT : run()
+EXT --> MV : result graph (deductions)
+deactivate EXT
+
+MV -> VU : ValidatorUtil.logProblems(logger, result)
+activate VU
+VU --> MV
+deactivate VU
+
+MV --> VB : OntModel (diagnosis graph)
+deactivate MV
+deactivate VB
+
+== Path C: Profile Consistency Check ==
+
+activate CC
+CC -> PV : new ProfileValidator(profileModel, backgroundModel)
+activate PV
+note right of PV
+    target = the .owl profile OntModel
+    reference = the background schema OntModel
+    Checks that every class and property
+    referenced in the profile is resolvable
+    in the schema (the background model).
+end note
+PV --> CC : checker
+deactivate PV
+
+CC -> PV : checker.run()
+activate PV
+
+PV -> PV : buildRules()
+note right of PV
+    Loads the profile-specific rule set
+    which checks for dangling references,
+    unknown property types, and cardinality
+    inconsistencies between the profile
+    and its schema.
+end note
+
+PV -> SR : TransitiveReasoner bind(reference graph)
+activate SR
+note right of SR
+    Wraps the reference schema graph in
+    a transitive inferencer so that
+    rdfs:subClassOf / rdfs:subPropertyOf
+    chains are resolved during rule matching.
+    This is needed for inheritance-aware
+    profile consistency checking.
+end note
+SR --> PV : InfGraph (transitive schema)
+deactivate SR
+
+PV -> EXT : new Extractor(GraphAdapter(target),\ntransGraph, rules, functors)
+activate EXT
+note right of EXT
+    Applies profile-validation rules to the
+    profile graph, using the transitively-
+    reasoned schema as axioms. Violations
+    are emitted as LOG.Problem deductions.
+end note
+EXT -> EXT : run()
+EXT --> PV : result graph (log)
+deactivate EXT
+
+PV -> PV : log = ModelFactory.createMem(result)
+PV --> CC : (checker with log populated)
+deactivate PV
+
+alt checker.hasErrors()
+    CC -> DM : new DiagnosisModel(new RepairMan())
+    activate DM
+    note right of DM
+        DiagnosisModel wraps the deductions
+        graph as a JFace tree model for the
+        Eclipse Diagnosis and Repair editors.
+        It exposes LOG.Problem nodes as tree
+        items grouped by the instance resource
+        they apply to (LOG.hasProblems subject).
+        RepairMan holds RepairAction entries
+        that can apply automatic fixes to the
+        profile OWL model when the user
+        accepts a repair suggestion.
+    end note
+    CC -> DM : setRootResource(DIAGNOSIS_ROOT)
+    DM --> CC : diagnosisModel (for Repair/Diagnosis editor)
+    deactivate DM
+    CC -> CC : write log to .repair file\nCIMBuilder.addMarker(file, message)
+end
+
+deactivate CC
+
+@enduml

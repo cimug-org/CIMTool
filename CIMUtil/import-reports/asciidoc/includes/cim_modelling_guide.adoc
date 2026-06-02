@@ -1,0 +1,27 @@
+[[CIM_Modelling_Guide]]
+== CIM Modelling Guide
+
+=== CIM UML Modelling Rules and Recommendations
+
+include::{includesdir}/package_rules.adoc[]
+
+include::{includesdir}/class_rules.adoc[]
+
+include::{includesdir}/attribute_rules.adoc[]
+
+include::{includesdir}/association_rules.adoc[]
+
+include::{includesdir}/enumeration_rules.adoc[]
+
+include::{includesdir}/element_description_rules.adoc[]
+
+include::{includesdir}/inheritance_rules.adoc[]
+
+include::{includesdir}/stereotype_rules.adoc[]
+
+include::{includesdir}/namespace_rules.adoc[]
+
+=== CIM UML Extension Rules and Recommendations
+
+include::{includesdir}/extension_rules.adoc[]
+

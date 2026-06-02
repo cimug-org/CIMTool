@@ -1,0 +1,199 @@
+# Kena
+
+An Eclipse plugin that provides a clean, purpose-built RDF/OWL graph API for
+CIMTool, wrapping Apache Jena 2.6.3 behind a stable abstraction layer. All
+RDF graph operations across the CIMTool codebase use the Kena API exclusively —
+no other plugin calls Apache Jena directly.
+
+
+
+## Overview
+
+Kena (`au.com.langdale.kena`) serves as the foundational RDF layer for the
+entire CIMTool plugin ecosystem. Its central contribution is the `OntModel` /
+`Resource` / `Property` API — a simplified, CIMTool-specific facade over
+Apache Jena's `Graph` and `Model` infrastructure — that insulates the rest of
+the codebase from Jena's complexity and from potential Jena version changes.
+
+Beyond the API facade, Kena also provides:
+
+- A custom **inference engine** (`inference/`) for CIM/XML validation rules, built directly on Jena's `Graph` and `Reasoner` interfaces
+- A **split model** reader/writer (`splitmodel/`) for partitioned CIM/XML files
+- A **SAX parsing** framework (`sax/`) used by the XMI import pipeline
+- **Utility classes** (`util/`) shared across the project
+- Several **targeted Jena patches** — source overrides of specific Jena internal classes to fix bugs or add behaviour not available in the vendored version
+
+
+
+## Project Structure
+
+```
+Kena/
+├── META-INF/
+│   └── MANIFEST.MF               ← OSGi bundle manifest — exports all packages, lib classpath
+├── build.properties              ← PDE build configuration — source JAR and lib includes
+├── lib/                          ← Vendored Apache Jena 2.6.3 and its dependencies
+│   ├── jena-2.6.3.jar            ← Apache Jena core
+│   ├── arq-2.8.4.jar             ← ARQ SPARQL processor
+│   ├── icu4j-71.1.jar            ← Unicode support (ICU4J)
+│   ├── iri-0.8.jar               ← IRI processing library
+│   ├── lucene-core-2.3.1.jar     ← Lucene (Jena LARQ text indexing)
+│   ├── stax-api-1.0.1.jar        ← StAX streaming XML API
+│   ├── wstx-asl-3.2.9.jar        ← Woodstox StAX implementation
+│   ├── xercesImpl-2.7.1.jar      ← Apache Xerces XML parser
+│   └── log4j-over-slf4j-2.0.17.jar  ← Log4j 1.x → SLF4J bridge (intercepts Jena Log4j API calls; no real Log4j bytecode on classpath)
+└── src/
+    ├── au/com/langdale/kena/      ← Kena RDF/OWL API (the primary public API)
+    │   ├── OntModel.java          ← Central graph model — resource lookup, traversal,
+    │   │                             subclass/property queries, composition
+    │   ├── ModelFactory.java      ← Factory methods for creating OntModel instances
+    │   ├── Resource.java          ← RDF resource wrapper
+    │   ├── OntResource.java       ← OWL ontology resource wrapper
+    │   ├── Property.java          ← RDF property wrapper
+    │   ├── ResourceFactory.java   ← Factory for creating Resource instances
+    │   ├── IO.java                ← RDF serialization and deserialization (read/write)
+    │   ├── Format.java            ← Supported RDF serialization formats enum
+    │   ├── RDFParser.java         ← RDF document parser
+    │   ├── Composition.java       ← Graph composition utilities
+    │   ├── Injector.java          ← Graph injection helper
+    │   ├── LocalNameIndex.java    ← Index of resources by local name
+    │   ├── PropertyIndex.java     ← Index of properties
+    │   ├── SearchIndex.java       ← Text search index over the graph
+    │   ├── NodeIterator.java      ← Typed iterator over RDF nodes
+    │   ├── ResIterator.java       ← Typed iterator over RDF resources
+    │   ├── ConversionException.java ← Exception for type conversion failures
+    │   ├── rdf/model/impl/        ← Sorted RDF model implementation
+    │   │   ├── SortedModel.java   ← RDF Model with deterministic statement ordering
+    │   │   └── SortedStmtIteratorImpl.java ← Statement iterator over a sorted model
+    │   └── filters/               ← Iterator filter implementations
+    │       ├── NamedSubjects.java ← Filters for named (URI) subjects
+    │       ├── Objects.java / Subjects.java ← Object/subject extractors
+    │       ├── UniqueObjects.java / UniqueSubjects.java ← De-duplication filters
+    │       ├── ResourceObjects.java / LiteralObjects.java ← Type-specific filters
+    │       ├── TransitiveIterator.java ← Transitive closure iterator
+    │       └── ...                ← Additional filter and wrapper utilities
+    ├── au/com/langdale/inference/ ← CIM/XML validation rule engine
+    │   ├── SimpleReasoner.java    ← Custom Jena Reasoner for CIM validation rules
+    │   ├── SimpleInfGraph.java    ← Inferred graph implementation
+    │   ├── RuleParser.java        ← Parser for CIMTool validation rule language
+    │   ├── RuleLexer.java         ← Lexer for rule language tokens
+    │   ├── Extractor.java         ← Rule-based graph extractor
+    │   ├── AsyncModel.java        ← Asynchronous model query interface
+    │   ├── AsyncResult.java       ← Asynchronous result callback interface
+    │   ├── ValidationBuiltins.java ← Built-in functions for validation rules
+    │   ├── RepairLibrary.java / RepairFunctors.java ← Repair rule support
+    │   ├── StandardFunctorActions.java ← Standard functor action implementations
+    │   └── ...                    ← Additional inference engine support classes
+    ├── au/com/langdale/splitmodel/ ← Split CIM/XML model I/O
+    │   ├── SplitReader.java       ← Reads a partitioned CIM/XML dataset from disk
+    │   ├── SplitWriter.java       ← Writes a partitioned CIM/XML dataset to disk
+    │   └── SplitBase.java         ← Shared base for split model operations
+    ├── au/com/langdale/sax/       ← SAX parsing framework
+    │   ├── XMLInterpreter.java    ← SAX event interpreter base class
+    │   ├── XMLElement.java        ← SAX element wrapper
+    │   ├── XMLMode.java           ← SAX parsing mode abstraction
+    │   ├── AbstractReader.java    ← Abstract SAX reader base
+    │   └── XMLReaderBase.java     ← Base SAX reader implementation
+    ├── au/com/langdale/util/      ← Shared utilities
+    │   ├── Logger.java            ← Simple logging wrapper
+    │   ├── TextUtil.java          ← Text processing utilities
+    │   ├── NSMapper.java          ← Namespace URI mapping
+    │   ├── MultiMap.java          ← Multi-valued map implementation
+    │   ├── Formater.java          ← String formatting utilities
+    │   └── Profiler.java          ← Simple performance profiler
+    └── com/hp/hpl/jena/           ← Targeted Jena patches (source overrides)
+        ├── graph/query/SimpleQueryHandler.java
+        ├── rdf/arp/QuotedStatementHandler.java
+        ├── rdf/arp/impl/ARPResource.java
+        ├── rdf/arp/states/WantPropertyElement.java
+        ├── rdf/arp/states/WantQuotedDescription.java
+        ├── util/CollectionFactory.java
+        └── xmloutput/impl/Basic.java
+```
+
+
+
+## Dependencies on Other Projects
+
+Kena has **no dependencies on other in-repository plugins**. It is the
+foundational layer of the dependency stack — all other plugins depend on it,
+but it depends on none of them.
+
+### Vendored Third-Party Libraries
+
+Kena bundles Apache Jena 2.6.3 and all of its required dependencies, declared
+in `Bundle-ClassPath` in `MANIFEST.MF` and included via `build.properties`:
+
+| Library | Version | Purpose |
+| --- | --- | --- |
+| Apache Jena | 2.6.3 | Core RDF graph engine — `Graph`, `Model`, `OntModel`, reasoner framework, RDF/XML and N3/Turtle parsers and serializers |
+| ARQ | 2.8.4 | SPARQL query processor for Jena — used by the inference engine |
+| ICU4J | 71.1 | Unicode character set and locale support — required by Jena's IRI handling |
+| IRI | 0.8 | IRI syntax and validation library — used by Jena's ARP RDF/XML parser |
+| Lucene Core | 2.3.1 | Full-text indexing — used by Jena LARQ (`SearchIndex`) |
+| StAX API | 1.0.1 | Streaming XML API interface — required by Jena |
+| Woodstox (wstx-asl) | 3.2.9 | StAX streaming XML implementation used by Jena's N-Triples parser |
+| Xerces | 2.7.1 | XML parser implementation — used by Jena's ARP RDF/XML parser |
+| log4j-over-slf4j | 2.0.17 | Log4j 1.x → SLF4J bridge — intercepts all Apache Jena Log4j 1.x API calls and redirects them into the SLF4J pipeline. No Log4j 1.x bytecode executes at runtime. Vendored in `Bundle-ClassPath` rather than a real Log4j 1.x implementation intentionally — the vulnerable Log4j appender classes (`SocketServer`, `JMSSink`, `JMSAppender`, `JDBCAppender`) are never present on the classpath. Wired to the platform SLF4J 2.x bundle via `Import-Package: org.slf4j` in `MANIFEST.MF`. |
+
+> [!NOTE]
+> `log4j-over-slf4j` is declared in `Bundle-ClassPath` rather than resolved via `Import-Package` because it must intercept Log4j 1.x API calls at the classloader level — the bridge's `org.apache.log4j.*` stub classes must be found before Jena's code attempts to load the real Log4j classes. Routing through SLF4J is then achieved via `Import-Package: org.slf4j`, which wires the bridge output to the platform SLF4J 2.x bundle at runtime rather than to a private vendored copy. This is the same `Import-Package` pattern used by CIMUtil for Saxon-HE's SLF4J calls. Because no real Log4j 1.x implementation is ever on the classpath, the current pipeline also eliminates the security risks associated with [CVE-2019-17571](https://nvd.nist.gov/vuln/detail/CVE-2019-17571), [CVE-2022-23302](https://nvd.nist.gov/vuln/detail/CVE-2022-23302), [CVE-2022-23303](https://nvd.nist.gov/vuln/detail/CVE-2022-23303), and [CVE-2022-23305](https://nvd.nist.gov/vuln/detail/CVE-2022-23305).
+
+
+
+## Kena API vs Apache Jena
+
+The Kena API (`au.com.langdale.kena`) is a deliberate simplification of the
+Apache Jena API, designed specifically for CIMTool's use cases. Key design
+decisions:
+
+- `OntModel` is **not** a subclass of `com.hp.hpl.jena.ontology.OntModel` — it wraps a Jena `Graph` directly and exposes only the operations CIMTool needs
+- All iterators (`ResIterator`, `NodeIterator`) are typed Java iterators rather than Jena's `ExtendedIterator` — simpler to use and chain with the `filters/` package
+- `Resource`, `Property`, and `OntResource` are thin, typed wrappers over Jena's `Node` and `FrontsNode` — they provide a stable API that does not change if Jena is upgraded
+- `ModelFactory` provides named factory methods (`createMem()`, `createMem(Graph)`, `createTransitive()`) rather than Jena's reflection-based factory pattern
+
+This design means that if Apache Jena is ever upgraded to a newer version, the rest of the CIMTool codebase is insulated from the API changes — only Kena's internal implementation would need to change.
+
+### Jena Patches
+
+The `com/hp/hpl/jena/` source files in Kena's `src/` directory are targeted
+patches to specific Jena internal classes. These override the corresponding
+classes in `jena-2.6.3.jar` at compile time (PDE compiles source into
+`kena.jar`, which takes precedence over the vendored JAR on the classpath).
+They exist to fix specific bugs or add behaviour — such as RDF reification
+support and quoted statement handling — that was not available in the vendored
+Jena version.
+
+
+
+## Inference Engine
+
+The `au.com.langdale.inference` package implements CIMTool's custom rule-based
+inference engine, used to validate CIM/XML and Turtle instance documents against
+a CIM profile. Key components:
+
+- **`RuleParser` / `RuleLexer`** — parse CIMTool's validation rule language into rule objects
+- **`SimpleReasoner` / `SimpleInfGraph`** — a custom Jena `Reasoner` that applies rules to a CIM/XML graph and produces an inferred graph of validation violations
+- **`Extractor`** — applies rules to extract a result graph from an input graph, used by the CLI and test framework
+- **`AsyncModel` / `AsyncResult`** — asynchronous callback interfaces for streaming rule results from the `SplitReader`
+
+
+
+## Split Model
+
+The `au.com.langdale.splitmodel` package handles CIM/XML datasets partitioned
+across multiple files — a common practice in large power system models.
+`SplitReader` locates and reads the parts via a hash-based directory structure,
+and `SplitWriter` writes a model in the same partitioned format. The
+`SplitReaderTest` and `ExtractorTest` in `CIMToolTest` exercise this package
+directly.
+
+
+
+## Relationship to Other Projects
+
+- **CIMUtil** — its single OSGi dependency. All profile model, XMI import, and validation logic in CIMUtil uses the Kena `OntModel` API.
+- **CIMToolPlugin** — uses Kena for the project model cache, editors, views, and the incremental build system.
+- **RCPUtil** — no dependency on Kena.
+- **com.cimphony.cimtoole** — uses Kena `OntModel` and related types via `Import-Package` declarations for Ecore extraction and generation.
+- **cimtool-cli** — packages `kena.jar` alongside `cimutil.jar` in the CLI uber JAR. At CLI runtime, all RDF operations go through the Kena API.

@@ -4,14 +4,13 @@
  */
 package au.com.langdale.profiles;
 
-import java.util.Collection;
-import java.util.Iterator;
-
+import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
-
-import au.com.langdale.jena.JenaTreeModelBase;
 import au.com.langdale.xmi.UML;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 public class HierarchyModel extends JenaTreeModelBase {
 

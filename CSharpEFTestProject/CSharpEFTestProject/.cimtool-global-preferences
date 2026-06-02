@@ -1,0 +1,76 @@
+@prefix msg:     <http://langdale.com.au/2005/Message#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix uml:     <http://langdale.com.au/2005/UML#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix project:  <http://cimtoole.langdale.com.au/2009/project/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+@prefix prefs:   <http://cimtoole.langdale.com.au/2009/builder-prefs#> .
+
+<http://cimtoole.langdale.com.au/2009/global-prefs#>
+      prefs:instance_namespace
+              "http://www.ucaiug.org/network#" ;
+      prefs:mapping_label "Mappings" ;
+      prefs:mapping_namespace
+              "http://langdale.com.au/2010/schema-mapping#" ;
+      prefs:merge_shadow_extensions
+              "true" ;
+      prefs:plantuml_abstract_classes_color
+              "#E8E8E8" ;
+      prefs:plantuml_choices_color
+              "#E6E6FF" ;
+      prefs:plantuml_cimdatatypes_color
+              "#FFEBCD" ;
+      prefs:plantuml_compounds_color
+              "#FFEBCD" ;
+      prefs:plantuml_concrete_classes_color
+              "#FFFFE0" ;
+      prefs:plantuml_current_profile_preview_style
+              "puml-rdfs-t2b" ;
+      prefs:plantuml_docroot_classes_color
+              "#D3FBFE" ;
+      prefs:plantuml_enable_dark_mode
+              "false" ;
+      prefs:plantuml_enable_shadowing
+              "true" ;
+      prefs:plantuml_enumerations_color
+              "#A9F1A9" ;
+      prefs:plantuml_errors_color
+              "#FFC0CB" ;
+      prefs:plantuml_hide_cardinality_for_required_attributes
+              "false" ;
+      prefs:plantuml_hide_cimdatatypes
+              "true" ;
+      prefs:plantuml_hide_compounds
+              "true" ;
+      prefs:plantuml_hide_enumerations
+              "false" ;
+      prefs:plantuml_hide_primitives
+              "true" ;
+      prefs:plantuml_nodesep_horizontal_spacing
+              "20" ;
+      prefs:plantuml_primitives_color
+              "#E6E6FF" ;
+      prefs:plantuml_ranksep_vertical_spacing
+              "30" ;
+      prefs:plantuml_refs_color
+              "#FFDBDB" ;
+      prefs:plantuml_set_anonymous_classes_color_to_white
+              "false" ;
+      prefs:plantuml_theme
+              "_none_" ;
+      prefs:preserve_namespaces
+              "true" ;
+      prefs:problem_per_subject
+              "true" ;
+      prefs:profile_envelope
+              "Profile" ;
+      prefs:profile_namespace
+              "http://www.ucaiug.org/profile#" ;
+      prefs:schema_namespace
+              "http://www.ucaiug.org/CIM-generic#" ;
+      prefs:self_heal_on_import
+              "false" ;
+      prefs:user_package_names
+              "false" .

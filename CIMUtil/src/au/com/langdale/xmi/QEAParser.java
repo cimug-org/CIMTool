@@ -4,15 +4,38 @@
  */
 package au.com.langdale.xmi;
 
+import au.com.langdale.logging.SchemaImportLogger;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Set;
 
-public class QEAParser extends AbstractEAProjectDBParsor {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	public QEAParser(File file) {
-		super(file);
+/**
+ * EAProjectParsor implementation to support Sparx EA 16.x (64-bit) project
+ * files. Introduced in the 64-bit release of EA 16.x, the internal format of
+ * these files is based on the SQLite open source database and stored in binary
+ * form. Both file types support basic replication with the .qeax extension
+ * indicating that file sharing is enabled. A .qeax file can simply be renamed
+ * back to .qea to disable file sharing.
+ */
+public class QEAParser extends AbstractEAProjectParsor {
+
+	private static final Logger log = LoggerFactory.getLogger(QEAParser.class);
+
+	public QEAParser(String baseURI, File file, boolean selfHealOnImport, boolean validateModel,
+			boolean usePackageNames, SchemaImportLogger logger, File namespacesFile) {
+		super(baseURI, file, selfHealOnImport, validateModel, usePackageNames, logger, namespacesFile);
+	}
+
+	public QEAParser(String baseURI, File file, boolean selfHealOnImport, boolean validateModel,
+			boolean usePackageNames, SchemaImportLogger logger, File namespacesFile, Set<String> stereotypeExtensions) {
+		super(baseURI, file, selfHealOnImport, validateModel, usePackageNames, logger, namespacesFile,
+				stereotypeExtensions);
 	}
 
 	@Override
@@ -31,8 +54,8 @@ public class QEAParser extends AbstractEAProjectDBParsor {
 			String connectionURL = "jdbc:sqlite:" + file.getAbsolutePath();
 			return DriverManager.getConnection(connectionURL);
 		} catch (SQLException sqlException) {
-			sqlException.printStackTrace(System.err);
-			throw new EAProjectParserException("Unable to import the EA project file:  " + file.getAbsolutePath(),
+			log.error("Failed to open SQLite JDBC connection to: {}", file.getAbsolutePath(), sqlException);
+			throw new EAProjectParserException("Unable to read the EA project file:  " + file.getAbsolutePath(),
 					sqlException);
 		}
 	}

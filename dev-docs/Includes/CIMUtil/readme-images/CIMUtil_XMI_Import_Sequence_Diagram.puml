@@ -1,0 +1,249 @@
+@startuml XMI Import Sequence Diagram
+
+title CIMUtil - XMI / EA Project Import Sequence
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+participant "Task\n[CIMToolPlugin]" as TASK #LightSalmon
+participant "EAProjectParser\nFactory" as EPF #LightGreen
+participant "AbstractEAProject\nParsor\n(EAPParser / QEAParser)" as PARSE #LightBlue
+participant "XMIModel" as XMIM #LightBlue
+participant "XMIParser" as XMLP #LightGreen
+participant "CIMInterpreter\nFactory" as CIF #LightGreen
+participant "CIMInterpreter\nImpl" as INTERP #LightBlue
+participant "Translator" as TRANS #LightCoral
+participant "Extensions\nTranslator" as EXTTRANS #LightCoral
+participant "CIMInterpreter\nResult" as RESULT #LightPink
+
+== Path A: EA Project Import (.eap / .eapx / .qea / .qeax) ==
+
+activate TASK
+TASK -> EPF : EAProjectParserFactory.createParser(\nbaseURI, file, selfHealOnImport,\nvalidateModel, usePackageNames,\nlogger, namespacesFile, stereotypeExtensions)
+activate EPF
+note right of EPF
+    Selects concrete parser by file extension:
+    .eap / .eapx → EAPParser
+      (MS Access via UCanAccess JDBC)
+    .qea / .qeax → QEAParser
+      (SQLite via sqlite-jdbc)
+end note
+EPF --> TASK : EAProjectParser
+deactivate EPF
+
+TASK -> PARSE : parser.parse()
+activate PARSE
+
+PARSE -> PARSE : dbInit()
+note right of PARSE
+    Registers the appropriate JDBC driver
+    and opens the database connection.
+end note
+PARSE -> PARSE : loadStereotypesCache()
+note right of PARSE
+    Queries t_xref WHERE Name='Stereotypes'
+    to build the stereotypesMap used
+    throughout parsing.
+end note
+PARSE -> PARSE : initializeDBModelRulesValidator()
+note right of PARSE
+    Creates CIMModellingGuideDBRulesValidator
+    or NoOpModelRulesValidator depending
+    on the validateModel flag.
+    (See EasyRules sequence diagram for detail)
+end note
+PARSE -> PARSE : loadTagValuesCaches()
+note right of PARSE
+    Queries t_objectproperties, t_attribute,
+    t_attributetag, and t_connector tables
+    to pre-load tag values for packages,
+    classes, attributes, and associations.
+end note
+PARSE -> PARSE : gatherPackageIDs()
+note right of PARSE
+    Queries t_package table to collect
+    the set of valid package IDs used
+    to filter objects during parsing.
+end note
+
+PARSE -> XMIM : parsePackages()
+activate XMIM
+note right of XMIM
+    AbstractEAProjectParsor extends XMIModel.
+    Each parseXxx() method queries the EA
+    database via JDBC and calls XMIModel
+    operations to add triples to the raw
+    Kena OntModel being built.
+    DB validator fires per element.
+    (See EasyRules diagram for that detail)
+end note
+XMIM --> PARSE : packages added to OntModel
+deactivate XMIM
+
+PARSE -> XMIM : parseClasses()
+activate XMIM
+note right of XMIM
+    Queries t_object WHERE Object_Type IN
+    ('Class','Enumeration','Package',...).
+    Emits rdf:type, rdfs:label, rdfs:comment,
+    UML stereotype triples per class.
+end note
+XMIM --> PARSE : classes added to OntModel
+deactivate XMIM
+
+PARSE -> XMIM : parseAssociations()
+activate XMIM
+note right of XMIM
+    Queries t_connector WHERE Connector_Type
+    IN ('Association','Aggregation',
+    'Generalization'). Emits OWL object
+    property triples, inverseOf links,
+    domain/range, and cardinality restrictions.
+end note
+XMIM --> PARSE : associations added to OntModel
+deactivate XMIM
+
+PARSE -> XMIM : parseAttributes()
+activate XMIM
+note right of XMIM
+    Queries t_attribute. Emits OWL datatype
+    property triples, XSD type mappings,
+    and enum literals (UML.enumliteral).
+end note
+XMIM --> PARSE : attributes added to OntModel
+deactivate XMIM
+
+PARSE -> PARSE : dbShutdown()
+PARSE --> TASK : parser (raw OntModel\n+ DB violations)
+deactivate PARSE
+
+TASK -> CIF : CIMInterpreterFactory.create(\nstereotypedNamespaces, file)
+activate CIF
+note right of CIF
+    .xmi files → LegacyCIMInterpreterImpl
+    all others → CIMInterpreterImpl
+end note
+CIF --> TASK : CIMInterpreter
+deactivate CIF
+
+TASK -> INTERP : interpret(parser.getModel(),\nbaseURI, annote, usePackageNames,\nmergeShadowExtensions, validateModel)
+activate INTERP
+
+group Post-Processing Pipeline (CIMInterpreterImpl.postProcess)
+
+    INTERP -> INTERP : UML.loadOntology(model)
+    note right of INTERP
+        Loads the UML vocabulary OWL triples
+        into the model so UML.Package,
+        UML.attribute, UML.enumliteral etc.
+        are resolvable during translation.
+    end note
+    INTERP -> INTERP : pruneIncomplete()
+    note right of INTERP
+        Removes any XMI elements that were
+        referenced but never fully defined —
+        partial triples that would cause
+        downstream errors.
+    end note
+    INTERP -> INTERP : labelRoles()
+    note right of INTERP
+        Stage 1: Derives rdfs:label values
+        for association role ends from
+        the XMI role name attributes.
+    end note
+
+    INTERP -> TRANS : new Translator(model,\nstereotypedNamespaces,\nbaseURI, usePackageNames)
+    activate TRANS
+    note right of TRANS
+        Translator renames all XMI-internal
+        resource URIs (e.g. EAID_xxxx or xuid#nnn)
+        to proper CIM namespace URIs.
+        Runs in two passes:
+        Pass 1 — rename subjects/objects in
+          all triples using baseURI + localName
+          (or package hierarchy if usePackageNames)
+        Pass 2 — clean up any remaining
+          internal references
+    end note
+    TRANS -> TRANS : pass1.run()
+    TRANS -> TRANS : pass2.run()
+    TRANS --> INTERP : translated OntModel\n(Stage 3)
+    deactivate TRANS
+
+    INTERP -> INTERP : propagateComments()
+    INTERP -> INTERP : applyStereotypes(baseURI)
+    INTERP -> INTERP : classifyAttributes()
+    note right of INTERP
+        Stage 3 post-processing:
+        - propagateComments: copies association
+          comments to their role-end properties
+        - applyStereotypes: promotes UML stereo-
+          type tag values to first-class OWL triples
+        - classifyAttributes: distinguishes OWL
+          datatype properties from object properties
+          based on range type
+    end note
+    INTERP -> INTERP : removeUntyped()
+    note right of INTERP
+        Removes any resources that ended up
+        without an rdf:type after translation —
+        typically orphaned XMI stubs.
+    end note
+
+    note over INTERP
+        CIM Modelling Guide OWL validation fires here
+        if validateModel == true.
+        See EasyRules sequence diagram for detail.
+    end note
+
+    alt mergeShadowExtensions == true
+        INTERP -> EXTTRANS : new ExtensionsTranslator\n(model, baseURI)
+        activate EXTTRANS
+        note right of EXTTRANS
+            Stage 4: Processes shadow extension
+            classes — merges extension namespace
+            triples into the normative model graph
+            and rewrites URIs accordingly.
+        end note
+        EXTTRANS -> EXTTRANS : run()
+        EXTTRANS --> INTERP : extended OntModel
+        deactivate EXTTRANS
+    end
+
+    INTERP -> INTERP : createOntologyHeader(baseURI)
+    note right of INTERP
+        Adds the owl:Ontology header individual
+        and sets the default namespace prefix.
+    end note
+
+end
+
+INTERP -> RESULT : new CIMInterpreterResult\n(model, violations)
+activate RESULT
+RESULT --> INTERP : result
+deactivate RESULT
+INTERP --> TASK : CIMInterpreterResult
+deactivate INTERP
+
+TASK -> TASK : result.getRuleViolations()\n.addAll(parser.getRuleViolations())
+note right of TASK
+    Merges DB violations from Phase 1
+    into the result alongside OWL
+    violations from Phase 2.
+end note
+deactivate TASK
+
+== Path B: XMI File Import (.xmi) ==
+
+note over TASK, RESULT
+    For .xmi files the EA database path is bypassed entirely. Task calls XMIParser.parse()
+    directly — a SAX-based parser that walks the XMI XML elements using the XMLMode/
+    XMLInterpreter framework (from the Kena sax package) and populates a raw OntModel
+    via XMIModel operations. The raw model is then passed to LegacyCIMInterpreterImpl
+    (returned by CIMInterpreterFactory for .xmi extensions), which applies a simplified
+    post-processing pipeline without the EA-specific namespace resolution or stereotype
+    handling that CIMInterpreterImpl provides.
+end note
+
+@enduml

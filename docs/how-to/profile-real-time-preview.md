@@ -15,6 +15,8 @@ pre-configured for profile design and includes the **Profile Real-Time Preview**
 as one of its built-in views, visible as a tab in the lower portion of the
 workbench. No manual setup is required to use it.
 
+Click on the image to present a larger view.
+
 [![image](../images/ProfileRealTimePreview-vs-PlantUML-Views.png)](../images/ProfileRealTimePreview-vs-PlantUML-Views.png "The Real-Time Preview tab (outlined in red) and the PlantUML Svg tab (outlined in blue) in the default CIMTool perspective")
 
 The **Profile Real-Time Preview** view tracks whichever profile is currently
@@ -44,6 +46,8 @@ simultaneously side by side. The screenshot below illustrates this arrangement
 within the profile definition. The PlantUML Svg view (right), rendering the
 same profile as a standard diagram, shows no such indicator even though the
 issue exists in the profile.
+
+Click on the image to present a larger view.
 
 [![image](../images/ProfileRealTimePreview-PlantUML-SplitView.png)](../images/ProfileRealTimePreview-PlantUML-SplitView.png "The Real-Time Preview (left) surfacing definition errors using distinct visual cues; the PlantUML Svg view (right) rendering the same profile as a standard diagram with no error indicators")
 
@@ -76,6 +80,8 @@ Preview are relevant to the target schema type the profile is being designed for
 
 Under **Real-Time Profile Preview PlantUML Diagram Preferences**, the
 **Diagram Style** dropdown presents the available options:
+
+Click on the image to present a larger view.
 
 [![image](../images/RealTimePreviewProjectLevelPropertiesDialog.png)](../images/RealTimePreviewProjectLevelPropertiesDialog.png "Configuring the diagram style in project properties")
 
@@ -111,13 +117,17 @@ screen, giving the diagram the maximum possible space while leaving the profile
 editor and the rest of the workbench fully accessible on the primary monitor.
 This arrangement is particularly effective when working with large profiles
 whose diagrams would otherwise require significant panning and zooming to
-navigate within a docked view. Click on the image to present a larger view.
+navigate within a docked view. 
+
+Click on the image to present a larger view.
 
 [![image](../images/ProfileRealTimePreview-MaximizedDualMonitor.png)](../images/ProfileRealTimePreview-MaximizedDualMonitor.png "The Profile Real-Time Preview detached and maximized, showing multiple error indicators within an RDFS-style diagram of a large profile")
 
 The screenshot above shows this arrangement with a profile that contains five
 definition errors — each numbered for reference. A second set of errors,
-numbered 6 through 8, is illustrated in the screenshot below. Click on the image to present a larger view.
+numbered 6 through 8, is illustrated in the screenshot below. 
+
+Click on the image to present a larger view.
 
 [![image](../images/ProfileRealTimePreview-ErrorsExamples.png)](../images/ProfileRealTimePreview-ErrorsExamples.png "Issues 6, 7, and 8 illustrated in the Real-Time Preview: an abstract class with fields defined (6), a concrete class with no fields or associations (7), and an isolated abstract class with no parent, child, or associations (8)")
 
@@ -192,7 +202,9 @@ There are three ways to address this error, as the note callout itself states:
 In the example shown here, `Terminal` has no subclasses in the CIM model, so
 option 2 is not available. The fix applied in the animated GIF below is
 option 1 — navigating to `Terminal` via the profile editor's **Restriction**
-tab and checking **"Make this class concrete"**.
+tab and checking **"Make this class concrete"**. 
+
+Click on the image to present a larger view.
 
 [![image](../images/RDFS-Resolve-Issue-1.gif)](../images/RDFS-Resolve-Issue-1.gif "Navigating to the Terminal class Restriction tab and checking Make this class concrete")
 
@@ -241,6 +253,8 @@ and select the enumeration or compound type on the attribute's detail page:
    column. Move it to the left-hand (selected) column to include it in the
    attribute's definition.
 4. Save the profile.
+
+Click on the image to present a larger view.
 
 [![image](../images/RDFS-Resolve-Issue-2.gif)](../images/RDFS-Resolve-Issue-2.gif "Drilling into the unitSymbol attribute on the Add/Remove tab and moving UnitSymbol to the selected column")
 
@@ -297,6 +311,8 @@ selection:
    will appear in the right-hand (available) column. Move it to the left-hand
    (selected) column to include it in the association's definition.
 4. Save the profile.
+
+Click on the image to present a larger view.
 
 [![image](../images/RDFS-Resolve-Issue-3.gif)](../images/RDFS-Resolve-Issue-3.gif "Drilling into the PowerSystemResource association on the Add/Remove tab and moving Class: PowerSystemResource to the selected column")
 
@@ -364,6 +380,8 @@ is no longer entirely unresolved.
    column. Move it to the left-hand (selected) column.
 8. Save the profile.
 
+Click on the image to present a larger view.
+
 [![image](../images/RDFS-Resolve-Issues-4-and-5.gif)](../images/RDFS-Resolve-Issues-4-and-5.gif "Selecting UnitMultiplier for unitMultiplier attributes in Measurement and Control")
 
 #### Result
@@ -430,6 +448,8 @@ In the example shown here, the fix applied is option 1 — removing the three
 fields from `Asset`'s profile definition, leaving it as a clean abstract class
 suited to its role as an external reference.
 
+Click on the image to present a larger view.
+
 [![image](../images/RDFS-Resolve-Issue-6.gif)](../images/RDFS-Resolve-Issue-6.gif "Navigating to Asset on the Add/Remove tab and removing the three selected fields from the profile definition")
 
 #### Result
@@ -492,6 +512,8 @@ There are three valid resolutions, as the note callout itself states:
    on the **"Add/Remove"** tab and add one or more fields or associations to its
    profile definition.
 
+Click on the image to present a larger view.
+
 [![image](../images/RDFS-Resolve-Issue-7.gif)](../images/RDFS-Resolve-Issue-7.gif "Navigating to the MeasurementValueSource Restriction tab and selecting IdentifiedObject as the super class")
 
 #### Result
@@ -547,6 +569,8 @@ There are two valid resolutions, as the note callout itself states:
    are needed. This is the fix applied in the example shown here.
 2. **Remove the class from the profile** — if `Location` is not needed, remove
    it from the profile entirely via the **"Add/Remove"** tab.
+
+Click on the image to present a larger view.
 
 [![image](../images/RDFS-Resolve-Issue-8.gif)](../images/RDFS-Resolve-Issue-8.gif "Navigating to the Location class Restriction tab and checking Make this class concrete")
 

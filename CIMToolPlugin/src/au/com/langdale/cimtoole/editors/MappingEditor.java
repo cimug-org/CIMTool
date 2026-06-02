@@ -309,7 +309,7 @@ public class MappingEditor extends ModelEditor {
 					getForm().setImage(IconCache.getIcons().get("equiv"));
 					getForm().setText("Create mappings between schema classes");
 					getButton("remove").setEnabled(focusNode != null && focusNode.extant());
-					getButton("add").setEnabled( !(focusNode == null || focusNode.extant() || focusNode.isProperty() && name.getText().isEmpty()));
+					getButton("add").setEnabled( !(focusNode == null || focusNode.extant() || focusNode.isProperty() && name.getText().isBlank()));
 					getText("name").setEnabled(focusNode != null && focusNode.isProperty());
 					getButton("search_from").setEnabled(fromBinding.getOntModel() != null);
 					getButton("search_to").setEnabled(toBinding.getOntModel() != null);

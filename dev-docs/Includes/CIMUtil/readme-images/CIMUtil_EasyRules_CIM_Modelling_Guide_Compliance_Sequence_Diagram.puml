@@ -1,0 +1,196 @@
+@startuml EasyRules CIM Modelling Guide Compliance Sequence Diagram
+
+title CIMUtil - EasyRules CIM Modelling Guide Compliance Sequence
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+participant "Task\n[CIMToolPlugin]" as TASK #LightSalmon
+participant "AbstractEAProject\nParsor" as DBPARSE #LightBlue
+participant "CIMModellingGuide\nDBRulesValidator" as DBVAL #LightGreen
+participant "DBBaseRule\n(concrete rule)" as DBRULE #LightCoral
+participant "RuleViolation" as VIOL #LightPink
+participant "CIMInterpreter\nImpl" as INTERP #LightBlue
+participant "CIMModellingGuide\nRulesValidator" as MVAL #LightGreen
+participant "DefaultRulesEngine" as ENG #LightYellow
+participant "OntResourceBaseRule\n(concrete rule)" as RULE #LightCoral
+
+== Phase 1: EA Database Validation (during .eap/.eapx import) ==
+
+activate TASK
+TASK -> DBPARSE : parser = EAProjectParserFactory\n.createParser(...)
+activate DBPARSE
+TASK -> DBPARSE : parser.parse()
+DBPARSE -> DBPARSE : initializeDBModelRulesValidator()
+note right of DBPARSE
+    Only creates CIMModellingGuideDBRulesValidator
+    if validateModel == true (set from project
+    settings). Otherwise uses NoOpModelRulesValidator.
+end note
+DBPARSE -> DBVAL : new CIMModellingGuideDBRulesValidator\n(baseURI, namespaceResolver, selfHealOnImport)
+activate DBVAL
+note right of DBVAL
+    Constructor registers DB-specific rules
+    across 4 rule engines operating on
+    JDBC ResultSet + OntResource pairs:
+    - packageRulesEngine
+    - classAndEnumerationRulesEngine
+    - attributeAndEnumLiteralRulesEngine
+    - associationRulesEngine
+    These rules can also perform optional
+    self-healing corrections during import
+    if selfHealOnImport is enabled.
+end note
+DBVAL --> DBPARSE : dbValidator
+deactivate DBVAL
+
+loop for each EA element (package / class / attribute / association)
+    DBPARSE -> DBVAL : validatePackage / validateClass /\nvalidateAttribute / validateAssociation\n(rs, resource, namesMap, violations)
+    activate DBVAL
+
+    DBVAL -> ENG : fire(rules, facts)
+    activate ENG
+    note right of ENG
+        Facts injected:
+        - "rs": ResultSet (EA DB row)
+        - "resource": OntResource
+        - "namesMap": Map<String,List<String>>
+        - "violations": List<RuleViolation>
+    end note
+
+    ENG -> DBRULE : when(@Fact rs, resource, namesMap)
+    activate DBRULE
+    note right of DBRULE
+        doWhen() reads columns from ResultSet
+        alongside OntResource properties to
+        evaluate the rule condition.
+        SQLException is caught and returns
+        false (treated as no violation).
+    end note
+    DBRULE --> ENG : true (violated) / false (pass)
+    deactivate DBRULE
+
+    alt rule condition is true (violation detected)
+        ENG -> DBRULE : then(@Fact rs, resource, namesMap, violations)
+        activate DBRULE
+        DBRULE -> DBRULE : createRuleViolation(rs, resource, namesMap)
+        DBRULE -> VIOL : new RuleViolation(ruleId, compositeRuleId,\ncompositeSubRuleId, type, category,\nerrorMsg, resourceURI, namespace,\nlabel, severity, normative,\npackageHierarchy, placeholderValues)
+        activate VIOL
+        VIOL --> DBRULE : violation
+        deactivate VIOL
+        DBRULE -> DBRULE : violations.add(violation)
+        deactivate DBRULE
+    end
+
+    deactivate ENG
+    deactivate DBVAL
+end
+
+DBPARSE --> TASK : parser (raw OntModel\n+ DB violations ready)
+deactivate DBPARSE
+
+== Phase 2: OWL Model Validation (post-parse, pre-shadow-merge) ==
+
+TASK -> INTERP : result = interpretSchema\n(parser.getModel(), file,\nparser.getStereotypedNamespaces(),\nvalidateModel)
+activate INTERP
+note right of INTERP
+    Model undergoes Stages 1-3:
+    pruneIncomplete, labelRoles,
+    Translator.run(), propagateComments,
+    applyStereotypes, classifyAttributes,
+    removeUntyped — THEN validation fires
+    before shadow extension merging (Stage 4)
+end note
+
+INTERP -> MVAL : new CIMModellingGuideRulesValidator(baseURI)
+activate MVAL
+note right of MVAL
+    Constructor registers 100+ rules
+    across 9 specialised rule engines:
+    - packageRulesEngine
+    - classRulesEngine
+    - attributeRulesEngine
+    - associationRulesEngine
+    - enumerationRulesEngine
+    - elementDescriptionRulesEngine
+    - inheritanceRulesEngine
+    - namespaceRulesEngine
+    - extensionRulesEngine
+    - shadowClassExtensionRulesEngine
+    Each engine has a DefaultRuleListener
+    registered for invocation statistics.
+end note
+MVAL --> INTERP : modelValidator
+deactivate MVAL
+
+INTERP -> MVAL : validate(ontModel)
+activate MVAL
+
+note right of MVAL
+    Pre-processes model into targeted
+    resource sets before firing engines:
+    - packageNamesMap (for uniqueness checks)
+    - classNamesMap (for uniqueness checks)
+    - normativeClasses / extensionClasses
+    - shadowClasses (bottom-up + top-down)
+    - allClasses, attributes, associations,
+      enums, enumLiterals, allResources
+end note
+
+loop for each resource category
+    MVAL -> ENG : fire(rules, facts)
+    activate ENG
+    note right of ENG
+        Facts injected per resource:
+        - "resource": OntResource
+        - "violations": List<RuleViolation>
+        - "namesMap": Map<String,List<String>>
+    end note
+
+    ENG -> RULE : when(@Fact resource, namesMap)
+    activate RULE
+    note right of RULE
+        Condition method checks whether
+        the rule is violated for this
+        specific resource
+    end note
+    RULE --> ENG : true (violated) / false (pass)
+    deactivate RULE
+
+    alt rule condition is true (violation detected)
+        ENG -> RULE : then(@Fact resource, namesMap, violations)
+        activate RULE
+        RULE -> RULE : createRuleViolation(resource, namesMap)
+        RULE -> VIOL : new RuleViolation(ruleId, compositeRuleId,\ncompositeSubRuleId, type, category,\nerrorMsg, resourceURI, namespace,\nlabel, severity, normative,\npackageHierarchy, placeholderValues)
+        activate VIOL
+        VIOL --> RULE : violation
+        deactivate VIOL
+        RULE -> RULE : violations.add(violation)
+        deactivate RULE
+    end
+
+    deactivate ENG
+end
+
+MVAL --> INTERP : List<RuleViolation> owlViolations
+deactivate MVAL
+
+INTERP --> TASK : CIMInterpreterResult\n(model, owlViolations)
+deactivate INTERP
+
+== Phase 3: Violation Merge ==
+
+TASK -> TASK : result.getRuleViolations()\n.addAll(parser.getRuleViolations())
+note right of TASK
+    DB violations from Phase 1 are merged into
+    the CIMInterpreterResult alongside OWL
+    violations from Phase 2. The combined list
+    is then passed to
+    CIMModellingGuideViolationsReportGenerator
+    .generateReport() to produce the AsciiDoc
+    compliance report written to /Schema.
+end note
+deactivate TASK
+
+@enduml
