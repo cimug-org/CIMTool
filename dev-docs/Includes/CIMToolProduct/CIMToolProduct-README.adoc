@@ -346,10 +346,6 @@ version in `cimtool-cli/pom.xml` must also be updated to match before running
 | CIMToolTest
 | `1.2.0`
 | Test suite; only increment when tests or test infrastructure are changed or added
-
-| io.ucaiug.slf4j.logback.binding
-| `1.0.0`
-| OSGi fragment bundle that wires SLF4J 2.x to Logback (see the *Dependencies on Other Projects* section); pure OSGi metadata with no Java source, versioned independently of the core product — increment only when the fragment's `MANIFEST.MF` or `META-INF/services` registration changes
 |===
 
 ===== Dormant Projects
@@ -497,16 +493,22 @@ script:
   `C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe` — update the
   `SIGNTOOL` variable in the script if your installation path differs.
 
-. *SafeNet Authentication Client (SAC)* — must be installed and the IdenTrust EV
-  USB token must be inserted before running the script. SAC installs the PKCS#11
-  library at `C:\Windows\System32\eTPKCS11.dll`. If this file is not found the
-  script will automatically attempt the alternate location
-  `C:\Windows\System32\pkcs11.dll`.
+. *SafeNet Authentication Client (SAC)* — must be installed *and running*, and the
+  IdenTrust EV USB token must be inserted, before launching the script. Installing
+  SAC is not sufficient on its own: the SafeNet service that backs the PKCS#11
+  library must be active for `jarsigner` and `keytool` to reach the token, so launch
+  SafeNet Authentication Client and confirm it lists the inserted token before
+  running `release-cimtool.bat`. SAC installs the PKCS#11 library at
+  `C:\Windows\System32\eTPKCS11.dll`; if this file is not found the script
+  automatically attempts the alternate location `C:\Windows\System32\pkcs11.dll`.
 
-. *Token PIN* — the script prompts for the hardware token PIN once at startup
-  using a masked input field (characters are not echoed). The PIN is held in
-  memory for the duration of the signing session and cleared immediately on
-  completion. It is never written to disk.
+. *Token PIN* — the script prompts for the hardware token PIN once at startup using
+  a masked input field. *No characters, asterisks, or cursor movement appear as the
+  PIN is typed* — this is expected; type the PIN and press Enter once. Wait for the
+  prompt to appear before typing, and avoid pressing Enter on an empty line, which
+  submits no PIN and fails without authenticating. The PIN is held in memory for the
+  duration of the signing session, cleared immediately on completion, and never
+  written to disk.
 
 . *Certificate alias* — The `CERT_ALIAS` variable in the script is set to the
   UUID that the IdenTrust token uses internally to identify the certificate entry.
@@ -522,12 +524,108 @@ script:
 ----
 "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" ^
   -list -keystore NONE -storetype PKCS11 ^
-  -providerClass sun.security.pkcs11.SunPKCS11 ^
+  -addprovider SunPKCS11 ^
   -providerArg pkcs11.cfg
 ----
 +
 The alias is the value appearing before the first comma in the output entry, e.g.:
 `2a5b28ed-47ef-2c08-a705-896ee5b3016e, PrivateKeyEntry, ...`
+
+===== Hardware Token PIN Management and Lockout Prevention
+
+The UCA Users Group EV code signing key — used to sign all UCA open source project
+releases, not CIMTool alone — is protected by a PIN held entirely on the hardware
+token, and the token enforces its own retry counter. A sequence of failed
+authentication attempts can lock the token, and — depending on how the token was
+provisioned — a fully locked token may require replacement and certificate
+re-issuance. Understanding the token's PIN model before running a signing session
+is therefore essential.
+
+*PIN objects on the token.* The IdenTrust EV token used to sign UCA open source
+project releases is a SafeNet/Thales IDPrime device that exposes more than one PIN
+object, and they are not interchangeable:
+
+* *Token Passcode* — the user PIN that protects the code signing key, with a
+  maximum of *15* retries on this token. The retry counter resets to its maximum on
+  _any_ single successful authentication, so one correct login fully restores the
+  budget.
+* *Digital Signature PIN / PUK* — a separate PIN object (maximum 3 retries each)
+  that exists on the token but does *not* protect the code signing key. Its much
+  tighter limit is a hazard only if a signing operation is mistakenly bound to it.
+
+To confirm which PIN protects the signing key, open the certificate's *Private key*
+detail in SafeNet Authentication Client (SAC): Advanced View → Tokens → IdenTrust
+Token → User certificates → the certificate. The field *Token authentication on
+board* reading *No* confirms the key is gated by the standard Token Passcode rather
+than a separate on-board authentication object. On this token the signing key uses
+the *eToken Base Cryptographic Provider* with key specification *AT_KEYEXCHANGE*,
+gated by the Token Passcode.
+
+image::{cimtoolproduct-imagesdir}/SAC_Private_Key_PIN_Binding.png[SafeNet Authentication Client private key detail showing the signing key gated by the Token Passcode]
+
+[WARNING]
+====
+*Inspecting token status is safe; guessing the PIN is not.* Viewing the token's
+properties and retry counters in SAC consumes no attempts — only an actual
+authentication with an incorrect PIN decrements the counter. Before any signing
+session, inspect *Token Passcode retries remaining* in SAC. If it is below maximum,
+a previous session left the counter eroded; do not run anything that submits a PIN
+until the correct PIN is confirmed. Never "test" the token by trying candidate PINs.
+====
+
+image::{cimtoolproduct-imagesdir}/SAC_Token_Passcode_Retries.png[SafeNet Authentication Client token detail showing Token Passcode retries remaining against the maximum of 15]
+
+*Why the signing script fails fast.* `release-cimtool.bat` signs the entire
+`plugins/` set — on the order of 150 JARs — in a single loop. If that loop continued
+past a failed signing attempt, an incorrect PIN or an unusable keystore would produce
+one failed token authentication _per JAR_, draining the retry counter and locking the
+token within a single run. To prevent this, the script treats the first JAR as a live
+token-access test: if the first signing attempt fails, the script aborts immediately,
+before any further `jarsigner` invocation. A misconfigured run therefore costs at most
+one attempt rather than the entire counter. This guard is intentional and must be
+preserved in any future revision of the signing pipeline.
+
+[NOTE]
+====
+*Distinguishing a keystore-load failure from a PIN failure:* Not every `jarsigner`
+failure is a wrong-PIN failure, and the distinction matters for the retry counter. A
+failure reported as `keystore load: load failed` or a provider error generally occurs
+in the JVM/PKCS#11 provider layer _before_ a PIN is ever submitted to the token, and
+does not necessarily decrement the retry counter. A common cause on JDK 9 and later is
+the deprecated `-providerClass sun.security.pkcs11.SunPKCS11` invocation, which can
+fail to load the provider; the supported form is `-addprovider SunPKCS11` (retaining
+`-providerArg <pkcs11.cfg>`). To verify token access independently of the full
+pipeline — and to reset the retry counter with a known-good PIN — run a single
+`keytool` listing with PKCS#11 debug enabled:
+
+[source,cmd]
+----
+"C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" ^
+  -list -keystore NONE -storetype PKCS11 ^
+  -addprovider SunPKCS11 -providerArg pkcs11.cfg ^
+  -J-Djava.security.debug=sunpkcs11
+----
+
+A clean listing of the UCA USERS GROUP certificate confirms both that the provider
+invocation is correct and that the token is accessible. The `sunpkcs11` debug output
+names the underlying PKCS#11 `CKR_*` result code when something is wrong, which
+distinguishes a provider or library problem from a genuine PIN rejection.
+====
+
+[NOTE]
+====
+*Recovering a locked token:* If the Token Passcode counter reaches zero the token
+locks. On this token the *Token unlock object* is the *Administrator Passcode* (there
+is no user PUK), which can reset the user PIN via SAC. However, possession of the
+Administrator Passcode depends on how IdenTrust provisioned the token — it is not
+always released to the subscriber, and it has its own independent retry limit that can
+also lock permanently. Do not rely on the admin unlock as a safety net unless the
+Administrator Passcode value is known to be held and recorded. Treat a lockout as a
+worst case that may require a replacement token and certificate re-issuance from
+IdenTrust.
+====
+
+image::{cimtoolproduct-imagesdir}/SAC_Token_Unlock_Object.png[SafeNet Authentication Client token detail showing the Token unlock object is the Administrator Passcode]
 
 ===== Running the Signing Script
 
@@ -574,7 +672,7 @@ The script exits immediately with a non-zero error code if any step fails.
 The following screenshots illustrate a complete successful run of the signing
 pipeline.
 
-*Confirm Prerequisites — Confirm EV USB token inserted / Step 1 — Start JAR signing:*
+*Confirm Prerequisites — Confirm EV USB token inserted and SafeNet Authentication Client running / Step 1 — Start JAR signing:*
 
 image::{cimtoolproduct-imagesdir}/Step1.png[Step 1 Insert EV USB Token and SafeNet PIN prompt]
 
@@ -738,6 +836,53 @@ In the event of future macOS support, `codesign` would be used in place of
 `signtool` for signing the macOS launcher (`CIMTool.app`). JAR signing via
 `jarsigner` would remain unchanged across platforms.
 
+
+
+[[vendored-library-change-checklist]]
+=== Maintaining Vendored Third-Party Libraries
+
+CIMTool does not pull third-party libraries from Maven Central at build time; every
+third-party JAR is vendored — committed to the repository and referenced explicitly.
+A vendored JAR is therefore referenced in several places at once, and adding,
+removing, or upgrading one requires updating _all_ of its references in the same
+change. Missing one typically produces a build that passes in the IDE but fails at
+PDE export or runtime, or a CLI build that cannot resolve the dependency.
+
+There are two vendoring patterns, with different reference sets.
+
+*Pattern A — JAR bundled inside a plugin.* The JAR lives in `<Plugin>/lib/` and is
+woven into that plugin's classpath. When it changes, update all of the following in
+that plugin, in lockstep:
+
+* `<Plugin>/lib/` — add, remove, or replace the physical JAR (the filename carries the version)
+* `<Plugin>/META-INF/MANIFEST.MF` — the `Bundle-ClassPath` entry
+* `<Plugin>/build.properties` — the `bin.includes` and/or `jars.extra.classpath` entry, so PDE export ships the JAR
+* `<Plugin>/.classpath` — the `kind="lib"` classpath entry, so the IDE compiles against it
+* The project's README — `Project Structure` tree and `Vendored Third-Party Libraries` table
+
+Plugins using this pattern include CIMToolPlugin, CIMUtil, and Kena.
+
+*Pattern B — library shipped as its own bundle in the product.* The library is a
+standalone OSGi bundle listed in the product. When it changes, update:
+
+* `CIMToolProduct/CIMTool.product` — the `<plugin id="…"/>` entry
+* `CIMToolProduct/build.properties` — where the bundle is referenced
+* This README's product composition documentation
+
+Two cross-cutting layers apply to any vendored JAR, regardless of pattern:
+
+*Signing (release).* `release-cimtool.bat` discovers and signs every JAR in the
+exported `plugins/` directory automatically, so no per-JAR list is maintained for
+signing — _except_ `SKIP_JARS`. A newly added JAR that cannot be signed (for example,
+one already signed by its vendor) must be added to `SKIP_JARS`; a removed JAR should
+be pruned from it.
+
+*CLI (Maven / cimtool-cli).* If the CLI uses the library, it is vendored into the
+CLI's local `lib-repo/` rather than fetched from Maven Central. Update, together:
+
+* `cimtool-cli/pom.xml` — the `<dependency>` (groupId / artifactId / version)
+* `cimtool-cli/install-jars.bat` and `cimtool-cli/install-jars.sh` — the `mvn install:install-file` line that seeds `lib-repo/` (keep the two in sync; the `.sh` retains LF line endings)
+* `cimtool-cli/lib-repo/` — the installed artifact, regenerated by running `install-jars`
 
 
 === Relationship to cimtool-cli
