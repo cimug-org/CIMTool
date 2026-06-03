@@ -40,7 +40,7 @@ REM  2. Windows SDK signtool.exe must be installed (via Visual Studio or a
 REM     standalone Windows SDK download). Update the SIGNTOOL variable below
 REM     if your installation path differs from the default.
 REM
-REM  3. SafeNet Authentication Client (SAC) must be installed and the
+REM  3. SafeNet Authentication Client must be installed and the
 REM     IdenTrust EV USB token must be inserted before running this script.
 REM
 REM  4. Maven 3.9 or later must be installed and mvn must be on the PATH.
@@ -164,7 +164,7 @@ if not exist "%PKCS11_DLL%" (
     set PKCS11_DLL=C:\Windows\System32\pkcs11.dll
     if not exist "!PKCS11_DLL!" (
         echo ERROR: No PKCS#11 library found.
-        echo        Ensure SafeNet Authentication Client ^(SAC^) is installed.
+        echo        Ensure SafeNet Authentication Client is installed.
         exit /b 1
     )
     echo          Found alternate PKCS#11 library: !PKCS11_DLL!
@@ -191,14 +191,20 @@ set PKCS11_CFG=%TEMP%\cimtool-pkcs11.cfg
 echo name = IdenTrust-EV> "%PKCS11_CFG%"
 echo library = %PKCS11_DLL%>> "%PKCS11_CFG%"
 
-REM --- Confirm token is inserted ---
+REM --- Confirm token is inserted and SafeNet Authentication Client is running ---
 echo.
-echo IMPORTANT: Ensure the IdenTrust EV USB token is inserted before continuing.
+echo IMPORTANT: Before continuing, ensure BOTH of the following are true:
+echo   1. The IdenTrust EV USB token is inserted.
+echo   2. SafeNet Authentication Client is installed AND running, with the
+echo      token visible in it. Having SafeNet Authentication Client merely
+echo      installed is not sufficient - the service that backs the PKCS#11
+echo      library must be active for the token to be reachable.
 echo.
-set /p TOKEN_CONFIRM="Is the IdenTrust EV USB token inserted? (Y/N): "
+set /p TOKEN_CONFIRM="Is the token inserted AND SafeNet Authentication Client running? (Y/N): "
 if /i not "%TOKEN_CONFIRM%"=="Y" (
     echo.
-    echo Aborted. Please insert the token and re-run the script.
+    echo Aborted. Insert the token, start SafeNet Authentication Client, and re-run
+    echo the script.
     del "%PKCS11_CFG%" 2>nul
     exit /b 1
 )
@@ -222,6 +228,13 @@ set JAR_COUNT=0
 set JAR_SKIPPED=0
 set JAR_ERRORS=0
 
+REM TOKEN_TESTED guards against EV-token lockout. The FIRST signing attempt acts
+REM as a live token/keystore access test. If it fails, the script aborts before
+REM any further jarsigner invocations, so a wrong PIN or unusable keystore results
+REM in a SINGLE failed token-open attempt rather than one per plugin JAR. Repeated
+REM failed PIN attempts will permanently lock the IdenTrust EV token.
+set TOKEN_TESTED=0
+
 for /r "%PLUGINS_DIR%" %%F in (*.jar) do (
     set JAR_NAME=%%~nxF
     set JAR_SKIP=0
@@ -233,8 +246,12 @@ for /r "%PLUGINS_DIR%" %%F in (*.jar) do (
         set /a JAR_SKIPPED+=1
     ) else (
         set /a JAR_COUNT+=1
-        echo   Signing: !JAR_NAME!
-        %JARSIGNER% -providerClass sun.security.pkcs11.SunPKCS11 ^
+        if "!TOKEN_TESTED!"=="0" (
+            echo   Verifying token/keystore access by signing first JAR: !JAR_NAME!
+        ) else (
+            echo   Signing: !JAR_NAME!
+        )
+        %JARSIGNER% -addprovider SunPKCS11 ^
                     -providerArg "%PKCS11_CFG%" ^
                     -keystore NONE ^
                     -storetype PKCS11 ^
@@ -244,9 +261,33 @@ for /r "%PLUGINS_DIR%" %%F in (*.jar) do (
                     -sigalg SHA256withRSA ^
                     "%%F" "%CERT_ALIAS%"
         if errorlevel 1 (
-            echo   ERROR: Failed to sign !JAR_NAME!
-            set /a JAR_ERRORS+=1
+            if "!TOKEN_TESTED!"=="0" (
+                echo.
+                echo =============================================================================
+                echo ERROR: The first signing attempt FAILED - aborting before any further attempts.
+                echo.
+                echo        No additional JARs will be signed. This guard exists to prevent
+                echo        repeated failed PIN/keystore attempts from locking the EV token.
+                echo.
+                echo        Likely causes, in order:
+                echo          1. Incorrect token PIN. WARNING: the IdenTrust EV token locks after
+                echo             a small number of consecutive wrong PINs - do NOT keep retrying.
+                echo             Verify the PIN in SafeNet Authentication Client first.
+                echo          2. jarsigner provider invocation. On JDK 9+ the deprecated
+                echo             -providerClass may fail; -addprovider SunPKCS11 is the modern form.
+                echo          3. SafeNet Authentication Client not running, or token not inserted
+                echo             / not recognized by Windows.
+                echo          4. PKCS#11 DLL bitness mismatch with the JDK ^(both must be 64-bit^).
+                echo =============================================================================
+                set TOKEN_PIN=
+                del "%PKCS11_CFG%" 2>nul
+                exit /b 1
+            ) else (
+                echo   ERROR: Failed to sign !JAR_NAME!
+                set /a JAR_ERRORS+=1
+            )
         )
+        set TOKEN_TESTED=1
     )
 )
 
@@ -320,7 +361,7 @@ REM --- Step 5: Sign cimtool-cli.jar ---
 echo.
 echo [Step 5/8] Signing cimtool-cli.jar...
 
-%JARSIGNER% -providerClass sun.security.pkcs11.SunPKCS11 ^
+%JARSIGNER% -addprovider SunPKCS11 ^
             -providerArg "%PKCS11_CFG%" ^
             -keystore NONE ^
             -storetype PKCS11 ^
