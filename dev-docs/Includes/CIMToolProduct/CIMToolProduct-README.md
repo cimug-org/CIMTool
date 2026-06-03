@@ -50,13 +50,17 @@ CIMToolProduct/
 ├── cimtool-v2.icns             ← macOS application icon
 ├── cimtool-v2.xpm              ← Linux application icon
 ├── makeicons.sh                ← Script to regenerate icon assets from source
-├── readme-images/              ← Screenshots referenced by this README (PDE export dialog, signing pipeline steps)
+├── readme-images/              ← Screenshots referenced by this README (PDE export dialog, token/keystore inspection, signing pipeline steps, release tagging)
 │   ├── Eclipse_Product_Export.png
 │   ├── Release_Artifacts.png
+│   ├── SAC_Private_Key_PIN_Binding.png
+│   ├── SAC_Token_Passcode_Retries.png
+│   ├── SAC_Token_Unlock_Object.png
 │   ├── Step1.png
 │   ├── Step2.png
 │   ├── Step3.png
-│   └── Step4.png
+│   ├── Step4.png
+│   └── Tag_Release.png
 └── icons/                      ← Window title bar and taskbar icons at multiple resolutions
     ├── cimtool-v2_16x16.png
     ├── cimtool-v2_32x32.png
@@ -553,8 +557,16 @@ immediately run `mvn clean package` without needing to re-run `install-jars.bat`
 #### Create the GitHub Release
 
 Navigate to [https://github.com/cimug-org/CIMTool/releases](https://github.com/cimug-org/CIMTool/releases)
-and create a new release against master. Set the tag to the release version (e.g.
-`2.3.0`). Copy the release notes entry for this version from `docs/release-notes.md`
+and create a new release against the `master` target. By project convention the
+release tag is a **new** tag named for the release version — not an existing tag.
+Open the **Select tag** dropdown, type the release version exactly as it should
+appear (for this example, `2.3.0` — the bare version, with no `v` prefix, matching
+the existing tags such as `2.2.0`), and choose **Create new tag** so the tag is
+created on the `master` target when the release is published:
+
+![GitHub release tag selection — create a new tag named for the release version, e.g. 2.3.0, targeting master](readme-images/Tag_Release.png)
+
+Copy the release notes entry for this version from `docs/release-notes.md`
 into the release notes body. Attach all four release artifacts by dropping them
 into the Assets upload area highlighted below, then click **Publish release**:
 
