@@ -121,6 +121,8 @@ but it depends on none of them.
 
 ### Vendored Third-Party Libraries
 
+> **Note — Keeping vendored libraries in sync:** Adding, removing, or upgrading any library listed in this section must be mirrored in the same change across this project's `META-INF/MANIFEST.MF` (`Bundle-ClassPath`), `build.properties`, and `.classpath`, as well as the repository-wide reference chain. See the [Vendored Library Change Checklist](../CIMToolProduct/CIMToolProduct-README.md#maintaining-vendored-third-party-libraries) in the CIMToolProduct documentation.
+
 Kena bundles Apache Jena 2.6.3 and all of its required dependencies, declared
 in `Bundle-ClassPath` in `MANIFEST.MF` and included via `build.properties`:
 

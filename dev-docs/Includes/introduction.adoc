@@ -1,6 +1,32 @@
 
 == Introduction
 
-What follows is a sample document that highlights the latest documentation features introduced in the https://github.com/cimug-org/CIMTool/releases[2.3.0] release of https://cimtool.ucaiug.io/[CIMTool]. It illustrates how to modularize and include documentation components within a master document as well as how to dynamically include various CIMTool generated artifacts within your documentation.
+This document is the developer documentation for CIMTool, the open-source platform
+maintained by the UCA International Users Group for authoring CIM (Common Information
+Model) profiles and generating the artifacts derived from them. It is written for the
+developers who build, extend, package, and release CIMTool — contributors working in
+the source tree, not end users authoring profiles. Documentation on using CIMTool
+itself lives separately on the project website at
+https://cimtool.ucaiug.io/[cimtool.ucaiug.io].
 
-image::{docdir}/Documentation/Images/asciidoc-org.png[link="https://asciidoc.org/",alt="AsciiDoc.org",align="center"]
+CIMTool is structured as a suite of Eclipse PDE plugins and supporting projects that
+together produce a standalone Rich Client Platform (RCP) application, along with a
+companion command-line tool. Because that structure spans many cooperating projects —
+the core plugin, shared utilities, the RDF engine, the product and feature
+definitions, the CLI, and others — this document is assembled modularly: each project
+contributes its own README, and those READMEs are included here into a single
+reference. Each README also stands alone in its project directory for developers
+working within that one component.
+
+Each project section describes that component's purpose, its place in the overall
+architecture, its dependencies on other projects and on vendored third-party
+libraries, and the conventions that govern how it is built and maintained.
+Cross-cutting concerns that span multiple projects — the build and release pipeline,
+code signing, the unified logging architecture, and the dependency vendoring model —
+are documented where they are owned, with cross-references from the projects they
+affect.
+
+This documentation describes the point-in-time state of the codebase rather than its
+history, and is intended to stay current with the source it accompanies. Developers
+extending or releasing CIMTool should treat it as the authoritative reference for how
+the projects fit together and how a change in one project ripples into others.

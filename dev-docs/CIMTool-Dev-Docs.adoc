@@ -12,8 +12,8 @@
 // title in the document or else will not register correctly.
 //:pdf-themesdir: {docdir}/Documentation/Themes
 //:pdf-theme: cimtool-adoc
-//:stylesdir: {docdir}/Documentation/Styles
-//:stylesheet: cimtool-adoc.css
+:stylesdir: {docdir}/Styles
+:stylesheet: cimtool-adoc.css
 //
 //------ General document settings ------
 :doctype: book

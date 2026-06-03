@@ -54,9 +54,16 @@ CIMToolPlugin/
 ├── js/                           ← Bundled JavaScript libraries (air-gap safe; no CDN dependency)
 │   ├── svg-pan-zoom.js           ← svg-pan-zoom 3.6.2 — pan/zoom for the PlantUML Real-Time Preview SVG view
 │   └── README.md                 ← Documents the bundled svg-pan-zoom version and source
-├── icons/                        ← Toolbar, view, wizard, and editor icons (PNG/BMP)
-├── graphics/                     ← SVG icon sources for profile diagram elements (e.g. `class.svg`, `aggregate.svg`, …)
-├── makeicons.sh                  ← Script to regenerate icon assets from the SVG sources
+├── builders/                     ← XSLT builder stylesheets and supporting resources
+│   └── includes/                 ← Shared XSLT includes used across builders
+├── import-reports/               ← AsciiDoc templates and stylesheets for the audit/compliance
+│   │                               report generated into the project's /Schema folder
+│   ├── asciidoc/
+│   │   ├── includes/
+│   │   ├── styles/
+│   │   └── themes/
+│   ├── puml/                     ← PlantUML templates for diagram generation
+│   └── schema/                   ← JSON/XML schemas for report configuration
 └── src/
     └── au/com/langdale/
         ├── cimtoole/             ← Main plugin package
@@ -115,9 +122,11 @@ It also depends on the following standard Eclipse platform bundles:
 | `org.eclipse.ui.themes` | Eclipse theming and colour/font registry — `IThemeManager`, `ColorRegistry`, `FontRegistry` for consistent UI styling |
 | `org.eclipse.core.filesystem` | Abstraction over file system access — `IFileStore`, `EFS`, used for file operations that span local and remote file systems |
 | `net.sourceforge.plantuml.library` | PlantUML rendering library — generates SVG diagrams from `.puml` source in the Real-Time Preview pipeline. Declared as a hard `Require-Bundle` dependency. |
-| `net.sourceforge.plantuml.eclipse` | PlantUML Eclipse integration bundle — provides the Eclipse-side PlantUML API, including the `PlantUmlSvgView` that backs the "CIMTool PlantUML Svg" view. Declared as a hard `Require-Bundle` dependency. |
+| `net.sourceforge.plantuml.eclipse` | PlantUML Eclipse integration bundle — provides the Eclipse-side PlantUML API. Declared as `resolution:=optional` since the feature degrades gracefully when absent. |
 
 ### Vendored Third-Party Libraries
+
+> **Note — Keeping vendored libraries in sync:** Adding, removing, or upgrading any library listed in this section must be mirrored in the same change across this project's `META-INF/MANIFEST.MF` (`Bundle-ClassPath`), `build.properties`, and `.classpath`, as well as the repository-wide reference chain. See the [Vendored Library Change Checklist](../CIMToolProduct/CIMToolProduct-README.md#maintaining-vendored-third-party-libraries) in the CIMToolProduct documentation.
 
 The following JARs are included directly in the plugin bundle via `Bundle-ClassPath`
 in `MANIFEST.MF` (not resolved from the target platform):
@@ -154,10 +163,10 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | `org.eclipse.core.resources.builders` | Registers `CIMBuilder` as an incremental project builder that runs automatically on workspace resource changes to produce all configured CIM profile output artefacts |
 | `org.eclipse.core.resources.natures` | Registers `CIMNature` as the Eclipse project nature that marks a project as a CIMTool project and associates it with `CIMBuilder` |
 | `org.eclipse.core.resources.markers` | Defines CIMTool-specific problem markers used to display build errors and validation warnings in the Eclipse Problems view and editor gutter |
-| `org.eclipse.core.contenttype.contentTypes` | Declares a file association binding the `xml-log` file extension to the platform `org.eclipse.core.runtime.text` content type. CIMTool's own editor file extensions (e.g. `.owl`, `.xmi`) are bound directly in the `org.eclipse.ui.editors` contribution rather than here |
+| `org.eclipse.core.contenttype.contentTypes` | Registers CIMTool file content types (e.g. `.xmi`, `.owl`, `.profile`) so Eclipse can associate them with the correct editors and handlers |
 | `org.eclipse.ui.perspectives` | Registers the CIMTool Perspective, CIMTool Browsing Perspective, and Validation Perspective — defines the initial layout of views, editors, and toolbars for each |
 | `org.eclipse.ui.editors` | Registers multi-page editors for CIM profiles, model artefacts, mappings, diagnosis output, and repair files, bound to their respective content types |
-| `org.eclipse.ui.views` | Registers the Project Model, Documentation, and Validation views, the Profile Preview view (`CurrentProfilePlantUmlSvgView` — the PlantUML Real-Time Preview), and the "CIMTool PlantUML Svg" view (backed by `net.sourceforge.plantuml.eclipse`'s `PlantUmlSvgView`) as Eclipse workbench views |
+| `org.eclipse.ui.views` | Registers the Project Model view, Documentation view, and Validation view as Eclipse workbench views |
 | `org.eclipse.ui.importWizards` | Registers import wizards for EA projects, XMI models, schemas, profiles, rulesets, spreadsheets, and transform builders under the CIMTool category |
 | `org.eclipse.ui.newWizards` | Registers new-resource wizards for creating CIMTool projects, profiles, mappings, rulesets, and other CIMTool artefact types |
 | `org.eclipse.ui.exportWizards` | Registers the schema export wizard under the CIMTool category |
@@ -261,9 +270,7 @@ defaults are set in `PlantUMLBuildersPreferencesPage`.
 
 `net.sourceforge.plantuml.library` is a hard `Require-Bundle` dependency —
 the buildlet calls the PlantUML API directly. `net.sourceforge.plantuml.eclipse`
-is also a hard `Require-Bundle` dependency; the real-time preview pipeline does not
-call it directly, but it provides the `PlantUmlSvgView` that backs the separate
-"CIMTool PlantUML Svg" view registered in `plugin.xml`.
+is `resolution:=optional` and is not used by the preview pipeline.
 
 
 

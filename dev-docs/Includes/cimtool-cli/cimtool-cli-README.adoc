@@ -26,7 +26,7 @@ This project is a *packaging-only* Maven module. It contains no Java source of
 its own. Its sole purpose is to:
 
 . Collect `kena.jar` and `cimutil.jar` from a CIMTool Eclipse PDE product export
-. Collect all vendored third-party JARs from `Kena/lib/`, `CIMUtil/lib/`, and `CIMToolPlugin/lib/`, together with the SLF4J 2.x / Logback provider bundles from the PDE product export `plugins/` directory
+. Collect all vendored third-party JARs from `Kena/lib/` and `CIMUtil/lib/`
 . Embed the XSLT builder stylesheets and Java builder configurations from `CIMUtil/builders/` at the classpath root
 . Merge everything into a single executable uber JAR via Maven Shade
 
@@ -124,13 +124,20 @@ CIMTool/
 
 === Dependency Management — Local File Repository
 
+[NOTE]
+====
+*Keeping vendored dependencies in sync:* When a third-party dependency used by the
+CLI is added, removed, or upgraded, update `pom.xml`, both `install-jars.bat` and
+`install-jars.sh`, and regenerate `lib-repo/` together in the same change. See
+<<vendored-library-change-checklist,Maintaining Vendored Third-Party Libraries>> in
+the CIMToolProduct documentation for the full repository-wide reference chain.
+====
+
 ==== Why a Local Maven File Repository?
 
-All of this project's dependencies are vendored JARs that live under `Kena/lib/`,
-`CIMUtil/lib/`, and `CIMToolPlugin/lib/` in the Eclipse PDE project tree, plus
-`kena.jar` and `cimutil.jar` and the SLF4J 2.x / Logback provider bundles
-(`slf4j-api`, `logback-core`, `logback-classic`) sourced from the CIMTool Eclipse
-PDE product export `plugins/` directory.
+All of this project's dependencies are vendored JARs that live under `Kena/lib/`
+and `CIMUtil/lib/` in the Eclipse PDE project tree, plus `kena.jar` and
+`cimutil.jar` sourced from the CIMTool Eclipse PDE product export.
 None of these are published to Maven Central.
 
 Maven's `system` scope (the most obvious way to reference local JARs) is formally
@@ -213,7 +220,7 @@ also install the vendor JARs:
   Install vendor JARs? (Y/N): _
 ----
 
-The script processes all 27 dependencies in four groups:
+The script processes all 26 dependencies in three groups:
 
 [cols="2,1,3", options="header"]
 |===
@@ -228,10 +235,6 @@ The script processes all 27 dependencies in four groups:
 | Kena/lib vendored JARs
 | 9
 | `Kena/lib/*.jar`
-
-| SLF4J 2.x / Logback / JUL bridge
-| 4
-| PDE export `plugins/` (slf4j-api, logback-core, logback-classic) + `CIMToolPlugin/lib/` (jul-to-slf4j)
 
 | CIMUtil/lib vendored JARs
 | 12
@@ -341,10 +344,7 @@ Do not run `mvn clean package` directly for official releases. See
 | Core CIMTool processing: profiles, XMI import, validation, XSLT transforms
 
 | `Kena/lib/*.jar`
-| Apache Jena 2.6.3, ARQ 2.8.4, IRI 0.8, Xerces 2.7.1, ICU4J 71.1, Lucene Core 2.3.1, StAX API 1.0.1, Woodstox 3.2.9, log4j-over-slf4j 2.0.17 (Log4j 1.x → SLF4J bridge)
-
-| PDE export `plugins/` + `CIMToolPlugin/lib/`
-| slf4j-api 2.0.17, logback-classic 1.5.32, logback-core 1.5.32 (SLF4J 2.x logging provider), jul-to-slf4j 2.0.17 (JUL → SLF4J bridge)
+| Apache Jena 2.6.3, ARQ 2.8.4, Xerces 2.7.1, ICU4J 71.1, Lucene Core 2.3.1, StAX API 1.0.1, Woodstox 3.2.9, log4j-over-slf4j 2.0.17 (Log4j 1.x → SLF4J bridge)
 
 | `CIMUtil/lib/*.jar`
 | Saxon-HE 10.8, Easy-Rules 4.1.0, Apache POI 3.9, Jackcess 2.2.3, UCanAccess 4.0.4, HSQLDB 2.3.6, SQLite JDBC 3.45.2.0, Gson 2.8.6, commons-lang 2.6, commons-logging 1.1.3, xml-resolver 1.2
@@ -688,10 +688,8 @@ The debug configuration enables the following:
 | UCanAccess and HSQLDB reserved-word noise remains suppressed
 
 | root
-| `WARN`
-| Keeps third-party library output (Saxon, Jena, etc.) quiet so the targeted
-  `au.com.langdale.*` output is not buried in noise; change to `DEBUG` if broader
-  framework-level diagnostics are needed
+| `DEBUG`
+| All other CIMTool packages
 |===
 
 
@@ -785,10 +783,8 @@ a JAR came from a specific publisher and that its contents have not been tampere
 with since signing. The signature is mathematically bound to the exact byte contents
 of the original JAR file.
 
-*Why stripping is necessary and unavoidable:* When Maven Shade merges all 27
-contributing JARs — the 2 CIMTool core modules (`kena.jar` and `cimutil.jar`) plus
-the 25 vendored third-party JARs — into one uber JAR, the contents of each
-contributing JAR are extracted and repacked into
+*Why stripping is necessary and unavoidable:* When Maven Shade merges 25 JARs into
+one uber JAR, the contents of each contributing JAR are extracted and repacked into
 a new ZIP structure. This invalidates every original signature unconditionally —
 regardless of whether anything malicious occurred. There is no way to produce a
 valid shaded uber JAR that preserves the original signatures. The only two outcomes
