@@ -126,7 +126,7 @@ public class PlantUMLRealTimePreviewBuildlet extends TextBuildlet {
 		if (!owlFile.exists())
 			return;
 
-		String style = Info.getHierarchicalBuilderPreference(owlFile, Info.CURRENT_PROFILE_PREVIEW_STYLE);
+		String style = Info.getCurrentProfileRealTimePreviewDisplayStyle(owlFile);
 		ProfileModel tree = Task.getMessageModel(owlFile);
 		if (tree == null)
 			return;

@@ -706,6 +706,14 @@ public class Info implements QualifiedNames {
 		return instance;
 	}
 
+	/**
+	 * Method that retrieve a project level property.
+	 * 
+	 * @param resource
+	 * @param symbol
+	 * @return
+	 * @throws CoreException
+	 */
 	public static String getProperty(IResource resource, QualifiedName symbol) throws CoreException {
 		String value;
 		if (resource.exists()) {
@@ -761,31 +769,32 @@ public class Info implements QualifiedNames {
 	}
 
 	/**
-	 * Method that applied hierarchical precedence for preference setting can be
-	 * configured to hierarchically override:
+	 * Method that determines the current profile's real-time preview display style.
+	 * 
+	 * The following is the override hierarchy with those on the right taking
+	 * precedence over those on the left:
 	 * 
 	 * <pre>
 	 * global default preferences -> project-level preference -> profile-level preference
 	 * </pre>
 	 * 
-	 * @param resource The resource to determine the default for.
-	 * @param symbol   The QualifedName for the preference.
-	 * @return The preference value.
+	 * @param resource The profile to determine the real-time display style for.
+	 * @return The preference value or null if the resource is not a profile.
 	 */
-	public static String getHierarchicalBuilderPreference(IResource resource, QualifiedName symbol) {
+	public static String getCurrentProfileRealTimePreviewDisplayStyle(IResource resource) {
 		String style = null;
 		if (isProfile(resource)) {
 			// Step 1: Check first at the profile-level to determine if the preference is
 			// specified...
-			style = CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+			style = CIMToolPlugin.getBuilderPreferences().getPreference(resource, CURRENT_PROFILE_PREVIEW_STYLE);
 			if (style == null || style.isEmpty()) {
 				// Step 2: When not, we next check to see if the preference is specified at the
 				// project-level...
 				IProject project = resource.getProject();
-				style = CIMToolPlugin.getBuilderPreferences().getPreference(project, symbol);
+				style = CIMToolPlugin.getSettings().getSetting(project, CURRENT_PROFILE_PREVIEW_STYLE);
 				if (style == null || style.isEmpty()) {
 					// Step 3: If not, then the preference's global default is used...
-					style = getPreference(symbol);
+					style = getPreference(CURRENT_PROFILE_PREVIEW_STYLE);
 				}
 			}
 		}
@@ -793,25 +802,33 @@ public class Info implements QualifiedNames {
 	}
 
 	/**
-	 * Note for this method we do not resort to a "fallback" default value as we
-	 * intentionally want to know if a value is explicitly set at the level
-	 * (profile, project or global) of the resource passed in.
+	 * Method that determines the default display style that corresponds to the type
+	 * of the specified resource (i.e. the "level").
 	 * 
-	 * @param resource The resource to retrieve a builder preference value for.
-	 * @param symbol   The QualifedName for the preference.
+	 * If it is a project then the value configured at the project-level is returned
+	 * and if it is a profile then the value configured at the profile-level is
+	 * returned. If the type is neither then it is understood to be the default
+	 * global preference setting that is to be returned.
+	 * 
+	 * @param resource The resource to retrieve the value for.
+	 * @param symbol   The QualifedName for the preference to retrieve.
 	 * @return The preference value.
 	 */
-	public static String getHierarchicalBuilderPreferenceWithoutDefault(IResource resource, QualifiedName symbol) {
-		if (isProfile(resource)) {
+	public static String getCurrentProfileRealTimePreviewDisplayStyleByLevel(IResource resource) {
+		if (!(resource instanceof IProject)) {
 			// Resource is a profile so we get the profile-level preference and return it.
 			// Note for this method we do not resort to a "fallback" default hierarchically
 			// as we intentionally want to know if a value is explicitly set or not.
-			return CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+			return CIMToolPlugin.getBuilderPreferences().getPreference(resource, CURRENT_PROFILE_PREVIEW_STYLE);
 		} else if (resource instanceof IProject) {
-			// Resource is a profile so we get the profile-level preference and return it.
-			return CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
+			// Resource is a project so we get the project-level preference and return it.
+			try {
+				return getProperty(resource.getProject(), CURRENT_PROFILE_PREVIEW_STYLE);
+			} catch (CoreException e) {
+				return null;
+			}
 		} else {
-			return getPreference(symbol);
+			return getPreference(CURRENT_PROFILE_PREVIEW_STYLE);
 		}
 	}
 

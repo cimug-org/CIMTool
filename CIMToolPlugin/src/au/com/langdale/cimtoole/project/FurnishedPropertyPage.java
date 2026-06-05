@@ -203,13 +203,13 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 		protected String getValue() {
 			RGB rgb = editor.getColorSelector().getColorValue();
-			return ColorUtils.parseRGBColor(new int[] {rgb.red, rgb.green, rgb.blue});
+			return ColorUtils.parseRGBColor(new int[] { rgb.red, rgb.green, rgb.blue });
 		}
 
 		protected void setValue(String color) {
 			if (color != null) {
 				int[] rgb = ColorUtils.parseHexColor(color);
-				editor.getColorSelector().setColorValue(new RGB(rgb[0], rgb[1],rgb[2]));
+				editor.getColorSelector().setColorValue(new RGB(rgb[0], rgb[1], rgb[2]));
 			}
 		}
 
@@ -233,7 +233,7 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 				if (editor.getColorSelector().getColorValue() != null) {
 					RGB color = editor.getColorSelector().getColorValue();
-					selectedColor = ColorUtils.parseRGBColor(new int[] {color.red, color.green, color.blue});
+					selectedColor = ColorUtils.parseRGBColor(new int[] { color.red, color.green, color.blue });
 				}
 
 				if (selectedColor != null) {
@@ -339,7 +339,7 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 			setValue(Boolean.valueOf(Info.getBuilderPreference(symbol)));
 		}
 	}
-	
+
 	public class BuilderPreferenceOption extends OptionBinding {
 		public BuilderPreferenceOption(QualifiedName symbol, String label) {
 			super(symbol, label);
@@ -422,30 +422,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 	}
 
-	public class HierarchicalBuilderPreferenceReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public HierarchicalBuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
-			super(symbol, validator, null, Info.getHierarchicalBuilderPreference(getResource(), symbol));
-		}
-
-		public HierarchicalBuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
-			super(symbol, validator, data, Info.getHierarchicalBuilderPreference(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getHierarchicalBuilderPreference(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
-		}
-
-	}
-	
 	public class BuilderPreferenceReadOnlyCombo extends ReadOnlyComboBinding {
 
 		public BuilderPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
@@ -528,6 +504,26 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 	}
 
+	public class ProjectPreferenceReadOnlyCombo extends ReadOnlyComboBinding {
+
+		public ProjectPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data,
+				Object projectLevelInitialSelection) {
+			super(symbol, validator, data, projectLevelInitialSelection);
+		}
+
+		public void refresh() {
+			setValue(getPreferenceStore().getString(symbol.getLocalName()));
+		}
+
+		public void reset() {
+			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
+		}
+
+		public void update() {
+			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
+		}
+	}
+
 	public class PreferenceReadOnlyCombo extends ReadOnlyComboBinding {
 
 		public PreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
@@ -536,6 +532,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 		public PreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
 			super(symbol, validator, data, getPreferenceStore().getString(symbol.getLocalName()));
+		}
+
+		public PreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data,
+				Object initialSelection) {
+			super(symbol, validator, data);
 		}
 
 		public void refresh() {

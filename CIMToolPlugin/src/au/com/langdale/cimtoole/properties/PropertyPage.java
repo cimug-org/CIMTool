@@ -17,24 +17,55 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
-import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.builder.PlantUMLRealTimePreviewBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.SchemaBuildlet;
+import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.project.FurnishedPropertyPage;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.registries.ProfileBuildletConfigUtils;
+import au.com.langdale.ui.binding.Validator;
 import au.com.langdale.ui.binding.Validators;
 import au.com.langdale.ui.builder.Template;
 import au.com.langdale.util.Jobs;
 
 public class PropertyPage extends FurnishedPropertyPage {
+
+	public class DisplayStyleReadOnlyCombo extends ReadOnlyComboBinding {
+
+		public DisplayStyleReadOnlyCombo(QualifiedName symbol, Validator validator, Object data,
+				Object initialSelection) {
+			super(symbol, validator, data, initialSelection);
+		}
+
+		public void refresh() {
+			setValue(Info.getCurrentProfileRealTimePreviewDisplayStyleByLevel(getResource()));
+		}
+
+		public void update() {
+			IResource resource = getResource();
+			String value = getValue();
+			if (resource instanceof IProject) {
+				Info.putProperty(getResource(), symbol, value);
+			} else if (Info.isProfile(resource) || Info.isPlantUML(resource)) {
+				Info.putBuilderPreference(getResource(), symbol, value);
+			} else {
+				throw new RuntimeException("Invalid entry...");
+			}
+		}
+
+		public void reset() {
+			Object value = Info.getCurrentProfileRealTimePreviewDisplayStyleByLevel(getResource());
+			setValue(value);
+		}
+
+	}
 
 	public PropertyPage() {
 		setPreferenceStore(CIMToolPlugin.getDefault().getPreferenceStore());
@@ -82,6 +113,8 @@ public class PropertyPage extends FurnishedPropertyPage {
 			}
 
 			private Template defineProjectPage() {
+				String displayStyleInitialSetting = Info
+						.getCurrentProfileRealTimePreviewDisplayStyleByLevel(getResource());
 				Boolean enabled = Info.isMergeShadowExtensionsEnabled(getResource());
 				return Grid(Group(Label("Merged Schema Output")),
 						Group(Label("File Name:"),
@@ -90,8 +123,8 @@ public class PropertyPage extends FurnishedPropertyPage {
 						Group(HRule()), //
 						Group(Label("Real-Time Profile Preview PlantUML Diagram Preferences:")), //
 						Group(Label("Diagram Style: "),
-								new PreferenceReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE, Validators.NONE,
-										getPlantUMLBuildetStyles())),
+								new DisplayStyleReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE, Validators.NONE,
+										getPlantUMLBuildetStyles(), displayStyleInitialSetting)),
 						Group(Label(
 								"(Specifies a project-level default PlantUML style for real-time previews. If left empty will")),
 						Group(Label(
@@ -109,10 +142,10 @@ public class PropertyPage extends FurnishedPropertyPage {
 								"If you change the above setting you should immediatly reimport the project's schema file. ")),
 						Group(Label("")),
 						Group(Label(
-								"The above setting should always be enabled when the schema format you are using is an ")),
+								"The above setting should almost always be enabled when the schema format you are using ")),
 						Group(Label(
-								".eap, .eapx, .qea or .qeax project file. If using .xmi files as your project schemas then uncheck ")),
-						Group(Label("this setting.")), Group(Label("")),
+								"is an .eap, .eapx, .qea or .qeax project file. If using .xmi files as your project schemas then ")),
+						Group(Label("uncheck this setting.")), Group(Label("")),
 						Group(Label(
 								"Finally, there may be specialized projects that may need this setting disabled in order to")),
 						Group(Label(
@@ -130,12 +163,14 @@ public class PropertyPage extends FurnishedPropertyPage {
 			 * fields is used and not the Property related fields.
 			 */
 			private Template definePlantUMLPage(boolean isProfileLevel) {
+				String displayStyleInitialSetting = Info
+						.getCurrentProfileRealTimePreviewDisplayStyleByLevel(getResource());
 				Template plantUMLTemplate = null;
 				if (isProfileLevel) {
 					plantUMLTemplate = Grid(Group(Label("Real-Time Profile Preview PlantUML Diagram Preferences:")), //
 							Group(Label("Diagram Style: "),
-									new BuilderPreferenceReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE,
-											Validators.NONE, getPlantUMLBuildetStyles())),
+									new DisplayStyleReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE, Validators.NONE,
+											getPlantUMLBuildetStyles(), displayStyleInitialSetting)),
 							Group(Label(
 									"(Specifies a profile-level PlantUML style for real-time previews. If left empty will default")),
 							Group(Label(
@@ -193,7 +228,8 @@ public class PropertyPage extends FurnishedPropertyPage {
 							Group(Label("Refs Color:"), new BuilderColorPreference("", Info.REFS_COLOR),
 									Label(Info.REFS_COLOR.getLocalName() + "-label",
 											Info.getBuilderPreference(getResource(), Info.REFS_COLOR))),
-							Group(Label("Shadow Classes Color:"), new BuilderColorPreference("", Info.SHADOW_CLASSES_COLOR),
+							Group(Label("Shadow Classes Color:"),
+									new BuilderColorPreference("", Info.SHADOW_CLASSES_COLOR),
 									Label(Info.SHADOW_CLASSES_COLOR.getLocalName() + "-label",
 											Info.getBuilderPreference(getResource(), Info.SHADOW_CLASSES_COLOR))),
 							Group(new BuilderPreferenceOption(Info.ANONYMOUS_CLASSES_COLOR_WHITE,
@@ -254,7 +290,8 @@ public class PropertyPage extends FurnishedPropertyPage {
 							Group(Label("Refs Color:"), new BuilderColorPreference("", Info.REFS_COLOR),
 									Label(Info.REFS_COLOR.getLocalName() + "-label",
 											Info.getBuilderPreference(getResource(), Info.REFS_COLOR))),
-							Group(Label("Shadow Classes Color:"), new BuilderColorPreference("", Info.SHADOW_CLASSES_COLOR),
+							Group(Label("Shadow Classes Color:"),
+									new BuilderColorPreference("", Info.SHADOW_CLASSES_COLOR),
 									Label(Info.SHADOW_CLASSES_COLOR.getLocalName() + "-label",
 											Info.getBuilderPreference(getResource(), Info.SHADOW_CLASSES_COLOR))),
 							Group(new BuilderPreferenceOption(Info.ANONYMOUS_CLASSES_COLOR_WHITE,
@@ -314,11 +351,20 @@ public class PropertyPage extends FurnishedPropertyPage {
 					}
 					if (owlFile == null)
 						return;
+					/**
+					 * A project-level preference change is only relevant to profiles that live in
+					 * that project. If the focused profile editor belongs to a different project
+					 * there is nothing to regenerate here, and proceeding would build a preview
+					 * path inside this project for a profile that lives elsewhere, scheduling the
+					 * write under a mismatched rule.
+					 */
+					if (resource instanceof IProject && !owlFile.getProject().equals(resource))
+						return;
 					String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
 					IFile previewFile = profileFolder
 							.getFile("." + baseName + "." + PlantUMLRealTimePreviewBuildlet.PREVIEW_EXT);
 					IWorkspaceRunnable runnable = new PlantUMLRealTimePreviewBuildlet().asRunnable(previewFile, false);
-					Jobs.runJob(runnable, owlFile.getProject(), "Regenerating real-time preview diagram");
+					Jobs.runJob(runnable, previewFile.getProject(), "Regenerating real-time preview diagram");
 				} else if (Info.isPlantUML(resource)) {
 					IFile file = profileFolder.getFile(resource.getName());
 					String extension = file.getName().substring(file.getName().indexOf(".") + 1);

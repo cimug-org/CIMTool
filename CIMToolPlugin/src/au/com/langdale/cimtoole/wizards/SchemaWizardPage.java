@@ -61,6 +61,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 		}
 		//
 		shouldGenerateReport = new DependentCheckBoxBinding() {
+
 			@Override
 			public void refreshDependentCheckBoxes() {
 				boolean isGenerateReportSelected = getCheckBox().getSelection();
@@ -336,7 +337,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					}
 				}
 				//=================================================================================
-				// This next lines to be removed post 2.3.0 release once reports are ready
+				// These next lines to be removed post 2.3.0 release once reports are ready
 				getButton("generate-report").setEnabled(false);
 				getButton("include-extensions").setEnabled(false);
 				getButton("include-normative").setEnabled(false);
@@ -344,7 +345,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 				getButton("include-enterprise").setEnabled(false);
 				getButton("include-market").setEnabled(false);
 				//=================================================================================
-				// Uncomment this next line at the time the the reports are ready...
+				// Uncomment these next lines at the time the the reports are ready...
 				//shouldGenerateReport.bind("generate-report", this);
 				//includeNormative.bind("include-normative", this);
 				//includeExtensions.bind("include-extensions", this);
@@ -361,8 +362,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 					getButton(Info.MERGE_SHADOW_EXTENSIONS.getLocalName()).setEnabled(false);
 					getButton(Info.SELF_HEAL_ON_IMPORT.getLocalName()).setEnabled(false);
 					// The next two must be initialized to disabled...
-					//getButton("include-extensions").setEnabled(false);
-					//getButton("include-normative").setEnabled(false);
+					getButton("include-extensions").setEnabled(false);
+					getButton("include-normative").setEnabled(false);
 				}
 			}
 
