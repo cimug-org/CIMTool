@@ -555,5 +555,11 @@
    <extension
          point="org.eclipse.ui.themes">
    </extension>
-
+   <!-- TEMPORARY FIX: Addresses known Eclipse SWT #1848 probe issues) - remove this block why the next platform upgrade is performed -->
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="au.com.langdale.cimtoole.interceptors.ProjectExplorerDoubleClickInterceptor">
+      </startup>
+   </extension>
 </plugin>
