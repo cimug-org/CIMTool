@@ -30,6 +30,8 @@
 // Sections included inline
 include::{includedir}/introduction.adoc[]
 
+include::{includedir}/DevEnvSetup/DevEnvSetup-README.adoc[]
+ +
 include::{includedir}/CIMToolProduct/CIMToolProduct-README.adoc[]
 
 include::{includedir}/CIMToolPlugin/CIMToolPlugin-README.adoc[]

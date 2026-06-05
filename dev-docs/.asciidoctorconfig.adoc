@@ -18,6 +18,7 @@
 :cimutil-imagesdir: {asciidoctorconfigdir}/Includes/CIMUtil/readme-images/
 :com.cimphony.cimtoole-imagesdir: {asciidoctorconfigdir}/Includes/com.cimphony.cimtoole/readme-images/
 :csharpeftestproject-imagesdir: {asciidoctorconfigdir}/Includes/CSharpEFTestProject/readme-images/
+:devenvsetup-imagesdir: {asciidoctorconfigdir}/Includes/DevEnvSetup/readme-images/
 :io.ucaiug.slf4j.logback.binding-imagesdir: {asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
 :kena-imagesdir: {asciidoctorconfigdir}/Includes/Kena/readme-images/
 :rcputil-imagesdir: {asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
@@ -39,6 +40,7 @@
 //:debug-cimutil-imagesdir:{asciidoctorconfigdir}/Includes/CIMUtil/readme-images/
 //:debug-com.cimphony.cimtoole-imagesdir:{asciidoctorconfigdir}/Includes/com.cimphony.cimtoole/readme-images/
 //:debug-csharpeftestproject-imagesdir:{asciidoctorconfigdir}/Includes/CSharpEFTestProject/readme-images/
+//:debug-devenvsetup-imagesdir:{asciidoctorconfigdir}/Includes/DevEnvSetup/readme-images/
 //:debug-io.ucaiug.slf4j.logback.binding-imagesdir:{asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
 //:debug-kena-imagesdir:{asciidoctorconfigdir}/Includes/Kena/readme-images/
 //:debug-rcputil-imagesdir:{asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
