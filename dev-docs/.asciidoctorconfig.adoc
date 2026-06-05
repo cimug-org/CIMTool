@@ -22,6 +22,7 @@
 :io.ucaiug.slf4j.logback.binding-imagesdir: {asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
 :kena-imagesdir: {asciidoctorconfigdir}/Includes/Kena/readme-images/
 :rcputil-imagesdir: {asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
+:maintainernotes-imagesdir: {asciidoctorconfigdir}/Includes/MaintainerNotes/readme-images/
 //
 // A "debugging trick" is to remove the space between the variable name and the directory.
 // This will then explicitly display in the document what the path is that the variable
@@ -44,5 +45,6 @@
 //:debug-io.ucaiug.slf4j.logback.binding-imagesdir:{asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
 //:debug-kena-imagesdir:{asciidoctorconfigdir}/Includes/Kena/readme-images/
 //:debug-rcputil-imagesdir:{asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
+//:debug-maintainernotes-imagesdir: {asciidoctorconfigdir}/Includes/MaintainerNotes/readme-images/
 // 
 // For more information please take a look at https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles
