@@ -1,0 +1,94 @@
+
+== Development Environment Setup
+
+// Settings:
+:doctype: inline
+:sectnums:
+:sectnumlevels: 4
+:reproducible:
+:icons: font
+:xrefstyle: short
+
+Instructions for setting up a development environment for the CIMTool 2.x release
+line: installing the recommended Eclipse IDE, configuring a Java runtime, and
+cloning and importing the CIMTool projects into an Eclipse workspace. Active
+development on the CIMTool 1.x release line has ceased; these instructions apply
+to the 2.x line only.
+
+[NOTE]
+====
+A specific Eclipse edition and release is recommended to eliminate unanticipated
+configuration and setup issues. Development and deployment of CIMTool against this
+release has been fully tested and its plugin dependencies verified out of the box.
+Questions may be posted to the
+https://github.com/cimug-org/CIMTool/discussions/92[CIMTool 2.x Release Line — Development Community Discussion Board].
+====
+
+
+=== Eclipse Installation
+
+CIMTool is developed against a specific Eclipse IDE edition and release. The steps
+below cover locating, installing, and configuring it on Windows. Editions for
+macOS and Linux are available from the same downloads site, but the instructions
+here are Windows-specific.
+
+==== Step 1: Download the Eclipse IDE
+
+The recommended IDE is the _Eclipse IDE for Enterprise Java and Web Developers_
+from the https://www.eclipse.org/downloads/packages/release/2023-06/r[Eclipse IDE 2023-06 R packages].
+The Windows 64-bit archive is available
+link:https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2023-06/R/eclipse-jee-2023-06-R-win32-x86_64.zip[here].
+
+image::{devenvsetup-imagesdir}/eclipse-4.28.0-about.png[Eclipse 2023-06 (4.28.0) About dialog]
+
+==== Step 2: Install a JDK
+
+CIMTool requires Java 20 or newer. If a suitable JDK is not already installed, one
+must be installed before continuing. The
+https://www.azul.com/downloads/?package=jdk#zulu[Azul Zulu OpenJDK] distribution
+provides a freely available Windows 64-bit option; the `.msi` installer makes
+installation straightforward.
+
+image::{devenvsetup-imagesdir}/azul-jdk-downloads.png[Azul Zulu OpenJDK downloads]
+
+==== Step 3: Extract the Eclipse IDE
+
+Installation consists of extracting the downloaded
+`eclipse-jee-2023-06-R-win32-x86_64.zip` archive. Depending on the chosen
+extraction location, the process may fail with "path too long" errors on Windows.
+If this occurs, create a directory off the root of a local drive (for example,
+`C:\temp-eclipse`) and extract into it; the shorter base path avoids the error.
+Extraction creates an `\eclipse` folder under the chosen directory containing the
+IDE, which may then be relocated to a preferred location on the file system.
+
+==== Step 4: Register the Installed JRE in Eclipse
+
+When a newer JDK has been installed in Step 2, it must be registered in the Eclipse
+IDE configuration before the CIMTool projects are imported.
+
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step1.png[Configure the installed JRE — step 1]
+
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step2.png[Configure the installed JRE — step 2]
+
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step3.png[Configure the installed JRE — step 3]
+
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step4.png[Configure the installed JRE — step 4]
+
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step5.png[Configure the installed JRE — step 5]
+
+
+=== Cloning and Importing the CIMTool Projects
+
+The final step is to clone a development branch of the CIMTool codebase from the
+https://github.com/cimug-org/CIMTool[CIMTool GitHub repository] and import its
+projects into the workspace. Two approaches are available:
+
+* An external Git client — such as https://desktop.github.com/[GitHub Desktop],
+https://tortoisegit.org/[TortoiseGit], or https://gitforwindows.org/[Git for Windows]
+(see the https://git-scm.com/downloads/guis[full list]) — used to clone the
+repository to a local directory, from which the projects are then imported into
+Eclipse.
+
+* The Git tooling bundled with Eclipse (EGit), used to clone and import the CIMTool
+projects directly from the repository. It is configured from the Eclipse
+preferences dialog.

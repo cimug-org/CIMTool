@@ -41,9 +41,6 @@ nav:
     - 'further-learning/uml-xmi-owl.md'
     - 'further-learning/cim.md'
     - 'further-learning/protege-and-topbraid.md'
-  - 'release-notes.md'
-  - 'Developers':
-    - 'developers/dev-env-setup.md'
-    - 'developers/package-deploy.md'
   - 'SchemaOps Automation & Integration':
     - 'schemaops/cimtool-cli.md'
+  - 'release-notes.md'
