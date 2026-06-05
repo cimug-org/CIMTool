@@ -1,7 +1,7 @@
 ---
 name: CIMTool Bug Report
 about: Create a report to help us improve CIMTool
-title: "[BUG]"
+title: "[DEFECT]"
 labels: bug
 assignees: ''
 
