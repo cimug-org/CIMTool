@@ -1,0 +1,1 @@
+This readme is a placeholder file to retain the folder in GitHub. Remove it once images are added

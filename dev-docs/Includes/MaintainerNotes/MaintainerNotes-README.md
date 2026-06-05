@@ -1,0 +1,102 @@
+# Maintainer Notes for Potential Future Changes
+
+This document retains engineering context for changes that may be undertaken in
+the future. It is not a roadmap and not a task tracker. It records *what* a
+potential change involves and *why* — the background, rationale, and constraints
+understood at the time of writing — so that whoever eventually carries out the
+change inherits that context rather than rediscovering it. Each entry describes
+potential work; an entry does not commit the project to that work, imply a
+schedule, or report status.
+
+> **Note:** Status is tracked in GitHub, not in this document. Where a GitHub
+> issue exists for an item it is referenced here, but an entry does not require
+> one. An entry is removed once the change it describes has been made.
+
+
+## Eclipse Platform Upgrade (Eclipse 2023-06 / 4.28 to 4.35 or Later)
+
+The development environment and the product build are pinned to the Eclipse
+2023-06 (4.28) platform (see the *Development Environment Setup* section). A future
+platform upgrade is anticipated, and two independent drivers point to the same
+upgrade:
+
+- The deferred TextMate (TM4E) syntax-highlighting enhancement depends on a newer
+  TM4E release whose execution-environment baseline (Java 21) was introduced
+  around Eclipse 4.32–4.35. The enhancement cannot be adopted on 4.28.
+- Eclipse SWT issue
+  [#1848](https://github.com/eclipse-platform/eclipse.platform.swt/issues/1848)
+  (Edge/WebView2 focus handling on Windows) is the root cause of the PlantUML
+  preview focus workaround described below. The Edge backend became the Windows
+  default in Eclipse 4.35 (2025-03); the exact release that resolves #1848 must be
+  verified during upgrade scoping.
+
+A single platform upgrade therefore both unblocks the TM4E enhancement and is the
+condition that retires the PlantUML preview focus workaround. Items tied to this
+upgrade carry the `requires-platform-upgrade` GitHub label, which surfaces the
+full set of work the upgrade unblocks or retires. Introducing a committed
+target-platform definition (next entry) would be a natural part of the same
+upgrade.
+
+
+## Build Reproducibility — Plugin and Target-Platform Version Pinning
+
+The product resolves against whatever plugin versions are present in the
+developer's IDE / target platform; it pins nothing. The product file lists plugins
+by id only, with no version attribute; `CIMToolPlugin`'s `MANIFEST.MF`
+`Require-Bundle` lists the PlantUML bundles without `bundle-version` constraints;
+and no `feature.xml` records versions. The consequence has been observed in
+practice: a moving update site served a newer, incompatible
+`net.sourceforge.plantuml.eclipse`, producing a mismatch that nothing in source
+constrained.
+
+The currently verified plugin versions are recorded in the *Development
+Environment Setup* section, which is the authoritative point-in-time record; they
+are not duplicated here, to avoid drift.
+
+Two places a fix could live, with their trade-offs:
+
+- `bundle-version` constraints in `MANIFEST.MF` — localized and precise, but must
+  be maintained per bundle.
+- A committed target-platform (`.target`) definition in the repository —
+  comprehensive and deterministic across machines, but a larger artifact to
+  maintain.
+
+Either closes the gap; a committed `.target` is the more complete solution and
+pairs naturally with the platform upgrade above.
+
+
+## PlantUML Real-Time Preview Focus Workaround (Temporary)
+
+A temporary workaround ships in CIMTool 2.3.0 to keep the "Project Explorer"
+usable while the PlantUML real-time preview view is open. The root cause is
+Eclipse SWT issue
+[#1848](https://github.com/eclipse-platform/eclipse.platform.swt/issues/1848)
+("Edge: Focus jumps back to browser control when trying to leave"): the preview's
+Edge/WebView2-backed SWT `Browser` re-asserts native focus asynchronously, so
+while it holds focus a Project Explorer double-click (and the Enter key) selects a
+file but does not open it.
+
+The workaround is the `IStartup` contribution
+`au.com.langdale.cimtoole.interceptors.ProjectExplorerDoubleClickInterceptor`,
+registered through an `org.eclipse.ui.startup` extension in
+`CIMToolPlugin/plugin.xml`. It attaches raw `SWT.MouseDown` and `SWT.KeyDown`
+listeners to the Project Explorer tree, reconstructs the double-click and handles
+Enter / keypad-Enter from the primitive input events, and routes the open through
+`IDE.openEditor(...)` — beneath SWT's gesture synthesis, which is why it succeeds
+where the broken gesture does not. It resolves the tree by reflection
+(`getCommonViewer().getTree()`), which is acceptable only because it is bound to
+the pinned 4.28 platform. The sanctioned `CommonActionProvider` open hook was
+evaluated and rejected: its open handler does not fire at all in the failing
+focus state.
+
+> **Important:** This workaround MUST be removed as part of the platform upgrade
+> that resolves SWT #1848 (see *Eclipse Platform Upgrade* above): delete the class
+> and its `org.eclipse.ui.startup` extension. The accompanying CIMTool defect
+> (labeled `requires-platform-upgrade`) documents the failure and remains the
+> long-term fix.
+
+Packaging note for any similar change: `CIMToolPlugin` is a nested-JAR build — its
+classes ship inside `cimtool.jar`. A self-hosted *Run As ▸ Eclipse Application*
+launch serves classes from `bin/` and can therefore mask whether a class is
+actually packaged into the jar. Changes of this kind should be validated from a
+product export, not only from a self-hosted launch.

@@ -77,6 +77,162 @@ image::{devenvsetup-imagesdir}/eclipse-configure-jre-step4.png[Configure the ins
 image::{devenvsetup-imagesdir}/eclipse-configure-jre-step5.png[Configure the installed JRE — step 5]
 
 
+=== Installing Required Eclipse Plugins
+
+Beyond the base IDE, CIMTool development requires several Eclipse plugins that are not
+part of the _Eclipse IDE for Enterprise Java and Web Developers_ package and must be
+installed separately. These plugins serve two purposes:
+
+* They are used within the development environment to author and preview the project's
+AsciiDoc and PlantUML documentation.
+* They are dependencies of the CIMTool product. Because a product export resolves
+against the plugins installed in the development IDE, each must be present in the IDE for
+the exported CIMTool product to include it. Omitting them produces a product that fails
+to load the corresponding features at runtime.
+
+Each plugin is installed through `Help` > `Install New Software...`. For each one, click
+`Add...`, enter the update-site _Location_ (the URL given below) and a descriptive
+_Name_, confirm, then check the required features under _Work with_ and proceed. The
+update-site URL to enter for each plugin is shown in that plugin's first screenshot.
+
+==== What to Expect During Installation
+
+After the features are selected and `Next` is clicked, every plugin install follows the
+same Eclipse p2 sequence. These shared steps are described here once and referenced from
+each plugin below.
+
+. *Install Details* lists the resolved set of features to be installed. This page is
+worth reviewing: if Eclipse reports _"Your original request has been modified"_, or if
+two versions of the same feature appear, the selection has resolved to a conflicting set
+and should be corrected with `< Back` before continuing.
+. *Review Licenses* presents the _Eclipse Foundation Software User Agreement_ (EPL).
+Select _I accept the terms of the license agreement_ and click `Finish`.
+
+image::{devenvsetup-imagesdir}/eclipse-install_Step-license.png[Review Licenses: accept the Eclipse Public License]
+
+[start=3]
+. *Trust* dialogs verify the integrity and origin of the downloaded content. Their exact
+form depends on whether each plugin's artifacts are digitally signed, so they are shown
+per plugin below.
+. *Restart* is prompted once installation completes. Choose `Restart Now` so the newly
+installed plugins are activated and available to a subsequent product export.
+
+image::{devenvsetup-imagesdir}/eclipse-install_Step-restart.png[Restart Eclipse to apply the software update]
+
+==== PlantUML Eclipse Plugin
+
+The _PlantUML Eclipse Plugin_ provides the PlantUML rendering that CIMTool uses to
+generate and preview UML class diagrams of profiles. Its plugins
+(`net.sourceforge.plantuml.eclipse`, `net.sourceforge.plantuml.svg`,
+`net.sourceforge.plantuml.library`, and their companions) are dependencies of the CIMTool
+product and must be present in the development IDE so that the product export includes
+them. This is the more involved of the two installs; the Asciidoctor Editor install that
+follows presents the same license, trust, and restart dialogs in a simpler form.
+
+Using `Add...`, add the update site `https://plantuml.github.io/plantuml-eclipse/` as
+shown. Then select the features below and click `Next`:
+
+* From _PlantUML Eclipse support_: the _Ecore_, _Feature_, and _UML2_ features, verified
+at version `1.2.1.202605211549`.
+* From _PlantUML Library_: the _PlantUML Library Feature_, verified at version
+`1.2026.4.202605202036`.
+* From _PlantUML Eclipse support sources_: the matching _Developer Resources_ features at
+`1.2.1.202605211549` (these source bundles are optional, but are included here to match
+the verified configuration).
+
+image::{devenvsetup-imagesdir}/eclipse-install-plantuml_Step1.png[Selecting the PlantUML features]
+
+[TIP]
+====
+The PlantUML site retains its full version history. Unticking _"Show only the latest
+versions of available software"_ exposes every published build, so a specific, known-good
+version can be selected and pinned.
+====
+
+On the _Install Details_ page, confirm that exactly *one* _PlantUML Library Feature_ is
+listed and that no _"Your original request has been modified"_ warning appears. If a
+second Library version is added or the warning is shown, return with `< Back` and adjust
+the selection until a single, conflict-free set resolves. The version pairing above
+(_Eclipse support_ `1.2.1.202605211549` with _Library_ `1.2026.4.202605202036`) resolves
+cleanly.
+
+image::{devenvsetup-imagesdir}/eclipse-install-plantuml_Step2.png[PlantUML Install Details: a single, conflict-free Library version]
+
+Next the PlantUML installation process will present the trust dialog it lists the `net.sourceforge.plantuml.*`
+bundles. Select the content and click `Trust Selected` to proceed.
+
+[NOTE]
+====
+Unsigned content carries no cryptographic proof of origin or integrity: Eclipse cannot
+confirm who produced the artifacts or that they were not altered in transit. The
+installation proceeds only because the content is explicitly trusted at this prompt.
+====
+
+Complete the installation by accepting the license and restarting, as described in
+<<What to Expect During Installation>>.
+
+==== Asciidoctor Editor
+
+The _Asciidoctor Editor_ provides AsciiDoc editing and live preview within the IDE and is
+used to author the CIMTool developer documentation. It is also bundled in the CIMTool
+product (`de.jcup.asciidoctoreditor` and its companion plugins), where it supports the
+product's AsciiDoc-based documentation features. Its install follows the same sequence as
+the PlantUML install above, with two differences noted below.
+
+Using `Add...`, add the update site
+`https://de-jcup.github.io/update-site-eclipse-asciidoctor-editor/update-site/` as shown.
+Then, under the _Stable_ category, check _Asciidoctor Editor_ (verified at version
+`3.1.2`) and click `Next`.
+
+image::{devenvsetup-imagesdir}/eclipse-install-asciidoctor_Step1.png[Selecting the Asciidoctor Editor feature]
+
+[TIP]
+====
+The first difference from PlantUML: the Asciidoctor Editor site publishes only its latest
+release. Unticking _"Show only the latest versions of available software"_ reveals no
+earlier builds, so the version obtained is whatever is current (here `3.1.2`).
+Guaranteeing this exact version on a later install therefore requires mirroring it.
+====
+
+The second difference is trust: the Asciidoctor Editor artifacts _are_ digitally signed.
+The trust dialog asks whether to trust the signer, presenting an x509 certificate for
+_"Albert Tregnaghi; de.jcup; Private person"_ with a _Valid_ status. Select the signer
+and click `Trust Selected` to proceed.
+
+image::{devenvsetup-imagesdir}/eclipse-install-asciidoctor_Step2.png[Trusting the signed Asciidoctor Editor artifacts]
+
+[NOTE]
+====
+The dialog itself notes that _"The displayed originator names are not necessarily a
+reliable certification of origin."_ A valid signature confirms that the content was
+signed by the holder of that certificate, not that an institutional authority has vouched
+for the publisher. Here the content is signed by an individual developer's certificate.
+====
+
+Complete the installation by accepting the license and restarting, as described in
+<<What to Expect During Installation>>.
+
+[NOTE]
+====
+*Verified versions* (installed and confirmed against the pinned Eclipse 2023-06 / 4.28
+platform):
+
+* _Asciidoctor Editor_ -- `3.1.2`
+* _PlantUML Eclipse support_ -- `1.2.1.202605211549`
+* _PlantUML Library_ -- `1.2026.4.202605202036`
+
+Both update sites publish the most recent release of each plugin, and a later install may
+retrieve a newer version that has not been verified against this platform. The PlantUML
+site retains older versions for selection; the Asciidoctor Editor site does not. The
+Asciidoctor Editor artifacts are signed by an individual developer's certificate and the
+PlantUML artifacts are unsigned; neither is signed by an institutional authority. For
+product builds that must be reproducible across machines or air-gapped, these plugins and
+their exact versions should be mirrored to an internal p2 repository and pinned in a
+committed target platform definition, rather than relying on whichever versions happen to
+be available from the public sites at install time.
+====
+
+
 === Cloning and Importing the CIMTool Projects
 
 The final step is to clone a development branch of the CIMTool codebase from the

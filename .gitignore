@@ -20,3 +20,4 @@ bin
 /target/
 **/cimtool-signing.properties
 /CSharpEFTestProject/EfCoreSmokeTest/obj/
+/logs
