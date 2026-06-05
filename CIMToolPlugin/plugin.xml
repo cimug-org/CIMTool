@@ -206,6 +206,9 @@
             icon="icons/catalog.png"
             id="au.com.langdale.cimtoole.editors.MessageModelEditor"
             name="Profile Editor">
+         <contentTypeBinding
+               contentTypeId="au.com.langdale.cimtoole.profile">
+         </contentTypeBinding>
       </editor>
       <editor
             class="au.com.langdale.cimtoole.editors.DiagnosisEditor"
@@ -493,6 +496,17 @@
             content-type="org.eclipse.core.runtime.text"
             file-extensions="xml-log">
       </file-association>
+      <file-association
+            content-type="org.eclipse.core.runtime.xml"
+            file-extensions="rdfs">
+      </file-association>
+      <content-type
+            id="au.com.langdale.cimtoole.profile"
+            name="CIMTool Profile"
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="owl"
+            priority="high">
+      </content-type>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
@@ -542,4 +556,4 @@
          point="org.eclipse.ui.themes">
    </extension>
 
-</plugin>
+</plugin>
