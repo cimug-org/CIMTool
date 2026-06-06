@@ -15,19 +15,25 @@ import java.io.File;
  *   <li>{@code --profile <file>} - Single input profile OWL file</li>
  *   <li>{@code --builder <n>} - The builder name from builders.json (e.g., "xsd", "json-schema-draft-07")</li>
  *   <li>{@code --xslt <file>} - Path to a custom XSLT stylesheet (alternative to --builder)</li>
+ *   <li>{@code --output-ext <ext>} - Output file extension (required when using --xslt)</li>
  *   <li>{@code --output <dir>} - The output directory</li>
  *   <li>{@code --copyright-multi-line <file>} - File containing multi-line copyright text</li>
  *   <li>{@code --copyright-single-line <file>} - File containing single-line copyright text</li>
  *   <li>{@code --copyright-defaults} - Use bundled default copyright templates</li>
+ *   <li>{@code --list-builders} - List available builders and exit</li>
+ *   <li>{@code --version} - Show version information and exit</li>
  *   <li>{@code --help} - Show usage information</li>
  * </ul>
  * 
- * <p>The project directory must contain .cimtool-settings and .builder-preferences files.
- * Schema files are read from the Schema/ subdirectory as specified in .cimtool-settings.</p>
+ * <p>The project directory must contain .cimtool-settings and .builder-preferences files,
+ * and may optionally contain a .cimtool-global-preferences file. Schema files are read
+ * from the Schema/ subdirectory as specified in .cimtool-settings.</p>
  * 
  * <p>If --profile is not specified, the CLI operates in project mode and processes all
  * profile OWL files in the Profiles/ subdirectory of the project directory. If --output
  * is not specified, output defaults to the project's Profiles/ subdirectory.</p>
+ * 
+ * <p>The --builder and --xslt options are mutually exclusive; specifying both is an error.</p>
  */
 public class CLIOptions {
 
@@ -235,6 +241,7 @@ public class CLIOptions {
 			"Required options:\n" +
 			"  --project-dir, -pd <dir>  CIMTool project directory containing\n" +
 			"                                 .cimtool-settings and .builder-preferences\n" +
+			"                                 (.cimtool-global-preferences optional)\n" +
 			"                                 (schema from Schema/, profiles from Profiles/)\n" +
 			"\n" +
 			"Profile option (if omitted, all .owl files in <project>/Profiles/ are processed):\n" +
@@ -248,6 +255,7 @@ public class CLIOptions {
 			"                             (e.g., xsd, json-schema-draft-07, html)\n" +
 			"  --xslt, -x <file>          Path to custom XSLT stylesheet\n" +
 			"  --output-ext, -oe <ext>    Output file extension (required when specifying --xslt)\n" +
+			"  Note: --builder and --xslt are mutually exclusive; specify at most one.\n" +
 			"\n" +
 			"Copyright options:\n" +
 			"  --copyright-multi-line, -cm <file>   Specify a file containing your multi-line copyright text\n" +
