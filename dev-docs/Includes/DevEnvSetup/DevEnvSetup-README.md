@@ -118,12 +118,11 @@ Using `Add...`, add the update site `https://plantuml.github.io/plantuml-eclipse
 shown. Then select the features below and click `Next`:
 
 - From *PlantUML Eclipse support*: the *Ecore*, *Feature*, and *UML2* features, verified
-  at version `1.2.1.202605211549`.
+  at version `1.2.0.202511102215`.
 - From *PlantUML Library*: the *PlantUML Library Feature*, verified at version
-  `1.2026.4.202605202036`.
-- From *PlantUML Eclipse support sources*: the matching *Developer Resources* features at
-  `1.2.1.202605211549` (these source bundles are optional, but are included here to match
-  the verified configuration).
+  `1.2025.10.202511041744`.
+- From *PlantUML Eclipse support sources*: the *Developer Resources* (source) bundles are
+  optional and are left unselected in this configuration.
 
 ![Selecting the PlantUML features](readme-images/eclipse-install-plantuml_Step1.png)
 
@@ -131,11 +130,11 @@ shown. Then select the features below and click `Next`:
 > latest versions of available software"* exposes every published build, so a specific,
 > known-good version can be selected and pinned.
 
-On the *Install Details* page, confirm that exactly **one** *PlantUML Library Feature* is
-listed and that no *"Your original request has been modified"* warning appears. If a
+On the *Install Details* page, confirm that the *PlantUML Library Feature* resolves to a
+**single version** and that no *"Your original request has been modified"* warning appears. If a
 second Library version is added or the warning is shown, return with `< Back` and adjust
 the selection until a single, conflict-free set resolves. The version pairing above
-(*Eclipse support* `1.2.1.202605211549` with *Library* `1.2026.4.202605202036`) resolves
+(*Eclipse support* `1.2.0.202511102215` with *Library* `1.2025.10.202511041744`) resolves
 cleanly.
 
 ![PlantUML Install Details: a single, conflict-free Library version](readme-images/eclipse-install-plantuml_Step2.png)
@@ -195,8 +194,8 @@ Complete the installation by accepting the license and restarting, as described 
 > 2023-06 / 4.28 platform):
 >
 > - *Asciidoctor Editor* — `3.1.2`
-> - *PlantUML Eclipse support* — `1.2.1.202605211549`
-> - *PlantUML Library* — `1.2026.4.202605202036`
+> - *PlantUML Eclipse support* — `1.2.0.202511102215`
+> - *PlantUML Library* — `1.2025.10.202511041744`
 >
 > Both update sites publish the most recent release of each plugin, and a later install
 > may retrieve a newer version that has not been verified against this platform. The
@@ -213,14 +212,31 @@ Complete the installation by accepting the license and restarting, as described 
 
 The final step is to clone a development branch of the CIMTool codebase from the
 [CIMTool GitHub repository](https://github.com/cimug-org/CIMTool) and import its
-projects into the workspace. Two approaches are available:
+projects into the workspace. Two approaches are available, and they differ in how the
+projects are brought into Eclipse:
 
-- An external Git client — such as [GitHub Desktop](https://desktop.github.com/),
+- **External Git client** — such as [GitHub Desktop](https://desktop.github.com/),
   [TortoiseGit](https://tortoisegit.org/), or [Git for Windows](https://gitforwindows.org/)
   (see the [full list](https://git-scm.com/downloads/guis)) — used to clone the
-  repository to a local directory, from which the projects are then imported into
-  Eclipse.
+  repository to a local directory *outside* Eclipse. The cloned projects are then brought
+  in with Eclipse's *Existing Projects into Workspace* import (described below).
 
-- The Git tooling bundled with Eclipse (EGit), used to clone and import the CIMTool
-  projects directly from the repository. It is configured from the Eclipse
-  preferences dialog.
+- **Eclipse's bundled Git tooling (EGit)** — used to clone *and* import the CIMTool
+  projects directly from the repository in a single operation, via `File` > `Import...` >
+  `Git` > `Projects from Git`.
+
+### Importing Existing Projects from an External Clone
+
+When the repository has been cloned with an external Git client, the projects are imported
+as **existing projects from the file system** — not as Git-managed projects retrieved
+through Eclipse. Choose `File` > `Import...` > `General` > `Existing Projects into
+Workspace`, set *Select root directory* to the clone location (for example,
+`D:\CIMug-GIT-REPOS\release-2.3.0`), and let Eclipse discover the projects it contains.
+Leave *Copy projects into workspace* unchecked so the imported projects remain in the
+cloned Git working tree, where the external client continues to manage them.
+
+![Importing the CIMTool projects as existing projects from the file system](readme-images/import-existing-projects.png)
+
+> **Note:** The checked projects in the screenshot are the **core** projects required to
+> build and deploy CIMTool. The remaining, unchecked projects may optionally be imported,
+> but they are **dormant** — not required to build or deploy the product.
