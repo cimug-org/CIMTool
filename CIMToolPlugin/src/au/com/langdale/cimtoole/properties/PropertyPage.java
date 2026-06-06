@@ -52,6 +52,8 @@ public class PropertyPage extends FurnishedPropertyPage {
 				Info.putProperty(getResource(), symbol, value);
 			} else if (Info.isProfile(resource) || Info.isPlantUML(resource)) {
 				Info.putBuilderPreference(getResource(), symbol, value);
+			} else {
+				throw new RuntimeException("Invalid entry...");
 			}
 		}
 
@@ -333,6 +335,8 @@ public class PropertyPage extends FurnishedPropertyPage {
 					return;
 				}
 				IFolder profileFolder = Info.getProfileFolder(resource.getProject());
+				if (profileFolder == null || !profileFolder.exists())
+					return;
 				if (Info.isProfile(resource)) {
 					IFile owlFile = (IFile) resource;
 					String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");

@@ -81,6 +81,8 @@ public class ProfileEditor extends ModelEditor {
 		if (restrictToProject != null && !owlFile.getProject().equals(restrictToProject))
 			return;
 		IFolder profileFolder = Info.getProfileFolder(owlFile.getProject());
+		if (profileFolder == null || !profileFolder.exists())
+			return;
 		String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
 		IFile previewFile = profileFolder
 				.getFile("." + baseName + "." + PlantUMLRealTimePreviewBuildlet.PREVIEW_EXT);
