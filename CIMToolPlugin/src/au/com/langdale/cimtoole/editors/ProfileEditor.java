@@ -5,6 +5,9 @@
 package au.com.langdale.cimtoole.editors;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -16,6 +19,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IEditorPart;
 
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -27,6 +34,7 @@ import au.com.langdale.cimtoole.editors.profile.Stereotype;
 import au.com.langdale.cimtoole.editors.profile.Summary;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
+import au.com.langdale.cimtoole.builder.PlantUMLRealTimePreviewBuildlet;
 import au.com.langdale.cimtoole.wizards.SearchWizard;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeModelBase;
@@ -40,8 +48,45 @@ import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.ui.util.IconCache;
 import au.com.langdale.ui.util.WizardLauncher;
+import au.com.langdale.util.Jobs;
 
 public class ProfileEditor extends ModelEditor {
+
+	/**
+	 * Regenerate the real-time PlantUML preview for the profile editor that
+	 * currently has focus, so an open preview view re-renders with the latest
+	 * (global-, project-, or profile-level) preferences. Shared by the global
+	 * PlantUML Builder preference page and the project-level property page.
+	 *
+	 * When {@code restrictToProject} is non-null the refresh is skipped unless
+	 * the focused profile belongs to that project — a project-level preference
+	 * change is only relevant to profiles that live in that project, and
+	 * proceeding would build a preview path inside the wrong project under a
+	 * mismatched scheduling rule. Pass {@code null} for a global change that
+	 * affects every open profile.
+	 */
+	public static void refreshActiveProfilePreview(IProject restrictToProject) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return;
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null)
+			return;
+		IEditorPart active = page.getActiveEditor();
+		if (!(active instanceof ProfileEditor))
+			return;
+		IFile owlFile = ((ProfileEditor) active).getFile();
+		if (owlFile == null)
+			return;
+		if (restrictToProject != null && !owlFile.getProject().equals(restrictToProject))
+			return;
+		IFolder profileFolder = Info.getProfileFolder(owlFile.getProject());
+		String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
+		IFile previewFile = profileFolder
+				.getFile("." + baseName + "." + PlantUMLRealTimePreviewBuildlet.PREVIEW_EXT);
+		IWorkspaceRunnable runnable = new PlantUMLRealTimePreviewBuildlet().asRunnable(previewFile, false);
+		Jobs.runJob(runnable, previewFile.getProject(), "Regenerating real-time preview diagram");
+	}
 	private ProfileModel tree;
 	private OntModel backgroundModel, rawBackgroundModel, diagnosticModel, profileModel;
 	private boolean hasDiagnostics;

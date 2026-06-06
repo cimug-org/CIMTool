@@ -10,6 +10,7 @@ import static au.com.langdale.ui.builder.Templates.HRule;
 import static au.com.langdale.ui.builder.Templates.Label;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.project.FurnishedPropertyPage;
 import au.com.langdale.cimtoole.project.GlobalPreferencesExporter;
 import au.com.langdale.cimtoole.project.Info;
@@ -95,6 +96,7 @@ public class PlantUMLBuildersPreferencesPage extends FurnishedPropertyPage {
 
 		if (result) {
 			GlobalPreferencesExporter.exportGlobalPreferencesToAllOpenProjects();
+			ProfileEditor.refreshActiveProfilePreview(null);
 		}
 
 		return result;

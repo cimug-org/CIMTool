@@ -18,9 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.PlantUMLRealTimePreviewBuildlet;
@@ -50,13 +47,11 @@ public class PropertyPage extends FurnishedPropertyPage {
 
 		public void update() {
 			IResource resource = getResource();
-			String value = getValue();
+			String value = (getValue() == null ? "" : getValue());
 			if (resource instanceof IProject) {
 				Info.putProperty(getResource(), symbol, value);
 			} else if (Info.isProfile(resource) || Info.isPlantUML(resource)) {
 				Info.putBuilderPreference(getResource(), symbol, value);
-			} else {
-				throw new RuntimeException("Invalid entry...");
 			}
 		}
 
@@ -331,35 +326,15 @@ public class PropertyPage extends FurnishedPropertyPage {
 			}
 
 			private void refreshPlantUMLViewParts(IResource resource) {
+				if (resource instanceof IProject) {
+					// Project-level preference change: refresh the focused profile editor's
+					// preview, but only if that profile lives in this project.
+					ProfileEditor.refreshActiveProfilePreview((IProject) resource);
+					return;
+				}
 				IFolder profileFolder = Info.getProfileFolder(resource.getProject());
-				if (resource instanceof IProject || Info.isProfile(resource)) {
-					// When the resource is a project (e.g. a project-level preference
-					// change) we derive the profile name from whichever profile editor
-					// currently has focus. If no profile editor is active there is
-					// nothing to regenerate.
-					IFile owlFile;
-					if (resource instanceof IProject) {
-						IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-						if (page == null)
-							return;
-						IEditorPart active = page.getActiveEditor();
-						if (!(active instanceof ProfileEditor))
-							return;
-						owlFile = ((ProfileEditor) active).getFile();
-					} else {
-						owlFile = (IFile) resource;
-					}
-					if (owlFile == null)
-						return;
-					/**
-					 * A project-level preference change is only relevant to profiles that live in
-					 * that project. If the focused profile editor belongs to a different project
-					 * there is nothing to regenerate here, and proceeding would build a preview
-					 * path inside this project for a profile that lives elsewhere, scheduling the
-					 * write under a mismatched rule.
-					 */
-					if (resource instanceof IProject && !owlFile.getProject().equals(resource))
-						return;
+				if (Info.isProfile(resource)) {
+					IFile owlFile = (IFile) resource;
 					String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
 					IFile previewFile = profileFolder
 							.getFile("." + baseName + "." + PlantUMLRealTimePreviewBuildlet.PREVIEW_EXT);
