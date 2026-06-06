@@ -31,13 +31,15 @@ public class NewProject extends Wizard implements INewWizard {
 		protected boolean validatePage() {
 			if (!super.validatePage())
 				return false;
-
+			
+			//preferences.setNewProject(main.getProjectHandle());
 			schema.setNewProject(main.getProjectHandle());
 			copyrightTemplates.setNewProject(main.getProjectHandle());
 			return true;
 		}
 	};
 
+	private NewProjectPreferencesWizardPage preferences = new NewProjectPreferencesWizardPage();
 	private SchemaWizardPage schema = new SchemaWizardPage(true);
 
 	private ImportCopyrightTemplatesPage copyrightTemplates = new ImportCopyrightTemplatesPage("copyright-templates",
@@ -53,6 +55,9 @@ public class NewProject extends Wizard implements INewWizard {
 		copyrightTemplates.setMultiLineCopyrightSources(new String[] { "*.txt", "*.copyright-multi-line" });
 		copyrightTemplates.setSingleLineCopyrightSources(new String[] { "*.txt", "*.copyright-single-line" });
 		//
+		// preferences.setTitle("New Project Preferences");
+		// preferences.setDescription("Select the default display style for profile real-time previews.");
+		//
 		schema.setTitle("Import Initial Schema");
 		schema.setDescription("Import an XMI, OWL or EA project file as your base schema.");
 	}
@@ -60,6 +65,7 @@ public class NewProject extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		addPage(main);
+		// addPage(preferences);
 		addPage(copyrightTemplates);
 		addPage(schema);
 	}
