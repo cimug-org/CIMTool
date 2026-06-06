@@ -3,7 +3,7 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
-### Release 2.3.0 [01-Jun-2026]
+### Release 2.3.0 [05-Jun-2026]
 
 **CIMTool 2.3.0** is a release with significant enhancements focused on documentation generation, usability enhancements, real-time preview, diagram customization, enhanced profiling capabilities, and important defect fixes.
 
@@ -31,10 +31,10 @@ Enhancement [Issue #176](https://github.com/cimug-org/CIMTool/issues/176):
 Two new **PlantUML** builders have been introduced specifically for XSD profiles: `puml-xsd-l2r.xsl` (left-to-right layout) and `puml-xsd-t2b.xsl` (top-to-bottom layout). The original **PlantUML** builders (previously named `puml-l2r.xsl` and `puml-t2b.xsl`) have been renamed to `puml-rdfs-l2r.xsl` and `puml-rdfs-t2b.xsl` to clarify their purpose for RDFS profiles. Together these builders enable comprehensive diagram generation for both RDFS and XSD profile types, supporting visualization needs across different schema formats.
 
 Enhancement [Issue #184](https://github.com/cimug-org/CIMTool/issues/184):
-An integrated **AsciiDoc** editor from the Eclipse Marketplace has been added to **CIMTool**, providing syntax highlighting, live preview, and editing capabilities for AsciiDoc documents. This integration streamlines the workflow for users creating profile documentation, allowing them to edit generated AsciiDoc content directly within **CIMTool** without switching to external editors. The editor supports standard AsciiDoc features and enhances the overall documentation development experience.
+The **AsciiDoctor Eclipse Pluginn** has been added to **CIMTool**, providing syntax highlighting, live preview, and editing capabilities for AsciiDoc documents. This integration streamlines the workflow for users creating profile documentation, allowing them to edit generated AsciiDoc content directly within **CIMTool** without switching to external editors. The editor supports standard AsciiDoc features and enhances the overall documentation development experience.
 
 Enhancement [Issue #185](https://github.com/cimug-org/CIMTool/issues/185):
-**Pandoc** has been embedded within **CIMTool** to enable direct generation of Microsoft Word documents from AsciiDoc profiles. Users can now convert AsciiDoc documentation to `.docx` format without installing external tools or dependencies. This enhancement particularly benefits users who need to deliver profile documentation in Word format for stakeholder review or standards body submission, providing a seamless path from profile creation to final document delivery.
+**Pandoc** has been embedded within **CIMTool**.  This addition was architectural prep for future features for generating Word documents from AsciiDoc documents (using the intermediary DocBook5 format.
 
 Enhancement [Issue #188](https://github.com/cimug-org/CIMTool/issues/188):
 The **CIMantic Graphs** builders (`cimantic-graphs.xsl` and `cimantic-graphs-init.xsl`) have been updated with the latest changes provided by **PNNL**, adding support for `Identity.identifier`.
@@ -52,7 +52,7 @@ Enhancement [Issue #204](https://github.com/cimug-org/CIMTool/issues/204):
 **CIMTool** now supports shadow class (also called "mix-in") extensions when profiling directly from Enterprise Architect project files (`.eap`, `.qea`, `.qeax`). Shadow classes are a lightweight EA extension mechanism that lets modelers add attributes to existing classes without modifying the original class definition. **CIMTool** now recognizes these extensions during profiling and includes them according to the profile's configuration, enabling extension-modeling workflows where organizations can layer additional attributes onto standard CIM classes while maintaining clear separation between normative and extended content.
 
 Enhancement [Issue #207](https://github.com/cimug-org/CIMTool/issues/207):
-The intermediary XML format that **CIMTool** generates as input to its XSLT builders has been enhanced with `PrimitiveType` and `Compound` elements, providing richer semantic information about CIM datatypes. Builders — including custom user-defined XSLT builders — can now distinguish simple primitives (such as String or Integer) from compound types (such as ActivePower, with its value, unit, and multiplier components), enabling more accurate, type-aware code generation and documentation.
+The intermediary XML format that **CIMTool** generates as input to its XSLT builders has been enhanced with `PrimitiveType` and `CompoundType` elements, providing richer semantic information about CIM datatypes. Builders — including custom user-defined XSLT builders — can now distinguish simple primitives (such as String or Integer) from compound types (such as EmailAddress), enabling more accurate, type-aware code generation and documentation.
 
 Enhancement [Issue #217](https://github.com/cimug-org/CIMTool/issues/217):
 The SQL builder (`sql.xsl`) has been significantly enhanced to support `<<Compound>>` types with dedicated tables and proper foreign key relationships. When generating database schemas, the builder now creates separate tables for compound types (such as ActivePower, Voltage, etc.) and establishes foreign key constraints from classes that use these compounds. For example, a class with an ActivePower attribute will have a foreign key to the ActivePower compound table. Additionally, foreign key indexes are automatically generated to optimize query performance. This enhancement enables full relational database representation of CIM profiles with proper normalization of compound types.
