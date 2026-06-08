@@ -1,4 +1,4 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Fri Jun 05 20:57:41 CDT 2026
+#Mon Jun 08 07:30:52 CDT 2026
 log4j-over-slf4j-2.0.17.jar>=
 log4j-over-slf4j-2.0.17.pom>=
