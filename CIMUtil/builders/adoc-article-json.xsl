@@ -612,7 +612,25 @@
 	<!-- potentially have asciidoc sensitive characters that we want to parse and replace.  -->
 	<!-- Thus we use the $asciidoc-restricted map and not the $asciidoc-table-sensitive.    -->
 	<xsl:template match="a:Comment|a:Note" mode="annotate-type">
-		<item><xsl:call-template name="replace"><xsl:with-param name="text" select="."/><xsl:with-param name="map" select="$asciidoc-restricted"/></xsl:call-template></item>
+		<xsl:variable name="result">
+			<xsl:variable name="replaced">
+				<xsl:call-template name="replace">
+					<xsl:with-param name="text" select="."/>
+					<xsl:with-param name="map" select="$asciidoc-restricted"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:choose>
+				<xsl:when test="self::a:Comment">
+					<xsl:call-template name="neutralize-leading-markers">
+						<xsl:with-param name="text" select="$replaced"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$replaced"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<item><xsl:value-of select="$result"/></item>
 		<!-- Below accounts for extra line spacing between paragraphs - DO NOT REMOVE -->
 		<item></item>
 	</xsl:template>
@@ -633,7 +651,18 @@
 	<!-- putting the a:Comment and a:Note elements into the "description" column of the   -->
 	<!-- table. This documentation is sources from both the UML and the end-user.         -->
 	<xsl:template match="a:Comment|a:Note" mode="annotate-table-cell">
-		<item><xsl:call-template name="replace"><xsl:with-param name="text" select="."/><xsl:with-param name="map" select="$asciidoc-table-sensitive"/></xsl:call-template></item>
+		<xsl:variable name="result">
+			<xsl:variable name="replaced">
+				<xsl:call-template name="replace">
+					<xsl:with-param name="text" select="."/>
+					<xsl:with-param name="map" select="$asciidoc-table-sensitive"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:call-template name="neutralize-leading-markers">
+				<xsl:with-param name="text" select="$replaced"/>
+			</xsl:call-template>
+		</xsl:variable>
+		<item><xsl:value-of select="$result"/></item>
 		<!-- Below accounts for extra line spacing between paragraphs - DO NOT REMOVE -->
 		<item></item>
 	</xsl:template>
@@ -662,6 +691,19 @@
 			</xsl:iterate>
 		</xsl:variable>
 		<xsl:sequence select="$final"/>
+	</xsl:template>
+	
+	<!--  Neutralizes AsciiDoc block-level markers that begin a line by emitting the marker's  -->
+	<!--  numeric character reference, which renders as the literal character but cannot start -->
+	<!--  a block construct. Applied only to a:Comment text (UML-sourced, non-editable). The   -->
+	<!--  input has already passed through the 'replace' character-map template, so the        -->
+	<!--  ampersand introduced here is not re-escaped to {amp}. Markers: = (section title),    -->
+	<!--  / (guards against the // line comment, which silently drops the line), . (block      -->
+	<!--  title / ordered list), - (list item / listing fence), * (list marker, relevant in    -->
+	<!--  the table-cell path). The 'm' flag anchors ^ at the start of every embedded line.    -->
+	<xsl:template name="neutralize-leading-markers">
+		<xsl:param name="text" as="xs:string"/>
+		<xsl:sequence select="replace(replace(replace(replace(replace($text, '^=', '&amp;#61;', 'm'), '^/', '&amp;#47;', 'm'), '^\.', '&amp;#46;', 'm'), '^-', '&amp;#45;', 'm'), '^\*', '&amp;#42;', 'm')"/>
 	</xsl:template>
 	
 	<xsl:template match="node()" mode="annotate-type">
