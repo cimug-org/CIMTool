@@ -59,4 +59,3 @@ include::{includedir}/CIMToolUpdate/CIMToolUpdate-README.adoc[]
 include::{includedir}/CIMToolFeature/CIMToolFeature-README.adoc[]
 
 include::{includedir}/MaintainerNotes/MaintainerNotes-README.adoc[]
-
