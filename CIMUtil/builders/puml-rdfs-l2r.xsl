@@ -458,7 +458,7 @@
 					</xsl:if>
 				</list>
 			</list>
-			<!-- Purely for the purposes of extensions the enumeration can inherit from a shadow class enumeration -->
+			<!-- Purely for the purposes of extensions the enumeration can technically inherit from a shadow class enumeration -->
 			<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'true']">
 				<xsl:variable name="parentBaseEnum" select="@baseClass"/>
 				<xsl:variable name="parentEnum" as="element()?" select="(//a:EnumeratedType[@baseClass = $parentBaseEnum])[1]"/>
@@ -664,7 +664,7 @@
 				<xsl:otherwise>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/></item>
-						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, if ($error) then ' &lt;&lt;error&gt;&gt; ' else ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
+						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, if ($error and $errorAssistance) then ' &lt;&lt;error&gt;&gt; ' else ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
 							<xsl:choose>
 								<xsl:when test="not(a:Stereotype[contains(., '#diagramshideallattributes')])">
 									<xsl:for-each select="a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Reference">
