@@ -741,7 +741,7 @@ public class ProfileSerializer extends AbstractReader {
 
 				OntResource inverse = (node.getBaseProperty() != null ? node.getBaseProperty().getInverse() : null);
 				if ((inverse != null) && (node.getProfile().getPropertyInfo(inverse) != null)) {
-					elem.close(); // First, close "Reference" ...
+					elem.close(); // First, close "Reference"...
 					elem = new Element("InverseReference");
 					elem.set("hideInDiagrams",
 							(node.getSubject() != null && isHidden(node.getSubject()) ? Boolean.TRUE.toString()
@@ -1142,6 +1142,9 @@ public class ProfileSerializer extends AbstractReader {
 		valueElem.set("hideInDiagrams", Boolean.FALSE.toString());
 		valueElem.set("name", "value");
 		valueElem.set("xstype", xstype(type));
+		if (type.getEquivalentClass() != null) {
+			primitivesDeferred.add(type.getEquivalentClass());
+		}
 		valueElem.set("dataType", (type.getEquivalentClass() != null ? type.getEquivalentClass().getURI()
 				: ontologyURI + "#" + type.getLabel()));
 		valueElem.set("cimDatatype", getOntologyURI() + "#Float");
@@ -1167,7 +1170,7 @@ public class ProfileSerializer extends AbstractReader {
 		unitElem.set("constant", unitConstant);
 		String unitEAGUID = type.hasProperty(UML.unitEAGUID) ? type.getString(UML.unitEAGUID) : "";
 		unitElem.set("ea_guid", unitEAGUID);
-		unitElem.set("baseClass", "http://iec.ch/TC57/CIM100#UnitSymbol");
+		unitElem.set("baseClass", getOntologyURI() + "#UnitSymbol");
 		unitElem.set("baseProperty", type.getURI() + ".unit");
 		unitElem.set("basePropertyClass", type.getURI());
 		unitElem.set("minOccurs", "0");
@@ -1192,7 +1195,7 @@ public class ProfileSerializer extends AbstractReader {
 		multiplierElem.set("constant", multiplierConstant);
 		String multiplierEAGUID = type.hasProperty(UML.multiplierEAGUID) ? type.getString(UML.multiplierEAGUID) : "";
 		multiplierElem.set("ea_guid", multiplierEAGUID);
-		multiplierElem.set("baseClass", "http://iec.ch/TC57/CIM100#UnitMultiplier");
+		multiplierElem.set("baseClass", getOntologyURI() + "#UnitMultiplier");
 		multiplierElem.set("baseProperty", type.getURI() + ".multiplier");
 		multiplierElem.set("basePropertyClass", type.getURI());
 		multiplierElem.set("minOccurs", "0");
