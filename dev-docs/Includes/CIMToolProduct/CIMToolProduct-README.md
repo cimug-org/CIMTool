@@ -428,7 +428,7 @@ release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0-RC8
 
 The script performs the following steps in sequence:
 
-1. **Signs all JAR files** in the `plugins/` directory using `jarsigner` with the IdenTrust EV token via PKCS#11, SHA-256 digest, and a TSA timestamp
+1. **Signs all JAR files** in the `plugins/` directory using `jarsigner` with the IdenTrust EV token via PKCS#11, SHA-256 digest, and a TSA timestamp  (approximately 20+ minutes)
 2. **Signs `CIMTool.exe`** using `signtool` Authenticode with SHA-256 and a TSA timestamp
 3. **Populates `cimtool-cli/lib-repo/`** by invoking `install-jars.bat` with the signed export directory
 4. **Builds `cimtool-cli.jar`** by invoking `mvn clean package` in the `cimtool-cli/` project
