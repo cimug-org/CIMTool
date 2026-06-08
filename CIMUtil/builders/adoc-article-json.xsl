@@ -509,6 +509,7 @@
 		<item>|name |description</item>
 		<xsl:apply-templates>
 			<xsl:sort select="@name" collation="http://www.w3.org/2005/xpath-functions/collation/html-ascii-case-insensitive"/>
+			<xsl:sort select="@name" order="descending"/>
 		</xsl:apply-templates>
 		<item>|===</item>
 	</xsl:template>
@@ -526,6 +527,7 @@
 		<item>|name |description</item>
 		<xsl:apply-templates>
 			<xsl:sort select="@name" collation="http://www.w3.org/2005/xpath-functions/collation/html-ascii-case-insensitive"/>
+			<xsl:sort select="@name" order="descending"/>
 		</xsl:apply-templates>
 		<item>|===</item>
 	</xsl:template>
@@ -551,7 +553,7 @@
 			<xsl:call-template name="attribute-stereotype-roles"/> 
 		</xsl:variable>
 		<item></item>
-		<item>|<item>[[<xsl:value-of select="$link"/>]]</item><xsl:value-of select="if (cimtool:hasPrefix(@baseResource)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseResource), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (@code and @code != '') then concat(@name, '   (code=', @code, ')') else @name"/><xsl:if test="$roles != ''">##</xsl:if></item>
+		<item>|<item>[[<xsl:value-of select="$link"/>]]</item><xsl:value-of select="if (cimtool:hasPrefix(@baseResource)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseResource), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (@code and @code != '') then concat(@name, '   (code', ' = ', @code, ')') else @name"/><xsl:if test="$roles != ''">##</xsl:if></item>
 		<item>|</item><xsl:apply-templates select="a:Comment|a:Note|a:AsciiDoc" mode="annotate-table-cell"/>
 	</xsl:template>
 
