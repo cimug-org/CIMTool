@@ -3,7 +3,7 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
-### Release 2.3.0 [05-Jun-2026]
+### Release 2.3.0 [08-Jun-2026]
 
 **CIMTool 2.3.0** is a release with significant enhancements focused on documentation generation, usability enhancements, real-time preview, diagram customization, enhanced profiling capabilities, and important defect fixes.
 
