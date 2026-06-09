@@ -17,22 +17,22 @@ Click on the image to present a larger view.
 
 [![image](../images/ProjectExplorer-FiveFolders.png)](../images/ProjectExplorer-FiveFolders.png "A newly created CIMTool project in the Project Explorer, showing the five auto-created folders: Documentation, Incremental, Instances, Profiles, and Schema")
 
-The five folders, shown in the **Project Explorer** above in the alphabetical order **CIMTool** lists them, are:
+The five folders, shown in the **Project Explorer** above are:
 
 | Folder | Purpose |
 |---|---|
 | **Documentation** | For AsciiDoc-related artifacts with the `.adoc` extension. Introduced in **CIMTool** 2.3.0 and the focus of this page. |
 | **Incremental** | For CIM XML incremental files in RDF format, with a `.xml` extension. |
 | **Instances** | For CIM XML instance files in RDF format, with a `.xml` extension. |
-| **Profiles** | For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (`.owl`); the XSD, JSON Schema, RDFS, and other formats found here are artifacts generated from that definition by **CIMTool**'s builders. Log files identifying errors are written as `.log` text files, and depending on how **CIMTool** is used, HTML, RTF, XML, Java, and SQL files, among other types, may also appear. |
-| **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in the Enterprise Architect tool; or **Enterprise Architect** project files used directly by **CIMTool** — both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeap`). |
+| **Profiles** | For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (`.owl`); the XSD, JSON Schema, RDFS, and other formats found here are artifacts generated from that definition by **CIMTool**'s builders. Log files identifying errors are written as `.log` text files, and depending on how **CIMTool** is used, HTML, RTF, XML, Java, and SQL files, among other types, may also be hosted here. |
+| **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in Sparx EA; or **Enterprise Architect** project files used directly by **CIMTool** — both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeap`). |
 
-The **Documentation** and **Profiles** folders are the two that matter most for documentation work: the documentation builders write their generated AsciiDoc output into **Profiles** alongside the profile definitions, while the **Documentation** folder is where you assemble that generated content together with your own hand-written material into a finished document. The remaining sections look at each of these in turn.
+The **Documentation** and **Profiles** folders are the two that matter most for documentation work: the documentation builders write their generated AsciiDoc output into **Profiles** alongside the OWL profile definitions, while the **Documentation** folder is where you assemble generated content together with end-user written content into a finished document. The remaining sections look at each of these in turn.
 
 
 ## Inside the Documentation Folder
 
-The **Documentation** folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically — you do not need to create them by hand. Each subfolder also contains a small `readme.txt` placeholder describing what belongs there.
+The **Documentation** folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically — you do not need to create them by hand. Within the CGMES-CIM17 sample project, each subfolder also contains a small `readme.txt` placeholder describing what belongs there.
 
 | Subfolder | Purpose |
 |---|---|
@@ -41,18 +41,18 @@ The **Documentation** folder is created with four subfolders, each intended for 
 | **Styles** | Custom CSS stylesheets (`.css`) that control the appearance of HTML output. |
 | **Themes** | Custom theme files (`.yml`) that control the appearance of PDF output. |
 
-The master document itself — the top-level `.adoc` file that ties everything together — lives at the root of the **Documentation** folder, alongside these four subfolders. Building a master document is covered in detail in [Building a Master Document](#building-a-master-document).
+The master document itself — the top-level `.adoc` file that aggregates modularized documentation components together — lives at the root of the **Documentation** folder, alongside these four subfolders. Building a master document is covered in detail in [Building a Master Document](#building-a-master-document).
 
 !!! tip
 
-    For larger documentation efforts, it is common to organize the **Includes** folder further by creating subfolders beneath it, grouping related modular content into logical units. **CIMTool** places no restrictions on this — the structure beneath **Includes** is yours to arrange as your documentation grows.
+    For larger documentation efforts, it is common to organize the **Includes** folder further by creating subfolders beneath it, grouping related modular content into logical units. **CIMTool** places no restrictions on this — the structure beneath **Includes** is yours to arrange in a manner that best meets your documentation needs.
 
 The [CGMES-CIM17](https://github.com/cimug-org/CGMES-CIM17) sample project shows this layout in practice. Its **Documentation** folder holds a master document, `CGMES-Documentation.adoc`, at the root; a set of modular narrative files under **Includes** (an introduction, a CGMES overview, profile-group introductions, a conclusion, and more); a custom HTML stylesheet under **Styles**; and a custom PDF theme under **Themes**.
 
 
 ## The Asciidoctor Eclipse Editor
 
-Authoring and previewing AsciiDoc content within **CIMTool** is handled by the Asciidoctor Eclipse editor, which is bundled with **CIMTool** 2.3.0 out of the box. No separate installation is required — when you open an `.adoc` file in the workbench, the editor is already there.
+Authoring and previewing AsciiDoc content within **CIMTool** is handled by the Asciidoctor Eclipse editor, which is bundled with **CIMTool** 2.3.0 out of the box. No separate installation is required — when you open an `.adoc` file in the workbench, the editor is automatically launched for the selected file.
 
 The editor provides a live, side-by-side preview: your AsciiDoc source on one side and the rendered result on the other. The preview reflects the same AsciiDoc processing **CIMTool** uses elsewhere, so what you see in the editor is a faithful representation of the final output.
 
@@ -189,7 +189,7 @@ The element-level documentation described in [Adding Documentation to Profile El
 
 !!! note
 
-    The `adoc-article-rdfs-mappings` and `adoc-inline-rdfs-mappings` builders produce the same RDFS documentation as their non-mappings counterparts, with one addition: each class member table includes a dedicated **mapping** column for documenting how each CIM element maps to another information model or third-party system. This column is populated from the element's **"Documentation"** tab, as described in [Adding Documentation to Profile Elements](#adding-documentation-to-profile-elements). Mappings are an RDFS-only feature; the XSD and JSON Schema builders have no mappings variant.
+    The `adoc-article-rdfs-mappings` and `adoc-inline-rdfs-mappings` builders produce the same RDFS documentation as their non-mappings counterparts, with one addition: each class member table includes a dedicated **mapping** column for documenting how each CIM element maps to another information model or third-party system. This column is populated from the element's **"Documentation"** tab, as described in [Adding Documentation to Profile Elements](#adding-documentation-to-profile-elements). Mappings are currently an RDFS-only feature in CIMTool 2.3.0; the XSD and JSON Schema builders will have mappings variant in future releases.
 
 
 ## Building a Master Document
@@ -241,7 +241,7 @@ include::{profilesdir}/CGMES-Operation.inline-rdfs.adoc[]
 include::{includedir}/conclusion.adoc[]
 ```
 
-Because the included profile fragments are produced by *inline* builders, they carry no document title of their own and begin at a section heading — so they slot neatly beneath the master document's structure rather than competing with it. The narrative includes and the generated profile sections combine into a single, continuously numbered document.
+Because the included profile fragments are produced by *inline* builders they carry no document title of their own. However, they do generate their own section heading at the correct level — so they slot neatly beneath the master document's structure rather than competing with it. The narrative includes and the generated profile sections combine into a single, continuously document with appropriate page number automatically assigned across the document.
 
 ### The Rendered Result
 
