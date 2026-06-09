@@ -31,6 +31,7 @@ nav:
     - 'how-to/search-schemas-profiles.md'
     - 'how-to/generate-database-schema.md'
     - 'how-to/profile-real-time-preview.md'
+    - 'how-to/using-cimtool-documentation-features.md'
     - 'how-to/profile-maintenance.md'
     - 'how-to/comparing-profiles-schemas.md'
     - 'how-to/associations-anonymous-classes.md'
