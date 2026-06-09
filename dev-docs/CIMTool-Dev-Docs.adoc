@@ -38,9 +38,9 @@ include::{includedir}/CIMToolPlugin/CIMToolPlugin-README.adoc[]
 
 include::{includedir}/CIMUtil/CIMUtil-README.adoc[]
 
-include::{includedir}/Kena/Kena-README.adoc[] +
+include::{includedir}/Kena/Kena-README.adoc[]
 
-include::{includedir}/RCPUtil/RCPUtil-README.adoc[] + +
+include::{includedir}/RCPUtil/RCPUtil-README.adoc[]
 
 include::{includedir}/CIMToolHelp/CIMToolHelp-README.adoc[]
 
@@ -52,7 +52,7 @@ include::{includedir}/cimtool-cli/cimtool-cli-README.adoc[]
 
 include::{includedir}/CIMToolTest/CIMToolTest-README.adoc[]
 
-include::{includedir}/CSharpEFTestProject/CSharpEFTestProject-README.adoc[] +
+include::{includedir}/CSharpEFTestProject/CSharpEFTestProject-README.adoc[]
 
 include::{includedir}/CIMToolUpdate/CIMToolUpdate-README.adoc[]
 
