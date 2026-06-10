@@ -49,7 +49,7 @@ In the example above, `ExtEuIdentifiedObject` shadows `IdentifiedObject`. Its `s
 
 ### Variant 2: Same-Named Class with a Distinct Namespace
 
-The shadow class is given the exact same name as the normative CIM class it shadows. **CIMTool** implicitly identifies it as a shadow class because it has an identical name but a different namespace — that namespace being determined by whichever mechanism is in use for the project: either a `baseuri` tagged value on the class (highlighted in the example below) or a stereotype-to-namespace mapping defined in a `.namespaces` file. No explicit `<<ShadowExtension>>` stereotype is required for **CIMTool** to recognise this variant.
+The shadow class is given the exact same name as the normative CIM class it shadows. **CIMTool** implicitly identifies it as a shadow class because it has an identical name but a different namespace — that namespace being determined by whichever mechanism is in use for the project: either a `baseuri` tagged value on the class (highlighted in the example below) or a stereotype-to-namespace mapping defined in a `.namespaces` file for the schema. No explicit `<<ShadowExtension>>` stereotype is required for **CIMTool** to recognise this variant. Note that this variant is the one with the longest history while variants #1 and #2 added in recent years are what you will see most commonly used in current models used with CIMTool.
 
 ![Shadow class using same name as normative class with distinct baseuri](../images/ShadowExtensionSameNamedClass.png)
 
