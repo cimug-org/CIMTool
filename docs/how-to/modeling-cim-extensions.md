@@ -101,3 +101,7 @@ The extension modeling conventions underpinning the shadow class pattern are des
 - [Section 6.6 — Association Extension Rules](https://cim-mg.ucaiug.io/latest/section6-cim-uml-extension-rules-and-recommendations/#association-extension-rules): covers Rule204 and best practices for modeling associations between extension classes and normative CIM classes.
 
 For guidance on assigning extension namespaces in **CIMTool** — including the `baseuri` tagged value and the stereotype-to-namespace mappings file introduced in 2.3.0 — see [CIMTool Support for Extension Namespaces](cimtool-support-for-extension-namespaces.md).
+
+!!! note
+
+    At present, the CIM Modeling Guide sections referenced above do not formally describe variants #1 and #3 extensions options but are planned additions in the next release of the guide.
