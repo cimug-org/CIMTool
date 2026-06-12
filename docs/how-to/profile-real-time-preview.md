@@ -150,7 +150,7 @@ class diagram that reflects the structural conventions of an RDFS profile
 definition. Errors specific to those conventions are visualized directly within
 the diagram.
 
-The numbered errors shown in the overview screenshot above are each examined
+The numbered errors shown in the overview screenshots above are each examined
 below in sequence, using a deliberately constructed profile that contains each
 type of error so they can be illustrated and resolved one by one.
 
@@ -282,9 +282,9 @@ between the two classes. In this example, a red association runs from
 
 Note that this error looks visually similar to Issue 2, but its cause is
 fundamentally different. In Issue 2 the red arc indicated a missing declared
-type on an attribute. Here, the arc represents a **true association** between
-two classes — `Measurement` and `PowerSystemResource` — and `PowerSystemResource`
-is already included in the profile, as confirmed by its presence in the
+type on an attribute. Here, it is representing the **association** between
+two classes — `Measurement` and `PowerSystemResource` — and that the `PowerSystemResource`
+class is already included in the profile, as confirmed by its presence in the
 **Outline** panel's alphabetical list of currently profiled classes. Because
 `PowerSystemResource` is profiled, it appears in the diagram in grey — the
 convention used for abstract classes — rather than pink/red, which would
