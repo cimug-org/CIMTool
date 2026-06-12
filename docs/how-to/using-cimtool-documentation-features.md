@@ -1,17 +1,17 @@
 # Using CIMTool Documentation Features
 
-**CIMTool** 2.3.0 introduces a set of features for authoring rich, professional documentation directly from a CIM profile.
+**CIMTool** 2.3.0 introduces a set of features for authoring rich, professional documentation directly from CIM profiles.
 
-These features address a need that profile authors have long had: producing human-readable specifications that stay in step with the profile itself. Rather than maintaining documentation separately and by hand, you can write narrative content within **CIMTool** and author expanded documentation for individual profile elements. **CIMTool**'s builders can generate modularized documentation components that can then be included in master documents.
+These features address a need that profile authors have long had: producing human-readable specifications that stay in step with the profile itself. Rather than maintaining documentation separately and by hand, you can write custom content within **CIMTool** and author expanded documentation at the level of individual profile elements. **CIMTool** builders aid in generating modularized documentation components that, in turn, can then be included in master documents.
 
-All of this is built on [AsciiDoc](https://asciidoc.org/), a concise, plain-text authoring format designed for technical documentation. AsciiDoc content is easy to write, friendly to version control, and can be published to multiple output formats. The documentation **CIMTool** generates from a profile is AsciiDoc, the content you author within **CIMTool** is AsciiDoc, and the bundled editor renders AsciiDoc previews — so a working familiarity with the format is helpful. This page closes with an [AsciiDoc Syntax Quick Reference](#asciidoc-syntax-quick-reference) to get you started.
+All of this is built on [AsciiDoc](https://asciidoc.org/), a concise, plain-text authoring format designed for technical documentation. AsciiDoc content is easy to write, friendly to version control, and can be published to multiple output formats. The documentation **CIMTool** generates from a profile is AsciiDoc, the content you author within **CIMTool** is AsciiDoc, and the bundled editor renders AsciiDoc previews — so establishing a working familiarity with the AsciiDoc format is helpful. This page closes with an [AsciiDoc Syntax Quick Reference](#asciidoc-syntax-quick-reference) to get you started.
 
-Finally, what follows will walk you through where documentation lives in a project, how to author it at the profile and element level, what types of documentation builders currently ship with **CIMTool** and what they produce, and how to assemble a complete master document using the publicly available [CGMES-CIM17](https://github.com/cimug-org/CGMES-CIM17) sample project as a worked example.
+What follows is a walk through where documentation lives in a project, how to author it at the various levels in a profile, what types of AsciiDoc builders currently ship with **CIMTool** and the type of documentation they produce, and finally, using the new publicly available [CGMES-CIM17](https://github.com/cimug-org/CGMES-CIM17) sample project as a working example, how to assemble a complete master document.
 
 
 ## The Five Project Folders
 
-Every **CIMTool** project is created with the same set of top-level folders, generated automatically when the project is created. Prior to **CIMTool** 2.3.0 there were four; the **Documentation** folder, new in 2.3.0, brings the total to five. Understanding what each one holds makes it clear where the **Documentation** folder fits and where the documentation features described on this page do their work.
+Every **CIMTool** project is created with the same set of top-level folders, generated automatically when the project is created. With the introduction of the **Documentation** folder in CIMTool 2.3.0, there are now five formally recognized folders. Understanding what each folders purpose is makes it clear where the **Documentation** folder fits into the workflow.
 
 Click on the image to present a larger view.
 
@@ -21,18 +21,18 @@ The five folders, shown in the **Project Explorer** above are:
 
 | Folder | Purpose |
 |---|---|
-| **Documentation** | For AsciiDoc-related artifacts with the `.adoc` extension. Introduced in **CIMTool** 2.3.0 and the focus of this page. |
-| **Incremental** | For CIM XML incremental files in RDF format, with a `.xml` extension. |
-| **Instances** | For CIM XML instance files in RDF format, with a `.xml` extension. |
-| **Profiles** | For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (`.owl`); the XSD, JSON Schema, RDFS, and other formats found here are artifacts generated from that definition by **CIMTool**'s builders. Log files identifying errors are written as `.log` text files, and depending on how **CIMTool** is used, HTML, RTF, XML, Java, and SQL files, among other types, may also be hosted here. |
+| **Documentation** | For AsciiDoc-related documentation artifacts and introduced in **CIMTool** 2.3.0 |
+| **Incremental** | For CIM XML incremental files in RDF format, with a `.xml` extension. Used when validating CIM/XML instance models in CIMTool. |
+| **Instances** | For CIM XML instance files in RDF format, with a `.xml` extension. Used when validating CIM/XML differences models in CIMTool.|
+| **Profiles** | For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (`.owl`); the XSD, JSON Schema, RDFS, and other artifacts found in this folder are those generated from the `.owl` definition by **CIMTool**'s builders. Log files identifying errors are written as `.log` text files, and depending on how **CIMTool** is used, HTML, RTF, XML, Java, and SQL files, among other types, may also be hosted here. |
 | **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in Sparx EA; or **Enterprise Architect** project files used directly by **CIMTool** — both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeap`). |
 
-The **Documentation** and **Profiles** folders are the two that matter most for documentation work: the documentation builders write their generated AsciiDoc output into **Profiles** alongside the OWL profile definitions, while the **Documentation** folder is where you assemble generated content together with end-user written content into a finished document. The remaining sections look at each of these in turn.
+The **Documentation** and **Profiles** folders are the two that matter for the purposes of documentation generation: the documentation builders write their generated AsciiDoc output into **Profiles** alongside the OWL profile definitions, while the **Documentation** folder is where you assemble generated content together with end-user written content into a finished document. The remaining sections look at each of these in turn.
 
 
 ## Inside the Documentation Folder
 
-The **Documentation** folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically — you do not need to create them by hand. Within the CGMES-CIM17 sample project, each subfolder also contains a small `readme.txt` placeholder describing what belongs there.
+The **Documentation** folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically — you do not need to create them by hand. Within the CGMES-CIM17 sample project, each subfolder also contains a small `readme.txt` placeholder describing what belongs within the folder.
 
 | Subfolder | Purpose |
 |---|---|

@@ -121,17 +121,21 @@ navigate within a docked view.
 
 Click on the image to present a larger view.
 
-[![image](../images/ProfileRealTimePreview-MaximizedDualMonitor.png)](../images/ProfileRealTimePreview-MaximizedDualMonitor.png "The Profile Real-Time Preview detached and maximized, showing multiple error indicators within an RDFS-style diagram of a large profile")
+[![image](../images/ProfileRealTimePreview-DualMonitors.gif)](../images/ProfileRealTimePreview-DualMonitors.gif "The Profile Real-Time Preview detached and maximized")
 
-The screenshot above shows this arrangement with a profile that contains five
-definition errors — each numbered for reference. A second set of errors,
-numbered 6 through 8, is illustrated in the screenshot below. 
+The next set of screenshots will be used for illustration purposes, and show 
+a profile that contains a wide range of profile errors — each numbered 1 through 
+8 for reference. 
 
 Click on the image to present a larger view.
 
-[![image](../images/ProfileRealTimePreview-ErrorsExamples.png)](../images/ProfileRealTimePreview-ErrorsExamples.png "Issues 6, 7, and 8 illustrated in the Real-Time Preview: an abstract class with fields defined (6), a concrete class with no fields or associations (7), and an isolated abstract class with no parent, child, or associations (8)")
+[![image](../images/ProfileRealTimePreview-ErrorsExamples1.png)](../images/ProfileRealTimePreview-ErrorsExamples1.png "The Profile Real-Time Preview showing multiple error indicators within an RDFS-style diagram of a large profile")
 
-The sections that follow examine each of these errors in detail, explaining
+Click on the image to present a larger view.
+
+[![image](../images/ProfileRealTimePreview-ErrorsExamples2.png)](../images/ProfileRealTimePreview-ErrorsExamples2.png "Issues 6, 7, and 8 illustrated in the Real-Time Preview: an abstract class with fields defined (6), a concrete class with no fields or associations (7), and an isolated abstract class with no parent, child, or associations (8)")
+
+The sections that follow examine each of the above errors in detail, explaining
 what each one indicates and how to resolve it, beginning with the RDFS diagram
 style.
 
