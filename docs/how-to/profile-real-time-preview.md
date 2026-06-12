@@ -225,18 +225,18 @@ standard **yellow** convention for concrete classes.
 
 When an attribute has been added to the profile but its associated enumeration
 or compound type has not been included in the attribute's definition, the
-Real-Time Preview flags it with a **red association arc** drawn from the class
+Real-Time Preview flags it with a **red association** drawn from the class
 that owns the attribute to the enumeration or compound type class. In this
 example, the `unitSymbol` attribute on `Measurement` has been added to the
 profile, but the `UnitSymbol` enumeration that is its declared type has not
 been selected as part of the attribute definition. The result is a red
-association arc from `Measurement` to the `UnitSymbol` class.
+association from `Measurement` to the `UnitSymbol` class.
 
 #### What it means
 
 In the CIM, enumeration and compound types never participate in associations —
 they are only ever used as the declared type of an attribute. When **CIMTool**
-renders a red association arc between a class and an enumeration or compound
+renders a red association between a class and an enumeration or compound
 type, it is signalling that the attribute exists in the profile but its type
 has not been properly included in the attribute's definition. The diagram is
 making visible what would otherwise be an invisible gap in the profile
@@ -264,7 +264,7 @@ Click on the image to present a larger view.
 #### Result
 
 After saving the profile the diagram refreshes automatically. The red
-association arc from `Measurement` to `UnitSymbol` is gone. The `unitSymbol`
+association from `Measurement` to `UnitSymbol` is gone. The `unitSymbol`
 attribute now appears correctly as a typed property within the `Measurement`
 class — rendered as `unitSymbol: UnitSymbol [1]` — which is the expected
 representation for a properly defined attribute whose type is an enumeration.
@@ -276,8 +276,8 @@ representation for a properly defined attribute whose type is an enumeration.
 
 When an association between two classes has been added to the profile but the
 target end of the association has not been included in the profile definition
-for that relationship, the Real-Time Preview renders the association as a **red
-arc** between the two classes. In this example, a red arc runs from
+for that relationship, the Real-Time Preview renders the associationin **red** 
+between the two classes. In this example, a red association runs from
 `Measurement` to `PowerSystemResource`.
 
 Note that this error looks visually similar to Issue 2, but its cause is
@@ -298,7 +298,7 @@ In a CIM profile definition, adding an association to the profile is not
 sufficient on its own — the target end of the association must also be
 explicitly included in the association's definition within the profile. Until
 that step is completed, **CIMTool** cannot fully resolve the relationship and
-flags it with a red arc to make the incomplete definition visible.
+renders the association in red to make the incomplete definition visible.
 
 #### How to resolve it
 
@@ -321,8 +321,8 @@ Click on the image to present a larger view.
 
 #### Result
 
-After saving the profile the diagram refreshes automatically. The red arc from
-`Measurement` to `PowerSystemResource` is replaced by a **grey arc** —
+After saving the profile the diagram refreshes automatically. The red association from
+`Measurement` to `PowerSystemResource` is replaced by a **grey association** —
 confirming that the association is now fully and correctly defined within the
 profile, with `PowerSystemResource` participating as a properly profiled
 abstract class on the target end of the relationship.
@@ -336,10 +336,15 @@ The Real-Time Preview renders `UnitMultiplier` as an **entirely pink/red**
 class with red arcs running from both `Measurement` and `Control` to it.
 
 This is an important distinction from Issue 2, where `UnitSymbol` appeared
-with a **green** body. In Issue 2 the green body indicated that `UnitSymbol` was already a defined member in the profile. The pink/red association signalled only that a specific attribute definition was incomplete.
+rendered in the default **green** typical for enumerations. In Issue 2 the 
+green body indicated that `UnitSymbol` was already a defined member in the 
+profile. The pink/red association signalled only that a specific attribute 
+definition was incomplete.
 
-Here, in Issue 4 and 5, `UnitMultiplier` is **entirely pink/red** because the `UnitMultiplier` 
-Here, in Issue 4 and 5, `UnitMultiplier` is **entirely pink/red** because it is not yet a defined member of the profile; **CIMTool** renders it this way to signal that the enumeration is wholly unresolved within the profile.
+Here, in Issue 4 and 5, `UnitMultiplier` is **entirely pink/red** because it is 
+not yet a defined member of the profile; **CIMTool** renders it this way to signal 
+that the enumeration is wholly unresolved within the profile.
+
 #### What it means
 
 Both `Measurement` and `Control` have a `unitMultiplier` attribute in the CIM
