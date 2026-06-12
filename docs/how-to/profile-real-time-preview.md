@@ -123,9 +123,8 @@ Click on the image to present a larger view.
 
 [![image](../images/ProfileRealTimePreview-DualMonitors.gif)](../images/ProfileRealTimePreview-DualMonitors.gif "Detaching and maximizing the Profile Real-Time Preview within a dual monitor configuration")
 
-The next set of screenshots will be used for illustration purposes, and show 
-a profile that contains a wide range of profile errors — each numbered 1 through 
-8 for reference. 
+The next set of screenshots are used for illustration purposes and show a profile
+that contains a wide range of profile errors — each numbered 1 through 8 for reference. 
 
 Click on the image to present a larger view.
 
