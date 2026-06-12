@@ -17,7 +17,7 @@ workbench. No manual setup is required to use it.
 
 Click on the image to present a larger view.
 
-[![image](../images/ProfileRealTimePreview-vs-PlantUML-Views.png)](../images/ProfileRealTimePreview-vs-PlantUML-Views.png "The Real-Time Preview tab (outlined in red) and the PlantUML Svg tab (outlined in blue) in the default CIMTool perspective")
+[![image](../images/ProfileRealTimePreview-vs-PlantUML-Views.png)](../images/ProfileRealTimePreview-vs-PlantUML-Views.png "The Profile Real-Time Preview tab (outlined in red) and the PlantUML Svg tab (outlined in blue) in the default CIMTool perspective")
 
 The **Profile Real-Time Preview** view tracks whichever profile is currently
 active in the profile editor and updates in place when focus moves to a
@@ -30,7 +30,7 @@ well beyond the visible area of the view.
 
     The **Profile Real-Time Preview** view is distinct from the **PlantUML Svg** view that also appears in the default workbench layout (outlined in blue in the screenshot above). The **PlantUML Svg** view is a general-purpose PlantUML renderer that displays whatever `.puml` file is currently open or selected in the editor. The **Profile Real-Time Preview**, by contrast, is purpose-built for profile design work: it automatically tracks the active profile and regenerates its diagram on every save — no manual file selection is required.
 
-Beyond visualizing the profile's structure, the Real-Time Preview serves a
+Beyond visualizing the profile's structure, the Profile Real-Time Preview serves a
 second purpose that is especially valuable when building large or complex
 profiles: it surfaces incomplete or invalid profile definitions directly within
 the rendered diagram using distinct visual cues. This makes it possible to
@@ -41,7 +41,7 @@ Because the two views serve different purposes, they can be used together. The
 **PlantUML Svg** view can be repositioned within the workbench by dragging its
 tab to a different panel, making it possible to display both views
 simultaneously side by side. The screenshot below illustrates this arrangement
-— and demonstrates the key difference between them: the Real-Time Preview
+— and demonstrates the key difference between them: the Profile Real-Time Preview
 (left) renders definition errors using distinct visual cues, flagging issues
 within the profile definition. The PlantUML Svg view (right), rendering the
 same profile as a standard diagram, shows no such indicator even though the
@@ -49,12 +49,12 @@ issue exists in the profile.
 
 Click on the image to present a larger view.
 
-[![image](../images/ProfileRealTimePreview-PlantUML-SplitView.png)](../images/ProfileRealTimePreview-PlantUML-SplitView.png "The Real-Time Preview (left) surfacing definition errors using distinct visual cues; the PlantUML Svg view (right) rendering the same profile as a standard diagram with no error indicators")
+[![image](../images/ProfileRealTimePreview-PlantUML-SplitView.png)](../images/ProfileRealTimePreview-PlantUML-SplitView.png "The Profile Real-Time Preview (left) surfacing definition errors using distinct visual cues; the PlantUML Svg view (right) rendering the same profile as a standard diagram with no error indicators")
 
 Historically, validating a large profile required a meticulous inspection of
 every class, attribute, and association definition in the profile editor — a
 process that was time-consuming and error-prone precisely because definition
-problems had no visible presence in the workspace. The Real-Time Preview
+problems had no visible presence in the workspace. The Profile Real-Time Preview
 eliminates that burden by making errors immediately visible each time the
 profile is saved.
 
@@ -63,7 +63,7 @@ profile is saved.
 
 A CIM profile definition is shaped by its intended target artifact — the type
 of schema or serialization format the profile is ultimately meant to produce.
-The style of diagram rendered by the Real-Time Preview reflects this:
+The style of diagram rendered by the Profile Real-Time Preview reflects this:
 **CIMTool** generates a PlantUML diagram appropriate for the profile's target
 schema type, and it is within that diagram that any definition errors will be
 visualized.
@@ -132,7 +132,7 @@ Click on the image to present a larger view.
 
 Click on the image to present a larger view.
 
-[![image](../images/ProfileRealTimePreview-ErrorsExamples2.png)](../images/ProfileRealTimePreview-ErrorsExamples2.png "Issues 6, 7, and 8 illustrated in the Real-Time Preview: an abstract class with fields defined (6), a concrete class with no fields or associations (7), and an isolated abstract class with no parent, child, or associations (8)")
+[![image](../images/ProfileRealTimePreview-ErrorsExamples2.png)](../images/ProfileRealTimePreview-ErrorsExamples2.png "Issues 6, 7, and 8 illustrated in the Profile Real-Time Preview: an abstract class with fields defined (6), a concrete class with no fields or associations (7), and an isolated abstract class with no parent, child, or associations (8)")
 
 The sections that follow examine each of the above errors in detail, explaining
 what each one indicates and how to resolve it, beginning with the RDFS diagram
@@ -145,7 +145,7 @@ An RDFS-style profile definition targets RDF Schema artifact generation
 conforming to **IEC 61970-501:2016** — *Energy management system application
 program interface (EMS-API) – Part 501: Common Information Model Resource
 Description Framework (CIM RDF) schema*. When the diagram style is set to
-`puml-rdfs-t2b` or `puml-rdfs-l2r`, the Real-Time Preview renders a PlantUML
+`puml-rdfs-t2b` or `puml-rdfs-l2r`, the Profile Real-Time Preview renders a PlantUML
 class diagram that reflects the structural conventions of an RDFS profile
 definition. Errors specific to those conventions are visualized directly within
 the diagram.
@@ -225,7 +225,7 @@ standard **yellow** convention for concrete classes.
 
 When an attribute has been added to the profile but its associated enumeration
 or compound type has not been included in the attribute's definition, the
-Real-Time Preview flags it with a **red association** drawn from the class
+Profile Real-Time Preview flags it with a **red association** drawn from the class
 that owns the attribute to the enumeration or compound type class. In this
 example, the `unitSymbol` attribute on `Measurement` has been added to the
 profile, but the `UnitSymbol` enumeration that is its declared type has not
@@ -276,8 +276,8 @@ representation for a properly defined attribute whose type is an enumeration.
 
 When an association between two classes has been added to the profile but the
 target end of the association has not been included in the profile definition
-for that relationship, the Real-Time Preview renders the associationin **red** 
-between the two classes. In this example, a red association runs from
+for that relationship, the Profile Real-Time Preview renders the association in 
+**red** between the two classes. In this example, a red association runs from
 `Measurement` to `PowerSystemResource`.
 
 Note that this error looks visually similar to Issue 2, but its cause is
@@ -332,7 +332,7 @@ abstract class on the target end of the relationship.
 
 #### What the diagram shows
 
-The Real-Time Preview renders `UnitMultiplier` as an **entirely pink/red**
+The Profile Real-Time Preview renders `UnitMultiplier` as an **entirely pink/red**
 class with red arcs running from both `Measurement` and `Control` to it.
 
 This is an important distinction from Issue 2, where `UnitSymbol` appeared
@@ -405,7 +405,7 @@ within each class respectively.
 
 #### What the diagram shows
 
-The Real-Time Preview renders `Asset` in **pink/red** with a note callout
+The Profile Real-Time Preview renders `Asset` in **pink/red** with a note callout
 attached, reading: *"Class Asset is 'abstract'. If it is serving as a reference
 to an external object then no fields should be defined in it. Otherwise, it
 should be declared as 'concrete'."*
@@ -472,7 +472,7 @@ expressed in the profile definition.
 
 #### What the diagram shows
 
-The Real-Time Preview renders `MeasurementValueSource` in **pink/red** with a
+The Profile Real-Time Preview renders `MeasurementValueSource` in **pink/red** with a
 note callout reading: *"Class MeasurementValueSource is 'concrete' but has no
 fields or associations declared. If it is intended to serve as a reference to
 an external object then it should be declared as 'abstract'. Otherwise, it
@@ -537,7 +537,7 @@ the substance required of a concrete class in an RDFS profile definition.
 
 #### What the diagram shows
 
-The Real-Time Preview renders `Location` in **pink/red** with a note callout
+The Profile Real-Time Preview renders `Location` in **pink/red** with a note callout
 reading: *"Class Location is 'abstract' and has no parent class, child class,
 or association references to it. It should either be removed from the profile
 or declared as 'concrete'."*
