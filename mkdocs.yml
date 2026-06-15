@@ -45,3 +45,4 @@ nav:
   - 'SchemaOps Automation & Integration':
     - 'schemaops/cimtool-cli.md'
   - 'release-notes.md'
+  - 'download-latest.md'
