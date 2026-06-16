@@ -1,4 +1,4 @@
-# Download Latest Release
+# Download Latest
 
   -   2.3.0
 
