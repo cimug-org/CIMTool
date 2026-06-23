@@ -692,7 +692,7 @@
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
 			<xsl:choose>
 				<xsl:when test="a:SuperType[@baseClassIsShadowExtension = 'false']">
-					<xsl:variable name="superClassName" select="a:SuperType[@baseClassIsShadowExtension = 'false']/@name"/>
+					<xsl:variable name="superClassName" select="string-join(a:SuperType[@baseClassIsShadowExtension = 'false']/@name, ', ')"/>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/> inherits from <xsl:value-of select="$superClassName"/></item>
 						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">
@@ -758,9 +758,12 @@
 								<item></item>
 							</xsl:for-each>	
 						</xsl:if>	
-						<xsl:if test="not(//node()[@name = $superClassName]/@hideInDiagrams = 'true')">
-							<item><xsl:value-of select="concat($superClassName, ' &lt;|-- ', $className)"/></item>
-						</xsl:if>
+						<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'false']">
+							<xsl:variable name="parentName" select="@name"/>
+							<xsl:if test="not(//node()[@name = $parentName]/@hideInDiagrams = 'true')">
+								<item><xsl:value-of select="concat($parentName, ' &lt;|-- ', $className)"/></item>
+							</xsl:if>
+						</xsl:for-each>
 					</list>
 				</xsl:when>
 				<xsl:otherwise>
