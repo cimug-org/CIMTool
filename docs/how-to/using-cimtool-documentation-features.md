@@ -25,7 +25,7 @@ The five folders, shown in the **Project Explorer** above are:
 | **Incremental** | For CIM XML incremental files in RDF format, with a `.xml` extension. Used when validating CIM/XML instance models in CIMTool. |
 | **Instances** | For CIM XML instance files in RDF format, with a `.xml` extension. Used when validating CIM/XML differences models in CIMTool.|
 | **Profiles** | For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (`.owl`); the XSD, JSON Schema, RDFS, and other artifacts found in this folder are those generated from the `.owl` definition by **CIMTool**'s builders. Log files identifying errors are written as `.log` text files, and depending on how **CIMTool** is used, HTML, RTF, XML, Java, and SQL files, among other types, may also be hosted here. |
-| **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in Sparx EA; or **Enterprise Architect** project files used directly by **CIMTool** — both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeap`). |
+| **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in Sparx EA; or **Enterprise Architect** project files used directly by **CIMTool** — both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeax`). |
 
 The **Documentation** and **Profiles** folders are the two that matter for the purposes of documentation generation: the documentation builders write their generated AsciiDoc output into **Profiles** alongside the OWL profile definitions, while the **Documentation** folder is where you assemble generated content together with end-user written content into a finished document. The remaining sections look at each of these in turn.
 
@@ -190,6 +190,34 @@ The element-level documentation described in [Adding Documentation to Profile El
 !!! note
 
     The `adoc-article-rdfs-mappings` and `adoc-inline-rdfs-mappings` builders produce the same RDFS documentation as their non-mappings counterparts, with one addition: each class member table includes a dedicated **mapping** column for documenting how each CIM element maps to another information model or third-party system. This column is populated from the element's **"Documentation"** tab, as described in [Adding Documentation to Profile Elements](#adding-documentation-to-profile-elements). Mappings are currently an RDFS-only feature in CIMTool 2.3.0; the XSD and JSON Schema builders will have mappings variant in future releases.
+
+### Annotating Extension Members with Namespace Prefixes
+
+When a profile draws on attributes and associations from extension namespaces — for example, the European (ENTSO-E) extensions to the CIM — the AsciiDoc builders can annotate those members in the generated documentation with a short namespace **prefix**, making it immediately clear which namespace each extension member belongs to. In the example below, the inherited members `eu:energyIdentCodeEic` and `eu:shortName` carry the `eu:` prefix, distinguishing them from the normative CIM members (`mRID`, `description`, `name`), which have none.
+
+Click on the image to present a larger view.
+
+[![image](../images/Documentation-NamespacePrefixes.png)](../images/Documentation-NamespacePrefixes.png "Generated documentation for the BusNameMarker class: the eu: prefix annotates the European extension members energyIdentCodeEic and shortName, distinguishing them from the normative CIM members")
+
+These prefixes come from a **namespace-prefixes mappings file**, a distinct file from the stereotype-to-namespace `.namespaces` file described in [CIMTool Support for Extension Namespaces](cimtool-support-for-extension-namespaces.md). Where the `.namespaces` file maps stereotypes to namespaces during schema import, the `.namespace-prefixes` file maps each namespace to the prefix the builders should use when annotating members in that namespace.
+
+The file follows the same naming and import conventions as the `.namespaces` file: it is named identically to the EA project file used as the project's schema but with a `.namespace-prefixes` extension, co-located with that schema file in the **Schema** folder, and automatically imported alongside the schema when a project is created or its schema is (re-)imported. Each line is a simple `<prefix>=<namespace URI>` mapping (lines beginning with `#` are comments):
+
+```
+nc=http://entsoe.eu/ns/nc#
+eu=http://iec.ch/TC57/CIM100-European#
+eumd=http://entsoe.eu/ns/Metadata-European#
+```
+
+With this mapping in effect, any member resolved to the `http://iec.ch/TC57/CIM100-European#` namespace is annotated with the `eu:` prefix in the generated documentation, as shown above.
+
+!!! note
+
+    The `.namespace-prefixes` file is independent of the stereotype-to-namespace `.namespaces` file — it does not require a `.namespaces` file to be present. It applies regardless of how the model's namespaces were defined, whether through a `.namespaces` file or through `baseuri` tagged values (see [CIMTool Support for Extension Namespaces](cimtool-support-for-extension-namespaces.md) for both approaches). It is, however, honored only when the project's schema is an **Enterprise Architect** project file (`.eap`, `.eapx`, `.qea`, `.qeax`); it has no effect when the schema is imported in XMI format (`.xmi` or `.owl`).
+
+!!! note
+
+    The `.namespace-prefixes` file is optional and is used only by the AsciiDoc builders to annotate generated documentation; it does not affect the profile definition itself. Both namespace prefixes and namespace URIs are case-sensitive (per the W3C *Namespaces in XML* specification) and are compared character by character — `http://www.example.org/wine` and `http://www.Example.org/wine` are distinct namespaces — so ensure each URI in the file exactly matches the namespace used in your model.
 
 
 ## Building a Master Document
