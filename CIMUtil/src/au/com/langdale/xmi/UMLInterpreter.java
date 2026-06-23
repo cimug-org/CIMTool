@@ -112,7 +112,7 @@ public class UMLInterpreter {
 
 	/**
 	 * Find all attributes and convert them to OWL DataTypeProperty or
-	 * FunctionalProperty depending on their range. This utilily must be applied
+	 * FunctionalProperty depending on their range. This utility must be applied
 	 * after standard naming for some XMI derived models.
 	 */
 	public void classifyAttributes() {
