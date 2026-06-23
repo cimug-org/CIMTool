@@ -12,7 +12,6 @@ import au.com.langdale.kena.Resource;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.xerces.util.XMLChar;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.impl.LiteralLabelFactory;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
