@@ -29,12 +29,12 @@
 		<link>
 			<name>builders</name>
 			<type>2</type>
-			<location>//D:/CIMug-GIT-REPOS/release-2.3.0/CIMUtil/builders/</location>
+			<location>//D:/CIMug-GIT-REPOS/release-2.3.1/CIMUtil/builders/</location>
 		</link>
 		<link>
 			<name>import-reports</name>
 			<type>2</type>
-			<location>//D:/CIMug-GIT-REPOS/release-2.3.0/CIMUtil/import-reports/</location>
+			<location>//D:/CIMug-GIT-REPOS/release-2.3.1/CIMUtil/import-reports/</location>
 		</link>
 	</linkedResources>
 	<filteredResources>
