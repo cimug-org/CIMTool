@@ -1,0 +1,145 @@
+#
+# This is a stereotype to namespace mappings file. By convention
+# a namespace mapping file must be named the same as the schema
+# file used for the project under the ..\Schema directory but with
+# the *.namespaces file extension. For example:
+#
+# C:\
+# ├── CDPSM-CIM17
+# │   ├── .settings 
+# │   ├── Documentation
+# │   │   ├── Images      
+# │   │   ├── Includes     
+# │   │   ├── Styles     
+# │   │   └── Themes     
+# │   ├── Incremental
+# │   ├── Instances
+# │   ├── Profiles
+# │   └── Schema
+# │       ├── CDPSM-68968-13-ed2.qea   
+# │       └── CDPSM-68968-13-ed2.namespaces  (manually drop the file from within the CIMTool UI)
+# ├── .asciidoctorconfig.adoc 
+# ├── .cimtool-settings        
+# ├── .copyright-multi-line  
+# ├── .copyright-single-line  
+# ├── .project  
+# └── ...
+#
+# These mapping files are intended to be used with EA project files
+# such as .eap, .qea, and .feap files. They are particularly useful 
+# for European/CGMES UML models where specific stereotypes are used
+# represent different namespaced extensions. In such cases (or if 
+# using this approach for your own extensions modeling) including
+# this simple file along with your model will require no changes 
+# made to your UML model.
+# 
+# If present, this file will override any baseuri tagged values 
+# that may have been specified on the model. Simply deleting this 
+# file and "refreshing" your CIMTool project folder will result in 
+# CIMTool reverting back to using baseuri tags which is the historical 
+# method for specifying namespaces.
+#
+# Order of precedence is as follows:
+#
+#
+#    For attributes:
+#
+# 1. A stereotype specified on an attribute will always supersede 
+#    all others specified at any level.
+#
+# 2. If an attribute does not have a stereotype defined on it then
+#    CIMTool will honor any stereotype defined on the class.
+#
+# 3. If no stereotype exists on the class then CIMTool will check
+#    for a stereotype on the package containing the class.
+#
+# 4. Finally, if a stereotype is not specified on the containing
+#    package than CIMTool will walk up the package hierarchy until 
+#    it finds a stereotype. If one is not found then the class will
+#    be assigned the namespace of CIM schema used by the project 
+#    e.g. http://iec.ch/TC57/CIM100#
+#
+#
+#    For Classes:
+#
+# 1. A stereotype specified on the class will always supersede  
+#    all others specified at any level.
+#
+# 2. If a class does not have a stereotype defined on it then
+#    CIMTool will honor any stereotype defined on the package 
+#    containing the class.
+#
+# 3. Finally, if a stereotype is not specified on the containing
+#    package than CIMTool will walk up the package hierarchy until 
+#    it finds a stereotype. If one is not found then the class will
+#    be assigned the namespace of CIM schema used by the project 
+#    e.g. http://iec.ch/TC57/CIM100#
+#
+#
+#    For associations:
+#
+# 1. A stereotype specified on an association will always supersede 
+#    all others specified at any level.
+#
+# 2. If an association does not have a stereotype defined on it then
+#    CIMTool will look for stereotypes on the classes participating
+#    on each end of the relationship. Precedence is as follows:
+#       a. If the association is between two normative CIM classes
+#          then the association will have CIM's namespace.
+#       b. If one class is a normative CIM class and the other an
+#          extension then the extension stereotype takes precedence.
+#       c. If an association exists between two extension classes
+#          each in a distinct namespace this is considered unresolvable
+#          without an explicit stereotype on the association. It is 
+#          recommended to add the appropriate stereotype to the
+#          association in such scenarios.  
+#
+#
+# Important notes on the <stereotype>=<namespace> mappings below:
+#
+# STEREOTYPES:
+# Based on UML 2.5 specifications, UML stereotypes are considered
+# case-insensitive and should NOT contain spaces. Therefore, the 
+# stereotypes in the below mapping may be expressed either in
+# the form they appear in the UML (e.g. NC for network codes)
+# or in lowercase. Either is treated the same in CIMTool.
+#
+# NAMESPACES:
+# W3C namespaces are case-sensitive. Both namespace prefixes and 
+# the namespace URIs themselves are compared character by character 
+# when determining if two names belong to the same namespace, according 
+# to the W3C's Namespaces in XML 1.1. This means that 
+# http://www.example.org/wine and http://www.Example.org/wine are  
+# treated as different namespaces. 
+#
+# Therefore, when adding mappings care should be taken to account 
+# for the above considerations.
+#
+# CDPSM 
+CDPSM=http://edf.fr/CDPSM/2016/cdpsm2015#
+CDPSM2=http://iec.ch/TC57/CIM/CDPSM/SchemaExtension/2/0#
+Entsoe=http://entsoe.eu/CIM/SchemaExtension/3/1#
+#
+# Network Codes 
+adms=http://www.w3.org/ns/adms#
+European=http://iec.ch/TC57/CIM100-European#
+euvoc=http://publications.europa.eu/ontology/euvoc#
+dc=http://purl.org/dc/elements/1.1/#
+dcat=http://www.w3.org/ns/dcat#
+dct=http://purl.org/dc/terms/#
+dcterms=http://purl.org/dc/terms/#
+dm=http://iec.ch/TC57/61970-552/DifferenceModel/1#
+eumd=http://entsoe.eu/ns/Metadata-European#
+GB=http://GB/placeholder/ext#
+md=http://iec.ch/TC57/61970-552/ModelDescription/1#
+NC=http://entsoe.eu/ns/nc#
+owl=http://www.w3.org/2002/07/owl#
+prof=http://www.w3.org/ns/dx/prof/#
+profcim=http://iec.ch/TC57/ns/CIM/prof-cim#
+prov=http://www.w3.org/ns/prov#
+rdf=http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs=http://www.w3.org/2000/01/rdf-schema#
+skos=http://www.w3.org/2004/02/skos/core#
+sh=http://www.w3.org/ns/shacl#
+xsd=http://www.w3.org/2001/XMLSchema#
+
