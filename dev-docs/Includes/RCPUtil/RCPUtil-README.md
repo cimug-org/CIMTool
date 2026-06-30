@@ -1,7 +1,7 @@
 # RCPUtil
 
 A small Eclipse RCP utility plugin that provides reusable UI infrastructure
-for CIMTool — data binding, form builder, JFace plumbing, and workspace
+for CIMTool, data binding, form builder, JFace plumbing, and workspace
 helpers. It contains no CIM-specific logic and has no dependency on any other
 in-repository plugin.
 
@@ -16,10 +16,10 @@ separation between Eclipse UI infrastructure and CIM domain logic.
 
 Its four exported packages cover distinct concerns:
 
-- **`ui.binding`** — a lightweight data binding framework that connects Eclipse JFace viewers and SWT widgets to model objects, with validation support
-- **`ui.builder`** — a form builder framework for constructing editor pages and wizard pages declaratively using a template/assembly pattern
-- **`ui.plumbing`** — the underlying observer/controller wiring that drives the binding and builder frameworks
-- **`ui.util`** — miscellaneous Eclipse UI utilities (icon cache, selection provider, wizard launcher, UI thread tickler)
+- **`ui.binding`**: a lightweight data binding framework that connects Eclipse JFace viewers and SWT widgets to model objects, with validation support
+- **`ui.builder`**: a form builder framework for constructing editor pages and wizard pages declaratively using a template/assembly pattern
+- **`ui.plumbing`**: the underlying observer/controller wiring that drives the binding and builder frameworks
+- **`ui.util`**: miscellaneous Eclipse UI utilities (icon cache, selection provider, wizard launcher, UI thread tickler)
 
 A single utility class, `util.Jobs`, provides Eclipse workspace job helpers
 and is exported under the `au.com.langdale.util` package namespace alongside
@@ -91,11 +91,11 @@ It depends only on standard Eclipse platform bundles:
 
 | Bundle | What RCPUtil uses from it |
 | --- | --- |
-| `org.eclipse.core.runtime` | `IProgressMonitor`, `CoreException`, `IStatus` — used by `Jobs.java` for workspace runnable execution |
-| `org.eclipse.core.resources` | `IWorkspaceRunnable`, workspace resource APIs — used by `Jobs.java` |
-| `org.eclipse.jface` | JFace viewers (`IStructuredContentProvider`, `ILabelProvider`), actions, resources — core of the binding and builder frameworks |
-| `org.eclipse.ui.workbench` | `IWorkbenchPage`, `IEditorPart`, `IViewPart` — used by editor and view base classes |
-| `org.eclipse.ui.forms` | `FormToolkit`, `ScrolledForm`, `Section`, `FormPage` — the Forms UI toolkit used by `FurnishedEditor` and `FurnishedMultiEditor` |
+| `org.eclipse.core.runtime` | `IProgressMonitor`, `CoreException`, `IStatus`: used by `Jobs.java` for workspace runnable execution |
+| `org.eclipse.core.resources` | `IWorkspaceRunnable`, workspace resource APIs: used by `Jobs.java` |
+| `org.eclipse.jface` | JFace viewers (`IStructuredContentProvider`, `ILabelProvider`), actions, resources: core of the binding and builder frameworks |
+| `org.eclipse.ui.workbench` | `IWorkbenchPage`, `IEditorPart`, `IViewPart`: used by editor and view base classes |
+| `org.eclipse.ui.forms` | `FormToolkit`, `ScrolledForm`, `Section`, `FormPage`: the Forms UI toolkit used by `FurnishedEditor` and `FurnishedMultiEditor` |
 
 
 
@@ -104,9 +104,9 @@ It depends only on standard Eclipse platform bundles:
 The `ui.builder` package provides a declarative pattern for constructing
 Eclipse Forms-based editor pages and wizard pages:
 
-- **`Template`** — a subclass declares the layout of a form page by overriding `defineContent()`, placing widget declarations in a grid. Each declaration specifies a widget type, its label, and a binding key.
-- **`Assembly`** — takes a `Template` and instantiates the declared widgets into an SWT `Composite`, applying the generated `GridLayout`. It is the concrete SWT container that appears in the editor or wizard.
-- **`FurnishedEditor` / `FurnishedMultiEditor` / `FurnishedWizardPage`** — base classes that wire a `Template` to an `Assembly` and connect the `Controller` (from `ui.plumbing`) to the assembled bindings. Subclasses in `CIMToolPlugin` extend these to build all of the profile, model, and mapping editor pages.
+- **`Template`**: a subclass declares the layout of a form page by overriding `defineContent()`, placing widget declarations in a grid. Each declaration specifies a widget type, its label, and a binding key.
+- **`Assembly`**: takes a `Template` and instantiates the declared widgets into an SWT `Composite`, applying the generated `GridLayout`. It is the concrete SWT container that appears in the editor or wizard.
+- **`FurnishedEditor` / `FurnishedMultiEditor` / `FurnishedWizardPage`**: base classes that wire a `Template` to an `Assembly` and connect the `Controller` (from `ui.plumbing`) to the assembled bindings. Subclasses in `CIMToolPlugin` extend these to build all of the profile, model, and mapping editor pages.
 
 This pattern means that the layout and binding of an editor page is declared once in the `Template` subclass, and the framework handles SWT widget creation, layout, data binding, and refresh automatically.
 
@@ -126,8 +126,8 @@ between bindings so that changing one widget can refresh others.
 
 ## Relationship to Other Projects
 
-- **CIMToolPlugin** — the primary consumer. All editors, wizard pages, views, and property pages in `CIMToolPlugin` use `FurnishedEditor`, `FurnishedWizardPage`, and the binding framework from RCPUtil. `IconCache` and `GeneralIconCache` are used by `CIMToolPlugin`'s icon infrastructure.
-- **com.cimphony.cimtoole** — uses RCPUtil base classes for its wizards (`ExportEcore`, `ImportRegistrySchema`).
-- **CIMToolTest** — the `WorkbenchTest` base class depends on RCPUtil's workbench utilities for UI test setup.
-- **Kena** — no dependency on RCPUtil.
-- **CIMUtil** — no dependency on RCPUtil.
+- **CIMToolPlugin**: the primary consumer. All editors, wizard pages, views, and property pages in `CIMToolPlugin` use `FurnishedEditor`, `FurnishedWizardPage`, and the binding framework from RCPUtil. `IconCache` and `GeneralIconCache` are used by `CIMToolPlugin`'s icon infrastructure.
+- **com.cimphony.cimtoole**: uses RCPUtil base classes for its wizards (`ExportEcore`, `ImportRegistrySchema`).
+- **CIMToolTest**: the `WorkbenchTest` base class depends on RCPUtil's workbench utilities for UI test setup.
+- **Kena**: no dependency on RCPUtil.
+- **CIMUtil**: no dependency on RCPUtil.

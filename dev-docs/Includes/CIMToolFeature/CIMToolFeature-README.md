@@ -12,7 +12,7 @@ provisioning system.
 
 
 
-## Current Status — Legacy / Dormant
+## Current Status: Legacy / Dormant
 
 CIMToolFeature is **not actively used** in the current build and packaging
 workflow. The definitive indicator is the `useFeatures="false"` attribute in
@@ -44,8 +44,8 @@ produced by the PDE product export in `CIMToolProduct`.
 
 When active, an Eclipse PDE feature serves two purposes:
 
-1. **Packaging** — groups a set of plugins into a single installable unit for deployment via an Eclipse p2 update site
-2. **Dependency declaration** — declares the minimum plugin versions required for the feature to function correctly
+1. **Packaging**: groups a set of plugins into a single installable unit for deployment via an Eclipse p2 update site
+2. **Dependency declaration**: declares the minimum plugin versions required for the feature to function correctly
 
 CIMToolFeature (`au.com.langdale.cimtoole.feature`) groups the full set of
 in-repository CIMTool plugins plus the license and release note text files that
@@ -104,5 +104,5 @@ following steps would be required:
 
 ## Relationship to Other Projects
 
-- **CIMToolProduct** — the active replacement for this project's packaging role. `CIMTool.product` with `useFeatures="false"` performs plugin-based packaging directly, making this feature project redundant in the current workflow.
-- All plugins listed in `feature.xml` (`au.com.langdale.cimtoole`, `au.com.langdale.cimtoole.help`, `au.com.langdale.kena`, `au.com.langdale.rcputil`, `au.com.langdale.cimutil`, `com.cimphony.cimtoole`) are active projects — only this feature wrapper is dormant.
+- **CIMToolProduct**: the active replacement for this project's packaging role. `CIMTool.product` with `useFeatures="false"` performs plugin-based packaging directly, making this feature project redundant in the current workflow.
+- All plugins listed in `feature.xml` (`au.com.langdale.cimtoole`, `au.com.langdale.cimtoole.help`, `au.com.langdale.kena`, `au.com.langdale.rcputil`, `au.com.langdale.cimutil`, `com.cimphony.cimtoole`) are active projects, and only this feature wrapper is dormant.

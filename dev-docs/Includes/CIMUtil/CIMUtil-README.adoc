@@ -23,31 +23,31 @@ perspective. The Eclipse UI in `CIMToolPlugin` and the standalone CLI in
 
 CIMUtil (`au.com.langdale.cimutil`) serves two distinct roles:
 
-. *Eclipse plugin* - required by `CIMToolPlugin` and `com.cimphony.cimtoole`
+. *Eclipse plugin*: required by `CIMToolPlugin` and `com.cimphony.cimtoole`
   at runtime. Exports its packages via OSGi so they are available to other
   bundles in the Eclipse workbench.
 
-. *Standalone library* - its compiled `cimutil.jar` is extracted from the PDE
+. *Standalone library*: its compiled `cimutil.jar` is extracted from the PDE
   product export and installed into the `cimtool-cli` local Maven repository by
   `install-jars.bat`, where Maven Shade packages it into the CLI uber JAR.
 
 The key functional areas are:
 
-* *XMI / EA project import* - parses Sparx Enterprise Architect `.eap`, `.eapx`,
+* *XMI / EA project import*: parses Sparx Enterprise Architect `.eap`, `.eapx`,
   `.qea`, and `.qeax` project files (via UCanAccess / SQLite JDBC) and XMI exports
   into an RDF ontology graph via Kena
-* *Profile model* - the CIM profile object model (`ProfileClass`, `ProfileModel`,
+* *Profile model*: the CIM profile object model (`ProfileClass`, `ProfileModel`,
   `HierarchyModel`) and profile manipulation operations (reorganize, refactor,
   rename, remap, repair)
-* *XSLT transform engine* - 34 XSLT builders in `builders/` that generate
+* *XSLT transform engine*: 34 XSLT builders in `builders/` that generate
   diverse output artefacts (XSD, RDFS, OWL, JSON Schema, HTML, RTF, SQL, Java,
   Scala, C#, Avro, LinkML, PlantUML, AsciiDoc, and more) from a CIM profile
-* *Validation* - CIM/XML and Turtle instance document validation against a
+* *Validation*: CIM/XML and Turtle instance document validation against a
   profile using a Jena rules engine
-* *CIM Modelling Guide compliance* - an Easy Rules engine with 100+ rules
+* *CIM Modelling Guide compliance*: an Easy Rules engine with 100+ rules
   implementing the IEC CIM Modelling Guidelines, used to generate the
   audit/compliance report
-* *CLI entry point* - `CIMToolCLI` and supporting classes in `profiles.cl`
+* *CLI entry point*: `CIMToolCLI` and supporting classes in `profiles.cl`
   provide a headless command-line interface for profile transformation
 
 
@@ -191,7 +191,7 @@ platform:
 
 | Saxon HE
 | 10.8
-| XSLT 2.0 / 3.0 processor - executes all builder stylesheets
+| XSLT 2.0 / 3.0 processor: executes all builder stylesheets
 
 | Apache POI
 | 3.9
@@ -232,7 +232,7 @@ platform:
 | SLF4J API
 | 2.x (platform)
 | Logging facade used by Saxon-HE and other vendored dependencies. Resolved via
-`Import-Package` rather than vendored — `MANIFEST.MF` declares `org.slf4j`,
+`Import-Package` rather than vendored, `MANIFEST.MF` declares `org.slf4j`,
 `org.slf4j.event`, `org.slf4j.helpers`, and `org.slf4j.spi`, wiring these calls
 to the platform SLF4J 2.x bundle. Saxon's SLF4J log events route through the
 platform bundle into the Logback pipeline.
@@ -384,56 +384,56 @@ using in-memory knowledge graphs.
 
 | `cimantic-graphs-init.xsl`
 | `.__init__.py`
-| Companion builder to `cimantic-graphs.xsl` — generates the Python `__init__.py`
+| Companion builder to `cimantic-graphs.xsl`: generates the Python `__init__.py`
 file required for library imports to work correctly. Both builders must be enabled
 together for the CIMantic Graphs output to be usable as a Python package.
 
 | `puml-rdfs-t2b.xsl` / `puml-rdfs-l2r.xsl`
 | `.rdfs-t2b.puml` / `.rdfs-l2r.puml`
 | Generates a PlantUML class diagram representing the profile classes and
-relationships derived from an RDFS schema. Two layout variants — top-to-bottom
+relationships derived from an RDFS schema. Two layout variants, top-to-bottom
 (`t2b`) and left-to-right (`l2r`).
 
 | `puml-xsd-t2b.xsl` / `puml-xsd-l2r.xsl`
 | `.xsd-t2b.puml` / `.xsd-l2r.puml`
 | Generates a PlantUML class diagram representing the profile classes and
-relationships derived from an XSD schema. Two layout variants — top-to-bottom
+relationships derived from an XSD schema. Two layout variants, top-to-bottom
 (`t2b`) and left-to-right (`l2r`).
 
 | `puml-json-t2b.xsl` / `puml-json-l2r.xsl`
 | `.json-t2b.puml` / `.json-l2r.puml`
 | Generates a PlantUML class diagram representing the profile classes and
-relationships derived from a JSON Schema. Two layout variants — top-to-bottom
+relationships derived from a JSON Schema. Two layout variants, top-to-bottom
 (`t2b`) and left-to-right (`l2r`).
 
 | `adoc-article-xsd.xsl` / `adoc-inline-xsd.xsl`
 | `.article-xsd.adoc` / `.inline-xsd.adoc`
 | Generates AsciiDoc documentation for a profile derived from an XSD schema. Two
-structural variants — `article` (standalone AsciiDoc document) and `inline`
+structural variants, `article` (standalone AsciiDoc document) and `inline`
 (content fragment for inclusion in a larger document). ^1^
 
 | `adoc-article-rdfs.xsl` / `adoc-inline-rdfs.xsl`
 | `.article-rdfs.adoc` / `.inline-rdfs.adoc`
 | Generates AsciiDoc documentation for a profile derived from an RDFS schema. Two
-structural variants — `article` (standalone AsciiDoc document) and `inline`
+structural variants, `article` (standalone AsciiDoc document) and `inline`
 (content fragment for inclusion in a larger document). ^1^
 
 | `adoc-article-json.xsl` / `adoc-inline-json.xsl`
 | `.article-json.adoc` / `.inline-json.adoc`
 | Generates AsciiDoc documentation for a profile derived from a JSON Schema. Two
-structural variants — `article` (standalone AsciiDoc document) and `inline`
+structural variants, `article` (standalone AsciiDoc document) and `inline`
 (content fragment for inclusion in a larger document). ^1^
 
 | `adoc-article-rdfs-mappings.xsl` / `adoc-inline-rdfs-mappings.xsl`
 | `.article-rdfs-mappings.adoc` / `.inline-rdfs-mappings.adoc`
-| Generates AsciiDoc documentation describing the RDFS mappings for a profile —
+| Generates AsciiDoc documentation describing the RDFS mappings for a profile: 
 classes, attributes, associations, and their corresponding RDFS/RDF URI mappings.
-Two structural variants — `article` and `inline`. ^1^
+Two structural variants, `article` and `inline`. ^1^
 |===
 
 [.footnote]
 ^1^ The `article` and `inline` variants differ in their intended embedding context.
-An *article* builder generates a complete, standalone AsciiDoc document — it includes
+An *article* builder generates a complete, standalone AsciiDoc document; it includes
 a document title (`=`), preamble, and full section structure that can be processed
 independently by Asciidoctor to produce a self-contained HTML, PDF, or other output
 format. An *inline* builder generates only the body content of the documentation as
@@ -450,15 +450,15 @@ The `easyrules/` package implements the CIM Modelling Guide compliance checker
 using the Easy Rules framework. Rules are organised into categories matching
 the IEC CIM Modelling Guidelines document structure:
 
-* *Packages* - naming, uniqueness, visibility (Rules 025–182)
-* *Classes* - naming, datatypes, abstract classes (Rules 038–187)
-* *Attributes* - naming, types, multiplicity, scope (Rules 049–195)
-* *Associations* - naming, roles, cardinality, directionality (Rules 065–198)
-* *Enumerations* - structure, literal naming, stereotypes (Rules 084–205)
-* *Descriptions* - documentation requirements (Rule 104)
-* *Inheritance* - multiple inheritance, datatype inheritance (Rules 115–119)
-* *Namespaces* - namespace URI and prefix requirements (Rules 143–146)
-* *Extensions* - shadow class and user-defined extension rules
+* *Packages*: naming, uniqueness, visibility (Rules 025–182)
+* *Classes*: naming, datatypes, abstract classes (Rules 038–187)
+* *Attributes*: naming, types, multiplicity, scope (Rules 049–195)
+* *Associations*: naming, roles, cardinality, directionality (Rules 065–198)
+* *Enumerations*: structure, literal naming, stereotypes (Rules 084–205)
+* *Descriptions*: documentation requirements (Rule 104)
+* *Inheritance*: multiple inheritance, datatype inheritance (Rules 115–119)
+* *Namespaces*: namespace URI and prefix requirements (Rules 143–146)
+* *Extensions*: shadow class and user-defined extension rules
 
 Each rule class implements the Easy Rules `Rule` interface and is annotated
 with `@RuleMetadata` declaring its rule number, severity, category, and type.
@@ -481,18 +481,18 @@ by `cimtool-cli`. Key classes:
 | Class | Role
 
 | `CIMToolCLI`
-| Main entry point - initialises JUL logging suppression, delegates to `run()`
+| Main entry point: initialises JUL logging suppression, delegates to `run()`
 
 | `CLIOptions`
 | Parses and validates command-line arguments (`--project-dir`, `--builder`,
   `--output`, `--schema`, `--namespace`, `--help`, `--version`, `--list-builders`)
 
 | `CLIProfileTransformer`
-| Orchestrates the headless transform pipeline - loads schema, loads profile,
+| Orchestrates the headless transform pipeline: loads schema, loads profile,
   runs the selected builder stylesheet via Saxon
 
 | `CLISchemaParser`
-| Headless XMI/EA project schema parser - wraps `EAPParser` / `QEAParser` for
+| Headless XMI/EA project schema parser: wraps `EAPParser` / `QEAParser` for
   use outside the Eclipse workspace
 
 | `CLISettings`
@@ -508,20 +508,20 @@ image::{cimutil-imagesdir}/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.s
 
 === Relationship to Other Projects
 
-* *Kena* - CIMUtil's single OSGi dependency. All RDF graph operations use the
+* *Kena*: CIMUtil's single OSGi dependency. All RDF graph operations use the
   Kena `OntModel` API rather than calling Apache Jena directly.
 
-* *CIMToolPlugin* - the Eclipse UI shell around CIMUtil's logic. The builder
+* *CIMToolPlugin*: the Eclipse UI shell around CIMUtil's logic. The builder
   system, profile editors, import wizards, and validation views all delegate
   to CIMUtil classes. CIMToolPlugin does not duplicate any model processing.
 
-* *com.cimphony.cimtoole* - extends CIMUtil's profile buildlet extension point
+* *com.cimphony.cimtoole*: extends CIMUtil's profile buildlet extension point
   to add Ecore output support, and uses CIMUtil's profile model and Kena graph
   API directly.
 
-* *cimtool-cli* - packages `cimutil.jar` (extracted from the PDE product export)
+* *cimtool-cli*: packages `cimutil.jar` (extracted from the PDE product export)
   into a standalone uber JAR. At runtime the CLI uses `CIMToolCLI` as its entry
   point and `CLIProfileTransformer` for all transform operations.
 
-* *CIMToolTest* - tests CIMUtil's validation engine, Kena integration, profile
+* *CIMToolTest*: tests CIMUtil's validation engine, Kena integration, profile
   tasks, and transform pipeline via the `headless/` test package.

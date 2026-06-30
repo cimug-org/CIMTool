@@ -19,7 +19,7 @@ the Eclipse PDE build system uses to assemble a distributable CIMTool ZIP archiv
 
 === Overview
 
-In Eclipse PDE terminology a *product* is the outermost packaging unit — it
+In Eclipse PDE terminology a *product* is the outermost packaging unit. It
 defines what an end user actually runs. The `CIMTool.product` file at the root of
 this project is the authoritative descriptor for everything about the CIMTool
 application from the user's perspective: its name, version, icons, splash screen,
@@ -86,8 +86,8 @@ CIMToolProduct/
 
 This project has *no compile-time dependencies*. It contains no Java source and
 does not declare `Require-Bundle` dependencies in its MANIFEST. Instead it
-references other plugins by symbolic name in `CIMTool.product` via the `<plugins>`
-list — these are resolved by the PDE export at packaging time.
+references other plugins by symbolic name in `CIMTool.product` via the
+`<plugins>` list, which are resolved by the PDE export at packaging time.
 
 The plugins that CIMTool.product explicitly includes which are developed within
 this repository are:
@@ -98,7 +98,7 @@ this repository are:
 
 | CIMToolPlugin
 | `au.com.langdale.cimtoole`
-| Core Eclipse UI plugin — perspectives, editors, views, wizards, builders
+| Core Eclipse UI plugin: perspectives, editors, views, wizards, builders
 
 | CIMUtil
 | `au.com.langdale.cimutil`
@@ -118,11 +118,11 @@ this repository are:
 
 | com.cimphony.cimtoole
 | `com.cimphony.cimtoole`
-| CIMphony extensions — Ecore integration, additional buildlets
+| Cimphony extensions: Ecore integration, additional buildlets
 
 | SLF4J Logback Binding
 | `io.ucaiug.slf4j.logback.binding`
-| OSGi fragment bundle — wires SLF4J 2.x to Logback as its logging provider
+| OSGi fragment bundle: wires SLF4J 2.x to Logback as its logging provider
 |===
 
 All remaining plugins in the `<plugins>` list are Eclipse platform and third-party
@@ -180,8 +180,8 @@ workspace. Key settings:
 * Places the perspective switcher in the top-right
 * Shows a progress indicator on startup
 
-These are default values only — users can override them through Eclipse preferences
-and their choices are persisted per-workspace.
+These are default values only, and users can override them through Eclipse
+preferences and their choices are persisted per-workspace.
 
 ==== logging.properties
 
@@ -213,17 +213,17 @@ Configures Logback for the CIMTool application. This file is:
   on first startup alongside `logging.properties`
 . Loaded by Logback via the `-Dlogback.configurationFile=./logback.xml` JVM argument
 
-SLF4J is wired to Logback via the `io.ucaiug.slf4j.logback.binding` fragment bundle
-— a minimal OSGi fragment that attaches to `slf4j.api` and provides the
+SLF4J is wired to Logback via the `io.ucaiug.slf4j.logback.binding` fragment bundle,
+a minimal OSGi fragment that attaches to `slf4j.api` and provides the
 `META-INF/services/org.slf4j.spi.SLF4JServiceProvider` registration that makes
 `LogbackServiceProvider` visible through `slf4j.api`'s classloader. This requires
 no bytecode weaving and has no impact on security scanning tools.
 
 The following logging sources route through `logback.xml`:
 
-* *SLF4J API calls* — direct (Saxon-HE, m2e/Aether, UCanAccess, and other vendored libraries)
-* *Log4j 1.x API calls* — routed via `log4j-over-slf4j` bridge in Kena
-* *JUL API calls* — bridged via `SLF4JBridgeHandler` installed in
+* *SLF4J API calls*: direct (Saxon-HE, m2e/Aether, UCanAccess, and other vendored libraries)
+* *Log4j 1.x API calls*: routed via `log4j-over-slf4j` bridge in Kena
+* *JUL API calls*: bridged via `SLF4JBridgeHandler` installed in
   `CIMToolPlugin.configureLogging()` at startup, including `System.out`/`System.err`
   console output in production mode which is routed through the `CIMTool.console`
   JUL logger
@@ -248,27 +248,27 @@ Changes to `logback.xml` take effect on the next restart.
 === Release Process
 
 The CIMTool release process consists of four sequential phases. All phases must
-be completed in order — no phase should begin until the previous one is fully
+be completed in order, with no phase beginning until the previous one is fully
 complete and verified.
 
 [cols="1,3", options="header"]
 |===
 | Phase | Description
 
-| *1 — Pre-Build Preparation*
+| *1: Pre-Build Preparation*
 | Versioning, release notes, PR to master
 
-| *2 — PDE Product Export*
+| *2: PDE Product Export*
 | Eclipse product export to a local directory
 
-| *3 — Code Signing and Packaging*
+| *3: Code Signing and Packaging*
 | Signing, cimtool-cli build, ZIP assembly, checksums
 
-| *4 — Post-Build and Publishing*
+| *4: Post-Build and Publishing*
 | `lib-repo/` PR, GitHub Release creation, tagging, artifact upload
 |===
 
-==== Phase 1 — Pre-Build Preparation
+==== Phase 1: Pre-Build Preparation
 
 All preparation work must be completed, reviewed, and merged to master via Pull
 Request *before* any build or signing activity begins. Master is intended to
@@ -286,9 +286,9 @@ review and update is the mandatory first step in every release cycle.
 
 All CIMTool sub-projects follow *Semantic Versioning* as defined at https://semver.org. A version number takes the form `MAJOR.MINOR.PATCH`, where each element is incremented according to the following rules:
 
-* *MAJOR* — incremented when incompatible API or behavioral changes are introduced that would break existing consumers of the component.
-* *MINOR* — incremented when new functionality is added in a backward-compatible manner (new features, new builders, new extension points, etc.).
-* *PATCH* — incremented for backward-compatible bug fixes, documentation corrections, or minor internal changes that do not alter the component's public interface or behavior.
+* *MAJOR*: incremented when incompatible API or behavioral changes are introduced that would break existing consumers of the component.
+* *MINOR*: incremented when new functionality is added in a backward-compatible manner (new features, new builders, new extension points, etc.).
+* *PATCH*: incremented for backward-compatible bug fixes, documentation corrections, or minor internal changes that do not alter the component's public interface or behavior.
 
 ===== Product-Aligned Projects
 
@@ -304,7 +304,7 @@ The following projects must always be versioned in lockstep with the primary CIM
 
 | CIMToolPlugin
 | `META-INF/MANIFEST.MF`
-| Core UI plugin — ships in every release
+| Core UI plugin, ships in every release
 
 | CIMToolHelp
 | `META-INF/MANIFEST.MF`
@@ -312,11 +312,11 @@ The following projects must always be versioned in lockstep with the primary CIM
 
 | CIMUtil
 | `META-INF/MANIFEST.MF`
-| Core processing library — ships in every release
+| Core processing library, ships in every release
 
 | RCPUtil
 | `META-INF/MANIFEST.MF`
-| Eclipse RCP utility layer — ships in every release
+| Eclipse RCP utility layer, ships in every release
 
 | CIMToolFeature
 | `feature.xml`
@@ -345,7 +345,7 @@ version in `cimtool-cli/pom.xml` must also be updated to match before running
 
 | com.cimphony.cimtoole
 | `1.1.0`
-| CIMphony extensions; versioned independently of the core product
+| Cimphony extensions; versioned independently of the core product
 
 | CIMToolTest
 | `1.2.0`
@@ -382,23 +382,23 @@ entry for the release being prepared must be added at the top of the file
 following the established format used by prior releases.
 
 The content of this entry is also used verbatim as the release notes body when
-creating the GitHub Release in Phase 4. Authoring the release notes here first —
-as part of the pre-build PR — ensures the notes are reviewed before publication
+creating the GitHub Release in Phase 4. Authoring the release notes here first,
+as part of the pre-build PR, ensures the notes are reviewed before publication
 and that the GitHub Release and the public website remain in sync.
 
 Once versioning updates and release notes are complete, open a Pull Request to
 merge all changes to master and obtain the required review approval before
 proceeding.
 
-==== Phase 2 — PDE Product Export
+==== Phase 2: PDE Product Export
 
-The CIMTool distribution is produced via the Eclipse PDE product export. The export must always target a *Directory* destination — the distribution ZIP is produced by the code signing pipeline in the subsequent step, not by the PDE exporter directly.
+The CIMTool distribution is produced via the Eclipse PDE product export. The export must always target a *Directory* destination. The distribution ZIP is produced by the code signing pipeline in the subsequent step, not by the PDE exporter directly.
 
 . From the Eclipse menu select *File > Export*
 . In the Export dialog select *Plug-in Development > Eclipse product* and click *Next*
 . Set the fields as shown in the screenshot below:
 ** *Configuration:* `/CIMToolProduct/CIMTool.product`
-** *Root directory:* `CIMTool-<version>` (e.g. `CIMTool-2.3.0-RC8`) —
+** *Root directory:* `CIMTool-<version>` (e.g. `CIMTool-2.3.0-RC8`);
    replace with the actual release version being built
 ** *Destination:* Select *Directory* and set the path to your release staging
    area (e.g. `D:\CIMTool-Releases`)
@@ -431,12 +431,12 @@ placed there by the PDE export directly. Both are extracted from the
 `au.com.langdale.cimtool.product` plugin bundle at first startup by
 `CIMToolPlugin.extractLoggingProperties()`.
 
-Once the export completes, proceed immediately to Phase 3 — Code Signing and
-Packaging before creating the distribution ZIP.
+Once the export completes, proceed immediately to Phase 3, Code Signing and
+Packaging, before creating the distribution ZIP.
 
 
 
-==== Phase 3 — Code Signing and Packaging
+==== Phase 3: Code Signing and Packaging
 
 [WARNING]
 ====
@@ -464,7 +464,7 @@ untrusted application.
 
 CIMTool uses an EV (Extended Validation) code signing certificate issued to
 *UCA USERS GROUP* by TrustID (IdenTrust). The certificate is stored on a SafeNet
-USB hardware token and the private key never leaves the token — all signing
+USB hardware token and the private key never leaves the token. All signing
 operations are performed on the hardware itself.
 
 [NOTE]
@@ -481,23 +481,23 @@ of certificate expiry.
 Ensure the following are in place on the build machine before running the signing
 script:
 
-. *Eclipse Temurin JDK 20* — must be installed from https://adoptium.net.
+. *Eclipse Temurin JDK 20*: must be installed from https://adoptium.net.
   Temurin is specifically required because it includes the `SunPKCS11` security
   provider that `jarsigner` uses to communicate with the IdenTrust EV hardware
   token. Other OpenJDK distributions such as Zulu omit this provider and cannot
   be used for JAR signing. The script expects `jarsigner` at
   `C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\jarsigner.exe`
   (the default install location for the
-  `OpenJDK20U-jdk_x64_windows_hotspot_20.0.2_9` installer) — update the
+  `OpenJDK20U-jdk_x64_windows_hotspot_20.0.2_9` installer); update the
   `JARSIGNER` variable in the script if your installation path differs.
 
-. *Windows SDK `signtool.exe`* — used to apply Authenticode signatures to
+. *Windows SDK `signtool.exe`*: used to apply Authenticode signatures to
   `CIMTool.exe`. Installed with Visual Studio or as a standalone Windows SDK
   download. The script expects it at
-  `C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe` — update the
+  `C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe`; update the
   `SIGNTOOL` variable in the script if your installation path differs.
 
-. *SafeNet Authentication Client (SAC)* — must be installed *and running*, and the
+. *SafeNet Authentication Client (SAC)*: must be installed *and running*, and the
   IdenTrust EV USB token must be inserted, before launching the script. Installing
   SAC is not sufficient on its own: the SafeNet service that backs the PKCS#11
   library must be active for `jarsigner` and `keytool` to reach the token, so launch
@@ -506,18 +506,18 @@ script:
   `C:\Windows\System32\eTPKCS11.dll`; if this file is not found the script
   automatically attempts the alternate location `C:\Windows\System32\pkcs11.dll`.
 
-. *Token PIN* — the script prompts for the hardware token PIN once at startup using
+. *Token PIN*: the script prompts for the hardware token PIN once at startup using
   a masked input field. *No characters, asterisks, or cursor movement appear as the
-  PIN is typed* — this is expected; type the PIN and press Enter once. Wait for the
+  PIN is typed*. This is expected; type the PIN and press Enter once. Wait for the
   prompt to appear before typing, and avoid pressing Enter on an empty line, which
   submits no PIN and fails without authenticating. The PIN is held in memory for the
   duration of the signing session, cleared immediately on completion, and never
   written to disk.
 
-. *Certificate alias* — The `CERT_ALIAS` variable in the script is set to the
+. *Certificate alias*: The `CERT_ALIAS` variable in the script is set to the
   UUID that the IdenTrust token uses internally to identify the certificate entry.
   Note that this UUID does not match the friendly display name (`UCA USERS GROUP`)
-  shown in the SafeNet Authentication Client GUI — `jarsigner` resolves aliases
+  shown in the SafeNet Authentication Client GUI, because `jarsigner` resolves aliases
   through the PKCS#11 provider which exposes the underlying token UUID. If the
   certificate is ever renewed onto a new token the alias UUID will change and the
   `CERT_ALIAS` variable must be updated. To rediscover the alias run the following
@@ -537,11 +537,11 @@ The alias is the value appearing before the first comma in the output entry, e.g
 
 ===== Hardware Token PIN Management and Lockout Prevention
 
-The UCA Users Group EV code signing key — used to sign all UCA open source project
-releases, not CIMTool alone — is protected by a PIN held entirely on the hardware
+The UCA Users Group EV code signing key (used to sign all UCA open source project
+releases, not CIMTool alone) is protected by a PIN held entirely on the hardware
 token, and the token enforces its own retry counter. A sequence of failed
-authentication attempts can lock the token, and — depending on how the token was
-provisioned — a fully locked token may require replacement and certificate
+authentication attempts can lock the token, and, depending on how the token was
+provisioned, a fully locked token may require replacement and certificate
 re-issuance. Understanding the token's PIN model before running a signing session
 is therefore essential.
 
@@ -549,11 +549,11 @@ is therefore essential.
 project releases is a SafeNet/Thales IDPrime device that exposes more than one PIN
 object, and they are not interchangeable:
 
-* *Token Passcode* — the user PIN that protects the code signing key, with a
+* *Token Passcode*: the user PIN that protects the code signing key, with a
   maximum of *15* retries on this token. The retry counter resets to its maximum on
   _any_ single successful authentication, so one correct login fully restores the
   budget.
-* *Digital Signature PIN / PUK* — a separate PIN object (maximum 3 retries each)
+* *Digital Signature PIN / PUK*: a separate PIN object (maximum 3 retries each)
   that exists on the token but does *not* protect the code signing key. Its much
   tighter limit is a hazard only if a signing operation is mistakenly bound to it.
 
@@ -570,7 +570,7 @@ image::{cimtoolproduct-imagesdir}/SAC_Private_Key_PIN_Binding.png[SafeNet Authen
 [WARNING]
 ====
 *Inspecting token status is safe; guessing the PIN is not.* Viewing the token's
-properties and retry counters in SAC consumes no attempts — only an actual
+properties and retry counters in SAC consumes no attempts, since only an actual
 authentication with an incorrect PIN decrements the counter. Before any signing
 session, inspect *Token Passcode retries remaining* in SAC. If it is below maximum,
 a previous session left the counter eroded; do not run anything that submits a PIN
@@ -580,7 +580,7 @@ until the correct PIN is confirmed. Never "test" the token by trying candidate P
 image::{cimtoolproduct-imagesdir}/SAC_Token_Passcode_Retries.png[SafeNet Authentication Client token detail showing Token Passcode retries remaining against the maximum of 15]
 
 *Why the signing script fails fast.* `release-cimtool.bat` signs the entire
-`plugins/` set — on the order of 150 JARs — in a single loop. If that loop continued
+`plugins/` set, on the order of 150 JARs, in a single loop. If that loop continued
 past a failed signing attempt, an incorrect PIN or an unusable keystore would produce
 one failed token authentication _per JAR_, draining the retry counter and locking the
 token within a single run. To prevent this, the script treats the first JAR as a live
@@ -599,7 +599,7 @@ does not necessarily decrement the retry counter. A common cause on JDK 9 and la
 the deprecated `-providerClass sun.security.pkcs11.SunPKCS11` invocation, which can
 fail to load the provider; the supported form is `-addprovider SunPKCS11` (retaining
 `-providerArg <pkcs11.cfg>`). To verify token access independently of the full
-pipeline — and to reset the retry counter with a known-good PIN — run a single
+pipeline, and to reset the retry counter with a known-good PIN, run a single
 `keytool` listing with PKCS#11 debug enabled:
 
 [source,cmd]
@@ -621,7 +621,7 @@ distinguishes a provider or library problem from a genuine PIN rejection.
 *Recovering a locked token:* If the Token Passcode counter reaches zero the token
 locks. On this token the *Token unlock object* is the *Administrator Passcode* (there
 is no user PUK), which can reset the user PIN via SAC. However, possession of the
-Administrator Passcode depends on how IdenTrust provisioned the token — it is not
+Administrator Passcode depends on how IdenTrust provisioned the token; it is not
 always released to the subscriber, and it has its own independent retry limit that can
 also lock permanently. Do not rely on the admin unlock as a safety net unless the
 Administrator Passcode value is known to be held and recorded. Treat a lockout as a
@@ -676,27 +676,27 @@ The script exits immediately with a non-zero error code if any step fails.
 The following screenshots illustrate a complete successful run of the signing
 pipeline.
 
-*Confirm Prerequisites — Confirm EV USB token inserted and SafeNet Authentication Client running / Step 1 — Start JAR signing:*
+*Confirm Prerequisites: Confirm EV USB token inserted and SafeNet Authentication Client running / Step 1: Start JAR signing:*
 
 image::{cimtoolproduct-imagesdir}/Step1.png[Step 1 Insert EV USB Token and SafeNet PIN prompt]
 
 
-*Step 1 — JAR signing complete / Step 2 — CIMTool.exe signing begins:*
+*Step 1: JAR signing complete / Step 2: CIMTool.exe signing begins:*
 
 image::{cimtoolproduct-imagesdir}/Step2.png[Step 1 complete\, Step 2 SafeNet PIN prompt]
 
-When Step 2 begins, the SafeNet Authentication Client presents a native GUI dialog
-prompting for the *Token Passcode* again. This second prompt is expected and cannot
-be automated — `signtool` communicates with the hardware token through Windows
-CryptoAPI rather than the PKCS#11 path used by `jarsigner`, which triggers a
-separate authentication dialog from the SafeNet middleware. Enter the token PIN
-in this dialog and click *OK* to proceed.
+When Step 2 begins, the SafeNet Authentication Client presents a native GUI
+dialog prompting for the *Token Passcode* again. This second prompt is expected
+and cannot be automated, because `signtool` communicates with the hardware token
+through Windows CryptoAPI rather than the PKCS#11 path used by `jarsigner`,
+which triggers a separate authentication dialog from the SafeNet middleware.
+Enter the token PIN in this dialog and click *OK* to proceed.
 
-*Step 2 complete / Step 3 — Distribution archive creation in progress:*
+*Step 2 complete / Step 3: Distribution archive creation in progress:*
 
 image::{cimtoolproduct-imagesdir}/Step3.png[Step 2 complete\, Step 3 ZIP creation progress]
 
-*Steps 3 and 4 complete — Successful completion summary:*
+*Steps 3 and 4 complete: Successful completion summary:*
 
 image::{cimtoolproduct-imagesdir}/Step4.png[Steps 3 and 4 complete\, final summary]
 
@@ -712,14 +712,14 @@ is the only confirmation needed that signing succeeded.
 * *`The timestamp will expire within one year on <date>. However, the JAR will be valid until the signer certificate expires on <date>.`*
 +
 This warning has two distinct subjects that are easy to conflate. The first date
-refers to the *TSA server's own infrastructure certificate* — the IdenTrust
+refers to the *TSA server's own infrastructure certificate*, the IdenTrust
 timestamp authority server's cert, not the UCA Users Group signing cert and not
 the timestamp embedded in the JAR. When that cert expires IdenTrust simply renews
 it as with any server cert, and it has no effect whatsoever on timestamps already
-embedded in signed JARs. The second date is the EV signing certificate's expiry —
+embedded in signed JARs. The second date is the EV signing certificate's expiry;
 `jarsigner` is confirming that the JAR remains valid through the signing cert's
 full lifetime. More importantly: once a JAR is signed with a TSA timestamp
-embedded, it remains trusted and valid *indefinitely* — even after the EV signing
+embedded, it remains trusted and valid *indefinitely*, even after the EV signing
 cert expires. The timestamp is permanent cryptographic proof that the signature was
 created while the cert was valid. This is how every major software vendor ships
 signed software and is precisely why timestamping is mandatory for all release
@@ -732,7 +732,7 @@ simply ignored by `jarsigner` during the signing process.
 
 * *`The signer certificate will expire on <date>.`*
 +
-Informational only — confirms the expiry date of the EV signing certificate.
+Informational only, confirming the expiry date of the EV signing certificate.
 No action required until renewal time.
 
 *Unpacked plugin resources:*
@@ -741,7 +741,7 @@ Some plugins in the CIMTool distribution are deployed with resources unpacked
 directly onto the filesystem rather than bundled inside a JAR. For example, the
 `au.com.langdale.cimutil_<version>\builders\` directory contains `.xsl` transform
 files that are written loose to disk so that the Saxon XSLT processor can access
-them directly at runtime. These files are not covered by JAR signing — there is no
+them directly at runtime. These files are not covered by JAR signing; there is no
 JAR container for `jarsigner` to sign. Their integrity is instead protected by the
 SHA-256 checksum published alongside the ZIP archive. Users who verify the checksum
 before extracting the distribution are assured of the integrity of all contents,
@@ -756,28 +756,29 @@ their respective publishers. When `jarsigner` processes them as part of this
 pipeline it replaces those original publisher signatures with the UCA Users Group
 EV certificate signature. This is standard practice for Eclipse RCP distributions:
 by re-signing all bundled JARs under a single certificate the UCA Users Group is
-asserting that this specific combination of libraries — as integrated, tested, and
-shipped in CIMTool — has been reviewed and vouched for. The original publisher
+asserting that this specific combination of libraries, as integrated, tested, and
+shipped in CIMTool, has been reviewed and vouched for. The original publisher
 signatures served their purpose at the point of download; at the point of
 redistribution the responsibility for the bundled artifact passes to the
 distributor. Running `jarsigner -verify` on any `\lib\` JAR after signing will
-show the UCA Users Group signature rather than the original publisher signature —
-this is expected and correct.
+show the UCA Users Group signature rather than the original publisher signature.
+This is expected and correct.
 
 *Known unsignable JARs:*
 
-One JAR in the distribution cannot be signed due to a structural defect in the JAR
-itself that is outside of CIMTool's control: `asp-server-asciidoctorj-dist.jar`,
-part of the `de.jcup.asciidoctoreditor` plugin. It contains a duplicate
-`META-INF/BSDL` entry in its internal ZIP structure which causes `jarsigner` to
-reject it with a `ZipException: duplicate entry` error. The signing script handles
-this automatically via the `SKIP_JARS` configuration variable — the JAR is skipped
-without aborting the pipeline and is reported in the final summary as a skipped
-entry rather than an error. The JAR remains protected by the distribution ZIP
-SHA-256 checksum. If a future release of the AsciiDoc editor plugin corrects this
-defect, the entry can be removed from `SKIP_JARS`.
+One JAR in the distribution cannot be signed due to a structural defect in the
+JAR itself that is outside of CIMTool's control:
+`asp-server-asciidoctorj-dist.jar`, part of the `de.jcup.asciidoctoreditor`
+plugin. It contains a duplicate `META-INF/BSDL` entry in its internal ZIP
+structure which causes `jarsigner` to reject it with a `ZipException: duplicate
+entry` error. The signing script handles this automatically via the `SKIP_JARS`
+configuration variable, so the JAR is skipped without aborting the pipeline and
+is reported in the final summary as a skipped entry rather than an error. The
+JAR remains protected by the distribution ZIP SHA-256 checksum. If a future
+release of the AsciiDoc editor plugin corrects this defect, the entry can be
+removed from `SKIP_JARS`.
 
-==== Phase 4 — Post-Build and Publishing
+==== Phase 4: Post-Build and Publishing
 
 ===== Commit lib-repo/ Changes
 
@@ -791,12 +792,12 @@ that must be committed back to master before the release is tagged.
 This commit is only required when the Kena or CIMUtil versions have actually
 changed since the previous release. If both versions are unchanged,
 `install-jars.bat` reinstalls identical JARs producing identical checksums,
-resulting in no git diff — and no PR is needed.
+resulting in no git diff, and no PR is needed.
 ====
 
 When changes are present, open a Pull Request containing only the `lib-repo/`
 changes, obtain review approval, and merge to master. *The tag must not be
-created until this PR is merged* — the tag must capture the exact `lib-repo/`
+created until this PR is merged*: the tag must capture the exact `lib-repo/`
 state that produced the release, so that any developer cloning at the tag can
 immediately run `mvn clean package` without needing to re-run `install-jars.bat`.
 
@@ -804,13 +805,13 @@ immediately run `mvn clean package` without needing to re-run `install-jars.bat`
 
 Navigate to https://github.com/cimug-org/CIMTool/releases and create a new release
 against the `master` target. By project convention the release tag is a *new* tag
-named for the release version — not an existing tag. Open the *Select tag* dropdown,
-type the release version exactly as it should appear (for this example, `2.3.0` — the
+named for the release version, not an existing tag. Open the *Select tag* dropdown,
+type the release version exactly as it should appear (for this example, `2.3.0`, the
 bare version, with no `v` prefix, matching the existing tags such as `2.2.0`), and
 choose *Create new tag* so the tag is created on the `master` target when the release
 is published:
 
-image::{cimtoolproduct-imagesdir}/Tag_Release.png[GitHub release tag selection — create a new tag named for the release version targeting master,700]
+image::{cimtoolproduct-imagesdir}/Tag_Release.png[GitHub release tag selection: create a new tag named for the release version targeting master,700]
 
 Copy the release notes entry for this version from `docs/release-notes.md` into the
 release notes body. Attach all five release artifacts by dropping them into the
@@ -825,7 +826,7 @@ Assets upload area highlighted below, then click *Publish release*:
 image::{cimtoolproduct-imagesdir}/Release_Artifacts.png[GitHub Release Assets upload area,700]
 
 Publishing the release simultaneously creates the tag on master at the current
-HEAD commit — which at this point includes all pre-build version changes, release
+HEAD commit, which at this point includes all pre-build version changes, release
 notes, and the post-build `lib-repo/` commit. This tagged commit is the definitive
 reproducible state for this release.
 
@@ -855,7 +856,7 @@ In the event of future macOS support, `codesign` would be used in place of
 === Maintaining Vendored Third-Party Libraries
 
 CIMTool does not pull third-party libraries from Maven Central at build time; every
-third-party JAR is vendored — committed to the repository and referenced explicitly.
+third-party JAR is vendored, committed to the repository and referenced explicitly.
 A vendored JAR is therefore referenced in several places at once, and adding,
 removing, or upgrading one requires updating _all_ of its references in the same
 change. Missing one typically produces a build that passes in the IDE but fails at
@@ -863,46 +864,46 @@ PDE export or runtime, or a CLI build that cannot resolve the dependency.
 
 There are two vendoring patterns, with different reference sets.
 
-*Pattern A — JAR bundled inside a plugin.* The JAR lives in `<Plugin>/lib/` and is
+*Pattern A: JAR bundled inside a plugin.* The JAR lives in `<Plugin>/lib/` and is
 woven into that plugin's classpath. When it changes, update all of the following in
 that plugin, in lockstep:
 
-* `<Plugin>/lib/` — add, remove, or replace the physical JAR (the filename carries the version)
-* `<Plugin>/META-INF/MANIFEST.MF` — the `Bundle-ClassPath` entry
-* `<Plugin>/build.properties` — the `bin.includes` and/or `jars.extra.classpath` entry, so PDE export ships the JAR
-* `<Plugin>/.classpath` — the `kind="lib"` classpath entry, so the IDE compiles against it
-* The project's README — `Project Structure` tree and `Vendored Third-Party Libraries` table
+* `<Plugin>/lib/`: add, remove, or replace the physical JAR (the filename carries the version)
+* `<Plugin>/META-INF/MANIFEST.MF`: the `Bundle-ClassPath` entry
+* `<Plugin>/build.properties`: the `bin.includes` and/or `jars.extra.classpath` entry, so PDE export ships the JAR
+* `<Plugin>/.classpath`: the `kind="lib"` classpath entry, so the IDE compiles against it
+* The project's README: `Project Structure` tree and `Vendored Third-Party Libraries` table
 
 Plugins using this pattern include CIMToolPlugin, CIMUtil, and Kena.
 
-*Pattern B — library shipped as its own bundle in the product.* The library is a
+*Pattern B: library shipped as its own bundle in the product.* The library is a
 standalone OSGi bundle listed in the product. When it changes, update:
 
-* `CIMToolProduct/CIMTool.product` — the `<plugin id="…"/>` entry
-* `CIMToolProduct/build.properties` — where the bundle is referenced
+* `CIMToolProduct/CIMTool.product`: the `<plugin id="…"/>` entry
+* `CIMToolProduct/build.properties`: where the bundle is referenced
 * This README's product composition documentation
 
 Two cross-cutting layers apply to any vendored JAR, regardless of pattern:
 
 *Signing (release).* `release-cimtool.bat` discovers and signs every JAR in the
 exported `plugins/` directory automatically, so no per-JAR list is maintained for
-signing — _except_ `SKIP_JARS`. A newly added JAR that cannot be signed (for example,
+signing, _except_ `SKIP_JARS`. A newly added JAR that cannot be signed (for example,
 one already signed by its vendor) must be added to `SKIP_JARS`; a removed JAR should
 be pruned from it.
 
 *CLI (Maven / cimtool-cli).* If the CLI uses the library, it is vendored into the
 CLI's local `lib-repo/` rather than fetched from Maven Central. Update, together:
 
-* `cimtool-cli/pom.xml` — the `<dependency>` (groupId / artifactId / version)
-* `cimtool-cli/install-jars.bat` and `cimtool-cli/install-jars.sh` — the `mvn install:install-file` line that seeds `lib-repo/` (keep the two in sync; the `.sh` retains LF line endings)
-* `cimtool-cli/lib-repo/` — the installed artifact, regenerated by running `install-jars`
+* `cimtool-cli/pom.xml`: the `<dependency>` (groupId / artifactId / version)
+* `cimtool-cli/install-jars.bat` and `cimtool-cli/install-jars.sh`: the `mvn install:install-file` line that seeds `lib-repo/` (keep the two in sync; the `.sh` retains LF line endings)
+* `cimtool-cli/lib-repo/`: the installed artifact, regenerated by running `install-jars`
 
 
 === Relationship to cimtool-cli
 
 The PDE product export produces versioned plugin folders under `plugins/`. Two of
-these — `au.com.langdale.kena_<version>/kena.jar` and
-`au.com.langdale.cimutil_<version>/cimutil.jar` — are consumed by the
+these, `au.com.langdale.kena_<version>/kena.jar` and
+`au.com.langdale.cimutil_<version>/cimutil.jar`, are consumed by the
 `cimtool-cli` project's `install-jars.bat` script to assemble the standalone CLI
 uber JAR. See `cimtool-cli/cimtool-cli-README.adoc` for details.
 

@@ -1,21 +1,21 @@
 # Using CIMTool in CI/CD Pipelines with cimtool-cli
 
-**CIMTool** has a companion standalone command-line tool — `cimtool-cli.jar` — that exposes **CIMTool**'s full artifact generation capabilities outside of the Eclipse desktop application. Beginning with the **CIMTool** 2.3.0 release, it is distributed as a separate optional download alongside each **CIMTool** release and runs headless on any platform where Java 11 or later is available, with no Eclipse installation, OSGi runtime, or workspace required.
+**CIMTool** has a companion standalone command-line tool, `cimtool-cli.jar`, that exposes **CIMTool**'s full artifact generation capabilities outside of the Eclipse desktop application. Beginning with the **CIMTool** 2.3.0 release, it is distributed as a separate optional download alongside each **CIMTool** release and runs headless on any platform where Java 11 or later is available, with no Eclipse installation, OSGi runtime, or workspace required.
 
-This opens up a *SchemaOps* workflow: the practice of treating your CIM schema and profile set as versioned source artifacts that can be checked into a repository and processed automatically as part of a CI/CD pipeline — in the same way DevOps treats application source code.
+This opens up a *SchemaOps* workflow: the practice of treating your CIM schema and profile set as versioned source artifacts that can be checked into a repository and processed automatically as part of a CI/CD pipeline, in the same way DevOps treats application source code.
 
 ## What is SchemaOps?
 
-SchemaOps applies the principles of DevOps — automation, reproducibility, version control, and pipeline-driven delivery — to the lifecycle of CIM schemas, profiles, and the artifacts derived from them.
+SchemaOps applies the principles of DevOps (automation, reproducibility, version control, and pipeline-driven delivery) to the lifecycle of CIM schemas, profiles, and the artifacts derived from them.
 
 With a SchemaOps pipeline you can:
 
 - Check in a Sparx EA project file (`.qea`) or a **CIMTool** project directory as the authoritative schema source
-- Trigger `cimtool-cli.jar` on commit or pull request — pointing it at the project directory — to regenerate all profile artifacts (XSD, JSON Schema, RDFS/OWL, AsciiDoc documentation fragments, PlantUML diagrams, and so on)
-- Feed those generated artifacts downstream to other tools — for example, invoke the Asciidoctor command-line toolchain to combine a master document with the generated fragments and produce a final HTML5 or PDF output, then deploy that output to a corporate intranet
+- Trigger `cimtool-cli.jar` on commit or pull request, pointing it at the project directory, to regenerate all profile artifacts (XSD, JSON Schema, RDFS/OWL, AsciiDoc documentation fragments, PlantUML diagrams, and so on)
+- Feed those generated artifacts downstream to other tools: for example, invoke the Asciidoctor command-line toolchain to combine a master document with the generated fragments and produce a final HTML5 or PDF output, then deploy that output to a corporate intranet
 - Or use `cimtool-cli.jar` to generate LinkML artifacts from **CIMTool** profiles, then pass those generated LinkML artifacts downstream to LinkML tooling to produce code, documentation, or further derivative artifacts
 
-Because `cimtool-cli.jar` runs on Linux, macOS, and Windows, you can integrate it with any CI/CD system — GitHub Actions, GitLab CI, Jenkins, Azure Pipelines, or any shell-based automation.
+Because `cimtool-cli.jar` runs on Linux, macOS, and Windows, you can integrate it with any CI/CD system: GitHub Actions, GitLab CI, Jenkins, Azure Pipelines, or any shell-based automation.
 
 ## Prerequisites
 
@@ -29,18 +29,18 @@ If Java is not available, download and install a distribution such as [Eclipse T
 
 ## Downloading cimtool-cli.jar
 
-`cimtool-cli.jar` is an optional download co-deployed alongside the **CIMTool** Windows application on the [CIMTool GitHub Releases page](https://github.com/cimug-org/CIMTool/releases). It is a separate artifact from the **CIMTool** application ZIP — download only what you need. Each release provides the following files:
+`cimtool-cli.jar` is an optional download co-deployed alongside the **CIMTool** Windows application on the [CIMTool GitHub Releases page](https://github.com/cimug-org/CIMTool/releases). It is a separate artifact from the **CIMTool** application ZIP, so download only what you need. Each release provides the following files:
 
-- `CIMTool-X.Y.Z-win32.win32.x86_64.zip` — the **CIMTool** Eclipse desktop application (Windows only)
-- `cimtool-cli.jar` — the standalone cross-platform CLI tool
-- `cimtool-cli.jar.sha256` — SHA-256 checksum for verifying the download
-- `logback-debug.xml` — an optional diagnostic logging configuration file (see [Logging and Diagnostics](#logging-and-diagnostics))
+- `CIMTool-X.Y.Z-win32.win32.x86_64.zip`: the **CIMTool** Eclipse desktop application (Windows only)
+- `cimtool-cli.jar`: the standalone cross-platform CLI tool
+- `cimtool-cli.jar.sha256`: SHA-256 checksum for verifying the download
+- `logback-debug.xml`: an optional diagnostic logging configuration file (see [Logging and Diagnostics](#logging-and-diagnostics))
 
 Download `cimtool-cli.jar` and, optionally, `logback-debug.xml` and place them in the same directory.
 
 !!! note
 
-    If you are optionally interested in verifying the signature on the downloaded JAR, you will need a JDK that includes the `jarsigner` command-line tool. Note that `jarsigner` is a JDK tool — it is not included in a JRE-only installation. [Eclipse Temurin](https://adoptium.net/) is the recommended JDK distribution for this purpose, as other OpenJDK distributions (such as Zulu) may behave differently when verifying signatures produced with an EV certificate. To verify:
+    If you are optionally interested in verifying the signature on the downloaded JAR, you will need a JDK that includes the `jarsigner` command-line tool. Note that `jarsigner` is a JDK tool, not included in a JRE-only installation. [Eclipse Temurin](https://adoptium.net/) is the recommended JDK distribution for this purpose, as other OpenJDK distributions (such as Zulu) may behave differently when verifying signatures produced with an EV certificate. To verify:
 
     ```bat
     "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\jarsigner.exe" ^
@@ -63,25 +63,25 @@ java -jar cimtool-cli.jar --version
 
 ### Informational Options
 
-These options are standalone — they print output and exit immediately. No other options are required or processed when you use them.
+These options are standalone, printing output and exiting immediately. No other options are required or processed when you use them.
 
 | Option | Short form | Description |
 |---|---|---|
 | `--help` | `-h` | Prints a summary of all available options and exits. |
 | `--version` | `-v` | Prints the CLI version (e.g. `CIMTool CLI version 2.3.0`) read from the JAR manifest and exits. |
-| `--list-builders` | `-l` | Prints the names, type indicators, and output file extensions of all builders bundled in the JAR and exits. Each builder is shown with a type in parentheses — `(JAVA)`, `(TEXT)`, `(XSD)`, or `(TRANSFORM)` — identifying its implementation type. Use this to discover the exact builder name to pass to `--builder`. |
+| `--list-builders` | `-l` | Prints the names, type indicators, and output file extensions of all builders bundled in the JAR and exits. Each builder is shown with a type in parentheses, such as `(JAVA)`, `(TEXT)`, `(XSD)`, or `(TRANSFORM)`, identifying its implementation type. Use this to discover the exact builder name to pass to `--builder`. |
 
 ### Transformation Options
 
 #### `--project-dir <path>` / `-pd` *(required)*
 
-Point this to the root directory of your **CIMTool** project — the folder that contains the `Schema`, `Profiles`, `Instances`, `Incremental`, and (optionally) `Documentation` subfolders, as well as the project settings files.
+Point this to the root directory of your **CIMTool** project, the folder that contains the `Schema`, `Profiles`, `Instances`, `Incremental`, and (optionally) `Documentation` subfolders, as well as the project settings files.
 
 ```bat
 --project-dir .\MyProject
 ```
 
-Your project directory must contain `.cimtool-settings` and `.builder-preferences` files, and may optionally contain a `.cimtool-global-preferences` file. All of these are created automatically by **CIMTool** when a project is created, loaded, or imported in the desktop application. The CLI reads your schema file locations from `.cimtool-settings`, your builder configurations from `.builder-preferences`, and — when present — any global preference values (such as PlantUML diagram style settings) from `.cimtool-global-preferences`. If `.cimtool-global-preferences` is absent, built-in defaults are used for those values.
+Your project directory must contain `.cimtool-settings` and `.builder-preferences` files, and may optionally contain a `.cimtool-global-preferences` file. All of these are created automatically by **CIMTool** when a project is created, loaded, or imported in the desktop application. The CLI reads your schema file locations from `.cimtool-settings`, your builder configurations from `.builder-preferences`, and, when present, any global preference values (such as PlantUML diagram style settings) from `.cimtool-global-preferences`. If `.cimtool-global-preferences` is absent, built-in defaults are used for those values.
 
 !!! note
 
@@ -115,17 +115,17 @@ When `--project-dir` is specified and `--output` is omitted, the CLI defaults to
 
 #### `--builder <name>` / `-b` *(optional)*
 
-Specify a builder by name to override the builders configured on each profile. The name must exactly match one of the builder names returned by `--list-builders` (e.g. `xsd`, `linkml`, `json-schema-draft-07`, `legacy-rdfs`). This option works for all builder types — both XSLT-based builders (`TEXT`, `XSD`, `TRANSFORM`) and Java-based builders (`JAVA`).
+Specify a builder by name to override the builders configured on each profile. The name must exactly match one of the builder names returned by `--list-builders` (e.g. `xsd`, `linkml`, `json-schema-draft-07`, `legacy-rdfs`). This option works for all builder types: both XSLT-based builders (`TEXT`, `XSD`, `TRANSFORM`) and Java-based builders (`JAVA`).
 
 ```bat
 --builder xsd
 ```
 
-If you omit this option, the CLI uses whichever builders are already enabled on each profile in **CIMTool**. This is the recommended approach for pipeline use — configure your builders on profiles in the desktop application, then let the CLI execute them without needing to name each one explicitly. `--builder` and `--xslt` are mutually exclusive — specifying both results in an invalid arguments error (exit code `1`).
+If you omit this option, the CLI uses whichever builders are already enabled on each profile in **CIMTool**. This is the recommended approach for pipeline use: configure your builders on profiles in the desktop application, then let the CLI execute them without needing to name each one explicitly. `--builder` and `--xslt` are mutually exclusive, and specifying both results in an invalid arguments error (exit code `1`).
 
 #### `--xslt <path>` / `-x` *(optional)*
 
-Use this option to apply a custom XSLT stylesheet that is not part of the bundled builder catalog. When you use `--xslt` you must also supply `--output-ext`. `--xslt` and `--builder` are mutually exclusive — specifying both results in an invalid arguments error (exit code `1`).
+Use this option to apply a custom XSLT stylesheet that is not part of the bundled builder catalog. When you use `--xslt` you must also supply `--output-ext`. `--xslt` and `--builder` are mutually exclusive, and specifying both results in an invalid arguments error (exit code `1`).
 
 ```bat
 --xslt .\my-custom-transform.xsl
@@ -167,7 +167,7 @@ Specify the path to a plain text file containing your single-line copyright noti
 --copyright-single-line .\copyright-single.txt
 ```
 
-You can specify both `--copyright-multi-line` and `--copyright-single-line` together — both files are loaded and applied. Neither can be combined with `--copyright-defaults`.
+You can specify both `--copyright-multi-line` and `--copyright-single-line` together, and both files are loaded and applied. Neither can be combined with `--copyright-defaults`.
 
 ### JVM System Properties
 
@@ -175,7 +175,7 @@ Pass these to the JVM before `-jar` rather than as CLI arguments.
 
 #### `-Dcimtool.debug` *(optional)*
 
-By default, when the CLI exits with a transformation error only the exception message is printed. Set this property to any non-null value to additionally print the full Java stack trace to `stderr`, which is useful when diagnosing an unexpected crash at the CLI level. This property has no effect on Logback log levels and does not enable verbose output from the parsing or interpretation pipeline — for that level of detail, see [Logging and Diagnostics](#logging-and-diagnostics).
+By default, when the CLI exits with a transformation error only the exception message is printed. Set this property to any non-null value to additionally print the full Java stack trace to `stderr`, which is useful when diagnosing an unexpected crash at the CLI level. This property has no effect on Logback log levels and does not enable verbose output from the parsing or interpretation pipeline. For that level of detail, see [Logging and Diagnostics](#logging-and-diagnostics).
 
 ```bat
 java -Dcimtool.debug=true -jar cimtool-cli.jar [options...]
@@ -183,7 +183,7 @@ java -Dcimtool.debug=true -jar cimtool-cli.jar [options...]
 
 #### `-Dlogback.configurationFile=<path>` *(optional)*
 
-Use this property to override the production Logback configuration bundled inside the JAR with an external configuration file. The `logback-debug.xml` file distributed on the release page is the recommended starting point — see [Logging and Diagnostics](#logging-and-diagnostics) for full details.
+Use this property to override the production Logback configuration bundled inside the JAR with an external configuration file. The `logback-debug.xml` file distributed on the release page is the recommended starting point. See [Logging and Diagnostics](#logging-and-diagnostics) for full details.
 
 ```bat
 java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar [options...]
@@ -193,7 +193,7 @@ java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar [optio
 
 | Option | Short | Required | Notes |
 |---|---|---|---|
-| `--project-dir` | `-pd` | Yes | Root directory of your **CIMTool** project; must contain `.cimtool-settings` and `.builder-preferences` (`.cimtool-global-preferences` is optional — built-in defaults are used if it is absent) |
+| `--project-dir` | `-pd` | Yes | Root directory of your **CIMTool** project; must contain `.cimtool-settings` and `.builder-preferences` (`.cimtool-global-preferences` is optional, with built-in defaults used if it is absent) |
 | `--profile` | `-p` | No | Single profile to process; if omitted, all `.owl` files in `<project-dir>/Profiles` are processed |
 | `--output` | `-o` | Optional when `--project-dir` is specified | Output directory; defaults to `<project-dir>/Profiles` when not specified |
 | `--builder` | `-b` | No | Overrides profile-configured builders; mutually exclusive with `--xslt` |
@@ -215,7 +215,7 @@ The `--list-builders` output shows each builder's type in parentheses. There are
 | `TEXT` | XSLT-based builders that produce text output with indentation post-processing | `xsd`, `json-schema-draft-07`, `adoc-article-rdfs`, `scala`, `jpa` |
 | `XSD` | XSLT-based builders that produce XSD schemas with XML Schema validation | `xsd`, `xsd-part100-ed2` |
 | `TRANSFORM` | XSLT-based builders that produce XML output without additional post-processing | `html`, `rdfs-2020`, `linkml`, `profile-doc-rtf` |
-| `JAVA` | Java-based builders that use CIMTool generator classes directly — no XSLT involved | `xml`, `ttl`, `simple-flat-owl`, `simple-owl`, `legacy-rdfs`, `simple-flat-owl-augmented`, `simple-owl-augmented`, `legacy-rdfs-augmented` |
+| `JAVA` | Java-based builders that use CIMTool generator classes directly, with no XSLT involved | `xml`, `ttl`, `simple-flat-owl`, `simple-owl`, `legacy-rdfs`, `simple-flat-owl-augmented`, `simple-owl-augmented`, `legacy-rdfs-augmented` |
 
 The `(JAVA)` builders were historically executed only within the **CIMTool** Eclipse desktop application. Beginning with the 2.3.0 release they are fully supported by the CLI, enabling headless generation of OWL, RDFS, Turtle, and XML profile serializations as part of a CI/CD pipeline.
 
@@ -223,7 +223,7 @@ The `(JAVA)` builders were historically executed only within the **CIMTool** Ecl
 
 !!! note
 
-    The examples below use `cimtool-cli.jar` without a path, which assumes the JAR is in your current working directory. In practice, either run the commands from the directory containing the JAR, or substitute the full path to the JAR — for example `"D:\tools\cimtool-cli.jar"`.
+    The examples below use `cimtool-cli.jar` without a path, which assumes the JAR is in your current working directory. In practice, either run the commands from the directory containing the JAR, or substitute the full path to the JAR, for example `"D:\tools\cimtool-cli.jar"`.
 
 ### Generating Artifacts from a Single Profile
 
@@ -249,7 +249,7 @@ The CLI reads the project settings (`.cimtool-settings`, `.builder-preferences`,
 
 ### Generating Artifacts from All Profiles
 
-Process all profiles in the project's `Profiles` folder using the builders configured on each — the minimum valid invocation:
+Process all profiles in the project's `Profiles` folder using the builders configured on each, the minimum valid invocation:
 
 ```bat
 java -jar cimtool-cli.jar ^
@@ -262,7 +262,7 @@ Short-form equivalent:
 java -jar cimtool-cli.jar -pd .\MyProject
 ```
 
-The CLI reads all project settings from `.\MyProject`, discovers every `.owl` file in `.\MyProject\Profiles`, and for each profile runs whichever builders are enabled on it. Generated artifacts are written alongside the source `.owl` files in `.\MyProject\Profiles` — exactly as the **CIMTool** desktop application does.
+The CLI reads all project settings from `.\MyProject`, discovers every `.owl` file in `.\MyProject\Profiles`, and for each profile runs whichever builders are enabled on it. Generated artifacts are written alongside the source `.owl` files in `.\MyProject\Profiles`, exactly as the **CIMTool** desktop application does.
 
 With an explicit output directory:
 
@@ -301,7 +301,7 @@ Short-form equivalent:
 java -jar cimtool-cli.jar -pd .\MyProject -p .\MyProject\Profiles\MyProfile.owl -x .\my-custom-transform.xsl -oe json -o .\output
 ```
 
-The CLI applies `my-custom-transform.xsl` to `MyProfile.owl` using the schema and settings from `--project-dir`. The `--output-ext` value determines the output filename — in this case `MyProfile.json` is written to `.\output`. Custom XSLT transforms have access to the same profile model and schema data as any built-in builder.
+The CLI applies `my-custom-transform.xsl` to `MyProfile.owl` using the schema and settings from `--project-dir`. The `--output-ext` value determines the output filename. In this case, `MyProfile.json` is written to `.\output`. Custom XSLT transforms have access to the same profile model and schema data as any built-in builder.
 
 ---
 
@@ -378,7 +378,7 @@ for %%f in (.\MyProject\Profiles\*.linkml.yaml) do (
 
 !!! note
 
-    The LinkML builder must be enabled on each profile individually within **CIMTool** before running `cimtool-cli.jar`. The CLI executes whichever builders are configured on each profile — it does not enable or modify builder settings.
+    The LinkML builder must be enabled on each profile individually within **CIMTool** before running `cimtool-cli.jar`. The CLI executes whichever builders are configured on each profile and does not enable or modify builder settings.
 
 !!! tip "Linux and macOS CI runners"
 
@@ -396,7 +396,7 @@ for %%f in (.\MyProject\Profiles\*.linkml.yaml) do (
 
 ## Logging and Diagnostics
 
-Under normal operation `cimtool-cli.jar` is intentionally quiet. Only genuine warnings and errors appear on the console — schema integrity issues such as missing range types or invalid cardinality declarations. All log output is written to `stderr` so it does not interfere with structured `stdout` output that downstream pipeline tools may consume.
+Under normal operation `cimtool-cli.jar` is intentionally quiet. Only genuine warnings and errors appear on the console, schema integrity issues such as missing range types or invalid cardinality declarations. All log output is written to `stderr` so it does not interfere with structured `stdout` output that downstream pipeline tools may consume.
 
 ### Enabling Diagnostic Logging
 
@@ -410,21 +410,21 @@ This overrides the production logging configuration bundled inside the JAR witho
 
 ### Capturing Log Output to a File
 
-**Linux / macOS** — writes to file and shows output on screen simultaneously:
+**Linux / macOS** (writes to file and shows output on screen simultaneously):
 
 ```bash
 java -Dlogback.configurationFile=./logback-debug.xml \
   -jar cimtool-cli.jar [options...] 2>&1 | tee debug.log
 ```
 
-**Windows Command Prompt** — writes to file only:
+**Windows Command Prompt** (writes to file only):
 
 ```bat
 java -Dlogback.configurationFile=.\logback-debug.xml ^
   -jar cimtool-cli.jar [options...] > debug.log 2>&1
 ```
 
-**Windows PowerShell** — writes to file and shows output on screen simultaneously:
+**Windows PowerShell** (writes to file and shows output on screen simultaneously):
 
 ```powershell
 java -Dlogback.configurationFile=.\logback-debug.xml `
@@ -445,4 +445,4 @@ This flag prints additional diagnostic information at the CLI level only. For ve
 
 `cimtool-cli.jar` runs on Windows, Linux, and macOS. The examples on this page use Windows `^` line-continuation syntax for readability. On Linux and macOS, replace `^` with `\` and adjust path separators accordingly.
 
-The **CIMTool** Eclipse desktop application is currently released for Windows only. `cimtool-cli.jar` has no such restriction — it is fully cross-platform and is the recommended approach for integrating **CIMTool**'s artifact generation capabilities into Linux-based CI/CD runners and container environments.
+The **CIMTool** Eclipse desktop application is currently released for Windows only. `cimtool-cli.jar` has no such restriction. It is fully cross-platform and is the recommended approach for integrating **CIMTool**'s artifact generation capabilities into Linux-based CI/CD runners and container environments.

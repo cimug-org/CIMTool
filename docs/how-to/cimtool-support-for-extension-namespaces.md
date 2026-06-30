@@ -33,7 +33,7 @@ An example of a `baseuri` tag on a class in Sparx EA:
 
 #### Annotation File
 
-In the edge case where you are working with an XMI file provided by an external party that lacks `baseuri` tagged values, **CIMTool** provides a stopgap mechanism via an annotation file. There is no editor or other GUI for managing namespace information in the annotation file — it is intended solely for situations where you do not control the XMI file and cannot add `baseuri` tags to it directly.
+In the edge case where you are working with an XMI file provided by an external party that lacks `baseuri` tagged values, **CIMTool** provides a stopgap mechanism via an annotation file. There is no editor or other GUI for managing namespace information in the annotation file, which is intended solely for situations where you do not control the XMI file and cannot add `baseuri` tags to it directly.
 
 The annotation file should be placed in the project's `Schema` folder where the XMI file is located. It must have the same base name as the XMI file with a `.annotation` extension instead of `.xmi`.
 
@@ -61,7 +61,7 @@ Has the same effect as attaching a `baseuri` tag to the Extensions package with 
 
 ## Option 2: Using a Sparx EA Project File Schema
 
-When your project uses a Sparx EA project file (`.eap`, `.eapx`, `.qea`, or `.qeax`) directly as its schema, two approaches are available for assigning URI namespaces to extension elements. These two approaches are **mutually exclusive** — **CIMTool** determines which is in effect based solely on whether a `.namespaces` file is present in the project's `Schema` folder.
+When your project uses a Sparx EA project file (`.eap`, `.eapx`, `.qea`, or `.qeax`) directly as its schema, two approaches are available for assigning URI namespaces to extension elements. These two approaches are **mutually exclusive**, with **CIMTool** determining which is in effect based solely on whether a `.namespaces` file is present in the project's `Schema` folder.
 
 ### Approach 1: UML Tag: `baseuri`
 
@@ -102,13 +102,13 @@ C:\
 └── ...
 ```
 
-The screenshot below shows an example of both files as they appear in the **CIMTool** Project Explorer — the `.namespaces` file alongside its corresponding `.qea` EA project file (identified by the Sparx EA icon):
+The screenshot below shows an example of both files as they appear in the **CIMTool** Project Explorer, the `.namespaces` file alongside its corresponding `.qea` EA project file (identified by the Sparx EA icon):
 
 ![CIMTool Project Explorer showing .namespaces file alongside EA project file schema](../images/CIMToolProjectExplorerNamespacesFile.png)
 
 !!! warning "Naming convention and file location are required for correct import"
 
-    The `.namespaces` file must be manually created — it is not created or managed by **CIMTool**. It must be named exactly the same as the EA project file it defines mappings for (with a `.namespaces` extension in place of `.qea`, `.eap`, etc.) and co-located with that EA project file on the file system prior to import. When **CIMTool** imports a schema — whether importing a new schema or re-importing an existing one — it automatically detects any co-located `.namespaces` file and imports it into the project's `Schema` folder alongside the EA project file.
+    The `.namespaces` file must be manually created, not created or managed by **CIMTool**. It must be named exactly the same as the EA project file it defines mappings for (with a `.namespaces` extension in place of `.qea`, `.eap`, etc.) and co-located with that EA project file on the file system prior to import. When **CIMTool** imports a schema, whether importing a new schema or re-importing an existing one, it automatically detects any co-located `.namespaces` file and imports it into the project's `Schema` folder alongside the EA project file.
 
     When present in the project's `Schema` folder, all `baseuri` tagged values defined in the UML are ignored and the stereotype-to-namespace mappings in the file take effect instead. Deleting the `.namespaces` file from the `Schema` folder causes **CIMTool** to revert to honoring `baseuri` tagged values in the UML when present.
 
@@ -140,7 +140,7 @@ When a `.namespaces` file is in effect, **CIMTool** resolves the namespace for e
 
     When using the `<<ShadowExtension>>` or `<<MixIn>>` extension patterns, it is safest practice to always model extension associations between **two** `<<ShadowExtension>>` classes rather than between a `<<ShadowExtension>>` class and a normative CIM class directly.
 
-    Modeling an association from a `<<ShadowExtension>>` class to a normative CIM class is technically valid — **CIMTool** will process and namespace it correctly — however, the direction of the association determines which package owns it. An association drawn *from* an extension class *to* a normative class is implicitly owned by the extension package and exports correctly. If that direction is inadvertently reversed, ownership shifts to the normative side and the association will be silently dropped when exporting the extensions package.
+    Modeling an association from a `<<ShadowExtension>>` class to a normative CIM class is technically valid, and **CIMTool** will process and namespace it correctly. However, the direction of the association determines which package owns it. An association drawn *from* an extension class *to* a normative class is implicitly owned by the extension package and exports correctly. If that direction is inadvertently reversed, ownership shifts to the normative side and the association will be silently dropped when exporting the extensions package.
 
     When both endpoints are `<<ShadowExtension>>` classes, the association is unambiguously owned by the extensions package regardless of the direction in which it was drawn, completely eliminating the risk of silent loss on export. This is especially important in model upgrade and migration scenarios, where a dropped association may not be discovered until after the migration to a new CIM version is complete.
 
@@ -156,7 +156,7 @@ When a `.namespaces` file is in effect, **CIMTool** resolves the namespace for e
 
 !!! note
 
-    **Stereotype names** in the mappings file are case-insensitive. The entries `NC`, `nc`, and `Nc` are all treated as equivalent — you may use whichever form matches how the stereotype appears in your UML model.
+    **Stereotype names** in the mappings file are case-insensitive. The entries `NC`, `nc`, and `Nc` are all treated as equivalent, so you may use whichever form matches how the stereotype appears in your UML model.
 
     **Namespace URIs** are case-sensitive. Verify that each URI in the mappings file exactly matches the case used in your UML model. For example, `http://iec.ch/TC57/CIM100#` and `http://iec.ch/TC57/cim100#` are treated as distinct namespaces.
 

@@ -2,8 +2,8 @@
 
 This document retains engineering context for changes that may be undertaken in
 the future. It is not a roadmap and not a task tracker. It records *what* a
-potential change involves and *why* — the background, rationale, and constraints
-understood at the time of writing — so that whoever eventually carries out the
+potential change involves and *why*, the background, rationale, and constraints
+understood at the time of writing, so that whoever eventually carries out the
 change inherits that context rather than rediscovering it. Each entry describes
 potential work; an entry does not commit the project to that work, imply a
 schedule, or report status.
@@ -38,7 +38,7 @@ target-platform definition (next entry) would be a natural part of the same
 upgrade.
 
 
-## Build Reproducibility — Plugin and Target-Platform Version Pinning
+## Build Reproducibility: Plugin and Target-Platform Version Pinning
 
 The product resolves against whatever plugin versions are present in the
 developer's IDE / target platform; it pins nothing. The product file lists plugins
@@ -55,9 +55,9 @@ are not duplicated here, to avoid drift.
 
 Two places a fix could live, with their trade-offs:
 
-- `bundle-version` constraints in `MANIFEST.MF` — localized and precise, but must
+- `bundle-version` constraints in `MANIFEST.MF`, localized and precise, but must
   be maintained per bundle.
-- A committed target-platform (`.target`) definition in the repository —
+- A committed target-platform (`.target`) definition in the repository,
   comprehensive and deterministic across machines, but a larger artifact to
   maintain.
 
@@ -82,7 +82,7 @@ registered through an `org.eclipse.ui.startup` extension in
 `CIMToolPlugin/plugin.xml`. It attaches raw `SWT.MouseDown` and `SWT.KeyDown`
 listeners to the Project Explorer tree, reconstructs the double-click and handles
 Enter / keypad-Enter from the primitive input events, and routes the open through
-`IDE.openEditor(...)` — beneath SWT's gesture synthesis, which is why it succeeds
+`IDE.openEditor(...)`: beneath SWT's gesture synthesis, which is why it succeeds
 where the broken gesture does not. It resolves the tree by reflection
 (`getCommonViewer().getTree()`), which is acceptable only because it is bound to
 the pinned 4.28 platform. The sanctioned `CommonActionProvider` open hook was
@@ -95,8 +95,7 @@ focus state.
 > (labeled `requires-platform-upgrade`) documents the failure and remains the
 > long-term fix.
 
-Packaging note for any similar change: `CIMToolPlugin` is a nested-JAR build — its
-classes ship inside `cimtool.jar`. A self-hosted *Run As ▸ Eclipse Application*
+Packaging note for any similar change: `CIMToolPlugin` is a nested-JAR build, with its classes shipping inside `cimtool.jar`. A self-hosted *Run As ▸ Eclipse Application*
 launch serves classes from `bin/` and can therefore mask whether a class is
 actually packaged into the jar. Changes of this kind should be validated from a
 product export, not only from a self-hosted launch.

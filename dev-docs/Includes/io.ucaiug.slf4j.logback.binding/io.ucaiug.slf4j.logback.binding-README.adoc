@@ -10,13 +10,13 @@
 :xrefstyle: short
 
 A minimal OSGi fragment bundle that wires SLF4J 2.x to Logback as its logging
-provider in the CIMTool Eclipse RCP product. Without this bundle, SLF4J permanently
-binds to its built-in NOP implementation and all SLF4J-native log events from
-vendored libraries (Saxon-HE, m2e/Aether, UCanAccess, and others) are silently
-discarded — `logs/cimtool.log` is created by Logback but remains empty. With this
-bundle in place those events flow through Logback into `logs/cimtool.log`,
-completing the unified single-file logging pipeline together with the JUL bridge
-(`jul-to-slf4j`) installed by `CIMToolPlugin`.
+provider in the CIMTool Eclipse RCP product. Without this bundle, SLF4J
+permanently binds to its built-in NOP implementation and all SLF4J-native log
+events from vendored libraries (Saxon-HE, m2e/Aether, UCanAccess, and others)
+are silently discarded, and `logs/cimtool.log` is created by Logback but remains
+empty. With this bundle in place those events flow through Logback into
+`logs/cimtool.log`, completing the unified single-file logging pipeline together
+with the JUL bridge (`jul-to-slf4j`) installed by `CIMToolPlugin`.
 
 
 
@@ -47,19 +47,21 @@ JUL is bridged to SLF4J at startup by `SLF4JBridgeHandler` installed in
 through SLF4J -> Logback into `logs/cimtool.log`. Log4j 1.x calls are intercepted
 by `log4j-over-slf4j` in Kena's `Bundle-ClassPath` and routed into SLF4J.
 
-SLF4J 2.x provider discovery fails silently in OSGi due to classloader isolation.
-SLF4J uses `ServiceLoader` to discover its logging provider at runtime. On a standard
-flat classpath this works transparently — `ServiceLoader` scans all
-`META-INF/services/` files reachable from a single classloader and finds Logback's
-registration. In OSGi, every bundle has its own isolated classloader and can only see
-packages it explicitly imports. When SLF4J calls `ServiceLoader.load()` to find its
-provider, the calling classloader is `slf4j.api`'s own bundle classloader — which has
-no visibility into the `ch.qos.logback.classic` bundle. `ServiceLoader` finds nothing,
-and SLF4J permanently binds to its built-in NOP (no-operation) implementation — all
+SLF4J 2.x provider discovery fails silently in OSGi due to classloader
+isolation. SLF4J uses `ServiceLoader` to discover its logging provider at
+runtime. On a standard flat classpath this works transparently, with
+`ServiceLoader` scanning all `META-INF/services/` files reachable from a single
+classloader and finds Logback's registration. In OSGi, every bundle has its own
+isolated classloader and can only see packages it explicitly imports. When SLF4J
+calls `ServiceLoader.load()` to find its provider, the calling classloader is
+`slf4j.api`'s own bundle classloader, which has no visibility into the
+`ch.qos.logback.classic` bundle. `ServiceLoader` finds nothing, and SLF4J
+permanently binds to its built-in NOP (no-operation) implementation, and all
 SLF4J-native log events are silently discarded for the lifetime of the JVM. This
 bundle solves the problem by attaching as an OSGi fragment to `slf4j.api`, which
-merges its `META-INF/services/` registration directly into `slf4j.api`'s classloader
-so `ServiceLoader` finds `LogbackServiceProvider` at the moment SLF4J initialises.
+merges its `META-INF/services/` registration directly into `slf4j.api`'s
+classloader so `ServiceLoader` finds `LogbackServiceProvider` at the moment
+SLF4J initialises.
 
 
 === Why a Fragment Bundle?
@@ -71,24 +73,24 @@ An OSGi *fragment bundle* shares its host bundle's classloader. By declaring
 `Fragment-Host: slf4j.api`, this bundle's contents become part of `slf4j.api`'s
 classloader. This means the `META-INF/services/org.slf4j.spi.SLF4JServiceProvider`
 file inside this fragment is visible when `ServiceLoader` scans `slf4j.api`'s
-classloader — so it finds `LogbackServiceProvider` and SLF4J binds to Logback
+classloader, so it finds `LogbackServiceProvider` and SLF4J binds to Logback
 correctly.
 
 `DynamicImport-Package: ch.qos.logback.classic.spi` allows the classloader to
-resolve `LogbackServiceProvider`'s class at runtime without creating static package
-wiring that could introduce split-package conflicts with other bundles. Specifically,
-a static `Import-Package: ch.qos.logback.classic.spi` would create a wiring conflict
-on the `org.xml.sax` package — both `slf4j.api` and the Logback classic bundle export
-it, and a static import would cause OSGi to fail to resolve the bundle entirely,
-breaking `XMIModel` initialisation at startup.
+resolve `LogbackServiceProvider`'s class at runtime without creating static
+package wiring that could introduce split-package conflicts with other bundles.
+Specifically, a static `Import-Package: ch.qos.logback.classic.spi` would create
+a wiring conflict on the `org.xml.sax` package, since both `slf4j.api` and the
+Logback classic bundle export it, and a static import would cause OSGi to fail
+to resolve the bundle entirely, breaking `XMIModel` initialisation at startup.
 
 This approach:
 
-* Requires *no bytecode weaving* — unlike Apache Aries SPI Fly, no class
+* Requires *no bytecode weaving*, so unlike Apache Aries SPI Fly, no class
   modification at runtime occurs
-* Has *no impact on security scanning tools* — the bundle contains only metadata
+* Has *no impact on security scanning tools*, since the bundle contains only metadata
   files, no executable code
-* Is *self-contained* — two metadata files and no JAR dependencies
+* Is *self-contained*, two metadata files and no JAR dependencies
 * Is *version-controlled* as part of the CIMTool repo alongside all other
   dependencies
 
@@ -101,8 +103,8 @@ implementation and is the "official" solution to this class of problem. It was
 evaluated and rejected for CIMTool for one practical reason: SPI Fly uses ASM
 bytecode weaving to intercept `ServiceLoader.load()` calls at class-load time.
 Security tools including Malwarebytes flag this behavior as a
-`Malware.Ransom.Agent.Generic` threat because the behavioral signature — an
-application that loads and modifies bytecodes dynamically at runtime — is
+`Malware.Ransom.Agent.Generic` threat because the behavioral signature, an
+application that loads and modifies bytecodes dynamically at runtime, is
 indistinguishable from ransomware to a heuristic scanner. Since CIMTool is
 deployed in utility companies with enterprise security policies, this is not
 acceptable.
@@ -134,20 +136,20 @@ Fragment-Host: slf4j.api
 DynamicImport-Package: ch.qos.logback.classic.spi
 ----
 
-*`Fragment-Host: slf4j.api`* — declares this as a fragment of the `slf4j.api`
+*`Fragment-Host: slf4j.api`*: declares this as a fragment of the `slf4j.api`
 OSGi bundle. The fragment's classpath contents (including `META-INF/services/`)
 are merged into `slf4j.api`'s classloader at framework startup. When SLF4J calls
 `ServiceLoader.load(SLF4JServiceProvider.class)` the services file is now visible
 and `LogbackServiceProvider` is discovered.
 
-*`DynamicImport-Package: ch.qos.logback.classic.spi`* — allows the classloader
-to load `ch.qos.logback.classic.spi.LogbackServiceProvider` at runtime when
+*`DynamicImport-Package: ch.qos.logback.classic.spi`*: allows the classloader to
+load `ch.qos.logback.classic.spi.LogbackServiceProvider` at runtime when
 ServiceLoader attempts to instantiate it. Dynamic imports are resolved lazily at
 class-load time rather than at bundle resolution time, so they do not affect the
 OSGi package wiring graph. A static `Import-Package` here would create a
-split-package conflict on `org.xml.sax` — both `slf4j.api` and the Logback classic
-bundle export it — which would prevent bundle resolution entirely and break
-`XMIModel` initialisation at CIMTool startup.
+split-package conflict on `org.xml.sax`, since both `slf4j.api` and the Logback
+classic bundle export it, which would prevent bundle resolution entirely and
+break `XMIModel` initialisation at CIMTool startup.
 
 
 
@@ -160,10 +162,10 @@ line:
 ch.qos.logback.classic.spi.LogbackServiceProvider
 ----
 
-This is standard Java `ServiceLoader` registration. In a flat classpath environment
-this file would be picked up automatically from Logback's JAR. In OSGi it is
-invisible across bundle boundaries — this fragment makes it visible by placing it
-on `slf4j.api`'s classloader.
+This is standard Java `ServiceLoader` registration. In a flat classpath
+environment this file would be picked up automatically from Logback's JAR. In
+OSGi it is invisible across bundle boundaries, so this fragment makes it visible
+by placing it on `slf4j.api`'s classloader.
 
 
 
@@ -178,7 +180,7 @@ section:
 ----
 
 The `fragment="true"` attribute tells the PDE exporter to include this bundle as
-a fragment in the exported product. No start level configuration is needed —
+a fragment in the exported product. No start level configuration is needed;
 fragment bundles attach to their host automatically at framework startup before
 any bundle activators run, which ensures SLF4J finds Logback before any other
 bundle triggers SLF4J initialization.
@@ -198,11 +200,11 @@ entries in its MANIFEST. It wires to two platform bundles via OSGi manifest head
 
 | SLF4J API
 | `slf4j.api`
-| `Fragment-Host` — this bundle is a fragment of `slf4j.api` and shares its classloader
+| `Fragment-Host`: this bundle is a fragment of `slf4j.api` and shares its classloader
 
 | Logback Classic
 | `ch.qos.logback.classic`
-| `DynamicImport-Package: ch.qos.logback.classic.spi` — resolved lazily at class-load
+| `DynamicImport-Package: ch.qos.logback.classic.spi`: resolved lazily at class-load
 time to instantiate `LogbackServiceProvider`
 |===
 
@@ -213,7 +215,7 @@ at export time. Neither is vendored in this project.
 
 This project vendors *no third-party libraries*. It contains no JAR files and
 declares no `Bundle-ClassPath` entries. The project consists entirely of OSGi
-metadata — `META-INF/MANIFEST.MF`,
+metadata, `META-INF/MANIFEST.MF`,
 `META-INF/services/org.slf4j.spi.SLF4JServiceProvider`, and `build.properties`.
 
 

@@ -13,8 +13,7 @@ profile transforms, topology processing, and UI wizards.
 
 ## Overview
 
-CIMToolTest is structured as an Eclipse **plugin fragment** — its `MANIFEST.MF`
-declares `Fragment-Host: au.com.langdale.cimtoole`, which means it attaches
+CIMToolTest is structured as an Eclipse **plugin fragment** whose `MANIFEST.MF` declares `Fragment-Host: au.com.langdale.cimtoole`, which means it attaches
 directly to the `CIMToolPlugin` bundle at runtime and has access to all of its
 packages without requiring explicit exports. This is the standard Eclipse pattern
 for test fragments: the tests run inside the same OSGi bundle as the code under
@@ -22,8 +21,8 @@ test, giving them access to package-private and internal APIs.
 
 The test suite is divided into two main categories:
 
-- **Headless tests** — run without a UI, exercising the core model, validation, schema processing, Kena RDF layer, and incremental build logic
-- **UI tests** — exercise the Eclipse wizard and workbench UI components using the Eclipse workbench testing infrastructure
+- **Headless tests**: run without a UI, exercising the core model, validation, schema processing, Kena RDF layer, and incremental build logic
+- **UI tests**: exercise the Eclipse wizard and workbench UI components using the Eclipse workbench testing infrastructure
 
 A set of CIM/XML and Turtle validation fixture files in `src/ValidationCases/`
 provides the test data used by the validation and schema test classes.
@@ -121,11 +120,11 @@ dependencies on:
 
 | Bundle | Role in tests |
 | --- | --- |
-| `org.junit` (4.x) | JUnit 4 test framework — `@Test`, `assertEquals`, `TestCase` base class |
+| `org.junit` (4.x) | JUnit 4 test framework: `@Test`, `assertEquals`, `TestCase` base class |
 | `au.com.langdale.kena` | Used directly in `KenaTests` to test the RDF/OWL graph API independently |
 | `au.com.langdale.rcputil` | Eclipse UI utilities needed by workbench-level test base classes |
 | `org.eclipse.core.resources` | Workspace and project resource APIs used to set up test projects and assert the presence or absence of problem markers |
-| `org.eclipse.core.runtime` | OSGi runtime utilities — `IProgressMonitor`, `CoreException`, `IPath` |
+| `org.eclipse.core.runtime` | OSGi runtime utilities: `IProgressMonitor`, `CoreException`, `IPath` |
 | `org.eclipse.ui` | Workbench APIs used by the UI test base classes |
 
 
@@ -139,10 +138,10 @@ These tests run without a display and exercise the core CIMTool logic:
 | Test Class | What it tests |
 | --- | --- |
 | `KenaTests` | Kena RDF/OWL model creation, traversal, resource lookup, and serialization |
-| `SchemaTests` | CIM/XML validation against the CPSM profile without topology constraints — exercises cardinality, type, range, and domain checks across all validation fixture cases |
-| `TopologyTests` | CIM/XML validation against the CPSM profile with topology constraints — exercises terminal connectivity, isolated node, and loop detection cases |
-| `IncrementalTests` | Incremental model change processing — add and remove cases, delta handling |
-| `SplitReaderTest` | Split CIM/XML file reader — multi-file model assembly |
+| `SchemaTests` | CIM/XML validation against the CPSM profile without topology constraints: exercises cardinality, type, range, and domain checks across all validation fixture cases |
+| `TopologyTests` | CIM/XML validation against the CPSM profile with topology constraints: exercises terminal connectivity, isolated node, and loop detection cases |
+| `IncrementalTests` | Incremental model change processing: add and remove cases, delta handling |
+| `SplitReaderTest` | Split CIM/XML file reader: multi-file model assembly |
 | `ExtractorTest` | XMI/EA model extraction and parsing |
 | `ProfileBuildletConfigUtilsTest` | JSON serialization and deserialization of buildlet configuration objects |
 
@@ -152,8 +151,8 @@ These tests require a running Eclipse workbench and exercise the wizard UI:
 
 | Test Class | What it tests |
 | --- | --- |
-| `ModelWizards` | Model import wizard flows — XMI, EA project, and schema import |
-| `ProfileWizards` | Profile creation wizard — new profile, namespace setup |
+| `ModelWizards` | Model import wizard flows: XMI, EA project, and schema import |
+| `ProfileWizards` | Profile creation wizard: new profile, namespace setup |
 | `SchemaWizards` | Schema import wizard flows |
 | `RuleWizards` | Ruleset creation and import wizard flows |
 | `CustomBuildersWizards` | Custom transform builder configuration wizard |
@@ -171,8 +170,8 @@ pair represents a specific validation scenario:
 
 Two OWL profile files drive the validation:
 
-- `cpsm2007.owl` — the CPSM profile including topology constraints, used by `TopologyTests`
-- `cpsm2007_no_topol.owl` — the CPSM profile without topology, used by `SchemaTests`
+- `cpsm2007.owl`: the CPSM profile including topology constraints, used by `TopologyTests`
+- `cpsm2007_no_topol.owl`: the CPSM profile without topology, used by `SchemaTests`
 
 The `build.sh` and `run.sh` scripts in `ValidationCases/` support standalone
 execution of the validation fixtures outside of the Eclipse test runner.
@@ -184,7 +183,7 @@ execution of the validation fixtures outside of the Eclipse test runner.
 The `CIMToolTestFiles/` folder at the project root contains two ZIP archives
 that provide test fixture data at runtime.
 
-### CIMToolTestFiles.zip — Fully Implemented
+### CIMToolTestFiles.zip: Fully Implemented
 
 This is the primary test data archive. `ProjectTest.setUpTestData()` loads it
 automatically via the OSGi classloader on every `setUp()` call:
@@ -198,12 +197,12 @@ unzip(is, getSamplesFolder());
 The extracted folder is placed adjacent to the test workspace root and torn
 down after each test in `tearDown()`. It contains the schema files, OWL
 profiles, rules files, and other inputs referenced by the constants in
-`ProjectTest` — `SAMPLE_SCHEMA_XMI`, `SAMPLE_SCHEMA_EAP`, `SAMPLE_SCHEMA_QEA`,
+`ProjectTest`: `SAMPLE_SCHEMA_XMI`, `SAMPLE_SCHEMA_EAP`, `SAMPLE_SCHEMA_QEA`,
 `SAMPLE_PROFILE`, `SAMPLE_RULES`, etc. All tests that extend `ProjectTest`
 (the majority of the test suite) depend on this ZIP being present and correctly
 bundled.
 
-### IOP10Kit.zip — Pending Implementation
+### IOP10Kit.zip: Pending Implementation
 
 This archive contains the `ABB40BusIOP10_rev7` split model folder used by
 `SplitReaderTest` and `ExtractorTest`. Currently these tests locate the folder
