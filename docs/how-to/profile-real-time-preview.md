@@ -28,7 +28,7 @@ well beyond the visible area of the view.
 
 !!! note
 
-    The **Profile Real-Time Preview** view is distinct from the **PlantUML Svg** view that also appears in the default workbench layout (outlined in blue in the screenshot above). The **PlantUML Svg** view is a general-purpose PlantUML renderer that displays whatever `.puml` file is currently open or selected in the editor. The **Profile Real-Time Preview**, by contrast, is purpose-built for profile design work: it automatically tracks the active profile and regenerates its diagram on every save — no manual file selection is required.
+    The **Profile Real-Time Preview** view is distinct from the **PlantUML Svg** view that also appears in the default workbench layout (outlined in blue in the screenshot above). The **PlantUML Svg** view is a general-purpose PlantUML renderer that displays whatever `.puml` file is currently open or selected in the editor. The **Profile Real-Time Preview**, by contrast, is purpose-built for profile design work: it automatically tracks the active profile and regenerates its diagram on every save, with no manual file selection required.
 
 Beyond visualizing the profile's structure, the Profile Real-Time Preview serves a
 second purpose that is especially valuable when building large or complex
@@ -40,8 +40,8 @@ them only after a lengthy, systematic post-completion review.
 Because the two views serve different purposes, they can be used together. The
 **PlantUML Svg** view can be repositioned within the workbench by dragging its
 tab to a different panel, making it possible to display both views
-simultaneously side by side. The screenshot below illustrates this arrangement
-— and demonstrates the key difference between them: the Profile Real-Time Preview
+simultaneously side by side. The screenshot below illustrates this arrangement,
+and demonstrates the key difference between them: the Profile Real-Time Preview
 (left) renders definition errors using distinct visual cues, flagging issues
 within the profile definition. The PlantUML Svg view (right), rendering the
 same profile as a standard diagram, shows no such indicator even though the
@@ -52,7 +52,7 @@ Click on the image to present a larger view.
 [![image](../images/ProfileRealTimePreview-PlantUML-SplitView.png)](../images/ProfileRealTimePreview-PlantUML-SplitView.png "The Profile Real-Time Preview (left) surfacing definition errors using distinct visual cues; the PlantUML Svg view (right) rendering the same profile as a standard diagram with no error indicators")
 
 Historically, validating a large profile required a meticulous inspection of
-every class, attribute, and association definition in the profile editor — a
+every class, attribute, and association definition in the profile editor, a
 process that was time-consuming and error-prone precisely because definition
 problems had no visible presence in the workspace. The Profile Real-Time Preview
 eliminates that burden by making errors immediately visible each time the
@@ -61,7 +61,7 @@ profile is saved.
 
 ## Diagram Style and Target Schema Type
 
-A CIM profile definition is shaped by its intended target artifact — the type
+A CIM profile definition is shaped by its intended target artifact, the type
 of schema or serialization format the profile is ultimately meant to produce.
 The style of diagram rendered by the Profile Real-Time Preview reflects this:
 **CIMTool** generates a PlantUML diagram appropriate for the profile's target
@@ -69,8 +69,8 @@ schema type, and it is within that diagram that any definition errors will be
 visualized.
 
 When a new project is created, the diagram style defaults to `puml-rdfs-t2b`.
-If the project is primarily targeting a different schema type — for example,
-XSD — the default should be overridden by updating the project-level preference.
+If the project is primarily targeting a different schema type (for example,
+XSD), the default should be overridden by updating the project-level preference.
 Right-click the project in the **Project Explorer**, select **Properties**,
 navigate to **CIMTool**, and select the appropriate diagram style from the
 **Diagram Style** dropdown. For an XSD-oriented project, for instance,
@@ -96,7 +96,7 @@ Click on the image to present a larger view.
 
 This project-level setting applies as the default for all profiles in the
 project. It can be overridden on a per-profile basis from within the profile's
-own properties. The layout orientation — top-to-bottom or left-to-right — is a
+own properties. The layout orientation, top-to-bottom or left-to-right, is a
 presentational preference and has no effect on the content of the diagram or
 the errors it surfaces.
 
@@ -110,8 +110,8 @@ errors are visualized within it and how to resolve each one.
 ## Working with the Preview on a Second Monitor
 
 The **Profile Real-Time Preview** view can be detached from the workbench
-entirely and moved to a separate window — for example, onto a second monitor
-— by dragging its tab away from its current panel and releasing it outside the
+entirely and moved to a separate window (for example, onto a second monitor)
+by dragging its tab away from its current panel and releasing it outside the
 workbench boundary. Once detached, the view can be maximized to fill the full
 screen, giving the diagram the maximum possible space while leaving the profile
 editor and the rest of the workbench fully accessible on the primary monitor.
@@ -124,7 +124,7 @@ Click on the image to present a larger view.
 [![image](../images/ProfileRealTimePreview-DualMonitors.gif)](../images/ProfileRealTimePreview-DualMonitors.gif "Detaching and maximizing the Profile Real-Time Preview within a dual monitor configuration")
 
 The next set of screenshots are used for illustration purposes and show a profile
-that contains a wide range of profile errors — each numbered 1 through 8 for reference. 
+that contains a wide range of profile errors, each numbered 1 through 8 for reference. 
 
 Click on the image to present a larger view.
 
@@ -142,7 +142,7 @@ style.
 ## RDFS Profile Definition Style
 
 An RDFS-style profile definition targets RDF Schema artifact generation
-conforming to **IEC 61970-501:2016** — *Energy management system application
+conforming to **IEC 61970-501:2016**, *Energy management system application
 program interface (EMS-API) – Part 501: Common Information Model Resource
 Description Framework (CIM RDF) schema*. When the diagram style is set to
 `puml-rdfs-t2b` or `puml-rdfs-l2r`, the Profile Real-Time Preview renders a PlantUML
@@ -155,7 +155,7 @@ below in sequence, using a deliberately constructed profile that contains each
 type of error so they can be illustrated and resolved one by one.
 
 
-### Issue 1 — Abstract Class with No Concrete Child Classes
+### Issue 1: Abstract Class with No Concrete Child Classes
 
 #### What the diagram shows
 
@@ -174,13 +174,13 @@ Preview flags it with two distinct visual cues:
   declared as 'concrete'."*
 
 The note callout is particularly useful in large profiles where it may not be
-immediately obvious why a class has been flagged — it tells you exactly what
+immediately obvious why a class has been flagged, telling you exactly what
 the problem is and what your options are to resolve it, without requiring you
 to inspect the profile definition manually.
 
 #### What it means
 
-An abstract class in an RDFS profile definition exists to be specialized — it
+An abstract class in an RDFS profile definition exists to be specialized, and it
 is expected to have at least one concrete subclass through which instances are
 actually typed. A profile that includes an abstract class with no concrete
 child classes creates an ambiguity in the generated RDFS artifact: the class is
@@ -191,20 +191,20 @@ error because the resulting artifact would be structurally incomplete.
 
 There are three ways to address this error, as the note callout itself states:
 
-1. **Declare the class as concrete** — if the class is appropriate to include
+1. **Declare the class as concrete.** If the class is appropriate to include
    directly in the profile without requiring a subclass, check the **"Make
    this class concrete"** checkbox on the class's **Restriction** tab in the
    profile editor.
-2. **Add a concrete subclass** — if a suitable subclass exists in the CIM
+2. **Add a concrete subclass.** If a suitable subclass exists in the CIM
    model, add it to the profile and declare it as concrete. This is the
    preferred resolution when the intent is to preserve the abstract nature of
    the parent class.
-3. **Remove the class from the profile** — if the class is not needed, remove
+3. **Remove the class from the profile.** If the class is not needed, remove
    it from the profile entirely via the **"Add/Remove"** tab.
 
 In the example shown here, `Terminal` has no subclasses in the CIM model, so
 option 2 is not available. The fix applied in the animated GIF below is
-option 1 — navigating to `Terminal` via the profile editor's **Restriction**
+option 1, navigating to `Terminal` via the profile editor's **Restriction**
 tab and checking **"Make this class concrete"**. 
 
 Click on the image to present a larger view.
@@ -214,12 +214,12 @@ Click on the image to present a larger view.
 #### Result
 
 After saving the profile the diagram refreshes automatically. Navigating to
-`Terminal` in the updated diagram confirms the error has been resolved — the
+`Terminal` in the updated diagram confirms the error has been resolved. The
 note callout is no longer present and `Terminal` now appears rendered in the
 standard **yellow** convention for concrete classes.
 
 
-### Issue 2 — Attribute Type Not Selected in the Profile Definition
+### Issue 2: Attribute Type Not Selected in the Profile Definition
 
 #### What the diagram shows
 
@@ -234,8 +234,8 @@ association from `Measurement` to the `UnitSymbol` class.
 
 #### What it means
 
-In the CIM, enumeration and compound types never participate in associations —
-they are only ever used as the declared type of an attribute. When **CIMTool**
+In the CIM, enumeration and compound types never participate in associations,
+and are only ever used as the declared type of an attribute. When **CIMTool**
 renders a red association between a class and an enumeration or compound
 type, it is signalling that the attribute exists in the profile but its type
 has not been properly included in the attribute's definition. The diagram is
@@ -266,11 +266,11 @@ Click on the image to present a larger view.
 After saving the profile the diagram refreshes automatically. The red
 association from `Measurement` to `UnitSymbol` is gone. The `unitSymbol`
 attribute now appears correctly as a typed property within the `Measurement`
-class — rendered as `unitSymbol: UnitSymbol [1]` — which is the expected
+class, rendered as `unitSymbol: UnitSymbol [1]`, which is the expected
 representation for a properly defined attribute whose type is an enumeration.
 
 
-### Issue 3 — Association Target End Not Included in the Profile Definition
+### Issue 3: Association Target End Not Included in the Profile Definition
 
 #### What the diagram shows
 
@@ -283,11 +283,11 @@ for that relationship, the Profile Real-Time Preview renders the association in
 Note that this error looks visually similar to Issue 2, but its cause is
 fundamentally different. In Issue 2 the red arc indicated a missing declared
 type on an attribute. Here, it is representing the **association** between
-two classes — `Measurement` and `PowerSystemResource` — and that the `PowerSystemResource`
+two classes, `Measurement` and `PowerSystemResource`, and that the `PowerSystemResource`
 class is already included in the profile, as confirmed by its presence in the
 **Outline** panel's alphabetical list of currently profiled classes. Because
-`PowerSystemResource` is profiled, it appears in the diagram in grey — the
-convention used for abstract classes — rather than pink/red, which would
+`PowerSystemResource` is profiled, it appears in the diagram in grey, the
+convention used for abstract classes, rather than pink/red, which would
 indicate a class that is entirely absent from the profile. The issue is not
 that the class is missing; it is that the **association's target end has not
 been included in the profile definition** for that relationship.
@@ -295,7 +295,7 @@ been included in the profile definition** for that relationship.
 #### What it means
 
 In a CIM profile definition, adding an association to the profile is not
-sufficient on its own — the target end of the association must also be
+sufficient on its own, since the target end of the association must also be
 explicitly included in the association's definition within the profile. Until
 that step is completed, **CIMTool** cannot fully resolve the relationship and
 renders the association in red to make the incomplete definition visible.
@@ -322,13 +322,13 @@ Click on the image to present a larger view.
 #### Result
 
 After saving the profile the diagram refreshes automatically. The red association from
-`Measurement` to `PowerSystemResource` is replaced by a **grey association** —
+`Measurement` to `PowerSystemResource` is replaced by a **grey association**,
 confirming that the association is now fully and correctly defined within the
 profile, with `PowerSystemResource` participating as a properly profiled
 abstract class on the target end of the relationship.
 
 
-### Issues 4 & 5 — Enumeration Type Not Yet Referenced by Any Attribute in the Profile
+### Issues 4 & 5: Enumeration Type Not Yet Referenced by Any Attribute in the Profile
 
 #### What the diagram shows
 
@@ -352,7 +352,7 @@ whose declared type is the `UnitMultiplier` enumeration. Both attributes have
 been added to the profile, but neither has had `UnitMultiplier` selected in the
 attribute's definition on the **"Add/Remove"** tab. Until at least one of them
 does so, `UnitMultiplier` remains entirely unresolved and is rendered fully
-pink/red. The two red arcs — one from `Measurement` and one from `Control` —
+pink/red. The two red arcs, one from `Measurement` and one from `Control`,
 each represent the same underlying problem on their respective attribute
 definitions.
 
@@ -362,7 +362,7 @@ Each attribute definition must be completed independently, following the same
 drill-down pattern as Issue 2. Issue 4 addresses `Measurement`'s
 `unitMultiplier` attribute first; Issue 5 then addresses `Control`'s.
 
-**Issue 4 — Measurement → unitMultiplier:**
+**Issue 4: Measurement → unitMultiplier:**
 
 1. On the **"Add/Remove"** tab, double-click `Measurement` to drill into its
    member list.
@@ -374,12 +374,12 @@ drill-down pattern as Issue 2. Issue 4 addresses `Measurement`'s
 After saving, the diagram refreshes. The red arc from `Measurement` to
 `UnitMultiplier` disappears and `unitMultiplier: UnitMultiplier [1]` now
 appears as a correctly typed property within the `Measurement` class.
-Critically, `UnitMultiplier` itself is now rendered in **green** — because
+Critically, `UnitMultiplier` itself is now rendered in **green**, because
 its membership in the profile has been established through `Measurement`'s
 attribute definition. The red arc from `Control` remains, but `UnitMultiplier`
 is no longer entirely unresolved.
 
-**Issue 5 — Control → unitMultiplier:**
+**Issue 5: Control → unitMultiplier:**
 
 5. Double-click `Control` on the **"Add/Remove"** tab to drill into its member
    list.
@@ -395,13 +395,13 @@ Click on the image to present a larger view.
 #### Result
 
 After the second save the diagram refreshes fully. Both red arcs are gone.
-`UnitMultiplier` no longer appears as a standalone class in the diagram —
-it is now correctly resolved as the declared type of the `unitMultiplier`
+`UnitMultiplier` no longer appears as a standalone class in the diagram,
+and is now correctly resolved as the declared type of the `unitMultiplier`
 attribute on both `Measurement` and `Control`, appearing as a typed property
 within each class respectively.
 
 
-### Issue 6 — Abstract Class with Fields Defined
+### Issue 6: Abstract Class with Fields Defined
 
 #### What the diagram shows
 
@@ -421,18 +421,18 @@ RDFS profile definition.
 In an RDFS profile definition, an abstract class can serve one of two valid
 roles:
 
-- **An external reference** — the class is included in the profile not because
+- **An external reference**: the class is included in the profile not because
   instances of it will be fully described within the data exchange, but because
   other classes need to reference instances of it that exist outside the scope
   of the exchange. The class acts as a typed pointer to an external resource.
-  For this role, the class should have **no fields defined** — fields would
+  For this role, the class should have **no fields defined**, since fields would
   never be populated in practice and their presence is misleading.
-- **A parent class to be specialized** — the class exists to be subclassed by
+- **A parent class to be specialized**: the class exists to be subclassed by
   one or more concrete child classes that inherit its structure. For this role,
   having fields is appropriate, but the class itself must not be directly
-  instantiable — it must remain abstract.
+  instantiable and must remain abstract.
 
-`Asset` is currently abstract with fields defined — it cannot serve as a clean
+`Asset` is currently abstract with fields defined, so it cannot serve as a clean
 external reference (because it has fields) and it cannot serve as a parent class
 to be specialized (because it has no concrete child classes in the profile).
 **CIMTool** flags this as a definition error because the intent is ambiguous and
@@ -443,16 +443,16 @@ must be resolved explicitly.
 There are two valid resolutions, depending on the intended role of `Asset` in
 the profile:
 
-1. **If `Asset` is intended as an external reference** — remove the fields from
+1. **If `Asset` is intended as an external reference**: remove the fields from
    its profile definition via the **"Add/Remove"** tab. Navigate to `Asset` in
    the member list, select all three fields (`critical`, `initialCondition`,
    `initialLossOfLife`) in the selected column and remove them. `Asset` will
    then be a clean abstract class with no fields, appropriate for use as an
    external reference pointer.
-2. **If `Asset` is intended to carry data** — declare it concrete via the
+2. **If `Asset` is intended to carry data**: declare it concrete via the
    **Restriction** tab by checking **"Make this class concrete"**.
 
-In the example shown here, the fix applied is option 1 — removing the three
+In the example shown here, the fix applied is option 1, removing the three
 fields from `Asset`'s profile definition, leaving it as a clean abstract class
 suited to its role as an external reference.
 
@@ -463,12 +463,12 @@ Click on the image to present a larger view.
 #### Result
 
 After saving the profile the diagram refreshes automatically. `Asset` now
-renders in **grey** — the convention for abstract classes — with no fields
+renders in **grey**, the convention for abstract classes, with no fields
 and no note callout. Its role as an external reference is now correctly
 expressed in the profile definition.
 
 
-### Issue 7 — Concrete Class with No Fields or Associations
+### Issue 7: Concrete Class with No Fields or Associations
 
 #### What the diagram shows
 
@@ -481,17 +481,17 @@ class that does."*
 
 This is in some ways the mirror image of Issue 6. Where Issue 6 showed an
 abstract class that had fields it should not have, Issue 7 shows a concrete
-class that has **no** fields or associations — and no parent class from which
+class that has **no** fields or associations, and no parent class from which
 to inherit them.
 
 #### What it means
 
-A concrete class in an RDFS profile definition is expected to carry substance —
+A concrete class in an RDFS profile definition is expected to carry substance:
 either its own fields or associations, or those inherited from a parent class.
 A concrete class with none of these has no meaningful content to contribute to a
 data exchange. As noted in Issue 6, a class that is intended purely as an
 external reference (a typed pointer to an object existing outside the scope of
-the exchange) should have no fields — but for that role, **abstract** is the
+the exchange) should have no fields, but for that role, **abstract** is the
 correct declaration, not concrete.
 
 **CIMTool** flags `MeasurementValueSource` because it is concrete, has no
@@ -504,19 +504,19 @@ parent class (if it is meant to carry data).
 
 There are three valid resolutions, as the note callout itself states:
 
-1. **Declare the class as abstract** — if `MeasurementValueSource` is intended
+1. **Declare the class as abstract.** If `MeasurementValueSource` is intended
    purely as an external reference (a typed pointer to an object existing outside
    the scope of the exchange), uncheck the **"Make this class concrete"** checkbox
    on the **Restriction** tab. A clean abstract class with no fields is the
    correct expression of that role.
-2. **Add a parent class** — navigate to `MeasurementValueSource` on the
+2. **Add a parent class.** Navigate to `MeasurementValueSource` on the
    **Restriction** tab and select a super class. This allows the class to remain
    concrete while inheriting fields from a parent, satisfying the requirement
    that a concrete class must carry substance. In the example shown here, this
-   is the fix applied — `IdentifiedObject` is selected as the super class,
+   is the fix applied, with `IdentifiedObject` selected as the super class,
    providing inherited fields without requiring any direct field definitions on
    `MeasurementValueSource` itself.
-3. **Add fields or associations directly** — navigate to `MeasurementValueSource`
+3. **Add fields or associations directly.** Navigate to `MeasurementValueSource`
    on the **"Add/Remove"** tab and add one or more fields or associations to its
    profile definition.
 
@@ -528,12 +528,12 @@ Click on the image to present a larger view.
 
 After saving the profile the diagram refreshes automatically.
 `MeasurementValueSource` now renders as a **yellow** concrete class with no
-note callout — the pink/red coloring is gone and the error is resolved. By
+note callout. The pink/red coloring is gone and the error is resolved. By
 inheriting from `IdentifiedObject`, it now has a parent class that provides
 the substance required of a concrete class in an RDFS profile definition.
 
 
-### Issue 8 — Isolated Abstract Class with No Parent, Child, or Associations
+### Issue 8: Isolated Abstract Class with No Parent, Child, or Associations
 
 #### What the diagram shows
 
@@ -552,14 +552,14 @@ connecting it to any other class in the profile.
 An abstract class exists to be specialized or referenced through its
 relationships. If a class has no parent to inherit from, no child classes to
 specialize it, and no associations connecting it to anything else in the
-profile, it is completely isolated — there is no path through which it could
+profile, it is completely isolated, with no path through which it could
 ever be instantiated or referenced in a data exchange. In this state, the class
 serves no purpose in the profile regardless of what fields it carries.
 
 Declaring it **concrete** resolves this because it changes the class's role
 entirely: instead of requiring specialization or indirect reference, it becomes
 directly instantiable. Instances of a concrete class can be included in a data
-exchange as standalone objects — a legitimate and meaningful role even without
+exchange as standalone objects, a legitimate and meaningful role even without
 parent, child, or association relationships. The presence of fields
 (`direction` and `geoInfoReference`) confirms that `Location` is intended to
 carry data, making concrete the appropriate declaration.
@@ -568,14 +568,14 @@ carry data, making concrete the appropriate declaration.
 
 There are two valid resolutions, as the note callout itself states:
 
-1. **Declare the class as concrete** — navigate to `Location` on the
+1. **Declare the class as concrete.** Navigate to `Location` on the
    **Restriction** tab and check the **"Make this class concrete"** checkbox.
    Since `Location` already has fields defined (`direction` and
-   `geoInfoReference`), declaring it concrete is sufficient — it gains a
+   `geoInfoReference`), declaring it concrete is sufficient, and it gains a
    legitimate role as a directly instantiable class whose instances can
    participate in a data exchange. No further changes to the profile definition
    are needed. This is the fix applied in the example shown here.
-2. **Remove the class from the profile** — if `Location` is not needed, remove
+2. **Remove the class from the profile.** If `Location` is not needed, remove
    it from the profile entirely via the **"Add/Remove"** tab.
 
 Click on the image to present a larger view.

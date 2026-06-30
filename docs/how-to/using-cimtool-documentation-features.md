@@ -4,7 +4,7 @@
 
 These features address a need that profile authors have long had: producing human-readable specifications that stay in step with the profile itself. Rather than maintaining documentation separately and by hand, you can write custom content within **CIMTool** and author expanded documentation at the level of individual profile elements. **CIMTool** builders aid in generating modularized documentation components that, in turn, can then be included in master documents.
 
-All of this is built on [AsciiDoc](https://asciidoc.org/), a concise, plain-text authoring format designed for technical documentation. AsciiDoc content is easy to write, friendly to version control, and can be published to multiple output formats. The documentation **CIMTool** generates from a profile is AsciiDoc, the content you author within **CIMTool** is AsciiDoc, and the bundled editor renders AsciiDoc previews — so establishing a working familiarity with the AsciiDoc format is helpful. This page closes with an [AsciiDoc Syntax Quick Reference](#asciidoc-syntax-quick-reference) to get you started.
+All of this is built on [AsciiDoc](https://asciidoc.org/), a concise, plain-text authoring format designed for technical documentation. AsciiDoc content is easy to write, friendly to version control, and can be published to multiple output formats. The documentation **CIMTool** generates from a profile is AsciiDoc, the content you author within **CIMTool** is AsciiDoc, and the bundled editor renders AsciiDoc previews, so establishing a working familiarity with the AsciiDoc format is helpful. This page closes with an [AsciiDoc Syntax Quick Reference](#asciidoc-syntax-quick-reference) to get you started.
 
 What follows is a walk through where documentation lives in a project, how to author it at the various levels in a profile, what types of AsciiDoc builders currently ship with **CIMTool** and the type of documentation they produce, and finally, using the new publicly available [CGMES-CIM17](https://github.com/cimug-org/CGMES-CIM17) sample project as a working example, how to assemble a complete master document.
 
@@ -25,34 +25,34 @@ The five folders, shown in the **Project Explorer** above are:
 | **Incremental** | For CIM XML incremental files in RDF format, with a `.xml` extension. Used when validating CIM/XML instance models in CIMTool. |
 | **Instances** | For CIM XML instance files in RDF format, with a `.xml` extension. Used when validating CIM/XML differences models in CIMTool.|
 | **Profiles** | For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (`.owl`); the XSD, JSON Schema, RDFS, and other artifacts found in this folder are those generated from the `.owl` definition by **CIMTool**'s builders. Log files identifying errors are written as `.log` text files, and depending on how **CIMTool** is used, HTML, RTF, XML, Java, and SQL files, among other types, may also be hosted here. |
-| **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in Sparx EA; or **Enterprise Architect** project files used directly by **CIMTool** — both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeax`). |
+| **Schema** | Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (`.xmi`), generated from the UML model in Sparx EA; or **Enterprise Architect** project files used directly by **CIMTool**, both 32-bit EA15 (`.eap`, `.eapx`) and 64-bit EA16/EA17 (`.qea`, `.qeax`). |
 
 The **Documentation** and **Profiles** folders are the two that matter for the purposes of documentation generation: the documentation builders write their generated AsciiDoc output into **Profiles** alongside the OWL profile definitions, while the **Documentation** folder is where you assemble generated content together with end-user written content into a finished document. The remaining sections look at each of these in turn.
 
 
 ## Inside the Documentation Folder
 
-The **Documentation** folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically — you do not need to create them by hand. Within the CGMES-CIM17 sample project, each subfolder also contains a small `readme.txt` placeholder describing what belongs within the folder.
+The **Documentation** folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically, so you do not need to create them by hand. Within the CGMES-CIM17 sample project, each subfolder also contains a small `readme.txt` placeholder describing what belongs within the folder.
 
 | Subfolder | Purpose |
 |---|---|
-| **Images** | Image assets referenced from your documents — diagrams, screenshots, logos, and the like. |
+| **Images** | Image assets referenced from your documents (diagrams, screenshots, logos, and the like). |
 | **Includes** | Modular AsciiDoc content files (`.adoc`) intended to be pulled into a master document. |
 | **Styles** | Custom CSS stylesheets (`.css`) that control the appearance of HTML output. |
 | **Themes** | Custom theme files (`.yml`) that control the appearance of PDF output. |
 
-The master document itself — the top-level `.adoc` file that aggregates modularized documentation components together — lives at the root of the **Documentation** folder, alongside these four subfolders. Building a master document is covered in detail in [Building a Master Document](#building-a-master-document).
+The master document itself, the top-level `.adoc` file that aggregates modularized documentation components together, lives at the root of the **Documentation** folder, alongside these four subfolders. Building a master document is covered in detail in [Building a Master Document](#building-a-master-document).
 
 !!! tip
 
-    For larger documentation efforts, it is common to organize the **Includes** folder further by creating subfolders beneath it, grouping related modular content into logical units. **CIMTool** places no restrictions on this — the structure beneath **Includes** is yours to arrange in a manner that best meets your documentation needs.
+    For larger documentation efforts, it is common to organize the **Includes** folder further by creating subfolders beneath it, grouping related modular content into logical units. **CIMTool** places no restrictions on this, and the structure beneath **Includes** is yours to arrange in a manner that best meets your documentation needs.
 
 The [CGMES-CIM17](https://github.com/cimug-org/CGMES-CIM17) sample project shows this layout in practice. Its **Documentation** folder holds a master document, `CGMES-Documentation.adoc`, at the root; a set of modular narrative files under **Includes** (an introduction, a CGMES overview, profile-group introductions, a conclusion, and more); a custom HTML stylesheet under **Styles**; and a custom PDF theme under **Themes**.
 
 
 ## The Asciidoctor Eclipse Editor
 
-Authoring and previewing AsciiDoc content within **CIMTool** is handled by the Asciidoctor Eclipse editor, which is bundled with **CIMTool** 2.3.0 out of the box. No separate installation is required — when you open an `.adoc` file in the workbench, the editor is automatically launched for the selected file.
+Authoring and previewing AsciiDoc content within **CIMTool** is handled by the Asciidoctor Eclipse editor, which is bundled with **CIMTool** 2.3.0 out of the box. No separate installation is required. When you open an `.adoc` file in the workbench, the editor is automatically launched for the selected file.
 
 The editor provides a live, side-by-side preview: your AsciiDoc source on one side and the rendered result on the other. The preview reflects the same AsciiDoc processing **CIMTool** uses elsewhere, so what you see in the editor is a faithful representation of the final output.
 
@@ -111,12 +111,12 @@ Click on the image to present a larger view.
 
 ### Configuration Files
 
-When you first open an `.adoc` file, the editor automatically generates an `.asciidoctorconfig.adoc` configuration file. This file establishes the rendering context for documents in its directory and is created and maintained by the editor — you should leave it in place.
+When you first open an `.adoc` file, the editor automatically generates an `.asciidoctorconfig.adoc` configuration file. This file establishes the rendering context for documents in its directory and is created and maintained by the editor, so you should leave it in place.
 
 
 ## Adding Documentation to Profile Elements
 
-Beyond authoring standalone narrative content, **CIMTool** lets you attach documentation directly to individual elements of a profile — a class, an enumeration, an attribute, an association role end, and so on. This element-level documentation is carried with the profile and is emitted by the documentation builders into the generated output for that element, so it travels with the profile rather than living in a separate document.
+Beyond authoring standalone narrative content, **CIMTool** lets you attach documentation directly to individual elements of a profile: a class, an enumeration, an attribute, an association role end, and so on. This element-level documentation is carried with the profile and is emitted by the documentation builders into the generated output for that element, so it travels with the profile rather than living in a separate document.
 
 Two tabs in the profile editor contribute this documentation: the **"Description"** tab, which has been part of **CIMTool** since its inception, and the **"Documentation"** tab, introduced in **CIMTool** 2.3.0. Both accept AsciiDoc, so the formatting and styling described in the [AsciiDoc Syntax Quick Reference](#asciidoc-syntax-quick-reference) applies to the text you enter in either one.
 
@@ -124,8 +124,8 @@ Two tabs in the profile editor contribute this documentation: the **"Description
 
 The **"Description"** tab presents two fields for a selected element:
 
-- **Schema Description** — the normative description carried in the source CIM schema (the UML model in the `.qea`, `.eap`, `.xmi`, etc. file). This text is read-only by design: it reflects the definition as it exists in the model and cannot be edited in **CIMTool**.
-- **Profile Description** — a field for additional notes you supply. AsciiDoc syntax is honored here, so you can format and style the text.
+- **Schema Description**: the normative description carried in the source CIM schema (the UML model in the `.qea`, `.eap`, `.xmi`, etc. file). This text is read-only by design: it reflects the definition as it exists in the model and cannot be edited in **CIMTool**.
+- **Profile Description**: a field for additional notes you supply. AsciiDoc syntax is honored here, so you can format and style the text.
 
 Click on the image to present a larger view.
 
@@ -135,24 +135,24 @@ Click on the image to present a larger view.
 
 The **"Documentation"** tab, new in **CIMTool** 2.3.0, provides a dedicated, full-page area for authoring element documentation in AsciiDoc.
 
-The **"Documentation"** tab was introduced to give authors a substantially larger editing and viewing area than the **"Description"** tab's field affords. A planned future enhancement will embed richer AsciiDoc editing and live preview directly within the **"Documentation"** tab itself — a further reason to favor it for anything beyond a brief note.
+The **"Documentation"** tab was introduced to give authors a substantially larger editing and viewing area than the **"Description"** tab's field affords. A planned future enhancement will embed richer AsciiDoc editing and live preview directly within the **"Documentation"** tab itself, a further reason to favor it for anything beyond a brief note.
 
 ### Where Your Content Appears
 
-The normative **Schema Description** is non-editable, but you can always supplement or clarify it using the two editable fields above — the **"Description"** tab's Profile Description and the **"Documentation"** tab. You may use either, or both; they are complementary. The one thing to be aware of is where each one lands in the generated output, which depends on the kind of documentation builder you use:
+The normative **Schema Description** is non-editable, but you can always supplement or clarify it using the two editable fields above, the **"Description"** tab's Profile Description and the **"Documentation"** tab. You may use either, or both; they are complementary. The one thing to be aware of is where each one lands in the generated output, which depends on the kind of documentation builder you use:
 
 - The **Schema Description** and the **Profile Description** always appear together in the element's **description**, with the normative Schema Description first.
-- The **"Documentation"** tab content appears in the **description** as well for the standard builders — but for a *mappings* builder it is placed instead in a separate **mapping** column, making the **"Documentation"** tab the natural place to record how an element maps to another information model or third-party system. The builders and the mapping column are covered in [The AsciiDoc Builders](#the-asciidoc-builders).
+- The **"Documentation"** tab content appears in the **description** as well for the standard builders, but for a *mappings* builder it is placed instead in a separate **mapping** column, making the **"Documentation"** tab the natural place to record how an element maps to another information model or third-party system. The builders and the mapping column are covered in [The AsciiDoc Builders](#the-asciidoc-builders).
 
 ### Documentation in the Generated Output
 
-The following example shows attribute-level documentation flowing through to the generated output. Documentation authored on the **"Documentation"** tab for the `negativeR12` attribute appears in the generated AsciiDoc source and is rendered, in the preview, into the description cell for that attribute — demonstrating the full path from authored text to final output.
+The following example shows attribute-level documentation flowing through to the generated output. Documentation authored on the **"Documentation"** tab for the `negativeR12` attribute appears in the generated AsciiDoc source and is rendered, in the preview, into the description cell for that attribute, demonstrating the full path from authored text to final output.
 
 Click on the image to present a larger view.
 
 [![image](../images/Documentation-AttributeLevel.png)](../images/Documentation-AttributeLevel.png "Documentation authored on the Documentation tab for the negativeR12 attribute, shown in the generated AsciiDoc source and in the rendered preview's description cell")
 
-Because both tabs accept arbitrary AsciiDoc, element documentation is not limited to plain prose. You can introduce your own headings, tables, lists, and other structures, and the documentation builders fold them into the generated document. The example below adds class-level documentation to the abstract class `ACDCTerminal`: a custom sub-section heading and an inlined AsciiDoc table authored on the **"Documentation"** tab. In the generated output, the sub-section appears as a numbered subsection beneath the class — and in the document's table of contents — and the table renders as a titled, formatted table.
+Because both tabs accept arbitrary AsciiDoc, element documentation is not limited to plain prose. You can introduce your own headings, tables, lists, and other structures, and the documentation builders fold them into the generated document. The example below adds class-level documentation to the abstract class `ACDCTerminal`: a custom sub-section heading and an inlined AsciiDoc table authored on the **"Documentation"** tab. In the generated output, the sub-section appears as a numbered subsection beneath the class (and in the document's table of contents), and the table renders as a titled, formatted table.
 
 Click on the image to present a larger view.
 
@@ -183,7 +183,7 @@ Within each family, the four builders differ by the schema convention the docume
 
 ### Choosing Between Article and Inline
 
-Use an **article** builder when you want a self-contained document for a single profile — a standalone specification that can be rendered and distributed on its own. Use an **inline** builder when the profile's documentation is one piece of a larger work — for example, a master document that brings together several profiles along with hand-written narrative. Because an inline fragment has no document title and starts at a section heading, the master document controls the overall structure and the fragment falls into place beneath it.
+Use an **article** builder when you want a self-contained document for a single profile, a standalone specification that can be rendered and distributed on its own. Use an **inline** builder when the profile's documentation is one piece of a larger work, such as a master document that brings together several profiles along with hand-written narrative. Because an inline fragment has no document title and starts at a section heading, the master document controls the overall structure and the fragment falls into place beneath it.
 
 The element-level documentation described in [Adding Documentation to Profile Elements](#adding-documentation-to-profile-elements) is emitted by these builders into the generated output, regardless of which family you choose.
 
@@ -193,7 +193,7 @@ The element-level documentation described in [Adding Documentation to Profile El
 
 ### Annotating Extension Members with Namespace Prefixes
 
-When a profile draws on attributes and associations from extension namespaces — for example, the European (ENTSO-E) extensions to the CIM — the AsciiDoc builders can annotate those members in the generated documentation with a short namespace **prefix**, making it immediately clear which namespace each extension member belongs to. In the example below, the inherited members `eu:energyIdentCodeEic` and `eu:shortName` carry the `eu:` prefix, distinguishing them from the normative CIM members (`mRID`, `description`, `name`), which have none.
+When a profile draws on attributes and associations from extension namespaces, such as the European (ENTSO-E) extensions to the CIM, the AsciiDoc builders can annotate those members in the generated documentation with a short namespace **prefix**, making it immediately clear which namespace each extension member belongs to. In the example below, the inherited members `eu:energyIdentCodeEic` and `eu:shortName` carry the `eu:` prefix, distinguishing them from the normative CIM members (`mRID`, `description`, `name`), which have none.
 
 Click on the image to present a larger view.
 
@@ -213,16 +213,16 @@ With this mapping in effect, any member resolved to the `http://iec.ch/TC57/CIM1
 
 !!! note
 
-    The `.namespace-prefixes` file is independent of the stereotype-to-namespace `.namespaces` file — it does not require a `.namespaces` file to be present. It applies regardless of how the model's namespaces were defined, whether through a `.namespaces` file or through `baseuri` tagged values (see [CIMTool Support for Extension Namespaces](cimtool-support-for-extension-namespaces.md) for both approaches). It is, however, honored only when the project's schema is an **Enterprise Architect** project file (`.eap`, `.eapx`, `.qea`, `.qeax`); it has no effect when the schema is imported in XMI format (`.xmi` or `.owl`).
+    The `.namespace-prefixes` file is independent of the stereotype-to-namespace `.namespaces` file and does not require a `.namespaces` file to be present. It applies regardless of how the model's namespaces were defined, whether through a `.namespaces` file or through `baseuri` tagged values (see [CIMTool Support for Extension Namespaces](cimtool-support-for-extension-namespaces.md) for both approaches). It is, however, honored only when the project's schema is an **Enterprise Architect** project file (`.eap`, `.eapx`, `.qea`, `.qeax`); it has no effect when the schema is imported in XMI format (`.xmi` or `.owl`).
 
 !!! note
 
-    The `.namespace-prefixes` file is optional and is used only by the AsciiDoc builders to annotate generated documentation; it does not affect the profile definition itself. Both namespace prefixes and namespace URIs are case-sensitive (per the W3C *Namespaces in XML* specification) and are compared character by character — `http://www.example.org/wine` and `http://www.Example.org/wine` are distinct namespaces — so ensure each URI in the file exactly matches the namespace used in your model.
+    The `.namespace-prefixes` file is optional and is used only by the AsciiDoc builders to annotate generated documentation; it does not affect the profile definition itself. Both namespace prefixes and namespace URIs are case-sensitive (per the W3C *Namespaces in XML* specification) and are compared character by character (`http://www.example.org/wine` and `http://www.Example.org/wine` are distinct namespaces), so ensure each URI in the file exactly matches the namespace used in your model.
 
 
 ## Building a Master Document
 
-A *master document* is a top-level AsciiDoc file that assembles a complete, publishable document from smaller pieces — hand-written narrative, generated profile documentation, diagrams, and supporting assets. It lives at the root of the **Documentation** folder and uses AsciiDoc's `include::` directive to pull in content from elsewhere in the project.
+A *master document* is a top-level AsciiDoc file that assembles a complete, publishable document from smaller pieces: hand-written narrative, generated profile documentation, diagrams, and supporting assets. It lives at the root of the **Documentation** folder and uses AsciiDoc's `include::` directive to pull in content from elsewhere in the project.
 
 The publicly available [CGMES-CIM17](https://github.com/cimug-org/CGMES-CIM17) sample project is a complete, worked example of this approach, and the rest of this section walks through how its master document, `CGMES-Documentation.adoc`, is put together. It is a recommended starting point for anyone looking to build their own modularized documentation.
 
@@ -244,14 +244,14 @@ Two things are worth highlighting here. First, `:doctype: book` selects the Asci
 
 !!! note
 
-    Within a **CIMTool** project, the `{docdir}` attribute always resolves to the **project root**. The Asciidoctor editor runs with the project root as its base directory, so every path attribute above is written relative to that root — `{docdir}/Profiles`, `{docdir}/Documentation/Includes`, and so on — regardless of the fact that the master document itself lives in the **Documentation** folder. A leading `./` resolves from the same project root, so the `./Profiles/...` paths you will see in **CIMTool**'s generated artifacts and the `{docdir}/Profiles/...` paths you write in a master document point to the same place; `{docdir}/` is simply the explicit, self-documenting form recommended when authoring. Writing your own master-document paths this way ensures they resolve correctly.
+    Within a **CIMTool** project, the `{docdir}` attribute always resolves to the **project root**. The Asciidoctor editor runs with the project root as its base directory, so every path attribute above is written relative to that root (`{docdir}/Profiles`, `{docdir}/Documentation/Includes`, and so on) regardless of the fact that the master document itself lives in the **Documentation** folder. A leading `./` resolves from the same project root, so the `./Profiles/...` paths you will see in **CIMTool**'s generated artifacts and the `{docdir}/Profiles/...` paths you write in a master document point to the same place; `{docdir}/` is simply the explicit, self-documenting form recommended when authoring. Writing your own master-document paths this way ensures they resolve correctly.
 
 ### Assembling the Content
 
 With the path attributes defined, the body of the master document is largely a sequence of `include::` directives that interleave two kinds of content:
 
-- **Hand-written narrative** from the **Includes** subfolder — introductions, overviews, and connecting prose — referenced via the `{includedir}` attribute.
-- **Generated profile documentation** from the **Profiles** folder — the `.inline-rdfs.adoc` fragments produced by the AsciiDoc builders — referenced via the `{profilesdir}` attribute.
+- **Hand-written narrative** from the **Includes** subfolder (introductions, overviews, and connecting prose) referenced via the `{includedir}` attribute.
+- **Generated profile documentation** from the **Profiles** folder, the `.inline-rdfs.adoc` fragments produced by the AsciiDoc builders, referenced via the `{profilesdir}` attribute.
 
 A simplified excerpt illustrates the pattern:
 
@@ -269,7 +269,7 @@ include::{profilesdir}/CGMES-Operation.inline-rdfs.adoc[]
 include::{includedir}/conclusion.adoc[]
 ```
 
-Because the included profile fragments are produced by *inline* builders they carry no document title of their own. However, they do generate their own section heading at the correct level — so they slot neatly beneath the master document's structure rather than competing with it. The narrative includes and the generated profile sections combine into a single, continuously document with appropriate page number automatically assigned across the document.
+Because the included profile fragments are produced by *inline* builders they carry no document title of their own. However, they do generate their own section heading at the correct level, so they slot neatly beneath the master document's structure rather than competing with it. The narrative includes and the generated profile sections combine into a single, continuously document with appropriate page number automatically assigned across the document.
 
 ### The Rendered Result
 
@@ -281,7 +281,7 @@ Click on the image to present a larger view.
 
 [![image](../images/MasterDocument-HTML.png)](../images/MasterDocument-HTML.png "The assembled CGMES Profiles Guide rendered to HTML, showing the table of contents, a generated profile section, and an embedded PlantUML class diagram")
 
-The same document rendered to PDF produces a paginated, book-style specification — here, a multi-hundred-page guide assembled entirely from the project's narrative includes and generated profile documentation:
+The same document rendered to PDF produces a paginated, book-style specification, in this case a multi-hundred-page guide assembled entirely from the project's narrative includes and generated profile documentation:
 
 Click on the image to present a larger view.
 
@@ -290,7 +290,7 @@ Click on the image to present a larger view.
 
 ## AsciiDoc Syntax Quick Reference
 
-This quick reference covers the AsciiDoc syntax you are most likely to use when authoring **CIMTool** documentation — in the **"Description"** and **"Documentation"** tabs, in **Includes** content, and in a master document. Each entry shows a brief example and links to the corresponding page in the official Asciidoctor documentation, where the full set of options is described. A few entries marked *(CIMTool-specific)* describe patterns particular to **CIMTool** projects and are documented more fully here, as they have no direct equivalent in the general AsciiDoc reference.
+This quick reference covers the AsciiDoc syntax you are most likely to use when authoring **CIMTool** documentation: in the **"Description"** and **"Documentation"** tabs, in **Includes** content, and in a master document. Each entry shows a brief example and links to the corresponding page in the official Asciidoctor documentation, where the full set of options is described. A few entries marked *(CIMTool-specific)* describe patterns particular to **CIMTool** projects and are documented more fully here, as they have no direct equivalent in the general AsciiDoc reference.
 
 The examples below are a quick reference only. For the complete, authoritative AsciiDoc syntax documentation, see the [AsciiDoc Syntax Quick Reference](https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/) at the Asciidoctor documentation site, which this reference draws on.
 
@@ -354,7 +354,7 @@ The examples below are a quick reference only. For the complete, authoritative A
 | `. item` | Ordered list item (`..`, `...` for nesting) | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/lists/ordered/) |
 | `* [ ] item` / `* [*] item` | Checklist item, unchecked / checked | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/lists/checklist/) |
 | `term:: description` | Description (definition) list | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/lists/description/) |
-| `+` *(on its own line)* | List continuation — attach another block to a list item | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/lists/continuation/) |
+| `+` *(on its own line)* | List continuation: attach another block to a list item | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/lists/continuation/) |
 
 ### Links &amp; Cross References
 
@@ -384,7 +384,7 @@ The `plantuml::` block macro embeds a PlantUML diagram, rendering a `.puml` file
 plantuml::./Profiles/CGMES-ShortCircuit.rdfs-t2b.puml[format=svg, align=center]
 ```
 
-The line beginning with a dot (`.ShortCircuit Profile`) is the optional diagram title. The macro target is the `.puml` file to render — resolved from the project root, the same base used everywhere in a **CIMTool** project — and the bracketed attributes control the output: `format=svg` renders to SVG (sharp at any zoom), and `align=center` centers the diagram.
+The line beginning with a dot (`.ShortCircuit Profile`) is the optional diagram title. The macro target is the `.puml` file to render (resolved from the project root, the same base used everywhere in a **CIMTool** project), and the bracketed attributes control the output: `format=svg` renders to SVG (sharp at any zoom), and `align=center` centers the diagram.
 
 ### Include Directives
 
@@ -395,7 +395,7 @@ The line beginning with a dot (`.ShortCircuit Profile`) is the optional diagram 
 | `include::file.adoc[tag=name]` | Include only a tagged region | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/directives/include-tagged-regions/) |
 | `include::file.adoc[leveloffset=+1]` | Shift the included content's heading levels | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/directives/include-with-leveloffset/) |
 
-In a **CIMTool** master document — content you author yourself — `include::` directives are written project-root-relative using the `{docdir}` attribute (or path attributes derived from it, such as `{includedir}` and `{profilesdir}`). This is how a master document pulls in both hand-written narrative and generated profile documentation:
+In a **CIMTool** master document, content you author yourself, `include::` directives are written project-root-relative using the `{docdir}` attribute (or path attributes derived from it, such as `{includedir}` and `{profilesdir}`). This is how a master document pulls in both hand-written narrative and generated profile documentation:
 
 ```asciidoc
 include::{docdir}/Documentation/Includes/introduction.adoc[]
@@ -417,8 +417,8 @@ The first line includes a hand-written narrative file from the **Includes** subf
 | Syntax | Description | Reference |
 |---|---|---|
 | `` `+literal+` `` | Inline literal monospace (no substitutions) | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/text/literal-monospace/) |
-| `....` block | Literal block — text shown verbatim | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/verbatim/literal-blocks/) |
-| `----` block | Listing block — preformatted code or output | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/verbatim/listing-blocks/) |
+| `....` block | Literal block: text shown verbatim | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/verbatim/literal-blocks/) |
+| `----` block | Listing block: preformatted code or output | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/verbatim/listing-blocks/) |
 | `[source,xml]` + `----` block | Source block with language for syntax highlighting | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/verbatim/source-blocks/) |
 | `<1>` *(in code)* + `<1> note` | Callouts annotating lines of a code block | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/verbatim/callouts/) |
 
@@ -437,10 +437,10 @@ The first line includes a hand-written narrative file from the **Includes** subf
 
 | Syntax | Description | Reference |
 |---|---|---|
-| `****` block | Sidebar — set-apart auxiliary content | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/blocks/sidebars/) |
+| `****` block | Sidebar: set-apart auxiliary content | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/blocks/sidebars/) |
 | `====` block | Example block | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/blocks/example-blocks/) |
 | `____` block | Blockquote | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/blocks/blockquotes/) |
-| `--` block | Open block — a general-purpose container | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/blocks/open-blocks/) |
+| `--` block | Open block: a general-purpose container | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/blocks/open-blocks/) |
 
 ### Comments
 
@@ -469,5 +469,5 @@ These attributes, set in a master document's header, control the appearance of g
 | `--` | Replaced with an em dash (&mdash;) | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/) |
 | `->` `=>` `<-` `<=` | Replaced with arrows (&rarr;, &rArr;, &larr;, &lArr;) | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/) |
 | `\` *(before markup)* | Backslash escapes the character that follows | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/subs/prevent/) |
-| `+text+` | Inline passthrough — render text without substitutions | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/pass/pass-macro/) |
+| `+text+` | Inline passthrough: render text without substitutions | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/pass/pass-macro/) |
 | `&amp;#NNN;` | Named, decimal, or hexadecimal character reference | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/) |

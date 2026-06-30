@@ -10,7 +10,7 @@ to the 2.x line only.
 > unanticipated configuration and setup issues. Development and deployment of
 > CIMTool against this release has been fully tested and its plugin dependencies
 > verified out of the box. Questions may be posted to the
-> [CIMTool 2.x Release Line — Development Community Discussion Board](https://github.com/cimug-org/CIMTool/discussions/92).
+> [CIMTool 2.x Release Line: Development Community Discussion Board](https://github.com/cimug-org/CIMTool/discussions/92).
 
 
 ## Eclipse Installation
@@ -52,15 +52,15 @@ IDE, which may then be relocated to a preferred location on the file system.
 When a newer JDK has been installed in Step 2, it must be registered in the Eclipse
 IDE configuration before the CIMTool projects are imported.
 
-![Configure the installed JRE — step 1](readme-images/eclipse-configure-jre-step1.png)
+![Configure the installed JRE, step 1](readme-images/eclipse-configure-jre-step1.png)
 
-![Configure the installed JRE — step 2](readme-images/eclipse-configure-jre-step2.png)
+![Configure the installed JRE, step 2](readme-images/eclipse-configure-jre-step2.png)
 
-![Configure the installed JRE — step 3](readme-images/eclipse-configure-jre-step3.png)
+![Configure the installed JRE, step 3](readme-images/eclipse-configure-jre-step3.png)
 
-![Configure the installed JRE — step 4](readme-images/eclipse-configure-jre-step4.png)
+![Configure the installed JRE, step 4](readme-images/eclipse-configure-jre-step4.png)
 
-![Configure the installed JRE — step 5](readme-images/eclipse-configure-jre-step5.png)
+![Configure the installed JRE, step 5](readme-images/eclipse-configure-jre-step5.png)
 
 
 ## Installing Required Eclipse Plugins
@@ -193,9 +193,9 @@ Complete the installation by accepting the license and restarting, as described 
 > **Note:** **Verified versions** (installed and confirmed against the pinned Eclipse
 > 2023-06 / 4.28 platform):
 >
-> - *Asciidoctor Editor* — `3.1.2`
-> - *PlantUML Eclipse support* — `1.2.0.202511102215`
-> - *PlantUML Library* — `1.2025.10.202511041744`
+> - *Asciidoctor Editor*: `3.1.2`
+> - *PlantUML Eclipse support*: `1.2.0.202511102215`
+> - *PlantUML Library*: `1.2025.10.202511041744`
 >
 > Both update sites publish the most recent release of each plugin, and a later install
 > may retrieve a newer version that has not been verified against this platform. The
@@ -215,20 +215,20 @@ The final step is to clone a development branch of the CIMTool codebase from the
 projects into the workspace. Two approaches are available, and they differ in how the
 projects are brought into Eclipse:
 
-- **External Git client** — such as [GitHub Desktop](https://desktop.github.com/),
+- **External Git client**: such as [GitHub Desktop](https://desktop.github.com/),
   [TortoiseGit](https://tortoisegit.org/), or [Git for Windows](https://gitforwindows.org/)
-  (see the [full list](https://git-scm.com/downloads/guis)) — used to clone the
+  (see the [full list](https://git-scm.com/downloads/guis)), used to clone the
   repository to a local directory *outside* Eclipse. The cloned projects are then brought
   in with Eclipse's *Existing Projects into Workspace* import (described below).
 
-- **Eclipse's bundled Git tooling (EGit)** — used to clone *and* import the CIMTool
+- **Eclipse's bundled Git tooling (EGit)**: used to clone *and* import the CIMTool
   projects directly from the repository in a single operation, via `File` > `Import...` >
   `Git` > `Projects from Git`.
 
 ### Importing Existing Projects from an External Clone
 
 When the repository has been cloned with an external Git client, the projects are imported
-as **existing projects from the file system** — not as Git-managed projects retrieved
+as **existing projects from the file system**, not as Git-managed projects retrieved
 through Eclipse. Choose `File` > `Import...` > `General` > `Existing Projects into
 Workspace`, set *Select root directory* to the clone location (for example,
 `D:\CIMug-GIT-REPOS\release-2.3.0`), and let Eclipse discover the projects it contains.
@@ -239,4 +239,4 @@ cloned Git working tree, where the external client continues to manage them.
 
 > **Note:** The checked projects in the screenshot are the **core** projects required to
 > build and deploy CIMTool. The remaining, unchecked projects may optionally be imported,
-> but they are **dormant** — not required to build or deploy the product.
+> but they are **dormant**, not required to build or deploy the product.

@@ -19,13 +19,13 @@ using a real relational EF Core provider backed by an in-memory SQLite database.
 CSharpEFTestProject exercises the generated `SampleProfile.csharp-ef-rdfs.cs` file against
 two overarching goals that guided the design of the `csharp-ef-rdfs.xsl` XSLT builder.
 The first goal is that application developers should write as little EF Core and Fluent API
-code as possible — the generated `DbContextBase` class provides DbSet properties, complete
+code as possible, the generated `DbContextBase` class provides DbSet properties, complete
 Fluent API model configuration, a `DbContextOptions` constructor for dependency injection
 integration, and automatic compound orphan cleanup through `SaveChanges` and
 `SaveChangesAsync` overrides, leaving the developer with nothing more than a one-class thin
 subclass. The second goal is that the companion SQL DDL script produced by the
 `sql-rdfs-ansi92.xsl` builder is the authoritative schema, and the generated EF Core code
-is a tightly complementary layer above it — for example, the SQL DDL's reverse-reference
+is a tightly complementary layer above it, for example, the SQL DDL's reverse-reference
 `ON DELETE CASCADE` pattern for compound value objects is paired with
 `DeleteBehavior.Restrict` in the EF Core model configuration, enforcing the compound
 ownership invariant at both layers.
@@ -105,9 +105,9 @@ SQLite connection and database via `WithFreshDatabase`, `WithFreshDatabaseAsync`
 Certain behaviors are documented through a `diagnostics` list rather than hard
 `AssertCondition` calls. Diagnostics appear in the output under a `Diagnostics:` heading
 after the section summary. They are used for intentional architectural divergences between
-the SQL DDL and EF Core layers — specifically the `PARITY GAP OBSERVED` message confirming
+the SQL DDL and EF Core layers, specifically the `PARITY GAP OBSERVED` message confirming
 that the SQL `ON DELETE CASCADE` and EF Core `DeleteBehavior.Restrict` plus `SaveChanges`
-cleanup are complementary rather than identical — and for the `BASELINE OBSERVED` message
+cleanup are complementary rather than identical, and for the `BASELINE OBSERVED` message
 confirming that orphan accumulation without `DbContextBase` is the expected baseline
 behavior of `GeneratedOnlySampleProfileDbContext`.
 
@@ -161,7 +161,7 @@ all three entity categories. Enumerated types compare by natural `Name` key. Com
 compare by surrogate `Id`. `IdentifiedObject` subclasses compare by `MRId` and reject
 cross-type equality even when `MRId` values match. Confirms that compound constructors
 assign a non-empty surrogate `Id` on construction without requiring application code to
-set it, and that each constructor call produces a distinct `Id` — enforcing the
+set it, and that each constructor call produces a distinct `Id`, enforcing the
 one-compound-per-slot ownership invariant that the generated cleanup logic depends on.
 
 ==== Name Association Behavior
@@ -216,7 +216,7 @@ path completes correctly and that the full TPT deletion chain removes both the
 
 Exercises the same compound replacement and null-detach operations using
 `GeneratedOnlySampleProfileDbContext`, which has no `SaveChanges` overrides. Confirms that
-all replaced and detached compound rows — including nested compounds — remain orphaned in
+all replaced and detached compound rows, including nested compounds, remain orphaned in
 the database when cleanup is absent, establishing the baseline that motivates the generated
 `DbContextBase` implementation.
 
@@ -230,8 +230,8 @@ runtime types when queried through the hierarchy root.
 ==== Inheritance Delete Cleanup
 
 Deletes `ParentOrganization` and `OverheadWireInfo` entities through their typed DbSet
-properties and verifies that all TPT rows — including base `IdentifiedObject` rows and
-intermediate table rows — are removed across the full inheritance chain.
+properties and verifies that all TPT rows, including base `IdentifiedObject` rows and
+intermediate table rows, are removed across the full inheritance chain.
 
 
 === Eclipse IDE Integration
@@ -240,11 +240,11 @@ CIMTool developers who work primarily in Eclipse IDE have two options for access
 `EfCoreSmokeTest` project from within their existing Eclipse workspace.
 
 
-==== Option A — General Project Import (view only)
+==== Option A: General Project Import (view only)
 
 Importing the project as a General Project requires no additional plugins and takes less
-than a minute. It gives full access to all project files — including this README, the
-`.csproj`, and all `.cs` source files — through Eclipse's file browser and text editor,
+than a minute. It gives full access to all project files, including this README, the
+`.csproj`, and all `.cs` source files, through Eclipse's file browser and text editor,
 with no C#-specific language intelligence.
 
 . In Eclipse, select *File → Import → General → Existing Projects into Workspace*.
@@ -252,19 +252,19 @@ with no C#-specific language intelligence.
 . Click *Finish*.
 
 The project appears in the Package Explorer. Files open in Eclipse's built-in text editor.
-All developmental work — editing `Program.cs`, running `dotnet run`, debugging — is
+All developmental work (editing `Program.cs`, running `dotnet run`, debugging) is
 performed externally in Visual Studio Code or a terminal. Eclipse serves purely as a
 project viewer under this option.
 
 
-==== Option B — Eclipse aCute Plugin (full C# language support)
+==== Option B: Eclipse aCute Plugin (full C# language support)
 
 Eclipse aCute provides a rich C# editor with error reporting, hover, content assist, and
 jump to references using OmniSharp, and syntax highlighting using TextMate grammar.
 Integration with OmniSharp-Roslyn and the Language Server Protocol is powered by Eclipse
 LSP4E. This is the same OmniSharp language server that the C# extension for Visual
-Studio Code uses, so the editing experience — completions, diagnostics, hover
-documentation, go-to-definition, find references — is equivalent to working in VS Code,
+Studio Code uses, so the editing experience, completions, diagnostics, hover
+documentation, go-to-definition, find references, is equivalent to working in VS Code,
 presented through the familiar Eclipse IDE shell.
 
 aCute supports Eclipse versions through 2025-03 (4.35) and later. The .NET 8 SDK
@@ -273,7 +273,7 @@ must already be installed and available on `PATH` before configuring aCute.
 *Prerequisites*
 
 * Eclipse IDE (2023-06 or later recommended)
-* .NET 8 SDK installed and on `PATH` — verify with `dotnet --version`
+* .NET 8 SDK installed and on `PATH`, verify with `dotnet --version`
 
 *Installation steps*
 
@@ -313,7 +313,7 @@ dotnet run
 
 A successful run prints a summary of completed sections followed by any informational
 diagnostics. Any assertion failure terminates the run immediately with a message
-identifying the failed condition. No test runner or xUnit dependency is required — the
+identifying the failed condition. No test runner or xUnit dependency is required, the
 harness is a self-contained console application.
 
 

@@ -12,12 +12,12 @@ and uploading platform-specific ZIP archives to Amazon S3.
 
 
 
-## Current Status — Legacy / Dormant
+## Current Status: Legacy / Dormant
 
 CIMToolUpdate is **not actively used**. The update site it referenced
 (`http://files.cimtool.org`) is defunct, and the current CIMTool distribution
 model uses a standalone ZIP archive produced directly by the PDE product export
-in `CIMToolProduct` — no update site or S3 upload step is involved.
+in `CIMToolProduct`, with no update site or S3 upload step involved.
 
 This project has no `MANIFEST.MF`, no `build.properties`, and no Eclipse plugin
 or feature structure. It is a plain Eclipse project (`.project` only) containing
@@ -25,7 +25,7 @@ a handful of files left over from the original deployment pipeline.
 
 Additional indicators of dormancy:
 
-- `site.xml` references `au.com.langdale.cimtoole.feature` at version `1.8.3.201008171439` — a build timestamp from 2010, far behind the current `2.3.0` release
+- `site.xml` references `au.com.langdale.cimtoole.feature` at version `1.8.3.201008171439`, a build timestamp from 2010, far behind the current `2.3.0` release
 - `makepackages.sh` uploads to `files.cimtool.org` via an `s3` command-line tool that is no longer configured
 - The `Assembly/` directory referenced in `makepackages.sh` is excluded via `.gitignore` and does not exist in the repository
 
@@ -65,8 +65,8 @@ CIMToolUpdate/
 
 ## Relationship to Other Projects
 
-- **CIMToolFeature** — `site.xml` references the feature produced by `CIMToolFeature` (`au.com.langdale.cimtoole.feature`). Both projects are dormant and were part of the same legacy update site deployment pipeline.
-- **CIMToolProduct** — the active replacement for this project's distribution role. The PDE product export in `CIMToolProduct` produces the ZIP archive directly without any separate packaging or upload step.
+- **CIMToolFeature**: `site.xml` references the feature produced by `CIMToolFeature` (`au.com.langdale.cimtoole.feature`). Both projects are dormant and were part of the same legacy update site deployment pipeline.
+- **CIMToolProduct**: the active replacement for this project's distribution role. The PDE product export in `CIMToolProduct` produces the ZIP archive directly without any separate packaging or upload step.
 
 
 
@@ -75,7 +75,7 @@ CIMToolUpdate/
 If Eclipse update site / p2 deployment is ever reinstated, the following would
 be required:
 
-1. Reinstate `CIMToolFeature` (set `useFeatures="true"` in `CIMTool.product`, update versions — see `CIMToolFeature-README.adoc` for details)
+1. Reinstate `CIMToolFeature` (set `useFeatures="true"` in `CIMTool.product`, update versions, see `CIMToolFeature-README.adoc` for details)
 2. Update `site.xml` to reference the current feature version
 3. Provision a new update site host and update the URL in `site.xml` and `CIMToolFeature/feature.xml`
 4. Update `makepackages.sh` with the correct S3 bucket or hosting target

@@ -25,9 +25,9 @@ that contributes to the `org.eclipse.help.toc` extension point, registering
 `toc.xml` as the table of contents for the CIMTool help system. All content is
 static HTML stored in the `html/` directory.
 
-The documentation covers the full range of CIMTool user topics — from getting
+The documentation covers the full range of CIMTool user topics, from getting
 started and importing EA models through to profiling, validation, namespace
-management, and OWL/RDF concepts — and is displayed directly within the Eclipse
+management, and OWL/RDF concepts, and is displayed directly within the Eclipse
 Help viewer.
 
 
@@ -178,7 +178,7 @@ All documentation is hand-authored HTML. To add or update a topic:
 . Add or edit the HTML file in `html/`
 . If adding a new topic, add a `<topic>` entry to `toc.xml` referencing it via
   the `PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/<filename>.html` path
-. Rebuild and re-export the product — no Java compilation is required
+. Rebuild and re-export the product, with no Java compilation required
 
 NOTE: The `PLUGINS_ROOT/` prefix in `toc.xml` href values is an Eclipse help
 framework convention that resolves to the installed plugins directory at runtime.

@@ -21,7 +21,7 @@ A specific Eclipse edition and release is recommended to eliminate unanticipated
 configuration and setup issues. Development and deployment of CIMTool against this
 release has been fully tested and its plugin dependencies verified out of the box.
 Questions may be posted to the
-https://github.com/cimug-org/CIMTool/discussions/92[CIMTool 2.x Release Line — Development Community Discussion Board].
+https://github.com/cimug-org/CIMTool/discussions/92[CIMTool 2.x Release Line: Development Community Discussion Board].
 ====
 
 
@@ -66,15 +66,15 @@ IDE, which may then be relocated to a preferred location on the file system.
 When a newer JDK has been installed in Step 2, it must be registered in the Eclipse
 IDE configuration before the CIMTool projects are imported.
 
-image::{devenvsetup-imagesdir}/eclipse-configure-jre-step1.png[Configure the installed JRE — step 1]
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step1.png[Configure the installed JRE, step 1]
 
-image::{devenvsetup-imagesdir}/eclipse-configure-jre-step2.png[Configure the installed JRE — step 2]
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step2.png[Configure the installed JRE, step 2]
 
-image::{devenvsetup-imagesdir}/eclipse-configure-jre-step3.png[Configure the installed JRE — step 3]
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step3.png[Configure the installed JRE, step 3]
 
-image::{devenvsetup-imagesdir}/eclipse-configure-jre-step4.png[Configure the installed JRE — step 4]
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step4.png[Configure the installed JRE, step 4]
 
-image::{devenvsetup-imagesdir}/eclipse-configure-jre-step5.png[Configure the installed JRE — step 5]
+image::{devenvsetup-imagesdir}/eclipse-configure-jre-step5.png[Configure the installed JRE, step 5]
 
 
 === Installing Required Eclipse Plugins
@@ -239,20 +239,20 @@ https://github.com/cimug-org/CIMTool[CIMTool GitHub repository] and import its
 projects into the workspace. Two approaches are available, and they differ in how the
 projects are brought into Eclipse:
 
-* *External Git client* — such as https://desktop.github.com/[GitHub Desktop],
+* *External Git client*: such as https://desktop.github.com/[GitHub Desktop],
 https://tortoisegit.org/[TortoiseGit], or https://gitforwindows.org/[Git for Windows]
-(see the https://git-scm.com/downloads/guis[full list]) — used to clone the
+(see the https://git-scm.com/downloads/guis[full list]), used to clone the
 repository to a local directory _outside_ Eclipse. The cloned projects are then brought
 in with Eclipse's _Existing Projects into Workspace_ import (described below).
 
-* *Eclipse's bundled Git tooling (EGit)* — used to clone _and_ import the CIMTool
+* *Eclipse's bundled Git tooling (EGit)*: used to clone _and_ import the CIMTool
 projects directly from the repository in a single operation, via `File` > `Import...` >
 `Git` > `Projects from Git`.
 
 ==== Importing Existing Projects from an External Clone
 
 When the repository has been cloned with an external Git client, the projects are imported
-as *existing projects from the file system* — not as Git-managed projects retrieved
+as *existing projects from the file system*, not as Git-managed projects retrieved
 through Eclipse. Choose `File` > `Import...` > `General` > `Existing Projects into
 Workspace`, set _Select root directory_ to the clone location (for example,
 `D:\CIMug-GIT-REPOS\release-2.3.0`), and let Eclipse discover the projects it contains.
@@ -265,5 +265,5 @@ image::{devenvsetup-imagesdir}/import-existing-projects.png[Importing the CIMToo
 ====
 The checked projects in the screenshot are the *core* projects required to build and
 deploy CIMTool. The remaining, unchecked projects may optionally be imported, but they
-are *dormant* — not required to build or deploy the product.
+are *dormant*, not required to build or deploy the product.
 ====

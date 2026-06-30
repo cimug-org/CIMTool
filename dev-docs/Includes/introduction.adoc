@@ -4,25 +4,25 @@
 This document is the developer documentation for CIMTool, the open-source platform
 maintained by the UCA International Users Group for authoring CIM (Common Information
 Model) profiles and generating the artifacts derived from them. It is written for the
-developers who build, extend, package, and release CIMTool — contributors working in
+developers who build, extend, package, and release CIMTool, contributors working in
 the source tree, not end users authoring profiles. Documentation on using CIMTool
 itself lives separately on the project website at
 https://cimtool.ucaiug.io/[cimtool.ucaiug.io].
 
 CIMTool is structured as a suite of Eclipse PDE plugins and supporting projects that
 together produce a standalone Rich Client Platform (RCP) application, along with a
-companion command-line tool. Because that structure spans many cooperating projects —
-the core plugin, shared utilities, the RDF engine, the product and feature
-definitions, the CLI, and others — this document is assembled modularly: each project
-contributes its own README, and those READMEs are included here into a single
-reference. Each README also stands alone in its project directory for developers
-working within that one component.
+companion command-line tool. Because that structure spans many cooperating projects
+(the core plugin, shared utilities, the RDF engine, the product and feature
+definitions, the CLI, and others), this document is assembled modularly with each
+project contributing its own README, and those READMEs are included here into a
+single reference. Each README also stands alone in its project directory for
+developers working within that one component.
 
 Each project section describes that component's purpose, its place in the overall
 architecture, its dependencies on other projects and on vendored third-party
 libraries, and the conventions that govern how it is built and maintained.
-Cross-cutting concerns that span multiple projects — the build and release pipeline,
-code signing, the unified logging architecture, and the dependency vendoring model —
+Cross-cutting concerns that span multiple projects, the build and release pipeline,
+code signing, the unified logging architecture, and the dependency vendoring model
 are documented where they are owned, with cross-references from the projects they
 affect.
 
