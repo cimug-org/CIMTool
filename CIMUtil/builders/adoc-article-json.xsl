@@ -327,9 +327,9 @@
 	<xsl:template match="a:Choice">
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-			<xsl:call-template name="attribute-stereotype-roles"/> 
+			<xsl:call-template name="attribute-association-stereotype-roles"/> 
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (a:Stereotype[contains(., '#byreference')]) then concat(@name, ' (@ref)') else @name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (a:Stereotype[contains(., '#byreference')]) then concat(@name, ' (@ref)') else @name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|</item>
 		<item>[cols="1"]</item>
@@ -358,9 +358,9 @@
 	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain">
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-			<xsl:call-template name="attribute-stereotype-roles"/> 
+			<xsl:call-template name="attribute-association-stereotype-roles"/> 
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (a:Stereotype[contains(., '#byreference')]) then concat(@name, ' (@ref)') else @name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (a:Stereotype[contains(., '#byreference')]) then concat(@name, ' (@ref)') else @name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
@@ -372,7 +372,7 @@
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseClass, concat($ontologyURI, '#')))">.extension</xsl:if>
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="$anonymousId"/>,<xsl:value-of select="substring-after(@baseClass, '#')"/>&gt;&gt;<xsl:text> (anon)</xsl:text></item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
@@ -384,7 +384,7 @@
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="$anonymousId"/>,<xsl:value-of select="substring-after(@baseClass, '#')"/>&gt;&gt;<xsl:text> (anon)</xsl:text></item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
@@ -396,7 +396,7 @@
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="$anonymousId"/>,<xsl:value-of select="substring-after(@baseClass, '#')"/>&gt;&gt;<xsl:text> (anon)</xsl:text></item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
@@ -405,9 +405,9 @@
 	<xsl:template match="a:Simple">
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-			<xsl:call-template name="attribute-stereotype-roles"/> 
+			<xsl:call-template name="attribute-association-stereotype-roles"/> 
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
 		<item>|</item><xsl:apply-templates mode="annotate-table-cell"/>
@@ -426,9 +426,9 @@
 	<xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain|a:Complex|a:SimpleCompound|a:SimpleEnumerated" mode="inherited">
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-			<xsl:call-template name="attribute-stereotype-roles"/> 
+			<xsl:call-template name="attribute-association-stereotype-roles"/> 
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:choose><xsl:when test="@maxOccurs = 'unbounded'">*</xsl:when><xsl:otherwise><xsl:value-of select="@maxOccurs"/></xsl:otherwise></xsl:choose></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>,<xsl:value-of select="@type"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
@@ -437,9 +437,9 @@
 	<xsl:template match="a:Simple" mode="inherited">
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-			<xsl:call-template name="attribute-stereotype-roles"/> 
+			<xsl:call-template name="attribute-association-stereotype-roles"/> 
 		</xsl:variable>
-		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><!--<xsl:call-template name="process-attribute-stereotypes"/>--></item>
+		<item>|<xsl:value-of select="if (cimtool:hasPrefix(@baseProperty)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseProperty), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="@name"/><xsl:if test="$roles != ''">##</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/></item>
 		<item>|<xsl:value-of select="@minOccurs"/>..<xsl:value-of select="@maxOccurs"/></item>
 		<item>|&lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>,<xsl:value-of select="substring-after(@cimDatatype, '#')"/>&gt;&gt;</item>
 		<item>|see &lt;&lt;<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>,<xsl:value-of select="../@name"/>&gt;&gt;</item>
@@ -550,7 +550,7 @@
 		</xsl:variable>
 		<xsl:variable name="roles">
 			<xsl:if test="not(starts-with(@baseResource, concat($ontologyURI, '#')))">.extension</xsl:if>
-			<xsl:call-template name="attribute-stereotype-roles"/> 
+			<xsl:call-template name="attribute-association-stereotype-roles"/> 
 		</xsl:variable>
 		<item></item>
 		<item>|<item>[[<xsl:value-of select="$link"/>]]</item><xsl:value-of select="if (cimtool:hasPrefix(@baseResource)) then concat('[.extension-prefix]##', cimtool:getPrefix(@baseResource), '##') else ''"/><xsl:if test="$roles != ''">[<xsl:value-of select="$roles"/>]##</xsl:if><xsl:value-of select="if (@code and @code != '') then concat(@name, '   (code', ' = ', @code, ')') else @name"/><xsl:if test="$roles != ''">##</xsl:if></item>
@@ -590,19 +590,63 @@
 			</xsl:for-each>)<xsl:text> </xsl:text></xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="process-attribute-stereotypes">
-		<xsl:if test="count(a:Stereotype[not(contains(., '#attribute')) and not(contains(., '#byreference')) and not(contains(., '#enumeration')) and not(contains(., 'compound')) and not(contains(., 'cimdatatype'))]) > 0"> (<xsl:for-each select="a:Stereotype[not(contains(., '#attribute')) and not(contains(., '#byreference')) and not(contains(., '#enumeration')) and not(contains(., 'compound')) and not(contains(., 'cimdatatype'))]">
+	<xsl:template name="process-attribute-association-stereotypes">
+		<xsl:if test="count(a:Stereotype[
+							not(contains(., '#attribute')) and 
+							not(contains(., '#byreference')) and 
+							not(contains(., '#enumeration')) and 
+							not(contains(., '#compound')) and 
+							not(contains(., '#cimdatatype')) and 
+							not(contains(., '#primitive')) and 
+							not(contains(., '#compositeOf')) and 
+							not(contains(., '#ofComposite')) and 
+							not(contains(., '#aggregateOf')) and 
+							not(contains(., '#ofAggregate')) and 
+							not(contains(., '#hideondiagrams'))]) > 0"> (<xsl:for-each select="a:Stereotype[
+																								not(contains(., '#attribute')) and 							
+																								not(contains(., '#byreference')) and 
+																								not(contains(., '#enumeration')) and 
+																								not(contains(., '#compound')) and 
+																								not(contains(., '#cimdatatype')) and 
+																								not(contains(., '#primitive')) and 
+																								not(contains(., '#compositeOf')) and 
+																								not(contains(., '#ofComposite')) and 
+																								not(contains(., '#aggregateOf')) and 
+																								not(contains(., '#ofAggregate')) and 
+																								not(contains(., '#hideondiagrams'))]">
 				<xsl:value-of select="@label"/>
 				<xsl:if test="position()!=last()">
 					<xsl:value-of select="', '"/>
 				</xsl:if>
-			</xsl:for-each>)</xsl:if>
+			</xsl:for-each>)<xsl:text> </xsl:text></xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="attribute-stereotype-roles">
-		<xsl:if test="count(a:Stereotype[not(contains(., '#attribute')) and not(contains(., '#byreference')) and not(contains(., '#enumeration')) and not(contains(., 'compound')) and not(contains(., 'cimdatatype'))]) > 0"><xsl:for-each select="a:Stereotype[not(contains(., '#attribute')) and not(contains(., '#byreference')) and not(contains(., '#enumeration')) and not(contains(., 'compound')) and not(contains(., 'cimdatatype'))]">
+	<xsl:template name="attribute-association-stereotype-roles">
+		<xsl:if test="count(a:Stereotype[
+							not(contains(., '#attribute')) and 
+							not(contains(., '#byreference')) and 
+							not(contains(., '#enumeration')) and 
+							not(contains(., '#compound')) and 
+							not(contains(., '#cimdatatype')) and 
+							not(contains(., '#primitive')) and 
+							not(contains(., '#compositeOf')) and 
+							not(contains(., '#ofComposite')) and 
+							not(contains(., '#aggregateOf')) and 
+							not(contains(., '#ofAggregate')) and 
+							not(contains(., '#hideondiagrams'))]) > 0"> (<xsl:for-each select="a:Stereotype[
+																								not(contains(., '#attribute')) and 							
+																								not(contains(., '#byreference')) and 
+																								not(contains(., '#enumeration')) and 
+																								not(contains(., '#compound')) and 
+																								not(contains(., '#cimdatatype')) and 
+																								not(contains(., '#primitive')) and 
+																								not(contains(., '#compositeOf')) and 
+																								not(contains(., '#ofComposite')) and 
+																								not(contains(., '#aggregateOf')) and 
+																								not(contains(., '#ofAggregate')) and 
+																								not(contains(., '#hideondiagrams'))]">
 				<xsl:value-of select="concat('.', @label)"/>
-			</xsl:for-each></xsl:if>
+			</xsl:for-each>)<xsl:text> </xsl:text></xsl:if>
 	</xsl:template>
 	
 	<!-- Template for a:Comment and a:Note elements. The a:Comment elements will always     -->
