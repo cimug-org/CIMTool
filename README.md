@@ -47,6 +47,10 @@ The CIMTool public roadmap is maintained on GitHub Projects. View the current re
 
 For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://cimtool.ucaiug.io/getting-started/).
 
+## Security
+
+Please do not report security vulnerabilities in public issues. See [SECURITY.md](SECURITY.md) for how to report them privately.
+
 ## License
 
   Distributed under the LGPL-2.1 license. See [LICENSE](LICENSE) for more information.
