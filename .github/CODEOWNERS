@@ -1,0 +1,24 @@
+# CIMTool code owners
+#
+# Every pull request requires an approving review from a maintainer.
+# This is enforced by the "Protected branches" ruleset:
+#
+#     Require a pull request before merging
+#       -> Require review from Code Owners
+#
+# Code owners must hold write access to cimug-org/CIMTool. The
+# cimtool-maintainers team holds the write role on this repository.
+# See GOVERNANCE.md for the distinction between the Committer and
+# Maintainer roles: write access alone does not confer merge authority.
+#
+# IMPORTANT: GitHub reads this file from the BASE branch of a pull
+# request, not from master. Because contributions target the current
+# release branch, this file must exist on that branch. Commit it to
+# master, then back-merge into the current release-* branch. A release
+# branch cut before this file existed will not enforce code owner
+# review until the file reaches it.
+#
+# The last matching pattern takes precedence. Add narrower path rules
+# below the catch-all, never above it.
+
+* @cimug-org/cimtool-maintainers
