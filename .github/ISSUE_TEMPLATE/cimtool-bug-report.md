@@ -7,6 +7,14 @@ assignees: ''
 
 ---
 
+> [!CAUTION]
+> **Do not use this template to report a security vulnerability.**
+> Filing a vulnerability here discloses it publicly, to everyone, before a fix
+> exists. CIMTool runs in production systems, and their operators would learn of the
+> problem at the same moment an attacker does.
+> Report it privately instead: [open a security advisory](https://github.com/cimug-org/CIMTool/security/advisories/new).
+> See [SECURITY.md](https://github.com/cimug-org/CIMTool/blob/master/SECURITY.md).
+
 ### Describe the defect:
 
 A clear and concise description of what the defect is.  This should include a high level description of what you were trying to do that produced the issue. (e.g. "While creating a new profile I selected the ...")

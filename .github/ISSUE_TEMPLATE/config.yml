@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/cimug-org/CIMTool/security/advisories/new
+    about: Do NOT open a public issue. Public disclosure exposes every CIMTool user before a fix exists. Report vulnerabilities privately here.
+
+  - name: Ask a question or discuss an idea
+    url: https://github.com/cimug-org/CIMTool/discussions
+    about: For usage questions, profiling help, and general discussion. Not for defects or feature requests.
+
+  - name: Read the contributing guidelines
+    url: https://github.com/cimug-org/CIMTool/blob/master/CONTRIBUTING.md
+    about: Branch naming, commit conventions, and how to submit a pull request.
