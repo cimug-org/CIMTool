@@ -8,11 +8,11 @@
 
 [![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   
 
-AspenTech serves at the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug.  
+AspenTech serves as the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug.  
 
 ## CIMTool Discussion Forums
 
-The CIMTool [Google Group](https://groups.google.com/g/cimtool) is no longer actively monitored and has been retained only for archival purposes.  Please post all questions, suggestions, and/or comments directly to the new [CIMTool Discussions](https://github.com/ucaiug/CIMTool/discussions) board for this repository.
+The CIMTool [Google Group](https://groups.google.com/g/cimtool) is no longer actively monitored and has been retained only for archival purposes.  Please post all questions, suggestions, and/or comments directly to the new [CIMTool Discussions](https://github.com/cimug-org/CIMTool/discussions) board for this repository.
 
 ## Using CIMTool with Enterprise Architect
 
@@ -32,6 +32,8 @@ For further details on how to use CIMTool to create and edit profiles based on t
 
   Note that these instructions are purely for those interested in participating in the development of **CIMTool**. They do not describe standard use of the tool for creating profiles.
 
+  Before opening your first pull request, please read the [contributing guidelines](CONTRIBUTING.md). They describe the branching model, commit conventions, and how contributions are reviewed. See also the [Code of Conduct](CODE_OF_CONDUCT.md) and [project governance](GOVERNANCE.md).
+
 ## Product Roadmap
 
 The CIMTool public roadmap is maintained on GitHub Projects. View the current release plan and backlog at [CIMTool Roadmap](https://github.com/orgs/cimug-org/projects/17).
@@ -40,12 +42,16 @@ The CIMTool public roadmap is maintained on GitHub Projects. View the current re
 
   -   2.3.0
 
-      - The latest release is available here on GitHub at [CIMTool-2.3.0](https://github.com/ucaiug/CIMTool/releases) and is delivered as a ZIP file. Releases are also made available in the CIMug [tools download folder](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) on the UCAIug website.
+      - The latest release is available here on GitHub at [CIMTool-2.3.0](https://github.com/cimug-org/CIMTool/releases/tag/2.3.0) and is delivered as a ZIP file. Releases are also made available in the CIMug [tools download folder](https://cimug.ucaiug.org/Standards%20Artifacts/Forms/AllItems.aspx?RootFolder=%2FStandards%20Artifacts%2FUCA%20TF%20Tools&FolderCTID=0x0120001062F2F1DF27704DBB748ABBDC3B3AA2&View=%7BFEBD8EE1%2D6B40%2D42F6%2DB228%2DCCF131291FBE%7D) on the UCAIug website.
       - Information on features and fixes for the release can be found [here](https://cimtool.ucaiug.io/release-notes).
 
 ## Installation & Setup
 
 For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://cimtool.ucaiug.io/getting-started/).
+
+## Getting Help
+
+For usage questions, profiling advice, and general discussion, see [SUPPORT.md](SUPPORT.md), which describes where to ask and what to expect.
 
 ## Security
 
