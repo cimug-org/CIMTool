@@ -1,7 +1,7 @@
 ---
 name: Documentation Needed
 about: Documentation updates or recommendations
-title: "[DOCUMENTATION]"
+title: "[DOCUMENTATION] "
 labels: documentation
 assignees: ''
 
