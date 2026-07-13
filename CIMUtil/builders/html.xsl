@@ -24,6 +24,7 @@
 	<xsl:output indent="yes" doctype-public="-//W3C//DTD XHTML 1.1//EN" doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" />
 	<xsl:param name="version"></xsl:param>
 	<xsl:param name="baseURI"></xsl:param>
+	<xsl:param name="copyright-single-line"></xsl:param>
 
 	<xsl:template match="a:Catalog">
 		<!--  the top level template generates the html and body elementa -->
@@ -126,6 +127,11 @@ p.package { position: absolute; right: 10px; top: 0px}
 				<xsl:apply-templates select="a:PrimitiveType" >
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				<xsl:if test="$copyright-single-line and $copyright-single-line != ''">
+					<div class="footer" style="margin-top: 20px; padding-top: 8px; border-top: 1px solid gray; color: gray; font-size: small;">
+						<xsl:value-of select="$copyright-single-line"/>
+					</div>
+				</xsl:if>
 			</body>
 		</html>
 	</xsl:template>
