@@ -13,7 +13,7 @@
 #    1. Populate cimtool-cli lib-repo/ via install-jars.sh
 #    2. Build the cimtool-cli uber JAR via Maven
 #    3. Deploy cimtool-cli.jar to dist/ and generate its SHA-256 checksum
-#    4. Ensure the CIMTool launcher is executable
+#    4. Restore Unix executable bits (launcher + bundled JRE) stripped by export
 #    5. Package the CIMToolProduct export into a distribution tar.gz
 #    6. Generate the tar.gz SHA-256 checksum
 #
@@ -142,14 +142,36 @@ cp -f "$CLI_JAR" "$CLI_DIST_JAR"
 ( cd "$CLI_DIST_DIR" && sha256sum "cimtool-cli.jar" > "$CLI_SHA256" )
 echo "           $CLI_SHA256"
 
-# --- Step 4: Ensure the launcher is executable ---
+# --- Step 4: Restore Unix executable bits stripped by the export ---
+#
+# The Eclipse PDE product export unpacks the bundled JRE (and other archives)
+# through java.util.zip, which does NOT preserve Unix mode bits. As a result the
+# JRE's launchers and — critically — jspawnhelper/jexec ship non-executable.
+# jspawnhelper is the helper the JVM uses to fork+exec every external process, so
+# without its +x bit ANY subprocess launch (e.g. CIMTool calling Graphviz `dot`
+# for profile diagrams) fails with "error=13, Permission denied". Restore the
+# executable bit on the launcher and the whole bundled JRE.
+JRE_DIR="$PRODUCT_DIR/jre"
+
 echo
-echo "[Step 4/6] Ensuring CIMTool launcher is executable..."
+echo "[Step 4/6] Restoring executable bits (launcher + bundled JRE)..."
 if [ ! -f "$LAUNCHER" ]; then
     echo "ERROR: CIMTool launcher not found at $LAUNCHER"
     exit 1
 fi
 chmod +x "$LAUNCHER"
+
+if [ -d "$JRE_DIR" ]; then
+    # All JRE command-line tools live in jre/bin.
+    chmod +x "$JRE_DIR"/bin/* 2>/dev/null || true
+    # jspawnhelper and jexec live in jre/lib and are the ones that actually
+    # break subprocess spawning when non-executable.
+    [ -f "$JRE_DIR/lib/jspawnhelper" ] && chmod +x "$JRE_DIR/lib/jspawnhelper"
+    [ -f "$JRE_DIR/lib/jexec" ] && chmod +x "$JRE_DIR/lib/jexec"
+    echo "  OK: restored +x on $JRE_DIR/bin/* and jspawnhelper/jexec"
+else
+    echo "  NOTE: no bundled JRE at $JRE_DIR (skipping JRE chmod)"
+fi
 
 # --- Step 5: Package tar.gz ---
 ARCHIVE_NAME="$VERSION-linux.gtk.x86_64.tar.gz"

@@ -294,6 +294,11 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 				// system.
 				InputStream zipFileInputStream = pandocClientExeFileURL.openStream();
 				unzip(zipFileInputStream, stateLocationNativePlatformDir.getAbsolutePath());
+
+				// unzip() uses FileOutputStream, which does not preserve Unix mode bits,
+				// so the extracted binary is not executable on Linux/macOS. Restore the
+				// executable bit. Harmless no-op for Windows' pandoc.exe.
+				pandocExe.setExecutable(true, false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -357,6 +362,8 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 			return arch.contains("64") ? "win32-x86_64" : "win32-x86";
 		} else if (os.contains("mac")) {
 			return ("amd64".equals(arch) || "x86_64".equals(arch)) ? "mac-x86_64" : "mac-arm64";
+		} else if (os.contains("nux")) {
+			return "linux-x86_64";
 		} else {
 			throw new IllegalStateException("Unsupported platform: " + os);
 		}
