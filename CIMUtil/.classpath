@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="lib" path="builders"/>
-	<classpathentry exported="true" kind="lib" path="import-reports/asciidoc"/>
-	<classpathentry exported="true" kind="lib" path="import-reports/puml"/>
-	<classpathentry exported="true" kind="lib" path="import-reports/schema"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/gson-2.8.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ucanaccess-4.0.4.jar" sourcepath="lib/ucanaccess-4.0.4-sources.jar">
