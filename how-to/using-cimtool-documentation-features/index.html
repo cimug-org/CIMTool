@@ -1,0 +1,3058 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../profile-real-time-preview/">
+      
+      
+        <link rel="next" href="../profile-maintenance/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../logos/cimtool-v2.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Using CIMTool Documentation Features - CIMTool</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-cimtool-documentation-features" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTool" class="md-header__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Using CIMTool Documentation Features
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTool" class="md-nav__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    CIMTool
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How To
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How To
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../obtain-cim-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Obtain Stable Releases of the CIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../navigate-workspace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Navigate the Workspace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import-cim-uml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool with Enterprise Architect: Importing a CIM Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Contextual Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edit-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editing a Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../browsing-the-CIM-UML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Browsing the CIM UML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exchange-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exchange a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../search-schemas-profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Searching Schemas and Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generate-database-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generating a Database Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profile-real-time-preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Real-Time Preview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool Documentation Features
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool Documentation Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-five-project-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Five Project Folders
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inside-the-documentation-folder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inside the Documentation Folder
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-asciidoctor-eclipse-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Asciidoctor Eclipse Editor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Asciidoctor Eclipse Editor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-editor-toolbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Editor Toolbar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rendering-preferences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendering Preferences
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-documentation-to-profile-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Documentation to Profile Elements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Documentation to Profile Elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-description-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Description" Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-documentation-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Documentation" Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#where-your-content-appears" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where Your Content Appears
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-in-the-generated-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation in the Generated Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-asciidoc-builders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The AsciiDoc Builders
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The AsciiDoc Builders">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-between-article-and-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing Between Article and Inline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotating-extension-members-with-namespace-prefixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annotating Extension Members with Namespace Prefixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-master-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Master Document
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Master Document">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-document-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Document Header
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assembling-the-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assembling the Content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-rendered-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Rendered Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asciidoc-syntax-quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AsciiDoc Syntax Quick Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AsciiDoc Syntax Quick Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text Formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paragraphs-breaks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paragraphs &amp; Breaks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-headings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Section Headings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#document-header-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Header &amp; Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#links-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Links &amp; Cross References
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#images-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Images &amp; Diagrams
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#include-directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Include Directives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admonitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admonitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-code-literal-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Code &amp; Literal Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sidebars-examples-blockquotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sidebars, Examples &amp; Blockquotes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pdf-html-styling-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PDF &amp; HTML Styling Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#text-replacements-escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text Replacements &amp; Escaping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profile-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Maintenance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../comparing-profiles-schemas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparing Profiles and Schemas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../associations-anonymous-classes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Associations and Anonymous Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../namespaces-in-cimtool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces in CIMTool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cimtool-support-for-extension-namespaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CIMTool Support for Extension Namespaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modeling-cim-extensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modeling CIM Extensions: Shadow Extension Classes and Mix-Ins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Further Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Further Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/uml-xmi-owl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UML, XMI, and OWL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/cim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/protege-and-topbraid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool with Protege and Top Braid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SchemaOps Automation & Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SchemaOps Automation & Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../schemaops/cimtool-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool in CI/CD Pipelines with cimtool-cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../download-latest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download Latest
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-five-project-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Five Project Folders
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inside-the-documentation-folder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inside the Documentation Folder
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-asciidoctor-eclipse-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Asciidoctor Eclipse Editor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Asciidoctor Eclipse Editor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-editor-toolbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Editor Toolbar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rendering-preferences" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendering Preferences
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-documentation-to-profile-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Documentation to Profile Elements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding Documentation to Profile Elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-description-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Description" Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-documentation-tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Documentation" Tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#where-your-content-appears" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where Your Content Appears
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-in-the-generated-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation in the Generated Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-asciidoc-builders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The AsciiDoc Builders
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The AsciiDoc Builders">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-between-article-and-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing Between Article and Inline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotating-extension-members-with-namespace-prefixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annotating Extension Members with Namespace Prefixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-master-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Master Document
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Building a Master Document">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-document-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Document Header
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assembling-the-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Assembling the Content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-rendered-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Rendered Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asciidoc-syntax-quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AsciiDoc Syntax Quick Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AsciiDoc Syntax Quick Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text Formatting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paragraphs-breaks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paragraphs &amp; Breaks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-headings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Section Headings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#document-header-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Header &amp; Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#links-cross-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Links &amp; Cross References
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#images-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Images &amp; Diagrams
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#include-directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Include Directives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admonitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admonitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-code-literal-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source Code &amp; Literal Blocks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sidebars-examples-blockquotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sidebars, Examples &amp; Blockquotes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pdf-html-styling-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PDF &amp; HTML Styling Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#text-replacements-escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text Replacements &amp; Escaping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="using-cimtool-documentation-features">Using CIMTool Documentation Features</h1>
+<p><strong>CIMTool</strong> 2.3.0 introduces a set of features for authoring rich, professional documentation directly from CIM profiles.</p>
+<p>These features address a need that profile authors have long had: producing human-readable specifications that stay in step with the profile itself. Rather than maintaining documentation separately and by hand, you can write custom content within <strong>CIMTool</strong> and author expanded documentation at the level of individual profile elements. <strong>CIMTool</strong> builders aid in generating modularized documentation components that, in turn, can then be included in master documents.</p>
+<p>All of this is built on <a href="https://asciidoc.org/">AsciiDoc</a>, a concise, plain-text authoring format designed for technical documentation. AsciiDoc content is easy to write, friendly to version control, and can be published to multiple output formats. The documentation <strong>CIMTool</strong> generates from a profile is AsciiDoc, the content you author within <strong>CIMTool</strong> is AsciiDoc, and the bundled editor renders AsciiDoc previews, so establishing a working familiarity with the AsciiDoc format is helpful. This page closes with an <a href="#asciidoc-syntax-quick-reference">AsciiDoc Syntax Quick Reference</a> to get you started.</p>
+<p>What follows is a walk through where documentation lives in a project, how to author it at the various levels in a profile, what types of AsciiDoc builders currently ship with <strong>CIMTool</strong> and the type of documentation they produce, and finally, using the new publicly available <a href="https://github.com/cimug-org/CGMES-CIM17">CGMES-CIM17</a> sample project as a working example, how to assemble a complete master document.</p>
+<h2 id="the-five-project-folders">The Five Project Folders</h2>
+<p>Every <strong>CIMTool</strong> project is created with the same set of top-level folders, generated automatically when the project is created. With the introduction of the <strong>Documentation</strong> folder in CIMTool 2.3.0, there are now five formally recognized folders. Understanding what each folders purpose is makes it clear where the <strong>Documentation</strong> folder fits into the workflow.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/ProjectExplorer-FiveFolders.png" title="A newly created CIMTool project in the Project Explorer, showing the five auto-created folders: Documentation, Incremental, Instances, Profiles, and Schema"><img alt="image" src="../../images/ProjectExplorer-FiveFolders.png" /></a></p>
+<p>The five folders, shown in the <strong>Project Explorer</strong> above are:</p>
+<table>
+<thead>
+<tr>
+<th>Folder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>For AsciiDoc-related documentation artifacts and introduced in <strong>CIMTool</strong> 2.3.0</td>
+</tr>
+<tr>
+<td><strong>Incremental</strong></td>
+<td>For CIM XML incremental files in RDF format, with a <code>.xml</code> extension. Used when validating CIM/XML instance models in CIMTool.</td>
+</tr>
+<tr>
+<td><strong>Instances</strong></td>
+<td>For CIM XML instance files in RDF format, with a <code>.xml</code> extension. Used when validating CIM/XML differences models in CIMTool.</td>
+</tr>
+<tr>
+<td><strong>Profiles</strong></td>
+<td>For profile definitions and their generated artifacts. A profile definition itself is stored as an OWL file (<code>.owl</code>); the XSD, JSON Schema, RDFS, and other artifacts found in this folder are those generated from the <code>.owl</code> definition by <strong>CIMTool</strong>'s builders. Log files identifying errors are written as <code>.log</code> text files, and depending on how <strong>CIMTool</strong> is used, HTML, RTF, XML, Java, and SQL files, among other types, may also be hosted here.</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>Contains the schema that profiles are built from. Two formats can be used: a CIM model in XMI format (<code>.xmi</code>), generated from the UML model in Sparx EA; or <strong>Enterprise Architect</strong> project files used directly by <strong>CIMTool</strong>, both 32-bit EA15 (<code>.eap</code>, <code>.eapx</code>) and 64-bit EA16/EA17 (<code>.qea</code>, <code>.qeax</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>Documentation</strong> and <strong>Profiles</strong> folders are the two that matter for the purposes of documentation generation: the documentation builders write their generated AsciiDoc output into <strong>Profiles</strong> alongside the OWL profile definitions, while the <strong>Documentation</strong> folder is where you assemble generated content together with end-user written content into a finished document. The remaining sections look at each of these in turn.</p>
+<h2 id="inside-the-documentation-folder">Inside the Documentation Folder</h2>
+<p>The <strong>Documentation</strong> folder is created with four subfolders, each intended for a specific kind of AsciiDoc-related content. As with the project folders themselves, these subfolders are generated automatically, so you do not need to create them by hand. Within the CGMES-CIM17 sample project, each subfolder also contains a small <code>readme.txt</code> placeholder describing what belongs within the folder.</p>
+<table>
+<thead>
+<tr>
+<th>Subfolder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Images</strong></td>
+<td>Image assets referenced from your documents (diagrams, screenshots, logos, and the like).</td>
+</tr>
+<tr>
+<td><strong>Includes</strong></td>
+<td>Modular AsciiDoc content files (<code>.adoc</code>) intended to be pulled into a master document.</td>
+</tr>
+<tr>
+<td><strong>Styles</strong></td>
+<td>Custom CSS stylesheets (<code>.css</code>) that control the appearance of HTML output.</td>
+</tr>
+<tr>
+<td><strong>Themes</strong></td>
+<td>Custom theme files (<code>.yml</code>) that control the appearance of PDF output.</td>
+</tr>
+</tbody>
+</table>
+<p>The master document itself, the top-level <code>.adoc</code> file that aggregates modularized documentation components together, lives at the root of the <strong>Documentation</strong> folder, alongside these four subfolders. Building a master document is covered in detail in <a href="#building-a-master-document">Building a Master Document</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For larger documentation efforts, it is common to organize the <strong>Includes</strong> folder further by creating subfolders beneath it, grouping related modular content into logical units. <strong>CIMTool</strong> places no restrictions on this, and the structure beneath <strong>Includes</strong> is yours to arrange in a manner that best meets your documentation needs.</p>
+</div>
+<p>The <a href="https://github.com/cimug-org/CGMES-CIM17">CGMES-CIM17</a> sample project shows this layout in practice. Its <strong>Documentation</strong> folder holds a master document, <code>CGMES-Documentation.adoc</code>, at the root; a set of modular narrative files under <strong>Includes</strong> (an introduction, a CGMES overview, profile-group introductions, a conclusion, and more); a custom HTML stylesheet under <strong>Styles</strong>; and a custom PDF theme under <strong>Themes</strong>.</p>
+<h2 id="the-asciidoctor-eclipse-editor">The Asciidoctor Eclipse Editor</h2>
+<p>Authoring and previewing AsciiDoc content within <strong>CIMTool</strong> is handled by the Asciidoctor Eclipse editor, which is bundled with <strong>CIMTool</strong> 2.3.0 out of the box. No separate installation is required. When you open an <code>.adoc</code> file in the workbench, the editor is automatically launched for the selected file.</p>
+<p>The editor provides a live, side-by-side preview: your AsciiDoc source on one side and the rendered result on the other. The preview reflects the same AsciiDoc processing <strong>CIMTool</strong> uses elsewhere, so what you see in the editor is a faithful representation of the final output.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/AsciidoctorEditor-SplitView.png" title="The Asciidoctor editor in split view: AsciiDoc source with syntax highlighting on the left, the live rendered preview with table of contents and section numbering on the right"><img alt="image" src="../../images/AsciidoctorEditor-SplitView.png" /></a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Asciidoctor editor renders previews by running an external Asciidoctor process and communicating with it, rather than by embedding the AsciiDoc processor inside <strong>CIMTool</strong> itself. This is an implementation detail you do not normally need to think about, but it explains the editor's "rebuild" and "clear cache" toolbar actions described below, which manage that external rendering process.</p>
+</div>
+<h3 id="the-editor-toolbar">The Editor Toolbar</h3>
+<p>The editor's toolbar provides quick access to formatting, insertion, navigation, and output actions.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/AsciidoctorEditor-Toolbar.png" title="The Asciidoctor editor toolbar"><img alt="image" src="../../images/AsciidoctorEditor-Toolbar.png" /></a></p>
+<p>The buttons, from left to right, are:</p>
+<table>
+<thead>
+<tr>
+<th>Button</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vertical layout</td>
+<td>Arranges source and preview side by side (vertical split).</td>
+</tr>
+<tr>
+<td>Horizontal layout</td>
+<td>Arranges source and preview one above the other (horizontal split).</td>
+</tr>
+<tr>
+<td>Preview in external browser</td>
+<td>Renders the document to HTML and opens it in your default external browser.</td>
+</tr>
+<tr>
+<td>Open rendering preferences</td>
+<td>Opens the editor's rendering preferences, where custom AsciiDoc attributes used during rendering can be defined.</td>
+</tr>
+<tr>
+<td>Section level (<code>H1</code>)</td>
+<td>Inserts a section heading. The dropdown selects the level, from Document Title (<code>H0</code>) through Level 5 Section (<code>H5</code>).</td>
+</tr>
+<tr>
+<td>Italic</td>
+<td>Formats the selected text as italic.</td>
+</tr>
+<tr>
+<td>Bold</td>
+<td>Formats the selected text as bold.</td>
+</tr>
+<tr>
+<td>Monospace</td>
+<td>Formats the selected text as monospace.</td>
+</tr>
+<tr>
+<td>Admonition (NOTE)</td>
+<td>Inserts an admonition. The dropdown selects the type: TIP, NOTE, IMPORTANT, WARNING, or CAUTION.</td>
+</tr>
+<tr>
+<td>Insert a link</td>
+<td>Inserts a link.</td>
+</tr>
+<tr>
+<td>Insert a reference anchor</td>
+<td>Inserts an anchor that can be referenced elsewhere via a cross reference.</td>
+</tr>
+<tr>
+<td>Insert a table</td>
+<td>Inserts a table skeleton.</td>
+</tr>
+<tr>
+<td>Insert a code block</td>
+<td>Inserts a source/listing code block.</td>
+</tr>
+<tr>
+<td>Add linebreak</td>
+<td>Inserts a hard line break.</td>
+</tr>
+<tr>
+<td>Toggle table of contents</td>
+<td>Shows or hides the table of contents in the preview. The tooltip reads "TOC is hidden" when off and "TOC is shown" when on.</td>
+</tr>
+<tr>
+<td>Jump to top of AsciiDoc view</td>
+<td>Scrolls the preview back to the top of the document.</td>
+</tr>
+<tr>
+<td>Create temporary PDF</td>
+<td>Renders the document to a temporary PDF file and opens it.</td>
+</tr>
+<tr>
+<td>Create overview diagram</td>
+<td>Generates a structural overview diagram of the current document.</td>
+</tr>
+<tr>
+<td>Rebuild AsciiDoc preview content</td>
+<td>Rebuilds the preview (also available via <strong>F5</strong>). Useful when included files or other resources have changed outside the editor, or when refreshing an external-browser preview.</td>
+</tr>
+<tr>
+<td>Clear complete cache</td>
+<td>Clears all temporary files cached for the project. The next rebuild takes longer because everything is regenerated.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rendering-preferences">Rendering Preferences</h3>
+<p>The <strong>Open rendering preferences</strong> toolbar button opens a preferences dialog for defining custom AsciiDoc attributes that are applied when the editor renders a document.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/AsciidoctorEditor-RenderingPreferences.png" title="The rendering preferences dialog showing the AsciiDoc attributes page, where custom attribute entries can be defined"><img alt="image" src="../../images/AsciidoctorEditor-RenderingPreferences.png" /></a></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Custom attribute entries defined here override attribute definitions of the same name declared in your documents. If a rendered document does not reflect an attribute set in its own header, check whether an entry here is overriding it.</p>
+</div>
+<h3 id="configuration-files">Configuration Files</h3>
+<p>When you first open an <code>.adoc</code> file, the editor automatically generates an <code>.asciidoctorconfig.adoc</code> configuration file. This file establishes the rendering context for documents in its directory and is created and maintained by the editor, so you should leave it in place.</p>
+<h2 id="adding-documentation-to-profile-elements">Adding Documentation to Profile Elements</h2>
+<p>Beyond authoring standalone narrative content, <strong>CIMTool</strong> lets you attach documentation directly to individual elements of a profile: a class, an enumeration, an attribute, an association role end, and so on. This element-level documentation is carried with the profile and is emitted by the documentation builders into the generated output for that element, so it travels with the profile rather than living in a separate document.</p>
+<p>Two tabs in the profile editor contribute this documentation: the <strong>"Description"</strong> tab, which has been part of <strong>CIMTool</strong> since its inception, and the <strong>"Documentation"</strong> tab, introduced in <strong>CIMTool</strong> 2.3.0. Both accept AsciiDoc, so the formatting and styling described in the <a href="#asciidoc-syntax-quick-reference">AsciiDoc Syntax Quick Reference</a> applies to the text you enter in either one.</p>
+<h3 id="the-description-tab">The "Description" Tab</h3>
+<p>The <strong>"Description"</strong> tab presents two fields for a selected element:</p>
+<ul>
+<li><strong>Schema Description</strong>: the normative description carried in the source CIM schema (the UML model in the <code>.qea</code>, <code>.eap</code>, <code>.xmi</code>, etc. file). This text is read-only by design: it reflects the definition as it exists in the model and cannot be edited in <strong>CIMTool</strong>.</li>
+<li><strong>Profile Description</strong>: a field for additional notes you supply. AsciiDoc syntax is honored here, so you can format and style the text.</li>
+</ul>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/Documentation-DescriptionTab.png" title="The Description tab for the negativeR12 attribute: the read-only Schema Description (top) and the editable Profile Description (bottom)"><img alt="image" src="../../images/Documentation-DescriptionTab.png" /></a></p>
+<h3 id="the-documentation-tab">The "Documentation" Tab</h3>
+<p>The <strong>"Documentation"</strong> tab, new in <strong>CIMTool</strong> 2.3.0, provides a dedicated, full-page area for authoring element documentation in AsciiDoc.</p>
+<p>The <strong>"Documentation"</strong> tab was introduced to give authors a substantially larger editing and viewing area than the <strong>"Description"</strong> tab's field affords. A planned future enhancement will embed richer AsciiDoc editing and live preview directly within the <strong>"Documentation"</strong> tab itself, a further reason to favor it for anything beyond a brief note.</p>
+<h3 id="where-your-content-appears">Where Your Content Appears</h3>
+<p>The normative <strong>Schema Description</strong> is non-editable, but you can always supplement or clarify it using the two editable fields above, the <strong>"Description"</strong> tab's Profile Description and the <strong>"Documentation"</strong> tab. You may use either, or both; they are complementary. The one thing to be aware of is where each one lands in the generated output, which depends on the kind of documentation builder you use:</p>
+<ul>
+<li>The <strong>Schema Description</strong> and the <strong>Profile Description</strong> always appear together in the element's <strong>description</strong>, with the normative Schema Description first.</li>
+<li>The <strong>"Documentation"</strong> tab content appears in the <strong>description</strong> as well for the standard builders, but for a <em>mappings</em> builder it is placed instead in a separate <strong>mapping</strong> column, making the <strong>"Documentation"</strong> tab the natural place to record how an element maps to another information model or third-party system. The builders and the mapping column are covered in <a href="#the-asciidoc-builders">The AsciiDoc Builders</a>.</li>
+</ul>
+<h3 id="documentation-in-the-generated-output">Documentation in the Generated Output</h3>
+<p>The following example shows attribute-level documentation flowing through to the generated output. Documentation authored on the <strong>"Documentation"</strong> tab for the <code>negativeR12</code> attribute appears in the generated AsciiDoc source and is rendered, in the preview, into the description cell for that attribute, demonstrating the full path from authored text to final output.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/Documentation-AttributeLevel.png" title="Documentation authored on the Documentation tab for the negativeR12 attribute, shown in the generated AsciiDoc source and in the rendered preview's description cell"><img alt="image" src="../../images/Documentation-AttributeLevel.png" /></a></p>
+<p>Because both tabs accept arbitrary AsciiDoc, element documentation is not limited to plain prose. You can introduce your own headings, tables, lists, and other structures, and the documentation builders fold them into the generated document. The example below adds class-level documentation to the abstract class <code>ACDCTerminal</code>: a custom sub-section heading and an inlined AsciiDoc table authored on the <strong>"Documentation"</strong> tab. In the generated output, the sub-section appears as a numbered subsection beneath the class (and in the document's table of contents), and the table renders as a titled, formatted table.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/Documentation-ClassLevel.png" title="Class-level documentation on ACDCTerminal: a custom sub-section and an inlined table authored on the Documentation tab, rendered as a numbered subsection and a formatted table in the generated output"><img alt="image" src="../../images/Documentation-ClassLevel.png" /></a></p>
+<h2 id="the-asciidoc-builders">The AsciiDoc Builders</h2>
+<p><strong>CIMTool</strong>'s documentation builders generate AsciiDoc directly from a profile definition. Like all <strong>CIMTool</strong> builders, they are enabled per profile and write their output into the <strong>Profiles</strong> folder alongside the profile's <code>.owl</code> definition. For documentation, <strong>CIMTool</strong> ships eight AsciiDoc builders, organized into two families of four.</p>
+<p>The distinction between the two families is the kind of document each produces:</p>
+<ul>
+<li><strong>Article builders</strong> generate a complete, standalone AsciiDoc document. The output carries a full document header, uses the <code>article</code> document type, has its own document title, and can be rendered on its own into HTML or PDF.</li>
+<li><strong>Inline builders</strong> generate an AsciiDoc fragment designed to be pulled into a larger document. The output uses the <code>inline</code> document type, has no document title of its own, and begins at a section heading so that it slots cleanly beneath the headings of the master document that includes it.</li>
+</ul>
+<p>Within each family, the four builders differ by the schema convention the documentation is generated for:</p>
+<table>
+<thead>
+<tr>
+<th>Builder</th>
+<th>Family</th>
+<th>Output file</th>
+<th>Generated for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>adoc-article-rdfs</code></td>
+<td>Article</td>
+<td><code>.article-rdfs.adoc</code></td>
+<td>RDFS</td>
+</tr>
+<tr>
+<td><code>adoc-article-rdfs-mappings</code></td>
+<td>Article</td>
+<td><code>.article-rdfs-mappings.adoc</code></td>
+<td>RDFS</td>
+</tr>
+<tr>
+<td><code>adoc-article-xsd</code></td>
+<td>Article</td>
+<td><code>.article-xsd.adoc</code></td>
+<td>XSD</td>
+</tr>
+<tr>
+<td><code>adoc-article-json</code></td>
+<td>Article</td>
+<td><code>.article-json.adoc</code></td>
+<td>JSON Schema</td>
+</tr>
+<tr>
+<td><code>adoc-inline-rdfs</code></td>
+<td>Inline</td>
+<td><code>.inline-rdfs.adoc</code></td>
+<td>RDFS</td>
+</tr>
+<tr>
+<td><code>adoc-inline-rdfs-mappings</code></td>
+<td>Inline</td>
+<td><code>.inline-rdfs-mappings.adoc</code></td>
+<td>RDFS</td>
+</tr>
+<tr>
+<td><code>adoc-inline-xsd</code></td>
+<td>Inline</td>
+<td><code>.inline-xsd.adoc</code></td>
+<td>XSD</td>
+</tr>
+<tr>
+<td><code>adoc-inline-json</code></td>
+<td>Inline</td>
+<td><code>.inline-json.adoc</code></td>
+<td>JSON Schema</td>
+</tr>
+</tbody>
+</table>
+<h3 id="choosing-between-article-and-inline">Choosing Between Article and Inline</h3>
+<p>Use an <strong>article</strong> builder when you want a self-contained document for a single profile, a standalone specification that can be rendered and distributed on its own. Use an <strong>inline</strong> builder when the profile's documentation is one piece of a larger work, such as a master document that brings together several profiles along with hand-written narrative. Because an inline fragment has no document title and starts at a section heading, the master document controls the overall structure and the fragment falls into place beneath it.</p>
+<p>The element-level documentation described in <a href="#adding-documentation-to-profile-elements">Adding Documentation to Profile Elements</a> is emitted by these builders into the generated output, regardless of which family you choose.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>adoc-article-rdfs-mappings</code> and <code>adoc-inline-rdfs-mappings</code> builders produce the same RDFS documentation as their non-mappings counterparts, with one addition: each class member table includes a dedicated <strong>mapping</strong> column for documenting how each CIM element maps to another information model or third-party system. This column is populated from the element's <strong>"Documentation"</strong> tab, as described in <a href="#adding-documentation-to-profile-elements">Adding Documentation to Profile Elements</a>. Mappings are currently an RDFS-only feature in CIMTool 2.3.0; the XSD and JSON Schema builders will have mappings variant in future releases.</p>
+</div>
+<h3 id="annotating-extension-members-with-namespace-prefixes">Annotating Extension Members with Namespace Prefixes</h3>
+<p>When a profile draws on attributes and associations from extension namespaces, such as the European (ENTSO-E) extensions to the CIM, the AsciiDoc builders can annotate those members in the generated documentation with a short namespace <strong>prefix</strong>, making it immediately clear which namespace each extension member belongs to. In the example below, the inherited members <code>eu:energyIdentCodeEic</code> and <code>eu:shortName</code> carry the <code>eu:</code> prefix, distinguishing them from the normative CIM members (<code>mRID</code>, <code>description</code>, <code>name</code>), which have none.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/Documentation-NamespacePrefixes.png" title="Generated documentation for the BusNameMarker class: the eu: prefix annotates the European extension members energyIdentCodeEic and shortName, distinguishing them from the normative CIM members"><img alt="image" src="../../images/Documentation-NamespacePrefixes.png" /></a></p>
+<p>These prefixes come from a <strong>namespace-prefixes mappings file</strong>, a distinct file from the stereotype-to-namespace <code>.namespaces</code> file described in <a href="../cimtool-support-for-extension-namespaces/">CIMTool Support for Extension Namespaces</a>. Where the <code>.namespaces</code> file maps stereotypes to namespaces during schema import, the <code>.namespace-prefixes</code> file maps each namespace to the prefix the builders should use when annotating members in that namespace.</p>
+<p>The file follows the same naming and import conventions as the <code>.namespaces</code> file: it is named identically to the EA project file used as the project's schema but with a <code>.namespace-prefixes</code> extension, co-located with that schema file in the <strong>Schema</strong> folder, and automatically imported alongside the schema when a project is created or its schema is (re-)imported. Each line is a simple <code>&lt;prefix&gt;=&lt;namespace URI&gt;</code> mapping (lines beginning with <code>#</code> are comments):</p>
+<pre><code>nc=http://entsoe.eu/ns/nc#
+eu=http://iec.ch/TC57/CIM100-European#
+eumd=http://entsoe.eu/ns/Metadata-European#
+</code></pre>
+<p>With this mapping in effect, any member resolved to the <code>http://iec.ch/TC57/CIM100-European#</code> namespace is annotated with the <code>eu:</code> prefix in the generated documentation, as shown above.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>.namespace-prefixes</code> file is independent of the stereotype-to-namespace <code>.namespaces</code> file and does not require a <code>.namespaces</code> file to be present. It applies regardless of how the model's namespaces were defined, whether through a <code>.namespaces</code> file or through <code>baseuri</code> tagged values (see <a href="../cimtool-support-for-extension-namespaces/">CIMTool Support for Extension Namespaces</a> for both approaches). It is, however, honored only when the project's schema is an <strong>Enterprise Architect</strong> project file (<code>.eap</code>, <code>.eapx</code>, <code>.qea</code>, <code>.qeax</code>); it has no effect when the schema is imported in XMI format (<code>.xmi</code> or <code>.owl</code>).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>.namespace-prefixes</code> file is optional and is used only by the AsciiDoc builders to annotate generated documentation; it does not affect the profile definition itself. Both namespace prefixes and namespace URIs are case-sensitive (per the W3C <em>Namespaces in XML</em> specification) and are compared character by character (<code>http://www.example.org/wine</code> and <code>http://www.Example.org/wine</code> are distinct namespaces), so ensure each URI in the file exactly matches the namespace used in your model.</p>
+</div>
+<h2 id="building-a-master-document">Building a Master Document</h2>
+<p>A <em>master document</em> is a top-level AsciiDoc file that assembles a complete, publishable document from smaller pieces: hand-written narrative, generated profile documentation, diagrams, and supporting assets. It lives at the root of the <strong>Documentation</strong> folder and uses AsciiDoc's <code>include::</code> directive to pull in content from elsewhere in the project.</p>
+<p>The publicly available <a href="https://github.com/cimug-org/CGMES-CIM17">CGMES-CIM17</a> sample project is a complete, worked example of this approach, and the rest of this section walks through how its master document, <code>CGMES-Documentation.adoc</code>, is put together. It is a recommended starting point for anyone looking to build their own modularized documentation.</p>
+<h3 id="the-document-header">The Document Header</h3>
+<p>The master document opens with a header that establishes document-wide settings and, importantly, defines a set of path attributes that the rest of the document uses to locate content:</p>
+<pre><code class="language-asciidoc">:profilesdir: {docdir}/Profiles
+:includedir: {docdir}/Documentation/Includes
+:pdf-themesdir: {docdir}/Documentation/Themes
+:pdf-theme: cgmes-adoc
+:stylesdir: {docdir}/Documentation/Styles
+:stylesheet: cgmes-adoc.css
+:doctype: book
+</code></pre>
+<p>Two things are worth highlighting here. First, <code>:doctype: book</code> selects the AsciiDoc book document type, which supports the multi-chapter structure appropriate for a specification of this size. Second, the <code>:stylesheet:</code> and <code>:pdf-theme:</code> attributes point at the custom CSS and PDF theme in the <strong>Styles</strong> and <strong>Themes</strong> subfolders, applying the project's own look to HTML and PDF output respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Within a <strong>CIMTool</strong> project, the <code>{docdir}</code> attribute always resolves to the <strong>project root</strong>. The Asciidoctor editor runs with the project root as its base directory, so every path attribute above is written relative to that root (<code>{docdir}/Profiles</code>, <code>{docdir}/Documentation/Includes</code>, and so on) regardless of the fact that the master document itself lives in the <strong>Documentation</strong> folder. A leading <code>./</code> resolves from the same project root, so the <code>./Profiles/...</code> paths you will see in <strong>CIMTool</strong>'s generated artifacts and the <code>{docdir}/Profiles/...</code> paths you write in a master document point to the same place; <code>{docdir}/</code> is simply the explicit, self-documenting form recommended when authoring. Writing your own master-document paths this way ensures they resolve correctly.</p>
+</div>
+<h3 id="assembling-the-content">Assembling the Content</h3>
+<p>With the path attributes defined, the body of the master document is largely a sequence of <code>include::</code> directives that interleave two kinds of content:</p>
+<ul>
+<li><strong>Hand-written narrative</strong> from the <strong>Includes</strong> subfolder (introductions, overviews, and connecting prose) referenced via the <code>{includedir}</code> attribute.</li>
+<li><strong>Generated profile documentation</strong> from the <strong>Profiles</strong> folder, the <code>.inline-rdfs.adoc</code> fragments produced by the AsciiDoc builders, referenced via the <code>{profilesdir}</code> attribute.</li>
+</ul>
+<p>A simplified excerpt illustrates the pattern:</p>
+<pre><code class="language-asciidoc">= CGMES Profiles Guide
+
+include::{includedir}/introduction.adoc[]
+
+include::{includedir}/cgmes-overview.adoc[]
+
+include::{profilesdir}/CGMES-CoreEquipment.inline-rdfs.adoc[]
+
+include::{profilesdir}/CGMES-Operation.inline-rdfs.adoc[]
+
+include::{includedir}/conclusion.adoc[]
+</code></pre>
+<p>Because the included profile fragments are produced by <em>inline</em> builders they carry no document title of their own. However, they do generate their own section heading at the correct level, so they slot neatly beneath the master document's structure rather than competing with it. The narrative includes and the generated profile sections combine into a single, continuously document with appropriate page number automatically assigned across the document.</p>
+<h3 id="the-rendered-result">The Rendered Result</h3>
+<p>The master document can be rendered to HTML or PDF directly from the Asciidoctor editor using the toolbar actions described in <a href="#the-asciidoctor-eclipse-editor">The Asciidoctor Eclipse Editor</a>. Both outputs apply the project's custom styling and include a generated table of contents with the assembled content.</p>
+<p>The HTML output, opened in an external browser, presents the assembled guide with a navigable table of contents, the generated profile sections, and the PlantUML class diagrams embedded from each profile:</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/MasterDocument-HTML.png" title="The assembled CGMES Profiles Guide rendered to HTML, showing the table of contents, a generated profile section, and an embedded PlantUML class diagram"><img alt="image" src="../../images/MasterDocument-HTML.png" /></a></p>
+<p>The same document rendered to PDF produces a paginated, book-style specification, in this case a multi-hundred-page guide assembled entirely from the project's narrative includes and generated profile documentation:</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/MasterDocument-PDF.png" title="The assembled CGMES Profiles Guide rendered to PDF, showing the book-style chapter layout"><img alt="image" src="../../images/MasterDocument-PDF.png" /></a></p>
+<h2 id="asciidoc-syntax-quick-reference">AsciiDoc Syntax Quick Reference</h2>
+<p>This quick reference covers the AsciiDoc syntax you are most likely to use when authoring <strong>CIMTool</strong> documentation: in the <strong>"Description"</strong> and <strong>"Documentation"</strong> tabs, in <strong>Includes</strong> content, and in a master document. Each entry shows a brief example and links to the corresponding page in the official Asciidoctor documentation, where the full set of options is described. A few entries marked <em>(CIMTool-specific)</em> describe patterns particular to <strong>CIMTool</strong> projects and are documented more fully here, as they have no direct equivalent in the general AsciiDoc reference.</p>
+<p>The examples below are a quick reference only. For the complete, authoritative AsciiDoc syntax documentation, see the <a href="https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/">AsciiDoc Syntax Quick Reference</a> at the Asciidoctor documentation site, which this reference draws on.</p>
+<h3 id="text-formatting">Text Formatting</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>*bold*</code></td>
+<td>Bold text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/bold/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>_italic_</code></td>
+<td>Italic text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/italic/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>`monospace`</code></td>
+<td>Monospace (code) text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/monospace/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>*_bold italic_*</code></td>
+<td>Combined bold and italic</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>#highlight#</code></td>
+<td>Highlighted (marked) text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/highlight/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[.underline]#text#</code></td>
+<td>Underlined text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/text-span-built-in-roles/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[.line-through]#text#</code></td>
+<td>Strikethrough text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/text-span-built-in-roles/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>^super^</code></td>
+<td>Superscript</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/subscript-and-superscript/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>~sub~</code></td>
+<td>Subscript</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/subscript-and-superscript/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="paragraphs-breaks">Paragraphs &amp; Breaks</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>(blank line between blocks)</em></td>
+<td>Separates paragraphs</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/paragraphs/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>+</code> <em>(at end of line)</em></td>
+<td>Hard line break within a paragraph</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/hard-line-breaks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[%hardbreaks]</code></td>
+<td>Preserve all line breaks in a block</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/hard-line-breaks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[.lead]</code></td>
+<td>Style a paragraph as a lead paragraph</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/preamble-and-lead/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>'''</code></td>
+<td>Thematic break (horizontal rule)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/breaks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>&lt;&lt;&lt;</code></td>
+<td>Page break</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/breaks/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="section-headings">Section Headings</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>= Title</code></td>
+<td>Document title (level 0)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/sections/titles-and-levels/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>== Section</code></td>
+<td>Level 1 section heading</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/sections/titles-and-levels/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>=== Section</code></td>
+<td>Level 2 section heading (add <code>=</code> per level, to level 5)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/sections/titles-and-levels/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[discrete]</code></td>
+<td>Mark a heading as discrete (not part of the section hierarchy)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/discrete-headings/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="document-header-attributes">Document Header &amp; Attributes</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>:name: value</code></td>
+<td>Define a document attribute</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/attributes/attribute-entries/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>{name}</code></td>
+<td>Reference a defined attribute</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/attributes/reference-attributes/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:doctype: book</code></td>
+<td>Set the document type (<code>article</code>, <code>book</code>, etc.)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/document/doctype/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>{docdir}</code></td>
+<td>Built-in attribute; in a <strong>CIMTool</strong> project resolves to the project root</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="table-of-contents">Table of Contents</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>:toc:</code></td>
+<td>Enable the table of contents</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/toc/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:toc: left</code></td>
+<td>Position the TOC (e.g. in a left sidebar)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/toc/position/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:toclevels: 3</code></td>
+<td>Set how many heading levels the TOC includes</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/toc/levels/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:toc-title: Contents</code></td>
+<td>Customize the TOC title</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/toc/title/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="lists">Lists</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>* item</code></td>
+<td>Unordered list item (<code>**</code>, <code>***</code> for nesting)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/lists/unordered/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>. item</code></td>
+<td>Ordered list item (<code>..</code>, <code>...</code> for nesting)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/lists/ordered/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>* [ ] item</code> / <code>* [*] item</code></td>
+<td>Checklist item, unchecked / checked</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/lists/checklist/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>term:: description</code></td>
+<td>Description (definition) list</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/lists/description/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>+</code> <em>(on its own line)</em></td>
+<td>List continuation: attach another block to a list item</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/lists/continuation/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="links-cross-references">Links &amp; Cross References</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>https://example.org</code></td>
+<td>Bare URL becomes an automatic link</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/autolinks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>https://example.org[Link text]</code></td>
+<td>URL with custom link text</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/url-macro/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>link:path/to/file.html[Text]</code></td>
+<td>Link to a relative file</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/link-macro/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>mailto:user@example.org[Text]</code></td>
+<td>Email link</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/mailto-macro/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[[anchor-id]]</code></td>
+<td>Define an inline anchor (reference target)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/xref/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>&lt;&lt;anchor-id,link text&gt;&gt;</code></td>
+<td>Cross reference to an anchor in the same document</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/xref/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>xref:other.adoc#id[Text]</code></td>
+<td>Cross reference to another document</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="images-diagrams">Images &amp; Diagrams</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image::file.png[Alt]</code></td>
+<td>Block image (on its own line)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/images/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>image:file.png[Alt]</code></td>
+<td>Inline image (within a line of text)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/images/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>image::file.png[Alt,300,200]</code></td>
+<td>Image with width and height</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/image-size/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>image::file.png[Alt,align=center]</code></td>
+<td>Image with alignment / positioning</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/macros/image-position/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>plantuml::</code> block macro embeds a PlantUML diagram, rendering a <code>.puml</code> file to an image as part of the document. <strong>CIMTool</strong>'s generated profile documentation uses this macro to embed the PlantUML class diagrams produced by the PlantUML builders. It is provided by the Asciidoctor Diagram extension rather than core AsciiDoc, so it is documented here. You will most often see it in generated <code>Profiles/</code> artifacts, where the builder writes the path relative to the project root:</p>
+<pre><code class="language-asciidoc">.ShortCircuit Profile
+plantuml::./Profiles/CGMES-ShortCircuit.rdfs-t2b.puml[format=svg, align=center]
+</code></pre>
+<p>The line beginning with a dot (<code>.ShortCircuit Profile</code>) is the optional diagram title. The macro target is the <code>.puml</code> file to render (resolved from the project root, the same base used everywhere in a <strong>CIMTool</strong> project), and the bracketed attributes control the output: <code>format=svg</code> renders to SVG (sharp at any zoom), and <code>align=center</code> centers the diagram.</p>
+<h3 id="include-directives">Include Directives</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>include::file.adoc[]</code></td>
+<td>Include the contents of another AsciiDoc file</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/directives/include/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>include::file.adoc[lines=5..10]</code></td>
+<td>Include only specific lines</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/directives/include-lines/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>include::file.adoc[tag=name]</code></td>
+<td>Include only a tagged region</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/directives/include-tagged-regions/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>include::file.adoc[leveloffset=+1]</code></td>
+<td>Shift the included content's heading levels</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/directives/include-with-leveloffset/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<p>In a <strong>CIMTool</strong> master document, content you author yourself, <code>include::</code> directives are written project-root-relative using the <code>{docdir}</code> attribute (or path attributes derived from it, such as <code>{includedir}</code> and <code>{profilesdir}</code>). This is how a master document pulls in both hand-written narrative and generated profile documentation:</p>
+<pre><code class="language-asciidoc">include::{docdir}/Documentation/Includes/introduction.adoc[]
+
+include::{docdir}/Profiles/CGMES-CoreEquipment.inline-rdfs.adoc[]
+</code></pre>
+<p>The first line includes a hand-written narrative file from the <strong>Includes</strong> subfolder; the second includes a generated <code>.inline-rdfs.adoc</code> profile fragment from the <strong>Profiles</strong> folder. See <a href="#building-a-master-document">Building a Master Document</a> for the full pattern.</p>
+<h3 id="admonitions">Admonitions</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NOTE: text</code></td>
+<td>Single-paragraph admonition (also <code>TIP</code>, <code>IMPORTANT</code>, <code>WARNING</code>, <code>CAUTION</code>)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/admonitions/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[NOTE]</code> + <code>====</code> block</td>
+<td>Multi-paragraph admonition block</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/admonitions/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="source-code-literal-blocks">Source Code &amp; Literal Blocks</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>`+literal+`</code></td>
+<td>Inline literal monospace (no substitutions)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/literal-monospace/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>....</code> block</td>
+<td>Literal block: text shown verbatim</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/verbatim/literal-blocks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>----</code> block</td>
+<td>Listing block: preformatted code or output</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/verbatim/listing-blocks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[source,xml]</code> + <code>----</code> block</td>
+<td>Source block with language for syntax highlighting</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/verbatim/source-blocks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>&lt;1&gt;</code> <em>(in code)</em> + <code>&lt;1&gt; note</code></td>
+<td>Callouts annotating lines of a code block</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/verbatim/callouts/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tables">Tables</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\|===</code> ... <code>\|===</code></td>
+<td>Table delimiters enclosing the table</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/tables/build-a-basic-table/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>\|cell</code></td>
+<td>A table cell (one per line, or several on a line)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/tables/add-cells-and-rows/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[%header]</code></td>
+<td>Promote the first row to a header row</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/tables/add-header-row/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[cols="1,1,2"]</code></td>
+<td>Define columns and their relative widths</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/tables/add-columns/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[cols="1,1a"]</code></td>
+<td>The <code>a</code> modifier makes a column render AsciiDoc content</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/tables/format-column-content/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>.Title</code> <em>(above table)</em></td>
+<td>Give the table a caption/title</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/tables/add-title/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sidebars-examples-blockquotes">Sidebars, Examples &amp; Blockquotes</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>****</code> block</td>
+<td>Sidebar: set-apart auxiliary content</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/sidebars/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>====</code> block</td>
+<td>Example block</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/example-blocks/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>____</code> block</td>
+<td>Blockquote</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/blockquotes/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>--</code> block</td>
+<td>Open block: a general-purpose container</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/blocks/open-blocks/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="comments">Comments</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>// comment</code></td>
+<td>Single-line comment (not rendered)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/comments/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>////</code> block</td>
+<td>Block comment (not rendered)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/comments/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="pdf-html-styling-attributes">PDF &amp; HTML Styling Attributes</h3>
+<p>These attributes, set in a master document's header, control the appearance of generated output. In a <strong>CIMTool</strong> project they typically point at the <strong>Styles</strong> and <strong>Themes</strong> subfolders of the <strong>Documentation</strong> folder.</p>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>:stylesdir:</code></td>
+<td>Directory containing CSS stylesheets (HTML output)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/html-backend/default-stylesheet/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:stylesheet:</code></td>
+<td>The CSS stylesheet to apply to HTML output</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/html-backend/default-stylesheet/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:pdf-themesdir:</code></td>
+<td>Directory containing PDF theme files (PDF output)</td>
+<td><a href="https://docs.asciidoctor.org/pdf-converter/latest/theme/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>:pdf-theme:</code></td>
+<td>The PDF theme to apply to PDF output</td>
+<td><a href="https://docs.asciidoctor.org/pdf-converter/latest/theme/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>[.rolename]#text#</code></td>
+<td>Apply a custom role (styled by the stylesheet or theme)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/text/text-span-built-in-roles/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="text-replacements-escaping">Text Replacements &amp; Escaping</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(C)</code> <code>(R)</code> <code>(TM)</code></td>
+<td>Replaced with &copy;, &reg;, &trade;</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>--</code></td>
+<td>Replaced with an em dash (&mdash;)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>-&gt;</code> <code>=&gt;</code> <code>&lt;-</code> <code>&lt;=</code></td>
+<td>Replaced with arrows (&rarr;, &rArr;, &larr;, &lArr;)</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>\</code> <em>(before markup)</em></td>
+<td>Backslash escapes the character that follows</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/subs/prevent/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>+text+</code></td>
+<td>Inline passthrough: render text without substitutions</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/pass/pass-macro/">&rarr; Docs</a></td>
+</tr>
+<tr>
+<td><code>&amp;amp;#NNN;</code></td>
+<td>Named, decimal, or hexadecimal character reference</td>
+<td><a href="https://docs.asciidoctor.org/asciidoc/latest/subs/replacements/">&rarr; Docs</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

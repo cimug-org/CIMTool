@@ -1,0 +1,2011 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../generate-database-schema/">
+      
+      
+        <link rel="next" href="../using-cimtool-documentation-features/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../logos/cimtool-v2.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Profile Real-Time Preview - CIMTool</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#profile-real-time-preview" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="CIMTool" class="md-header__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            CIMTool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Profile Real-Time Preview
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="CIMTool" class="md-nav__button md-logo" aria-label="CIMTool" data-md-component="logo">
+      
+  <img src="../../logos/cimtool-v2_96x96.png" alt="logo">
+
+    </a>
+    CIMTool
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/CIMug-org/CIMTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How To
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How To
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../obtain-cim-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Obtain Stable Releases of the CIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../navigate-workspace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Navigate the Workspace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../import-cim-uml/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool with Enterprise Architect: Importing a CIM Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Create a Contextual Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edit-a-profile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Editing a Profile
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../browsing-the-CIM-UML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Browsing the CIM UML
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exchange-a-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exchange a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../search-schemas-profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Searching Schemas and Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generate-database-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generating a Database Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Real-Time Preview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Real-Time Preview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#diagram-style-and-target-schema-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagram Style and Target Schema Type
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-the-preview-on-a-second-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with the Preview on a Second Monitor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rdfs-profile-definition-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RDFS Profile Definition Style
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RDFS Profile Definition Style">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-abstract-class-with-no-concrete-child-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 1: Abstract Class with No Concrete Child Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-attribute-type-not-selected-in-the-profile-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 2: Attribute Type Not Selected in the Profile Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-association-target-end-not-included-in-the-profile-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 3: Association Target End Not Included in the Profile Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issues-4-5-enumeration-type-not-yet-referenced-by-any-attribute-in-the-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issues 4 &amp; 5: Enumeration Type Not Yet Referenced by Any Attribute in the Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-6-abstract-class-with-fields-defined" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 6: Abstract Class with Fields Defined
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-7-concrete-class-with-no-fields-or-associations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 7: Concrete Class with No Fields or Associations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-8-isolated-abstract-class-with-no-parent-child-or-associations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 8: Isolated Abstract Class with No Parent, Child, or Associations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-cimtool-documentation-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool Documentation Features
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profile-maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profile Maintenance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../comparing-profiles-schemas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Comparing Profiles and Schemas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../associations-anonymous-classes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Associations and Anonymous Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../namespaces-in-cimtool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Namespaces in CIMTool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cimtool-support-for-extension-namespaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CIMTool Support for Extension Namespaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modeling-cim-extensions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modeling CIM Extensions: Shadow Extension Classes and Mix-Ins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Further Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Further Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/uml-xmi-owl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UML, XMI, and OWL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/cim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CIM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../further-learning/protege-and-topbraid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool with Protege and Top Braid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SchemaOps Automation & Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SchemaOps Automation & Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../schemaops/cimtool-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using CIMTool in CI/CD Pipelines with cimtool-cli
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../download-latest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Download Latest
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#diagram-style-and-target-schema-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagram Style and Target Schema Type
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-the-preview-on-a-second-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with the Preview on a Second Monitor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rdfs-profile-definition-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RDFS Profile Definition Style
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RDFS Profile Definition Style">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-abstract-class-with-no-concrete-child-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 1: Abstract Class with No Concrete Child Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-attribute-type-not-selected-in-the-profile-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 2: Attribute Type Not Selected in the Profile Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-association-target-end-not-included-in-the-profile-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 3: Association Target End Not Included in the Profile Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issues-4-5-enumeration-type-not-yet-referenced-by-any-attribute-in-the-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issues 4 &amp; 5: Enumeration Type Not Yet Referenced by Any Attribute in the Profile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-6-abstract-class-with-fields-defined" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 6: Abstract Class with Fields Defined
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-7-concrete-class-with-no-fields-or-associations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 7: Concrete Class with No Fields or Associations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-8-isolated-abstract-class-with-no-parent-child-or-associations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue 8: Isolated Abstract Class with No Parent, Child, or Associations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="profile-real-time-preview">Profile Real-Time Preview</h1>
+<p><strong>CIMTool</strong> 2.3.0 introduces the <strong>Profile Real-Time Preview</strong> feature, which
+renders a live UML class diagram of the active CIM profile directly within the
+<strong>CIMTool</strong> workbench. The diagram updates automatically each time the profile
+is saved, giving profile designers an immediate, visual representation of the
+profile's current state without leaving the application or switching to an
+external tool.</p>
+<p>The <strong>Profile Real-Time Preview</strong> view is part of the default <strong>CIMTool</strong>
+workbench layout. In <strong>CIMTool</strong>, a <em>perspective</em> is a named arrangement of
+views, editors, and toolbars that is optimized for a particular type of work.
+The default <strong>CIMTool</strong> perspective is
+pre-configured for profile design and includes the <strong>Profile Real-Time Preview</strong>
+as one of its built-in views, visible as a tab in the lower portion of the
+workbench. No manual setup is required to use it.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/ProfileRealTimePreview-vs-PlantUML-Views.png" title="The Profile Real-Time Preview tab (outlined in red) and the PlantUML Svg tab (outlined in blue) in the default CIMTool perspective"><img alt="image" src="../../images/ProfileRealTimePreview-vs-PlantUML-Views.png" /></a></p>
+<p>The <strong>Profile Real-Time Preview</strong> view tracks whichever profile is currently
+active in the profile editor and updates in place when focus moves to a
+different profile. The diagram is pan-and-zoom capable: holding <strong>Ctrl</strong> and
+scrolling zooms in or out; clicking and dragging pans the viewport. This is
+especially practical when working with large profiles whose full diagram extends
+well beyond the visible area of the view.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>Profile Real-Time Preview</strong> view is distinct from the <strong>PlantUML Svg</strong> view that also appears in the default workbench layout (outlined in blue in the screenshot above). The <strong>PlantUML Svg</strong> view is a general-purpose PlantUML renderer that displays whatever <code>.puml</code> file is currently open or selected in the editor. The <strong>Profile Real-Time Preview</strong>, by contrast, is purpose-built for profile design work: it automatically tracks the active profile and regenerates its diagram on every save, with no manual file selection required.</p>
+</div>
+<p>Beyond visualizing the profile's structure, the Profile Real-Time Preview serves a
+second purpose that is especially valuable when building large or complex
+profiles: it surfaces incomplete or invalid profile definitions directly within
+the rendered diagram using distinct visual cues. This makes it possible to
+identify and correct structural problems as they arise, rather than discovering
+them only after a lengthy, systematic post-completion review.</p>
+<p>Because the two views serve different purposes, they can be used together. The
+<strong>PlantUML Svg</strong> view can be repositioned within the workbench by dragging its
+tab to a different panel, making it possible to display both views
+simultaneously side by side. The screenshot below illustrates this arrangement,
+and demonstrates the key difference between them: the Profile Real-Time Preview
+(left) renders definition errors using distinct visual cues, flagging issues
+within the profile definition. The PlantUML Svg view (right), rendering the
+same profile as a standard diagram, shows no such indicator even though the
+issue exists in the profile.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/ProfileRealTimePreview-PlantUML-SplitView.png" title="The Profile Real-Time Preview (left) surfacing definition errors using distinct visual cues; the PlantUML Svg view (right) rendering the same profile as a standard diagram with no error indicators"><img alt="image" src="../../images/ProfileRealTimePreview-PlantUML-SplitView.png" /></a></p>
+<p>Historically, validating a large profile required a meticulous inspection of
+every class, attribute, and association definition in the profile editor, a
+process that was time-consuming and error-prone precisely because definition
+problems had no visible presence in the workspace. The Profile Real-Time Preview
+eliminates that burden by making errors immediately visible each time the
+profile is saved.</p>
+<h2 id="diagram-style-and-target-schema-type">Diagram Style and Target Schema Type</h2>
+<p>A CIM profile definition is shaped by its intended target artifact, the type
+of schema or serialization format the profile is ultimately meant to produce.
+The style of diagram rendered by the Profile Real-Time Preview reflects this:
+<strong>CIMTool</strong> generates a PlantUML diagram appropriate for the profile's target
+schema type, and it is within that diagram that any definition errors will be
+visualized.</p>
+<p>When a new project is created, the diagram style defaults to <code>puml-rdfs-t2b</code>.
+If the project is primarily targeting a different schema type (for example,
+XSD), the default should be overridden by updating the project-level preference.
+Right-click the project in the <strong>Project Explorer</strong>, select <strong>Properties</strong>,
+navigate to <strong>CIMTool</strong>, and select the appropriate diagram style from the
+<strong>Diagram Style</strong> dropdown. For an XSD-oriented project, for instance,
+<code>puml-xsd-t2b</code> or <code>puml-xsd-l2r</code> would be the appropriate choice. Selecting
+the correct diagram style ensures that the errors visualized in the Real-Time
+Preview are relevant to the target schema type the profile is being designed for.</p>
+<p>Under <strong>Real-Time Profile Preview PlantUML Diagram Preferences</strong>, the
+<strong>Diagram Style</strong> dropdown presents the available options:</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RealTimePreviewProjectLevelPropertiesDialog.png" title="Configuring the diagram style in project properties"><img alt="image" src="../../images/RealTimePreviewProjectLevelPropertiesDialog.png" /></a></p>
+<table>
+<thead>
+<tr>
+<th>Diagram Style</th>
+<th>Target Schema Type</th>
+<th>Layout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>puml-rdfs-t2b</code></td>
+<td>RDFS</td>
+<td>Top-to-bottom</td>
+</tr>
+<tr>
+<td><code>puml-rdfs-l2r</code></td>
+<td>RDFS</td>
+<td>Left-to-right</td>
+</tr>
+<tr>
+<td><code>puml-xsd-t2b</code></td>
+<td>XSD</td>
+<td>Top-to-bottom</td>
+</tr>
+<tr>
+<td><code>puml-xsd-l2r</code></td>
+<td>XSD</td>
+<td>Left-to-right</td>
+</tr>
+<tr>
+<td><code>puml-json-t2b</code></td>
+<td>JSON Schema</td>
+<td>Top-to-bottom</td>
+</tr>
+<tr>
+<td><code>puml-json-l2r</code></td>
+<td>JSON Schema</td>
+<td>Left-to-right</td>
+</tr>
+</tbody>
+</table>
+<p>This project-level setting applies as the default for all profiles in the
+project. It can be overridden on a per-profile basis from within the profile's
+own properties. The layout orientation, top-to-bottom or left-to-right, is a
+presentational preference and has no effect on the content of the diagram or
+the errors it surfaces.</p>
+<p>The type of errors that can appear in the diagram depends on the target schema
+type selected. Some errors are common to all diagram styles; others are
+specific to the conventions and constraints of a particular target schema type.
+The sections below address each target schema type in turn, describing how
+errors are visualized within it and how to resolve each one.</p>
+<h2 id="working-with-the-preview-on-a-second-monitor">Working with the Preview on a Second Monitor</h2>
+<p>The <strong>Profile Real-Time Preview</strong> view can be detached from the workbench
+entirely and moved to a separate window (for example, onto a second monitor)
+by dragging its tab away from its current panel and releasing it outside the
+workbench boundary. Once detached, the view can be maximized to fill the full
+screen, giving the diagram the maximum possible space while leaving the profile
+editor and the rest of the workbench fully accessible on the primary monitor.
+This arrangement is particularly effective when working with large profiles
+whose diagrams would otherwise require significant panning and zooming to
+navigate within a docked view. </p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/ProfileRealTimePreview-DualMonitors.gif" title="Detaching and maximizing the Profile Real-Time Preview within a dual monitor configuration"><img alt="image" src="../../images/ProfileRealTimePreview-DualMonitors.gif" /></a></p>
+<p>The next set of screenshots are used for illustration purposes and show a profile
+that contains a wide range of profile errors, each numbered 1 through 8 for reference. </p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/ProfileRealTimePreview-ErrorsExamples1.png" title="The Profile Real-Time Preview showing multiple error indicators within an RDFS-style diagram of a large profile"><img alt="image" src="../../images/ProfileRealTimePreview-ErrorsExamples1.png" /></a></p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/ProfileRealTimePreview-ErrorsExamples2.png" title="Issues 6, 7, and 8 illustrated in the Profile Real-Time Preview: an abstract class with fields defined (6), a concrete class with no fields or associations (7), and an isolated abstract class with no parent, child, or associations (8)"><img alt="image" src="../../images/ProfileRealTimePreview-ErrorsExamples2.png" /></a></p>
+<p>The sections that follow examine each of the above errors in detail, explaining
+what each one indicates and how to resolve it, beginning with the RDFS diagram
+style.</p>
+<h2 id="rdfs-profile-definition-style">RDFS Profile Definition Style</h2>
+<p>An RDFS-style profile definition targets RDF Schema artifact generation
+conforming to <strong>IEC 61970-501:2016</strong>, <em>Energy management system application
+program interface (EMS-API) – Part 501: Common Information Model Resource
+Description Framework (CIM RDF) schema</em>. When the diagram style is set to
+<code>puml-rdfs-t2b</code> or <code>puml-rdfs-l2r</code>, the Profile Real-Time Preview renders a PlantUML
+class diagram that reflects the structural conventions of an RDFS profile
+definition. Errors specific to those conventions are visualized directly within
+the diagram.</p>
+<p>The numbered errors shown in the overview screenshots above are each examined
+below in sequence, using a deliberately constructed profile that contains each
+type of error so they can be illustrated and resolved one by one.</p>
+<h3 id="issue-1-abstract-class-with-no-concrete-child-classes">Issue 1: Abstract Class with No Concrete Child Classes</h3>
+<h4 id="what-the-diagram-shows">What the diagram shows</h4>
+<p>When a class included in the profile is marked as <strong>abstract</strong> but has no
+child classes in the profile that are declared as <strong>concrete</strong>, the Real-Time
+Preview flags it with two distinct visual cues:</p>
+<ul>
+<li>The class is rendered in <strong>pink/red</strong> rather than the standard yellow
+  used for concrete classes. This color convention is used throughout the RDFS
+  diagram style to indicate an abstract class that violates the profile
+  definition rules.</li>
+<li>A <strong>note callout</strong> is attached directly to the class in the diagram, stating
+  the problem in plain language. In the example above, the note on <code>Terminal</code>
+  reads: <em>"Class Terminal is 'abstract' and has no child classes. It should
+  either be removed, declared as 'concrete', or have a child class that is
+  declared as 'concrete'."</em></li>
+</ul>
+<p>The note callout is particularly useful in large profiles where it may not be
+immediately obvious why a class has been flagged, telling you exactly what
+the problem is and what your options are to resolve it, without requiring you
+to inspect the profile definition manually.</p>
+<h4 id="what-it-means">What it means</h4>
+<p>An abstract class in an RDFS profile definition exists to be specialized, and it
+is expected to have at least one concrete subclass through which instances are
+actually typed. A profile that includes an abstract class with no concrete
+child classes creates an ambiguity in the generated RDFS artifact: the class is
+present but can never be instantiated. <strong>CIMTool</strong> flags this as a definition
+error because the resulting artifact would be structurally incomplete.</p>
+<h4 id="how-to-resolve-it">How to resolve it</h4>
+<p>There are three ways to address this error, as the note callout itself states:</p>
+<ol>
+<li><strong>Declare the class as concrete.</strong> If the class is appropriate to include
+   directly in the profile without requiring a subclass, check the <strong>"Make
+   this class concrete"</strong> checkbox on the class's <strong>Restriction</strong> tab in the
+   profile editor.</li>
+<li><strong>Add a concrete subclass.</strong> If a suitable subclass exists in the CIM
+   model, add it to the profile and declare it as concrete. This is the
+   preferred resolution when the intent is to preserve the abstract nature of
+   the parent class.</li>
+<li><strong>Remove the class from the profile.</strong> If the class is not needed, remove
+   it from the profile entirely via the <strong>"Add/Remove"</strong> tab.</li>
+</ol>
+<p>In the example shown here, <code>Terminal</code> has no subclasses in the CIM model, so
+option 2 is not available. The fix applied in the animated GIF below is
+option 1, navigating to <code>Terminal</code> via the profile editor's <strong>Restriction</strong>
+tab and checking <strong>"Make this class concrete"</strong>. </p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issue-1.gif" title="Navigating to the Terminal class Restriction tab and checking Make this class concrete"><img alt="image" src="../../images/RDFS-Resolve-Issue-1.gif" /></a></p>
+<h4 id="result">Result</h4>
+<p>After saving the profile the diagram refreshes automatically. Navigating to
+<code>Terminal</code> in the updated diagram confirms the error has been resolved. The
+note callout is no longer present and <code>Terminal</code> now appears rendered in the
+standard <strong>yellow</strong> convention for concrete classes.</p>
+<h3 id="issue-2-attribute-type-not-selected-in-the-profile-definition">Issue 2: Attribute Type Not Selected in the Profile Definition</h3>
+<h4 id="what-the-diagram-shows_1">What the diagram shows</h4>
+<p>When an attribute has been added to the profile but its associated enumeration
+or compound type has not been included in the attribute's definition, the
+Profile Real-Time Preview flags it with a <strong>red association</strong> drawn from the class
+that owns the attribute to the enumeration or compound type class. In this
+example, the <code>unitSymbol</code> attribute on <code>Measurement</code> has been added to the
+profile, but the <code>UnitSymbol</code> enumeration that is its declared type has not
+been selected as part of the attribute definition. The result is a red
+association from <code>Measurement</code> to the <code>UnitSymbol</code> class.</p>
+<h4 id="what-it-means_1">What it means</h4>
+<p>In the CIM, enumeration and compound types never participate in associations,
+and are only ever used as the declared type of an attribute. When <strong>CIMTool</strong>
+renders a red association between a class and an enumeration or compound
+type, it is signalling that the attribute exists in the profile but its type
+has not been properly included in the attribute's definition. The diagram is
+making visible what would otherwise be an invisible gap in the profile
+definition: the attribute is present but incomplete.</p>
+<h4 id="how-to-resolve-it_1">How to resolve it</h4>
+<p>The fix is to drill into the attribute definition via the <strong>"Add/Remove"</strong> tab
+and select the enumeration or compound type on the attribute's detail page:</p>
+<ol>
+<li>On the <strong>"Add/Remove"</strong> tab, double-click the class that owns the attribute
+   (in this example, <code>Measurement</code>) to drill into its member list.</li>
+<li>In the member list, locate the affected attribute (<code>unitSymbol 1..1</code>) and
+   double-click it to open its attribute detail page.</li>
+<li>The attribute detail page shows two columns. The declared type
+   (<code>Enumeration: UnitSymbol</code>) will appear in the right-hand (available)
+   column. Move it to the left-hand (selected) column to include it in the
+   attribute's definition.</li>
+<li>Save the profile.</li>
+</ol>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issue-2.gif" title="Drilling into the unitSymbol attribute on the Add/Remove tab and moving UnitSymbol to the selected column"><img alt="image" src="../../images/RDFS-Resolve-Issue-2.gif" /></a></p>
+<h4 id="result_1">Result</h4>
+<p>After saving the profile the diagram refreshes automatically. The red
+association from <code>Measurement</code> to <code>UnitSymbol</code> is gone. The <code>unitSymbol</code>
+attribute now appears correctly as a typed property within the <code>Measurement</code>
+class, rendered as <code>unitSymbol: UnitSymbol [1]</code>, which is the expected
+representation for a properly defined attribute whose type is an enumeration.</p>
+<h3 id="issue-3-association-target-end-not-included-in-the-profile-definition">Issue 3: Association Target End Not Included in the Profile Definition</h3>
+<h4 id="what-the-diagram-shows_2">What the diagram shows</h4>
+<p>When an association between two classes has been added to the profile but the
+target end of the association has not been included in the profile definition
+for that relationship, the Profile Real-Time Preview renders the association in 
+<strong>red</strong> between the two classes. In this example, a red association runs from
+<code>Measurement</code> to <code>PowerSystemResource</code>.</p>
+<p>Note that this error looks visually similar to Issue 2, but its cause is
+fundamentally different. In Issue 2 the red arc indicated a missing declared
+type on an attribute. Here, it is representing the <strong>association</strong> between
+two classes, <code>Measurement</code> and <code>PowerSystemResource</code>, and that the <code>PowerSystemResource</code>
+class is already included in the profile, as confirmed by its presence in the
+<strong>Outline</strong> panel's alphabetical list of currently profiled classes. Because
+<code>PowerSystemResource</code> is profiled, it appears in the diagram in grey, the
+convention used for abstract classes, rather than pink/red, which would
+indicate a class that is entirely absent from the profile. The issue is not
+that the class is missing; it is that the <strong>association's target end has not
+been included in the profile definition</strong> for that relationship.</p>
+<h4 id="what-it-means_2">What it means</h4>
+<p>In a CIM profile definition, adding an association to the profile is not
+sufficient on its own, since the target end of the association must also be
+explicitly included in the association's definition within the profile. Until
+that step is completed, <strong>CIMTool</strong> cannot fully resolve the relationship and
+renders the association in red to make the incomplete definition visible.</p>
+<h4 id="how-to-resolve-it_2">How to resolve it</h4>
+<p>The fix follows the same drill-down pattern as Issue 2, but the detail page
+being completed is an association definition rather than an attribute type
+selection:</p>
+<ol>
+<li>On the <strong>"Add/Remove"</strong> tab, double-click the class that owns the
+   association (in this example, <code>Measurement</code>) to drill into its member list.</li>
+<li>In the member list, locate the affected association (<code>PowerSystemResource
+   1..1</code>) and double-click it to open its association detail page.</li>
+<li>The association detail page shows two columns. <code>Class: PowerSystemResource</code>
+   will appear in the right-hand (available) column. Move it to the left-hand
+   (selected) column to include it in the association's definition.</li>
+<li>Save the profile.</li>
+</ol>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issue-3.gif" title="Drilling into the PowerSystemResource association on the Add/Remove tab and moving Class: PowerSystemResource to the selected column"><img alt="image" src="../../images/RDFS-Resolve-Issue-3.gif" /></a></p>
+<h4 id="result_2">Result</h4>
+<p>After saving the profile the diagram refreshes automatically. The red association from
+<code>Measurement</code> to <code>PowerSystemResource</code> is replaced by a <strong>grey association</strong>,
+confirming that the association is now fully and correctly defined within the
+profile, with <code>PowerSystemResource</code> participating as a properly profiled
+abstract class on the target end of the relationship.</p>
+<h3 id="issues-4-5-enumeration-type-not-yet-referenced-by-any-attribute-in-the-profile">Issues 4 &amp; 5: Enumeration Type Not Yet Referenced by Any Attribute in the Profile</h3>
+<h4 id="what-the-diagram-shows_3">What the diagram shows</h4>
+<p>The Profile Real-Time Preview renders <code>UnitMultiplier</code> as an <strong>entirely pink/red</strong>
+class with red arcs running from both <code>Measurement</code> and <code>Control</code> to it.</p>
+<p>This is an important distinction from Issue 2, where <code>UnitSymbol</code> appeared
+rendered in the default <strong>green</strong> typical for enumerations. In Issue 2 the 
+green body indicated that <code>UnitSymbol</code> was already a defined member in the 
+profile. The pink/red association signalled only that a specific attribute 
+definition was incomplete.</p>
+<p>Here, in Issue 4 and 5, <code>UnitMultiplier</code> is <strong>entirely pink/red</strong> because it is 
+not yet a defined member of the profile; <strong>CIMTool</strong> renders it this way to signal 
+that the enumeration is wholly unresolved within the profile.</p>
+<h4 id="what-it-means_3">What it means</h4>
+<p>Both <code>Measurement</code> and <code>Control</code> have a <code>unitMultiplier</code> attribute in the CIM
+whose declared type is the <code>UnitMultiplier</code> enumeration. Both attributes have
+been added to the profile, but neither has had <code>UnitMultiplier</code> selected in the
+attribute's definition on the <strong>"Add/Remove"</strong> tab. Until at least one of them
+does so, <code>UnitMultiplier</code> remains entirely unresolved and is rendered fully
+pink/red. The two red arcs, one from <code>Measurement</code> and one from <code>Control</code>,
+each represent the same underlying problem on their respective attribute
+definitions.</p>
+<h4 id="how-to-resolve-it_3">How to resolve it</h4>
+<p>Each attribute definition must be completed independently, following the same
+drill-down pattern as Issue 2. Issue 4 addresses <code>Measurement</code>'s
+<code>unitMultiplier</code> attribute first; Issue 5 then addresses <code>Control</code>'s.</p>
+<p><strong>Issue 4: Measurement → unitMultiplier:</strong></p>
+<ol>
+<li>On the <strong>"Add/Remove"</strong> tab, double-click <code>Measurement</code> to drill into its
+   member list.</li>
+<li>Double-click <code>unitMultiplier 1..1</code> to open its attribute detail page.</li>
+<li><code>Enumeration: UnitMultiplier</code> will appear in the right-hand (available)
+   column. Move it to the left-hand (selected) column.</li>
+<li>Save the profile.</li>
+</ol>
+<p>After saving, the diagram refreshes. The red arc from <code>Measurement</code> to
+<code>UnitMultiplier</code> disappears and <code>unitMultiplier: UnitMultiplier [1]</code> now
+appears as a correctly typed property within the <code>Measurement</code> class.
+Critically, <code>UnitMultiplier</code> itself is now rendered in <strong>green</strong>, because
+its membership in the profile has been established through <code>Measurement</code>'s
+attribute definition. The red arc from <code>Control</code> remains, but <code>UnitMultiplier</code>
+is no longer entirely unresolved.</p>
+<p><strong>Issue 5: Control → unitMultiplier:</strong></p>
+<ol>
+<li>Double-click <code>Control</code> on the <strong>"Add/Remove"</strong> tab to drill into its member
+   list.</li>
+<li>Double-click <code>unitMultiplier 0..1</code> to open its attribute detail page.</li>
+<li><code>Enumeration: UnitMultiplier</code> will appear in the right-hand (available)
+   column. Move it to the left-hand (selected) column.</li>
+<li>Save the profile.</li>
+</ol>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issues-4-and-5.gif" title="Selecting UnitMultiplier for unitMultiplier attributes in Measurement and Control"><img alt="image" src="../../images/RDFS-Resolve-Issues-4-and-5.gif" /></a></p>
+<h4 id="result_3">Result</h4>
+<p>After the second save the diagram refreshes fully. Both red arcs are gone.
+<code>UnitMultiplier</code> no longer appears as a standalone class in the diagram,
+and is now correctly resolved as the declared type of the <code>unitMultiplier</code>
+attribute on both <code>Measurement</code> and <code>Control</code>, appearing as a typed property
+within each class respectively.</p>
+<h3 id="issue-6-abstract-class-with-fields-defined">Issue 6: Abstract Class with Fields Defined</h3>
+<h4 id="what-the-diagram-shows_4">What the diagram shows</h4>
+<p>The Profile Real-Time Preview renders <code>Asset</code> in <strong>pink/red</strong> with a note callout
+attached, reading: <em>"Class Asset is 'abstract'. If it is serving as a reference
+to an external object then no fields should be defined in it. Otherwise, it
+should be declared as 'concrete'."</em></p>
+<p>Unlike Issue 1 where the class was abstract simply because it lacked a concrete
+child, here <code>Asset</code> is abstract <strong>and</strong> has fields defined on it (<code>critical</code>,
+<code>initialCondition</code>, <code>initialLossOfLife</code>). This combination is flagged because
+it does not fit either of the two valid patterns for an abstract class in an
+RDFS profile definition.</p>
+<h4 id="what-it-means_4">What it means</h4>
+<p>In an RDFS profile definition, an abstract class can serve one of two valid
+roles:</p>
+<ul>
+<li><strong>An external reference</strong>: the class is included in the profile not because
+  instances of it will be fully described within the data exchange, but because
+  other classes need to reference instances of it that exist outside the scope
+  of the exchange. The class acts as a typed pointer to an external resource.
+  For this role, the class should have <strong>no fields defined</strong>, since fields would
+  never be populated in practice and their presence is misleading.</li>
+<li><strong>A parent class to be specialized</strong>: the class exists to be subclassed by
+  one or more concrete child classes that inherit its structure. For this role,
+  having fields is appropriate, but the class itself must not be directly
+  instantiable and must remain abstract.</li>
+</ul>
+<p><code>Asset</code> is currently abstract with fields defined, so it cannot serve as a clean
+external reference (because it has fields) and it cannot serve as a parent class
+to be specialized (because it has no concrete child classes in the profile).
+<strong>CIMTool</strong> flags this as a definition error because the intent is ambiguous and
+must be resolved explicitly.</p>
+<h4 id="how-to-resolve-it_4">How to resolve it</h4>
+<p>There are two valid resolutions, depending on the intended role of <code>Asset</code> in
+the profile:</p>
+<ol>
+<li><strong>If <code>Asset</code> is intended as an external reference</strong>: remove the fields from
+   its profile definition via the <strong>"Add/Remove"</strong> tab. Navigate to <code>Asset</code> in
+   the member list, select all three fields (<code>critical</code>, <code>initialCondition</code>,
+   <code>initialLossOfLife</code>) in the selected column and remove them. <code>Asset</code> will
+   then be a clean abstract class with no fields, appropriate for use as an
+   external reference pointer.</li>
+<li><strong>If <code>Asset</code> is intended to carry data</strong>: declare it concrete via the
+   <strong>Restriction</strong> tab by checking <strong>"Make this class concrete"</strong>.</li>
+</ol>
+<p>In the example shown here, the fix applied is option 1, removing the three
+fields from <code>Asset</code>'s profile definition, leaving it as a clean abstract class
+suited to its role as an external reference.</p>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issue-6.gif" title="Navigating to Asset on the Add/Remove tab and removing the three selected fields from the profile definition"><img alt="image" src="../../images/RDFS-Resolve-Issue-6.gif" /></a></p>
+<h4 id="result_4">Result</h4>
+<p>After saving the profile the diagram refreshes automatically. <code>Asset</code> now
+renders in <strong>grey</strong>, the convention for abstract classes, with no fields
+and no note callout. Its role as an external reference is now correctly
+expressed in the profile definition.</p>
+<h3 id="issue-7-concrete-class-with-no-fields-or-associations">Issue 7: Concrete Class with No Fields or Associations</h3>
+<h4 id="what-the-diagram-shows_5">What the diagram shows</h4>
+<p>The Profile Real-Time Preview renders <code>MeasurementValueSource</code> in <strong>pink/red</strong> with a
+note callout reading: <em>"Class MeasurementValueSource is 'concrete' but has no
+fields or associations declared. If it is intended to serve as a reference to
+an external object then it should be declared as 'abstract'. Otherwise, it
+should have fields or associations declared or alternately inherit from a parent
+class that does."</em></p>
+<p>This is in some ways the mirror image of Issue 6. Where Issue 6 showed an
+abstract class that had fields it should not have, Issue 7 shows a concrete
+class that has <strong>no</strong> fields or associations, and no parent class from which
+to inherit them.</p>
+<h4 id="what-it-means_5">What it means</h4>
+<p>A concrete class in an RDFS profile definition is expected to carry substance:
+either its own fields or associations, or those inherited from a parent class.
+A concrete class with none of these has no meaningful content to contribute to a
+data exchange. As noted in Issue 6, a class that is intended purely as an
+external reference (a typed pointer to an object existing outside the scope of
+the exchange) should have no fields, but for that role, <strong>abstract</strong> is the
+correct declaration, not concrete.</p>
+<p><strong>CIMTool</strong> flags <code>MeasurementValueSource</code> because it is concrete, has no
+fields or associations, and has no parent class from which to inherit them.
+The note callout presents two paths to resolution: declare it abstract (if it
+is serving as an external reference) or give it fields, associations, or a
+parent class (if it is meant to carry data).</p>
+<h4 id="how-to-resolve-it_5">How to resolve it</h4>
+<p>There are three valid resolutions, as the note callout itself states:</p>
+<ol>
+<li><strong>Declare the class as abstract.</strong> If <code>MeasurementValueSource</code> is intended
+   purely as an external reference (a typed pointer to an object existing outside
+   the scope of the exchange), uncheck the <strong>"Make this class concrete"</strong> checkbox
+   on the <strong>Restriction</strong> tab. A clean abstract class with no fields is the
+   correct expression of that role.</li>
+<li><strong>Add a parent class.</strong> Navigate to <code>MeasurementValueSource</code> on the
+   <strong>Restriction</strong> tab and select a super class. This allows the class to remain
+   concrete while inheriting fields from a parent, satisfying the requirement
+   that a concrete class must carry substance. In the example shown here, this
+   is the fix applied, with <code>IdentifiedObject</code> selected as the super class,
+   providing inherited fields without requiring any direct field definitions on
+   <code>MeasurementValueSource</code> itself.</li>
+<li><strong>Add fields or associations directly.</strong> Navigate to <code>MeasurementValueSource</code>
+   on the <strong>"Add/Remove"</strong> tab and add one or more fields or associations to its
+   profile definition.</li>
+</ol>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issue-7.gif" title="Navigating to the MeasurementValueSource Restriction tab and selecting IdentifiedObject as the super class"><img alt="image" src="../../images/RDFS-Resolve-Issue-7.gif" /></a></p>
+<h4 id="result_5">Result</h4>
+<p>After saving the profile the diagram refreshes automatically.
+<code>MeasurementValueSource</code> now renders as a <strong>yellow</strong> concrete class with no
+note callout. The pink/red coloring is gone and the error is resolved. By
+inheriting from <code>IdentifiedObject</code>, it now has a parent class that provides
+the substance required of a concrete class in an RDFS profile definition.</p>
+<h3 id="issue-8-isolated-abstract-class-with-no-parent-child-or-associations">Issue 8: Isolated Abstract Class with No Parent, Child, or Associations</h3>
+<h4 id="what-the-diagram-shows_6">What the diagram shows</h4>
+<p>The Profile Real-Time Preview renders <code>Location</code> in <strong>pink/red</strong> with a note callout
+reading: <em>"Class Location is 'abstract' and has no parent class, child class,
+or association references to it. It should either be removed from the profile
+or declared as 'concrete'."</em></p>
+<p><code>Location</code> has two fields defined (<code>direction: String [0..1]</code> and
+<code>geoInfoReference: String [0..1]</code>) but is declared abstract, and has no
+parent class, no concrete child classes, and no association references
+connecting it to any other class in the profile.</p>
+<h4 id="what-it-means_6">What it means</h4>
+<p>An abstract class exists to be specialized or referenced through its
+relationships. If a class has no parent to inherit from, no child classes to
+specialize it, and no associations connecting it to anything else in the
+profile, it is completely isolated, with no path through which it could
+ever be instantiated or referenced in a data exchange. In this state, the class
+serves no purpose in the profile regardless of what fields it carries.</p>
+<p>Declaring it <strong>concrete</strong> resolves this because it changes the class's role
+entirely: instead of requiring specialization or indirect reference, it becomes
+directly instantiable. Instances of a concrete class can be included in a data
+exchange as standalone objects, a legitimate and meaningful role even without
+parent, child, or association relationships. The presence of fields
+(<code>direction</code> and <code>geoInfoReference</code>) confirms that <code>Location</code> is intended to
+carry data, making concrete the appropriate declaration.</p>
+<h4 id="how-to-resolve-it_6">How to resolve it</h4>
+<p>There are two valid resolutions, as the note callout itself states:</p>
+<ol>
+<li><strong>Declare the class as concrete.</strong> Navigate to <code>Location</code> on the
+   <strong>Restriction</strong> tab and check the <strong>"Make this class concrete"</strong> checkbox.
+   Since <code>Location</code> already has fields defined (<code>direction</code> and
+   <code>geoInfoReference</code>), declaring it concrete is sufficient, and it gains a
+   legitimate role as a directly instantiable class whose instances can
+   participate in a data exchange. No further changes to the profile definition
+   are needed. This is the fix applied in the example shown here.</li>
+<li><strong>Remove the class from the profile.</strong> If <code>Location</code> is not needed, remove
+   it from the profile entirely via the <strong>"Add/Remove"</strong> tab.</li>
+</ol>
+<p>Click on the image to present a larger view.</p>
+<p><a href="../../images/RDFS-Resolve-Issue-8.gif" title="Navigating to the Location class Restriction tab and checking Make this class concrete"><img alt="image" src="../../images/RDFS-Resolve-Issue-8.gif" /></a></p>
+<h4 id="result_6">Result</h4>
+<p>After saving the profile the diagram refreshes automatically. <code>Location</code> now
+renders as a <strong>yellow</strong> concrete class with its two fields displayed and no
+note callout. It is now correctly defined as a directly instantiable class
+whose instances can participate in a data exchange.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
