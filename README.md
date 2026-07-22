@@ -32,11 +32,9 @@ For further details on how to use CIMTool to create and edit profiles based on t
 
   Note that these instructions are purely for those interested in participating in the development of **CIMTool**. They do not describe standard use of the tool for creating profiles.
 
-  Before opening your first pull request, please read the [contributing guidelines](CONTRIBUTING.md). They describe the branching model, commit conventions, and how contributions are reviewed. See also the [Code of Conduct](CODE_OF_CONDUCT.md) and [project governance](GOVERNANCE.md).
-
 ## Product Roadmap
 
-The CIMTool public roadmap is maintained on GitHub Projects. View the current release plan and backlog at [CIMTool Roadmap](https://github.com/orgs/cimug-org/projects/17).
+  The CIMTool public roadmap is maintained on GitHub Projects. View the current release plan and backlog at [CIMTool Roadmap](https://github.com/orgs/cimug-org/projects/17).
 
 ## Latest Release
 
@@ -47,15 +45,23 @@ The CIMTool public roadmap is maintained on GitHub Projects. View the current re
 
 ## Installation & Setup
 
-For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://cimtool.ucaiug.io/getting-started/).
+  For instructions on installation and setup of **CIMTool** see [CIMTool Installation & Setup](https://cimtool.ucaiug.io/getting-started/).
 
 ## Getting Help
 
-For usage questions, profiling advice, and general discussion, see [SUPPORT.md](SUPPORT.md), which describes where to ask and what to expect.
+  For usage questions, profiling advice, and general discussion, see [SUPPORT.md](SUPPORT.md), which describes where to ask and what to expect.
 
 ## Security
 
-Please do not report security vulnerabilities in public issues. See [SECURITY.md](SECURITY.md) for how to report them privately.
+  Please do not report security vulnerabilities in public issues. See [SECURITY.md](SECURITY.md) for how to report them privately.
+
+## Contributing
+
+  We welcome contributions. Before you do though first read our [CONTRIBUTING](CONTRIBUTING.md) page for guidance. Therein is described our GitHub workflow and branching model, branching conventions, commit conventions, and how contributions are reviewed. See also the [CODE OF CONDUCT](CODE_OF_CONDUCT.md) and [GOVERNANCE](GOVERNANCE.md).
+
+## Code of Conduct
+
+  This repository operates under a Code of Conduct. See [CODE OF CONDUCT](CODE_OF_CONDUCT.md) page for details.
 
 ## License
 
