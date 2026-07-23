@@ -132,49 +132,49 @@
         "ext": "json-l2r.puml"
     },
     "adoc-article-json": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-article-json",
         "datetime": "2026-01-01T00:00:00Z",
         "ext": "article-json.adoc"
     },
     "adoc-inline-json": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-inline-json",
         "datetime": "2026-01-01T00:00:00Z",
         "ext": "inline-json.adoc"
     },
     "adoc-article-xsd": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-article-xsd",
         "datetime": "2024-11-04T00:00:00Z",
         "ext": "article-xsd.adoc"
     },
     "adoc-inline-xsd": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-inline-xsd",
         "datetime": "2024-11-04T00:00:00Z",
         "ext": "inline-xsd.adoc"
     },
     "adoc-article-rdfs": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-article-rdfs",
         "datetime": "2024-11-04T00:00:00Z",
         "ext": "article-rdfs.adoc"
     },
     "adoc-inline-rdfs": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-inline-rdfs",
         "datetime": "2024-11-04T00:00:00Z",
         "ext": "inline-rdfs.adoc"
     },
     "adoc-article-rdfs-mappings": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-article-rdfs-mappings",
         "datetime": "2025-04-01T00:00:00Z",
         "ext": "article-rdfs-mappings.adoc"
     },
     "adoc-inline-rdfs-mappings": {
-        "type": "TEXT",
+        "type": "ASCIIDOC",
         "style": "adoc-inline-rdfs-mappings",
         "datetime": "2025-04-01T00:00:00Z",
         "ext": "inline-rdfs-mappings.adoc"

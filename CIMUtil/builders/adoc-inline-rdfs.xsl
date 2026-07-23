@@ -561,7 +561,7 @@
 	<!-- this automatically. If we were to include an empty item element as in the above   -->
 	<!-- template it would processes as extra CR/LF.                                       -->
 	<xsl:template match="a:AsciiDoc" mode="annotate-type">
-		<item><xsl:value-of select="."/></item>
+		<item><xsl:copy-of select="@xml:space"/><xsl:value-of select="."/></item>
 	</xsl:template>
 	
 	<!-- Specialized template for comments or notes that appear within a table cell. Such -->
@@ -591,7 +591,7 @@
 	<!-- this automatically. If we were to include an empty item element as in the above   -->
 	<!-- template it would processes as extra CR/LF.                                       -->
 	<xsl:template match="a:AsciiDoc" mode="annotate-table-cell">
-		<item><xsl:call-template name="replace"><xsl:with-param name="text" select="."/><xsl:with-param name="map" select="$asciidoc-table-sensitive"/></xsl:call-template></item>
+		<item><xsl:copy-of select="@xml:space"/><xsl:call-template name="replace"><xsl:with-param name="text" select="."/><xsl:with-param name="map" select="$asciidoc-table-sensitive"/></xsl:call-template></item>
 	</xsl:template>
 
 	<xsl:template name="replace">
@@ -638,4 +638,4 @@
 		<!--  dont pass text through  -->
 	</xsl:template>
 	
-</xsl:stylesheet>
+</xsl:stylesheet>
