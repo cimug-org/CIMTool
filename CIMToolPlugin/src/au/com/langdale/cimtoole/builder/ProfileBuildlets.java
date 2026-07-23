@@ -411,6 +411,38 @@ public class ProfileBuildlets extends Task {
 	}
 
 	/**
+	 * Buildlet for AsciiDoc document artifacts. Behaves identically to
+	 * {@link TextBuildlet} in all respects except post-processing stylesheet
+	 * selection. The indent-asciidoc.xsl stylesheet is applied instead of
+	 * indent.xsl so that authored whitespace in AsciiDoc documentation (marked
+	 * xml:space="preserve" by ProfileSerializer.emitAsciiDoc()) is preserved
+	 * verbatim in the generated artifacts. See defect #288.
+	 */
+	public static class AsciiDocBuildlet extends TextBuildlet {
+
+		public AsciiDocBuildlet(String style, String ext) {
+			super(style, ext);
+		}
+
+		public AsciiDocBuildlet(String style, String ext, String includesFile) {
+			super(style, ext, includesFile);
+		}
+
+		public AsciiDocBuildlet(String style, String ext, DateTime datetime) {
+			super(style, ext, datetime);
+		}
+
+		public AsciiDocBuildlet(String style, String ext, DateTime datetime, String includesFile) {
+			super(style, ext, datetime, includesFile);
+		}
+
+		@Override
+		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
+			serializer.addStyleSheet("indent-asciidoc");
+		}
+	}
+
+	/**
 	 * Buildlet for profile artifacts that are related to the simplified RDFS
 	 * representation.
 	 */
@@ -519,4 +551,4 @@ public class ProfileBuildlets extends Task {
 
 		return availableBuildlets;
 	}
-}
+}

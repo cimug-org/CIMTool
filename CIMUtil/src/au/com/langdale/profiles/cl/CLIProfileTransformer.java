@@ -398,6 +398,8 @@ public class CLIProfileTransformer {
 			serializer.setStyleSheet(xsltStream, ProfileSerializer.XSDGEN);
 			if (builderType == BuilderType.TEXT) {
 				serializer.addStyleSheet("indent");
+			} else if (builderType == BuilderType.ASCIIDOC) {
+				serializer.addStyleSheet("indent-asciidoc");
 			}
 		} catch (TransformerConfigurationException e) {
 			throw new TransformerException("Failed to load XSLT stylesheet", e);
@@ -816,4 +818,4 @@ public class CLIProfileTransformer {
 
 		return sb.toString();
 	}
-}
+}

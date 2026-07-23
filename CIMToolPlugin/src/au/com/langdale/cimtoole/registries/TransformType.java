@@ -1,5 +1,6 @@
 package au.com.langdale.cimtoole.registries;
 
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.AsciiDocBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.ProfileBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
@@ -11,10 +12,12 @@ import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
  * configured in the .builders configuration file.
  */
 public enum TransformType {
-	TEXT, XSD, TRANSFORM;
+	TEXT, ASCIIDOC, XSD, TRANSFORM;
 
 	public static TransformType toTransformType(ProfileBuildlet buildlet) {
-		if (buildlet instanceof TextBuildlet) {
+		if (buildlet instanceof AsciiDocBuildlet) {
+			return ASCIIDOC;
+		} else if (buildlet instanceof TextBuildlet) {
 			return TEXT;
 		} else if (buildlet instanceof XSDBuildlet) {
 			return XSD;
@@ -23,4 +26,4 @@ public enum TransformType {
 		}
 		return null;
 	}
-}
+}

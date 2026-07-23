@@ -94,7 +94,7 @@ public class BuilderConfigDeserializer implements JsonDeserializer<BuilderConfig
 		BuilderType builderType = BuilderType.fromString(typeValue);
 		if (builderType == null) {
 			throw new JsonParseException("Invalid builder type '" + typeValue + "' for builder: " + style + 
-					". Valid types are: TEXT, XSD, TRANSFORM, JAVA");
+					". Valid types are: TEXT, ASCIIDOC, XSD, TRANSFORM, JAVA");
 		}
 
 		// For JAVA builders, extract the additional fields

@@ -9,6 +9,8 @@ package au.com.langdale.profiles.cl.builders;
  * 
  * <ul>
  * <li>{@link #TEXT} - General text output builders (Java, SQL, JSON, etc.)</li>
+ * <li>{@link #ASCIIDOC} - AsciiDoc document builders that preserve authored
+ * whitespace</li>
  * <li>{@link #XSD} - XML Schema builders with validation</li>
  * <li>{@link #TRANSFORM} - Generic XML transform builders</li>
  * <li>{@link #JAVA} - Java-based builders that use generator classes directly
@@ -22,6 +24,15 @@ public enum BuilderType {
 	 * indentation post-processing.
 	 */
 	TEXT,
+
+	/**
+	 * AsciiDoc document builders. These behave identically to {@link #TEXT} in all
+	 * respects except post-processing stylesheet selection: the indent-asciidoc.xsl
+	 * stylesheet is applied instead of indent.xsl so that authored whitespace in
+	 * AsciiDoc documentation (marked xml:space="preserve" by
+	 * ProfileSerializer.emitAsciiDoc()) is preserved verbatim. See defect #288.
+	 */
+	ASCIIDOC,
 
 	/**
 	 * XML Schema builders. These produce XSD schemas and perform XML Schema
@@ -58,4 +69,4 @@ public enum BuilderType {
 			return null;
 		}
 	}
-}
+}

@@ -20,6 +20,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Button;
 
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.AsciiDocBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -252,6 +253,9 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 			case TEXT:
 				buildlet = new TextBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated(), currentSelection.getIncludesFile());
 				break;
+			case ASCIIDOC:
+				buildlet = new AsciiDocBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated(), currentSelection.getIncludesFile());
+				break;
 			case XSD:
 				buildlet = new XSDBuildlet(getBuilderKey(), ext.getText(), currentSelection.getDateTimeCreated(), currentSelection.getIncludesFile());
 				break;
@@ -264,4 +268,4 @@ public class ManageBuildersWizardPage extends FurnishedWizardPage {
 		}
 		return buildlet;
 	}
-}
+}
