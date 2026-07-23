@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.AsciiDocBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -283,6 +284,9 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 			case TEXT:
 				buildlet = new TextBuildlet(getBuilderKey(), ext.getText(), includesFileName);
 				break;
+			case ASCIIDOC:
+				buildlet = new AsciiDocBuildlet(getBuilderKey(), ext.getText(), includesFileName);
+				break;
 			case XSD:
 				buildlet = new XSDBuildlet(getBuilderKey(), ext.getText(), includesFileName);
 				break;
@@ -296,4 +300,4 @@ public class ImportTransformBuilderPage extends FurnishedWizardPage {
 		return buildlet;
 	}
 
-}
+}
