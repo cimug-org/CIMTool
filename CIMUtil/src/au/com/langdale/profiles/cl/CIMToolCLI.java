@@ -140,6 +140,9 @@ public class CIMToolCLI {
 			settings = new CLISettings(options.getProjectDir());
 			builderPrefs = new CLIBuilderPreferences(options.getProjectDir());
 			System.out.println("Loaded project from: " + options.getProjectDir().getAbsolutePath());
+			if (options.isCopyrightFromProject()) {
+				System.out.println("Using project copyright templates: .copyright-multi-line, .copyright-single-line");
+			}
 		} catch (IOException e) {
 			System.err.println("Error loading project settings: " + e.getMessage());
 			return EXIT_IO_ERROR;
@@ -240,8 +243,9 @@ public class CIMToolCLI {
 
 		} else if (options.getXsltFile() != null) {
 			// Custom XSLT specified
-			System.out.println("Using custom XSLT: " + options.getXsltFile().getName());
-			transformer.setXslt(options.getXsltFile(), options.getOutputExtension());
+			System.out.println("Using custom XSLT: " + options.getXsltFile().getName() + " (type: "
+					+ options.getXsltType() + ")");
+			transformer.setXslt(options.getXsltFile(), options.getOutputExtension(), options.getXsltType());
 
 			File outputFile = transformer.getOutputFile();
 			System.out.println("Transforming to: " + outputFile.getName());
@@ -341,7 +345,7 @@ public class CIMToolCLI {
 
 				} else if (options.getXsltFile() != null) {
 					// Custom XSLT specified
-					transformer.setXslt(options.getXsltFile(), options.getOutputExtension());
+					transformer.setXslt(options.getXsltFile(), options.getOutputExtension(), options.getXsltType());
 
 					transformer.transform();
 
@@ -391,21 +395,20 @@ public class CIMToolCLI {
 	 * Configure copyright settings on the profile transformer.
 	 */
 	private static void configureCopyright(CLIProfileTransformer transformer, CLIOptions options) throws Exception {
-		if (options.isCopyrightDefaultsRequested()) {
+		if (options.isCopyrightNoneRequested()) {
+			// Explicitly suppressed, including any project-level templates
+			transformer.loadEmptyCopyrightTemplates();
+		} else if (options.isCopyrightDefaultsRequested()) {
 			// Use bundled default templates
 			transformer.loadDefaultCopyrightTemplates();
-		} else if (options.getCopyrightMultiLineFile() != null || options.getCopyrightSingleLineFile() != null) {
-			// Load empty templates first as a baseline
-			transformer.loadEmptyCopyrightTemplates();
-			// Then override with any specified files
-			if (options.getCopyrightMultiLineFile() != null) {
-				transformer.loadCopyrightMultiLine(options.getCopyrightMultiLineFile());
-			}
-			if (options.getCopyrightSingleLineFile() != null) {
-				transformer.loadCopyrightSingleLine(options.getCopyrightSingleLineFile());
-			}
+		} else if (options.getCopyrightMultiLineFile() != null) {
+			// A complete pair, either specified on the command line or resolved from the
+			// project directory. Pairing is enforced during validation, so the single-line
+			// file is guaranteed to be present here as well.
+			transformer.loadCopyrightMultiLine(options.getCopyrightMultiLineFile());
+			transformer.loadCopyrightSingleLine(options.getCopyrightSingleLineFile());
 		} else {
-			// No copyright options - use empty templates
+			// No selection and no project-level templates
 			transformer.loadEmptyCopyrightTemplates();
 		}
 	}

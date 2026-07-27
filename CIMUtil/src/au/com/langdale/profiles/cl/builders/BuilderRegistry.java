@@ -253,6 +253,90 @@ public class BuilderRegistry {
 	 * @param style the builder style name
 	 * @return true if the builder exists
 	 */
+	/**
+	 * Infer the builder type for a custom XSLT stylesheet by matching its filename
+	 * against the registered builder styles.
+	 * 
+	 * <p>
+	 * The stylesheet filename minus its {@code .xsl} extension is used as the style
+	 * key (for example {@code sql-rdfs-ansi92.xsl} resolves to the style
+	 * {@code sql-rdfs-ansi92}). The {@code .xsl} suffix is matched
+	 * case-insensitively; the style key itself is matched case-sensitively,
+	 * consistent with the rest of the registry.
+	 * </p>
+	 * 
+	 * <p>
+	 * A match whose type is {@link BuilderType#JAVA} is deliberately treated as no
+	 * match. JAVA builders are not XSLT-based, so a custom stylesheet whose filename
+	 * collides with a JAVA builder name must never inherit that type, which would
+	 * otherwise route execution to the Java generator and ignore the stylesheet
+	 * entirely.
+	 * </p>
+	 * 
+	 * @param xsltFile the custom stylesheet file
+	 * @return the matching builder's type, or null when the filename matches no
+	 *         registered builder or matches a JAVA builder
+	 */
+	public static BuilderType inferTypeForStylesheet(File xsltFile) {
+		BuilderConfig config = findBuilderForStylesheet(xsltFile);
+		return (config != null) ? config.getType() : null;
+	}
+
+	/**
+	 * Find the registered builder matching a custom XSLT stylesheet filename.
+	 * 
+	 * <p>
+	 * Matching rules are described on
+	 * {@link #inferTypeForStylesheet(File)}, including the deliberate exclusion of
+	 * {@link BuilderType#JAVA} matches.
+	 * </p>
+	 * 
+	 * @param xsltFile the custom stylesheet file
+	 * @return the matching builder configuration, or null when there is no usable
+	 *         match
+	 */
+	public static BuilderConfig findBuilderForStylesheet(File xsltFile) {
+		if (xsltFile == null) {
+			return null;
+		}
+		String fileName = xsltFile.getName();
+		if (!fileName.toLowerCase().endsWith(".xsl")) {
+			return null;
+		}
+		String style = fileName.substring(0, fileName.length() - 4);
+		BuilderRegistry registry = getInstance();
+		if (!registry.hasBuilder(style)) {
+			return null;
+		}
+		BuilderConfig config = registry.getBuilder(style);
+		return (config.getType() != BuilderType.JAVA) ? config : null;
+	}
+
+	/**
+	 * Find the name of the JAVA builder matching a custom XSLT stylesheet filename,
+	 * if any. Used to produce an accurate diagnostic when a stylesheet collides with
+	 * a JAVA builder name and therefore cannot inherit a type.
+	 * 
+	 * @param xsltFile the custom stylesheet file
+	 * @return the colliding JAVA builder style name, or null when there is no such
+	 *         collision
+	 */
+	public static String findJavaBuilderCollision(File xsltFile) {
+		if (xsltFile == null) {
+			return null;
+		}
+		String fileName = xsltFile.getName();
+		if (!fileName.toLowerCase().endsWith(".xsl")) {
+			return null;
+		}
+		String style = fileName.substring(0, fileName.length() - 4);
+		BuilderRegistry registry = getInstance();
+		if (registry.hasBuilder(style) && registry.getBuilder(style).getType() == BuilderType.JAVA) {
+			return style;
+		}
+		return null;
+	}
+
 	public boolean hasBuilder(String style) {
 		return builders.containsKey(style);
 	}
@@ -386,4 +470,4 @@ public class BuilderRegistry {
 	public static synchronized void resetInstance() {
 		instance = null;
 	}
-}
+}
