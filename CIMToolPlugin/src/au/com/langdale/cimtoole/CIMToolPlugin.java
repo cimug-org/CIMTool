@@ -220,7 +220,13 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	private void extractLoggingProperties() {
 		try {
 			URL installLocationURL = Platform.getInstallLocation().getURL();
-			File installDir = new File(installLocationURL.toURI());
+			/**
+			 * NOTE: Platform.getInstallLocation().getURL() returns a URL that is NOT
+			 * RFC 2396 encoded (spaces remain literal), so URL.toURI() throws
+			 * URISyntaxException for any install path containing a space. getPath()
+			 * yields the literal (unencoded) path, which is exactly what File expects.
+			 */
+			File installDir = new File(installLocationURL.getPath());
 			File loggingPropertiesFile = new File(installDir, "logging.properties");
 
 			// Ensure the logs/ directory exists - FileHandler will fail silently
@@ -294,11 +300,6 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 				// system.
 				InputStream zipFileInputStream = pandocClientExeFileURL.openStream();
 				unzip(zipFileInputStream, stateLocationNativePlatformDir.getAbsolutePath());
-
-				// unzip() uses FileOutputStream, which does not preserve Unix mode bits,
-				// so the extracted binary is not executable on Linux/macOS. Restore the
-				// executable bit. Harmless no-op for Windows' pandoc.exe.
-				pandocExe.setExecutable(true, false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -362,8 +363,6 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 			return arch.contains("64") ? "win32-x86_64" : "win32-x86";
 		} else if (os.contains("mac")) {
 			return ("amd64".equals(arch) || "x86_64".equals(arch)) ? "mac-x86_64" : "mac-arm64";
-		} else if (os.contains("nux")) {
-			return "linux-x86_64";
 		} else {
 			throw new IllegalStateException("Unsupported platform: " + os);
 		}

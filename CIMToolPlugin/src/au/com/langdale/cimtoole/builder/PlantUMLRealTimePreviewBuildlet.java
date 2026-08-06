@@ -148,7 +148,7 @@ public class PlantUMLRealTimePreviewBuildlet extends TextBuildlet {
 			try {
 				InputStream is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 				if (is != null) {
-					serializer.setStyleSheet(is, ProfileSerializer.XSDGEN);
+					serializer.setStyleSheet(is, null);
 				} else {
 					serializer.setStyleSheet(style);
 				}

@@ -181,7 +181,7 @@ public class ProfileSerializer extends AbstractReader {
 	 * Set the single line copyright notice (see above).
 	 */
 	public void setCopyrightSingleLine(String copyrightSingleLine) {
-		this.copyrightSingleLine = copyrightSingleLine;
+		this.copyrightSingleLine = substituteYear(copyrightSingleLine);
 	}
 
 	/**
@@ -200,7 +200,38 @@ public class ProfileSerializer extends AbstractReader {
 	 * Set the base URI (see above).
 	 */
 	public void setCopyrightMultiLine(String copyright) {
-		this.copyrightMultiLine = copyright;
+		this.copyrightMultiLine = substituteYear(copyright);
+	}
+
+	/**
+	 * Substitute the ${year} (or ${YEAR}) variable in a copyright template with the
+	 * current year.
+	 * 
+	 * <p>
+	 * Performed here in the setters so that substitution is applied uniformly to
+	 * every caller, whether the template originates from the desktop application,
+	 * from the CLI (bundled defaults, project-level files, or files supplied via
+	 * --copyright-multi-line / --copyright-single-line), or from a programmatic
+	 * caller. The operation is idempotent: text that has already been substituted
+	 * upstream contains no remaining variable to replace.
+	 * </p>
+	 * 
+	 * <p>
+	 * Prior to CIMTool 2.3.1 substitution was performed only by the desktop
+	 * application, so CLI-generated artifacts contained the literal text ${year}.
+	 * See defect #287.
+	 * </p>
+	 * 
+	 * @param copyright the copyright template text, may be null
+	 * @return the template with the year variable substituted, or null if the input
+	 *         was null
+	 */
+	private static String substituteYear(String copyright) {
+		if (copyright == null) {
+			return null;
+		}
+		String currentYear = String.valueOf(java.time.Year.now().getValue());
+		return copyright.replace("${year}", currentYear).replace("${YEAR}", currentYear);
 	}
 
 	/**
@@ -232,9 +263,9 @@ public class ProfileSerializer extends AbstractReader {
 	public void setStyleSheet(String name) throws TransformerConfigurationException {
 		if (name == null) {
 			templates.clear();
-			setStyleSheet(getClass().getResourceAsStream("indent-xml.xsl"), XSDGEN);
+			setStyleSheet(getClass().getResourceAsStream("indent-xml.xsl"), null);
 		} else {
-			setStyleSheet(getClass().getResourceAsStream(name + ".xsl"), XSDGEN);
+			setStyleSheet(getClass().getResourceAsStream(name + ".xsl"), null);
 		}
 	}
 
