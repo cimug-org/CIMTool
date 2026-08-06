@@ -242,7 +242,7 @@ public class ProfileBuildlets extends Task {
 				IFile local = getRelated(result, style + "-xslt");
 				if (local.exists()) {
 					serializer.setErrorHandler(CIMBuilder.createErrorHandler(local));
-					serializer.setStyleSheet(local.getContents(), ProfileSerializer.XSDGEN);
+					serializer.setStyleSheet(local.getContents(), null);
 				} else {
 					InputStream is = null;
 					try {
@@ -254,7 +254,7 @@ public class ProfileBuildlets extends Task {
 						 */
 						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 						if (is != null) {
-							serializer.setStyleSheet(is, ProfileSerializer.XSDGEN);
+							serializer.setStyleSheet(is, null);
 						} else {
 							serializer.setStyleSheet(style);
 						}

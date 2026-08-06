@@ -149,7 +149,24 @@ public final class ProfileBuildletConfigUtils {
 							}
 							//
 							try {
-								String mainXslFile = new String(Files.readAllBytes(Paths.get(xslFileUrl.toURI())), StandardCharsets.UTF_8);
+								/**
+								 * NOTE: FileLocator.toFileURL() intentionally returns URLs that are
+								 * NOT RFC 2396 encoded (spaces remain literal), so URL.toURI() throws
+								 * URISyntaxException whenever the install/workspace path contains a
+								 * space. We therefore read the stylesheet via openStream(), which
+								 * tolerates unencoded file URLs.
+								 */
+								String mainXslFile;
+								InputStream xslIs = xslFileUrl.openStream();
+								try {
+									mainXslFile = new String(IOUtils.toByteArray(xslIs), StandardCharsets.UTF_8);
+								} finally {
+									try {
+										xslIs.close();
+									} catch (Exception e) {
+										// Do nothing
+									}
+								}
 								// Check if the builder has an includes file...
 								if (dataAreaXslIncludesFile != null) {
 									String xslIncludesFilePath = getIncludesFileAbsolutePath(buildlet);

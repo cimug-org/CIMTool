@@ -42,7 +42,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 		Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
 		URL schemaJsonDraft07XslURL = cimtooleBundle.getEntry(CONFIG_DIR + "/" + SCHEMA_JSON_DRAFT_07_XSL_FILE);
 		URL schemaJsonDraft07XslFileURL = FileLocator.toFileURL(schemaJsonDraft07XslURL);
-		schemaJsonDraft07XslFile = new File(schemaJsonDraft07XslFileURL.toURI());
+		// FileLocator.toFileURL() returns unencoded URLs; toURI() throws on paths
+		// containing spaces. getPath() yields the literal path File expects.
+		schemaJsonDraft07XslFile = new File(schemaJsonDraft07XslFileURL.getPath());
 	}
 
 	@Override
