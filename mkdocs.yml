@@ -1,4 +1,6 @@
 site_name: CIMTool
+site_url: https://cimtool.ucaiug.io/
+site_description: Open-source platform for creating and maintaining IEC standards-compliant CIM data exchange profiles, and generating schemas and documentation from them.
 repo_url: https://github.com/CIMug-org/CIMTool
 copyright: Hosted on GitHub Pages · <a href="https://github.com/cimug-org">github.com/cimug-org</a>
 theme:
