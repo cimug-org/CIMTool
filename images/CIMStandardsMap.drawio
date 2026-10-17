@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" modified="2023-04-18T21:15:09.315Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="Y-60dVThVTr4ImeDVNfR" version="21.1.5" type="device">
+  <diagram name="Page-1" id="1hCgLnY99KaL-1qN4na2">
+    <mxGraphModel dx="2284" dy="707" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-18" value="&lt;b style=&quot;font-size: 35px;&quot;&gt;CIM&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=35;" vertex="1" parent="1">
+          <mxGeometry x="-16" y="50" width="850" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-4" value="Working Group 10&lt;br&gt;(IEC 61850)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="327.5" y="550" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-5" value="Working Group 13&lt;br&gt;(IEC 61970)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="110" y="160" width="300" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-6" value="Working Group 14&lt;br&gt;(IEC 61968)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="425" y="160" width="285" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-7" value="Working Group 15" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="97.5" y="430" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-8" value="Working Group 16&lt;br&gt;(IEC 62325)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="327.5" y="430" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-9" value="Working Group 19&lt;br&gt;(IEC 62361)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="547.5" y="430" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-10" value="Security" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontColor=#d1ffff;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="172.5" y="470" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-12" value="Substation Automation" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontColor=#d1ffff;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="387.5" y="600" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-13" value="Distribution&lt;br&gt;Part 100 - Enerprise Integration&lt;br&gt;Part 3 - OMS&lt;br&gt;Part 4 - Asset Model&lt;br&gt;Part 105 - Distributed Energy Resoruces&lt;br&gt;Part 106 - Work Orders&lt;br&gt;Part 107 - Engineering&lt;br&gt;Part 9 - Advanced Metering Infrastructure (AMI)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontStyle=1;fontColor=#d1ffff;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="430" y="210" width="287.5" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-14" value="Transmission/EMS&lt;br&gt;Part 452 - Network Model Exchange&lt;br&gt;Part 453 - CIM Based Graphics (e.g. Onelines)&lt;br&gt;Part 456 - Network Analysis I/O" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontStyle=1;fontColor=#d1ffff;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="116.5" y="207" width="285" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-15" value="Energy and Ancillary Service Markets" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontColor=#d1ffff;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="327.5" y="460" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ZUr9WKwiXmO9_rTLVlIK-16" value="Architecture&lt;br&gt;JSON Schema&lt;br&gt;SOAP&amp;nbsp; XML" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontColor=#d1ffff;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="542.5" y="470" width="220" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
