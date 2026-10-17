@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{#- Link previews (Open Graph and X/Twitter large card) on every page, using one
+    1280 x 640 image that is also the repo's GitHub Social preview. -#}
+{% block extrahead %}
+  {%- set social_image = config.site_url ~ "images/social/cimtool-social-1280x640.png" %}
+  {%- set social_title = config.site_name if page.is_homepage else page.title ~ " - " ~ config.site_name %}
+  {%- set social_desc = page.meta.description if page.meta and page.meta.description else config.site_description %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ social_title | striptags }}">
+  <meta property="og:description" content="{{ social_desc }}">
+  <meta property="og:url" content="{{ page.canonical_url }}">
+  <meta property="og:image" content="{{ social_image }}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="CIMTool: IEC standards-compliant CIM profiles, schemas and documentation">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ social_title | striptags }}">
+  <meta name="twitter:description" content="{{ social_desc }}">
+  <meta name="twitter:image" content="{{ social_image }}">
+{% endblock %}
