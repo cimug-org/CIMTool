@@ -297,3 +297,22 @@ body:has(.cmm-hero) .md-content h1:first-child {   /* the hero is the page title
   .cmm-masthead__tools { order: -1; padding-bottom: 0; }
   .cmm-hero--masthead .cmm-hero__grid { padding-top: 0.6rem; padding-bottom: 1.8rem; }
 }
+
+/* Compact header (pages other than home): hairline divider between the logo and the
+   title, as in the home-page hero. Material shows the logo only from 76.25em up. */
+@media screen and (min-width: 76.25em) {
+  .md-header:not(.cmm-masthead) .md-header__title {
+    position: relative;
+    margin-left: 0.6rem;
+    padding-left: 0.9rem;
+  }
+  .md-header:not(.cmm-masthead) .md-header__title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+}
