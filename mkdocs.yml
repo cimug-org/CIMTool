@@ -1,9 +1,27 @@
 site_name: CIMTool
 repo_url: https://github.com/CIMug-org/CIMTool
+copyright: Hosted on GitHub Pages · <a href="https://github.com/cimug-org">github.com/cimug-org</a>
 theme:
   name: material
-  logo: logos/cimtool-v2_96x96.png
+  custom_dir: overrides
+  logo: logos/cimtool-logo.svg
   favicon: logos/cimtool-v2.ico
+  font: false
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   features:
     - content.code.copy
 extra_css:

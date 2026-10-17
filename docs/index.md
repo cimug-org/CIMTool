@@ -4,8 +4,6 @@
 
 Designed for the IEC standards community, utility enterprises, systems integrators, software developers, and data architects, **CIMTool** supports standards-based interoperability across the power systems domain. Its built-in schema builders automatically generate fully compliant output, including RDFS profiles (per IEC 61970-501 and -552), XML schemas (per IEC 62361-100), and JSON schemas (per the IEC 62361-104 draft specification). This eliminates the risk and effort associated with manual schema creation.
 
-[![image](./images/CIMToolScreenshot.png)](./images/CIMToolScreenshot.png "CIMTool") 
-
 ## Overview
 **CIMTool** allows users to:
 

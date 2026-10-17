@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="CIMTool">
+<title>CIMTool</title>
+<circle cx="128" cy="128" r="110" fill="#FFFFFF"/>
+<g fill="none" stroke-width="32"><path d="M223.26 73.00A110 110 0 0 0 32.74 73.00" stroke="#01AFB1"/><path d="M32.74 73.00A110 110 0 0 0 128.00 238.00" stroke="#4D51BB"/><path d="M128.00 238.00A110 110 0 0 0 223.26 73.00" stroke="#01B75E"/></g>
+<path d="M128 67 V187.0 M128 116 L93.42 84.71 M128 116 L162.58 84.71 M77 103 H113.63 M179 103 H142.37 M99.50 126.77 L119.25 139 V172.5 L102.07 185.09 M156.50 126.77 L136.75 139 V172.5 L153.93 185.09" fill="none" stroke="#111111" stroke-width="3.8" stroke-linejoin="miter"/>
+<g fill="#FFFFFF" stroke-width="4.2"><circle cx="128.0" cy="57.0" r="7.9" stroke="#01AFB1"/><circle cx="86.0" cy="78.0" r="7.9" stroke="#01AFB1"/><circle cx="170.0" cy="78.0" r="7.9" stroke="#01AFB1"/><circle cx="67.0" cy="103.0" r="7.9" stroke="#4D51BB"/><circle cx="91.0" cy="121.5" r="7.9" stroke="#4D51BB"/><circle cx="189.0" cy="103.0" r="7.9" stroke="#01B75E"/><circle cx="165.0" cy="121.5" r="7.9" stroke="#01B75E"/><circle cx="94.0" cy="191.0" r="7.9" stroke="#FF8200"/><circle cx="162.0" cy="191.0" r="7.9" stroke="#FF8200"/><circle cx="128.0" cy="199.5" r="10.4" stroke="#FF8200"/></g>
+</svg>
