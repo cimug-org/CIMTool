@@ -1,16 +1,15 @@
 {#- CIM Model Management brand: on the home page the navy hero is the header (masthead).
     Every other page uses Material's standard header, below the else. -#}
 {% if page.is_homepage %}
-{#- Sponsor strip: home page only, above the masthead. -#}
-<div class="cmm-sponsorbar">
-  <a class="md-grid cmm-sponsorbar__inner" href="https://www.aspentech.com/en/products/suites/digital-grid-management" title="Emerson | AspenTech">
-    <span>Developed and sponsored by</span>
-    <img src="{{ 'logos/project-supporter-emerson-aspentech-white.svg' | url }}" width="142" height="32" alt="Emerson | AspenTech">
-  </a>
-</div>
 <header class="md-header cmm-masthead" data-md-component="header">
   <div class="cmm-hero cmm-hero--masthead">
     <div class="cmm-hero__markbox" aria-hidden="true"><img class="cmm-hero__mark" src="{{ 'brand/CIMug_mark.svg' | url }}" width="460" height="460" alt="" aria-hidden="true"></div>
+    <div class="md-grid cmm-hero__topbar">
+      <a class="cmm-hero__topsponsor" href="https://www.aspentech.com/en/products/suites/digital-grid-management" title="Emerson | AspenTech">
+        <span>Developed and sponsored by</span>
+        <img src="{{ 'logos/project-supporter-emerson-aspentech-white.svg' | url }}" width="214" height="48" alt="Emerson | AspenTech">
+      </a>
+    </div>
     <div class="md-grid cmm-hero__grid">
       <div class="cmm-hero__text">
         <div class="cmm-hero__brand">

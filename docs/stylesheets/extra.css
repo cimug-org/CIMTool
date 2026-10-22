@@ -317,18 +317,15 @@ body:has(.cmm-hero) .md-content h1:first-child {   /* the hero is the page title
   }
 }
 
-/* ---- Corporate sponsor (Welcome page) ---------------------------------- */
-.md-typeset .cmm-sponsor { display: inline-block; margin: 0.4rem 0 0.2rem; line-height: 0; }
-.md-typeset .cmm-sponsor__logo { height: 48px; width: auto; }
-
-/* ---- Corporate sponsor: thin strip above the site-wide header ---------- */
-.cmm-sponsorbar { background: var(--cmm-navy); border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
-.cmm-sponsorbar__inner { display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; padding: 0.35rem 1.2rem;
-  color: var(--cmm-on-navy); font-size: 0.6rem; text-decoration: none; }
-.cmm-sponsorbar__inner span { white-space: nowrap; }
-.cmm-sponsorbar__inner img { display: block; height: 32px; width: auto; }
-.cmm-sponsorbar__inner:hover span { color: #fff; }
-@media screen and (max-width: 44.9375em) {
-  .cmm-sponsorbar__inner { justify-content: center; padding: 0.35rem 0.8rem; }
-  .cmm-sponsorbar__inner img { height: 28px; }
+/* ---- Corporate sponsor: top bar of the home-page masthead -------------- */
+.cmm-hero__topbar { position: relative; width: 100%; display: flex; justify-content: flex-end; padding: 1rem 1.2rem 0; }
+.cmm-hero__topsponsor { display: inline-flex; align-items: center; gap: 0.9rem; color: var(--cmm-on-navy); font-size: 0.62rem; text-decoration: none; }
+.cmm-hero__topsponsor span { white-space: nowrap; }
+.cmm-hero__topsponsor img { display: block; height: 48px; width: auto; }
+.cmm-hero__topsponsor:hover span { color: #fff; }
+.cmm-hero--masthead .cmm-hero__topbar + .cmm-hero__grid { padding-top: 0.6rem; }
+@media screen and (max-width: 59.9844em) {
+  .cmm-hero__topbar { justify-content: flex-start; padding: 0.4rem 0.8rem 0; }
+  .cmm-hero__topsponsor { flex-wrap: wrap; gap: 0.3rem 0.7rem; }
+  .cmm-hero__topsponsor img { height: 40px; }
 }
