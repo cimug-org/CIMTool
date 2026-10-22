@@ -1,0 +1,334 @@
+/* =============================================================================
+   CIM Model Management brand for cimtool.ucaiug.io (MkDocs Material)
+   Palette and rules: Brand KB §3 and §11.1, site style guide §2–3.
+   Light: navy #0A2E57 · blue #0058A9 · teal #0097A5 · light teal #7FD3DC
+          green #00A851 · ink #231F20 · band #EEF4F8 · note #F6F9FB
+          hairline #C8D2DA · frame #D5DEE5 · hover #D6E6F5 · amber #E8A317
+   Dark (proposed): built only from the same tokens — page #231F20, text
+          #C9D6E3, headings #EEF4F8, links #7FD3DC, surfaces navy #0A2E57.
+   ========================================================================== */
+
+:root {
+  --cmm-navy: #0A2E57;
+  --cmm-blue: #0058A9;
+  --cmm-teal: #0097A5;
+  --cmm-teal-light: #7FD3DC;
+  --cmm-green: #00A851;
+  --cmm-amber: #E8A317;
+  --cmm-ink: #231F20;
+  --cmm-band: #EEF4F8;
+  --cmm-note: #F6F9FB;
+  --cmm-hairline: #C8D2DA;
+  --cmm-frame: #D5DEE5;
+  --cmm-hover: #D6E6F5;
+  --cmm-muted: #5B6770;
+  --cmm-on-navy: #C9D6E3;
+  --cmm-heading-font: Arial, "Liberation Sans", Helvetica, sans-serif;
+}
+
+/* ---- Material colour tokens: light ------------------------------------- */
+:root > *,
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #0A2E57;
+  --md-primary-fg-color--light: #0058A9;
+  --md-primary-fg-color--dark: #0A2E57;
+  --md-accent-fg-color: #0097A5;
+  --md-typeset-color: #231F20;
+  --md-typeset-a-color: #0058A9;
+  --md-code-bg-color: #EEF4F8;
+  --md-code-fg-color: #231F20;
+  --md-footer-bg-color: #0A2E57;
+  --md-footer-bg-color--dark: #0A2E57;
+
+  --cmm-heading: #0A2E57;
+  --cmm-rule: #C8D2DA;
+  --cmm-table-band: #EEF4F8;
+  --cmm-table-hover: #D6E6F5;
+  --cmm-table-frame: #D5DEE5;
+  --cmm-note-bg: #F6F9FB;
+  --cmm-inline-code-bg: rgba(10, 46, 87, 0.07);
+  --cmm-inline-code-fg: #0A2E57;
+}
+
+/* ---- Material colour tokens: dark (slate) ------------------------------ */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #0A2E57;
+  --md-primary-fg-color--light: #0058A9;
+  --md-primary-fg-color--dark: #0A2E57;
+  --md-accent-fg-color: #7FD3DC;
+  --md-default-bg-color: #231F20;
+  --md-typeset-color: #C9D6E3;
+  --md-typeset-a-color: #7FD3DC;
+  --md-code-bg-color: #0A2E57;
+  --md-code-fg-color: #C9D6E3;
+  --md-footer-bg-color: #0A2E57;
+  --md-footer-bg-color--dark: #0A2E57;
+
+  --cmm-heading: #EEF4F8;
+  --cmm-rule: #5B6770;
+  --cmm-table-band: #0A2E57;
+  --cmm-table-hover: rgba(0, 88, 169, 0.45);
+  --cmm-table-frame: #5B6770;
+  --cmm-note-bg: rgba(10, 46, 87, 0.6);
+  --cmm-inline-code-bg: #0A2E57;
+  --cmm-inline-code-fg: #EEF4F8;
+}
+
+/* ---- Header ------------------------------------------------------------- */
+.md-header { background: var(--cmm-navy); box-shadow: none; }
+.md-header__topic,
+.md-header__title { font-family: var(--cmm-heading-font); font-weight: 700; }
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg { height: 1.9rem; }
+
+/* CIM Model Management logo on the right of the header, with a hairline divider */
+@media screen and (min-width: 60em) {
+  .md-header__inner::after {
+    content: "";
+    flex: none;
+    width: 7.6rem;
+    height: 1.8rem;
+    margin-left: 0.8rem;
+    padding-left: 0.8rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.28);
+    background: url("../brand/CIM_Model_Management_logo_white.svg") no-repeat right center / contain;
+    background-origin: content-box;
+  }
+}
+
+/* ---- Headings ----------------------------------------------------------- */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  color: var(--cmm-heading);
+  font-family: var(--cmm-heading-font);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.md-typeset h2 {
+  position: relative;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--cmm-rule);
+}
+.md-typeset h2::after {            /* short teal accent under the start of the rule */
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 56px;
+  height: 3px;
+  background: var(--cmm-teal);
+}
+
+/* ---- Tables ------------------------------------------------------------- */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--cmm-table-frame);
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+.md-typeset table:not([class]) th {
+  background: var(--cmm-blue);
+  color: #fff;
+  font-family: var(--cmm-heading-font);
+  font-weight: 700;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+.md-typeset table:not([class]) th:last-child { border-right: 0; }
+.md-typeset table:not([class]) td { border-top: 1px solid var(--cmm-table-frame); }
+.md-typeset table:not([class]) tbody tr:nth-child(2n) { background: var(--cmm-table-band); }
+.md-typeset table:not([class]) tbody tr:hover { background: var(--cmm-table-hover); box-shadow: none; }
+
+/* ---- Callouts (admonitions) and block quotes ----------------------------
+   note / info / tip / abstract / example: brand note style, teal edge
+   warning / caution / bug / danger:       amber edge (KB §7.3 amber)       */
+.md-typeset .admonition,
+.md-typeset details {
+  border: 0;
+  border-left: 4px solid var(--cmm-teal);
+  border-radius: 0 4px 4px 0;
+  background: var(--cmm-note-bg);
+  box-shadow: none;
+  font-size: 0.72rem;
+}
+.md-typeset .admonition-title,
+.md-typeset summary {
+  background: transparent !important;
+  color: var(--cmm-heading);
+  font-family: var(--cmm-heading-font);
+  font-weight: 700;
+}
+.md-typeset .admonition-title::before,
+.md-typeset summary::before { background-color: var(--cmm-teal) !important; }
+
+.md-typeset .admonition:is(.warning, .caution, .attention, .bug, .danger, .error, .failure),
+.md-typeset details:is(.warning, .caution, .attention, .bug, .danger, .error, .failure) {
+  border-left-color: var(--cmm-amber);
+}
+.md-typeset :is(.admonition, details):is(.warning, .caution, .attention, .bug, .danger, .error, .failure)
+  > :is(.admonition-title, summary)::before { background-color: var(--cmm-amber) !important; }
+
+.md-typeset blockquote {
+  padding: 0.5rem 0.8rem;
+  border-left: 4px solid var(--cmm-teal);
+  border-radius: 0 4px 4px 0;
+  background: var(--cmm-note-bg);
+  color: var(--md-typeset-color);
+}
+
+/* ---- Code --------------------------------------------------------------- */
+.md-typeset pre > code { border: 1px solid var(--cmm-table-frame); border-radius: 4px; }
+.md-typeset :not(pre) > code { background: var(--cmm-inline-code-bg); color: var(--cmm-inline-code-fg); }
+
+/* ---- Footer ------------------------------------------------------------- */
+.md-footer-meta { border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.cmm-footer { display: flex; align-items: center; gap: 1rem; color: var(--cmm-on-navy); }
+.cmm-footer__logo img { display: block; height: 1.6rem; }
+.cmm-footer a { color: var(--cmm-on-navy); }
+
+/* ---- Home-page masthead hero (overrides/partials/header.html) ------------ */
+body:has(.cmm-hero) .md-content h1:first-child {   /* the hero is the page title */
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+}
+
+.cmm-hero {
+  position: relative;               /* no overflow clipping: the search results drop below the band */
+  background: var(--cmm-navy);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.cmm-hero__markbox { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.cmm-hero__mark {                    /* CIMug mark watermark, 13%, bleeding off the right */
+  position: absolute;
+  top: -90px;
+  right: -140px;
+  height: 460px;
+  opacity: 0.13;
+  pointer-events: none;
+}
+.cmm-hero__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2.4rem;
+  align-items: center;
+  padding: 2.2rem 1.2rem 2.4rem;
+}
+.cmm-hero__brand { display: flex; align-items: center; gap: 1rem; }
+.cmm-hero__logo { flex: none; height: 4.2rem; }
+.cmm-hero__rule { flex: none; align-self: stretch; width: 1px; margin: 0.4rem 0; background: rgba(255, 255, 255, 0.28); }
+.cmm-hero__kicker {
+  margin: 0 0 0.2rem;
+  color: var(--cmm-teal-light);
+  font: 700 12px/1.2 var(--cmm-heading-font);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cmm-hero__title { margin: 0; font: 700 2.4rem/1.05 var(--cmm-heading-font); }
+.cmm-cim { color: var(--cmm-teal-light); }   /* "CIM" picked out in light teal, as in the project wordmarks */
+.cmm-hero__lead { max-width: 30em; margin: 1.2rem 0 0.9rem; color: var(--cmm-on-navy); font-size: 0.9rem; line-height: 1.55; }
+
+.cmm-hero__chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1.3rem; padding: 0; list-style: none; }
+.cmm-hero__chips li {
+  margin: 0;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid rgba(127, 211, 220, 0.45);
+  border-radius: 999px;
+  color: var(--cmm-on-navy);
+  font-size: 0.62rem;
+}
+.cmm-hero__chips b { color: var(--cmm-teal-light); font-family: var(--cmm-heading-font); margin-right: 0.2rem; }
+
+.cmm-hero__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.cmm-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.85rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  color: #fff !important;
+  font: 700 0.7rem/1 var(--cmm-heading-font);
+  text-decoration: none;
+}
+.cmm-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.cmm-btn--primary { border-color: var(--cmm-green); background: var(--cmm-green); }
+.cmm-btn--primary:hover { background: var(--cmm-green); filter: brightness(0.92); }
+
+.cmm-hero__release { margin: 0.9rem 0 0; color: var(--cmm-on-navy); font-size: 0.65rem; }
+.cmm-hero__release b { color: #fff; }
+.cmm-hero__release a { color: var(--cmm-teal-light); }
+
+.cmm-hero__shot { display: block; line-height: 0; }
+.cmm-hero__shot img {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+@media screen and (max-width: 44.9375em) {
+  .cmm-hero__grid { grid-template-columns: 1fr; gap: 1.6rem; padding: 1.6rem 0.8rem 1.8rem; }
+  .cmm-hero__logo { height: 3rem; }
+  .cmm-hero__rule { display: none; }
+  .cmm-hero__title { font-size: 1.8rem; }
+  .cmm-hero__kicker { font-size: 10px; }
+  .cmm-hero__mark { top: -50px; right: -110px; height: 300px; }
+}
+
+/* On the home page the hero is the header (masthead); search, theme toggle
+   and the CIM MM logo sit along its bottom-right edge. Other pages keep the
+   compact header. */
+.md-header.cmm-masthead {
+  position: relative;          /* a tall band must not stick on scroll */
+  height: auto;
+  background: var(--cmm-navy);
+}
+.cmm-hero--masthead { display: flex; flex-direction: column; border-top: 0; }
+.cmm-hero--masthead .cmm-hero__grid { padding: 2rem 1.2rem 0.6rem; }
+.cmm-hero--masthead .cmm-hero__brand { color: #fff; }
+
+.cmm-masthead__tools { position: relative; width: 100%; padding-bottom: 0.6rem; }
+.cmm-masthead__tools .md-header__title { visibility: hidden; }   /* kept for Material's script; acts as a spacer */
+
+/* phones: tools row goes to the top of the band, where the menu button is expected */
+@media screen and (max-width: 59.9844em) {
+  .cmm-masthead__tools { order: -1; padding-bottom: 0; }
+  .cmm-hero--masthead .cmm-hero__grid { padding-top: 0.6rem; padding-bottom: 1.8rem; }
+}
+
+/* Compact header (pages other than home): hairline divider between the logo and the
+   title, as in the home-page hero. Material shows the logo only from 76.25em up. */
+@media screen and (min-width: 76.25em) {
+  .md-header:not(.cmm-masthead) .md-header__title {
+    position: relative;
+    margin-left: 0.6rem;
+    padding-left: 0.9rem;
+  }
+  .md-header:not(.cmm-masthead) .md-header__title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+}
+
+/* ---- Corporate sponsor (Welcome page) ---------------------------------- */
+.md-typeset .cmm-sponsor { display: inline-block; margin: 0.4rem 0 0.2rem; line-height: 0; }
+.md-typeset .cmm-sponsor__logo { height: 48px; width: auto; }
+
+/* ---- Corporate sponsor: thin strip above the site-wide header ---------- */
+.cmm-sponsorbar { background: var(--cmm-navy); border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+.cmm-sponsorbar__inner { display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; padding: 0.35rem 1.2rem;
+  color: var(--cmm-on-navy); font-size: 0.6rem; text-decoration: none; }
+.cmm-sponsorbar__inner span { white-space: nowrap; }
+.cmm-sponsorbar__inner img { display: block; height: 32px; width: auto; }
+.cmm-sponsorbar__inner:hover span { color: #fff; }
+@media screen and (max-width: 44.9375em) {
+  .cmm-sponsorbar__inner { justify-content: center; padding: 0.35rem 0.8rem; }
+  .cmm-sponsorbar__inner img { height: 28px; }
+}
