@@ -64,7 +64,7 @@ CIMTool is an open-source project of the
 [UCA International Users Group (UCAIug)](https://cimug.ucaiug.org/), which owns
 the project and sets the policies under which it operates.
 
-**Emerson/AspenTech is the official corporate sponsor of CIMTool** and develops
+**Emerson | AspenTech is the official corporate sponsor of CIMTool** and develops
 the tool on behalf of the UCA CIM Users Group. Sponsorship funds development; it
 does not confer ownership, and it does not make CIMTool a commercial product.
 
@@ -75,7 +75,7 @@ technical merits. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 CIMTool is distributed free of charge under an open-source license. It carries no
 warranty, no service level agreement, and no commercial support offering. Neither
-the UCAIug nor Emerson/AspenTech undertakes to answer support requests within any
+the UCAIug nor Emerson | AspenTech undertakes to answer support requests within any
 particular period.
 
 Maintainers and community members answer questions when they are able. A
