@@ -28,7 +28,7 @@ theme:
     - content.code.copy
 extra_css:
   # Bump ?v= whenever extra.css changes, so browsers and the Pages CDN fetch the new file
-  - stylesheets/extra.css?v=20261017b
+  - stylesheets/extra.css?v=20261022a
 markdown_extensions:
   - footnotes
   - admonition

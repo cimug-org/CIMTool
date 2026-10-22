@@ -316,3 +316,19 @@ body:has(.cmm-hero) .md-content h1:first-child {   /* the hero is the page title
     background: rgba(255, 255, 255, 0.28);
   }
 }
+
+/* ---- Corporate sponsor (Welcome page) ---------------------------------- */
+.md-typeset .cmm-sponsor { display: inline-block; margin: 0.4rem 0 0.2rem; line-height: 0; }
+.md-typeset .cmm-sponsor__logo { height: 48px; width: auto; }
+
+/* ---- Corporate sponsor: thin strip above the site-wide header ---------- */
+.cmm-sponsorbar { background: var(--cmm-navy); border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+.cmm-sponsorbar__inner { display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; padding: 0.35rem 1.2rem;
+  color: var(--cmm-on-navy); font-size: 0.6rem; text-decoration: none; }
+.cmm-sponsorbar__inner span { white-space: nowrap; }
+.cmm-sponsorbar__inner img { display: block; height: 32px; width: auto; }
+.cmm-sponsorbar__inner:hover span { color: #fff; }
+@media screen and (max-width: 44.9375em) {
+  .cmm-sponsorbar__inner { justify-content: center; padding: 0.35rem 0.8rem; }
+  .cmm-sponsorbar__inner img { height: 28px; }
+}
