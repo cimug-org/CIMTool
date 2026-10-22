@@ -14,7 +14,7 @@ not define them.
 
 ## Corporate sponsorship
 
-**Emerson/AspenTech is the official corporate sponsor of CIMTool** and develops
+**Emerson | AspenTech is the official corporate sponsor of CIMTool** and develops
 the tool on behalf of the UCA CIM Users Group. Sponsorship funds sustained
 maintainer effort that an entirely unfunded project could not supply.
 
