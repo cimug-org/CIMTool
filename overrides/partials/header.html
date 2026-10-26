@@ -1,0 +1,143 @@
+{#- CIM Model Management brand: on the home page the navy hero is the header (masthead).
+    Every other page uses Material's standard header, below the else. -#}
+{% if page.is_homepage %}
+{#- Sponsor strip: home page only, above the masthead. -#}
+<div class="cmm-sponsorbar">
+  <a class="md-grid cmm-sponsorbar__inner" href="https://www.aspentech.com/en/products/suites/digital-grid-management" title="Emerson | AspenTech">
+    <span>Developed and sponsored by</span>
+    <img src="{{ 'logos/project-supporter-emerson-aspentech-white.svg' | url }}" width="142" height="32" alt="Emerson | AspenTech">
+  </a>
+</div>
+<header class="md-header cmm-masthead" data-md-component="header">
+  <div class="cmm-hero cmm-hero--masthead">
+    <div class="cmm-hero__markbox" aria-hidden="true"><img class="cmm-hero__mark" src="{{ 'brand/CIMug_mark.svg' | url }}" width="460" height="460" alt="" aria-hidden="true"></div>
+    <div class="md-grid cmm-hero__grid">
+      <div class="cmm-hero__text">
+        <div class="cmm-hero__brand">
+          <img class="cmm-hero__logo" src="{{ 'logos/cimtool-logo.svg' | url }}" width="84" height="84" alt="">
+          <span class="cmm-hero__rule" aria-hidden="true"></span>
+          <div>
+            <p class="cmm-hero__kicker">UCAIug · Open source on GitHub</p>
+            <p class="cmm-hero__title"><span class="cmm-cim">CIM</span>Tool</p>
+          </div>
+        </div>
+        <p class="cmm-hero__lead">Create and maintain IEC standards-compliant CIM data exchange profiles, and generate schemas and documentation from them on one platform.</p>
+        <ul class="cmm-hero__chips">
+          <li><b>RDFS</b> IEC 61970-501 / -552</li>
+          <li><b>XML Schema</b> IEC 62361-100</li>
+          <li><b>JSON Schema</b> IEC 62361-104 (draft)</li>
+        </ul>
+        <div class="cmm-hero__actions">
+          <a class="cmm-btn cmm-btn--primary" href="{{ 'download-latest/' | url }}">Download CIMTool 2.3.0</a>
+          <a class="cmm-btn" href="{{ 'getting-started/' | url }}">Get started</a>
+          <a class="cmm-btn" href="https://github.com/cimug-org/CIMTool" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <p class="cmm-hero__release">Latest release <b>2.3.0</b> · 08-Jun-2026 · <a href="{{ 'release-notes/' | url }}">Release notes</a></p>
+      </div>
+      <a class="cmm-hero__shot" href="{{ 'images/CIMToolScreenshot.png' | url }}">
+        <img src="{{ 'images/CIMToolScreenshot.png' | url }}" alt="CIMTool workspace showing a profile and its generated outputs">
+      </a>
+    </div>
+    <nav class="md-header__inner md-grid cmm-masthead__tools" aria-label="{{ lang.t('header') }}">
+      <label class="md-header__button md-icon" for="__drawer">
+        {% set icon = config.theme.icon.menu or "material/menu" %}
+        {% include ".icons/" ~ icon ~ ".svg" %}
+      </label>
+      <div class="md-header__title" data-md-component="header-title">
+        <div class="md-header__ellipsis"><div class="md-header__topic"><span class="md-ellipsis"></span></div></div>
+      </div>
+    {% if config.theme.palette %}
+      {% if not config.theme.palette is mapping %}
+        {% include "partials/palette.html" %}
+      {% endif %}
+    {% endif %}
+    {% if not config.theme.palette is mapping %}
+      {% include "partials/javascripts/palette.html" %}
+    {% endif %}
+    {% if config.extra.alternate %}
+      {% include "partials/alternate.html" %}
+    {% endif %}
+    {% if "material/search" in config.plugins %}
+      {% set search = config.plugins["material/search"] | attr("config") %}
+      {% if search.enabled %}
+        <label class="md-header__button md-icon" for="__search">
+          {% set icon = config.theme.icon.search or "material/magnify" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+        </label>
+        {% include "partials/search.html" %}
+      {% endif %}
+    {% endif %}
+    </nav>
+  </div>
+</header>
+{% else %}
+{#-
+  This file was automatically generated - do not edit
+-#}
+{% set class = "md-header" %}
+{% if "navigation.tabs.sticky" in features %}
+  {% set class = class ~ " md-header--shadow md-header--lifted" %}
+{% elif "navigation.tabs" not in features %}
+  {% set class = class ~ " md-header--shadow" %}
+{% endif %}
+<header class="{{ class }}" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="{{ lang.t('header') }}">
+    <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}" title="{{ config.site_name | e }}" class="md-header__button md-logo" aria-label="{{ config.site_name }}" data-md-component="logo">
+      {% include "partials/logo.html" %}
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      {% set icon = config.theme.icon.menu or "material/menu" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            <span class="cmm-cim">CIM</span>Tool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            {% if page.meta and page.meta.title %}
+              {{ page.meta.title }}
+            {% else %}
+              {{ page.title }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+    {% if config.theme.palette %}
+      {% if not config.theme.palette is mapping %}
+        {% include "partials/palette.html" %}
+      {% endif %}
+    {% endif %}
+    {% if not config.theme.palette is mapping %}
+      {% include "partials/javascripts/palette.html" %}
+    {% endif %}
+    {% if config.extra.alternate %}
+      {% include "partials/alternate.html" %}
+    {% endif %}
+    {% if "material/search" in config.plugins %}
+      {% set search = config.plugins["material/search"] | attr("config") %}
+      {% if search.enabled %}
+        <label class="md-header__button md-icon" for="__search">
+          {% set icon = config.theme.icon.search or "material/magnify" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+        </label>
+        {% include "partials/search.html" %}
+      {% endif %}
+    {% endif %}
+    {% if config.repo_url %}
+      <div class="md-header__source">
+        {% include "partials/source.html" %}
+      </div>
+    {% endif %}
+  </nav>
+  {% if "navigation.tabs.sticky" in features %}
+    {% if "navigation.tabs" in features %}
+      {% include "partials/tabs.html" %}
+    {% endif %}
+  {% endif %}
+</header>
+{% endif %}

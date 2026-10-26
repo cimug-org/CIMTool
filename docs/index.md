@@ -4,8 +4,6 @@
 
 Designed for the IEC standards community, utility enterprises, systems integrators, software developers, and data architects, **CIMTool** supports standards-based interoperability across the power systems domain. Its built-in schema builders automatically generate fully compliant output, including RDFS profiles (per IEC 61970-501 and -552), XML schemas (per IEC 62361-100), and JSON schemas (per the IEC 62361-104 draft specification). This eliminates the risk and effort associated with manual schema creation.
 
-[![image](./images/CIMToolScreenshot.png)](./images/CIMToolScreenshot.png "CIMTool") 
-
 ## Overview
 **CIMTool** allows users to:
 
@@ -16,6 +14,14 @@ Designed for the IEC standards community, utility enterprises, systems integrato
   * Validate data instances against a Contextual Profile schema
   * Validate incremental data instances against an instance and a Contextual Profile schema
   * Import Contextual Profiles from a spreadsheet
+
+## Corporate Sponsorship
+<a class="cmm-sponsor" href="https://www.aspentech.com/en/products/suites/digital-grid-management" title="Emerson | AspenTech">
+  <img class="cmm-sponsor__logo" src="logos/project-supporter-emerson-aspentech.svg#only-light" width="214" height="48" alt="Emerson | AspenTech">
+  <img class="cmm-sponsor__logo" src="logos/project-supporter-emerson-aspentech-white.svg#only-dark" width="214" height="48" alt="Emerson | AspenTech">
+</a>
+
+Emerson | AspenTech is the official corporate sponsor of **CIMTool** and develops it on behalf of the UCAIug.
 
 ## Questions and Discussion
 The **CIMTool** community has a [Discussion board on GitHub](https://github.com/CIMug-org/CIMTool/discussions) which you can use to ask questions, get help, and engage with the rest of the community.

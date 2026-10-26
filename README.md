@@ -6,9 +6,14 @@
 
 ## Project Corporate Sponsorship
 
-[![image](docs/logos/project-supporter-aspentech-logo.gif)](https://www.aspentech.com/en/products/suites/digital-grid-management)   
+<a href="https://www.aspentech.com/en/products/suites/digital-grid-management" title="Emerson | AspenTech">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logos/project-supporter-emerson-aspentech-white.svg">
+    <img src="docs/logos/project-supporter-emerson-aspentech.svg" alt="Emerson | AspenTech">
+  </picture>
+</a>
 
-AspenTech serves as the official corporate sponsor supporting the development of CIMTool on behalf of the UCAIug.  
+Emerson | AspenTech is the official corporate sponsor of CIMTool and develops it on behalf of the UCAIug.
 
 ## CIMTool Discussion Forums
 
