@@ -151,13 +151,14 @@
 				<item>:sectnums:</item>
 				<item>:sectnumlevels: 4</item>
 				<item>:xrefstyle: short</item>
+				<item>ifndef::profilesdir[:profilesdir: {docdir}/Profiles]</item>
 				<item></item>
 				<item>Profile namespace:  <xsl:value-of select="$baseURI"/></item>
 				<item></item>
 				<!-- Note that AsciiDoc auto-generates the period below into a prefix of:  "Figure N." -->
 				<!-- Allowing for auto-number of the figures throughout a document                     -->
 				<item>.<xsl:value-of select="$envelope"/> Profile</item>
-				<item>plantuml::./Profiles/<xsl:value-of select="$fileName"/>.json-l2r.puml[format=svg, align=center]</item>
+				<item>plantuml::{profilesdir}/<xsl:value-of select="$fileName"/>.json-l2r.puml[format=svg, align=center]</item>
 				<item></item>
 				<xsl:apply-templates mode="annotate-type"/>
 				<xsl:if test="(count(/.//a:Root) + count(/.//a:Message)) > 0">

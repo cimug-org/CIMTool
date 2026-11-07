@@ -80,7 +80,7 @@ public class ProfileEditor extends ModelEditor {
 			return;
 		if (restrictToProject != null && !owlFile.getProject().equals(restrictToProject))
 			return;
-		IFolder profileFolder = Info.getProfileFolder(owlFile.getProject());
+		IFolder profileFolder = Info.getProfilesFolder(owlFile.getProject());
 		if (profileFolder == null || !profileFolder.exists())
 			return;
 		String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
