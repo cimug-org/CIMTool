@@ -423,7 +423,7 @@ public class CLIProfileTransformer {
 		// Load stylesheet
 		InputStream xsltStream = getXsltInputStream();
 		try {
-			serializer.setStyleSheet(xsltStream, ProfileSerializer.XSDGEN);
+			serializer.setStyleSheet(xsltStream, getStyleSheetSystemId());
 			if (builderType == BuilderType.TEXT) {
 				serializer.addStyleSheet("indent");
 			} else if (builderType == BuilderType.ASCIIDOC) {
@@ -701,6 +701,20 @@ public class CLIProfileTransformer {
 	/**
 	 * Get the XSLT input stream, either from a builder or custom file.
 	 */
+	/**
+	 * The system identifier (base URI) for the stylesheet being loaded, against
+	 * which its relative xsl:include, xsl:import and document() references
+	 * resolve. A custom stylesheet given through {@code --xslt} resolves against
+	 * its own file, so that sibling files it includes are found. A stylesheet from
+	 * the builder registry has no base, as in the desktop application (issue
+	 * #292). The namespace identifier {@link ProfileSerializer#XSDGEN} is never
+	 * used as a base, since relative references would then resolve to, and be
+	 * fetched from, langdale.com.au (issue #311).
+	 */
+	private String getStyleSheetSystemId() {
+		return (xsltFile != null) ? xsltFile.getAbsoluteFile().toURI().toString() : null;
+	}
+
 	private InputStream getXsltInputStream() throws IOException {
 		if (xsltFile != null) {
 			return new FileInputStream(xsltFile);
