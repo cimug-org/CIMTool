@@ -57,6 +57,7 @@ import au.com.langdale.cim.CIM;
 import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.builder.CIMBuilder;
+import au.com.langdale.cimtoole.builder.UpgradeRegeneration;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.registries.ModelParser;
@@ -144,6 +145,9 @@ public class Task extends Info {
 				description.setBuildSpec(new ICommand[] { command });
 				project.create(description, monitor);
 				project.open(monitor);
+				// A project created by this release has no artifacts from an earlier one, so
+				// it is stamped now and never queued for upgrade regeneration (issue #310).
+				UpgradeRegeneration.stampRunningVersion(project);
 				monitor.worked(1);
 				getDocumentationFolder(project).create(false, true, monitor);
 				getDocumentationImagesFolder(project).create(false, true, monitor);

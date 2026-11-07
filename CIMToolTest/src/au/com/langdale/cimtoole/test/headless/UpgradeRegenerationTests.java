@@ -3,9 +3,15 @@ package au.com.langdale.cimtoole.test.headless;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -14,7 +20,9 @@ import org.osgi.framework.Version;
 
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
+import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.builder.UpgradeRegeneration;
+import au.com.langdale.cimtoole.builder.UpgradeRegenerationStartup;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.ProjectTest;
 import au.com.langdale.kena.Format;
@@ -124,6 +132,7 @@ public class UpgradeRegenerationTests extends ProjectTest {
 			// Reopened so that the next test's setUp deletes the project's files: deleting
 			// a closed project leaves its content on disk.
 			project.open(monitor);
+			Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
 		}
 	}
 
@@ -204,6 +213,89 @@ public class UpgradeRegenerationTests extends ProjectTest {
 		Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
 
 		assertFalse("current project not regenerated", getRelated("xsd").exists());
+	}
+
+	public final void testNewProjectIsStamped() throws Exception {
+		assertEquals("stamped when created", UpgradeRegeneration.getRunningVersion(),
+				UpgradeRegeneration.getStamp(project));
+	}
+
+	public final void testListenerSchedulesReopenedProject() throws Exception {
+		UpgradeRegenerationStartup listener = new UpgradeRegenerationStartup();
+		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		try {
+			enableXSDBuilder();
+			UpgradeRegeneration.setStamp(project, OLDER);
+			closeAndWaitForNotification(project);
+			project.open(monitor);
+			waitForStamp(project);
+		} finally {
+			workspace.removeResourceChangeListener(listener);
+		}
+		assertEquals("stamped after the project was opened", UpgradeRegeneration.getRunningVersion(),
+				UpgradeRegeneration.getStamp(project));
+		assertTrue("XSD generated after the project was opened", getRelated("xsd").exists());
+	}
+
+	public final void testListenerSchedulesUnstampedAddedProject() throws Exception {
+		IProject added = workspace.getRoot().getProject("AddedProject");
+		if (added.exists())
+			added.delete(true, monitor);
+		UpgradeRegenerationStartup listener = new UpgradeRegenerationStartup();
+		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		try {
+			// Created outside Task.createProject, as an import would, so it has no stamp.
+			IProjectDescription description = workspace.newProjectDescription(added.getName());
+			description.setNatureIds(new String[] { CIMNature.NATURE_ID });
+			added.create(description, monitor);
+			added.open(monitor);
+			waitForStamp(added);
+			assertEquals("stamped after the project was added", UpgradeRegeneration.getRunningVersion(),
+					UpgradeRegeneration.getStamp(added));
+		} finally {
+			workspace.removeResourceChangeListener(listener);
+			added.delete(true, monitor);
+		}
+	}
+
+	/**
+	 * Closes the project and waits until the workspace has reported the close.
+	 * The workspace can hold notifications back while other workspace operations
+	 * run and then report several changes as one delta. A close followed at once
+	 * by an open would then be reported as no change in the project's open state,
+	 * and the listener would have no open to react to. Waiting here keeps the
+	 * reopen in a delta of its own.
+	 */
+	private void closeAndWaitForNotification(IProject target) throws Exception {
+		CountDownLatch closed = new CountDownLatch(1);
+		IResourceChangeListener watcher = event -> {
+			IResourceDelta delta = event.getDelta() == null ? null : event.getDelta().findMember(target.getFullPath());
+			if (delta != null && (delta.getFlags() & IResourceDelta.OPEN) != 0 && !target.isOpen())
+				closed.countDown();
+		};
+		workspace.addResourceChangeListener(watcher, IResourceChangeEvent.POST_CHANGE);
+		try {
+			target.close(monitor);
+			assertTrue("the workspace reported the close within 60 seconds", closed.await(60, TimeUnit.SECONDS));
+		} finally {
+			workspace.removeResourceChangeListener(watcher);
+		}
+	}
+
+	/**
+	 * Waits until the listener has queued the project and the regeneration job has
+	 * stamped it, since the workspace can report a change after the operation that
+	 * made it has returned. Returns after 60 seconds regardless, leaving the
+	 * assertions to report the state.
+	 */
+	private void waitForStamp(IProject target) throws Exception {
+		long deadline = System.currentTimeMillis() + 60_000;
+		while (System.currentTimeMillis() < deadline) {
+			Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
+			if (UpgradeRegeneration.getRunningVersion().equals(UpgradeRegeneration.getStamp(target)))
+				return;
+			Thread.sleep(100);
+		}
 	}
 
 	private void enableXSDBuilder() throws CoreException {
