@@ -328,8 +328,18 @@ public class Info implements QualifiedNames {
 		return schema != null ? schema.getFolder(".import-reports") : (IFolder) null;
 	}
 
-	public static IFolder getProfileFolder(IProject project) {
+	public static IFolder getProfilesFolder(IProject project) {
 		return project != null ? project.getFolder("Profiles") : null;
+	}
+
+	/**
+	 * @deprecated Use {@link #getProfilesFolder(IProject)}. Retained so that
+	 *             plugins built against CIMTool 2.3.0 and earlier continue to work;
+	 *             scheduled for removal in CIMTool 2.4.0.
+	 */
+	@Deprecated
+	public static IFolder getProfileFolder(IProject project) {
+		return getProfilesFolder(project);
 	}
 
 	public static IFolder getInstanceFolder(IProject project) {
@@ -665,7 +675,7 @@ public class Info implements QualifiedNames {
 		if (path.length() == 0)
 			return null;
 
-		IFile profile = getProfileFolder(resource.getProject()).getFile(path);
+		IFile profile = getProfilesFolder(resource.getProject()).getFile(path);
 		if (!profile.exists())
 			return null;
 

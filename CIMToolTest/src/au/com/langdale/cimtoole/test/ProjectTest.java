@@ -52,7 +52,7 @@ public class ProjectTest extends WorkspaceTest {
 		super.setUp();
 		workspace.run(Task.createProject(project, null), monitor);
 		schema = Info.getSchemaFolder(project).getFile(getSchemaForTesting());
-		profile = Info.getProfileFolder(project).getFile(getProfileForTesting());
+		profile = Info.getProfilesFolder(project).getFile(getProfileForTesting());
 		model = Info.getInstanceFolder(project).getFolder(MODEL_NAME);
 		increment = Info.getIncrementalFolder(project).getFolder(INCREMENT_NAME);
 		setUpTestData();

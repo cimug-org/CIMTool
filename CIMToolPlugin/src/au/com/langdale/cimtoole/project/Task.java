@@ -152,7 +152,7 @@ public class Task extends Info {
 				getDocumentationThemesFolder(project).create(false, true, monitor);
 				getSchemaFolder(project).create(false, true, monitor);
 				getSchemaImportReportFolder(project).create(false, true, monitor);
-				getProfileFolder(project).create(false, true, monitor);
+				getProfilesFolder(project).create(false, true, monitor);
 				getInstanceFolder(project).create(false, true, monitor);
 				getIncrementalFolder(project).create(false, true, monitor);
 				//
@@ -875,7 +875,7 @@ public class Task extends Info {
 	public static IWorkspaceRunnable ensureProfilesAsciiDoctorConfigFile(final IProject project) {
 		return new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IFolder profiles = Info.getProfileFolder(project);
+				IFolder profiles = Info.getProfilesFolder(project);
 				if (!profiles.exists())
 					return;
 				IFile file = profiles.getFile(PROFILES_ASCIIDOCTOR_CONFIG_FILE);
