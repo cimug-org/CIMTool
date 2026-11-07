@@ -6,6 +6,8 @@ import java.util.Collections;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -14,7 +16,9 @@ import org.osgi.framework.Version;
 
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.CopyBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
+import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.builder.UpgradeRegeneration;
+import au.com.langdale.cimtoole.builder.UpgradeRegenerationStartup;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.ProjectTest;
 import au.com.langdale.kena.Format;
@@ -124,6 +128,7 @@ public class UpgradeRegenerationTests extends ProjectTest {
 			// Reopened so that the next test's setUp deletes the project's files: deleting
 			// a closed project leaves its content on disk.
 			project.open(monitor);
+			Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
 		}
 	}
 
@@ -204,6 +209,49 @@ public class UpgradeRegenerationTests extends ProjectTest {
 		Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
 
 		assertFalse("current project not regenerated", getRelated("xsd").exists());
+	}
+
+	public final void testNewProjectIsStamped() throws Exception {
+		assertEquals("stamped when created", UpgradeRegeneration.getRunningVersion(),
+				UpgradeRegeneration.getStamp(project));
+	}
+
+	public final void testListenerSchedulesReopenedProject() throws Exception {
+		UpgradeRegenerationStartup listener = new UpgradeRegenerationStartup();
+		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		try {
+			enableXSDBuilder();
+			UpgradeRegeneration.setStamp(project, OLDER);
+			project.close(monitor);
+			project.open(monitor);
+			Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
+		} finally {
+			workspace.removeResourceChangeListener(listener);
+		}
+		assertTrue("XSD generated after the project was opened", getRelated("xsd").exists());
+		assertEquals("stamped after the project was opened", UpgradeRegeneration.getRunningVersion(),
+				UpgradeRegeneration.getStamp(project));
+	}
+
+	public final void testListenerSchedulesUnstampedAddedProject() throws Exception {
+		IProject added = workspace.getRoot().getProject("AddedProject");
+		if (added.exists())
+			added.delete(true, monitor);
+		UpgradeRegenerationStartup listener = new UpgradeRegenerationStartup();
+		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		try {
+			// Created outside Task.createProject, as an import would, so it has no stamp.
+			IProjectDescription description = workspace.newProjectDescription(added.getName());
+			description.setNatureIds(new String[] { CIMNature.NATURE_ID });
+			added.create(description, monitor);
+			added.open(monitor);
+			Job.getJobManager().join(UpgradeRegeneration.JOB_FAMILY, monitor);
+			assertEquals("stamped after the project was added", UpgradeRegeneration.getRunningVersion(),
+					UpgradeRegeneration.getStamp(added));
+		} finally {
+			workspace.removeResourceChangeListener(listener);
+			added.delete(true, monitor);
+		}
 	}
 
 	private void enableXSDBuilder() throws CoreException {

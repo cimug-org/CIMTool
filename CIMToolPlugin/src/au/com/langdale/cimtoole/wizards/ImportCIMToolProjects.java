@@ -4,8 +4,10 @@
  */
 package au.com.langdale.cimtoole.wizards;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
@@ -20,6 +22,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 
 import au.com.langdale.cimtoole.CIMNature;
+import au.com.langdale.cimtoole.builder.UpgradeRegeneration;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.util.Jobs;
 
@@ -73,10 +76,16 @@ public class ImportCIMToolProjects extends Wizard implements IImportWizard {
 		Set<IProject> existing = new HashSet<>(Arrays.asList(root.getProjects()));
 		boolean created = mainPage.createProjects();
 		if (created) {
+			List<IProject> imported = new ArrayList<>();
 			for (IProject project : root.getProjects()) {
-				if (!existing.contains(project))
+				if (!existing.contains(project)) {
 					ensureProfilesAsciiDoctorConfig(project);
+					imported.add(project);
+				}
 			}
+			// Regenerates the imported projects' artifacts with this release's builders,
+			// whether or not Build Automatically is on (issue #310).
+			UpgradeRegeneration.schedule(imported);
 		}
 		return created;
 	}
