@@ -4,11 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -19,10 +16,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import au.com.langdale.kena.Format;
-import au.com.langdale.kena.IO;
-import au.com.langdale.kena.ModelFactory;
-import au.com.langdale.kena.OntModel;
 import au.com.langdale.profiles.cl.builders.BuilderRegistry;
 import au.com.langdale.profiles.cl.builders.BuilderType;
 
@@ -40,12 +33,10 @@ import au.com.langdale.profiles.cl.builders.BuilderType;
  */
 class AsciiDocBuildersProfilesDirTest {
 
-	private static final String PROFILE = "MinimalProfile";
-
 	private static final String FALLBACK = "ifndef::profilesdir[:profilesdir: {docdir}/Profiles]";
 
 	private static final Pattern PLANTUML = Pattern
-			.compile("plantuml::\\{profilesdir\\}/" + PROFILE + "\\.[a-z0-9-]+\\.puml\\[format=svg, align=center\\]");
+			.compile("plantuml::\\{profilesdir\\}/" + MinimalProject.PROFILE + "\\.[a-z0-9-]+\\.puml\\[format=svg, align=center\\]");
 
 	static Stream<String> asciiDocBuilders() {
 		BuilderRegistry registry = BuilderRegistry.getInstance();
@@ -79,35 +70,10 @@ class AsciiDocBuildersProfilesDirTest {
 	}
 
 	private static List<String> generate(String builder, Path temp) throws Exception {
-		Path project = temp.resolve("project");
-		copyFixture("Profiles/" + PROFILE + ".owl", project);
-		copyFixture("Schema/MinimalSchema.owl", project);
-
-		CLIProfileTransformer transformer = new CLIProfileTransformer(new CLIBuilderPreferences(project.toFile()));
-		transformer.setProfile(project.resolve("Profiles/" + PROFILE + ".owl").toFile());
-		transformer.addSchema(readSchema(project.resolve("Schema/MinimalSchema.owl")));
+		CLIProfileTransformer transformer = MinimalProject.transformer(temp.resolve("project"));
 		transformer.setBuilder(builder);
 		transformer.setOutputDirectory(temp.resolve("output").toFile());
 		transformer.transform();
-
 		return Files.readAllLines(transformer.getOutputFile().toPath());
-	}
-
-	private static OntModel readSchema(Path schema) throws IOException {
-		OntModel model = ModelFactory.createMem();
-		try (InputStream in = Files.newInputStream(schema)) {
-			IO.read(model, in, "http://iec.ch/TC57/CIM100#", Format.RDF_XML.toFormat());
-		}
-		return model;
-	}
-
-	private static void copyFixture(String path, Path project) throws IOException {
-		Path target = project.resolve(path);
-		Files.createDirectories(target.getParent());
-		try (InputStream in = AsciiDocBuildersProfilesDirTest.class.getResourceAsStream("/minimal-project/" + path)) {
-			if (in == null)
-				throw new IOException("Test resource not found: /minimal-project/" + path);
-			Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-		}
 	}
 }
