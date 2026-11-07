@@ -178,6 +178,7 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | `org.eclipse.ui.themes` | Registers custom colour and font definitions used by the CIMTool editors and views for consistent theming |
 | `org.eclipse.core.runtime.preferences` | Registers `PreferenceInitializer` to set default values for all CIMTool preferences when a new workspace is created |
 | `org.eclipse.core.runtime.adapters` | Registers type adapters so that CIMTool model objects can be adapted to standard Eclipse interfaces (e.g. `IResource`, `IPropertySource`) |
+| `org.eclipse.ui.startup` | Registers two startup classes, each in its own extension. `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were produced by an earlier CIMTool release for regeneration (see Regeneration After an Upgrade below). `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse SWT issue #1848, restoring double-click and Enter in the Project Explorer while the PlantUML preview holds focus, and is removed at the platform upgrade that resolves that issue |
 | `org.eclipse.compare.structureCreators` | Registers the CIMTool model structure creator so that the Eclipse Compare framework can parse CIM model files into a comparable tree structure |
 | `org.eclipse.compare.structureMergeViewers` | Registers the model structure merge viewer used in side-by-side diff operations on CIM model files |
 | `org.eclipse.compare.contentMergeViewers` | Registers the model content merge viewer used for inline content comparison within the Eclipse Compare editor |
@@ -235,9 +236,79 @@ integrates with the Eclipse workspace build mechanism:
 - **`ValidationBaseBuildlet`**: shared base class for the validation buildlets.
 - **`SchemaBuildlet`**: handles schema-related build steps.
 - **`PlantUMLRealTimePreviewBuildlet`**: generates a hidden dot-prefixed `.puml` file in the `Profiles/` folder on every `.owl` profile save, triggering the Real-Time Preview pipeline. See the PlantUML Real-Time Preview section below.
+- **`UpgradeRegeneration`**: records which CIMTool version last regenerated each project's artifacts and regenerates them once after an upgrade. See Regeneration After an Upgrade below.
+- **`UpgradeRegenerationStartup`**: the startup class and resource change listener that queue projects for `UpgradeRegeneration`.
 
 The build is triggered automatically by Eclipse whenever a relevant workspace
 resource changes. It can also be triggered manually via **Project > Build Project**.
+
+### Regeneration After an Upgrade
+
+`CIMBuilder` rebuilds only the outputs of resources that change, so a newer
+CIMTool release opening a workspace built by an earlier one would otherwise leave
+every generated artifact as the earlier builders produced it. CIMTool therefore
+regenerates each project's profile artifacts once, the first time the project is
+opened by a newer release.
+
+**The stamp.** Each project carries an Eclipse persistent property,
+`au.com.langdale.cimtoole:lastFullBuildVersion`, holding the CIMTool version
+(major.minor.micro, for example `2.3.1`) that last regenerated all of its
+artifacts. Persistent properties live in the workspace's `.metadata`, not in the
+project folder, so the stamp never appears in Git and never travels with the
+project. It is intentionally not stored in `.cimtool-settings`, which is the
+project's portable configuration shared through Git and read by `cimtool-cli`: a
+stamp written there by one workspace would suppress regeneration in another
+workspace that never built the project. For the same reason, the property key is
+defined in `UpgradeRegeneration` rather than in `QualifiedNames`, whose constants
+`Settings` maps into `.cimtool-settings`.
+
+**The version.** The running version is the `Bundle-Version` of CIMUtil
+(`au.com.langdale.cimutil`), which holds the builders, `ProfileSerializer`, and
+the post-processing stylesheets, reduced to major.minor.micro so that the build
+qualifier is ignored. Versions compare numerically as
+`org.osgi.framework.Version`, so 2.10.0 is newer than 2.9.0, and a version
+written with fewer components is completed with zeros, so 2.4 equals 2.4.0.
+
+**When the stamp is written.**
+
+- `CIMBuilder` writes it after a build that traversed the whole project (a full
+  build, a first build with no prior build state, or a rebuild triggered by a
+  schema change) and completed without an exception. Incremental builds leave it
+  unchanged.
+- Regeneration writes it after regenerating a project.
+- `Task.createProject` writes it when a project is created, since a project
+  created by the running release has no artifacts from an earlier one.
+
+**When a project is regenerated.** A project is regenerated when it is open, has
+the CIMTool nature, and its stamp is missing or older than the running version
+(`UpgradeRegeneration.needsUpgradeRebuild`). A stamp equal to or newer than the
+running version never triggers regeneration, so opening a workspace with an older
+CIMTool does nothing.
+
+**What is regenerated.** Only the profile artifacts: every `ProfileBuildlet`
+returned by `CIMBuilder`, run through the same worker as a build. Each output is
+built when its builder is enabled on the profile and removed otherwise, exactly as
+a full build does. The schema and instance validation are not rebuilt.
+
+**Triggers.** All three queue projects through `UpgradeRegeneration.schedule`:
+
+| Trigger | Covers |
+| --- | --- |
+| `UpgradeRegenerationStartup.earlyStartup()` | Every open project when CIMTool starts, which covers a new release launched against an existing workspace |
+| The resource change listener registered by `earlyStartup()` | Projects added to the workspace or opened later, for example by a generic Eclipse import or by opening a closed project |
+| The Import CIMTool Projects wizard | The projects it imports, so that they are covered even when startup contributions are disabled under **Window > Preferences > General > Startup and Shutdown** |
+
+Queued projects are regenerated by a single background job ("Regenerating CIMTool
+artifacts after upgrade to X.Y.Z"). The job first waits for any automatic build in
+progress, since the first build of a newly imported project already stamps it, and
+then re-checks each project's stamp under the workspace build rule, skipping those
+already current. It runs whether or not **Build Automatically** is enabled, and
+writes one INFO entry per regenerated project to the Error Log.
+
+> **Note:** Because the running version comes from CIMUtil's `Bundle-Version`, a
+> release that does not bump it never triggers regeneration in upgraded workspaces.
+> `ReleaseVersionConsistencyTest` in CIMUtilTest fails when the product-aligned
+> versions disagree.
 
 
 
