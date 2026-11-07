@@ -320,17 +320,31 @@ These options are standalone, printing output and exiting immediately without pe
 | `--project-dir <path>` | `-pd` | Yes | Root directory of the CIMTool project. Must contain `.cimtool-settings` and `.builder-preferences`, and may optionally contain `.cimtool-global-preferences`. The CLI reads schema file locations from `.cimtool-settings`, builder configurations from `.builder-preferences`, and: when present: global preference values (e.g. PlantUML diagram style settings) from `.cimtool-global-preferences`; built-in defaults are used if that file is absent. |
 | `--profile <path>` | `-p` | No | Single `.owl` profile file to transform. If omitted, all `.owl` files in `<project-dir>/Profiles` are processed. |
 | `--output <path>` | `-o` | Optional when `--project-dir` is specified | Output directory for generated artifacts. Defaults to `<project-dir>/Profiles` when not specified. |
-| `--builder <name>` | `-b` | No | Builder name from the bundled catalog (e.g. `xsd`, `json-schema-draft-07`, `legacy-rdfs`). Overrides the builders configured on each profile. Works for all builder types: both XSLT-based (`TEXT`, `XSD`, `TRANSFORM`) and Java-based (`JAVA`). Mutually exclusive with `--xslt`. |
-| `--xslt <path>` | `-x` | No | Path to a custom XSLT stylesheet not in the bundled catalog. Requires `--output-ext`. Mutually exclusive with `--builder`. |
-| `--output-ext <ext>` | `-oe` | Required when `--xslt` is used | Output file extension for artifacts produced by a custom `--xslt` stylesheet (without the leading dot). Not required when using `--builder` or profile-configured builders. |
+| `--builder <name>` | `-b` | No | Builder name from the bundled catalog (e.g. `xsd`, `json-schema-draft-07`, `legacy-rdfs`). Overrides the builders configured on each profile. Works for all builder types: both XSLT-based (`TEXT`, `ASCIIDOC`, `XSD`, `TRANSFORM`) and Java-based (`JAVA`). Mutually exclusive with `--xslt`. |
+| `--xslt <path>` | `-x` | No | Path to a custom XSLT stylesheet. If the filename minus `.xsl` matches a bundled builder name, that builder's type and output extension are inherited, so a modified copy of a bundled stylesheet is a drop-in replacement. Otherwise `--type` and `--output-ext` are both required. Mutually exclusive with `--builder`. |
+| `--type <type>` | `-t` | Conditionally, with `--xslt` | Builder type for a custom `--xslt` stylesheet: `TEXT`, `ASCIIDOC`, `XSD`, or `TRANSFORM` (any letter case). Determines the post-processing applied after the stylesheet runs: `indent.xsl` for `TEXT`, `indent-asciidoc.xsl` for `ASCIIDOC`, none for `XSD` and `TRANSFORM`. `JAVA` is rejected. Valid only with `--xslt`. Introduced in 2.3.1. |
+| `--output-ext <ext>` | `-oe` | Conditionally, with `--xslt` | Output file extension for artifacts produced by a custom `--xslt` stylesheet (without the leading dot). Inherited from a matching bundled builder when not specified, and required otherwise. Valid only with `--xslt`; beginning with 2.3.1 it is rejected with `--builder` or on its own, where 2.3.0 silently ignored it. |
+
+> **Note:** Resolution of the type and extension for `--xslt` is implemented in `CLIOptions.resolveXsltTypeAndExtension()` using `BuilderRegistry.findBuilderForStylesheet()`. A match on a `JAVA` builder name (`legacy-rdfs`, `legacy-rdfs-augmented`) is deliberately treated as no match, since a JAVA builder has no stylesheet to inherit from; `findJavaBuilderCollision()` produces the corresponding diagnostic. Prior to 2.3.1 the builder type was never assigned in `--xslt` mode, so `TEXT` stylesheets skipped the indentation stage and emitted raw Indent-namespace XML (`<item>` elements). See defect #287.
 
 #### Copyright Options
 
+Copyright templates are handled as a pair, a multi-line and a single-line template, matching the desktop application. At most one selection may be made. Beginning with 2.3.1 the pair is resolved in this order by `CLIOptions.resolveCopyright()`:
+
+1. `--copyright-multi-line` and `--copyright-single-line`, both together
+2. `--copyright-defaults`
+3. `--copyright-none`
+4. The project's own `.copyright-multi-line` and `.copyright-single-line` files, when both are present in `--project-dir` (the same files the desktop application uses, see `Info.getMultiLineCopyrightFile()`); a project with only one of the two is an error
+5. Otherwise no copyright is generated
+
+`${year}` / `${YEAR}` in any template is replaced with the current year by `ProfileSerializer`'s copyright setters, so the substitution applies to desktop, CLI and programmatic callers alike.
+
 | Option | Short form | Description |
 | ------ | ---------- | ----------- |
-| `--copyright-defaults` | *(none)* | Injects the bundled default UCAIug Apache 2.0 copyright templates into generated artifacts. Cannot be combined with `--copyright-multi-line` or `--copyright-single-line`. |
-| `--copyright-multi-line <path>` | `-cm` | Path to a file containing multi-line copyright text to inject into generated artifacts. |
-| `--copyright-single-line <path>` | `-cs` | Path to a file containing single-line copyright text to inject into generated artifacts. |
+| `--copyright-defaults` | *(none)* | Injects the bundled default UCAIug Apache 2.0 copyright templates into generated artifacts, overriding any project-level templates. Cannot be combined with any other copyright selection. |
+| `--copyright-none` | *(none)* | Generates no copyright, suppressing project-level templates for the run. Cannot be combined with any other copyright selection. Introduced in 2.3.1. |
+| `--copyright-multi-line <path>` | `-cm` | Path to a file containing multi-line copyright text to inject into generated artifacts. Must be paired with `--copyright-single-line`. |
+| `--copyright-single-line <path>` | `-cs` | Path to a file containing single-line copyright text to inject into generated artifacts. Must be paired with `--copyright-multi-line`. |
 
 #### JVM System Properties
 
@@ -341,11 +355,12 @@ These options are standalone, printing output and exiting immediately without pe
 
 ### Builder Types
 
-`--list-builders` output includes a type indicator in parentheses for each builder. There are four types:
+`--list-builders` output includes a type indicator in parentheses for each builder. There are five types:
 
 | Type | Description |
 | ---- | ----------- |
 | `TEXT` | XSLT-based; produces text output with indentation post-processing applied |
+| `ASCIIDOC` | XSLT-based; produces AsciiDoc output, applying `indent-asciidoc.xsl` in place of `indent.xsl` so that authored whitespace marked `xml:space="preserve"` is kept verbatim. The eight `adoc-*` builders were registered as `TEXT` in 2.3.0 and as `ASCIIDOC` from 2.3.1 (defect #288) |
 | `XSD` | XSLT-based; produces XSD schemas with XML Schema validation of the output |
 | `TRANSFORM` | XSLT-based; produces XML output without additional post-processing |
 | `JAVA` | Java-based; uses CIMTool generator classes directly: no XSLT stylesheet involved |
@@ -392,11 +407,20 @@ java -jar cimtool-cli.jar ^
   --project-dir .\MyProject ^
   --profile .\MyProject\Profiles\MyProfile.owl ^
   --xslt .\my-custom-transform.xsl ^
+  --type TRANSFORM ^
   --output-ext json ^
   --output .\output
 ```
 ```
-java -jar cimtool-cli.jar -pd .\MyProject -p .\MyProject\Profiles\MyProfile.owl -x .\my-custom-transform.xsl -oe json -o .\output
+java -jar cimtool-cli.jar -pd .\MyProject -p .\MyProject\Profiles\MyProfile.owl -x .\my-custom-transform.xsl -t TRANSFORM -oe json -o .\output
+```
+
+**Run a modified copy of a bundled builder stylesheet (type and extension inherited):**
+```
+java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --xslt .\my-builders\sql-rdfs-ansi92.xsl ^
+  --output .\output
 ```
 
 **Apply bundled default copyright templates:**
@@ -412,6 +436,13 @@ java -jar cimtool-cli.jar ^
   --project-dir .\MyProject ^
   --copyright-multi-line .\copyright-multi.txt ^
   --copyright-single-line .\copyright-single.txt
+```
+
+**Suppress the project's own copyright templates for a run:**
+```
+java -jar cimtool-cli.jar ^
+  --project-dir .\MyProject ^
+  --copyright-none
 ```
 
 **List all available builders with their type indicators and output extensions:**
@@ -526,7 +557,7 @@ names and levels to focus on specific subsystems.
 
 `BuilderRegistry` loads builder configurations and XSLT stylesheets at runtime via classpath resource lookups. Two configuration files are loaded:
 
-- `builders.json`: XSLT-based builder catalog (`TEXT`, `XSD`, `TRANSFORM` types), loaded via `getResourceAsStream("/builders.json")`
+- `builders.json`: XSLT-based builder catalog (`TEXT`, `ASCIIDOC`, `XSD`, `TRANSFORM` types), loaded via `getResourceAsStream("/builders.json")`
 - `java-builders.json`: Java-based builder catalog (`JAVA` type), loaded via `getResourceAsStream("/java-builders.json")`
 
 Both files are loaded into a single unified `TreeMap`, producing one alphabetically sorted registry. XSLT stylesheets are loaded via `getResourceAsStream("/" + xslFileName)`. All of these resources must reside at the **classpath root** of the uber JAR, not under a `builders/` subdirectory.
