@@ -440,6 +440,20 @@ public class ProfileBuildlets extends Task {
 		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
 			serializer.addStyleSheet("indent-asciidoc");
 		}
+
+		/**
+		 * Generated AsciiDoc references its diagrams through {profilesdir} (issue
+		 * #291), so the Profiles folder's Asciidoctor editor configuration is ensured
+		 * before each build. This covers projects that reach this release without the
+		 * New Project or Import CIMTool Projects wizards, such as an existing workspace
+		 * opened by a newer CIMTool, a generic Eclipse import, or a Git clone where the
+		 * hidden configuration file is not under version control.
+		 */
+		@Override
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
+			ensureProfilesAsciiDoctorConfigFile(result.getProject()).run(monitor);
+			super.build(result, monitor);
+		}
 	}
 
 	/**

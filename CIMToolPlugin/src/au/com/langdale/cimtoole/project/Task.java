@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
@@ -839,6 +840,65 @@ public class Task extends Info {
 				// prefix with dot to make hidden on the Windows file system.
 				IFile file = Info.getSchemaFolder(project).getFile(".asciidoctorconfig.adoc");
 				importFileFromBundle(CIMUTIL_PLUGIN_ID, file, "/import-reports/schema/asciidoctorconfig.adoc", monitor);
+			}
+		};
+	}
+
+	/**
+	 * Name of the Asciidoctor editor configuration file maintained in a project's
+	 * Profiles folder. The leading dot hides it on the Windows file system.
+	 */
+	public static final String PROFILES_ASCIIDOCTOR_CONFIG_FILE = ".asciidoctorconfig.adoc";
+
+	/**
+	 * Matches an AsciiDoc attribute entry that defines (or unsets) profilesdir.
+	 */
+	private static final Pattern PROFILESDIR_DEFINITION = Pattern.compile("(?m)^\\s*:profilesdir!?:");
+
+	/**
+	 * Ensures the project's Profiles folder contains an .asciidoctorconfig.adoc
+	 * that defines the profilesdir attribute referenced by the AsciiDoc builders'
+	 * plantuml:: diagram macros (issue #291).
+	 * <ul>
+	 * <li>When the file is missing it is created from the bundled template.</li>
+	 * <li>When it exists and already defines profilesdir it is left unchanged,
+	 * since that value is the user's own setting.</li>
+	 * <li>When it exists without a profilesdir definition (for example, a file
+	 * created by hand or by the Asciidoctor editor) the definition is appended with
+	 * a short comment and nothing is removed.</li>
+	 * </ul>
+	 * The operation is idempotent. It is used by the New Project wizard, the Import
+	 * CIMTool Projects wizard, and the AsciiDoc buildlet, which together cover new
+	 * projects, imported projects, and projects that reach a newer CIMTool release
+	 * any other way.
+	 */
+	public static IWorkspaceRunnable ensureProfilesAsciiDoctorConfigFile(final IProject project) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IFolder profiles = Info.getProfileFolder(project);
+				if (!profiles.exists())
+					return;
+				IFile file = profiles.getFile(PROFILES_ASCIIDOCTOR_CONFIG_FILE);
+				file.refreshLocal(IResource.DEPTH_ZERO, monitor);
+				if (!file.exists()) {
+					importFileFromBundle(CIMUTIL_PLUGIN_ID, file, "/builders/profiles/asciidoctorconfig.adoc", monitor);
+					return;
+				}
+				String content;
+				try (InputStream in = file.getContents(true)) {
+					content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+				} catch (IOException e) {
+					throw error("Unable to read " + file.getFullPath(), e);
+				}
+				if (PROFILESDIR_DEFINITION.matcher(content).find())
+					return;
+				String eol = content.contains("\r\n") ? "\r\n" : "\n";
+				String addition = (content.isEmpty() || content.endsWith("\n") ? "" : eol)
+						+ "// Added by CIMTool: the folder holding the generated profile artifacts that the" + eol
+						+ "// AsciiDoc builders reference through {profilesdir} in their plantuml:: macros." + eol
+						+ ":profilesdir: {asciidoctorconfigdir}" + eol;
+				file.appendContents(new ByteArrayInputStream(addition.getBytes(StandardCharsets.UTF_8)),
+						IResource.KEEP_HISTORY, monitor);
 			}
 		};
 	}

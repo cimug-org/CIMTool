@@ -84,6 +84,8 @@ public class NewProject extends Wizard implements INewWizard {
 		IFile singleLineCopyrightTemplateFile = copyrightTemplates.getSingleLineCopyrightFile();
 		job = Task.chain(job, Task.importInputStreamToFile(singleLineCopyrightTemplateFile, singleLineInputStream));
 		
+		job = Task.chain(job, Task.ensureProfilesAsciiDoctorConfigFile(main.getProjectHandle()));
+		
 		String pathname = schema.getPathname();
 		if(pathname != null && pathname.length() != 0) {
 			IFile schemaFile = schema.getFile();
