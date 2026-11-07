@@ -41,9 +41,9 @@ import org.w3c.dom.NodeList;
  * <p>
  * The test reads the files from the repository, which it finds by walking up
  * from the working folder. It is skipped when run outside a checkout. The
- * {@code <features>} list in {@code CIMTool.product} is not checked: the
- * product sets {@code useFeatures="false"}, so that list is ignored at export
- * (see the CIMToolFeature developer documentation).
+ * reference to the CIMTool feature in {@code CIMTool.product} is checked as
+ * well: the product sets {@code useFeatures="false"}, so export ignores it, but
+ * it is kept tracking {@code feature.xml} while features are dormant.
  * </p>
  */
 class ReleaseVersionConsistencyTest {
@@ -76,6 +76,8 @@ class ReleaseVersionConsistencyTest {
 			checks.add(matches(project + "/META-INF/MANIFEST.MF Bundle-Version", bundleVersion(project)));
 		checks.add(matches("CIMToolFeature/feature.xml version",
 				xml("CIMToolFeature/feature.xml").getDocumentElement().getAttribute("version")));
+		checks.add(matches("CIMToolProduct/CIMTool.product reference to au.com.langdale.cimtoole.feature",
+				featureReference(xml("CIMToolProduct/CIMTool.product"), "au.com.langdale.cimtoole.feature")));
 		assertAll("versions aligned with CIMTool.product " + productVersion, checks);
 	}
 
@@ -125,6 +127,16 @@ class ReleaseVersionConsistencyTest {
 			versions.add(matcher.group(1));
 		assertFalse(versions.isEmpty(), path + " names \"CIMTool <version>\"");
 		return versions;
+	}
+
+	private static String featureReference(Document product, String id) {
+		NodeList features = product.getElementsByTagName("feature");
+		for (int i = 0; i < features.getLength(); i++) {
+			Element feature = (Element) features.item(i);
+			if (id.equals(feature.getAttribute("id")))
+				return feature.getAttribute("version");
+		}
+		return null;
 	}
 
 	private static String dependencyVersion(Document pom, String artifactId) {
