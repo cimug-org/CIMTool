@@ -195,9 +195,9 @@ echo "--- SLF4J 2.x / Logback / JUL bridge ------------------------------"
 echo
 
 echo "  Installing slf4j-api:2.0.17"
-SLF4J_API_JAR=$(find "$PLUGINS_DIR" -maxdepth 1 -name "org.slf4j.api_2.0.17*.jar" 2>/dev/null | head -1)
+SLF4J_API_JAR=$(find "$PLUGINS_DIR" -maxdepth 1 -name "slf4j.api_2.0.17*.jar" 2>/dev/null | head -1)
 if [ -z "$SLF4J_API_JAR" ]; then
-    echo "  [MISSING] No org.slf4j.api_2.0.17*.jar found under $PLUGINS_DIR -- skipping"
+    echo "  [MISSING] No slf4j.api_2.0.17*.jar found under $PLUGINS_DIR -- skipping"
 else
     echo "  Found: $SLF4J_API_JAR"
     $MVN_INSTALL -DgroupId="org.slf4j" -DartifactId="slf4j-api" -Dversion="2.0.17" -Dfile="$SLF4J_API_JAR" --quiet
