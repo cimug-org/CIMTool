@@ -61,6 +61,8 @@ CIMToolHelp/
     ├── New_and_Notable_for_1_9.html
     ├── LGPL.html
     ├── graphic.css                                ← Stylesheet for all help pages
+    ├── EclipseUpdate/, MultipleProfiles/,
+    │   Repair/, Search/                           ← PNG images for the topics of the same name
     └── ...                                        ← Supporting PNG images per topic
 ```
 
