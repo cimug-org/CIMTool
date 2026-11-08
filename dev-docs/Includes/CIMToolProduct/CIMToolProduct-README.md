@@ -235,6 +235,10 @@ The following projects must always be versioned in lockstep with the primary CIM
 
 > **Note:** Before running a product export at release time, verify that all version references above are updated and consistent. Exporting with stale or mismatched version values will produce an incorrectly versioned distribution that is difficult to retract once published.
 
+The CIMUtil `Bundle-Version` also decides when upgraded workspaces regenerate their artifacts: CIMTool regenerates a project's profile artifacts once when the running CIMUtil version is newer than the version recorded on the project (see [Regeneration After an Upgrade](../CIMToolPlugin/CIMToolPlugin-README.md#regeneration-after-an-upgrade)). A release that misses the CIMUtil bump therefore also leaves every upgraded workspace with the previous release's artifacts.
+
+`ReleaseVersionConsistencyTest` in CIMUtilTest checks the descriptors in this table, together with the product's reference to the CIMTool feature, against `CIMTool.product`'s version, and the `cimtool-cli/pom.xml` project, `cimutil`, and `kena` versions against their bundles. It reports every mismatch in one run, so running it is the quickest way to confirm the versioning before the product export.
+
 #### Independently-Versioned Projects
 
 The following projects maintain their own version lifecycle and should only be updated when changes are actually made to that project:
