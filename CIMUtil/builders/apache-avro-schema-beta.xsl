@@ -357,16 +357,12 @@
 			$count + count($element/(a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice))
 		"/>
 		
+		<!-- A class normally has one parent. It has more when shadow and mix-in extensions were not merged on import. -->
 		<xsl:variable name="result-count" select="
-			if ($element/a:SuperType) then
-				let $baseClass := $element/a:SuperType/@baseClass,
-					$parent := root($element)/*/node()[@baseClass = $baseClass]
-				return 
-					if ($parent) 
-					then cimtool:count-fields($parent, $total-count)
-					else $total-count
-			else
-				$total-count
+			$total-count + sum(
+				for $parent in root($element)/*/node()[@baseClass = $element/a:SuperType/@baseClass]
+				return cimtool:count-fields($parent, 0)
+			)
 		"/>
 		
 		<!-- Convert the integer variable to a sequence and return it -->
@@ -390,13 +386,15 @@
 				(: Direct match - this element has the target baseClass :)
 				true()
 			else if ($element/a:SuperType) then
-				(: Has a parent - check if parent inherits from target :)
-				let $superBaseClass := $element/a:SuperType/@baseClass,
-					$parent := (root($element)//a:Root[@baseClass = $superBaseClass]|root($element)//a:ComplexType[@baseClass = $superBaseClass])[1]
-				return 
-					if ($parent) 
-					then cimtool:inherits-from($parent, $targetBaseClass)
-					else false()
+				(: Has a parent - check if any parent inherits from target. A class normally has one parent; it has
+				   more when shadow and mix-in extensions were not merged on import. :)
+				some $superBaseClass in $element/a:SuperType/@baseClass
+				satisfies
+					let $parent := (root($element)//a:Root[@baseClass = $superBaseClass]|root($element)//a:ComplexType[@baseClass = $superBaseClass])[1]
+					return 
+						if ($parent) 
+						then cimtool:inherits-from($parent, $targetBaseClass)
+						else false()
 			else
 				(: No match and no parent - doesn't inherit :)
 				false()
@@ -506,17 +504,11 @@
 								else
 									(),
 					
-					(: If has SuperType, recursively get parent's dependencies :)
-					if ($element/a:SuperType) then
-						let $supertype_baseClass := $element/a:SuperType/@baseClass,
-							$parent := root($element)/*/node()[@baseClass = $supertype_baseClass]
-						return
-							if ($parent) then
-								cimtool:get-dependencies($parent, $exclusion-map)
-							else
-								()
-					else
-						()
+					(: Recursively get the parents' dependencies. A class normally has one parent; it has more when
+					   shadow and mix-in extensions were not merged on import. :)
+					for $parent in root($element)/*/node()[@baseClass = $element/a:SuperType/@baseClass]
+					return
+						cimtool:get-dependencies($parent, $exclusion-map)
 				)
 			)
 		"/>
