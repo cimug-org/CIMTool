@@ -123,7 +123,7 @@ note right of MVAL
     Each engine has a DefaultRuleListener
     registered for invocation statistics.
     An eleventh engine, allRulesEngine,
-    holds all of the rules.
+    has its own combined rule set (#331).
 end note
 MVAL --> INTERP : modelValidator
 deactivate MVAL
@@ -183,6 +183,8 @@ note right of MVAL
     As of 2.3.1 validate() returns only the
     allRulesEngine's violations, and prints
     both listeners' statistics to stdout.
+    The two rule sets differ, so Rule 198
+    violations are not reported (#331).
 end note
 MVAL --> INTERP : List<RuleViolation> owlViolations
 deactivate MVAL

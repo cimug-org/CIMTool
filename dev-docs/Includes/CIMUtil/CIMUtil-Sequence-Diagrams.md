@@ -113,11 +113,12 @@ completed Stage 3 post-processing, before shadow extension merging. Validates th
 fully translated OWL `OntModel`. Holds ten specialised rule engines, one per
 model element category (packages, normative classes, extension classes, shadow
 classes, attributes, associations, enumerations, element descriptions,
-inheritance and namespaces), and an eleventh engine registered with all of the
-rules. As of 2.3.1, `validate()` runs the ten category engines, then runs the
-all-rules engine over every resource, and returns only the all-rules engine's
-violations; it also prints the statistics of both engines' `DefaultRuleListener`
-instances to standard output.
+inheritance and namespaces), and an eleventh engine, `allRulesEngine`, with its
+own combined rule set. As of 2.3.1, `validate()` runs the ten category engines,
+then runs `allRulesEngine` over every resource, and returns only
+`allRulesEngine`'s violations; it also prints the statistics of both engines'
+`DefaultRuleListener` instances to standard output. The two rule sets differ, so
+Rule 198 violations are not reported. See [Issue #331](https://github.com/cimug-org/CIMTool/issues/331).
 
 **`DBBaseRule` / `OntResourceBaseRule`**: Abstract base classes for the two rule
 families. Both extend `BaseRule` which provides access to `@RuleMetadata`
