@@ -279,12 +279,6 @@ infrastructure is based on the newer 2022 standard.
 extensions to IEC 61970-501:2006. This is the current recommended RDFS format
 for profiles targeting modern CGMES and IEC TC57 toolchains.
 
-| `rdfs-501ed2-beta.xsl`
-| `.rdfs-501ed2-beta.rdfs`
-| Generates an RDFS schema targeting the draft IEC 61970-501 Ed 2.0 specification.
-This builder is in beta and tracks the evolving Ed 2.0 standard including potential
-LinkML-based semantics representation.
-
 | `html.xsl`
 | `.html`
 | Generates a standalone HTML file containing complete documentation for all

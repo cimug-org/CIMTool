@@ -89,12 +89,6 @@
         "datetime": "2024-08-07T00:00:00Z",
         "ext": "__init__.py"
     },
-    "rdfs-501ed2-beta": {
-        "type": "TRANSFORM",
-        "style": "rdfs-501ed2-beta",
-        "datetime": "2024-09-20T00:00:00Z",
-        "ext": "rdfs-501ed2-beta.rdfs"
-    },
     "puml-rdfs-t2b": {
         "type": "TEXT",
         "style": "puml-rdfs-t2b",
