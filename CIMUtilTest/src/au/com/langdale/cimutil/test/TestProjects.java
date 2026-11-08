@@ -35,7 +35,7 @@ import au.com.langdale.profiles.cl.CLISettings;
  * schema. The schema and its {@code .namespaces} and
  * {@code .namespace-prefixes} files, as in the cimug-org/CGMES-CIM17 project,
  * are taken from
- * {@code CIMToolTest/CIMToolTestFiles/CIMToolTestFiles.zip}, so no second copy
+ * {@code CIMToolTest/CIMToolTestFiles/CIMToolTestFiles-CGMES.zip}, so no second copy
  * is kept in the repository. The project is set up as the New Project wizard
  * sets up a project whose schema is an EA project file: shadow and mix-in
  * extensions merged, self-healing enabled, and the CIM 17 (CIM100)
@@ -60,14 +60,14 @@ public final class TestProjects {
 	public static final String MINIMAL_PROFILE = "MinimalProfile";
 	public static final String SAMPLE_PROFILE = "SampleProfile";
 
-	/** The CGMES CIM17 schema in CIMToolTestFiles.zip. */
+	/** The CGMES CIM17 schema in CIMToolTestFiles-CGMES.zip. */
 	public static final String CGMES_SCHEMA = "CIM17-2_CGMES31v01_PROF-20v02_NC23v66_MS10v01_DES10v01";
 
 	public static final String CIM100 = "http://iec.ch/TC57/CIM100#";
 	public static final String CIM100_EUROPEAN = "http://iec.ch/TC57/CIM100-European#";
 	public static final String SAMPLE_PROFILE_NAMESPACE = "http://example.com/CIMUtilTest/SampleProfile#";
 
-	private static final String TEST_FILES_ZIP = "CIMToolTest/CIMToolTestFiles/CIMToolTestFiles.zip";
+	private static final String TEST_FILES_ZIP = "CIMToolTest/CIMToolTestFiles/CIMToolTestFiles-CGMES.zip";
 
 	private static final SampleProject MERGED = new SampleProject("sample-project", true);
 	private static final SampleProject UNMERGED = new SampleProject("sample-project-unmerged", false);
@@ -206,7 +206,7 @@ public final class TestProjects {
 
 	/**
 	 * Finds the repository root by walking up from the working folder to the
-	 * folder containing {@code CIMToolTest/CIMToolTestFiles/CIMToolTestFiles.zip}.
+	 * folder containing {@code CIMToolTest/CIMToolTestFiles/CIMToolTestFiles-CGMES.zip}.
 	 * Tests needing it are skipped when run outside a repository checkout.
 	 */
 	public static Path repositoryRoot() {

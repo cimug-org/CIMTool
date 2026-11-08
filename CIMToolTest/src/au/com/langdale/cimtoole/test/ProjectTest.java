@@ -18,9 +18,13 @@ import au.com.langdale.splitmodel.SplitReader;
 public class ProjectTest extends WorkspaceTest {
 
 	public static final String SAMPLES_ZIP = "CIMToolTestFiles.zip";
+	/**
+	 * The CGMES CIM17 schema files, kept in an archive of their own so that each
+	 * archive stays below GitHub's recommended maximum file size.
+	 */
+	public static final String SAMPLES_CGMES_ZIP = "CIMToolTestFiles-CGMES.zip";
 	public static final String SAMPLES_FOLDER = "CIMToolTestFiles";
 	public static final String SAMPLE_SCHEMA_XMI = "cim11v09combined.xmi";
-	public static final String SAMPLE_SCHEMA_EAP = "iec61970cim17v38_iec61968cim13v13b_iec62325cim03v17a_CIM100.2.eap";
 	public static final String SAMPLE_SCHEMA_QEA = "CIM17-2_CGMES31v01_PROF-20v02_NC23v66_MS10v01_DES10v01.qea";
 	public static final String SAMPLE_CUSTOM_BUILDER = "junit-test.xsl";
 	public static final String SAMPLE_PROFILE = "cpsm2007.owl";
@@ -91,11 +95,13 @@ public class ProjectTest extends WorkspaceTest {
 	}
 
 	protected void setUpTestData() {
-		// We create an InputStream from the ZIP file resource loaded from the
-		// classpath...
-		InputStream is = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(SAMPLES_FOLDER + "/" + SAMPLES_ZIP);
-		unzip(is, getSamplesFolder());
+		// We create an InputStream from each ZIP file resource loaded from the
+		// classpath and extract both into the same samples folder...
+		for (String zip : new String[] { SAMPLES_ZIP, SAMPLES_CGMES_ZIP }) {
+			InputStream is = Thread.currentThread().getContextClassLoader()
+					.getResourceAsStream(SAMPLES_FOLDER + "/" + zip);
+			unzip(is, getSamplesFolder());
+		}
 	}
 
 	protected void tearDownTestData() {

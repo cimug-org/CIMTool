@@ -55,9 +55,13 @@ CIMToolTest/
 ├── CIMToolTestFiles/                        ← Test data ZIPs loaded at runtime by the test framework
 │   ├── CIMToolTestFiles.zip                 ← Primary test fixture archive — extracted programmatically
 │   │                                           on setUp() by ProjectTest.setUpTestData() via the OSGi
-│   │                                           classloader; contains schema XMI/EAP/QEA files, OWL
+│   │                                           classloader; contains schema XMI/QEA files, OWL
 │   │                                           profiles, rules files, and other inputs used by all
 │   │                                           tests that extend ProjectTest
+│   ├── CIMToolTestFiles-CGMES.zip           ← CGMES CIM17 schema archive (.qea, .namespaces and
+│   │                                           .namespace-prefixes); extracted alongside
+│   │                                           CIMToolTestFiles.zip by ProjectTest.setUpTestData(),
+│   │                                           and read by the CIMUtilTest sample projects
 │   └── IOP10Kit.zip                         ← Split model test fixture archive — contains the
 │                                               ABB40BusIOP10_rev7 folder used by SplitReaderTest
 │                                               and ExtractorTest; programmatic extraction (following
@@ -240,27 +244,34 @@ execution of the validation fixtures outside of the Eclipse test runner.
 
 === Test Data ZIPs
 
-The `CIMToolTestFiles/` folder at the project root contains two ZIP archives
+The `CIMToolTestFiles/` folder at the project root contains three ZIP archives
 that provide test fixture data at runtime:
 
-==== CIMToolTestFiles.zip: Fully Implemented
+==== CIMToolTestFiles.zip and CIMToolTestFiles-CGMES.zip: Fully Implemented
 
-This is the primary test data archive. `ProjectTest.setUpTestData()` loads it
-automatically via the OSGi classloader on every `setUp()` call:
+`CIMToolTestFiles.zip` is the primary test data archive.
+`CIMToolTestFiles-CGMES.zip` holds the CGMES CIM17 schema files
+(`SAMPLE_SCHEMA_QEA` and its `.namespaces` and `.namespace-prefixes` files),
+taken from the https://github.com/cimug-org/CGMES-CIM17[cimug-org/CGMES-CIM17]
+CIMTool project. They are kept as two archives so that each stays below
+GitHub's recommended maximum file size of 50 MB. `ProjectTest.setUpTestData()`
+loads both automatically via the OSGi classloader on every `setUp()` call and
+extracts them into the same folder:
 
 ----
-InputStream is = Thread.currentThread().getContextClassLoader()
-    .getResourceAsStream("CIMToolTestFiles/CIMToolTestFiles.zip");
-unzip(is, getSamplesFolder());
+for (String zip : new String[] { SAMPLES_ZIP, SAMPLES_CGMES_ZIP }) {
+    InputStream is = Thread.currentThread().getContextClassLoader()
+        .getResourceAsStream(SAMPLES_FOLDER + "/" + zip);
+    unzip(is, getSamplesFolder());
+}
 ----
 
 The extracted folder is placed adjacent to the test workspace root and torn
 down after each test in `tearDown()`. It contains the schema files, OWL
 profiles, rules files, and other inputs referenced by the constants in
-`ProjectTest`: `SAMPLE_SCHEMA_XMI`, `SAMPLE_SCHEMA_EAP`, `SAMPLE_SCHEMA_QEA`,
-`SAMPLE_PROFILE`, `SAMPLE_RULES`, etc. All tests that extend `ProjectTest`
-(the majority of the test suite) depend on this ZIP being present and correctly
-bundled.
+`ProjectTest`: `SAMPLE_SCHEMA_XMI`, `SAMPLE_SCHEMA_QEA`, `SAMPLE_PROFILE`,
+`SAMPLE_RULES`, etc. All tests that extend `ProjectTest` (the majority of the
+test suite) depend on both ZIPs being present and correctly bundled.
 
 ==== IOP10Kit.zip: Pending Implementation
 
