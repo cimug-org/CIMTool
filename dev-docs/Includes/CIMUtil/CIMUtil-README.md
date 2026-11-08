@@ -23,9 +23,9 @@ The key functional areas are:
 
 - **XMI / EA project import**: parses Sparx Enterprise Architect `.eap`, `.eapx`, `.qea`, and `.qeax` project files (via UCanAccess / SQLite JDBC) and XMI exports into an RDF ontology graph via Kena
 - **Profile model**: the CIM profile object model (`ProfileClass`, `ProfileModel`, `HierarchyModel`) and profile manipulation operations (reorganize, refactor, rename, remap, repair)
-- **XSLT transform engine**: 34 XSLT builders in `builders/` that generate diverse output artefacts (XSD, RDFS, OWL, JSON Schema, HTML, RTF, SQL, Java, Scala, C#, Avro, LinkML, PlantUML, AsciiDoc, and more) from a CIM profile
+- **Builders**: 31 XSLT builders registered in `builders/builders.json`, executed by Saxon, and 8 Java builders registered in `builders/java-builders.json`, which together generate diverse output artefacts (XSD, RDFS, OWL, JSON Schema, HTML, RTF, SQL, Java, Scala, C#, Avro, LinkML, PlantUML, AsciiDoc, and more) from a CIM profile
 - **Validation**: CIM/XML and Turtle instance document validation against a profile using a Jena rules engine
-- **CIM Modelling Guide compliance**: an Easy Rules engine with 100+ rules implementing the IEC CIM Modelling Guidelines, used to generate the audit/compliance report
+- **CIM Modelling Guide compliance**: an Easy Rules engine with more than 130 rule classes covering 70 numbered rules of the IEC CIM Modelling Guidelines, used to generate the audit/compliance report
 - **CLI entry point**: `CIMToolCLI` and supporting classes in `profiles.cl` provide a headless command-line interface for profile transformation
 
 
@@ -40,49 +40,36 @@ CIMUtil/
 ├── lib/                               ← Vendored third-party JARs (see Dependencies section)
 ├── builders/                          ← XSLT stylesheets and supporting resources
 │   ├── builders.json                  ← Builder registry — maps builder IDs to XSLT styles and output extensions
-│   ├── includes/                      ← Shared XSLT includes (e.g. namespace definitions)
+│   ├── java-builders.json             ← Registry of the Java builders (JAVA type), run by Java generator classes
+│   ├── includes/                      ← Reserved for shared XSLT includes (holds only a readme.txt)
 │   ├── adoc-themes/                   ← AsciiDoc theme files for report generation
-│   ├── *.xsl                          ← 34 XSLT builder stylesheets (see Builder Stylesheets section)
-│   └── default-copyright-template-*.txt ← Default copyright header templates
+│   ├── profiles/                      ← asciidoctorconfig.adoc template copied to a project's Profiles folder
+│   ├── *.xsl                          ← Builder stylesheets: the 31 registered builders and work-in-progress stylesheets
+│   ├── default-copyright-template-*.txt ← Default copyright header templates
+│   └── empty-copyright-template.txt   ← Empty copyright template, used when no copyright is wanted
 ├── import-reports/                    ← AsciiDoc templates for the CIM Modelling Guide
-│   │                                     audit/compliance report generated into /Schema
+│   │                                     audit/compliance report generated into Schema/.import-reports
 │   ├── asciidoc/
+│   │   ├── images/                    ← Images used by the rule documentation
 │   │   ├── includes/                  ← Per-category rule documentation includes
 │   │   ├── styles/                    ← CSS stylesheets for rendered reports
 │   │   └── themes/                    ← AsciiDoc PDF themes and logos
-│   ├── puml/                          ← PlantUML templates for report diagrams
-│   └── schema/                        ← JSON/XML schemas for report configuration
-├── CIMUtil-README.adoc                ← This README (AsciiDoc)
-├── CIMUtil-README.md                  ← This README (Markdown)
-├── CIMUtil-Sequence-Diagrams.adoc     ← Architecture & sequence diagram reference document (AsciiDoc)
-├── CIMUtil-Sequence-Diagrams.md       ← Architecture & sequence diagram reference document (Markdown)
-├── readme-images/                     ← PlantUML source and rendered SVG sequence diagrams
-│   ├── CIMTool_CLI_Profile_Transformation_Sequence_Diagram.puml
-│   ├── CIMTool_CLI_Profile_Transformation_Sequence_Diagram.svg
-│   ├── CIMUtil_EasyRules_CIM_Modelling_Guide_Compliance_Sequence_Diagram.puml
-│   ├── CIMUtil_EasyRules_CIM_Modelling_Guide_Compliance_Sequence_Diagram.svg
-│   ├── CIMUtil_Kena_Jena_Adapters_Sequence_Diagram.puml
-│   ├── CIMUtil_Kena_Jena_Adapters_Sequence_Diagram.svg
-│   ├── CIMUtil_Profile_Transformation_Sequence_Diagram.puml
-│   ├── CIMUtil_Profile_Transformation_Sequence_Diagram.svg
-│   ├── CIMUtil_Validation_Sequence_Diagram.puml
-│   ├── CIMUtil_Validation_Sequence_Diagram.svg
-│   ├── CIMUtil_XMI_Import_Sequence_Diagram.puml
-│   └── CIMUtil_XMI_Import_Sequence_Diagram.svg
+│   ├── puml/                          ← sparx-ea-style.puml, copied to a project's Schema folder
+│   └── schema/                        ← asciidoctorconfig.adoc template, copied to a project's Schema folder
 └── src/
     └── au/com/langdale/
         ├── cim/                       ← CIM vocabulary constants (CIM, CIMS)
         ├── colors/util/               ← Color utilities and NodeTraits — used by icon cache in CIMToolPlugin
         ├── easyrules/                 ← CIM Modelling Guide compliance rule engine
         │   ├── engine/               ← Rule validators (model-level, DB-level, combined)
-        │   └── rules/                ← 100+ rules organised by category:
+        │   └── rules/                ← More than 130 rule classes organised by category:
         │       ├── associations/     ← Association rules (Rule065–Rule198)
         │       ├── attributes/       ← Attribute rules (Rule049–Rule195)
         │       ├── classes/          ← Class rules (Rule038–Rule187)
         │       ├── common/           ← Base rule infrastructure
         │       ├── descriptions/     ← Description/documentation rules (Rule104)
         │       ├── enumerations/     ← Enumeration rules (Rule084–Rule205)
-        │       ├── extensions/       ← Extension/shadow class rules
+        │       ├── extensions/       ← Shadow class placement rules and the extension rules registry
         │       ├── inheritance/      ← Inheritance rules (Rule115–Rule119)
         │       ├── metadata/         ← Rule metadata annotations (severity, category, type)
         │       ├── namespaces/       ← Namespace rules (Rule143–Rule146)
@@ -110,7 +97,10 @@ CIMUtil/
         │       ├── CLIProfileTransformer.java ← Headless profile transform orchestration
         │       ├── CLISchemaParser.java ← Headless XMI/EA schema parsing
         │       ├── CLISettings.java  ← CLI project settings adapter
+        │       ├── CLIBuilderPreferences.java ← Per-profile builder preferences read from .builder-preferences
+        │       ├── CLIGlobalPreferences.java / CLIGlobalPreferenceDefaults.java ← Global preferences and their defaults
         │       └── builders/         ← CLI builder registry and configuration serialization
+        ├── saxon/functions/          ← Saxon extension functions (NewUUIDFunction, UUIDFromKeyFunction)
         ├── validation/               ← CIM/XML and Turtle validation engine
         │   ├── ProfileValidator.java ← Validates instance documents against a profile
         │   ├── ConsistencyChecker.java ← Cross-reference consistency checks
@@ -155,12 +145,12 @@ The following JARs are declared in `Bundle-ClassPath` in `MANIFEST.MF` and inclu
 | HSQLDB | 2.3.6 | In-memory SQL engine used internally by UCanAccess |
 | Jackcess | 2.2.3 | Low-level MS Access file reader used by UCanAccess |
 | SQLite JDBC | 3.45.2.0 | JDBC driver for reading Sparx EA `.qea` and `.qeax` SQLite files |
-| Gson | 2.8.6 | JSON serialization for builder configuration and CLI output |
+| Gson | 2.8.6 | JSON parsing of the builder registries `builders.json` and `java-builders.json` |
 | Easy Rules Core + Support | 4.1.0 | Rule engine framework for CIM Modelling Guide compliance rules |
-| commons-lang | 2.6 | Apache Commons general utilities |
+| commons-lang | 2.6 | Runtime dependency of Jackcess, which UCanAccess uses to read Sparx EA `.eap` and `.eapx` files. It is not used directly by CIMTool code. |
 | commons-logging | 1.1.3 | Logging facade used by vendored dependencies |
 | SLF4J API | 2.x (platform) | Logging facade used by Saxon-HE and other vendored dependencies. Resolved via `Import-Package` rather than vendored: `MANIFEST.MF` declares `org.slf4j`, `org.slf4j.event`, `org.slf4j.helpers`, and `org.slf4j.spi`, wiring these calls to the platform SLF4J 2.x bundle. Saxon's SLF4J log events route through the platform bundle into the Logback pipeline. |
-| xml-resolver | 1.2 | XML catalog resolver for XSLT stylesheet includes |
+| xml-resolver | 1.2 | Optional Saxon dependency that supports XML catalogs through Saxon's own command-line `-catalog` option. CIMTool calls Saxon through its Java API and configures no catalog, so the library is never loaded at run time. |
 
 Three additional Easy Rules extension JARs are physically present in `lib/` but are intentionally excluded from `Bundle-ClassPath` and from the table above: `easy-rules-jexl-4.1.0.jar`, `easy-rules-mvel-4.1.0.jar`, and `easy-rules-spel-4.1.0.jar`. These provide JEXL, MVEL, and Spring EL expression language support for Easy Rules and are retained for planned future use. None of the current compliance rule implementations use these expression languages.
 
@@ -168,20 +158,18 @@ Three additional Easy Rules extension JARs are physically present in `lib/` but 
 
 ## Builder Stylesheets
 
-The `builders/` directory contains 34 XSLT stylesheets registered in `builders.json`. Each transforms a CIM profile's internal XML representation into a specific output artefact format. The builders are executed by Saxon HE 10.8 and are all XSLT 3.0 compliant unless otherwise noted. For detailed documentation on individual builders, their NTE (Name/Type/Extension) settings, and usage guidance see the [CIMTool Builders Library](https://cimtool-builders.ucaiug.io/).
+The `builders/` directory contains the 31 XSLT builders registered in `builders.json`. Each transforms a CIM profile's internal XML representation into a specific output artefact format, and Saxon HE 10.8 executes every one of them. The 8 Java builders registered in `java-builders.json` produce OWL, RDFS, Turtle and canonical profile XML through Java generator classes rather than stylesheets, and are not listed below. Stylesheets in `builders/` that are not registered are works in progress. For detailed documentation on individual builders, their NTE (Name/Type/Extension) settings, and usage guidance see the [CIMTool Builders Library](https://cimtool-builders.ucaiug.io/).
 
 | Stylesheet | Output Extension | Description |
 | --- | --- | --- |
-| `xsd.xsl` | `.xsd` | Generates an XSD schema compliant with [IEC 62361-100:2016](https://webstore.iec.ch/publication/25114) (CIM Profiles to XML Schema Mapping). The generated schemas are also compatible with [IEC 61968-100:2013](https://webstore.iec.ch/publication/6198) (Implementation Profiles Ed 1.0) used for enterprise integration via JMS and web services. XSLT 1.0 compliant. |
+| `xsd.xsl` | `.xsd` | Generates an XSD schema compliant with [IEC 62361-100:2016](https://webstore.iec.ch/publication/25114) (CIM Profiles to XML Schema Mapping). The generated schemas are also compatible with [IEC 61968-100:2013](https://webstore.iec.ch/publication/6198) (Implementation Profiles Ed 1.0) used for enterprise integration via JMS and web services. |
 | `xsd-part100-ed2.xsl` | `.part100-ed2.xsd` | Generates an XSD schema also compliant with IEC 62361-100:2016, but uniquely targeting [IEC 61968-100:2022](https://webstore.iec.ch/publication/67766) (Implementation Profiles Ed 2.0), which is not backwards compatible with Ed 1.0. Use this builder when your integration infrastructure is based on the newer 2022 standard. |
 | `rdfs-2020.xsl` | `.rdfs-2020.rdfs` | Generates an RDFS schema reflecting the RDFS2020 de facto agreements on extensions to [IEC 61970-501:2006](https://webstore.iec.ch/publication/6215). This is the current recommended RDFS format for profiles targeting modern CGMES and IEC TC57 toolchains. |
 | `html.xsl` | `.html` | Generates a standalone HTML file containing complete documentation for all classes, attributes, and associations defined in a profile. Suitable for publishing as a human-readable profile reference without any additional tooling. |
 | `profile-doc-rtf.xsl` | `.rtf` | Generates a Microsoft Word compatible RTF (Rich Text Format) document containing complete documentation for all classes, attributes, and associations in a profile. The output can be opened directly in Microsoft Word for further editing or distribution. |
 | `json-schema-draft-07.xsl` | `.draft-07.schema.json` | Generates a JSON Schema compliant with the draft [IEC 62361-104](https://webstore.iec.ch/publication/67199) standard (CIM Profiles to JSON Schema Mapping). Targets JSON Schema draft-07 specification. Suitable for use with JSON Schema validators and code generation tools that support draft-07. |
 | `json-schema-draft-2020-12.xsl` | `.draft-2020-12.schema.json` | Generates a JSON Schema compliant with the draft IEC 62361-104 standard targeting the JSON Schema draft-2020-12 specification. Use this builder when your toolchain supports the newer 2020-12 vocabulary. |
-| `json-ld-context-json-beta.xsl` | `.context-json-beta.jsonld` | Generates a JSON-LD context document derived from a JSON Schema profile, enabling RDF-compatible JSON serialization of CIM instance data. Beta release targeting IEC 62361-104 JSON-LD serialization requirements. |
-| `json-ld-context-rdfs.xsl` | `.context-rdfs-beta.jsonld` | Generates a JSON-LD context document derived from an RDFS profile, enabling RDF-compatible JSON serialization of CIM instance data. Beta release targeting IEC 62361-104 JSON-LD serialization requirements. |
-| `apache-avro-schema.xsl` | `.avsc` | Generates an Apache Avro schema for a profile, enabling compact binary serialization of CIM instance data in high-throughput data pipeline contexts. Suitable for use with Kafka, Spark, and other Avro-compatible data platforms. |
+| `apache-avro-schema-beta.xsl` | `.beta.avsc` | Beta release. Generates an Apache Avro schema for a profile, enabling compact binary serialization of CIM instance data in high-throughput data pipeline contexts. Suitable for use with Kafka, Spark, and other Avro-compatible data platforms. |
 | `linkml.xsl` | `.linkml.yaml` | Generates a [LinkML](https://linkml.io/) schema for a profile in YAML format. LinkML is a semantic modelling language being explored in IEC 61970-501 Ed 2.0 as a potential semantic representation for the CIM. The generated schema includes `ea_guid` for direct traceability to Sparx EA UML elements. |
 | `jpa.xsl` | `.java` | Legacy generator for generating a Java source file containing JPA (Java Persistence API) entity classes compatible with JPA 2.2 and earlier. The generated entities are designed to correlate directly to the SQL database schema produced by the `sql.xsl` generator. The defined classes can be used in Java applications for persisting CIM profile instances to a relational database via any JPA 2.2 compliant ORM provider. The legacy generator does not support CIM Compound classes and has been retained for backwards compatibility. |
 | `jpa-rdfs.xsl` | `.jpa-rdfs.java` | Generates a Java source file containing JPA (Java Persistence API) entity classes compatible with JPA 3.1. The generated entities are designed to correlate directly to the SQL database schema produced by the `sql-rdfs-ansi92.xsl` generator. The defined classes can be used in Java applications for persisting CIM profile instances to a relational database via any JPA 3.1 compliant ORM provider. Supports CIM Compound classes and is the recommended replacement for the legacy `jpa.xsl` builder. |
@@ -208,9 +196,21 @@ The `builders/` directory contains 34 XSLT stylesheets registered in `builders.j
 
 ## CIM Modelling Guide Rule Engine
 
-The `easyrules/` package implements the CIM Modelling Guide compliance checker using the Easy Rules framework. Rules are organised into categories matching the IEC CIM Modelling Guidelines document structure (packages, classes, attributes, associations, enumerations, descriptions, inheritance, namespaces, and extensions) with over 100 rules in total. Each rule class implements the Easy Rules `Rule` interface and carries `@RuleMetadata` annotations declaring its rule number, severity, category, and type. Extension rule variants apply the same checks to user-defined CIM extension classes and packages.
+The `easyrules/` package implements the CIM Modelling Guide compliance checker using the Easy Rules framework. Rules are organised into categories matching the IEC CIM Modelling Guidelines document structure:
 
-The compliance check runs during the CIMBuilder build cycle and results are written as an AsciiDoc report into the project's `/Schema` folder using the templates in `import-reports/`.
+- **Packages**: naming, uniqueness, visibility (Rules 025–182)
+- **Classes**: naming, datatypes, abstract classes (Rules 038–187)
+- **Attributes**: naming, types, multiplicity, scope (Rules 049–195)
+- **Associations**: naming, roles, cardinality, directionality (Rules 065–198)
+- **Enumerations**: structure, literal naming, stereotypes (Rules 084–205)
+- **Descriptions**: documentation requirements (Rule 104)
+- **Inheritance**: multiple inheritance, datatype inheritance (Rules 115–119)
+- **Namespaces**: namespace URI and prefix requirements (Rules 143–146)
+- **Extensions**: shadow class placement and user-defined extension rules
+
+Each rule class implements the Easy Rules `Rule` interface and is annotated with `@RuleMetadata` declaring its rule number, severity, category, and type. In all there are more than 130 rule classes covering 70 numbered rules, together with checks that carry no rule number, such as a missing association domain or range. Extension rule variants, whose class names contain `Extension`, apply the same checks to user-defined CIM extension classes and packages.
+
+The compliance check runs when an EA project schema is imported through the New Project or Import Schema wizard with the import report option checked. The results are written as an AsciiDoc report into the project's `Schema/.import-reports/` folder using the templates in `import-reports/`.
 
 
 
@@ -220,11 +220,13 @@ The `profiles/cl/` package provides the standalone command-line interface used b
 
 | Class | Role |
 | --- | --- |
-| `CIMToolCLI` | Main entry point: initialises logging, delegates to `run()` |
-| `CLIOptions` | Parses and validates command-line arguments (`--project-dir`, `--builder`, `--output`, `--schema`, `--namespace`, `--help`, `--version`, `--list-builders`) |
+| `CIMToolCLI` | Main entry point: lowers UCanAccess and HSQLDB logging to SEVERE, runs the command, and exits with its exit code |
+| `CLIOptions` | Parses and validates the command-line options (`--project-dir`, `--profile`, `--builder`, `--xslt`, `--type`, `--output`, `--output-ext`, `--copyright-multi-line`, `--copyright-single-line`, `--copyright-defaults`, `--copyright-none`, `--list-builders`, `--version` and `--help`); see the cimtool-cli documentation for their meaning |
 | `CLIProfileTransformer` | Orchestrates the headless transform pipeline: loads schema, loads profile, runs the selected builder stylesheet via Saxon |
-| `CLISchemaParser` | Headless XMI/EA project schema parser: wraps `EAPParser` / `QEAParser` for use outside the Eclipse workspace |
+| `CLISchemaParser` | Headless schema parser for `.xmi` files and Sparx EA project files (wrapping `EAPParser` and `QEAParser`), which also loads the `.namespaces`, `.namespace-prefixes`, `.annotation` and `.stereotype-extensions` files beside the schema |
 | `CLISettings` | Adapts the CLI project directory structure to the `Settings` interface expected by the profile model |
+| `CLIBuilderPreferences` | Reads a project's per-profile builder preferences from `.builder-preferences` |
+| `CLIGlobalPreferences` | Reads a project's `.cimtool-global-preferences`, the global builder preferences that the desktop application writes into the project, with defaults from `CLIGlobalPreferenceDefaults` |
 
 The following sequence diagram documents the full CLI transform pipeline architecture.
 
@@ -236,6 +238,7 @@ The following sequence diagram documents the full CLI transform pipeline archite
 
 - **Kena**: CIMUtil's single OSGi dependency. All RDF graph operations use the Kena `OntModel` API rather than calling Apache Jena directly.
 - **CIMToolPlugin**: the Eclipse UI shell around CIMUtil's logic. The builder system, profile editors, import wizards, and validation views all delegate to CIMUtil classes. CIMToolPlugin does not duplicate any model processing.
-- **com.cimphony.cimtoole**: extends CIMUtil's profile buildlet extension point to add Ecore output support, and uses CIMUtil's profile model and Kena graph API directly.
+- **com.cimphony.cimtoole**: contributes to CIMToolPlugin's `au.com.langdale.cimtoole.profile_buildlet` extension point to add Ecore output support, and uses CIMUtil's profile model and Kena graph API directly.
 - **cimtool-cli**: packages `cimutil.jar` into a standalone uber JAR. At runtime the CLI uses `CIMToolCLI` as its entry point and `CLIProfileTransformer` for all transform operations.
 - **CIMToolTest**: tests CIMUtil's validation engine, Kena integration, profile tasks, and transform pipeline via the `headless/` test package.
+- **CIMUtilTest**: a fragment of CIMUtil that tests its builders, its command-line interface and its supporting classes headlessly, as plain JUnit 5 tests run offline.
