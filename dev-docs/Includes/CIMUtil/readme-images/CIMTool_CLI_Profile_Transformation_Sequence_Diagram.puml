@@ -1,5 +1,7 @@
 @startuml CLI Package Sequence Diagram
 
+skin rose
+
 title CIMTool CLI - Profile Transformation Sequence
 
 skinparam backgroundColor #FEFEFE
@@ -33,8 +35,8 @@ else normal execution
         - project-dir exists
         - .cimtool-settings exists
         - .builder-preferences exists
-        - Defaults profiles-dir to
-          project/Profiles/
+        - ~--profile exists, if given
+        - the option rules (#287)
     end note
     OPT --> CLI
     deactivate OPT
@@ -55,7 +57,9 @@ CLI -> PREF : new CLIBuilderPreferences(projectDir)
 activate PREF
 note right of PREF
     Loads .builder-preferences
-    (Turtle format)
+    (Turtle format), falling back to
+    .cimtool-global-preferences and
+    built-in defaults
 end note
 PREF --> CLI : builderPrefs
 deactivate PREF
@@ -84,9 +88,10 @@ loop for each schemaFile
     alt EA Project (.eap, .eapx, .qea, .qeax)
         PARSE -> PARSE : parseEAProject()
         note right of PARSE
-            Uses EAProjectParser
+            Uses EAProjectParserFactory
             Loads optional files:
             - .annotation
+            - .namespaces
             - .stereotype-extensions
             - .namespace-prefixes
         end note
@@ -99,7 +104,7 @@ loop for each schemaFile
     SET --> PARSE : namespace
     deactivate SET
     
-    PARSE -> SET : isMergeShadowExtensions(file)
+    PARSE -> SET : isMergeShadowExtensions()
     activate SET
     SET --> PARSE : boolean
     deactivate SET
@@ -107,27 +112,27 @@ loop for each schemaFile
     PARSE --> CLI : OntModel schema
     deactivate PARSE
     
-    CLI -> CLI : merge schemas
+    CLI -> CLI : Composition.merge(mergedSchema, schema)
 end
 
 == Profile Transformation ==
 
-alt Directory Mode (multiple profiles)
+alt Project Mode (no ~--profile)
     
-    loop for each .owl file in profilesDir
+    loop for each .owl file in <project-dir>/Profiles
         CLI -> TRANS : new CLIProfileTransformer(builderPrefs)
         activate TRANS
         
         CLI -> TRANS : setProfile(profileFile)
         CLI -> TRANS : addSchema(mergedSchema)
         CLI -> TRANS : setOutputDirectory(outputDir)
-        CLI -> TRANS : configureCopyright()
+        CLI -> CLI : configureCopyright(transformer, options)
         
         alt explicit builder specified
             CLI -> TRANS : setBuilder(builderName)
             CLI -> TRANS : transform()
         else explicit XSLT specified
-            CLI -> TRANS : setXslt(xsltFile, ext)
+            CLI -> TRANS : setXslt(xsltFile, outputExtension, type)
             CLI -> TRANS : transform()
         else use flagged builders
             CLI -> TRANS : getFlaggedBuilders()
@@ -147,7 +152,7 @@ alt Directory Mode (multiple profiles)
         deactivate TRANS
     end
     
-else Single File Mode
+else Single File Mode (~--profile)
     
     CLI -> TRANS : new CLIProfileTransformer(builderPrefs)
     activate TRANS
@@ -155,12 +160,17 @@ else Single File Mode
     CLI -> TRANS : setProfile(profileFile)
     CLI -> TRANS : addSchema(mergedSchema)
     CLI -> TRANS : setOutputDirectory(outputDir)
-    CLI -> TRANS : configureCopyright()
+    CLI -> CLI : configureCopyright(transformer, options)
     
     alt explicit builder
         CLI -> TRANS : setBuilder(builderName)
         CLI -> TRANS : transform()
+    else explicit XSLT
+        CLI -> TRANS : setXslt(xsltFile, outputExtension, type)
+        CLI -> TRANS : transform()
     else flagged builders
+        CLI -> TRANS : getFlaggedBuilders()
+        TRANS --> CLI : builders list
         CLI -> TRANS : transformFlagged()
     end
     

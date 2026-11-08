@@ -17,9 +17,9 @@ applies rule-based inference engines to validate CIM/XML instance documents and
 profile consistency.
 
 > **Note:** All sequence diagram SVG files are located in the `readme-images/`
-> subfolder under the `CIMUtil/` project root. The corresponding `.puml` PlantUML
-> source files are also present in `readme-images/` and serve as the editable
-> source of truth for each diagram.
+> folder beside this document (`dev-docs/Includes/CIMUtil/readme-images/`). The
+> corresponding `.puml` PlantUML source files are also present in
+> `readme-images/` and serve as the editable source of truth for each diagram.
 
 The diagram source files and their rendered SVGs are paired as follows:
 
@@ -74,8 +74,9 @@ from both the EA database validation phase and the OWL model validation phase.
 ### Two Import Paths
 
 **Path A - EA Project** (`.eap`, `.eapx`, `.qea`, `.qeax`): The EA database is
-read via JDBC. The `AbstractEAProjectParsor` queries the EA internal tables
-(`t_package`, `t_object`, `t_connector`, `t_attribute`) to build the raw
+read via JDBC. The `AbstractEAProjectParsor` queries the EA internal tables such as `t_package`, `t_object`, `t_connector` and `t_attribute`, with
+their tag-value tables (`t_objectproperties`, `t_attributetag`,
+`t_connectortag`) and `t_xref`, to build the raw
 `OntModel`. `CIMInterpreterImpl` then post-processes it. This is the primary
 path for real CIM model work.
 
@@ -109,9 +110,14 @@ import** project setting is enabled.
 
 **`CIMModellingGuideRulesValidator`**: Fires after `CIMInterpreterImpl` has
 completed Stage 3 post-processing, before shadow extension merging. Validates the
-fully translated OWL `OntModel`. Contains nine specialised rule engines targeting
-all model element categories. Each engine carries a `DefaultRuleListener` that
-collects invocation statistics.
+fully translated OWL `OntModel`. Holds ten specialised rule engines, one per
+model element category (packages, normative classes, extension classes, shadow
+classes, attributes, associations, enumerations, element descriptions,
+inheritance and namespaces), and an eleventh engine registered with all of the
+rules. As of 2.3.1, `validate()` runs the ten category engines, then runs the
+all-rules engine over every resource, and returns only the all-rules engine's
+violations; it also prints the statistics of both engines' `DefaultRuleListener`
+instances to standard output.
 
 **`DBBaseRule` / `OntResourceBaseRule`**: Abstract base classes for the two rule
 families. Both extend `BaseRule` which provides access to `@RuleMetadata`
@@ -148,8 +154,12 @@ produce the AsciiDoc compliance report written to the project's `/Schema` folder
 
 The profiles subsystem provides the CIM profile domain object model and the
 two pipelines for generating output artefacts from a profile: the XSLT transform
-pipeline (the primary path for all 41 builders) and the direct `SchemaGenerator`
-path (for RDFS and OWL output).
+pipeline, used by the 31 XSLT builders registered in `builders.json`, and the
+Java builders registered in `java-builders.json`, which use no stylesheet. Six
+of the eight Java builders use the direct `SchemaGenerator` path (`OWLGenerator`
+or `RDFSGenerator`) for OWL and RDFS output; `ttl` writes the profile model
+directly, and `xml` serializes it with `ProfileSerializer` and no builder
+stylesheet.
 
 ### Key Classes
 
@@ -179,17 +189,21 @@ events that the XSLT stylesheet processes to produce the output format.
 `OntModel`, bypassing the SAX + XSLT pipeline entirely.
 
 **`Reorganizer` / `ProfileReorganizer` / `SchemaReorganizer`**: Apply a structural
-normalisation pass over the profile `OntModel` before either pipeline runs,
-ensuring cardinalities and class hierarchies conform to IEC 61970-501 rules.
+normalisation pass over the profile `OntModel` so that it conforms to the
+IEC 61970-501 rules, each base class or property being represented by at most
+one profile class or property. No builder runs them: they run when the user
+chooses **Repair and Reorganize** in the profile editor (`RefactorWizard`), and
+`ProfileReorganizer` also runs when a profile is imported from a spreadsheet
+(`SpreadsheetParser`).
 
 ### XSLT Transform Pipeline
 
 The primary artefact generation pipeline works as follows:
 
 1. `ProfileBuildlets` loads the `.owl` profile file and the background schema into `OntModel` instances.
-2. A `ProfileModel` is constructed and given both models, triggering internal `Refactory` creation.
-3. A `ProfileSerializer` is configured with base URI, copyright text, builder parameters, namespace prefixes, and the compiled XSLT stylesheet.
-4. `ProfileSerializer.write(outputStream)` is called. Saxon drives the transformation by calling `parse()` on the serializer as its SAX source.
+2. A `ProfileModel` is constructed and given both models (`Task.getMessageModel()`). Once both are set it builds a `Refactory` over the profile model and the merge of the two (`Composition.merge`).
+3. A `ProfileSerializer` is configured with base URI, copyright text, builder parameters, namespace prefixes, and the compiled XSLT stylesheet, loaded with no base URI (#292). For `TEXT` builders the `indent` stylesheet is chained after it, and for `ASCIIDOC` builders `indent-asciidoc` (#288).
+4. `ProfileSerializer.write(outputStream)` is called. It runs the chained stylesheets in turn; Saxon drives the first by calling `parse()` on the serializer as its SAX source.
 5. `ProfileSerializer.emit()` walks the `ProfileModel` node tree, reading `ProfileClass` properties and cardinalities, firing SAX events that the XSLT processes to produce the output file.
 
 > **Tip:** Right-click the diagram and select **Open image in new tab** to view it
@@ -212,10 +226,11 @@ standalone uber JAR by the `cimtool-cli` Maven project.
 delegates to `run()`, and calls `System.exit()` with the result code.
 
 **`CLIOptions`**: Parses and validates all command-line arguments. Supports
-`--project-dir`, `--profile` / `--profiles-dir`, `--builder` / `--xslt`,
-`--output`, `--copyright-*`, `--list-builders`, `--version`, `--help`.
-`isDirectoryMode()` returns `true` when `--profiles-dir` is used (or defaulted)
-to drive the directory-mode transform loop.
+`--project-dir`, `--profile`, `--output`, `--builder` / `--xslt` (with `--type`
+and `--output-ext`), the `--copyright-*` options, `--list-builders`, `--version`
+and `--help`, as listed in the cimtool-cli developer documentation.
+`isProjectMode()` returns `true` when `--profile` is omitted, in which case
+every `.owl` file in `<project-dir>/Profiles` is transformed.
 
 **`CLISettings`**: Adapts the CLI project directory structure to the `Settings`
 interface expected by the profile model. Loads `.cimtool-settings` (Turtle format)
@@ -246,12 +261,13 @@ flagged-builder mode (builders marked in the profile OWL via
 
 The validation subsystem provides three distinct pipelines for validating CIM
 data: single-file CIM/XML instance validation, partitioned split-model validation,
-and profile-against-schema consistency checking. All three share a common
-rule-expansion infrastructure built on CIMTool's custom rule engine.
+and profile-against-schema consistency checking. All three run rules in
+CIMTool's custom rule language; the two instance-data paths also share a
+schema-driven rule-expansion step.
 
 ### Key Classes
 
-**`ValidatorUtil`**: Abstract base shared by all validators. Provides
+**`ValidatorUtil`**: Abstract base of `ModelValidator` and `SplitValidator`. Provides
 `openStandardRules(name)` to load bundled `.rules` files from the classpath, and
 the two-phase `expandRules(schema, ruleText, registry)` method that parses raw
 rule text and expands generic templates into schema-specific backward-chaining
@@ -290,7 +306,7 @@ automatic fixes to the profile OWL model when the user accepts a repair suggesti
 
 ### Three Validation Paths
 
-The three paths share Phase 1 (rule expansion) and then diverge:
+Paths A and B share Phase 1 (rule expansion), which runs in the validator's constructor. Path C parses `profile.rules` with `RuleParser` directly, in `ProfileValidator.buildRules()`:
 
 **Path A - Single-File CIM/XML**: `ValidationBuildlet` -> `ModelValidator`. Uses
 standard Jena `InfModel` + `prepare()` over a single input file. Bundled rule
@@ -317,8 +333,11 @@ displayed in the `RepairEditor`.
 
 The Kena layer is the foundational RDF infrastructure on which all other
 subsystems are built. It wraps Apache Jena 2.6.3 behind a stable, simplified API
-that is purpose-built for CIMTool's use cases. No other subsystem calls Apache
-Jena directly - all RDF graph operations go through the Kena API.
+that is purpose-built for CIMTool's use cases. Most RDF graph operations in
+CIMTool go through the Kena API, but not all: as of 2.3.1, 64 source files in
+CIMUtil and 14 in CIMToolPlugin also import Apache Jena (`com.hp.hpl.jena`)
+directly, for example `ModelValidator` (`createInfModel`), `ProfileValidator`
+(`TransitiveReasoner`), `SchemaGenerator` and `CLIProfileTransformer`.
 
 ### Design Rationale
 
@@ -330,8 +349,9 @@ Jena API. Key design decisions:
 - `Resource`, `Property`, and `OntResource` are thin typed wrappers over Jena's `Node` and `FrontsNode` - they provide a stable API that does not change if Jena is upgraded.
 - `OntResource` holds no cached state. Every property access (`hasProperty`, `getLabel`, `getDomain`, `getRange`) issues a fresh `graph.find()` or `graph.contains()` directly against the underlying `Graph`.
 
-This design means that upgrading Apache Jena only requires changing Kena's
-internal implementation - the rest of the codebase is fully insulated.
+This design keeps Jena's API out of most of the code that works with the CIM
+model. Because CIMUtil and CIMToolPlugin also call Jena directly, upgrading
+Apache Jena is not confined to Kena's implementation.
 
 ### Key Classes
 

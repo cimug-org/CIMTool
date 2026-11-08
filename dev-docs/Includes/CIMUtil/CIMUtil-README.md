@@ -48,7 +48,7 @@ CIMUtil/
 │   ├── default-copyright-template-*.txt ← Default copyright header templates
 │   └── empty-copyright-template.txt   ← Empty copyright template, used when no copyright is wanted
 ├── import-reports/                    ← AsciiDoc templates for the CIM Modelling Guide
-│   │                                     audit/compliance report generated into Schema/.import-reports
+│   │                                     audit/compliance report, copied into Schema/.import-reports
 │   ├── asciidoc/
 │   │   ├── images/                    ← Images used by the rule documentation
 │   │   ├── includes/                  ← Per-category rule documentation includes
@@ -210,7 +210,7 @@ The `easyrules/` package implements the CIM Modelling Guide compliance checker u
 
 Each rule class implements the Easy Rules `Rule` interface and is annotated with `@RuleMetadata` declaring its rule number, severity, category, and type. In all there are more than 130 rule classes covering 70 numbered rules, together with checks that carry no rule number, such as a missing association domain or range. Extension rule variants, whose class names contain `Extension`, apply the same checks to user-defined CIM extension classes and packages.
 
-The compliance check runs when an EA project schema is imported through the New Project or Import Schema wizard with the import report option checked. The results are written as an AsciiDoc report into the project's `Schema/.import-reports/` folder using the templates in `import-reports/`.
+The compliance check runs when an EA project schema is imported through the New Project or Import Schema wizard with the import report option checked. The results are written as an AsciiDoc report named after the schema file (`<schema>.adoc`) beside the schema in the project's `Schema/` folder. The includes, styles, themes and images that the report uses are copied from `import-reports/` into `Schema/.import-reports/`.
 
 
 
@@ -231,6 +231,15 @@ The `profiles/cl/` package provides the standalone command-line interface used b
 The following sequence diagram documents the full CLI transform pipeline architecture.
 
 ![CIMTool CLI Profile Transformation Sequence Diagram](readme-images/CIMTool_CLI_Profile_Transformation_Sequence_Diagram.svg)
+
+## Architecture and Sequence Diagrams
+
+The [CIMUtil - Architecture & Sequence Diagram Reference](CIMUtil-Sequence-Diagrams.md)
+describes the six subsystems that CIMUtil and Kena provide, each with a sequence
+diagram: XMI and EA project import, CIM Modelling Guide compliance (EasyRules),
+the profile model and transform pipeline, the command-line interface, validation,
+and the Kena/Jena adapter layer. The PlantUML sources (`.puml`) and the rendered
+SVGs are in `dev-docs/Includes/CIMUtil/readme-images/`.
 
 
 

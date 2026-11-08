@@ -468,7 +468,7 @@ performing any transformation.
 | `--project-dir <path>`
 | `-pd`
 | Yes
-| Root directory of the CIMTool project. Must contain `.cimtool-settings`, from which the CLI reads the schema file locations; without it no schema is found and the CLI exits with code `1`. May also contain `.builder-preferences`, holding the per-file PlantUML builder settings made in the desktop application, and `.cimtool-global-preferences`, holding global preference values (e.g. PlantUML diagram style settings); built-in defaults are used for either file when it is absent. The builders that run are those flagged on each profile, unless `--builder` or `--xslt` is given.
+| Root directory of the CIMTool project. Must contain `.cimtool-settings`, from which the CLI reads the schema file locations, and `.builder-preferences`, holding the per-file PlantUML builder settings made in the desktop application; the CLI exits with code `1` if either is missing. May also contain `.cimtool-global-preferences`, holding global preference values (e.g. PlantUML diagram style settings); built-in defaults are used when it is absent. The builders that run are those flagged on each profile, unless `--builder` or `--xslt` is given.
 
 | `--profile <path>`
 | `-p`

@@ -1,5 +1,7 @@
 @startuml EasyRules CIM Modelling Guide Compliance Sequence Diagram
 
+skin rose
+
 title CIMUtil - EasyRules CIM Modelling Guide Compliance Sequence
 
 skinparam backgroundColor #FEFEFE
@@ -107,7 +109,7 @@ INTERP -> MVAL : new CIMModellingGuideRulesValidator(baseURI)
 activate MVAL
 note right of MVAL
     Constructor registers 100+ rules
-    across 9 specialised rule engines:
+    across 10 specialised rule engines:
     - packageRulesEngine
     - classRulesEngine
     - attributeRulesEngine
@@ -120,6 +122,8 @@ note right of MVAL
     - shadowClassExtensionRulesEngine
     Each engine has a DefaultRuleListener
     registered for invocation statistics.
+    An eleventh engine, allRulesEngine,
+    holds all of the rules.
 end note
 MVAL --> INTERP : modelValidator
 deactivate MVAL
@@ -173,6 +177,13 @@ loop for each resource category
     deactivate ENG
 end
 
+note right of MVAL
+    After the ten category engines, the
+    allRulesEngine runs over every resource.
+    As of 2.3.1 validate() returns only the
+    allRulesEngine's violations, and prints
+    both listeners' statistics to stdout.
+end note
 MVAL --> INTERP : List<RuleViolation> owlViolations
 deactivate MVAL
 

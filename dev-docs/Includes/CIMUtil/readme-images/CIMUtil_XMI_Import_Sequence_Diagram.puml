@@ -1,5 +1,7 @@
 @startuml XMI Import Sequence Diagram
 
+skin rose
+
 title CIMUtil - XMI / EA Project Import Sequence
 
 skinparam backgroundColor #FEFEFE
@@ -198,6 +200,7 @@ group Post-Processing Pipeline (CIMInterpreterImpl.postProcess)
     end note
 
     alt mergeShadowExtensions == true
+        INTERP -> INTERP : processShadowExtensions(baseURI)
         INTERP -> EXTTRANS : new ExtensionsTranslator\n(model, baseURI)
         activate EXTTRANS
         note right of EXTTRANS
