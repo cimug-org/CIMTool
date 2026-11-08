@@ -4,14 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import au.com.langdale.cimutil.test.NoNetwork;
+import au.com.langdale.cimutil.test.TestProjects;
 
 /**
  * Verifies that relative references in a custom stylesheet given through
@@ -19,38 +18,12 @@ import org.junit.jupiter.params.provider.CsvSource;
  * http://langdale.com.au/2005/xsdgen (issue #311).
  *
  * <p>
- * Every test runs with HTTP and HTTPS routed through an unreachable proxy, so an
- * attempt to fetch a reference from the network fails the test instead of
- * reaching the internet.
+ * The class runs with {@link NoNetwork}, so an attempt to fetch a reference from
+ * the network fails the test instead of reaching the internet.
  * </p>
  */
+@NoNetwork
 class CustomStylesheetReferencesTest {
-
-	private static final String[] PROXY_PROPERTIES = { "http.proxyHost", "http.proxyPort", "https.proxyHost",
-			"https.proxyPort", "http.nonProxyHosts" };
-
-	private final Map<String, String> savedProperties = new HashMap<>();
-
-	@BeforeEach
-	void blockNetwork() {
-		for (String name : PROXY_PROPERTIES)
-			savedProperties.put(name, System.getProperty(name));
-		System.setProperty("http.proxyHost", "127.0.0.1");
-		System.setProperty("http.proxyPort", "9");
-		System.setProperty("https.proxyHost", "127.0.0.1");
-		System.setProperty("https.proxyPort", "9");
-		System.setProperty("http.nonProxyHosts", "");
-	}
-
-	@AfterEach
-	void restoreNetwork() {
-		savedProperties.forEach((name, value) -> {
-			if (value == null)
-				System.clearProperty(name);
-			else
-				System.setProperty(name, value);
-		});
-	}
 
 	@ParameterizedTest(name = "{0} in folder \"{1}\"")
 	@CsvSource({ "include-report.xsl, stylesheets", "import-report.xsl, stylesheets",
@@ -58,10 +31,10 @@ class CustomStylesheetReferencesTest {
 	void resolvesSiblingFileAgainstStylesheetFolder(String stylesheet, String folder, @TempDir Path temp)
 			throws Exception {
 		Path xslt = temp.resolve(folder).resolve(stylesheet);
-		MinimalProject.copyResource("/custom-xslt/" + stylesheet, xslt);
-		MinimalProject.copyResource("/custom-xslt/common.xsl", xslt.resolveSibling("common.xsl"));
+		TestProjects.copyResource("/custom-xslt/" + stylesheet, xslt);
+		TestProjects.copyResource("/custom-xslt/common.xsl", xslt.resolveSibling("common.xsl"));
 
-		CLIProfileTransformer transformer = MinimalProject.transformer(temp.resolve("project"));
+		CLIProfileTransformer transformer = TestProjects.minimal(temp.resolve("project"));
 		transformer.setXslt(xslt.toFile(), "txt");
 		transformer.setOutputDirectory(temp.resolve("output").toFile());
 		transformer.transform();

@@ -16,6 +16,7 @@
 :cimtooltest-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolTest/readme-images/
 :cimtoolupdate-imagesdir: {asciidoctorconfigdir}/Includes/CIMToolUpdate/readme-images/
 :cimutil-imagesdir: {asciidoctorconfigdir}/Includes/CIMUtil/readme-images/
+:cimutiltest-imagesdir: {asciidoctorconfigdir}/Includes/CIMUtilTest/readme-images/
 :com.cimphony.cimtoole-imagesdir: {asciidoctorconfigdir}/Includes/com.cimphony.cimtoole/readme-images/
 :csharpeftestproject-imagesdir: {asciidoctorconfigdir}/Includes/CSharpEFTestProject/readme-images/
 :devenvsetup-imagesdir: {asciidoctorconfigdir}/Includes/DevEnvSetup/readme-images/
@@ -39,6 +40,7 @@
 //:debug-cimtooltest-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolTest/readme-images/
 //:debug-cimtoolupdate-imagesdir:{asciidoctorconfigdir}/Includes/CIMToolUpdate/readme-images/
 //:debug-cimutil-imagesdir:{asciidoctorconfigdir}/Includes/CIMUtil/readme-images/
+//:debug-cimutiltest-imagesdir:{asciidoctorconfigdir}/Includes/CIMUtilTest/readme-images/
 //:debug-com.cimphony.cimtoole-imagesdir:{asciidoctorconfigdir}/Includes/com.cimphony.cimtoole/readme-images/
 //:debug-csharpeftestproject-imagesdir:{asciidoctorconfigdir}/Includes/CSharpEFTestProject/readme-images/
 //:debug-devenvsetup-imagesdir:{asciidoctorconfigdir}/Includes/DevEnvSetup/readme-images/

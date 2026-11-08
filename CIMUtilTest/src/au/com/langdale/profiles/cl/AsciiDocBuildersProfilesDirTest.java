@@ -16,6 +16,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import au.com.langdale.cimutil.test.NoNetwork;
+import au.com.langdale.cimutil.test.TestProjects;
 import au.com.langdale.profiles.cl.builders.BuilderRegistry;
 import au.com.langdale.profiles.cl.builders.BuilderType;
 
@@ -26,17 +28,18 @@ import au.com.langdale.profiles.cl.builders.BuilderType;
  *
  * <p>
  * Each builder is run headlessly through {@link CLIProfileTransformer} against
- * the minimal project in test-resources. The builders are discovered from
+ * the minimal project (see {@link TestProjects}). The builders are discovered from
  * builders.json, so a newly registered AsciiDoc builder is tested
  * automatically.
  * </p>
  */
+@NoNetwork
 class AsciiDocBuildersProfilesDirTest {
 
 	private static final String FALLBACK = "ifndef::profilesdir[:profilesdir: {docdir}/Profiles]";
 
 	private static final Pattern PLANTUML = Pattern
-			.compile("plantuml::\\{profilesdir\\}/" + MinimalProject.PROFILE + "\\.[a-z0-9-]+\\.puml\\[format=svg, align=center\\]");
+			.compile("plantuml::\\{profilesdir\\}/" + TestProjects.MINIMAL_PROFILE + "\\.[a-z0-9-]+\\.puml\\[format=svg, align=center\\]");
 
 	static Stream<String> asciiDocBuilders() {
 		BuilderRegistry registry = BuilderRegistry.getInstance();
@@ -70,7 +73,7 @@ class AsciiDocBuildersProfilesDirTest {
 	}
 
 	private static List<String> generate(String builder, Path temp) throws Exception {
-		CLIProfileTransformer transformer = MinimalProject.transformer(temp.resolve("project"));
+		CLIProfileTransformer transformer = TestProjects.minimal(temp.resolve("project"));
 		transformer.setBuilder(builder);
 		transformer.setOutputDirectory(temp.resolve("output").toFile());
 		transformer.transform();
