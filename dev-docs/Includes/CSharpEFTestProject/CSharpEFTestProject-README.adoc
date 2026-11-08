@@ -42,12 +42,25 @@ test run reflects the current builder output.
 [source]
 ----
 CSharpEFTestProject/
+├── CSharpEFTestProject.sln       Solution file
 ├── CSharpEFTestProject/          CIMTool project directory
+│   ├── .cimtool-settings         Project settings (schema files and import options)
+│   ├── .builder-preferences      Per-file builder settings
+│   ├── .cimtool-global-preferences
+│   ├── .copyright-multi-line     Copyright templates used by the builders
+│   ├── .copyright-single-line
+│   ├── Schema/
+│   │   ├── iec61970cim17v40_iec61968cim13v13b_iec62325cim03v17b_CIM100.1.1.1.qea
+│   │   │                                       CIM100 schema the profile is built on
+│   │   └── .import-reports/      Schema import reports (images, includes, styles, themes)
 │   └── Profiles/
-│       ├── SampleProfile.csharp-ef-rdfs.cs    Generated EF Core entities (linked by test)
-│       ├── SampleProfile.rdfs-ansi92.sql       Generated SQL DDL (read by SQL parity tests)
-│       └── SampleProfile.xml                   CIMTool profile source
+│       ├── .gitignore                          Ignores the generated files below
+│       ├── SampleProfile.owl                   CIMTool profile source
+│       ├── SampleProfile.csharp-ef-rdfs.cs     Generated EF Core entities (linked by test; not committed)
+│       ├── SampleProfile.rdfs-ansi92.sql       Generated SQL DDL (read by SQL parity tests; not committed)
+│       └── SampleProfile.xml                   Generated XML profile (not committed)
 └── EfCoreSmokeTest/              C# smoke test project
+    ├── EfCoreSmokeTest.sln
     ├── EfCoreSmokeTest.csproj
     ├── Program.cs                              All test sections and assertion helpers
     ├── SampleProfileDbContext.cs               Thin hand-written subclass of DbContextBase
@@ -301,6 +314,13 @@ the recommended environment.
 
 
 === Running the Test
+
+The test reads `SampleProfile.csharp-ef-rdfs.cs` and `SampleProfile.rdfs-ansi92.sql`
+from the CIMTool project's `Profiles` folder. These files are generated and not
+committed, so generate them first. The sample profile has both builders enabled,
+so either import the `CSharpEFTestProject` CIMTool project into CIMTool and let it
+build, or run `cimtool-cli` from the repository's `CSharpEFTestProject` folder
+(`java -jar cimtool-cli.jar --project-dir CSharpEFTestProject`).
 
 The .NET 8 SDK must be installed and `dotnet` available on `PATH`.
 

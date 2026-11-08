@@ -3,7 +3,7 @@
 > ⚠️ **This project is legacy/dormant and is not part of the active CIMTool
 > build or packaging workflow.** It is retained in the repository in the event
 > that feature-based deployment is ever resurrected. See
-> [Current Status](current-status--legacy--dormant) for details.
+> [Current Status](#current-status-legacy--dormant) for details.
 
 An Eclipse PDE feature project that was used to package and distribute CIMTool
 via an Eclipse update site. A PDE *feature* is a grouping of plugins that can

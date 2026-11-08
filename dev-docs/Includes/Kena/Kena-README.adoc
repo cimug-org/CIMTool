@@ -52,7 +52,11 @@ Kena/
 │   ├── stax-api-1.0.1.jar        ← StAX streaming XML API
 │   ├── wstx-asl-3.2.9.jar        ← Woodstox StAX implementation
 │   ├── xercesImpl-2.7.1.jar      ← Apache Xerces XML parser
-│   └── log4j-over-slf4j-2.0.17.jar  ← Log4j 1.x → SLF4J bridge (intercepts Jena Log4j API calls; no real Log4j bytecode on classpath)
+│   ├── log4j-over-slf4j-2.0.17.jar  ← Log4j 1.x → SLF4J bridge (intercepts Jena Log4j API calls; no real Log4j bytecode on classpath)
+│   ├── jena-2.6.3-sources.jar    ← Jena source; not on the bundle class path
+│   ├── jena-2.6.3-tests.jar      ← Jena tests; not on the bundle class path
+│   ├── iri-0.8-sources.jar       ← IRI source; not on the bundle class path
+│   └── junit-4.5.jar             ← Test framework; not on the bundle class path
 └── src/
     ├── au/com/langdale/kena/      ← Kena RDF/OWL API (the primary public API)
     │   ├── OntModel.java          ← Central graph model — resource lookup, traversal,
