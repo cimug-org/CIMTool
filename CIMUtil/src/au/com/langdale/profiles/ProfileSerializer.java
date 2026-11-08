@@ -79,7 +79,15 @@ public class ProfileSerializer extends AbstractReader {
 
 	public static final String XSDGEN = "http://langdale.com.au/2005/xsdgen";
 
-	TransformerFactory factory = TransformerFactory.newInstance();
+	/**
+	 * Saxon is created directly rather than through
+	 * {@link TransformerFactory#newInstance()}, which locates an implementation
+	 * through the thread's context class loader. Under OSGi a thread can carry a
+	 * context class loader that cannot see the Saxon library bundled in CIMUtil,
+	 * and the JDK's own implementation would then be returned. Saxon is required
+	 * in every case, since its extension functions are registered on it.
+	 */
+	TransformerFactory factory = new net.sf.saxon.TransformerFactoryImpl();
 	private List<Templates> templates = new ArrayList();
 	private final String xsd = XSD.anyURI.getNameSpace();
 	private JenaTreeModelBase model;
