@@ -12,9 +12,11 @@
 A standalone Maven project that assembles the CIMTool command-line interface into
 a single self-contained executable uber JAR (`cimtool-cli.jar`) using the
 Maven Shade plugin. While the CIMTool Eclipse RCP application is currently
-released for Windows only, with macOS and Linux under evaluation, `cimtool-cli.jar`
+released for Windows only (Linux support is planned in
+https://github.com/cimug-org/CIMTool/issues/325[Issue #325]), `cimtool-cli.jar`
 has no Eclipse or UI dependencies and can be run headless on any platform where
-Java 11 or later is available.
+Java 17 or later is available. Java 17 is the minimum because `kena.jar` and
+`cimutil.jar` are compiled for Java 17.
 
 No Eclipse, OSGi runtime, or workspace is required to run the resulting JAR.
 
@@ -51,7 +53,7 @@ only*.
 |===
 | Requirement | Version
 
-| JDK | 11 or later
+| JDK | 17 or later
 
 | Maven | 3.9 or later
 
@@ -92,7 +94,8 @@ CIMTool/
 ├── CIMUtil/                    ← Eclipse PDE project
 │   ├── bin/                    ← Eclipse workspace compile output (not used directly)
 │   ├── lib/                    ← vendored JARs (saxon-he, easy-rules, poi, etc.)
-│   ├── builders/               ← XSLT stylesheets + builders.json + java-builders.json (embedded in uber JAR)
+│   ├── builders/               ← XSLT stylesheets, builders.json, java-builders.json, copyright templates,
+│   │                             adoc-themes/, includes/ and profiles/ (embedded in uber JAR)
 │   └── import-reports/         ← report templates used during schema import
 │       ├── asciidoc/           ← AsciiDoc report templates
 │       │   ├── images/
@@ -106,18 +109,18 @@ CIMTool/
 │   └── lib/                    ← vendored JARs (jena, arq, xerces, icu4j, etc.)
 └── cimtool-cli/                ← THIS PROJECT
     ├── pom.xml
-    ├── cimtool-cli-README.adoc
-    ├── cimtool-cli-README.md
     ├── install-jars.bat        ← Windows: populates lib-repo/
     ├── install-jars.sh         ← Mac/Linux: populates lib-repo/
+    ├── src/main/resources/
+    │   └── logback.xml         ← production Logback configuration (embedded in uber JAR)
     ├── lib-repo/               ← local Maven file repository (committed to source control)
     │   └── ...                 ← populated by install-jars script
-    ├── dist/                   ← signed distribution JARs (produced by release-cimtool.bat)
-    │   ├── cimtool-cli.jar
-    │   ├── cimtool-cli.jar.sha256
-    │   └── logback-debug.xml
+    ├── dist/                   ← distribution folder; only logback-debug.xml is committed
+    │   ├── cimtool-cli.jar     ← signed JAR (written by release-cimtool.bat; not committed)
+    │   ├── cimtool-cli.jar.sha256 ← its checksum (written by release-cimtool.bat; not committed)
+    │   └── logback-debug.xml   ← diagnostic Logback configuration
     └── target/
-        └── cimtool-cli.jar   ← produced by mvn package
+        └── cimtool-cli.jar     ← produced by mvn package
 ----
 
 
@@ -158,7 +161,15 @@ directory inside `cimtool-cli/` is declared as a standard Maven repository in
 <repositories>
     <repository>
         <id>local-lib-repo</id>
-        <url>file://${basedir}/lib-repo</url>
+        <url>${project.baseUri}lib-repo</url>
+        <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+            <checksumPolicy>ignore</checksumPolicy>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
     </repository>
 </repositories>
 ----
@@ -179,6 +190,11 @@ The instructions below apply to *local development only*.
 The `lib-repo/` directory is populated by running the provided install script, which
 calls `mvn install:install-file` for each JAR and places it into `lib-repo/` using
 the standard Maven repository layout (`groupId/artifactId/version/artifact-version.jar`).
+
+Before installing anything, the script deletes the `kena` and `cimutil` entries
+from both `lib-repo/` and the local Maven repository (`~/.m2/repository`), so that
+a JAR the script fails to find cannot be replaced by a stale copy from an earlier
+run.
 
 *Passing the export root as an argument:*
 ----
@@ -209,7 +225,8 @@ When run without an argument, the script will prompt:
 ----
 
 After installing the two core module JARs, the script prompts whether to
-also install the vendor JARs:
+also install the vendor JARs, which are all the groups below except the core
+modules:
 
 ----
   The vendor JARs (Kena\lib and CIMUtil\lib) rarely change between
@@ -220,7 +237,7 @@ also install the vendor JARs:
   Install vendor JARs? (Y/N): _
 ----
 
-The script processes all 26 dependencies in three groups:
+The script processes all 27 dependencies in four groups:
 
 [cols="2,1,3", options="header"]
 |===
@@ -235,6 +252,10 @@ The script processes all 26 dependencies in three groups:
 | Kena/lib vendored JARs
 | 9
 | `Kena/lib/*.jar`
+
+| SLF4J 2.x / Logback / JUL bridge
+| 4
+| `slf4j-api`, `logback-core` and `logback-classic` from the export's `plugins/` directory; `jul-to-slf4j` from `CIMToolPlugin/lib/`
 
 | CIMUtil/lib vendored JARs
 | 12
@@ -262,7 +283,9 @@ skips it rather than aborting, so you can see all missing files in a single run.
 | Re-run install script and answer `Y` at the vendor JAR prompt
 
 | Another developer clones the repo
-| No action needed: `lib-repo/` is committed
+| No action needed while `lib-repo/` is current. After the `kena` or `cimutil`
+  version in `pom.xml` changes, and until the release's Phase 4 `lib-repo/`
+  commit, run the install script against a PDE export of that version first
 |===
 
 ==== Committing lib-repo/ to Source Control
@@ -271,6 +294,14 @@ The `lib-repo/` directory *should be committed to source control*. This means an
 developer who clones the repository can immediately run `mvn package` without needing
 to run the install script themselves, as long as the committed `lib-repo/` contents
 are current. The install script only needs to be re-run when the underlying JARs change.
+
+The committed `lib-repo/` holds the `kena` and `cimutil` versions of the last
+release. A release branch raises the version in `pom.xml` before that release is
+built, so between the version change and the Phase 4 `lib-repo/` commit,
+`mvn package` on a fresh clone fails to resolve the new `cimutil` (and, when it
+changed, `kena`) until the install script has been run. During 2.3.1
+development, for example, `pom.xml` asks for `cimutil` 2.3.1 while `lib-repo/`
+holds 2.3.0.
 
 [NOTE]
 ====
@@ -344,17 +375,28 @@ Do not run `mvn clean package` directly for official releases. See
 | Core CIMTool processing: profiles, XMI import, validation, XSLT transforms
 
 | `Kena/lib/*.jar`
-| Apache Jena 2.6.3, ARQ 2.8.4, Xerces 2.7.1, ICU4J 71.1, Lucene Core 2.3.1, StAX API 1.0.1, Woodstox 3.2.9, log4j-over-slf4j 2.0.17 (Log4j 1.x → SLF4J bridge)
+| Apache Jena 2.6.3, ARQ 2.8.4, IRI 0.8, Xerces 2.7.1, ICU4J 71.1, Lucene Core 2.3.1, StAX API 1.0.1, Woodstox 3.2.9, log4j-over-slf4j 2.0.17 (Log4j 1.x → SLF4J bridge)
 
 | `CIMUtil/lib/*.jar`
-| Saxon-HE 10.8, Easy-Rules 4.1.0, Apache POI 3.9, Jackcess 2.2.3, UCanAccess 4.0.4, HSQLDB 2.3.6, SQLite JDBC 3.45.2.0, Gson 2.8.6, commons-lang 2.6, commons-logging 1.1.3, xml-resolver 1.2
+| Saxon-HE 10.8, Easy-Rules Core and Support 4.1.0, Apache POI 3.9, Jackcess 2.2.3, UCanAccess 4.0.4, HSQLDB 2.3.6, SQLite JDBC 3.45.2.0, Gson 2.8.6, commons-lang 2.6, commons-logging 1.1.3, xml-resolver 1.2
+
+| SLF4J 2.x / Logback / JUL bridge
+| SLF4J API 2.0.17, Logback Core and Classic 1.5.32, jul-to-slf4j 2.0.17
+
+| `src/main/resources/`
+| `logback.xml`, the production logging configuration
 
 | `CIMUtil/builders/`
-| `builders.json`, `java-builders.json`, all XSLT stylesheets (`*.xsl`), `includes/`, `adoc-themes/`
+| `builders.json`, `java-builders.json`, all XSLT stylesheets (`*.xsl`), the copyright templates, `includes/`, `adoc-themes/`, `profiles/`
 
 | `CIMUtil/import-reports/`
 | AsciiDoc report templates (`asciidoc/`), PlantUML styles (`puml/`), schema config (`schema/`)
 |===
+
+The Shade plugin drops the `META-INF/MANIFEST.MF` of every contributing JAR and
+writes a new manifest naming the entry point and the version, merges Apache
+`LICENSE` and `NOTICE` files, and merges `META-INF/services` entries (see
+<<Saxon-HE and XSLT Service Registration>>).
 
 ==== What Is Intentionally Excluded
 
@@ -366,12 +408,17 @@ Do not run `mvn clean package` directly for official releases. See
 | `Kena/lib/jena-2.6.3-tests.jar`
 | Test-only artifact, not needed at CLI runtime
 
-| `Kena/lib/iri-0.8-sources.jar`
-| Source artifact, not needed at runtime
+| `Kena/lib/jena-2.6.3-sources.jar`, `Kena/lib/iri-0.8-sources.jar`
+| Source artifacts, not needed at runtime
 
 | `Kena/lib/junit-4.5.jar`
 | Test framework, not needed at CLI runtime
 
+| `CIMUtil/lib/*-sources.jar`, `CIMUtil/lib/*-javadoc.jar`, `CIMUtil/lib/saxon10-8source.zip`
+| Source and documentation artifacts, not needed at runtime
+
+| `CIMUtil/lib/easy-rules-jexl`, `-mvel` and `-spel` JARs
+| Easy-Rules expression language modules that CIMTool does not use
 |===
 
 
@@ -421,11 +468,7 @@ performing any transformation.
 | `--project-dir <path>`
 | `-pd`
 | Yes
-| Root directory of the CIMTool project. Must contain `.cimtool-settings` and `.builder-preferences`, and
-  may optionally contain `.cimtool-global-preferences`. The CLI reads schema file locations from
-  `.cimtool-settings`, builder configurations from `.builder-preferences`, and, when present, global
-  preference values (e.g. PlantUML diagram style settings) from `.cimtool-global-preferences`; built-in
-  defaults are used if that file is absent.
+| Root directory of the CIMTool project. Must contain `.cimtool-settings`, from which the CLI reads the schema file locations; without it no schema is found and the CLI exits with code `1`. May also contain `.builder-preferences`, holding the per-file PlantUML builder settings made in the desktop application, and `.cimtool-global-preferences`, holding global preference values (e.g. PlantUML diagram style settings); built-in defaults are used for either file when it is absent. The builders that run are those flagged on each profile, unless `--builder` or `--xslt` is given.
 
 | `--profile <path>`
 | `-p`
@@ -560,7 +603,7 @@ setters, so the substitution applies to desktop, CLI and programmatic callers al
   registered as `TEXT` in 2.3.0 and as `ASCIIDOC` from 2.3.1 (defect #288)
 
 | `XSD`
-| XSLT-based; produces XSD schemas with XML Schema validation of the output
+| XSLT-based; produces XSD schemas. The desktop application validates the generated schema; the CLI applies no post-processing or validation
 
 | `TRANSFORM`
 | XSLT-based; produces XML output without additional post-processing
@@ -755,8 +798,10 @@ The debug configuration enables the following:
 | UCanAccess and HSQLDB reserved-word noise remains suppressed
 
 | root
-| `DEBUG`
-| All other CIMTool packages
+| `WARN`
+| Everything else, including third-party libraries such as Saxon and Jena, as in
+  production. Change it to `DEBUG` in a copy of the file when framework-level
+  detail is also needed
 |===
 
 
@@ -850,7 +895,7 @@ a JAR came from a specific publisher and that its contents have not been tampere
 with since signing. The signature is mathematically bound to the exact byte contents
 of the original JAR file.
 
-*Why stripping is necessary and unavoidable:* When Maven Shade merges 25 JARs
+*Why stripping is necessary and unavoidable:* When Maven Shade merges 27 JARs
 into one uber JAR, the contents of each contributing JAR are extracted and
 repacked into a new ZIP structure. This invalidates every original signature
 unconditionally, regardless of whether anything malicious occurred. There is no
@@ -864,10 +909,12 @@ signatures, which is standard, expected, and unavoidable.
 *What you lose and whether it matters:* Stripping gives up the ability to verify at
 runtime that e.g. `saxon-he-10.8.jar` was genuinely published by Saxonica unmodified.
 However, that trust decision was already made implicitly when the JARs were added to
-the project. Additionally, the JVM security manager, the runtime mechanism that
-actually enforced JAR signature verification, was deprecated in Java 17 and removed
-in Java 21, meaning runtime signature enforcement no longer exists on Java 20+
-regardless. Finally, JAR signing was originally designed to protect sandboxed
+the project. Additionally, a signature grants a JAR no extra rights on a modern
+JVM: the Security Manager, which could grant permissions to code by signer, was
+deprecated for removal in Java 17 (https://openjdk.org/jeps/411[JEP 411]) and
+permanently disabled in JDK 24 (https://openjdk.org/jeps/486[JEP 486]). What
+the JVM still does is reject signed entries that no longer match their
+signatures, which is why the stale signatures must be stripped. Finally, JAR signing was originally designed to protect sandboxed
 environments such as browser applets and Java Web Start applications. Neither of
 those threat models applies to a CLI tool run directly from the command line.
 
@@ -879,7 +926,7 @@ coordinated release process orchestrated by `CIMToolProduct/release-cimtool.bat`
 That script builds the unsigned uber JAR, signs it via PKCS#11, deploys it to
 `dist/`, and generates the SHA-256 checksum.
 
-In both cases the assembled uber JAR is signed as a single artifact, replacing the
+The assembled uber JAR is signed as a single artifact, replacing the
 stripped vendor signatures with a unified signature over the entire JAR.
 
 
@@ -888,9 +935,11 @@ stripped vendor signatures with a unified signature over the entire JAR.
 
 The uber JAR version tracks the CIMTool bundle version declared in
 `CIMUtil/META-INF/MANIFEST.MF`. To update the version, change the `<version>`
-element in `pom.xml` to match the new bundle version. The `finalName` in the Shade
-plugin configuration picks this up automatically, so the output JAR name will
-update accordingly.
+element in `pom.xml` to match the new bundle version, and update the `cimutil`
+dependency version (and the `kena` dependency version, when the Kena bundle
+version changes) to match the PDE export. The Shade plugin writes the project
+version into the manifest's `Implementation-Version`, which `--version` prints.
+The `finalName` is fixed, so the file is always named `cimtool-cli.jar`.
 
 
 
@@ -922,9 +971,10 @@ prerequisites, and the complete step-by-step walkthrough.
 
 ==== Verifying the Release Signature
 
-To verify the signed JAR use Eclipse Temurin's `jarsigner` (not Zulu or other
-OpenJDK distributions, see the CIMToolProduct-README Prerequisites section for
-the reason):
+To verify the signed JAR, use the `jarsigner` of any JDK. Only signing needs
+Eclipse Temurin, for the `SunPKCS11` provider that reaches the hardware token
+(see the CIMToolProduct-README Prerequisites section); verification does not use
+the token. For example, with the Temurin JDK used for signing:
 
 ----
 "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\jarsigner.exe" ^
