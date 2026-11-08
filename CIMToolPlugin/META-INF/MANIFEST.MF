@@ -100,7 +100,6 @@ Export-Package: .,
    au.com.langdale.ui.builder,
    au.com.langdale.profiles",
  au.com.langdale.cimtoole.pandoc,
- au.com.langdale.cimtoole.popup.actions;uses:="org.eclipse.ui,org.eclipse.jface.action,org.eclipse.jface.viewers",
  au.com.langdale.cimtoole.preferences;uses:="org.eclipse.core.runtime.preferences,au.com.langdale.cimtoole.project",
  au.com.langdale.cimtoole.project;
   uses:="org.eclipse.swt.widgets,
