@@ -7,6 +7,7 @@ Fragment-Host: au.com.langdale.cimutil;bundle-version="0.0.0"
 Bundle-ClassPath: .,
  test-resources/
 Import-Package: org.junit.jupiter.api;version="[5.9.0,6.0.0)",
+ org.junit.jupiter.api.extension;version="[5.9.0,6.0.0)",
  org.junit.jupiter.api.function;version="[5.9.0,6.0.0)",
  org.junit.jupiter.api.io;version="[5.9.0,6.0.0)",
  org.junit.jupiter.params;version="[5.9.0,6.0.0)",
