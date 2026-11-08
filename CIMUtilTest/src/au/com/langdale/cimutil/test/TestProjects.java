@@ -32,7 +32,9 @@ import au.com.langdale.profiles.cl.CLISettings;
  * need a builder to run.</li>
  * <li><b>Sample project</b>: the profile in
  * {@code test-resources/sample-project}, defined against the CGMES CIM17
- * schema. The schema and its {@code .namespaces} file are taken from
+ * schema. The schema and its {@code .namespaces} and
+ * {@code .namespace-prefixes} files, as in the cimug-org/CGMES-CIM17 project,
+ * are taken from
  * {@code CIMToolTest/CIMToolTestFiles/CIMToolTestFiles.zip}, so no second copy
  * is kept in the repository. The project is set up as the New Project wizard
  * sets up a project whose schema is an EA project file: shadow and mix-in
@@ -182,6 +184,7 @@ public final class TestProjects {
 			try (ZipFile archive = new ZipFile(zip.toFile())) {
 				extract(archive, CGMES_SCHEMA + ".qea", schemaFolder);
 				extract(archive, CGMES_SCHEMA + ".namespaces", schemaFolder);
+				extract(archive, CGMES_SCHEMA + ".namespace-prefixes", schemaFolder);
 			}
 			copyResource("/" + resources + "/Profiles/" + SAMPLE_PROFILE + ".owl",
 					project.resolve("Profiles/" + SAMPLE_PROFILE + ".owl"));
