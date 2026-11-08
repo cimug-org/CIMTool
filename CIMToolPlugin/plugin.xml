@@ -44,25 +44,6 @@
                menubarPath="additions">
          </action>
       </objectContribution>
-      <objectContribution
-            id="au.com.langdale.cimtoole.contribution2"
-            objectClass="org.eclipse.core.resources.IFile">
-         <menu
-               label="New Submenu"
-               path="additions"
-               id="au.com.langdale.cimtoole.menu1">
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-         <action
-               label="New Action"
-               class="au.com.langdale.cimtoole.popup.actions.NewAction"
-               menubarPath="au.com.langdale.cimtoole.menu1/group1"
-               enablesFor="1"
-               id="au.com.langdale.cimtoole.newAction">
-         </action>
-      </objectContribution>
    </extension>
    <extension
          id="problem"
@@ -551,9 +532,6 @@
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
-   </extension>
-   <extension
-         point="org.eclipse.ui.themes">
    </extension>
    <!-- Regenerates profile artifacts once after a CIMTool upgrade (issue #310). Kept in its own
         extension so that removing the temporary fix below does not remove it. -->
