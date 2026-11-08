@@ -14,7 +14,7 @@
 ====
 *This project is legacy/dormant and is not part of the active CIMTool build
 or packaging workflow.* It is retained in the repository in the event that
-feature-based deployment is ever resurrected. See <<status>> for details.
+feature-based deployment is ever resurrected. See <<cimtoolfeature-status>> for details.
 ====
 
 An Eclipse PDE feature project that was used to package and distribute CIMTool
@@ -24,7 +24,7 @@ provisioning system.
 
 
 
-[[status]]
+[[cimtoolfeature-status]]
 === Current Status: Legacy / Dormant
 
 CIMToolFeature is **not actively used** in the current build and packaging

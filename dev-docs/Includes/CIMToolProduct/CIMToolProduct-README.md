@@ -224,11 +224,13 @@ The following projects must always be versioned in lockstep with the primary CIM
 | CIMToolHelp | `META-INF/MANIFEST.MF` | Help content is release-specific |
 | CIMUtil | `META-INF/MANIFEST.MF` | Core processing library, ships in every release |
 | RCPUtil | `META-INF/MANIFEST.MF` | Eclipse RCP utility layer, ships in every release |
-| CIMToolFeature | `feature.xml` | Top-level feature version matches the product version; internal plugin references use `0.0.0` and require no manual updates |
+| CIMToolFeature | `feature.xml` | Top-level feature version matches the product version; the `<plugin>` entries use `0.0.0` and require no manual updates, but the `<requires>` minimums for `au.com.langdale.cimutil`, `au.com.langdale.rcputil` and `au.com.langdale.cimtoole` are raised to the release version |
 
 > **Note:** Before running a product export at release time, verify that all version references above are updated and consistent. Exporting with stale or mismatched version values will produce an incorrectly versioned distribution that is difficult to retract once published.
 
 The CIMUtil `Bundle-Version` also decides when upgraded workspaces regenerate their artifacts: CIMTool regenerates a project's profile artifacts once when the running CIMUtil version is newer than the version recorded on the project (see [Regeneration After an Upgrade](../CIMToolPlugin/CIMToolPlugin-README.md#regeneration-after-an-upgrade)). A release that misses the CIMUtil bump therefore also leaves every upgraded workspace with the previous release's artifacts.
+
+Two sets of minimum versions also follow the release but are not version descriptors of their own: the `<requires>` imports in `CIMToolFeature/feature.xml` noted above, and the `bundle-version` minimums for `au.com.langdale.cimutil`, `au.com.langdale.rcputil` and `au.com.langdale.cimtoole` in the `Require-Bundle` of `com.cimphony.cimtoole/META-INF/MANIFEST.MF`. Raising the latter changes com.cimphony.cimtoole's manifest, so its own version is then incremented as described under Independently-Versioned Projects. `ReleaseVersionConsistencyTest` does not check either set.
 
 `ReleaseVersionConsistencyTest` in CIMUtilTest checks the descriptors in this table, together with the product's reference to the CIMTool feature, against `CIMTool.product`'s version, and the `cimtool-cli/pom.xml` project, `cimutil`, and `kena` versions against their bundles. It reports every mismatch in one run, so running it is the quickest way to confirm the versioning before the product export.
 
@@ -239,8 +241,8 @@ The following projects maintain their own version lifecycle and should only be u
 | Project | Current Version | Notes |
 | --- | --- | --- |
 | Kena | `3.4.0` | RDF/OWL abstraction library; versioned on its own API contract independent of the CIMTool release cycle. **When Kena's version changes, the `kena` dependency version in `cimtool-cli/pom.xml` must also be updated to match before running `install-jars.bat`.** |
-| com.cimphony.cimtoole | `1.1.0` | Cimphony extensions; versioned independently of the core product |
-| CIMToolTest | `1.2.0` | Test suite; only increment when tests or test infrastructure are changed or added |
+| com.cimphony.cimtoole | `1.1.1` | Cimphony extensions; versioned independently of the core product |
+| CIMToolTest | `1.3.0` | Test suite; only increment when tests or test infrastructure are changed or added |
 | CIMUtilTest | `1.0.0` | Test suite for CIMUtil; only increment when tests or test infrastructure are changed or added |
 | SLF4J Logback Binding | `1.0.0` | `io.ucaiug.slf4j.logback.binding` fragment; only increment when the fragment changes |
 
