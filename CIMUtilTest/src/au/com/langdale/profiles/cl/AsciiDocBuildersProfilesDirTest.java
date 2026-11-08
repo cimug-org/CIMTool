@@ -16,6 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import au.com.langdale.cimutil.test.NoNetwork;
 import au.com.langdale.cimutil.test.TestProjects;
 import au.com.langdale.profiles.cl.builders.BuilderRegistry;
 import au.com.langdale.profiles.cl.builders.BuilderType;
@@ -32,6 +33,7 @@ import au.com.langdale.profiles.cl.builders.BuilderType;
  * automatically.
  * </p>
  */
+@NoNetwork
 class AsciiDocBuildersProfilesDirTest {
 
 	private static final String FALLBACK = "ifndef::profilesdir[:profilesdir: {docdir}/Profiles]";

@@ -1,0 +1,273 @@
+
+== **CIMUtilTest** 
+
+// Settings:
+:doctype: inline
+:sectnums:
+:sectnumlevels: 4
+:reproducible:
+:icons: font
+:xrefstyle: short
+
+An Eclipse plugin fragment that provides the JUnit 5 test suite for CIMUtil. It
+runs the builders, the command-line interface and the supporting CIMUtil code
+headlessly, as plain JUnit tests, without an Eclipse workbench.
+
+The tests run offline. CIMTool is used in utility environments where outbound
+network access during a build is a security concern, so a test that depends on
+reaching the network, or a builder that tries to, fails instead of reaching the
+internet.
+
+
+
+=== Overview
+
+CIMUtilTest is an Eclipse *plugin fragment* whose `MANIFEST.MF` declares
+`Fragment-Host: au.com.langdale.cimutil`, so it attaches to the `CIMUtil` bundle
+and sees all of its packages, including the builder stylesheets in `builders/`
+that CIMUtil places on its class path. Unlike CIMToolTest, it does not need the
+Eclipse platform at run time: the classes it tests, such as
+`CLIProfileTransformer`, `CIMToolCLI` and `ProfileSerializer`, are the ones
+`cimtool-cli` runs outside Eclipse, so the tests run as plain JUnit tests.
+
+The suite covers two kinds of behavior:
+
+- *Every registered builder*: each builder in `builders.json` and
+  `java-builders.json` runs against a sample project built on the CGMES CIM17
+  schema, both as the New Project wizard sets a project up and with the merge
+  of shadow and mix-in extensions left unchecked.
+- *Specific behaviors that users depend on*: copyright notices in generated
+  SQL and HTML, the indentation of source listings in AsciiDoc documentation,
+  stereotype labels in the documentation builders, the `cimtool-cli` option
+  rules, `cimtool-cli` run end to end on a project, stylesheet references that
+  resolve without network access, and the release version declarations that
+  must change together.
+
+Tests that cover a specific behavior are written to fail against the code as it
+was before that behavior was introduced or fixed.
+
+
+
+=== Project Structure
+
+----
+CIMUtilTest/
+├── META-INF/
+│   └── MANIFEST.MF                          ← Fragment of au.com.langdale.cimutil; imports JUnit 5
+├── build.properties                         ← Source and bin.includes configuration
+├── src/
+│   └── au/com/langdale/
+│       ├── cimutil/test/                    ← Shared test support
+│       │   ├── NoNetwork.java               ← Class annotation that runs a test class offline
+│       │   ├── NoNetworkExtension.java      ← JUnit 5 extension behind @NoNetwork
+│       │   └── TestProjects.java            ← The minimal and sample projects the tests run against
+│       ├── profiles/
+│       │   ├── ProfileSerializerFactoryTest.java
+│       │   ├── ProfilesAsciiDoctorConfigTemplateTest.java
+│       │   └── cl/                          ← Builder and command-line tests
+│       │       ├── AllBuildersSmokeTest.java
+│       │       ├── AsciiDocBuildersProfilesDirTest.java
+│       │       ├── AsciiDocWhitespaceTest.java
+│       │       ├── CIMToolCLIEndToEndTest.java
+│       │       ├── CLIOptionsTest.java
+│       │       ├── CopyrightBuildersTest.java
+│       │       ├── CustomStylesheetReferencesTest.java
+│       │       └── StereotypeLabelTest.java
+│       └── release/
+│           └── ReleaseVersionConsistencyTest.java
+└── test-resources/                          ← On the bundle class path
+    ├── custom-xslt/                         ← Custom stylesheets with relative xsl:include and xsl:import
+    ├── minimal-project/                     ← One profile class against a hand-written schema
+    │   ├── Profiles/MinimalProfile.owl
+    │   └── Schema/MinimalSchema.owl
+    ├── sample-project/                      ← Sample profile against the CGMES CIM17 schema
+    │   └── Profiles/SampleProfile.owl
+    └── sample-project-unmerged/             ← The same profile with extensions left unmerged
+        └── Profiles/SampleProfile.owl
+----
+
+
+
+=== Dependencies on Other Projects
+
+CIMUtilTest is an OSGi fragment of `CIMUtil` and inherits all of its
+dependencies, including `au.com.langdale.kena` and the libraries vendored in
+CIMUtil, such as Saxon. It declares no `Require-Bundle` of its own, and imports
+only JUnit 5:
+
+[cols="2,5", options="header"]
+|===
+| Import | Role in tests
+
+| `org.junit.jupiter.api`, `org.junit.jupiter.api.function`, `org.junit.jupiter.api.io`
+| JUnit 5 test framework: `@Test`, assertions, `@TempDir`
+
+| `org.junit.jupiter.api.extension`
+| The extension API behind `@NoNetwork`
+
+| `org.junit.jupiter.params`, `org.junit.jupiter.params.provider`
+| Parameterized tests, used to run a test once per builder
+|===
+
+Each import is restricted to `[5.9.0,6.0.0)`, the JUnit 5 release line shipped
+with the Eclipse 2023-06 target platform.
+
+The sample projects also read the CGMES CIM17 schema from
+`CIMToolTest/CIMToolTestFiles/CIMToolTestFiles-CGMES.zip`, as described in
+<<cimutiltest-test-projects,Test Projects>>.
+
+
+
+=== Test Classes
+
+[cols="2,5", options="header"]
+|===
+| Class | Covers
+
+| `AllBuildersSmokeTest`
+| Every registered builder runs against both sample projects without an exception, writes non-empty output and makes no network access, and XSD output is well-formed. The registry must hold exactly the builders named in `builders.json` and `java-builders.json`, each XSLT builder with its stylesheet. With extensions left unmerged, the LinkML output lists the shadow parent as a mixin (https://github.com/cimug-org/CIMTool/issues/318[Issue #318]).
+
+| `AsciiDocBuildersProfilesDirTest`
+| Each AsciiDoc builder references its PlantUML diagram through `+{profilesdir}+` and defines the `+{docdir}/Profiles+` fallback (https://github.com/cimug-org/CIMTool/issues/291[Issue #291]).
+
+| `AsciiDocWhitespaceTest`
+| Each `ASCIIDOC` builder keeps the leading whitespace of every line of a source listing in AsciiDoc documentation (https://github.com/cimug-org/CIMTool/issues/288[Issue #288]).
+
+| `CIMToolCLIEndToEndTest`
+| `cimtool-cli` run in project mode on a copy of the sample project: project copyright templates in the `html` and `sql-rdfs-ansi92` output, `--xslt` with `--type TEXT` producing plain text, and the `.namespaces` file beside the schema being applied (https://github.com/cimug-org/CIMTool/issues/287[Issue #287]).
+
+| `CLIOptionsTest`
+| Each rule that `CLIOptions` enforces, with the exact error message for each rejected command line (https://github.com/cimug-org/CIMTool/issues/287[Issue #287]).
+
+| `CopyrightBuildersTest`
+| The copyright notices that `sql.xsl`, `sql-rdfs-ansi92.xsl` and `html.xsl` write, and their absence when the copyright templates are empty (https://github.com/cimug-org/CIMTool/issues/272[Issue #272]).
+
+| `CustomStylesheetReferencesTest`
+| Relative references in a custom `--xslt` stylesheet resolve against the stylesheet's own folder (https://github.com/cimug-org/CIMTool/issues/311[Issue #311]).
+
+| `StereotypeLabelTest`
+| The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference».
+
+| `ProfileSerializerFactoryTest`
+| `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it (https://github.com/cimug-org/CIMTool/issues/314[Issue #314]).
+
+| `ProfilesAsciiDoctorConfigTemplateTest`
+| The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` (https://github.com/cimug-org/CIMTool/issues/291[Issue #291]).
+
+| `ReleaseVersionConsistencyTest`
+| The version declarations that must change together at each release agree (https://github.com/cimug-org/CIMTool/issues/310[Issue #310]).
+|===
+
+Tests that run every builder, or every builder of a type, take the builders
+from the registry, so a newly registered builder is covered without a change to
+the tests. Stylesheets in `CIMUtil/builders` that are not registered are works
+in progress and are intentionally not tested.
+
+
+
+[[cimutiltest-test-projects]]
+=== Test Projects
+
+`TestProjects` provides the projects the builder and command-line tests run
+against:
+
+[cols="2,4,3", options="header"]
+|===
+| Project | Contents | Used for
+
+| Minimal project
+| `test-resources/minimal-project`: one profile class and one attribute against a hand-written schema of the same size
+| Tests that only need a builder to run, since it loads in a fraction of a second
+
+| Sample project
+| `test-resources/sample-project/Profiles/SampleProfile.owl` against the CGMES CIM17 schema
+| Tests that need real CIM classes, stereotypes and documentation
+
+| Unmerged sample project
+| `test-resources/sample-project-unmerged/Profiles/SampleProfile.owl` against the same schema
+| Builders on a project whose shadow and mix-in extensions were left unmerged
+|===
+
+The sample projects are assembled in a temporary folder. The schema
+`CIM17-2_CGMES31v01_PROF-20v02_NC23v66_MS10v01_DES10v01.qea`, with its
+`.namespaces` and `.namespace-prefixes` files, is extracted from
+`CIMToolTest/CIMToolTestFiles/CIMToolTestFiles-CGMES.zip`, so no second copy of
+the schema is kept in the repository. The files are those of the
+https://github.com/cimug-org/CGMES-CIM17[cimug-org/CGMES-CIM17] CIMTool
+project. Because parsing the schema takes several seconds, each sample project
+is assembled and its schema parsed once per test run, and tests treat both as
+read-only.
+
+The `.cimtool-settings` of each sample project mirrors what the New Project
+wizard writes for an EA project schema with its defaults: shadow and mix-in
+extensions merged, self-healing enabled, and the CIM 17 (CIM100) namespace. The
+unmerged sample project differs only in leaving the merge option unchecked,
+which is a mistake users make with an EA project schema and one the builders
+must not fail on.
+
+The sample profile is defined on the real CGMES classes, with single
+inheritance down to a concrete class, and holds the cases the tests rely on:
+
+- an enumeration, attributes and associations;
+- an attribute from the European extension merged into `IdentifiedObject`, and
+  an association from the NC extension merged into `Equipment`;
+- properties carrying only structural stereotypes, such as «attribute»,
+  «byreference», «enumeration» and «ofAggregate»;
+- AsciiDoc documentation on `IdentifiedObject` containing an indented Python
+  listing.
+
+As the CIMTool profile editor does, each property's range carries the
+stereotypes of the schema property it restricts. In the unmerged profile, the
+NC shadow class `ExtEquipment` is a second parent of `Equipment` and holds the
+association, and the European attribute is not merged.
+
+Tests that need the repository, such as the sample projects and
+`ReleaseVersionConsistencyTest`, find it by walking up from the working folder,
+and are skipped when run outside a repository checkout.
+
+
+
+=== Offline Testing
+
+`@NoNetwork` is a class annotation that runs a test class with HTTP and HTTPS
+routed through an unreachable proxy on `127.0.0.1`, and with no hosts exempted
+from the proxy. The settings are applied before the class's first test,
+including any `@BeforeAll` method, and restored after its last. A builder whose
+stylesheet tries to fetch an include or import over the network therefore fails
+the test with a connection error rather than reaching the internet.
+
+Every test class that runs builders or the command-line interface carries
+`@NoNetwork`. In particular, no stylesheet may be loaded with
+`http://langdale.com.au/2005/xsdgen` as its base URI, since relative references
+would then be fetched from that host.
+
+
+
+=== Running the Tests
+
+CIMUtilTest runs as plain JUnit tests:
+
+1. In Eclipse, right-click a test class or the `CIMUtilTest` project
+2. Select *Run As > JUnit Test*
+
+The tests need no Eclipse runtime, so a JUnit Plug-in Test launch is not
+needed. The working folder must be inside the repository checkout, which is the
+default for a JUnit launch in Eclipse, since the tests find the repository from
+it. The full suite takes under a minute, most of it spent parsing the CGMES
+schema.
+
+
+
+=== Relationship to Other Projects
+
+- *CIMUtil*: the host bundle. The tests cover its builder stylesheets in
+  `builders/`, its builder registries `builders.json` and `java-builders.json`,
+  and the classes in `au.com.langdale.profiles` and
+  `au.com.langdale.profiles.cl`.
+- *cimtool-cli*: packages CIMUtil's `CIMToolCLI` as the command-line tool
+  that `CIMToolCLIEndToEndTest` and `CLIOptionsTest` exercise.
+- *CIMToolTest*: holds `CIMToolTestFiles-CGMES.zip`, from which the sample
+  projects take the CGMES schema. CIMToolTest covers the CIMToolPlugin side of
+  CIMTool and runs as a JUnit Plug-in Test.
+- *CIMToolProduct* and *cimtool-cli*: `ReleaseVersionConsistencyTest`
+  checks the version declarations listed in their developer documentation.
