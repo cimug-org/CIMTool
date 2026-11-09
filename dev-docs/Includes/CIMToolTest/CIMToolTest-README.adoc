@@ -54,7 +54,7 @@ CIMToolTest/
 ├── ABB40BusIOP10_rev7/                      ← Split model (128 Part*.ttl files) read by
 │                                               SplitReaderTest and ExtractorTest
 ├── builders/
-│   ├── builders.json                        ← Registers the junit-test builder (type JSON,
+│   ├── builders.json                        ← Registers the junit-test builder (type TRANSFORM,
 │   │                                           extension junit-ext)
 │   ├── junit-test.xsl                       ← Stylesheet registered as a custom builder by
 │   │                                           ProfileBuildletConfigUtilsTest
@@ -375,10 +375,6 @@ https://github.com/cimug-org/CIMTool/issues/328[Issue #328].
   (`SAMPLE_XSD_RULES`) and `alternative.xsd-xslt` (`ALT_XSD_RULES`), which are
   in neither ZIP. The import tests in `RuleWizards` and
   `TransformTasks.testCustomXSDGeneration` read them.
-* _Stale builder path:_ `ProfileBuildletConfigUtilsTest` looks for
-  `builders/schema-json-draft-07.xsl` in the CIMToolPlugin bundle. The builders
-  now live in CIMUtil and that stylesheet is named `json-schema-draft-07.xsl`,
-  so every test in the class fails in `setUp()`.
 * _Test data is not deleted:_ `ProjectTest.tearDownTestData()` calls
   `File.delete()` on the extracted `CIMToolTestFiles` folder, which has no
   effect on a folder that is not empty. The folder stays beside the test
