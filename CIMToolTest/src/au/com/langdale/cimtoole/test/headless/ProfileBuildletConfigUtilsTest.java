@@ -166,7 +166,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 					try {
 						is = Thread.currentThread().getContextClassLoader()
 								.getResourceAsStream(CONFIG_DIR + "/" + CONFIG_DEFAULTS_FILE);
-						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
+						try (FileOutputStream out = new FileOutputStream(dataAreaBuilderConfigFile)) {
+							IOUtils.copy(is, out);
+						}
 					} finally {
 						if (is != null) {
 							try {
@@ -185,7 +187,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 						try {
 							is = Thread.currentThread().getContextClassLoader()
 									.getResourceAsStream(CONFIG_DIR + "/" + JUNIT_TEST_XSL_FILE);
-							IOUtils.copy(is, new FileOutputStream(dataAreaXslFile));
+							try (FileOutputStream out = new FileOutputStream(dataAreaXslFile)) {
+								IOUtils.copy(is, out);
+							}
 						} finally {
 							if (is != null) {
 								try {
