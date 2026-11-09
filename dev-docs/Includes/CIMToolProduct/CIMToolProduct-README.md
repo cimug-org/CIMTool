@@ -43,24 +43,14 @@ CIMToolProduct/
 ├── logging.properties          ← JUL pre-bridge config — handlers= empty, .level=ALL; Logback is the sole output target
 ├── logback.xml                 ← Logback config — SLF4J → Logback pipeline; extracted to install root at startup
 ├── logback-dev.xml             ← Development-only Logback config — intentionally excluded from bin.includes and not bundled in the product export
-├── release-cimtool.bat    ← Post-export signing and packaging pipeline (Windows only)
+├── release-cimtool.bat         ← Post-export signing and packaging pipeline for the Windows release
+├── release-cimtool.sh          ← Packaging pipeline for a Linux export (no code signing), held ahead of Linux support
 ├── cimtool-about.png           ← Image shown in the Help > About dialog
 ├── splash.bmp                  ← Splash screen displayed on startup
 ├── cimtool-v2.ico              ← Windows application icon
 ├── cimtool-v2.icns             ← macOS application icon
 ├── cimtool-v2.xpm              ← Linux application icon
 ├── makeicons.sh                ← Script to regenerate icon assets from source
-├── readme-images/              ← Screenshots referenced by this README (PDE export dialog, token/keystore inspection, signing pipeline steps, release tagging)
-│   ├── Eclipse_Product_Export.png
-│   ├── Release_Artifacts.png
-│   ├── SAC_Private_Key_PIN_Binding.png
-│   ├── SAC_Token_Passcode_Retries.png
-│   ├── SAC_Token_Unlock_Object.png
-│   ├── Step1.png
-│   ├── Step2.png
-│   ├── Step3.png
-│   ├── Step4.png
-│   └── Tag_Release.png
 └── icons/                      ← Window title bar and taskbar icons at multiple resolutions
     ├── cimtool-v2_16x16.png
     ├── cimtool-v2_32x32.png
@@ -115,11 +105,11 @@ The central descriptor consumed by the PDE export wizard. Key settings:
 | --- | --- |
 | Product UID | `au.com.langdale.cimtool.deployment` |
 | Application | `org.eclipse.ui.ide.workbench` |
-| Launcher name | `CIMTool` (produces `CIMTool.exe` on Windows, `CIMTool` on macOS/Linux) |
+| Launcher name | `CIMTool` (produces `CIMTool.exe` on Windows, the platform for which releases are built) |
 | JVM heap | `-Xms40m -Xmx4G` |
 | Logging config (JUL) | `-Djava.util.logging.config.file=./logging.properties` |
 | Logging config (Logback) | `-Dlogback.configurationFile=./logback.xml` |
-| Java requirement | JavaSE-20 |
+| Java requirement | JavaSE-20, set for Windows and Linux; no macOS execution environment is set |
 
 ### plugin_customization.ini
 
@@ -130,6 +120,8 @@ workspace. Key settings:
 - Enables new-style tabs
 - Places the perspective switcher in the top-right
 - Shows a progress indicator on startup
+- Uses the window working set by default
+- Orders the help books in the table of contents through `helpData.xml` (`org.eclipse.help/HELP_DATA`)
 
 These are default values only, and users can override them through Eclipse preferences
 and their choices are persisted per-workspace.
@@ -145,10 +137,10 @@ application. This file is:
 
 `CIMToolPlugin.configureLogging()` installs `SLF4JBridgeHandler` at startup which
 redirects all JUL events into the SLF4J → Logback pipeline. `logging.properties`
-is therefore retained solely to ensure JUL does not pre-filter events before they reach the bridge, declaring `handlers=` empty and `.level=ALL`. The `FileHandler`
-that previously wrote to `logs/cimtool-%u-%g.log` has been removed; Logback is now
-the sole log output target. UCanAccess and HSQLDB are still suppressed at the JUL
-level (`SEVERE`) to prevent their noise from reaching the bridge at all.
+is therefore retained solely to ensure JUL does not pre-filter events before they reach the bridge, declaring `handlers=` empty and `.level=ALL`. JUL has no
+handlers of its own, so Logback is the sole log output target. UCanAccess and
+HSQLDB are set to `SEVERE` at the JUL level to keep their noise from reaching the
+bridge at all.
 
 Changes to `logging.properties` take effect on the next restart.
 
@@ -173,7 +165,8 @@ The following logging sources route through `logback.xml`:
 - **JUL API calls**: bridged via `SLF4JBridgeHandler` installed in `CIMToolPlugin.configureLogging()` at startup, including `System.out`/`System.err` console output in production mode which is routed through the `CIMTool.console` JUL logger
 
 `logback.xml` configures a rolling `FileAppender` writing to `logs/cimtool.log`
-under the installation root (5 × 10 MB rotating files), suppresses spurious
+under the installation root, rolling it over daily and at 10 MB, keeping 5 days of
+history and at most 50 MB in total, suppresses spurious
 UCanAccess/HSQLDB warnings at `ERROR` level, and sets the root logger to `WARN`
 for production use.
 
@@ -231,9 +224,15 @@ The following projects must always be versioned in lockstep with the primary CIM
 | CIMToolHelp | `META-INF/MANIFEST.MF` | Help content is release-specific |
 | CIMUtil | `META-INF/MANIFEST.MF` | Core processing library, ships in every release |
 | RCPUtil | `META-INF/MANIFEST.MF` | Eclipse RCP utility layer, ships in every release |
-| CIMToolFeature | `feature.xml` | Top-level feature version matches the product version; internal plugin references use `0.0.0` and require no manual updates |
+| CIMToolFeature | `feature.xml` | Top-level feature version matches the product version; the `<plugin>` entries use `0.0.0` and require no manual updates, but the `<requires>` minimums for `au.com.langdale.cimutil`, `au.com.langdale.rcputil` and `au.com.langdale.cimtoole` are raised to the release version |
 
 > **Note:** Before running a product export at release time, verify that all version references above are updated and consistent. Exporting with stale or mismatched version values will produce an incorrectly versioned distribution that is difficult to retract once published.
+
+The CIMUtil `Bundle-Version` also decides when upgraded workspaces regenerate their artifacts: CIMTool regenerates a project's profile artifacts once when the running CIMUtil version is newer than the version recorded on the project (see [Regeneration After an Upgrade](../CIMToolPlugin/CIMToolPlugin-README.md#regeneration-after-an-upgrade)). A release that misses the CIMUtil bump therefore also leaves every upgraded workspace with the previous release's artifacts.
+
+Two sets of minimum versions also follow the release but are not version descriptors of their own: the `<requires>` imports in `CIMToolFeature/feature.xml` noted above, and the `bundle-version` minimums for `au.com.langdale.cimutil`, `au.com.langdale.rcputil` and `au.com.langdale.cimtoole` in the `Require-Bundle` of `com.cimphony.cimtoole/META-INF/MANIFEST.MF`. Raising the latter changes com.cimphony.cimtoole's manifest, so its own version is then incremented as described under Independently-Versioned Projects. `ReleaseVersionConsistencyTest` does not check either set.
+
+`ReleaseVersionConsistencyTest` in CIMUtilTest checks the descriptors in this table, together with the product's reference to the CIMTool feature, against `CIMTool.product`'s version, and the `cimtool-cli/pom.xml` project, `cimutil`, and `kena` versions against their bundles. It reports every mismatch in one run, so running it is the quickest way to confirm the versioning before the product export.
 
 #### Independently-Versioned Projects
 
@@ -242,8 +241,10 @@ The following projects maintain their own version lifecycle and should only be u
 | Project | Current Version | Notes |
 | --- | --- | --- |
 | Kena | `3.4.0` | RDF/OWL abstraction library; versioned on its own API contract independent of the CIMTool release cycle. **When Kena's version changes, the `kena` dependency version in `cimtool-cli/pom.xml` must also be updated to match before running `install-jars.bat`.** |
-| com.cimphony.cimtoole | `1.1.0` | Cimphony extensions; versioned independently of the core product |
-| CIMToolTest | `1.2.0` | Test suite; only increment when tests or test infrastructure are changed or added |
+| com.cimphony.cimtoole | `1.1.1` | Cimphony extensions; versioned independently of the core product |
+| CIMToolTest | `1.3.0` | Test suite; only increment when tests or test infrastructure are changed or added |
+| CIMUtilTest | `1.0.0` | Test suite for CIMUtil; only increment when tests or test infrastructure are changed or added |
+| SLF4J Logback Binding | `1.0.0` | `io.ucaiug.slf4j.logback.binding` fragment; only increment when the fragment changes |
 
 #### Dormant Projects
 
@@ -438,15 +439,15 @@ The script exits immediately with a non-zero error code if any step fails.
 
 #### Script Execution Walkthrough
 
-The following screenshots illustrate a complete successful run of the signing pipeline.
+The script runs its eight steps without further input except at the points shown below. The steps it performs automatically are described in [Running the Signing Script](#running-the-signing-script) above.
 
-**Confirm Prerequisites: Confirm EV USB token inserted and SafeNet Authentication Client running / Step 1: Start JAR signing:**
+**Before Step 1: confirm the token and SafeNet Authentication Client, then enter the token PIN.** The script asks for confirmation that the EV USB token is inserted and that SafeNet Authentication Client is running, then prompts for the token PIN at a masked prompt:
 
-![Step 1 Insert EV USB Token and SafeNet PIN prompt](readme-images/Step1.png)
+![Prompt to confirm that the EV USB token is inserted and SafeNet Authentication Client is running](readme-images/Step1.png)
 
-**Step 1: JAR signing complete / Step 2: CIMTool.exe signing begins:**
+**Step 2: enter the Token Passcode again.** This screenshot was taken with an earlier version of the script, so its console reads `[Step 2/4]`; the script prints `[Step 2/8] Signing CIMTool.exe...`.
 
-![Step 1 complete, Step 2 SafeNet PIN prompt](readme-images/Step2.png)
+![SafeNet Authentication Client Token Logon dialog during the signing of CIMTool.exe](readme-images/Step2.png)
 
 When Step 2 begins, the SafeNet Authentication Client presents a native GUI dialog
 prompting for the **Token Passcode** again. This second prompt is expected and cannot be automated, because `signtool` communicates with the hardware token through
@@ -454,13 +455,9 @@ Windows CryptoAPI rather than the PKCS#11 path used by `jarsigner`, which trigge
 a separate authentication dialog from the SafeNet middleware. Enter the token PIN
 in this dialog and click **OK** to proceed.
 
-**Step 2 complete / Step 3: Distribution archive creation in progress:**
+**On completion: the summary of the four release artifacts.** The script lists the distribution ZIP, the `cimtool-cli.jar` and their SHA-256 checksums, which are uploaded in Phase 4:
 
-![Step 2 complete, Step 3 ZIP creation progress](readme-images/Step3.png)
-
-**Steps 3 and 4 complete: Successful completion summary:**
-
-![Steps 3 and 4 complete, final summary](readme-images/Step4.png)
+![Signing and packaging complete, listing the four release artifacts](readme-images/Step4.png)
 
 > **Note: Expected `jarsigner` console warnings:** During JAR signing the
 > following three warnings will appear in the console output for every JAR
@@ -636,7 +633,7 @@ The PDE product export produces versioned plugin folders under `plugins/`. Two o
 these, `au.com.langdale.kena_<version>/kena.jar` and
 `au.com.langdale.cimutil_<version>/cimutil.jar`, are consumed by the
 `cimtool-cli` project's `install-jars.bat` script to assemble the standalone CLI
-uber JAR. See `cimtool-cli/cimtool-cli-README.adoc` for details.
+uber JAR. See the [cimtool-cli documentation](../cimtool-cli/cimtool-cli-README.md) for details.
 
 > **Note:** Whenever the Kena project version changes, the `kena` dependency
 > version declared in `cimtool-cli/pom.xml` must be updated to match the new

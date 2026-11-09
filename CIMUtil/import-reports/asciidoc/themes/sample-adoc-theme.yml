@@ -58,7 +58,7 @@ footer:
 #
 # Example use of the below 'custom-diagram-style':
 #
-#  plantuml::./Profiles/CPSM-CoreEquipment.rdfs-t2b.puml[
+#  plantuml::{profilesdir}/CPSM-CoreEquipment.rdfs-t2b.puml[
 #     format=svg, 
 #     align=center, 
 #     caption="Figure 1: ", 

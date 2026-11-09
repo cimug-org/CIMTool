@@ -3,6 +3,56 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
+### Release 2.3.1 [09-Nov-2026]
+
+**CIMTool 2.3.1** is a patch release with defect fixes, a security fix, enhancements to copyright notices and AsciiDoc documentation generation, and the automatic regeneration of profile artifacts after an upgrade.
+
+Enhancement [Issue #272](https://github.com/cimug-org/CIMTool/issues/272):
+The SQL builders (`sql` and `sql-rdfs-ansi92`) and the `html` builder now include the project's copyright notice. The SQL builders begin the generated `.sql` file with the project's multi-line copyright template as SQL comments, and the `html` builder ends the page with the single-line copyright template as a footer. Projects without copyright templates produce the same output as before.
+
+Enhancement [Issue #291](https://github.com/cimug-org/CIMTool/issues/291):
+The eight **AsciiDoc** builders now reference their **PlantUML** diagrams through the `{profilesdir}` attribute (for example `plantuml::{profilesdir}/MyProfile.rdfs-t2b.puml[...]`) rather than through a `./Profiles/...` path fixed relative to the project root, so generated articles and fragments can be included from documents anywhere in a project. **CIMTool** maintains a `Profiles/.asciidoctorconfig.adoc` file defining `:profilesdir: {asciidoctorconfigdir}`, so generated documents also render on their own in the AsciiDoc editor. The file is created when a project is created or imported and whenever an AsciiDoc builder runs, and an existing `profilesdir` definition in it is never changed. Each generated document falls back to `{docdir}/Profiles` when `profilesdir` is not defined, so existing master documents continue to work. See [Using CIMTool Documentation Features](how-to/using-cimtool-documentation-features.md#configuration-files).
+
+Enhancement [Issue #310](https://github.com/cimug-org/CIMTool/issues/310):
+When a new **CIMTool** release opens a workspace last built by an earlier release, **CIMTool** now regenerates each project's profile artifacts once, so the builder improvements in the new release reach existing projects without a manual rebuild. Regeneration runs in a background job at startup, and also when a project is opened, added or imported later. It re-runs only the builders enabled on each profile and does not rebuild the schema. The release that last regenerated a project is recorded in the workspace rather than in the project, so a project shared through Git is regenerated in each workspace that opens it.
+
+Security [Issue #311](https://github.com/cimug-org/CIMTool/issues/311):
+`cimtool-cli.jar` resolved relative `xsl:include`, `xsl:import` and `document()` references in a custom `--xslt` stylesheet against the URI `http://langdale.com.au/2005/xsdgen` rather than against the stylesheet's own folder. The CLI therefore attempted outbound network access to resolve them, a concern in the air-gapped and proxy-restricted environments common at utilities, and the transform failed. Relative references now resolve against the stylesheet file, with no network access. The bundled builders were not affected.
+
+Defect [Issue #287](https://github.com/cimug-org/CIMTool/issues/287):
+`cimtool-cli.jar` generated unusable output with the `sql` and `sql-rdfs-ansi92` builders, wrapping the SQL statements in `<item>` XML tags, and ignored the copyright templates configured in the project. Both are corrected, and a project's copyright templates are now used automatically. The CLI's option rules are also stricter: a custom `--xslt` stylesheet that matches no bundled builder requires `--type` and `--output-ext`, and copyright template files must be supplied as a pair. The new `--copyright-none` option generates artifacts without a copyright. Pipeline scripts written for 2.3.0 should be reviewed against [Changes in 2.3.1](schemaops/cimtool-cli.md#changes-in-231).
+
+Defect [Issue #288](https://github.com/cimug-org/CIMTool/issues/288):
+Leading whitespace authored on the **"Documentation"** tab, such as the indentation of the lines of a `[source,python]` listing, was stripped from generated `.adoc` artifacts by the indentation post-processing stage, so every line rendered flush left. The AsciiDoc builders now use a post-processing stage that indents the generated document while preserving the whitespace authored on the **"Documentation"** tab.
+
+Defect [Issue #292](https://github.com/cimug-org/CIMTool/issues/292):
+**CIMTool** could fail to launch in a fresh environment because of two problems in how builder stylesheets were loaded. Stylesheets were compiled with `http://langdale.com.au/2005/xsdgen` as their base URI, which caused a network fetch to a domain that does not exist. An installation or workspace path containing spaces caused a `URISyntaxException` that prevented the builders configuration and the logging configuration files from being created. Stylesheets are now loaded without network access, and paths containing spaces are supported.
+
+Defect [Issue #297](https://github.com/cimug-org/CIMTool/issues/297):
+With **CIMTool** installed in a folder whose path contains spaces, the real-time preview diagram was never shown and many builders, including the RDFS builders, produced no output. This is corrected by the path handling fixed for [Issue #292](https://github.com/cimug-org/CIMTool/issues/292).
+
+Defect [Issue #314](https://github.com/cimug-org/CIMTool/issues/314):
+A build could fail with a `ClassCastException` in `ProfileSerializer` when it ran on a thread whose context class loader cannot see the Saxon XSLT library bundled with **CIMTool**, and the remaining artifacts of that build were not produced. The failure was seen in the test environment and could occur when **CIMTool** is installed into a larger Eclipse installation. `ProfileSerializer` now creates Saxon directly.
+
+Defect [Issue #318](https://github.com/cimug-org/CIMTool/issues/318):
+The `linkml` and `apache-avro-schema-beta` builders failed with an XPath error, producing no output, when the project's schema was imported with **During import merge shadow/mixin extensions into the CIM classes that inherit from them** unchecked, because a shadow class then remains a second parent of the class it extends. Both builders now handle a class with more than one parent.
+
+Defect [Issue #334](https://github.com/cimug-org/CIMTool/issues/334):
+The six **PlantUML** builders failed with an XPath error, producing no diagram, when a profile class had more than one parent class, as happens when the schema is imported with the shadow/mixin merge option unchecked. Users then saw exceptions and error dialogs while the real-time preview was built. The builders now handle more than one parent, and the JSON and XSD **PlantUML** builders draw an inheritance arrow to each parent, as the RDFS builders already did.
+
+Defect [Issue #335](https://github.com/cimug-org/CIMTool/issues/335):
+The documentation builders (the eight **AsciiDoc** builders and `profile-doc-rtf`) showed **CIMTool**'s internal stereotypes, such as `compositeOf`, `aggregateOf` and `hideondiagrams`, beside attribute and association names as though they had been authored in the model. These stereotypes are now left out, as they already were for classes.
+
+Defect [Issue #339](https://github.com/cimug-org/CIMTool/issues/339):
+A project's `.cimtool-global-preferences` file holds the **CIMTool** workspace preferences that `cimtool-cli` uses, so that the CLI generates the same output as the desktop application. **CIMTool** refreshed the file when a project was opened or imported, or when changes were applied on the preference pages, but not for projects that were already open when **CIMTool** started, so such a project could keep the preferences of another workspace. The file is now refreshed for every open project when **CIMTool** starts, and is written only when its content changes, so an up-to-date file is left untouched.
+
+Defect [Issue #354](https://github.com/cimug-org/CIMTool/issues/354):
+On Windows, a custom builder that was imported and then removed in the same session could leave its `.xsl` file in **CIMTool**'s configuration area until **CIMTool** was restarted, because **CIMTool** did not close the files it wrote and read there when setting up, importing and removing builders. These files are now always closed, so removing a builder deletes its `.xsl` file.
+
+Cleanup [Issue #319](https://github.com/cimug-org/CIMTool/issues/319):
+The `rdfs-501ed2-beta` builder, which generated an RDFS schema targeting a draft of IEC 61970-501 Ed 2.0, has been removed.
+
+
 ### Release 2.3.0 [08-Jun-2026]
 
 **CIMTool 2.3.0** is a release with significant enhancements focused on documentation generation, usability enhancements, real-time preview, diagram customization, enhanced profiling capabilities, and important defect fixes.

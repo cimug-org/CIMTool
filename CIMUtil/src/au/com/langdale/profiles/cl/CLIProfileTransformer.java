@@ -212,9 +212,37 @@ public class CLIProfileTransformer {
 	 * @param outputExtension the file extension for output (e.g., "xml", "json")
 	 */
 	public void setXslt(File xsltFile, String outputExtension) {
+		setXslt(xsltFile, outputExtension, BuilderRegistry.inferTypeForStylesheet(xsltFile));
+	}
+
+	/**
+	 * Set a custom XSLT stylesheet with an explicit builder type.
+	 * 
+	 * <p>
+	 * The builder type determines which post-processing stage is applied after the
+	 * stylesheet runs: {@code indent.xsl} for {@link BuilderType#TEXT},
+	 * {@code indent-asciidoc.xsl} for {@link BuilderType#ASCIIDOC}, and none for the
+	 * remaining types. A null type applies no post-processing.
+	 * </p>
+	 * 
+	 * <p>
+	 * Prior to CIMTool 2.3.1 the builder type was never assigned in custom XSLT
+	 * mode, so TEXT-style stylesheets skipped the required indent stage and emitted
+	 * raw Indent-namespace XML instead of rendered text. See defect #287.
+	 * </p>
+	 * 
+	 * @param xsltFile        the custom stylesheet
+	 * @param outputExtension the extension for generated output files
+	 * @param builderType     the builder type, or null for no post-processing
+	 */
+	public void setXslt(File xsltFile, String outputExtension, BuilderType builderType) {
 		this.xsltFile = xsltFile;
 		this.builderName = null;
 		this.outputExtension = outputExtension;
+		// Assigned unconditionally so that a transformer previously configured via
+		// setBuilder() cannot retain that builder's type when switched to a custom
+		// stylesheet.
+		this.builderType = builderType;
 	}
 
 	/**
@@ -395,9 +423,11 @@ public class CLIProfileTransformer {
 		// Load stylesheet
 		InputStream xsltStream = getXsltInputStream();
 		try {
-			serializer.setStyleSheet(xsltStream, ProfileSerializer.XSDGEN);
+			serializer.setStyleSheet(xsltStream, getStyleSheetSystemId());
 			if (builderType == BuilderType.TEXT) {
 				serializer.addStyleSheet("indent");
+			} else if (builderType == BuilderType.ASCIIDOC) {
+				serializer.addStyleSheet("indent-asciidoc");
 			}
 		} catch (TransformerConfigurationException e) {
 			throw new TransformerException("Failed to load XSLT stylesheet", e);
@@ -671,6 +701,20 @@ public class CLIProfileTransformer {
 	/**
 	 * Get the XSLT input stream, either from a builder or custom file.
 	 */
+	/**
+	 * The system identifier (base URI) for the stylesheet being loaded, against
+	 * which its relative xsl:include, xsl:import and document() references
+	 * resolve. A custom stylesheet given through {@code --xslt} resolves against
+	 * its own file, so that sibling files it includes are found. A stylesheet from
+	 * the builder registry has no base, as in the desktop application (issue
+	 * #292). The namespace identifier {@link ProfileSerializer#XSDGEN} is never
+	 * used as a base, since relative references would then resolve to, and be
+	 * fetched from, langdale.com.au (issue #311).
+	 */
+	private String getStyleSheetSystemId() {
+		return (xsltFile != null) ? xsltFile.getAbsoluteFile().toURI().toString() : null;
+	}
+
 	private InputStream getXsltInputStream() throws IOException {
 		if (xsltFile != null) {
 			return new FileInputStream(xsltFile);

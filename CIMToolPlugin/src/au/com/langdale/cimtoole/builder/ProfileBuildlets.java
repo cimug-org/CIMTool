@@ -242,7 +242,7 @@ public class ProfileBuildlets extends Task {
 				IFile local = getRelated(result, style + "-xslt");
 				if (local.exists()) {
 					serializer.setErrorHandler(CIMBuilder.createErrorHandler(local));
-					serializer.setStyleSheet(local.getContents(), ProfileSerializer.XSDGEN);
+					serializer.setStyleSheet(local.getContents(), null);
 				} else {
 					InputStream is = null;
 					try {
@@ -254,7 +254,7 @@ public class ProfileBuildlets extends Task {
 						 */
 						is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 						if (is != null) {
-							serializer.setStyleSheet(is, ProfileSerializer.XSDGEN);
+							serializer.setStyleSheet(is, null);
 						} else {
 							serializer.setStyleSheet(style);
 						}
@@ -407,6 +407,52 @@ public class ProfileBuildlets extends Task {
 		@Override
 		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
 			serializer.addStyleSheet("indent");
+		}
+	}
+
+	/**
+	 * Buildlet for AsciiDoc document artifacts. Behaves identically to
+	 * {@link TextBuildlet} in all respects except post-processing stylesheet
+	 * selection. The indent-asciidoc.xsl stylesheet is applied instead of
+	 * indent.xsl so that authored whitespace in AsciiDoc documentation (marked
+	 * xml:space="preserve" by ProfileSerializer.emitAsciiDoc()) is preserved
+	 * verbatim in the generated artifacts. See defect #288.
+	 */
+	public static class AsciiDocBuildlet extends TextBuildlet {
+
+		public AsciiDocBuildlet(String style, String ext) {
+			super(style, ext);
+		}
+
+		public AsciiDocBuildlet(String style, String ext, String includesFile) {
+			super(style, ext, includesFile);
+		}
+
+		public AsciiDocBuildlet(String style, String ext, DateTime datetime) {
+			super(style, ext, datetime);
+		}
+
+		public AsciiDocBuildlet(String style, String ext, DateTime datetime, String includesFile) {
+			super(style, ext, datetime, includesFile);
+		}
+
+		@Override
+		protected void setupPostProcessors(ProfileSerializer serializer) throws TransformerConfigurationException {
+			serializer.addStyleSheet("indent-asciidoc");
+		}
+
+		/**
+		 * Generated AsciiDoc references its diagrams through {profilesdir} (issue
+		 * #291), so the Profiles folder's Asciidoctor editor configuration is ensured
+		 * before each build. This covers projects that reach this release without the
+		 * New Project or Import CIMTool Projects wizards, such as an existing workspace
+		 * opened by a newer CIMTool, a generic Eclipse import, or a Git clone where the
+		 * hidden configuration file is not under version control.
+		 */
+		@Override
+		protected void build(IFile result, IProgressMonitor monitor) throws CoreException {
+			ensureProfilesAsciiDoctorConfigFile(result.getProject()).run(monitor);
+			super.build(result, monitor);
 		}
 	}
 

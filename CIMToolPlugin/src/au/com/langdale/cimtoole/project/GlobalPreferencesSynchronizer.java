@@ -4,7 +4,6 @@
  */
 package au.com.langdale.cimtoole.project;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -23,21 +22,22 @@ import au.com.langdale.cimtoole.CIMToolPlugin;
  * Listens for CIMTool project open events and synchronizes global preferences.
  * 
  * <p>
- * When a CIMTool project is opened (or imported), this listener exports the
- * current global preferences from the Eclipse PreferenceStore to the project's
- * {@code .cimtool-global-preferences} file. This ensures the CLI can use the
- * same customized defaults as the Eclipse UI.
+ * A project's {@code .cimtool-global-preferences} file mirrors the CIMTool
+ * preferences of the workspace in use, so that the CLI uses the same customized
+ * defaults as the Eclipse UI. When a CIMTool project is opened (or imported),
+ * this listener exports the current global preferences from the Eclipse
+ * PreferenceStore to that file, replacing its contents.
  * </p>
  * 
  * <p>
  * On registration (called from the plugin activator's {@code start()} method),
- * this class also performs a one-time startup scan of all currently-open
- * CIMTool projects and exports preferences to any project whose
- * {@code .cimtool-global-preferences} file is missing. This handles the case
- * where an older workspace (predating the introduction of this file) is opened
- * in a newer release of CIMTool — no OPEN event fires for projects that were
- * already open in a previously-used workspace, so without the startup scan
- * those projects would never receive the file.
+ * this class also performs a one-time startup scan that exports preferences to
+ * every currently-open CIMTool project, creating the file where it is missing
+ * and refreshing it where it exists. No OPEN event fires for projects that were
+ * already open when the workspace is started or switched to, so without the
+ * startup scan those projects would keep a file written from another workspace,
+ * or from a release predating the file, and the CLI would not use the current
+ * workspace's preferences.
  * </p>
  * 
  * <p>
@@ -124,12 +124,10 @@ public class GlobalPreferencesSynchronizer implements IResourceChangeListener {
 	 * Register this listener with the workspace and perform a one-time startup scan.
 	 * 
 	 * <p>
-	 * The startup scan exports global preferences to any currently-open CIMTool
-	 * project whose {@code .cimtool-global-preferences} file is absent. This covers
-	 * the case where an older workspace (predating this file) is opened in a newer
-	 * release of CIMTool — projects already open in a previously-used workspace do
-	 * not generate an OPEN event when that workspace is switched to, so the
-	 * listener's normal event-driven path would never fire for them.
+	 * The startup scan exports global preferences to every currently-open CIMTool
+	 * project. Projects already open when the workspace is started or switched to
+	 * do not generate an OPEN event, so the listener's normal event-driven path
+	 * would never refresh their {@code .cimtool-global-preferences} file.
 	 * </p>
 	 * 
 	 * <p>
@@ -139,37 +137,25 @@ public class GlobalPreferencesSynchronizer implements IResourceChangeListener {
 	public static GlobalPreferencesSynchronizer register() {
 		GlobalPreferencesSynchronizer listener = new GlobalPreferencesSynchronizer();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
-		listener.exportMissingGlobalPreferences();
+		listener.exportGlobalPreferencesToOpenProjects();
 		return listener;
 	}
 
 	/**
-	 * Perform a one-time scan of all currently-open CIMTool projects and export
-	 * global preferences to any project whose {@code .cimtool-global-preferences}
-	 * file is missing.
+	 * Perform a one-time export of global preferences to every currently-open
+	 * CIMTool project, creating or refreshing its
+	 * {@code .cimtool-global-preferences} file.
 	 * 
 	 * <p>
 	 * This is scheduled as an asynchronous {@link WorkspaceJob} so it does not
 	 * block plugin startup and does not run while the workspace lock is held.
 	 * </p>
 	 */
-	private void exportMissingGlobalPreferences() {
-		WorkspaceJob job = new WorkspaceJob("Initializing global preferences for open CIMTool projects") {
+	private void exportGlobalPreferencesToOpenProjects() {
+		WorkspaceJob job = new WorkspaceJob("Refreshing global preferences for open CIMTool projects") {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-				for (IProject project : projects) {
-					try {
-						if (project.isOpen() && Info.isCIMToolProject(project)) {
-							IFile prefsFile = Info.getGlobalPreferences(project);
-							if (prefsFile != null && !prefsFile.exists()) {
-								GlobalPreferencesExporter.exportGlobalPreferencesToProject(project);
-							}
-						}
-					} catch (CoreException e) {
-						CIMToolPlugin.getDefault().getLog().error(e.getMessage(), e);
-					}
-				}
+				GlobalPreferencesExporter.exportGlobalPreferencesToAllOpenProjects();
 				return Status.OK_STATUS;
 			}
 		};

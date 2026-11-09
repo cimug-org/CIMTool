@@ -83,7 +83,7 @@ public class PlantUMLRealTimePreviewBuildlet extends TextBuildlet {
 	 * </pre>
 	 */
 	private IFile getOutputFile(IResource owlFile) {
-		IFolder profileFolder = Info.getProfileFolder(owlFile.getProject());
+		IFolder profileFolder = Info.getProfilesFolder(owlFile.getProject());
 		String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
 		return profileFolder.getFile("." + baseName + "." + PREVIEW_EXT);
 	}
@@ -120,7 +120,7 @@ public class PlantUMLRealTimePreviewBuildlet extends TextBuildlet {
 		String hiddenName = result.getName(); // ".EndDeviceConfig.puml"
 		String baseName = hiddenName.replaceFirst("^\\.", "") // "EndDeviceConfig.puml"
 				.replaceFirst("\\.[^.]+$", ""); // "EndDeviceConfig"
-		IFolder profileFolder = Info.getProfileFolder(result.getProject());
+		IFolder profileFolder = Info.getProfilesFolder(result.getProject());
 		IFile owlFile = profileFolder.getFile(baseName + ".owl");
 
 		if (!owlFile.exists())
@@ -148,7 +148,7 @@ public class PlantUMLRealTimePreviewBuildlet extends TextBuildlet {
 			try {
 				InputStream is = ProfileBuildletConfigUtils.getTransformBuildletInputStream(style);
 				if (is != null) {
-					serializer.setStyleSheet(is, ProfileSerializer.XSDGEN);
+					serializer.setStyleSheet(is, null);
 				} else {
 					serializer.setStyleSheet(style);
 				}

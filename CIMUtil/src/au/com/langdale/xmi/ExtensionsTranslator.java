@@ -10,14 +10,12 @@ import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.xerces.util.XMLChar;
 
 import com.hp.hpl.jena.graph.FrontsNode;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;

@@ -55,6 +55,10 @@ Select the **OK** button, and the workbench view will appear
 
 ![CIMToolWorkbench.png](./images/CIMToolWorkbench.png "CIMTool Workbench")
 
+!!! tip "Upgrading an existing workspace"
+
+    Each release can improve the builders, and those improvements reach a project only when its artifacts are regenerated. Beginning with **CIMTool** 2.3.1, when a newer release opens a workspace last built by an earlier one, **CIMTool** regenerates the artifacts of each project's enabled profile builders once, in a background job named "Regenerating CIMTool artifacts after upgrade to X.Y.Z". The same applies to a project opened, added or imported later. The schema isn't rebuilt. If you keep generated artifacts in source control, expect them to show as changed after the first launch of a new release.
+
 !!! tip
 
     It recommended to not add, modify or delete anything inside a workspace directory manually or with tools other than **CIMTool** to prevent corrupting your project. However, if you ever see a message indicating 'resource out of sync', you can usually correct it by using File -> Refresh or pressing F5.

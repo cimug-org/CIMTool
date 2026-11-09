@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import au.com.langdale.cimtoole.builder.ProfileBuildlets.AsciiDocBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TextBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.TransformBuildlet;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets.XSDBuildlet;
@@ -40,6 +41,9 @@ public class TransformBuildletDeserializer<T extends TransformBuildlet> implemen
 			switch (TransformType.valueOf(typeValue)) {
 			case TEXT:
 				buildlet = new TextBuildlet(style, ext, datetime, importFile);
+				break;
+			case ASCIIDOC:
+				buildlet = new AsciiDocBuildlet(style, ext, datetime, importFile);
 				break;
 			case XSD:
 				buildlet = new XSDBuildlet(style, ext, datetime, importFile);

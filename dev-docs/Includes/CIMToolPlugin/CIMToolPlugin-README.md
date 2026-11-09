@@ -18,12 +18,12 @@ to provide:
 
 - The **CIMTool Perspective** and the **CIMTool Browsing** and **Validation** perspectives
 - Editors for CIM profiles, model artefacts, mappings, diagnosis output, and repair files
-- Import wizards for EA projects (`.eap`), XMI models, schemas, profiles, rulesets, spreadsheets, and transform builders
+- Wizards to create CIMTool projects, profiles, rulesets and mappings, and to import schemas (Sparx EA `.eap`, `.eapx`, `.qea`, `.qeax` project files and `.xmi` files), profiles, spreadsheets, rules, copyright templates, XSLT transform builders, CIM/XML models and existing CIMTool projects
 - An incremental **CIMBuilder** that runs automatically on workspace resource changes and produces all configured output artefacts from a CIM profile
-- Views for project models, documentation, and validation results
+- Views for project models, documentation, validation results, and the PlantUML Real-Time Preview of the active profile
 - Preference pages for general settings and PlantUML builder configuration
 - Extension point registries for pluggable model parsers and profile buildlets
-- Pandoc integration for AsciiDoc report generation
+- An embedded Pandoc distribution, extracted at startup and held for possible future use; no CIMTool feature currently invokes it
 - A unified logging pipeline that installs the JUL-to-SLF4J bridge at startup and extracts `logging.properties` and `logback.xml` so all three logging subsystems (JUL, SLF4J, Log4j 1.x) converge into a single Logback-controlled output in `logs/cimtool.log`
 
 
@@ -33,7 +33,7 @@ to provide:
 ```
 CIMToolPlugin/
 ├── META-INF/
-│   └── MANIFEST.MF
+│   └── MANIFEST.MF               ← OSGi bundle manifest and dependency declarations
 ├── lib/
 │   ├── commons-io-2.5.jar
 │   ├── commons-logging-1.1.1.jar
@@ -50,20 +50,15 @@ CIMToolPlugin/
 │   ├── Pandoc_win32-x86_64.zip   ← Embedded Pandoc binary (Windows x86_64)
 │   ├── Pandoc_mac-x86_64.zip     ← Embedded Pandoc binary (macOS Intel)
 │   ├── Pandoc_mac-arm64.zip      ← Embedded Pandoc binary (macOS Apple Silicon)
+│   ├── Pandoc_linux-x86_64.zip   ← Embedded Pandoc binary (Linux x86_64), bundled ahead of Linux support
 │   └── README.TXT                ← Documents the current bundled Pandoc version
 ├── js/                           ← Bundled JavaScript libraries (air-gap safe; no CDN dependency)
 │   ├── svg-pan-zoom.js           ← svg-pan-zoom 3.6.2 — pan/zoom for the PlantUML Real-Time Preview SVG view
 │   └── README.md                 ← Documents the bundled svg-pan-zoom version and source
-├── builders/                     ← XSLT builder stylesheets and supporting resources
-│   └── includes/                 ← Shared XSLT includes used across builders
-├── import-reports/               ← AsciiDoc templates and stylesheets for the audit/compliance
-│   │                               report generated into the project's /Schema folder
-│   ├── asciidoc/
-│   │   ├── includes/
-│   │   ├── styles/
-│   │   └── themes/
-│   ├── puml/                     ← PlantUML templates for diagram generation
-│   └── schema/                   ← JSON/XML schemas for report configuration
+├── icons/                        ← PNG icons used by the UI, rendered from graphics/
+├── graphics/                     ← SVG source artwork for the icons
+├── makeicons.sh                  ← Renders the PNG icons in icons/ from the SVG artwork in graphics/
+├── makeicons.launch              ← Eclipse launch configuration that runs makeicons.sh
 └── src/
     └── au/com/langdale/
         ├── cimtoole/             ← Main plugin package
@@ -78,15 +73,15 @@ CIMToolPlugin/
         │   ├── compare/          ← Eclipse Compare framework integration
         │   ├── editors/          ← Multi-page editors for profiles, models, mappings
         │   │   └── profile/      ← Profile editor pages (Detail, Hierarchy, Populate, etc.)
-        │   ├── pandoc/           ← Pandoc path resolution and AsciiDoc conversion
-        │   ├── popup/actions/    ← Context menu actions
+        │   ├── interceptors/     ← ProjectExplorerDoubleClickInterceptor (temporary SWT workaround)
+        │   ├── pandoc/           ← Pandoc path resolution and conversion (not currently invoked)
         │   ├── preferences/      ← Preference pages and initializer
         │   ├── project/          ← Core project model — Cache, Settings, Task, importers
         │   ├── properties/       ← Eclipse property page contributions
         │   ├── registries/       ← Model parser and profile buildlet registry infrastructure
         │   │   └── config/       ← JSON serialization for buildlet configuration
         │   ├── reporting/        ← CIM modelling guide violation report generation
-        │   ├── views/            ← ProjectModelView, DocView, ValidationView, CurrentProfilePlantUmlSvgView
+        │   ├── views/            ← ProjectModelView, DocView, ValidationView, CurrentProfilePlantUmlSvgView, and their helpers
         │   └── wizards/          ← Import, New, and Export wizards
         ├── jena/                 ← Jena tree/check-tree JFace bindings
         ├── util/                 ← ProjectUtils, ValidateSchema
@@ -119,10 +114,10 @@ It also depends on the following standard Eclipse platform bundles:
 | `org.eclipse.ui.views` | Standard Eclipse view contributions: `IViewPart`, content outline view, properties view infrastructure |
 | `org.eclipse.ui.forms` | Eclipse Forms UI toolkit: `FormToolkit`, `ScrolledForm`, `Section`, used to build the multi-page profile and model editors |
 | `org.eclipse.compare` | Eclipse Compare framework: `CompareEditorInput`, structure and content merge viewer APIs used by the model diff/compare feature |
-| `org.eclipse.ui.themes` | Eclipse theming and colour/font registry: `IThemeManager`, `ColorRegistry`, `FontRegistry` for consistent UI styling |
+| `org.eclipse.ui.themes` | Eclipse theming bundle. It is listed in `Require-Bundle`, but no CIMToolPlugin code uses it. |
 | `org.eclipse.core.filesystem` | Abstraction over file system access: `IFileStore`, `EFS`, used for file operations that span local and remote file systems |
 | `net.sourceforge.plantuml.library` | PlantUML rendering library: generates SVG diagrams from `.puml` source in the Real-Time Preview pipeline. Declared as a hard `Require-Bundle` dependency. |
-| `net.sourceforge.plantuml.eclipse` | PlantUML Eclipse integration bundle: provides the Eclipse-side PlantUML API. Declared as `resolution:=optional` since the feature degrades gracefully when absent. |
+| `net.sourceforge.plantuml.eclipse` | PlantUML Eclipse integration bundle. Declared as a hard `Require-Bundle` dependency: `plugin.xml` registers its `PlantUmlSvgView` as the "CIMTool PlantUML Svg" view. |
 
 ### Vendored Third-Party Libraries
 
@@ -163,21 +158,21 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | `org.eclipse.core.resources.builders` | Registers `CIMBuilder` as an incremental project builder that runs automatically on workspace resource changes to produce all configured CIM profile output artefacts |
 | `org.eclipse.core.resources.natures` | Registers `CIMNature` as the Eclipse project nature that marks a project as a CIMTool project and associates it with `CIMBuilder` |
 | `org.eclipse.core.resources.markers` | Defines CIMTool-specific problem markers used to display build errors and validation warnings in the Eclipse Problems view and editor gutter |
-| `org.eclipse.core.contenttype.contentTypes` | Registers CIMTool file content types (e.g. `.xmi`, `.owl`, `.profile`) so Eclipse can associate them with the correct editors and handlers |
+| `org.eclipse.core.contenttype.contentTypes` | Defines the "CIMTool Profile" content type (XML-based, for `.owl` files) to which the Profile Editor is bound, and associates `.xml-log` files with plain text and `.rdfs` files with XML |
 | `org.eclipse.ui.perspectives` | Registers the CIMTool Perspective, CIMTool Browsing Perspective, and Validation Perspective, defining the initial layout of views, editors, and toolbars for each |
-| `org.eclipse.ui.editors` | Registers multi-page editors for CIM profiles, model artefacts, mappings, diagnosis output, and repair files, bound to their respective content types |
-| `org.eclipse.ui.views` | Registers the Project Model view, Documentation view, and Validation view as Eclipse workbench views |
-| `org.eclipse.ui.importWizards` | Registers import wizards for EA projects, XMI models, schemas, profiles, rulesets, spreadsheets, and transform builders under the CIMTool category |
-| `org.eclipse.ui.newWizards` | Registers new-resource wizards for creating CIMTool projects, profiles, mappings, rulesets, and other CIMTool artefact types |
+| `org.eclipse.ui.editors` | Registers the Model Browser (`.xmi`, `.simple-owl`, `.merged-owl`, and the EA project files `.eap`, `.eapx`, `.qea`, `.qeax`, `.feap`), Profile Editor (`.owl`), Diagnostic Browser (`.diagnostic`), Profile Repair Editor (`.repair`) and Mapping Editor (`.mapping-ttl`, `.mapping-owl`) |
+| `org.eclipse.ui.views` | Registers five views: Project Model, Validation, Documentation, Profile Preview (`CurrentProfilePlantUmlSvgView`), and "CIMTool PlantUML Svg" (`PlantUmlSvgView` from `net.sourceforge.plantuml.eclipse`) |
+| `org.eclipse.ui.importWizards` | Registers twelve import wizards under the CIMTool category: Schema, Profile, Spreadsheet as Profile, Validation Rules, Incremental Validation Rules, HTML Rules, XML Schema Rules, Copyright Templates, XSLT Transform Builder, Model (CIM/XML file), Incremental CIM/XML file, and CIMTool Projects |
+| `org.eclipse.ui.newWizards` | Registers seven new-resource wizards: Project, Profile, Ruleset, HTML Rules, XML Schema Rules, Incremental Ruleset, and Mappings |
 | `org.eclipse.ui.exportWizards` | Registers the schema export wizard under the CIMTool category |
-| `org.eclipse.ui.popupMenus` | Contributes context menu actions on CIMTool project resources (e.g. toggle CIMTool nature, import, jump to related resource) |
+| `org.eclipse.ui.popupMenus` | Contributes the "Add/Remove CIM Nature" action to the context menu of projects |
 | `org.eclipse.ui.actionSets` | Contributes toolbar and menu actions to the Eclipse workbench window when a CIMTool perspective is active |
 | `org.eclipse.ui.viewActions` | Contributes actions to the toolbar and drop-down menus of specific CIMTool views |
-| `org.eclipse.ui.preferencePages` | Registers the General and PlantUML Builders preference pages under the CIMTool category in the Eclipse Preferences dialog |
-| `org.eclipse.ui.propertyPages` | Registers property pages shown when the user opens Properties on a CIMTool project or resource |
-| `org.eclipse.ui.themes` | Registers custom colour and font definitions used by the CIMTool editors and views for consistent theming |
+| `org.eclipse.ui.preferencePages` | Registers the "CIMTool" page (`GeneralPreferencesPage`) and, under it, the "PlantUML Builder Preferences" page (`PlantUMLBuildersPreferencesPage`) in the Eclipse Preferences dialog |
+| `org.eclipse.ui.propertyPages` | Registers the "CIMTool" property page shown when the user opens Properties on a CIMTool project or resource |
 | `org.eclipse.core.runtime.preferences` | Registers `PreferenceInitializer` to set default values for all CIMTool preferences when a new workspace is created |
-| `org.eclipse.core.runtime.adapters` | Registers type adapters so that CIMTool model objects can be adapted to standard Eclipse interfaces (e.g. `IResource`, `IPropertySource`) |
+| `org.eclipse.core.runtime.adapters` | Registers `PropertySupport` as the adapter factory that adapts model tree nodes to `IPropertySource`, so the Properties view can show them |
+| `org.eclipse.ui.startup` | Registers two startup classes, each in its own extension. `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were produced by an earlier CIMTool release for regeneration (see Regeneration After an Upgrade below). `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse SWT issue #1848, restoring double-click and Enter in the Project Explorer while the PlantUML preview holds focus, and is removed at the platform upgrade that resolves that issue |
 | `org.eclipse.compare.structureCreators` | Registers the CIMTool model structure creator so that the Eclipse Compare framework can parse CIM model files into a comparable tree structure |
 | `org.eclipse.compare.structureMergeViewers` | Registers the model structure merge viewer used in side-by-side diff operations on CIM model files |
 | `org.eclipse.compare.contentMergeViewers` | Registers the model content merge viewer used for inline content comparison within the Eclipse Compare editor |
@@ -204,7 +199,7 @@ activated and is responsible for:
    bundle to the Eclipse state location. On subsequent runs the already-extracted
    binary is used directly.
 
-4. Initialises the shared **`Cache`**, **`Settings`**, **`BuilderPreferences`**,
+4. Installs the CIMTool icon cache, then initialises the shared **`Cache`**, **`Settings`**, **`BuilderPreferences`**,
    and **`GlobalPreferencesSynchronizer`** singletons that the rest of the plugin
    accesses via static getters.
 
@@ -222,6 +217,27 @@ redirected through JUL loggers `CIMTool.console.out` (INFO) and `CIMTool.console
 
 
 
+### The Global Preferences File for the CLI
+
+A project's `.cimtool-global-preferences` file mirrors the CIMTool preferences of
+the workspace in use, so that `cimtool-cli`, which cannot read the Eclipse
+preference store, uses the same customized defaults as the desktop application.
+`GlobalPreferencesExporter` writes the file from the preference store, replacing
+its contents only when they differ, so an up-to-date file is left untouched:
+
+- when a CIMTool project is opened or imported, through the
+  `GlobalPreferencesSynchronizer` resource change listener;
+- when CIMTool starts, through the synchronizer's one-time startup scan, for every
+  CIMTool project that is already open, since such projects raise no open event;
+- when changes are applied on the **CIMTool** and **PlantUML Builder Preferences**
+  preference pages, for every open CIMTool project.
+
+Project-level and profile-level settings made on a project's **Properties** pages
+are stored in `.builder-preferences` and take precedence over the file, in the
+desktop builders and in `cimtool-cli` alike.
+
+
+
 ## Incremental Build System
 
 The `builder/` package implements CIMTool's incremental build system, which
@@ -235,22 +251,92 @@ integrates with the Eclipse workspace build mechanism:
 - **`ValidationBaseBuildlet`**: shared base class for the validation buildlets.
 - **`SchemaBuildlet`**: handles schema-related build steps.
 - **`PlantUMLRealTimePreviewBuildlet`**: generates a hidden dot-prefixed `.puml` file in the `Profiles/` folder on every `.owl` profile save, triggering the Real-Time Preview pipeline. See the PlantUML Real-Time Preview section below.
+- **`UpgradeRegeneration`**: records which CIMTool version last regenerated each project's artifacts and regenerates them once after an upgrade. See Regeneration After an Upgrade below.
+- **`UpgradeRegenerationStartup`**: the startup class and resource change listener that queue projects for `UpgradeRegeneration`.
 
 The build is triggered automatically by Eclipse whenever a relevant workspace
 resource changes. It can also be triggered manually via **Project > Build Project**.
+
+### Regeneration After an Upgrade
+
+`CIMBuilder` rebuilds only the outputs of resources that change, so a newer
+CIMTool release opening a workspace built by an earlier one would otherwise leave
+every generated artifact as the earlier builders produced it. CIMTool therefore
+regenerates each project's profile artifacts once, the first time the project is
+opened by a newer release.
+
+**The stamp.** Each project carries an Eclipse persistent property,
+`au.com.langdale.cimtoole:lastFullBuildVersion`, holding the CIMTool version
+(major.minor.micro, for example `2.3.1`) that last regenerated all of its
+artifacts. Persistent properties live in the workspace's `.metadata`, not in the
+project folder, so the stamp never appears in Git and never travels with the
+project. It is intentionally not stored in `.cimtool-settings`, which is the
+project's portable configuration shared through Git and read by `cimtool-cli`: a
+stamp written there by one workspace would suppress regeneration in another
+workspace that never built the project. For the same reason, the property key is
+defined in `UpgradeRegeneration` rather than in `QualifiedNames`, whose constants
+`Settings` maps into `.cimtool-settings`.
+
+**The version.** The running version is the `Bundle-Version` of CIMUtil
+(`au.com.langdale.cimutil`), which holds the builders, `ProfileSerializer`, and
+the post-processing stylesheets, reduced to major.minor.micro so that the build
+qualifier is ignored. Versions compare numerically as
+`org.osgi.framework.Version`, so 2.10.0 is newer than 2.9.0, and a version
+written with fewer components is completed with zeros, so 2.4 equals 2.4.0.
+
+**When the stamp is written.**
+
+- `CIMBuilder` writes it after a build that traversed the whole project (a full
+  build, a first build with no prior build state, or a rebuild triggered by a
+  schema change) and completed without an exception. Incremental builds leave it
+  unchanged.
+- Regeneration writes it after regenerating a project.
+- `Task.createProject` writes it when a project is created, since a project
+  created by the running release has no artifacts from an earlier one.
+
+**When a project is regenerated.** A project is regenerated when it is open, has
+the CIMTool nature, and its stamp is missing or older than the running version
+(`UpgradeRegeneration.needsUpgradeRebuild`). A stamp equal to or newer than the
+running version never triggers regeneration, so opening a workspace with an older
+CIMTool does nothing.
+
+**What is regenerated.** Only the profile artifacts: every `ProfileBuildlet`
+returned by `CIMBuilder`, run through the same worker as a build. Each output is
+built when its builder is enabled on the profile and removed otherwise, exactly as
+a full build does. The schema and instance validation are not rebuilt.
+
+**Triggers.** All three queue projects through `UpgradeRegeneration.schedule`:
+
+| Trigger | Covers |
+| --- | --- |
+| `UpgradeRegenerationStartup.earlyStartup()` | Every open project when CIMTool starts, which covers a new release launched against an existing workspace |
+| The resource change listener registered by `earlyStartup()` | Projects added to the workspace or opened later, for example by a generic Eclipse import or by opening a closed project |
+| The Import CIMTool Projects wizard | The projects it imports, so that they are covered even when startup contributions are disabled under **Window > Preferences > General > Startup and Shutdown** |
+
+Queued projects are regenerated by a single background job ("Regenerating CIMTool
+artifacts after upgrade to X.Y.Z"). The job first waits for any automatic build in
+progress, since the first build of a newly imported project already stamps it, and
+then re-checks each project's stamp under the workspace build rule, skipping those
+already current. It runs whether or not **Build Automatically** is enabled, and
+writes one INFO entry per regenerated project to the Error Log.
+
+> **Note:** Because the running version comes from CIMUtil's `Bundle-Version`, a
+> release that does not bump it never triggers regeneration in upgraded workspaces.
+> `ReleaseVersionConsistencyTest` in CIMUtilTest fails when the product-aligned
+> versions disagree.
 
 
 
 ## Pandoc Integration
 
-The `pandoc/` package manages the embedded Pandoc installation:
+Pandoc is bundled in anticipation of possible future use. No CIMTool feature currently invokes it, and whether to keep it or remove it is still to be decided.
 
-- **`PandocPathResolver`**: resolves the path to the Pandoc executable within the state location extraction directory. Supports Windows, macOS Intel, and macOS Apple Silicon.
-- **`PandocConverter`**: invokes the Pandoc executable as a subprocess to convert AsciiDoc content to HTML for display in the `DocView`.
+Pandoc is embedded as platform-specific ZIP archives in the `native/` directory and extracted on first run by `CIMToolPlugin.loadEmbeddedPandocLibraries()`. The current bundled version is documented in `native/README.TXT`. Extraction is implemented for Windows and macOS. A Linux archive is bundled ahead of Linux support, which is tracked in [Issue #325](https://github.com/cimug-org/CIMTool/issues/325).
 
-Pandoc is embedded as platform-specific ZIP archives in the `native/` directory
-and extracted on first run by `CIMToolPlugin.loadEmbeddedPandocLibraries()`.
-The current bundled version is documented in `native/README.TXT`.
+The `pandoc/` package holds the supporting classes:
+
+- **`PandocPathResolver`**: resolves the path to the Pandoc executable within the extraction directory: `pandoc.exe` on Windows, and `bin/pandoc` on macOS and Linux.
+- **`PandocConverter`**: runs the Pandoc executable as a subprocess to convert a file from one format to another. No code calls it at present.
 
 
 
@@ -268,9 +354,10 @@ Diagram style (the XSLT builder used to generate the `.puml`) is configurable vi
 a three-tier preference hierarchy: profile-level → project-level → global. Global
 defaults are set in `PlantUMLBuildersPreferencesPage`.
 
-`net.sourceforge.plantuml.library` is a hard `Require-Bundle` dependency;
-the buildlet calls the PlantUML API directly. `net.sourceforge.plantuml.eclipse`
-is `resolution:=optional` and is not used by the preview pipeline.
+`net.sourceforge.plantuml.library` is a hard `Require-Bundle` dependency, since
+the preview pipeline calls the PlantUML API directly. `net.sourceforge.plantuml.eclipse`
+is also a hard `Require-Bundle` dependency, because `plugin.xml` registers its
+`PlantUmlSvgView`, but the preview pipeline does not use it.
 
 
 
@@ -280,4 +367,6 @@ is `resolution:=optional` and is not used by the preview pipeline.
 - **Kena**: the RDF graph used by the `Cache` and the editors is the Kena `OntModel` API. CIMToolPlugin never calls Apache Jena directly.
 - **RCPUtil**: all custom Eclipse UI infrastructure (form binding, wizard base classes, JFace plumbing) comes from RCPUtil. CIMToolPlugin's editors and wizards extend RCPUtil base classes rather than raw Eclipse classes.
 - **CIMToolProduct**: the product project that packages CIMToolPlugin into a runnable application. `CIMToolPlugin.java` references the product bundle (`au.com.langdale.cimtool.product`) by its symbolic name when extracting `logging.properties` and `logback.xml` at startup.
+- **com.cimphony.cimtoole**: contributes to both extension points that CIMToolPlugin defines, registering Ecore model parsers through `model_parser` and the Ecore buildlet through `profile_buildlet`.
+- **CIMToolTest**: a fragment of CIMToolPlugin that tests it as JUnit Plug-in Tests.
 - **cimtool-cli**: the CLI project sources `cimutil.jar` from the PDE export of this plugin's sibling projects. CIMToolPlugin itself is not used at runtime by the CLI, but the same underlying CIMUtil logic is what the CLI invokes headlessly.

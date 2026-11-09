@@ -61,7 +61,7 @@ public class ImportCopyrightTemplates extends Wizard implements IImportWizard {
 
 		//
 		// Now proceed to update the OWL profile files with the new imported copyright...
-		IFolder profilesFolder = Info.getProfileFolder(project);
+		IFolder profilesFolder = Info.getProfilesFolder(project);
 		try {
 			IResource[] resources = profilesFolder.members(false);
 			for (IResource resource : resources) {

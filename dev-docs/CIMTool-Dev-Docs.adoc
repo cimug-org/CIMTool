@@ -38,6 +38,8 @@ include::{includedir}/CIMToolPlugin/CIMToolPlugin-README.adoc[]
 
 include::{includedir}/CIMUtil/CIMUtil-README.adoc[]
 
+include::{includedir}/CIMUtil/CIMUtil-Sequence-Diagrams.adoc[]
+
 include::{includedir}/Kena/Kena-README.adoc[]
 
 include::{includedir}/RCPUtil/RCPUtil-README.adoc[]
@@ -51,6 +53,8 @@ include::{includedir}/io.ucaiug.slf4j.logback.binding/io.ucaiug.slf4j.logback.bi
 include::{includedir}/cimtool-cli/cimtool-cli-README.adoc[]
 
 include::{includedir}/CIMToolTest/CIMToolTest-README.adoc[]
+
+include::{includedir}/CIMUtilTest/CIMUtilTest-README.adoc[]
 
 include::{includedir}/CSharpEFTestProject/CSharpEFTestProject-README.adoc[]
 

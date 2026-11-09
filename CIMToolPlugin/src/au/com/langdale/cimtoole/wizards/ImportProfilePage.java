@@ -82,7 +82,7 @@ public class ImportProfilePage extends FurnishedWizardPage {
 			@Override
 			public String validate() {
 				IProject project = projects.getProject();
-				file = filename.getFile(Info.getProfileFolder(project));
+				file = filename.getFile(Info.getProfilesFolder(project));
 				
 				if( file.exists())
 					return "A profile of that name already exists.";

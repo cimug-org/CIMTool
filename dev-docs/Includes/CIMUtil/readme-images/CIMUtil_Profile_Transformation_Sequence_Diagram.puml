@@ -1,5 +1,7 @@
 @startuml Profiles Subsystem Sequence Diagram
 
+skin rose
+
 title CIMUtil - Profile Transformation Sequence
 
 skinparam backgroundColor #FEFEFE
@@ -16,19 +18,16 @@ participant "Saxon Transformer\n[XSLT Engine]" as SAX #LightYellow
 == Profile Loading ==
 
 activate ORCH
-ORCH -> ORCH : loadOntModel(profileFile)
+ORCH -> ORCH : Task.getMessageModel(profileFile)
 note right of ORCH
-    Reads the .owl profile file
-    into a Kena OntModel using
-    IO.read() (Turtle format)
-end note
-ORCH -> ORCH : loadOntModel(schemaFile(s))
-note right of ORCH
-    Reads the background schema
-    OntModel (merged if multiple).
+    Takes the profile OntModel from the
+    workspace cache, which reads the .owl
+    file as RDF/XML with node IDs (IO.read),
+    and the merged background schema
+    OntModel of the project's Schema folder.
     In the CLI path (CLIProfileTransformer)
-    this is the pre-parsed schema from
-    CLISchemaParser.
+    the schema is the pre-parsed model
+    from CLISchemaParser.
 end note
 
 == Profile Model Construction ==
@@ -38,13 +37,16 @@ activate PM
 ORCH -> PM : setOntModel(profileModel)
 note right of PM
     Stores the profile OWL model.
-    Constructs a Refactory over it
-    which becomes the bridge between
+end note
+ORCH -> PM : setBackgroundModel(backgroundModel)
+note right of PM
+    With both models set, initModels()
+    merges them (Composition.merge) and
+    builds a Refactory: the bridge between
     the OWL graph and the ProfileClass
     domain object layer.
 end note
-ORCH -> PM : setBackgroundModel(backgroundModel)
-PM -> REF : new Refactory(profileModel, backgroundModel)
+PM -> REF : new Refactory(profileModel,\nComposition.merge(profile, background))
 activate REF
 note right of REF
     Refactory is the central profile
@@ -75,13 +77,29 @@ ORCH -> SER : setCopyrightSingleLine(text)
 ORCH -> SER : setBuilderParameters(params)
 ORCH -> SER : setNamespacePrefixesBuilderParameter(map)
 
-ORCH -> SER : setStyleSheet(xsltStream, XSDGEN)
+alt project-local <style>-xslt file exists
+    ORCH -> SER : setStyleSheet(localXslt, null)
+else registered custom builder
+    ORCH -> SER : setStyleSheet(customXsltStream, null)
+else bundled builder
+    ORCH -> SER : setStyleSheet(style)
+end
 note right of SER
     Compiles the XSLT stylesheet into
     a cached Templates object via Saxon's
-    TransformerFactory. For TEXT builders
-    an additional "indent" post-processor
-    stylesheet is chained via addStyleSheet().
+    TransformerFactory. The base URI is
+    null (#292), so no relative reference
+    can resolve against a network host.
+end note
+ORCH -> ORCH : setupPostProcessors(serializer)
+opt TEXT or ASCIIDOC builder
+    ORCH -> SER : addStyleSheet("indent") or\naddStyleSheet("indent-asciidoc")
+end
+note right of SER
+    TEXT builders chain "indent";
+    ASCIIDOC builders chain
+    "indent-asciidoc" (#288).
+    write() runs the chain in order.
 end note
 
 == XSLT Transformation ==
@@ -162,10 +180,11 @@ deactivate SER
 == SchemaGenerator Path (direct OWL/RDFS output) ==
 
 note over ORCH, PC
-    A separate path exists for RDFS and OWL schema output builders that do not use
-    the SAX + XSLT pipeline above. SchemaGenerator subclasses (OWLGenerator,
-    RDFSGenerator, RDFSBasedGenerator) traverse ProfileClass objects directly and
-    emit OWL/RDFS triples into a result OntModel:
+    The 8 Java builders use no stylesheet. Six of them (simple-flat-owl, simple-owl,
+    legacy-rdfs and their -augmented forms) use SchemaGenerator subclasses
+    (OWLGenerator, RDFSGenerator, via RDFSBasedGenerator), which traverse ProfileClass
+    objects directly and emit OWL/RDFS triples into a result OntModel; ttl writes the
+    profile model directly, and xml serializes it with ProfileSerializer alone:
 
         SchemaGenerator.run()
             scanProfiles()    — iterates ProfileClass.getProfileClasses()
@@ -175,10 +194,10 @@ note over ORCH, PC
             generateLattice() — emits rdfs:subClassOf triples
 
     The resulting OntModel is then serialized to RDF/XML directly, bypassing
-    ProfileSerializer entirely. Reorganizer subclasses (ProfileReorganizer,
-    SchemaReorganizer) apply a structural normalization pass over the profile
-    OntModel before either pipeline runs, ensuring cardinalities and class
-    hierarchies conform to IEC 61970-501 rules.
+    ProfileSerializer entirely. Reorganizer and its subclasses (ProfileReorganizer,
+    SchemaReorganizer) are not part of either path: they run from the profile
+    editor's Repair and Reorganize wizard to make a profile conform to the
+    IEC 61970-501 rules.
 end note
 
 deactivate PM

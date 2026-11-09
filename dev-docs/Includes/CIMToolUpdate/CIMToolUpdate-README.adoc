@@ -13,7 +13,7 @@
 ====
 *This project is legacy/dormant and is not part of the active CIMTool build
 or packaging workflow.* It is retained in the repository as a reference for
-the original Eclipse update site deployment model. See <<status>> for details.
+the original Eclipse update site deployment model. See <<cimtoolupdate-status>> for details.
 ====
 
 A project that was used to assemble and publish CIMTool distributions to an
@@ -23,7 +23,7 @@ and uploading platform-specific ZIP archives to Amazon S3.
 
 
 
-[[status]]
+[[cimtoolupdate-status]]
 === Current Status: Legacy / Dormant
 
 CIMToolUpdate is *not actively used*. The update site it referenced
@@ -39,7 +39,7 @@ Additional indicators of dormancy:
 
 * `site.xml` references `au.com.langdale.cimtoole.feature` at version
   `1.8.3.201008171439`: a build timestamp from 2010, far behind the current
-  `2.3.0` release
+  2.3.x releases
 * `makepackages.sh` uploads to `files.cimtool.org` via an `s3` command-line
   tool that is no longer configured
 * The `Assembly/` directory referenced in `makepackages.sh` is excluded via

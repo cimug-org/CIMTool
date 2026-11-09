@@ -572,7 +572,7 @@
 			<xsl:variable name="stereotypes"><xsl:call-template name="stereotypes"/></xsl:variable>
 			<xsl:choose>
 				<xsl:when test="a:SuperType[@baseClassIsShadowExtension = 'false']">
-					<xsl:variable name="superClassName" select="substring-after(a:SuperType[@baseClassIsShadowExtension = 'false']/@baseClass, '#')"/>
+					<xsl:variable name="superClassName" select="string-join(a:SuperType[@baseClassIsShadowExtension = 'false']/@baseClass ! substring-after(., '#'), ', ')"/>
 					<list begin="" indent="" delim="" end="">
 						<item>' <xsl:value-of select="$className"/> inherits from <xsl:value-of select="$superClassName"/></item>
 						<list begin="{concat(if (not(a:Stereotype[contains(., '#concrete')])) then 'abstract class' else 'class', ' ', $className, if ($error and $errorAssistance) then ' &lt;&lt;error&gt;&gt; ' else ' ', $stereotypes, ' ', if (not(a:Stereotype[contains(., '#concrete')])) then '&lt;&lt;abstract&gt;&gt;' else '', ' &#123;')}" indent="   " delim="" end="{concat('&#125;', '&#xD;', '&#xA;')}">

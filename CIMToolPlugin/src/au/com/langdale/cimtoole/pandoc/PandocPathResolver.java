@@ -24,17 +24,15 @@ public class PandocPathResolver {
      * @throws IOException
      */
     public static File getPandocExecutablePath() throws IOException {
-    	File pandocExe = null;
-    	
-    	String os = System.getProperty(OS_NAME).toLowerCase();
-    	if (os.contains("mac")) {
-    		pandocExe = new File(new File((externalPandocRootDir != null ? externalPandocRootDir : embeddedPandocRootDir), "bin"), "pandoc");
-    	} else {
-    		pandocExe = new File((externalPandocRootDir != null ? externalPandocRootDir : embeddedPandocRootDir), "pandoc.exe");
+    	File rootDir = (externalPandocRootDir != null ? externalPandocRootDir : embeddedPandocRootDir);
 
+    	String os = System.getProperty(OS_NAME).toLowerCase();
+    	if (os.contains("win")) {
+    		// Windows: pandoc.exe at the root of the extracted archive.
+    		return new File(rootDir, "pandoc.exe");
+    	} else {
+    		// macOS and Linux: bin/pandoc within the extracted archive.
+    		return new File(new File(rootDir, "bin"), "pandoc");
     	}
-    	
-        // Return the absolute path to the Pandoc executable
-        return new File(pandocExe.toString());
     }
 }

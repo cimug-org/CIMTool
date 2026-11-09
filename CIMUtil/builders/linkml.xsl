@@ -110,9 +110,21 @@
 		<item><xsl:text>      ea_guid: </xsl:text>"<xsl:value-of select="@ea_guid" />"</item>
 		<xsl:text>&#10;</xsl:text>
 		<xsl:if test="a:SuperType">
-			<!-- The name of the superclass is determined using the @baseClass attribute (and not the a:SuperType/@name) -->
-		    <item><xsl:text>    is_a: </xsl:text><xsl:value-of select="substring-after(a:SuperType/@baseClass, '#')" /></item>
+			<!-- The name of the superclass is determined using the @baseClass attribute (and not the a:SuperType/@name).
+			     A class normally has one parent. It has more when shadow and mix-in extensions were not merged on
+			     import, in which case is_a names the first parent that is not a shadow extension and any others
+			     are listed as mixins. -->
+			<xsl:variable name="parents" select="(a:SuperType[@baseClassIsShadowExtension != 'true'], a:SuperType[@baseClassIsShadowExtension = 'true'])"/>
+		    <item><xsl:text>    is_a: </xsl:text><xsl:value-of select="substring-after($parents[1]/@baseClass, '#')" /></item>
 		    <xsl:text>&#10;</xsl:text>
+			<xsl:if test="count($parents) &gt; 1">
+				<item><xsl:text>    mixins:</xsl:text></item>
+				<xsl:text>&#10;</xsl:text>
+				<xsl:for-each select="subsequence($parents, 2)">
+					<item><xsl:text>      - </xsl:text><xsl:value-of select="substring-after(@baseClass, '#')" /></item>
+					<xsl:text>&#10;</xsl:text>
+				</xsl:for-each>
+			</xsl:if>
 		</xsl:if>
         <xsl:if test="not(a:Stereotype[contains(., '#concrete') or contains(., '#compound')])">
 			<xsl:text>    abstract: true</xsl:text>

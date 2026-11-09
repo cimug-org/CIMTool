@@ -1,5 +1,7 @@
 @startuml Validation Sequence Diagram
 
+skin rose
+
 title CIMUtil - CIM/XML Instance & Profile Validation Sequence
 
 skinparam backgroundColor #FEFEFE
@@ -17,13 +19,14 @@ participant "DiagnosisModel\n/ RepairMan" as DM #LightPink
 participant "ConsistencyChecks\n[CIMToolPlugin]" as CC #LightSalmon
 participant "ProfileValidator" as PV #LightGreen
 
-== Phase 1: Rule Expansion (shared by all validation paths) ==
+== Phase 1: Rule Expansion (Paths A and B) ==
 
 note over VB, SR
-    All three validation paths — CIM/XML instance, split model, and profile consistency —
-    begin with the same two-phase rule expansion step in ValidatorUtil.expandRules().
-    The schema OntModel is used to resolve namespace prefixes and expand schema-specific
-    rule templates before the rules are applied to instance data.
+    The CIM/XML instance and split model paths begin with the same two-phase rule
+    expansion step in ValidatorUtil.expandRules(), which the validator's constructor
+    calls. The schema OntModel is used to resolve namespace prefixes and expand
+    schema-specific rule templates before the rules are applied to instance data.
+    The profile consistency path (Path C) parses profile.rules directly instead.
 end note
 
 activate VB
@@ -41,7 +44,9 @@ end note
 VU --> VB : InputStream (rules text)
 deactivate VU
 
-VB -> VU : ValidatorUtil.expandRules(schema, ruleText, registry)
+VB -> MV : new ModelValidator(schema, ruleText)\nor new SplitValidator(schema, ruleText)
+activate MV
+MV -> VU : ValidatorUtil.expandRules(schema, ruleText, registry)
 activate VU
 
 VU -> RP : new RuleParser(ruleText, registry)
@@ -83,22 +88,20 @@ end note
 SR --> VU : SimpleInfGraph
 deactivate SR
 VU -> VU : extract expanded brules from deductions
-VU --> VB : List<Rule> expanded brules
+VU --> MV : List<Rule> expanded brules
 deactivate SR
 deactivate VU
+MV --> VB : validator
+deactivate MV
 
 == Path A: CIM/XML Single-File Validation ==
 
-VB -> MV : new ModelValidator(schema, ruleText)
-activate MV
-note right of MV
-    Stores the expanded brules and schema.
-    Registered as a ValidatorProtocol so
-    it can be called once per instance file
-    that triggers a build.
+note over VB, MV
+    The ModelValidator built in Phase 1 wraps the
+    expanded brules in a SimpleReasoner. It is a
+    ValidatorProtocol, so it can be called once per
+    instance file that triggers a build.
 end note
-MV --> VB : validator
-deactivate MV
 
 VB -> MV : validator.run(source, base, namespace, logger)
 activate MV
@@ -154,16 +157,11 @@ deactivate MV
 
 == Path B: Split Model Validation ==
 
-VB -> MV : new SplitValidator(schema, ruleText)
-activate MV
-note right of MV
-    Same rule expansion as Path A but
-    configured with additional options
-    for split model topology (e.g. proxy
-    node handling via ProxyRegistry).
+note over VB, MV
+    The SplitValidator built in Phase 1 uses the same
+    rule expansion as Path A, with a ProxyRegistry of
+    ValidationBuiltins and the validator's options.
 end note
-MV --> VB : validator
-deactivate MV
 
 VB -> MV : validator.run(source, base, namespace, logger)
 activate MV
@@ -179,11 +177,12 @@ end note
 SPLIT --> MV : SplitReader
 deactivate SPLIT
 
-MV -> EXT : new Extractor(GraphAdapter(splitReader),\ntransGraph, brules, functors)
+MV -> EXT : new Extractor(splitReader,\naxioms, brules, functors)
 activate EXT
 note right of EXT
     Extractor applies the brules to the
-    split model graph. It uses an AsyncModel
+    split model graph; axioms holds the
+    validator's option settings. It uses an AsyncModel
     interface (backed by SplitReader) to
     stream triples part-by-part rather than
     loading the entire dataset into memory.
@@ -224,8 +223,9 @@ activate PV
 
 PV -> PV : buildRules()
 note right of PV
-    Loads the profile-specific rule set
-    which checks for dangling references,
+    Parses the bundled profile.rules with
+    RuleParser (no schema expansion). The
+    rules check for dangling references,
     unknown property types, and cardinality
     inconsistencies between the profile
     and its schema.
@@ -261,25 +261,19 @@ PV --> CC : (checker with log populated)
 deactivate PV
 
 alt checker.hasErrors()
-    CC -> DM : new DiagnosisModel(new RepairMan())
-    activate DM
-    note right of DM
-        DiagnosisModel wraps the deductions
-        graph as a JFace tree model for the
-        Eclipse Diagnosis and Repair editors.
-        It exposes LOG.Problem nodes as tree
-        items grouped by the instance resource
-        they apply to (LOG.hasProblems subject).
-        RepairMan holds RepairAction entries
-        that can apply automatic fixes to the
-        profile OWL model when the user
-        accepts a repair suggestion.
-    end note
-    CC -> DM : setRootResource(DIAGNOSIS_ROOT)
-    DM --> CC : diagnosisModel (for Repair/Diagnosis editor)
-    deactivate DM
     CC -> CC : write log to .repair file\nCIMBuilder.addMarker(file, message)
 end
+
+note over CC, DM
+    When the user opens the .repair file, RepairEditor (CIMToolPlugin)
+    creates new DiagnosisModel(new RepairMan()) and calls
+    setRootResource(DiagnosisModel.DIAGNOSIS_ROOT). DiagnosisModel wraps
+    the log graph as a JFace tree model for the Diagnosis and Repair
+    editors, grouping LOG.Problem nodes by the resource they apply to
+    (LOG.hasProblems subject). RepairMan holds RepairAction entries that
+    can apply automatic fixes to the profile OWL model when the user
+    accepts a repair suggestion.
+end note
 
 deactivate CC
 

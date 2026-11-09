@@ -25,7 +25,7 @@ public class SplitReaderTest extends SplitModelTest {
 	}
 
 	public final void testFind01() throws Exception {
-		reader.find(pattern(NET + "_1744201", CIM + "IdentifiedObject.name", ANY), new AsyncResult() {
+		reader.find(pattern(NET + "_1744201", CIM + "IdentifiedObject.aliasName", ANY), new AsyncResult() {
 
 			public boolean add(Triple result) {
 				count ++;

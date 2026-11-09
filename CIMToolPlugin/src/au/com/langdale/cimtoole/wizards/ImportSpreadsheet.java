@@ -153,7 +153,7 @@ public class ImportSpreadsheet extends Wizard  implements IImportWizard {
 					}
 					
 					// overwrite profile
-					destin = Info.getProfileFolder(projects.getProject()).getFile(filename);
+					destin = Info.getProfilesFolder(projects.getProject()).getFile(filename);
 					boolean exists = destin.exists();
 					getButton("replace").setEnabled(exists);
 					if( exists && ! getButton("replace").getSelection())

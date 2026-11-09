@@ -220,7 +220,13 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	private void extractLoggingProperties() {
 		try {
 			URL installLocationURL = Platform.getInstallLocation().getURL();
-			File installDir = new File(installLocationURL.toURI());
+			/**
+			 * NOTE: Platform.getInstallLocation().getURL() returns a URL that is NOT
+			 * RFC 2396 encoded (spaces remain literal), so URL.toURI() throws
+			 * URISyntaxException for any install path containing a space. getPath()
+			 * yields the literal (unencoded) path, which is exactly what File expects.
+			 */
+			File installDir = new File(installLocationURL.getPath());
 			File loggingPropertiesFile = new File(installDir, "logging.properties");
 
 			// Ensure the logs/ directory exists - FileHandler will fail silently

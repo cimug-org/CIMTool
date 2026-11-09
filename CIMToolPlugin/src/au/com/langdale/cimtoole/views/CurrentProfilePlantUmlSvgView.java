@@ -269,7 +269,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 		if (owlFile == null)
 			return;
 
-		IFolder profileFolder = Info.getProfileFolder(owlFile.getProject());
+		IFolder profileFolder = Info.getProfilesFolder(owlFile.getProject());
 		if (profileFolder == null || !profileFolder.exists())
 			return;
 

@@ -334,7 +334,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 					ProfileEditor.refreshActiveProfilePreview((IProject) resource);
 					return;
 				}
-				IFolder profileFolder = Info.getProfileFolder(resource.getProject());
+				IFolder profileFolder = Info.getProfilesFolder(resource.getProject());
 				if (profileFolder == null || !profileFolder.exists())
 					return;
 				if (Info.isProfile(resource)) {

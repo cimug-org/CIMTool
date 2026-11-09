@@ -690,17 +690,17 @@
       <xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain">
         <xsl:variable name="roles">
           <xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-          <xsl:call-template name="attribute-stereotype-roles"/> 
+          <xsl:call-template name="attribute-association-stereotype-roles"/> 
         </xsl:variable>
-        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-stereotypes"/> | [<xsl:value-of select="@type"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:Comment|a:Note"/> | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
+        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/> | [<xsl:value-of select="@type"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:Comment|a:Note"/> | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
       </xsl:template>
       
       <xsl:template match="a:Simple">
         <xsl:variable name="roles">
           <xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-          <xsl:call-template name="attribute-stereotype-roles"/> 
+          <xsl:call-template name="attribute-association-stereotype-roles"/> 
         </xsl:variable>
-        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-stereotypes"/> | [<xsl:value-of select="substring-after(@cimDatatype, '#')"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:Comment|a:Note"/> | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
+        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/> | [<xsl:value-of select="substring-after(@cimDatatype, '#')"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:Comment|a:Note"/> | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
       </xsl:template>
       
       <xsl:template match="a:SuperType" mode="inherited">
@@ -716,17 +716,17 @@
       <xsl:template match="a:Instance|a:Reference|a:Enumerated|a:Compound|a:Domain" mode="inherited">
         <xsl:variable name="roles">
           <xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-          <xsl:call-template name="attribute-stereotype-roles"/> 
+          <xsl:call-template name="attribute-association-stereotype-roles"/> 
         </xsl:variable>
-        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-stereotypes"/> | [<xsl:value-of select="@type"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>) | see [<xsl:value-of select="../@name"/>](<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
+        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/> | [<xsl:value-of select="@type"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="@type"/>) | see [<xsl:value-of select="../@name"/>](<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
       </xsl:template>
       
       <xsl:template match="a:Simple" mode="inherited">
         <xsl:variable name="roles">
           <xsl:if test="not(starts-with(@baseProperty, concat($ontologyURI, '#')))">.extension</xsl:if>
-          <xsl:call-template name="attribute-stereotype-roles"/> 
+          <xsl:call-template name="attribute-association-stereotype-roles"/> 
         </xsl:variable>
-        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-stereotypes"/> | [<xsl:value-of select="substring-after(@cimDatatype, '#')"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>) | see [<xsl:value-of select="../@name"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
+        <item>| <xsl:if test="$roles != ''">`</xsl:if><xsl:value-of select="@name"/> [<xsl:value-of select="local:format-cardinality(@minOccurs, @maxOccurs)"/>]<xsl:if test="$roles != ''">`</xsl:if><xsl:text> </xsl:text><xsl:call-template name="process-attribute-association-stereotypes"/> | [<xsl:value-of select="substring-after(@cimDatatype, '#')"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="substring-after(@cimDatatype, '#')"/>) | see [<xsl:value-of select="../@name"/>](#<xsl:value-of select="$fileName"/>-<xsl:value-of select="../@name"/>) | <xsl:apply-templates mode="annotate-table-cell" select="a:AsciiDoc"/> |</item>
       </xsl:template>
   
       <xsl:template match="a:ComplexType">
@@ -829,23 +829,97 @@
         </xsl:choose>
       </xsl:template>
       
-      <xsl:template name="process-class-stereotypes">
-        <xsl:variable name="excludedStereotypes" select="('#concrete', '#byreference', '#enumeration', '#compound', '#cimdatatype', '#primitive', '#compositeOf', '#ofComposite', '#aggregateOf', '#ofAggregate', '#hideondiagrams', '#shadowextension')"/>
-        <xsl:variable name="relevantStereotypes" select="a:Stereotype[not(some $excluded in $excludedStereotypes satisfies contains(., $excluded))]"/>
-        <xsl:if test="exists($relevantStereotypes)"> (<xsl:value-of select="string-join($relevantStereotypes/@label, ', ')"/>)<xsl:text> </xsl:text></xsl:if>
-      </xsl:template>
-      
-      <xsl:template name="process-attribute-stereotypes">
-        <xsl:variable name="excludedStereotypes" select="('#attribute', '#byreference', '#enumeration', 'compound', 'cimdatatype')"/>
-        <xsl:variable name="relevantStereotypes" select="a:Stereotype[not(some $excluded in $excludedStereotypes satisfies contains(., $excluded))]"/>
-        <xsl:if test="exists($relevantStereotypes)"> (<xsl:value-of select="string-join($relevantStereotypes/@label, ', ')"/>)</xsl:if>
-      </xsl:template>
-      
-      <xsl:template name="attribute-stereotype-roles">
-        <xsl:variable name="excludedStereotypes" select="('#attribute', '#byreference', '#enumeration', 'compound', 'cimdatatype')"/>
-        <xsl:variable name="relevantStereotypes" select="a:Stereotype[not(some $excluded in $excludedStereotypes satisfies contains(., $excluded))]"/>
-        <xsl:if test="exists($relevantStereotypes)"><xsl:value-of select="string-join(for $s in $relevantStereotypes return '.' || $s/@label, '')"/></xsl:if>
-      </xsl:template>
+	<xsl:template name="process-class-stereotypes">
+		<xsl:if test="count(a:Stereotype[
+							not(contains(., '#concrete')) and 
+							not(contains(., '#byreference')) and 
+							not(contains(., '#enumeration')) and 
+							not(contains(., '#compound')) and 
+							not(contains(., '#cimdatatype')) and 
+							not(contains(., '#primitive')) and 
+							not(contains(., '#compositeOf')) and 
+							not(contains(., '#ofComposite')) and 
+							not(contains(., '#aggregateOf')) and 
+							not(contains(., '#ofAggregate')) and 
+							not(contains(., '#hideondiagrams')) and 
+							not(contains(., '#shadowextension'))]) > 0"> (<xsl:for-each select="a:Stereotype[
+																								not(contains(., '#concrete')) and 
+																								not(contains(., '#byreference')) and 
+																								not(contains(., '#enumeration')) and 
+																								not(contains(., '#compound')) and 
+																								not(contains(., '#cimdatatype')) and 
+																								not(contains(., '#primitive')) and 
+																								not(contains(., '#compositeOf')) and 
+																								not(contains(., '#ofComposite')) and 
+																								not(contains(., '#aggregateOf')) and 
+																								not(contains(., '#ofAggregate')) and 
+																								not(contains(., '#hideondiagrams')) and 
+																								not(contains(., '#shadowextension'))]">
+				<xsl:value-of select="@label"/>
+				<xsl:if test="position()!=last()">
+					<xsl:value-of select="', '"/>
+				</xsl:if>
+			</xsl:for-each>)<xsl:text> </xsl:text></xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="process-attribute-association-stereotypes">
+		<xsl:if test="count(a:Stereotype[
+							not(contains(., '#attribute')) and 
+							not(contains(., '#byreference')) and 
+							not(contains(., '#enumeration')) and 
+							not(contains(., '#compound')) and 
+							not(contains(., '#cimdatatype')) and 
+							not(contains(., '#primitive')) and 
+							not(contains(., '#compositeOf')) and 
+							not(contains(., '#ofComposite')) and 
+							not(contains(., '#aggregateOf')) and 
+							not(contains(., '#ofAggregate')) and 
+							not(contains(., '#hideondiagrams'))]) > 0"> (<xsl:for-each select="a:Stereotype[
+																								not(contains(., '#attribute')) and 							
+																								not(contains(., '#byreference')) and 
+																								not(contains(., '#enumeration')) and 
+																								not(contains(., '#compound')) and 
+																								not(contains(., '#cimdatatype')) and 
+																								not(contains(., '#primitive')) and 
+																								not(contains(., '#compositeOf')) and 
+																								not(contains(., '#ofComposite')) and 
+																								not(contains(., '#aggregateOf')) and 
+																								not(contains(., '#ofAggregate')) and 
+																								not(contains(., '#hideondiagrams'))]">
+				<xsl:value-of select="@label"/>
+				<xsl:if test="position()!=last()">
+					<xsl:value-of select="', '"/>
+				</xsl:if>
+			</xsl:for-each>)<xsl:text> </xsl:text></xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="attribute-association-stereotype-roles">
+		<xsl:if test="count(a:Stereotype[
+							not(contains(., '#attribute')) and 
+							not(contains(., '#byreference')) and 
+							not(contains(., '#enumeration')) and 
+							not(contains(., '#compound')) and 
+							not(contains(., '#cimdatatype')) and 
+							not(contains(., '#primitive')) and 
+							not(contains(., '#compositeOf')) and 
+							not(contains(., '#ofComposite')) and 
+							not(contains(., '#aggregateOf')) and 
+							not(contains(., '#ofAggregate')) and 
+							not(contains(., '#hideondiagrams'))]) > 0"> (<xsl:for-each select="a:Stereotype[
+																								not(contains(., '#attribute')) and 							
+																								not(contains(., '#byreference')) and 
+																								not(contains(., '#enumeration')) and 
+																								not(contains(., '#compound')) and 
+																								not(contains(., '#cimdatatype')) and 
+																								not(contains(., '#primitive')) and 
+																								not(contains(., '#compositeOf')) and 
+																								not(contains(., '#ofComposite')) and 
+																								not(contains(., '#aggregateOf')) and 
+																								not(contains(., '#ofAggregate')) and 
+																								not(contains(., '#hideondiagrams'))]">
+				<xsl:value-of select="concat('.', @label)"/>
+			</xsl:for-each>)<xsl:text> </xsl:text></xsl:if>
+	</xsl:template>
       
       <xsl:template match="a:Comment|a:Note" mode="annotate-type">
         <item><xsl:value-of select="local:replace-chars(., $asciidoc-restricted)"/></item>

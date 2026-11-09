@@ -42,9 +42,9 @@
         Change this path to suit your environment.
     -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>D:/CIMug-GIT-REPOS/release-2.3.0/logs/cimtool.log</file>
+        <file>D:/CIMug-GIT-REPOS/release-2.3.1/logs/cimtool.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>D:/CIMug-GIT-REPOS/release-2.3.0/logs/cimtool-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>D:/CIMug-GIT-REPOS/release-2.3.1/logs/cimtool-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>5</maxHistory>
             <totalSizeCap>50MB</totalSizeCap>
