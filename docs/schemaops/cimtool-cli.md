@@ -83,6 +83,8 @@ Point this to the root directory of your **CIMTool** project, the folder that co
 
 Your project directory must contain `.cimtool-settings` and `.builder-preferences` files, and may optionally contain a `.cimtool-global-preferences` file. All of these are created automatically by **CIMTool** when a project is created, loaded, or imported in the desktop application. The CLI reads your schema file locations from `.cimtool-settings`, your builder configurations from `.builder-preferences`, and, when present, any global preference values (such as PlantUML diagram style settings) from `.cimtool-global-preferences`. If `.cimtool-global-preferences` is absent, built-in defaults are used for those values.
 
+`.cimtool-global-preferences` mirrors the **CIMTool** preferences of the workspace you use in the desktop application (**Window → Preferences → CIMTool** and its **PlantUML Builder Preferences** page). **CIMTool** updates it to match your workspace whenever the project is opened or imported, whenever **CIMTool** starts with the project open, and whenever you apply changes on those preference pages, so the CLI uses the same settings as your workspace. Settings made for a project or profile on its **Properties** pages are stored in `.builder-preferences` and take precedence over it.
+
 !!! note
 
     This is the only truly required option for a transformation run. When `--profile` is not specified, the CLI processes all `.owl` files in the project's `Profiles` subdirectory. The minimum valid invocation is therefore simply:

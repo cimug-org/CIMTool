@@ -217,6 +217,27 @@ redirected through JUL loggers `CIMTool.console.out` (INFO) and `CIMTool.console
 
 
 
+### The Global Preferences File for the CLI
+
+A project's `.cimtool-global-preferences` file mirrors the CIMTool preferences of
+the workspace in use, so that `cimtool-cli`, which cannot read the Eclipse
+preference store, uses the same customized defaults as the desktop application.
+`GlobalPreferencesExporter` writes the file from the preference store, replacing
+its contents only when they differ, so an up-to-date file is left untouched:
+
+- when a CIMTool project is opened or imported, through the
+  `GlobalPreferencesSynchronizer` resource change listener;
+- when CIMTool starts, through the synchronizer's one-time startup scan, for every
+  CIMTool project that is already open, since such projects raise no open event;
+- when changes are applied on the **CIMTool** and **PlantUML Builder Preferences**
+  preference pages, for every open CIMTool project.
+
+Project-level and profile-level settings made on a project's **Properties** pages
+are stored in `.builder-preferences` and take precedence over the file, in the
+desktop builders and in `cimtool-cli` alike.
+
+
+
 ## Incremental Build System
 
 The `builder/` package implements CIMTool's incremental build system, which

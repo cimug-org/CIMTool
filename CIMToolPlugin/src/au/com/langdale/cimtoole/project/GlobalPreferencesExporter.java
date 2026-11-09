@@ -4,6 +4,11 @@
  */
 package au.com.langdale.cimtoole.project;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IProject;
@@ -21,6 +26,7 @@ import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Property;
+import au.com.langdale.workspace.ResourceOutputStream;
 
 /**
  * Exports Eclipse PreferenceStore values to a project-level file for CLI
@@ -87,6 +93,11 @@ public class GlobalPreferencesExporter extends Task {
 	 * </p>
 	 * 
 	 * <p>
+	 * The file is written only when its content would change, so a file that
+	 * already matches the workspace preferences is left untouched.
+	 * </p>
+	 * 
+	 * <p>
 	 * A shallow refresh of the project's root directory is performed before writing
 	 * to ensure Eclipse's workspace model is in sync with the actual filesystem
 	 * state. This prevents a {@code CoreException} (wrapped as
@@ -118,6 +129,14 @@ public class GlobalPreferencesExporter extends Task {
 		model.setNsPrefix("project", PROJECT_NS);
 
 		final IFile prefsFile = getGlobalPreferences(project);
+		if (prefsFile == null) {
+			return;
+		}
+
+		ByteArrayOutputStream generated = new ByteArrayOutputStream();
+		write(model, PROJECT_NS, true, Format.TURTLE.toFormat(), generated,
+				Info.getMultiLineCopyrightText(project));
+		final byte[] content = generated.toByteArray();
 
 		// Perform the filesystem operations (shallow refresh + write) atomically
 		// under the project's scheduling rule. The shallow refresh on the project
@@ -129,12 +148,27 @@ public class GlobalPreferencesExporter extends Task {
 		// refreshLocal where the cause is less obvious.
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				if (prefsFile != null) {
-					prefsFile.getParent().refreshLocal(IResource.DEPTH_ONE, monitor);
+				prefsFile.getParent().refreshLocal(IResource.DEPTH_ONE, monitor);
+				if (prefsFile.exists() && Arrays.equals(content, readContents(prefsFile))) {
+					return;
 				}
-				write(model, PROJECT_NS, true, prefsFile, Format.TURTLE.toFormat(), monitor);
+				ResourceOutputStream out = new ResourceOutputStream(prefsFile, monitor, false, false);
+				try {
+					out.write(content);
+					out.close();
+				} catch (IOException e) {
+					throw error("can't write " + prefsFile.getName(), e);
+				}
 			}
 		}, project, IResource.NONE, new NullProgressMonitor());
 	}
 	
+	private static byte[] readContents(IFile file) throws CoreException {
+		try (InputStream in = file.getContents(true)) {
+			return in.readAllBytes();
+		} catch (IOException e) {
+			throw error("can't read " + file.getName(), e);
+		}
+	}
+
 }
