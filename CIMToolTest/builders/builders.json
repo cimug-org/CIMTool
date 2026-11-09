@@ -1,10 +1,8 @@
 {
-	"builders": [
-		{ 
-			"junit-test": {
-				"type": "JSON",
-				"ext": "junit-ext"
-			}
-		}
-	]
+	"junit-test": {
+		"type": "TRANSFORM",
+		"style": "junit-test",
+		"datetime": "2020-05-01T00:00:00Z",
+		"ext": "junit-ext"
+	}
 }
