@@ -53,6 +53,7 @@ CIMUtilTest/
 │       │   ├── NoNetworkExtension.java      ← JUnit 5 extension behind @NoNetwork
 │       │   └── TestProjects.java            ← The minimal and sample projects the tests run against
 │       ├── profiles/
+│       │   ├── ProfileClassPropertyInfoTest.java
 │       │   ├── ProfileSerializerFactoryTest.java
 │       │   ├── ProfilesAsciiDoctorConfigTemplateTest.java
 │       │   └── cl/                          ← Builder and command-line tests
@@ -113,6 +114,7 @@ The sample projects also read the CGMES CIM17 schema from
 | `CopyrightBuildersTest` | The copyright notices that `sql.xsl`, `sql-rdfs-ansi92.xsl` and `html.xsl` write, and their absence when the copyright templates are empty ([Issue #272](https://github.com/cimug-org/CIMTool/issues/272)). |
 | `CustomStylesheetReferencesTest` | Relative references in a custom `--xslt` stylesheet resolve against the stylesheet's own folder ([Issue #311](https://github.com/cimug-org/CIMTool/issues/311)). |
 | `StereotypeLabelTest` | The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference». |
+| `ProfileClassPropertyInfoTest` | `ProfileClass.getPropertyInfo` reports no range, rather than failing, for a property the profile class does not restrict, such as the inverse of an association whose inverse end is not profiled ([Issue #342](https://github.com/cimug-org/CIMTool/issues/342)) |
 | `ProfileSerializerFactoryTest` | `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it ([Issue #314](https://github.com/cimug-org/CIMTool/issues/314)). |
 | `ProfilesAsciiDoctorConfigTemplateTest` | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
 | `ReleaseVersionConsistencyTest` | The version declarations that must change together at each release agree ([Issue #310](https://github.com/cimug-org/CIMTool/issues/310)). |
@@ -201,7 +203,7 @@ The tests need no Eclipse runtime, so a JUnit Plug-in Test launch is not
 needed. The working folder must be inside the repository checkout, which is the
 default for a JUnit launch in Eclipse, since the tests find the repository from
 it. The full suite takes under a minute, most of it spent parsing the CGMES
-schema.
+schema. The tests pass with Java assertions enabled (`-ea`), which Eclipse JUnit launches turn on by default.
 
 
 

@@ -538,7 +538,9 @@ public class ProfileClass {
 		while (jt.hasNext()) {
 			info.scanRestrict((OntResource) jt.next());
 		}
-		assert info.range != null;
+		// info.range stays null when no allValuesFrom restriction applies to prop in
+		// this profile class, for example for the inverse of an association whose
+		// inverse end is not profiled. Callers check getRange() for null.
 		return info;
 	}
 
