@@ -1,0 +1,8 @@
+# Line endings
+#
+# Files are stored in the repository with LF line endings. XSLT and Java source
+# files are checked out with CRLF line endings on every platform, whatever the
+# local core.autocrlf setting. Stylesheet behavior is unaffected: XML parsers
+# treat CRLF and LF line endings the same.
+*.xsl  text eol=crlf
+*.java text eol=crlf
