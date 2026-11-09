@@ -16,7 +16,7 @@ Import-Package: org.slf4j,
  org.slf4j.helpers,
  org.slf4j.spi
 Bundle-Activator: au.com.langdale.cimtoole.CIMToolPlugin
-Bundle-Vendor: Langdale Consultants
+Bundle-Vendor: UCA CIM Users Group (developed and maintained by Emerson | AspenTech)
 Require-Bundle: au.com.langdale.cimutil,
  au.com.langdale.kena,
  au.com.langdale.rcputil,
