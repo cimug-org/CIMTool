@@ -254,9 +254,9 @@ Two things are worth highlighting here. First, `:doctype: book` selects the Asci
 
     Within a **CIMTool** project, the `{docdir}` attribute always resolves to the **project root**. The Asciidoctor editor runs with the project root as its base directory, so every path attribute above is written relative to that root (`{docdir}/Profiles`, `{docdir}/Documentation/Includes`, and so on) regardless of the fact that the master document itself lives in the **Documentation** folder. Writing your own master-document paths this way ensures they resolve correctly.
 
-!!! warning
+!!! note
 
-    Beginning with **CIMTool** 2.3.1, the generated AsciiDoc artifacts reference their PlantUML diagrams through the `{profilesdir}` attribute (for example `plantuml::{profilesdir}/MyProfile.rdfs-t2b.puml[...]`) rather than through a `./Profiles/...` path. A master document that includes generated fragments must therefore define `:profilesdir:` in its header, as the example above does. A master document written for **CIMTool** 2.3.0 that does not define it shows unresolved diagram references until the definition is added.
+    Beginning with **CIMTool** 2.3.1, the generated AsciiDoc artifacts reference their PlantUML diagrams through the `{profilesdir}` attribute (for example `plantuml::{profilesdir}/MyProfile.rdfs-t2b.puml[...]`) rather than through a `./Profiles/...` path. Each generated artifact falls back to `{docdir}/Profiles` when `profilesdir` is not defined, so master documents written for earlier releases keep working without change. Defining `:profilesdir:` in the master document header, as the example above does, makes the location explicit. Outside the editor, for example with the Asciidoctor command line, `{docdir}` is the folder of the document being rendered, so pass the location of the **Profiles** folder with `-a profilesdir=...` instead (see [Using CIMTool in CI/CD Pipelines with cimtool-cli](../schemaops/cimtool-cli.md#example-1-asciidoc-documentation-publishing-pipeline)).
 
 ### Assembling the Content
 

@@ -285,7 +285,7 @@ If you are upgrading from 2.3.0, the following behavior changed. The first three
 | Only one of `--copyright-multi-line` or `--copyright-single-line` supplied | Accepted, applying only the supplied template | Error, since copyright templates are used as a pair |
 | No copyright option supplied, project contains `.copyright-multi-line` and `.copyright-single-line` | Project templates were ignored and no copyright was generated | Project templates are used automatically |
 | `--copyright-defaults` output | Contained the literal text `${year}` | Contains the current year |
-| PlantUML diagram references in generated AsciiDoc | Written as `plantuml::./Profiles/<name>.<ext>.puml[...]` | Written as `plantuml::{profilesdir}/<name>.<ext>.puml[...]`; the document that renders them must define `profilesdir` (see [Example 1](#example-1-asciidoc-documentation-publishing-pipeline)) |
+| PlantUML diagram references in generated AsciiDoc | Written as `plantuml::./Profiles/<name>.<ext>.puml[...]` | Written as `plantuml::{profilesdir}/<name>.<ext>.puml[...]`, falling back to `{docdir}/Profiles` when `profilesdir` is not defined (see [Example 1](#example-1-asciidoc-documentation-publishing-pipeline)) |
 
 The `--type` and `--copyright-none` options are new in 2.3.1 and have no 2.3.0 equivalent.
 
@@ -448,7 +448,7 @@ The master document in your project's `Documentation` folder uses AsciiDoc `incl
 
 !!! note
 
-    The generated fragments reference their PlantUML diagrams through the `{profilesdir}` attribute, so the master document must define it in its header, for example `:profilesdir: {docdir}/Profiles` (see [Building a Master Document](../how-to/using-cimtool-documentation-features.md#building-a-master-document)). To render a generated article directly instead, pass the attribute on the command line, for example `asciidoctor -r asciidoctor-diagram -a profilesdir=.\MyProject\Profiles .\MyProject\Profiles\MyProfile.article-rdfs.adoc`.
+    The generated fragments reference their PlantUML diagrams through the `{profilesdir}` attribute and fall back to `{docdir}/Profiles` when it is not defined. The Asciidoctor command line sets `{docdir}` to the folder of the document being rendered rather than to the project root, so neither that fallback nor a master document header that defines `:profilesdir: {docdir}/Profiles` (see [Building a Master Document](../how-to/using-cimtool-documentation-features.md#building-a-master-document)) finds the **Profiles** folder here. Pass the location on the command line instead, for example by adding `-a profilesdir=D:\work\MyProject\Profiles` to the `asciidoctor` command. An attribute passed with `-a` takes precedence over a definition in the document header, and the same option works when rendering a generated article directly.
 
 ### Example 2: LinkML Artifact Generation Pipeline
 
