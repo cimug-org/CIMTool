@@ -7,7 +7,7 @@ In the dialog box that appears, give it a name (e.g. 'MyProject') then click 'Ne
 
 ![ProjectNameLocation.png](../images/ProjectNameLocation.png "Project Name and Location")
 
-In the next dialog box that appears. select whether or not you want to include copyrights within your auto-generated artifacts (e.g. XSD, RDFS, etc.). Here you can load your own custom copyright headers or use the default UCAIug Apache 2.0 copyright headers provided by CIMTool. If you do not require copyrights you can simply select 'Do not include copyrights'.
+In the next dialog box that appears. select whether or not you want to include copyrights within your auto-generated artifacts (e.g. XSD, RDFS, SQL, HTML, etc.). Here you can load your own custom copyright headers or use the default UCAIug Apache 2.0 copyright headers provided by CIMTool. If you do not require copyrights you can simply select 'Do not include copyrights'.
 
 ![ProjectCopyrightTemplatesConfig.png](../images/ProjectCopyrightTemplatesConfig.png "Project Copyright Templates")
 

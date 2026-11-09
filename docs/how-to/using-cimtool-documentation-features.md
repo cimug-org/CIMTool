@@ -113,6 +113,14 @@ Click on the image to present a larger view.
 
 When you first open an `.adoc` file, the editor automatically generates an `.asciidoctorconfig.adoc` configuration file. This file establishes the rendering context for documents in its directory and is created and maintained by the editor, so you should leave it in place.
 
+Beginning with **CIMTool** 2.3.1, **CIMTool** also maintains an `.asciidoctorconfig.adoc` file in the **Profiles** folder. It defines the `profilesdir` attribute as the folder containing the file:
+
+```asciidoc
+:profilesdir: {asciidoctorconfigdir}
+```
+
+The AsciiDoc builders reference their PlantUML diagrams through `{profilesdir}`, so this definition lets a generated article or fragment render on its own in the editor wherever the project lives. **CIMTool** creates the file when a project is created or imported and whenever an AsciiDoc builder runs, if the file is missing. If the file already exists and defines `profilesdir`, **CIMTool** leaves it unchanged, so you can change the definition; if it exists without one, **CIMTool** adds the definition.
+
 
 ## Adding Documentation to Profile Elements
 
@@ -152,7 +160,7 @@ Click on the image to present a larger view.
 
 [![image](../images/Documentation-AttributeLevel.png)](../images/Documentation-AttributeLevel.png "Documentation authored on the Documentation tab for the negativeR12 attribute, shown in the generated AsciiDoc source and in the rendered preview's description cell")
 
-Because both tabs accept arbitrary AsciiDoc, element documentation is not limited to plain prose. You can introduce your own headings, tables, lists, and other structures, and the documentation builders fold them into the generated document. The example below adds class-level documentation to the abstract class `ACDCTerminal`: a custom sub-section heading and an inlined AsciiDoc table authored on the **"Documentation"** tab. In the generated output, the sub-section appears as a numbered subsection beneath the class (and in the document's table of contents), and the table renders as a titled, formatted table.
+Because both tabs accept arbitrary AsciiDoc, element documentation is not limited to plain prose. Beginning with **CIMTool** 2.3.1, the whitespace you author is preserved in the generated output, so the indentation of source and listing blocks (for example, a Python code sample) is kept exactly as written. You can introduce your own headings, tables, lists, and other structures, and the documentation builders fold them into the generated document. The example below adds class-level documentation to the abstract class `ACDCTerminal`: a custom sub-section heading and an inlined AsciiDoc table authored on the **"Documentation"** tab. In the generated output, the sub-section appears as a numbered subsection beneath the class (and in the document's table of contents), and the table renders as a titled, formatted table.
 
 Click on the image to present a larger view.
 
@@ -244,7 +252,11 @@ Two things are worth highlighting here. First, `:doctype: book` selects the Asci
 
 !!! note
 
-    Within a **CIMTool** project, the `{docdir}` attribute always resolves to the **project root**. The Asciidoctor editor runs with the project root as its base directory, so every path attribute above is written relative to that root (`{docdir}/Profiles`, `{docdir}/Documentation/Includes`, and so on) regardless of the fact that the master document itself lives in the **Documentation** folder. A leading `./` resolves from the same project root, so the `./Profiles/...` paths you will see in **CIMTool**'s generated artifacts and the `{docdir}/Profiles/...` paths you write in a master document point to the same place; `{docdir}/` is simply the explicit, self-documenting form recommended when authoring. Writing your own master-document paths this way ensures they resolve correctly.
+    Within a **CIMTool** project, the `{docdir}` attribute always resolves to the **project root**. The Asciidoctor editor runs with the project root as its base directory, so every path attribute above is written relative to that root (`{docdir}/Profiles`, `{docdir}/Documentation/Includes`, and so on) regardless of the fact that the master document itself lives in the **Documentation** folder. Writing your own master-document paths this way ensures they resolve correctly.
+
+!!! warning
+
+    Beginning with **CIMTool** 2.3.1, the generated AsciiDoc artifacts reference their PlantUML diagrams through the `{profilesdir}` attribute (for example `plantuml::{profilesdir}/MyProfile.rdfs-t2b.puml[...]`) rather than through a `./Profiles/...` path. A master document that includes generated fragments must therefore define `:profilesdir:` in its header, as the example above does. A master document written for **CIMTool** 2.3.0 that does not define it shows unresolved diagram references until the definition is added.
 
 ### Assembling the Content
 
@@ -377,14 +389,14 @@ The examples below are a quick reference only. For the complete, authoritative A
 | `image::file.png[Alt,300,200]` | Image with width and height | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/macros/image-size/) |
 | `image::file.png[Alt,align=center]` | Image with alignment / positioning | [&rarr; Docs](https://docs.asciidoctor.org/asciidoc/latest/macros/image-position/) |
 
-The `plantuml::` block macro embeds a PlantUML diagram, rendering a `.puml` file to an image as part of the document. **CIMTool**'s generated profile documentation uses this macro to embed the PlantUML class diagrams produced by the PlantUML builders. It is provided by the Asciidoctor Diagram extension rather than core AsciiDoc, so it is documented here. You will most often see it in generated `Profiles/` artifacts, where the builder writes the path relative to the project root:
+The `plantuml::` block macro embeds a PlantUML diagram, rendering a `.puml` file to an image as part of the document. **CIMTool**'s generated profile documentation uses this macro to embed the PlantUML class diagrams produced by the PlantUML builders. It is provided by the Asciidoctor Diagram extension rather than core AsciiDoc, so it is documented here. You will most often see it in generated `Profiles/` artifacts, where the builder references the diagram through the `profilesdir` attribute:
 
 ```asciidoc
 .ShortCircuit Profile
-plantuml::./Profiles/CGMES-ShortCircuit.rdfs-t2b.puml[format=svg, align=center]
+plantuml::{profilesdir}/CGMES-ShortCircuit.rdfs-t2b.puml[format=svg, align=center]
 ```
 
-The line beginning with a dot (`.ShortCircuit Profile`) is the optional diagram title. The macro target is the `.puml` file to render (resolved from the project root, the same base used everywhere in a **CIMTool** project), and the bracketed attributes control the output: `format=svg` renders to SVG (sharp at any zoom), and `align=center` centers the diagram.
+The line beginning with a dot (`.ShortCircuit Profile`) is the optional diagram title. The macro target is the `.puml` file to render (here, in the folder that `profilesdir` names; see [Configuration Files](#configuration-files)), and the bracketed attributes control the output: `format=svg` renders to SVG (sharp at any zoom), and `align=center` centers the diagram.
 
 ### Include Directives
 

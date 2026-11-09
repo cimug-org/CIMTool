@@ -11,6 +11,10 @@
 ## Getting Started
 To generate SQL statements for a profile, select the "SQL" checkbox on the summary page in the profile editor. When the profile is saved, a file with the same name as the profile and extension `.sql` will be generated in the Profile folder of the project.
 
+!!! note
+
+    Beginning with **CIMTool** 2.3.1, if the project has copyright templates, the generated `.sql` file begins with the project's multi-line copyright notice as an SQL comment.
+
 ## What is in the Schema
 The generated schema closely follows the structure of the profile as seen the Outline view.
 
