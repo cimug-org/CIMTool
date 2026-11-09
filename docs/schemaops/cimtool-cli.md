@@ -19,13 +19,13 @@ Because `cimtool-cli.jar` runs on Linux, macOS, and Windows, you can integrate i
 
 ## Prerequisites
 
-You need Java 11 or later on the machine or container that will run the CLI. No other installation is required.
+You need Java 17 or later on the machine or container that will run the CLI. No other installation is required.
 
 ```bat
 java -version
 ```
 
-If Java is not available, download and install a distribution such as [Eclipse Temurin](https://adoptium.net/) (recommended) or any other OpenJDK 11+ distribution.
+If Java is not available, download and install a distribution such as [Eclipse Temurin](https://adoptium.net/) (recommended) or any other OpenJDK 17+ distribution.
 
 ## Downloading cimtool-cli.jar
 
@@ -285,6 +285,7 @@ If you are upgrading from 2.3.0, the following behavior changed. The first three
 | Only one of `--copyright-multi-line` or `--copyright-single-line` supplied | Accepted, applying only the supplied template | Error, since copyright templates are used as a pair |
 | No copyright option supplied, project contains `.copyright-multi-line` and `.copyright-single-line` | Project templates were ignored and no copyright was generated | Project templates are used automatically |
 | `--copyright-defaults` output | Contained the literal text `${year}` | Contains the current year |
+| PlantUML diagram references in generated AsciiDoc | Written as `plantuml::./Profiles/<name>.<ext>.puml[...]` | Written as `plantuml::{profilesdir}/<name>.<ext>.puml[...]`; the document that renders them must define `profilesdir` (see [Example 1](#example-1-asciidoc-documentation-publishing-pipeline)) |
 
 The `--type` and `--copyright-none` options are new in 2.3.1 and have no 2.3.0 equivalent.
 
@@ -444,6 +445,10 @@ xcopy /E /I /Y .\output\html \\intranet-server\docs\cim-profiles\
 ```
 
 The master document in your project's `Documentation` folder uses AsciiDoc `include::` directives to pull in the generated fragments from the `Profiles` folder. When your schema or profiles change and are committed to the repository, the pipeline regenerates everything automatically.
+
+!!! note
+
+    The generated fragments reference their PlantUML diagrams through the `{profilesdir}` attribute, so the master document must define it in its header, for example `:profilesdir: {docdir}/Profiles` (see [Building a Master Document](../how-to/using-cimtool-documentation-features.md#building-a-master-document)). To render a generated article directly instead, pass the attribute on the command line, for example `asciidoctor -r asciidoctor-diagram -a profilesdir=.\MyProject\Profiles .\MyProject\Profiles\MyProfile.article-rdfs.adoc`.
 
 ### Example 2: LinkML Artifact Generation Pipeline
 
