@@ -52,7 +52,7 @@ public class ExtractorTest extends SplitModelTest {
 	
 	public final void testQuery01() throws Exception {
 		List rules = parse(
-			"(net:_1744201 cim:IdentifiedObject.name ?v) -> (tt:Result tt:value ?v)."
+			"(net:_1744201 cim:IdentifiedObject.aliasName ?v) -> (tt:Result tt:value ?v)."
 		);
 		Graph result = runExtractor(rules , Collections.EMPTY_MAP);
 		assertEquals(0, result.size());
