@@ -23,7 +23,8 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 	private static final String CONFIG_FILE = ".builders";
 	private static final String JUNIT_TEST_XSL_FILE = "junit-test.xsl";
 	private static final String JUNIT_TEST2_XSL_FILE = "junit-test2.xsl";
-	private static final String SCHEMA_JSON_DRAFT_07_XSL_FILE = "schema-json-draft-07.xsl";
+	private static final String CIMUTIL_PLUGIN_ID = "au.com.langdale.cimutil";
+	private static final String SCHEMA_JSON_DRAFT_07_XSL_FILE = "json-schema-draft-07.xsl";
 
 	private File schemaJsonDraft07XslFile;
 
@@ -39,8 +40,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 		dataAreaDir = new File(dataAreaDir.getPath(), CONFIG_DIR);
 		dataAreaBuilderConfigFile = new File(dataAreaDir, CONFIG_FILE);
 
-		Bundle cimtooleBundle = Platform.getBundle(CIMToolPlugin.PLUGIN_ID);
-		URL schemaJsonDraft07XslURL = cimtooleBundle.getEntry(CONFIG_DIR + "/" + SCHEMA_JSON_DRAFT_07_XSL_FILE);
+		// The builders are bundled with CIMUtil, as ProfileBuildletConfigUtils loads them.
+		Bundle cimutilBundle = Platform.getBundle(CIMUTIL_PLUGIN_ID);
+		URL schemaJsonDraft07XslURL = cimutilBundle.getEntry(CONFIG_DIR + "/" + SCHEMA_JSON_DRAFT_07_XSL_FILE);
 		URL schemaJsonDraft07XslFileURL = FileLocator.toFileURL(schemaJsonDraft07XslURL);
 		// FileLocator.toFileURL() returns unencoded URLs; toURI() throws on paths
 		// containing spaces. getPath() yields the literal path File expects.
@@ -164,7 +166,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 					try {
 						is = Thread.currentThread().getContextClassLoader()
 								.getResourceAsStream(CONFIG_DIR + "/" + CONFIG_DEFAULTS_FILE);
-						IOUtils.copy(is, new FileOutputStream(dataAreaBuilderConfigFile));
+						try (FileOutputStream out = new FileOutputStream(dataAreaBuilderConfigFile)) {
+							IOUtils.copy(is, out);
+						}
 					} finally {
 						if (is != null) {
 							try {
@@ -183,7 +187,9 @@ public class ProfileBuildletConfigUtilsTest extends WorkspaceTest {
 						try {
 							is = Thread.currentThread().getContextClassLoader()
 									.getResourceAsStream(CONFIG_DIR + "/" + JUNIT_TEST_XSL_FILE);
-							IOUtils.copy(is, new FileOutputStream(dataAreaXslFile));
+							try (FileOutputStream out = new FileOutputStream(dataAreaXslFile)) {
+								IOUtils.copy(is, out);
+							}
 						} finally {
 							if (is != null) {
 								try {
