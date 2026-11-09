@@ -7,6 +7,8 @@
       <image path="cimtool-about.png"/>
       <text>
          CIMTool is an open source tool that supports the Common Information Model (CIM) standards used in the electric power industry.  It is potentially useful for other semantic applications too.
+
+CIMTool is a project of the UCA CIM Users Group, developed and maintained by Emerson | AspenTech with contributions from the open source community.
       </text>
    </aboutInfo>
 

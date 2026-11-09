@@ -5,5 +5,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-SymbolicName: au.com.langdale.cimtool.product;singleton:=true
 Bundle-Version: 2.3.1
 Bundle-ClassPath: CIMToolProduct
-Bundle-Vendor: Langdale Consultants
+Bundle-Vendor: UCA CIM Users Group (developed and maintained by Emerson | AspenTech)
 Automatic-Module-Name: au.com.langdale.cimtool.product

@@ -171,5 +171,5 @@ Export-Package: au.com.langdale.cim;uses:="au.com.langdale.kena",
    org.apache.poi.poifs.property,
    org.apache.poi.poifs.filesystem",
  org.apache.poi.util;uses:="new org.apache.poi.util"
-Bundle-Vendor: UCAIug
+Bundle-Vendor: UCA CIM Users Group (developed and maintained by Emerson | AspenTech)
 Automatic-Module-Name: au.com.langdale.cimutil

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: RCPUtil
 Bundle-SymbolicName: au.com.langdale.rcputil
 Bundle-Version: 2.3.1
-Bundle-Vendor: Langdale Consultants
+Bundle-Vendor: UCA CIM Users Group (developed and maintained by Emerson | AspenTech)
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface;bundle-version="3.5.0",
  org.eclipse.ui.workbench;bundle-version="3.5.0",
