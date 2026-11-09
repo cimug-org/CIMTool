@@ -43,6 +43,9 @@ The six **PlantUML** builders failed with an XPath error, producing no diagram, 
 Defect [Issue #335](https://github.com/cimug-org/CIMTool/issues/335):
 The documentation builders (the eight **AsciiDoc** builders and `profile-doc-rtf`) showed **CIMTool**'s internal stereotypes, such as `compositeOf`, `aggregateOf` and `hideondiagrams`, beside attribute and association names as though they had been authored in the model. These stereotypes are now left out, as they already were for classes.
 
+Defect [Issue #339](https://github.com/cimug-org/CIMTool/issues/339):
+A project's `.cimtool-global-preferences` file holds the **CIMTool** workspace preferences that `cimtool-cli` uses, so that the CLI generates the same output as the desktop application. **CIMTool** refreshed the file when a project was opened or imported, or when changes were applied on the preference pages, but not for projects that were already open when **CIMTool** started, so such a project could keep the preferences of another workspace. The file is now refreshed for every open project when **CIMTool** starts, and is written only when its content changes, so an up-to-date file is left untouched.
+
 Cleanup [Issue #319](https://github.com/cimug-org/CIMTool/issues/319):
 The `rdfs-501ed2-beta` builder, which generated an RDFS schema targeting a draft of IEC 61970-501 Ed 2.0, has been removed.
 
