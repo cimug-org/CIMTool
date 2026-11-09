@@ -68,7 +68,7 @@ These options are standalone, printing output and exiting immediately. No other 
 | Option | Short form | Description |
 |---|---|---|
 | `--help` | `-h` | Prints a summary of all available options and exits. |
-| `--version` | `-v` | Prints the CLI version (e.g. `CIMTool CLI version 2.3.0`) read from the JAR manifest and exits. |
+| `--version` | `-v` | Prints the CLI version (e.g. `CIMTool CLI version 2.3.1`) read from the JAR manifest and exits. |
 | `--list-builders` | `-l` | Prints the names, type indicators, and output file extensions of all builders bundled in the JAR and exits. Each builder is shown with a type in parentheses, such as `(JAVA)`, `(TEXT)`, `(ASCIIDOC)`, `(XSD)`, or `(TRANSFORM)`, identifying its implementation type. Use this to discover the exact builder name to pass to `--builder`. |
 
 ### Transformation Options

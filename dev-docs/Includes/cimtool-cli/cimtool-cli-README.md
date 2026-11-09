@@ -348,7 +348,7 @@ These options are standalone, printing output and exiting immediately without pe
 | Option | Short form | Description |
 | ------ | ---------- | ----------- |
 | `--help` | `-h` | Prints a summary of all available options and exits. |
-| `--version` | `-v` | Prints the CLI version read from the JAR manifest (e.g. `CIMTool CLI version 2.3.0`) and exits. |
+| `--version` | `-v` | Prints the CLI version read from the JAR manifest (e.g. `CIMTool CLI version 2.3.1`) and exits. |
 | `--list-builders` | `-l` | Prints the names, type indicators, and output file extensions of all builders bundled in the JAR and exits. Each entry is shown in the form `name (TYPE) -> .extension`. See [Builder Types](#builder-types) for an explanation of the type indicators. |
 
 #### Transformation Options
