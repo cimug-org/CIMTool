@@ -3,7 +3,7 @@
       id="au.com.langdale.cimtoole.feature"
       label="CIMTool"
       version="2.3.1"
-      provider-name="Langdale Consultants">
+      provider-name="UCA CIM Users Group (developed and maintained by Emerson | AspenTech)">
 
    <description url="https://cimtool.ucaiug.io">
       CIMTool is an open source tool for supporting the IEC Common Information Model (CIM) standards used in the electric power industry.
