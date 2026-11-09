@@ -46,6 +46,9 @@ The documentation builders (the eight **AsciiDoc** builders and `profile-doc-rtf
 Defect [Issue #339](https://github.com/cimug-org/CIMTool/issues/339):
 A project's `.cimtool-global-preferences` file holds the **CIMTool** workspace preferences that `cimtool-cli` uses, so that the CLI generates the same output as the desktop application. **CIMTool** refreshed the file when a project was opened or imported, or when changes were applied on the preference pages, but not for projects that were already open when **CIMTool** started, so such a project could keep the preferences of another workspace. The file is now refreshed for every open project when **CIMTool** starts, and is written only when its content changes, so an up-to-date file is left untouched.
 
+Defect [Issue #354](https://github.com/cimug-org/CIMTool/issues/354):
+On Windows, a custom builder that was imported and then removed in the same session could leave its `.xsl` file in **CIMTool**'s configuration area until **CIMTool** was restarted, because **CIMTool** did not close the files it wrote and read there when setting up, importing and removing builders. These files are now always closed, so removing a builder deletes its `.xsl` file.
+
 Cleanup [Issue #319](https://github.com/cimug-org/CIMTool/issues/319):
 The `rdfs-501ed2-beta` builder, which generated an RDFS schema targeting a draft of IEC 61970-501 Ed 2.0, has been removed.
 
