@@ -3,7 +3,7 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
-### Release 2.3.1 [TBD]
+### Release 2.3.1 [09-Nov-2026]
 
 **CIMTool 2.3.1** is a patch release with defect fixes, a security fix, enhancements to copyright notices and AsciiDoc documentation generation, and the automatic regeneration of profile artifacts after an upgrade.
 
