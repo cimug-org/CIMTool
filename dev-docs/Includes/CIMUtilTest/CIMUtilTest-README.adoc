@@ -62,6 +62,7 @@ CIMUtilTest/
 │       │   ├── NoNetworkExtension.java      ← JUnit 5 extension behind @NoNetwork
 │       │   └── TestProjects.java            ← The minimal and sample projects the tests run against
 │       ├── profiles/
+│       │   ├── ProfileClassPropertyInfoTest.java
 │       │   ├── ProfileSerializerFactoryTest.java
 │       │   ├── ProfilesAsciiDoctorConfigTemplateTest.java
 │       │   └── cl/                          ← Builder and command-line tests
@@ -147,6 +148,9 @@ The sample projects also read the CGMES CIM17 schema from
 
 | `StereotypeLabelTest`
 | The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference».
+
+| `ProfileClassPropertyInfoTest`
+| `ProfileClass.getPropertyInfo` reports no range, rather than failing, for a property the profile class does not restrict, such as the inverse of an association whose inverse end is not profiled (https://github.com/cimug-org/CIMTool/issues/342[Issue #342]).
 
 | `ProfileSerializerFactoryTest`
 | `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it (https://github.com/cimug-org/CIMTool/issues/314[Issue #314]).
@@ -254,7 +258,7 @@ The tests need no Eclipse runtime, so a JUnit Plug-in Test launch is not
 needed. The working folder must be inside the repository checkout, which is the
 default for a JUnit launch in Eclipse, since the tests find the repository from
 it. The full suite takes under a minute, most of it spent parsing the CGMES
-schema.
+schema. The tests pass with Java assertions enabled (`-ea`), which Eclipse JUnit launches turn on by default.
 
 
 
