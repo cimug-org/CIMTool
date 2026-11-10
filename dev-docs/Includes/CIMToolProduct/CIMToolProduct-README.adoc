@@ -481,7 +481,10 @@ operations are performed on the hardware itself.
 annually per industry requirements. All releases must therefore be signed with an
 RFC 3161 TSA timestamp so that signed artifacts remain valid after the certificate
 expires. Releases signed with a timestamp remain trusted indefinitely regardless
-of certificate expiry.
+of certificate expiry. A renewal or reissue adds the new certificate to the hardware
+token and leaves the previous one there, so the script's `CERT_ALIAS` and
+`CERT_SHA1` must be updated before the next signing session, as described in
+<<verifying-the-signing-certificate,Verifying the Signing Certificate>>.
 ====
 
 ===== Prerequisites
@@ -522,27 +525,17 @@ script:
   duration of the signing session, cleared immediately on completion, and never
   written to disk.
 
-. *Certificate alias*: The `CERT_ALIAS` variable in the script is set to the
-  UUID that the IdenTrust token uses internally to identify the certificate entry.
-  Note that this UUID does not match the friendly display name (`UCA USERS GROUP`)
-  shown in the SafeNet Authentication Client GUI, because `jarsigner` resolves aliases
-  through the PKCS#11 provider which exposes the underlying token UUID. If the
-  certificate is ever renewed onto a new token the alias UUID will change and the
-  `CERT_ALIAS` variable must be updated. To rediscover the alias run the following
-  command with Temurin's `keytool` (not Zulu or any other JDK distribution) with
-  the token inserted:
-+
-[source,cmd]
-----
-"C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" ^
-  -list -keystore NONE -storetype PKCS11 ^
-  -addprovider SunPKCS11 ^
-  -providerArg pkcs11.cfg
-----
-+
-The alias is the value appearing before the first comma in the output entry, e.g.:
-`2a5b28ed-47ef-2c08-a705-896ee5b3016e, PrivateKeyEntry, ...`
+. *Signing certificate*: The `CERT_ALIAS` and `CERT_SHA1` variables in the
+  script identify the certificate to sign with. `CERT_ALIAS` is the certificate's
+  PKCS#11 alias, which `jarsigner` uses; it is a UUID that the token assigns
+  internally and does not match the friendly display name (`UCA USERS GROUP`)
+  shown in SafeNet Authentication Client. `CERT_SHA1` is the certificate's SHA-1
+  thumbprint, which `signtool` and the script's certificate checks use. Both must
+  name the current certificate, and both change whenever the certificate is
+  renewed or reissued. See
+  <<verifying-the-signing-certificate,Verifying the Signing Certificate>>.
 
+[[hardware-token-pin-management-and-lockout-prevention]]
 ===== Hardware Token PIN Management and Lockout Prevention
 
 The UCA Users Group EV code signing key (used to sign all UCA open source project
@@ -639,6 +632,133 @@ IdenTrust.
 
 image::{cimtoolproduct-imagesdir}/SAC_Token_Unlock_Object.png[SafeNet Authentication Client token detail showing the Token unlock object is the Administrator Passcode]
 
+[[verifying-the-signing-certificate]]
+===== Verifying the Signing Certificate
+
+Each renewal or reissue of the EV certificate adds a new certificate to the
+IdenTrust token and *leaves the previous certificate on it*, so the token can hold
+more than one certificate issued to UCA USERS GROUP. In November 2026, for example,
+the token held the certificate first issued in April 2026, which IdenTrust had
+revoked when it reissued the certificate in September 2026, as well as the
+reissued certificate. `release-cimtool.bat` identifies the certificate to sign with
+by two values in its USER CONFIGURATION section, which must name the same, current
+certificate:
+
+* `CERT_ALIAS`: the certificate's PKCS#11 alias, used by `jarsigner`.
+* `CERT_SHA1`: the certificate's SHA-1 thumbprint, without spaces or colons, used
+  by `signtool` and by the script's certificate checks.
+
+Confirm both values before a signing session, and always after the certificate has
+been renewed or reissued. Only step 4 requires the token PIN.
+
+. *Check for more than one certificate.* In SafeNet Authentication Client (SAC),
+  open Advanced View and expand Tokens → IdenTrust Token → User certificates. Each
+  entry named *UCA USERS GROUP* is a certificate on the token. More than one entry
+  means that a renewal or reissue has left an earlier certificate behind.
++
+image::{cimtoolproduct-imagesdir}/SAC_User_Certificates.png[SafeNet Authentication Client listing two UCA USERS GROUP entries under User certificates]
+
+. *Identify the current certificate.* Select each entry and compare its *Serial
+  number* and *Valid from*. The certificate with the latest *Valid from* is the
+  current one: when a certificate is renewed or reissued, IdenTrust issues the new
+  certificate with a *Valid from* of the day the request is processed and revokes
+  the previous certificate, which nevertheless remains on the token. Here the
+  certificate issued on 8-Apr-2026 was superseded by the one issued on 11-Sep-2026,
+  the day the reissue was processed; both are valid to 8-Apr-2027, so *Valid to*
+  does not distinguish them.
++
+image::{cimtoolproduct-imagesdir}/SAC_Superseded_Certificate.png[Certificate details in SafeNet Authentication Client for the superseded certificate\, serial 40 01 9D 6D\, valid from 8-Apr-2026]
++
+image::{cimtoolproduct-imagesdir}/SAC_Current_Certificate.png[Certificate details in SafeNet Authentication Client for the current certificate\, serial 40 01 A0 91\, valid from 11-Sep-2026]
++
+[WARNING]
+====
+*SAC does not show revocation.* The *State* field in SAC checks only a
+certificate's dates. A certificate that IdenTrust has revoked, for example as
+superseded by a reissue, still appears as *Valid*, as the superseded certificate
+does here. Always confirm the certificate with the revocation check in step 3.
+====
++
+image::{cimtoolproduct-imagesdir}/SAC_Revoked_Certificate_State_Valid.png[The superseded certificate in SafeNet Authentication Client with State reading Valid although IdenTrust has revoked it]
+
+. *Check the certificate's revocation status.* List the certificates in the
+  current user's store, each with its thumbprint (`Cert Hash(sha1)`) and serial
+  number:
++
+[source,cmd]
+----
+certutil -user -store My "UCA USERS GROUP"
+----
++
+Then export the certificate identified in step 2 by its thumbprint and check it
+against IdenTrust's revocation services:
++
+[source,cmd]
+----
+certutil -user -store My <thumbprint> cert.cer
+certutil -urlfetch -verify cert.cer
+----
++
+For the current certificate the output ends with `Leaf certificate revocation
+check passed`. For a superseded certificate it ends with:
++
+----
+Certificate is REVOKED
+Cert is an End Entity certificate
+Leaf certificate is REVOKED (Reason=4)
+----
++
+Reason 4 is _superseded_. Never sign with a revoked certificate: `jarsigner` does
+not check revocation and signs with it without warning.
+
+. *Find the certificate's alias.* SAC does not show the PKCS#11 alias that
+  `jarsigner` uses. List the token's entries with Temurin's `keytool`, which
+  prompts once for the token PIN (see
+  <<hardware-token-pin-management-and-lockout-prevention,Hardware Token PIN Management and Lockout Prevention>>
+  before entering it):
++
+[source,cmd]
+----
+echo name = IdenTrust-EV> "%TEMP%\cimtool-pkcs11.cfg"
+echo library = C:\Windows\System32\eTPKCS11.dll>> "%TEMP%\cimtool-pkcs11.cfg"
+"C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" ^
+  -list -v -keystore NONE -storetype PKCS11 ^
+  -addprovider SunPKCS11 -providerArg "%TEMP%\cimtool-pkcs11.cfg"
+del "%TEMP%\cimtool-pkcs11.cfg"
+----
++
+For each certificate the listing gives its `Alias name`, `Serial number` and
+`SHA1` fingerprint. The alias of the entry whose serial number and SHA-1
+fingerprint match the current certificate is the value for `CERT_ALIAS`.
+
+. *Update the script.* In the USER CONFIGURATION section of
+  `release-cimtool.bat`, set `CERT_ALIAS` to the alias from step 4 and `CERT_SHA1`
+  to the thumbprint from step 3, and commit the change through a branch and pull
+  request like any other change.
+
+The script also checks these values itself. Before it asks for the token PIN, it
+confirms that the `CERT_SHA1` certificate is in the current user's store with its
+private key, has not expired and passes the revocation check. After signing the
+first JAR, it confirms that the JAR's signer is the `CERT_SHA1` certificate, which
+proves that `CERT_ALIAS` names the same certificate. If either check fails, the
+script stops, lists every certificate issued to UCA USERS GROUP with its thumbprint
+and dates, and refers to this section. A failure after the first JAR leaves that
+JAR signed with the wrong certificate, so delete the export and export the product
+again before re-running the script.
+
+*Removing a superseded certificate (optional).* Once step 3 shows that a
+certificate is revoked or expired, it can no longer produce valid signatures and
+may be deleted from the token in SAC. Deleting it is not required, because the
+script selects the certificate by its alias and thumbprint, but it removes any
+chance of selecting it by mistake. To delete it, right-click the certificate under
+User certificates and choose *Delete Certificate*. Deletion cannot be undone and
+requires the Token Passcode, so first confirm the serial number of the certificate
+being deleted, and never delete the current certificate. *Export Certificate...* on
+the same menu saves a copy of the public certificate, without its private key, if a
+record of it is wanted.
+
+image::{cimtoolproduct-imagesdir}/SAC_Delete_Certificate.png[The Delete Certificate option on the right-click menu of the superseded certificate in SafeNet Authentication Client]
+
 [[running-the-signing-script]]
 ===== Running the Signing Script
 
@@ -659,12 +779,15 @@ release-cimtool.bat <export-root> <version-string>
 release-cimtool.bat D:\CIMTool-Releases CIMTool-2.3.0-RC8
 ----
 
-The script performs the following steps in sequence:
+Before Step 1 the script verifies the signing certificate, as described in
+<<verifying-the-signing-certificate,Verifying the Signing Certificate>>, and then
+prompts for the token PIN. The script then performs the following steps in
+sequence:
 
 . *Signs all JAR files* in the `plugins/` directory using `jarsigner` with the
   IdenTrust EV token via PKCS#11, SHA-256 digest, and a TSA timestamp (approximately 20+ minutes)
 . *Signs `CIMTool.exe`* using `signtool` Authenticode with SHA-256 and a TSA
-  timestamp
+  timestamp, selecting the certificate by its thumbprint (`CERT_SHA1`)
 . *Populates `cimtool-cli/lib-repo/`* by invoking `install-jars.bat` with the
   signed export directory
 . *Builds `cimtool-cli.jar`* by invoking `mvn clean package` in the `cimtool-cli/`
