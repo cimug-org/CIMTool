@@ -374,7 +374,7 @@ The UCA Users Group EV code signing key (used to sign all UCA open source projec
 
 **PIN objects on the token.** The IdenTrust EV token used to sign UCA open source project releases is a SafeNet/Thales IDPrime device that exposes more than one PIN object, and they are not interchangeable:
 
-- **Token Passcode**: the user PIN that protects the code signing key, with a maximum of **15** retries on this token. The retry counter resets to its maximum on *any* single successful authentication, so one correct login fully restores the budget.
+- **Token Passcode**: the user PIN that protects the code signing key, with a maximum of **15** retries on this token. SAC calls it the Token Passcode; the signing script calls it the token PIN, and `keytool` and `jarsigner` ask for it as the "keystore password". All three are the same value, and every wrong entry counts against the same counter. **A successful login does not restore the counter on this token.** In November 2026, after a sequence of failed attempts, a successful `keytool` login left SAC reporting 5 of 15 retries remaining, unchanged after the token was removed and reinserted. Each failed attempt should therefore be treated as permanently spent until the token is unlocked, as described in *Recovering a locked token* below.
 - **Digital Signature PIN / PUK**: a separate PIN object (maximum 3 retries each) that exists on the token but does **not** protect the code signing key. Its much tighter limit is a hazard only if a signing operation is mistakenly bound to it.
 
 To confirm which PIN protects the signing key, open the certificate's **Private key** detail in SafeNet Authentication Client (SAC): Advanced View → Tokens → IdenTrust Token → User certificates → the certificate. The field **Token authentication on board** reading **No** confirms the key is gated by the standard Token Passcode rather than a separate on-board authentication object. On this token the signing key uses the **eToken Base Cryptographic Provider** with key specification **AT_KEYEXCHANGE**, gated by the Token Passcode.
@@ -385,18 +385,17 @@ To confirm which PIN protects the signing key, open the certificate's **Private 
 
 ![SafeNet Authentication Client token detail showing Token Passcode retries remaining against the maximum of 15](readme-images/SAC_Token_Passcode_Retries.png)
 
-**Why the signing script fails fast.** `release-cimtool.bat` signs the entire `plugins/` set, on the order of 150 JARs, in a single loop. If that loop continued past a failed signing attempt, an incorrect PIN or an unusable keystore would produce one failed token authentication *per JAR*, draining the retry counter and locking the token within a single run. To prevent this, the script treats the first JAR as a live token-access test: if the first signing attempt fails, the script aborts immediately, before any further `jarsigner` invocation. A misconfigured run therefore costs at most one attempt rather than the entire counter. This guard is intentional and must be preserved in any future revision of the signing pipeline.
+**Why the signing script fails fast.** `release-cimtool.bat` signs the entire `plugins/` set, more than 300 JARs for CIMTool 2.3.1, in a single loop. If that loop continued past a failed signing attempt, an incorrect PIN or an unusable keystore would produce one failed token authentication *per JAR*, draining the retry counter and locking the token within a single run. To prevent this, the script treats the first JAR as a live token-access test: if the first signing attempt fails, the script aborts immediately, before any further `jarsigner` invocation. A misconfigured run therefore costs at most one attempt rather than the entire counter. This guard is intentional and must be preserved in any future revision of the signing pipeline.
 
-> **Note: Distinguishing a keystore-load failure from a PIN failure:** Not every `jarsigner` failure is a wrong-PIN failure, and the distinction matters for the retry counter. A failure reported as `keystore load: load failed` or a provider error generally occurs in the JVM/PKCS#11 provider layer *before* a PIN is ever submitted to the token, and does not necessarily decrement the retry counter. A common cause on JDK 9 and later is the deprecated `-providerClass sun.security.pkcs11.SunPKCS11` invocation, which can fail to load the provider; the supported form is `-addprovider SunPKCS11` (retaining `-providerArg <pkcs11.cfg>`). To verify token access independently of the full pipeline, and to reset the retry counter with a known-good PIN, run a single `keytool` listing with PKCS#11 debug enabled:
+> **Note: Distinguishing a keystore-load failure from a PIN failure:** Not every `jarsigner` failure is a wrong-PIN failure, and the distinction matters for the retry counter. A failure reported as `keystore load: load failed` or a provider error generally occurs in the JVM/PKCS#11 provider layer *before* a PIN is ever submitted to the token, and does not necessarily decrement the retry counter. A common cause on JDK 9 and later is the deprecated `-providerClass sun.security.pkcs11.SunPKCS11` invocation, which can fail to load the provider; the supported form is `-addprovider SunPKCS11` (retaining `-providerArg <pkcs11.cfg>`). To verify token access independently of the full pipeline, run a single `keytool` listing with PKCS#11 debug enabled, using the configuration file created in step 4 of [Verifying the Signing Certificate](#verifying-the-signing-certificate). Run the command on its own and type the PIN at the prompt (see the caution in that step):
 > ```cmd
-> "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" ^
->   -list -keystore NONE -storetype PKCS11 ^
->   -addprovider SunPKCS11 -providerArg pkcs11.cfg ^
->   -J-Djava.security.debug=sunpkcs11
+> "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" -list -keystore NONE -storetype PKCS11 -addprovider SunPKCS11 -providerArg "%TEMP%\cimtool-pkcs11.cfg" -J-Djava.security.debug=sunpkcs11
 > ```
 > A clean listing of the UCA USERS GROUP certificate confirms both that the provider invocation is correct and that the token is accessible. The `sunpkcs11` debug output names the underlying PKCS#11 `CKR_*` result code when something is wrong, which distinguishes a provider or library problem from a genuine PIN rejection.
 
-> **Note: Recovering a locked token:** If the Token Passcode counter reaches zero the token locks. On this token the **Token unlock object** is the **Administrator Passcode** (there is no user PUK), which can reset the user PIN via SAC. However, possession of the Administrator Passcode depends on how IdenTrust provisioned the token; it is not always released to the subscriber, and it has its own independent retry limit that can also lock permanently. Do not rely on the admin unlock as a safety net unless the Administrator Passcode value is known to be held and recorded. Treat a lockout as a worst case that may require a replacement token and certificate re-issuance from IdenTrust.
+> **Note: Recovering a locked token:** If the Token Passcode counter reaches zero the token locks. On this token the **Token unlock object** is the **Administrator Passcode** (there is no user PUK). SAC's **Unlock Token** does not, however, ask for the Administrator Passcode: it is a challenge-response unlock that displays a one-time **Challenge Code** and requires a **Response Code** calculated from the token's administrator key by the token's administrator, after which a new Token Passcode is set and the counter returns to its maximum. Unless the Response Code can be produced locally, an unlock therefore requires contacting IdenTrust with the Challenge Code shown at the time. Do not type the Administrator Passcode or any other guess into the Response Code field: the administrator credential has its own independent retry limit that can also lock permanently. Cancelling the dialog submits nothing. Treat a lockout as a worst case that may require a replacement token and certificate re-issuance from IdenTrust, and keep a margin of retries rather than relying on an unlock.
+>
+> ![The Unlock Token dialog in SafeNet Authentication Client, with its Challenge Code redacted, asking for the Response Code provided by the administrator](readme-images/SAC_Unlock_Token_Challenge_Response.png)
 
 ![SafeNet Authentication Client token detail showing the Token unlock object is the Administrator Passcode, with the separate three-retry Digital Signature PIN and PUK](readme-images/SAC_Token_Unlock_Object.png)
 
@@ -407,6 +406,8 @@ Each renewal or reissue of the EV certificate adds a new certificate to the Iden
 
 - `CERT_ALIAS`: the certificate's PKCS#11 alias, used by `jarsigner`.
 - `CERT_SHA1`: the certificate's SHA-1 thumbprint, without spaces or colons, used by `signtool` and by the script's certificate checks.
+
+The serial numbers, thumbprint and alias shown in this section are those of the certificate in use in November 2026 and serve only as examples. Take the values for `CERT_ALIAS` and `CERT_SHA1` from the commands run against the token at the time, never from this page.
 
 Confirm both values before a signing session, and always after the certificate has been renewed or reissued. Only step 4 requires the token PIN.
 
@@ -424,41 +425,117 @@ Confirm both values before a signing session, and always after the certificate h
 
    ![The superseded certificate in SafeNet Authentication Client with State reading Valid although IdenTrust has revoked it](readme-images/SAC_Revoked_Certificate_State_Valid.png)
 
-3. **Check the certificate's revocation status.** List the certificates in the current user's store, each with its thumbprint (`Cert Hash(sha1)`) and serial number:
+3. **Check the certificate's revocation status and note its thumbprint.** List the certificates issued to UCA USERS GROUP in the current user's store:
    ```cmd
    certutil -user -store My "UCA USERS GROUP"
    ```
-   Then export the certificate identified in step 2 by its thumbprint and check it against IdenTrust's revocation services:
+   The output has one block per certificate. Find the block whose `Serial Number` and `NotBefore` match the current certificate from step 2. Its `Cert Hash(sha1)` line is the certificate's **thumbprint**, the value for `CERT_SHA1`; here it is `baced1e8fdc8071ac84646bb9a3e20312a485052`:
+   ```
+   My "Personal"
+   ================ Certificate 2 ================
+   Serial Number: 4001a09148413037aeadd67401696fb2
+   Issuer: CN=TrustID EV Code Signing CA 4, O=IdenTrust, C=US
+    NotBefore: 11-Sep-26 10:23 AM
+    NotAfter: 08-Apr-27 10:22 AM
+   Subject: CN=UCA USERS GROUP, OU=UCA USERS GROUP, O=UCA USERS GROUP, ...
+   Non-root Certificate
+   Cert Hash(sha1): baced1e8fdc8071ac84646bb9a3e20312a485052
+     Key Container = (redacted)
+     Provider = SafeNet Smart Card Key Storage Provider
+   Private key is NOT exportable
+   Encryption test passed
+   CertUtil: -store command completed successfully.
+   ```
+   Then export that certificate by its thumbprint and check it against IdenTrust's revocation services:
    ```cmd
-   certutil -user -store My <thumbprint> cert.cer
+   certutil -user -store My baced1e8fdc8071ac84646bb9a3e20312a485052 cert.cer
    certutil -urlfetch -verify cert.cer
    ```
-   For the current certificate the output ends with `Leaf certificate revocation check passed`. For a superseded certificate it ends with:
+   The output is long. Only its last lines matter. For the current certificate they read:
    ```
+   Verified Issuance Policies:
+       2.23.140.1.3
+       2.16.840.1.113839.0.6.14.1
+   Verified Application Policies:
+       1.3.6.1.5.5.7.3.3 Code Signing
+   Cert is an End Entity certificate
+   Leaf certificate revocation check passed
+   CertUtil: -verify command completed successfully.
+   ```
+   For a superseded certificate they read:
+   ```
+   The certificate is revoked. 0x80092010 (-2146885616 CRYPT_E_REVOKED)
+   ------------------------------------
    Certificate is REVOKED
    Cert is an End Entity certificate
    Leaf certificate is REVOKED (Reason=4)
+   CertUtil: -verify command completed successfully.
    ```
-   Reason 4 is *superseded*. Never sign with a revoked certificate: `jarsigner` does not check revocation and signs with it without warning.
+   Reason 4 is *superseded*. Note that the final line, `CertUtil: -verify command completed successfully.`, appears in both cases: it means only that the check ran. The certificate can be used only if the output contains `Leaf certificate revocation check passed`. Never sign with a revoked certificate: `jarsigner` does not check revocation and signs with it without warning. Delete `cert.cer` afterwards.
 
 4. **Find the certificate's alias.** SAC does not show the PKCS#11 alias that `jarsigner` uses. List the token's entries with Temurin's `keytool`, which prompts once for the token PIN (see [Hardware Token PIN Management and Lockout Prevention](#hardware-token-pin-management-and-lockout-prevention) before entering it):
-   ```cmd
-   echo name = IdenTrust-EV> "%TEMP%\cimtool-pkcs11.cfg"
-   echo library = C:\Windows\System32\eTPKCS11.dll>> "%TEMP%\cimtool-pkcs11.cfg"
-   "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" ^
-     -list -v -keystore NONE -storetype PKCS11 ^
-     -addprovider SunPKCS11 -providerArg "%TEMP%\cimtool-pkcs11.cfg"
-   del "%TEMP%\cimtool-pkcs11.cfg"
-   ```
-   For each certificate the listing gives its `Alias name`, `Serial number` and `SHA1` fingerprint. The alias of the entry whose serial number and SHA-1 fingerprint match the current certificate is the value for `CERT_ALIAS`.
+   1. Create the PKCS#11 configuration file that `keytool` needs:
+      ```cmd
+      echo name = IdenTrust-EV> "%TEMP%\cimtool-pkcs11.cfg"
+      echo library = C:\Windows\System32\eTPKCS11.dll>> "%TEMP%\cimtool-pkcs11.cfg"
+      ```
+   2. Run `keytool`, on its own:
+      ```cmd
+      "C:\Program Files\Eclipse Adoptium\jdk-20.0.2.9-hotspot\bin\keytool.exe" -list -v -keystore NONE -storetype PKCS11 -addprovider SunPKCS11 -providerArg "%TEMP%\cimtool-pkcs11.cfg"
+      ```
+   3. Afterwards, delete the configuration file:
+      ```cmd
+      del "%TEMP%\cimtool-pkcs11.cfg"
+      ```
 
-5. **Update the script.** In the USER CONFIGURATION section of `release-cimtool.bat`, set `CERT_ALIAS` to the alias from step 4 and `CERT_SHA1` to the thumbprint from step 3, and commit the change through a branch and pull request like any other change.
+   > ⚠️ **Run the `keytool` command by itself and type the PIN.** `keytool` reads the PIN from the console, so any text pasted together with the command, such as the `del` line above, is read as the PIN and counts as a failed attempt. Paste or type only the single `keytool` line, wait for `Enter keystore password:`, and then type the PIN; nothing is displayed as it is typed. A response of `CKR_PIN_INCORRECT` means the token rejected the PIN and one retry has been used: check **Token Passcode retries remaining** in SAC before trying again, and see [Hardware Token PIN Management and Lockout Prevention](#hardware-token-pin-management-and-lockout-prevention).
+
+   The listing reports how many entries the token holds, then gives one block per certificate on the token, each ending with two lines of asterisks. Each block starts with `Alias name`, followed by the certificate's `Serial number`, `Valid from` and `SHA1` fingerprint (the thumbprint from step 3, in upper case with colons). Find the block whose `Serial number` matches the current certificate; its `Alias name` is the value for `CERT_ALIAS`, here `6f6c6115-4950-cfbb-f82e-2200a0d6581e`:
+   ```
+   Keystore type: PKCS11
+   Keystore provider: SunPKCS11-IdenTrust-EV
+
+   Your keystore contains 1 entry
+
+   Alias name: 6f6c6115-4950-cfbb-f82e-2200a0d6581e
+   Entry type: PrivateKeyEntry
+   Certificate chain length: 3
+   Certificate[1]:
+   Owner: CN=UCA USERS GROUP, OU=UCA USERS GROUP, O=UCA USERS GROUP, ...
+   Issuer: CN=TrustID EV Code Signing CA 4, O=IdenTrust, C=US
+   Serial number: 4001a09148413037aeadd67401696fb2
+   Valid from: Fri Sep 11 11:23:46 CDT 2026 until: Thu Apr 08 11:22:46 CDT 2027
+   Certificate fingerprints:
+            SHA1: BA:CE:D1:E8:FD:C8:07:1A:C8:46:46:BB:9A:3E:20:31:2A:48:50:52
+            SHA256: 47:C4:6E:C5:C6:99:CB:F1:F8:57:92:74:6B:78:00:3D:...
+   ...
+   *******************************************
+   *******************************************
+   ```
+   If the token still holds a superseded certificate, the listing contains a second block with a different alias, serial number and fingerprint. Do not use that alias.
+
+5. **Update the script.** Open `CIMToolProduct\release-cimtool.bat` in a text editor. In the USER CONFIGURATION section near the top of the file, set `CERT_ALIAS` to the alias from step 4 and `CERT_SHA1` to the thumbprint from step 3. Replace only the text after `=`, with no quotes and no spaces. The thumbprint may be pasted as `certutil` prints it; upper case is used here only for readability, because letter case does not matter. With the values above, the two lines read:
+   ```bat
+   REM CERT_SHA1: the certificate's SHA-1 thumbprint without spaces or colons, used
+   REM   by signtool and by the certificate checks below.
+   set CERT_ALIAS=6f6c6115-4950-cfbb-f82e-2200a0d6581e
+   set CERT_SHA1=BACED1E8FDC8071AC84646BB9A3E20312A485052
+   ```
+   Save the file, then commit the change through a branch and pull request like any other change.
 
 The script also checks these values itself. Before it asks for the token PIN, it confirms that the `CERT_SHA1` certificate is in the current user's store with its private key, has not expired and passes the revocation check. After signing the first JAR, it confirms that the JAR's signer is the `CERT_SHA1` certificate, which proves that `CERT_ALIAS` names the same certificate. If either check fails, the script stops, lists every certificate issued to UCA USERS GROUP with its thumbprint and dates, and refers to this section. A failure after the first JAR leaves that JAR signed with the wrong certificate, so delete the export and export the product again before re-running the script.
 
-**Removing a superseded certificate (optional).** Once step 3 shows that a certificate is revoked or expired, it can no longer produce valid signatures and may be deleted from the token in SAC. Deleting it is not required, because the script selects the certificate by its alias and thumbprint, but it removes any chance of selecting it by mistake. To delete it, right-click the certificate under User certificates and choose **Delete Certificate**. Deletion cannot be undone and requires the Token Passcode, so first confirm the serial number of the certificate being deleted, and never delete the current certificate. **Export Certificate…** on the same menu saves a copy of the public certificate, without its private key, if a record of it is wanted.
+**Removing a superseded certificate (optional).** Once step 3 shows that a certificate is revoked or expired, it can no longer produce valid signatures and may be deleted from the token in SAC. Deleting it is not required, because the script selects the certificate by its alias and thumbprint, but it removes any chance of selecting it by mistake. To delete it, right-click the certificate under User certificates and choose **Delete Certificate**. Deletion cannot be undone, so first confirm the serial number of the certificate being deleted, and never delete the current certificate. **Export Certificate…** on the same menu saves a copy of the public certificate, without its private key, if a record of it is wanted.
 
 ![The Delete Certificate option on the right-click menu of the superseded certificate in SafeNet Authentication Client](readme-images/SAC_Delete_Certificate.png)
+
+After a confirmation, SAC asks for the **Token Passcode**. Type it carefully: a wrong entry counts against the retry counter, which a later successful login does not restore.
+
+![SafeNet Authentication Client Token Logon dialog asking for the Token Passcode before deleting the certificate](readme-images/SAC_Delete_Certificate_Token_Logon.png)
+
+SAC then reports that the certificate was deleted, and User certificates lists only the remaining certificate. Confirm with `certutil -user -store My "UCA USERS GROUP"`, which should now list only the current certificate, and with the `keytool` listing in step 4, which should report one entry.
+
+![SafeNet Authentication Client reporting that the certificate was deleted successfully](readme-images/SAC_Delete_Certificate_Success.png)
 
 #### Running the Signing Script
 
