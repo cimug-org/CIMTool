@@ -47,7 +47,9 @@ REM  4. Maven 3.9 or later must be installed and mvn must be on the PATH.
 REM     Required to build the cimtool-cli uber JAR.
 REM
 REM  5. Review and update the USER CONFIGURATION section below before
-REM     running for the first time.
+REM     running for the first time, and update CERT_ALIAS and CERT_SHA1
+REM     whenever the EV certificate is renewed or reissued. See "Verifying
+REM     the Signing Certificate" in the CIMToolProduct developer documentation.
 REM
 REM  Usage
 REM  -----
@@ -73,12 +75,20 @@ set SIGNTOOL="C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signto
 REM Maven executable. Must be on the PATH. Override here if needed.
 set MVN=mvn
 
-REM Certificate alias as shown in SafeNet Authentication Client Tools
-REM under: Tokens > IdenTrust Token > User certificates
-set CERT_ALIAS=2a5b28ed-47ef-2c08-a705-896ee5b3016e
-
-REM Organization name exactly as it appears in the EV certificate "Issued to" field.
-set CERT_SUBJECT=UCA USERS GROUP
+REM Signing certificate. CERT_ALIAS and CERT_SHA1 must identify the SAME
+REM certificate on the IdenTrust token, and both must be updated whenever the
+REM certificate is renewed or reissued. A renewal or reissue leaves the previous
+REM certificate on the token, so the token can hold more than one certificate
+REM issued to UCA USERS GROUP. See "Verifying the Signing Certificate" in the
+REM CIMToolProduct developer documentation for how to find both values.
+REM
+REM CERT_ALIAS: the certificate's PKCS#11 alias, used by jarsigner. It is NOT
+REM   shown in SafeNet Authentication Client Tools; it is the "Alias name" that
+REM   keytool -list -v reports for the certificate.
+REM CERT_SHA1: the certificate's SHA-1 thumbprint without spaces or colons, used
+REM   by signtool and by the certificate checks below.
+set CERT_ALIAS=6f6c6115-4950-cfbb-f82e-2200a0d6581e
+set CERT_SHA1=BACED1E8FDC8071AC84646BB9A3E20312A485052
 
 REM Primary PKCS#11 library installed by SafeNet Authentication Client.
 REM If not found the script will attempt the alternate pkcs11.dll location.
@@ -157,6 +167,15 @@ if not exist %SIGNTOOL% (
     exit /b 1
 )
 
+REM --- Locate keytool alongside jarsigner (used to check the signing certificate) ---
+set KEYTOOL=%JARSIGNER:jarsigner.exe=keytool.exe%
+set KEYTOOL_PATH=%KEYTOOL:"=%
+if not exist "%KEYTOOL_PATH%" (
+    echo ERROR: keytool not found at %KEYTOOL%
+    echo        keytool must be installed alongside jarsigner in the Temurin JDK.
+    exit /b 1
+)
+
 REM --- Validate PKCS#11 DLL ---
 if not exist "%PKCS11_DLL%" (
     echo WARNING: Primary PKCS#11 library not found at %PKCS11_DLL%
@@ -208,6 +227,63 @@ if /i not "%TOKEN_CONFIRM%"=="Y" (
     del "%PKCS11_CFG%" 2>nul
     exit /b 1
 )
+echo.
+
+REM --- Verify the signing certificate (no PIN required) ---
+REM Confirms that CERT_SHA1 names a certificate in the current user's store that
+REM has a private key and has not expired, and that IdenTrust reports it as not
+REM revoked. SafeNet Authentication Client shows only a certificate's dates, so a
+REM certificate revoked as superseded by a reissue still appears there as Valid.
+echo Verifying the signing certificate %CERT_SHA1%...
+powershell -NoProfile -Command "$c = Get-Item ('Cert:\CurrentUser\My\' + '%CERT_SHA1%') -ErrorAction SilentlyContinue; if (-not $c) { exit 2 }; if ($c.NotAfter -lt (Get-Date)) { exit 3 }; if (-not $c.HasPrivateKey) { exit 4 }; exit 0"
+if errorlevel 4 (
+    echo.
+    echo ERROR: The signing certificate %CERT_SHA1% has no private key in this
+    echo        session. Ensure the token is inserted and SafeNet Authentication
+    echo        Client is running.
+    call :list_certificates
+    del "%PKCS11_CFG%" 2>nul
+    exit /b 1
+)
+if errorlevel 3 (
+    echo.
+    echo ERROR: The signing certificate %CERT_SHA1% has expired.
+    call :list_certificates
+    del "%PKCS11_CFG%" 2>nul
+    exit /b 1
+)
+if errorlevel 2 (
+    echo.
+    echo ERROR: No certificate with the thumbprint %CERT_SHA1% was found in the
+    echo        current user's certificate store.
+    call :list_certificates
+    del "%PKCS11_CFG%" 2>nul
+    exit /b 1
+)
+
+set CERT_FILE=%TEMP%\cimtool-signing-cert.cer
+set CERT_CHECK=%TEMP%\cimtool-signing-cert-check.txt
+del "%CERT_FILE%" 2>nul
+certutil -user -store My %CERT_SHA1% "%CERT_FILE%" >nul 2>&1
+certutil -urlfetch -verify "%CERT_FILE%" > "%CERT_CHECK%" 2>&1
+findstr /c:"Leaf certificate revocation check passed" "%CERT_CHECK%" >nul
+if errorlevel 1 (
+    echo.
+    echo ERROR: The signing certificate %CERT_SHA1% failed its revocation check:
+    findstr /i /c:"REVOKED" /c:"CRYPT_E" /c:"CERT_E" "%CERT_CHECK%"
+    echo.
+    echo        It may have been revoked ^(for example superseded by a reissued
+    echo        certificate^), or IdenTrust's revocation service may be unreachable.
+    echo        Do NOT sign with this certificate. The full certutil output is in
+    echo        %CERT_CHECK%
+    call :list_certificates
+    del "%CERT_FILE%" 2>nul
+    del "%PKCS11_CFG%" 2>nul
+    exit /b 1
+)
+del "%CERT_FILE%" 2>nul
+del "%CERT_CHECK%" 2>nul
+echo   OK: the certificate is present, has not expired and is not revoked.
 echo.
 
 REM --- Prompt for token PIN once (input is masked) ---
@@ -287,6 +363,14 @@ for /r "%PLUGINS_DIR%" %%F in (*.jar) do (
                 set /a JAR_ERRORS+=1
             )
         )
+        if "!TOKEN_TESTED!"=="0" (
+            call :check_jar_signer "%%F"
+            if errorlevel 1 (
+                set TOKEN_PIN=
+                del "%PKCS11_CFG%" 2>nul
+                exit /b 1
+            )
+        )
         set TOKEN_TESTED=1
     )
 )
@@ -312,7 +396,7 @@ if not exist "%PRODUCT_DIR%\CIMTool.exe" (
     exit /b 1
 )
 
-%SIGNTOOL% sign /tr %TSA_URL% /td sha256 /fd sha256 /n "%CERT_SUBJECT%" "%PRODUCT_DIR%\CIMTool.exe"
+%SIGNTOOL% sign /tr %TSA_URL% /td sha256 /fd sha256 /sha1 %CERT_SHA1% "%PRODUCT_DIR%\CIMTool.exe"
 if errorlevel 1 (
     echo ERROR: Failed to sign CIMTool.exe
     del "%PKCS11_CFG%" 2>nul
@@ -459,4 +543,41 @@ echo ===========================================================================
 echo.
 
 endlocal
+exit /b 0
+
+REM =============================================================================
+REM  Subroutines
+REM =============================================================================
+
+REM --- :list_certificates ---
+REM Lists every certificate issued to UCA USERS GROUP in the current user's store,
+REM oldest first, so that the correct CERT_SHA1 can be identified.
+:list_certificates
+echo.
+echo        Certificates issued to UCA USERS GROUP in the current user's store:
+powershell -NoProfile -Command "Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -like '*CN=UCA USERS GROUP*' } | Sort-Object NotBefore | ForEach-Object { '         ' + $_.Thumbprint + '  valid ' + $_.NotBefore.ToString('dd-MMM-yyyy') + ' to ' + $_.NotAfter.ToString('dd-MMM-yyyy') + '  serial ' + $_.SerialNumber }"
+echo.
+echo        See "Verifying the Signing Certificate" in the CIMToolProduct developer
+echo        documentation, then update CERT_ALIAS and CERT_SHA1 in this script.
+exit /b 0
+
+REM --- :check_jar_signer <jar> ---
+REM Confirms that the JAR was signed with the certificate CERT_SHA1 names, which
+REM proves that CERT_ALIAS and CERT_SHA1 identify the same certificate. Run once,
+REM after the first JAR is signed, so that a mismatch stops the run early.
+:check_jar_signer
+powershell -NoProfile -Command "$t = '%CERT_SHA1%'.ToUpper(); $f = (($t -split '(..)') -ne '') -join ':'; $o = & '%KEYTOOL_PATH%' -printcert -jarfile '%~1' 2>&1 | Out-String; if ($o.Contains('SHA1: ' + $f)) { exit 0 } else { exit 1 }"
+if errorlevel 1 (
+    echo.
+    echo =============================================================================
+    echo ERROR: The first JAR was not signed with the certificate CERT_SHA1 names.
+    echo.
+    echo        CERT_ALIAS ^(%CERT_ALIAS%^) and CERT_SHA1 ^(%CERT_SHA1%^)
+    echo        identify different certificates. Update CERT_ALIAS to the alias of
+    echo        the CERT_SHA1 certificate, delete this export, export the product
+    echo        again and re-run the script.
+    echo =============================================================================
+    exit /b 1
+)
+echo   Confirmed: the first JAR is signed with certificate %CERT_SHA1%.
 exit /b 0
