@@ -1,0 +1,26 @@
+# 
+# This example RDF Turtle file specifies the namespaces to be used when parsing the XMI file with the 
+# same name as the annotation file such as:
+#   iec61970cim17v40_iec61968cim13v13b_iec62325cim03v17b_CIM100.1.1.1.xmi
+#   iec61970cim17v40_iec61968cim13v13b_iec62325cim03v17b_CIM100.1.1.1.annotation
+#
+
+# 
+# Preamble
+# Note the underscore (_) after the #Package portion of the prefix...
+#
+@prefix uml: <http://langdale.com.au/2005/UML#> .
+@prefix package: <http://cim.ucaiug.io/2020/CIM100#Package_> .
+
+# 
+# Each line below is read:
+#
+#					package:name uml:baseuri "uri" .
+#
+# where:
+#					'name' is a package name defined in the XMI file
+#					'uri'  is the namespace URI for classes and properties defined therein 
+#
+ 
+package:Extensions     uml:baseuri "http://www.ucaiug.org/CIM100/extensions#" .
+package:Standard     uml:baseuri "http://www.ucaiug.org/CIM100/extensions#" .
