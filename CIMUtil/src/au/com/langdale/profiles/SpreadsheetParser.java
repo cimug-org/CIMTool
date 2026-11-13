@@ -337,7 +337,7 @@ public class SpreadsheetParser {
 			try {
 				spec.handleRow(this, row);
 			} catch (ParseProblem e) {
-				log(e, spec.sheetNo.toString(), new IndexNum().set(rownum).toString());
+				log(e, spec.sheetNo.toString(), new IndexNum().set(rownum - 1).toString());
 				//print(row, spec);
 			}
 		}

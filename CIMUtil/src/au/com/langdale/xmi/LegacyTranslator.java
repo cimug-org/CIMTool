@@ -76,6 +76,7 @@ public class LegacyTranslator implements Runnable {
 		log.debug("Stage 2 XMI model size: {}", getModel().size());
 
 		propagateAnnotation(UML.baseuri);
+		propagateAnnotation(UML.baseprefix);
 
 		pass2.run();
 	}
@@ -160,6 +161,7 @@ public class LegacyTranslator implements Runnable {
 	 * These are then available in later passes.
 	 */
 	Runnable pass1 = new Pass() {
+
 		/**
 		 * Substitute a a single resource.
 		 * 
@@ -177,7 +179,8 @@ public class LegacyTranslator implements Runnable {
 				return annotationResource(l);
 			} else if (r.hasProperty(RDF.type, UML.Package)) {
 				// there are three strategies evolved over time to assign package URI's
-				String packageNamespace = defaultNamespace; // findBaseURI(r);
+				String packageNamespace = findBaseURI(r);
+				//String packageNamespace = defaultNamespace; // findBaseURI(r);
 				if (uniqueNamespaces) {
 					if (extraDecoration)
 						return result.createResource(

@@ -102,30 +102,42 @@ p.package { position: absolute; right: 10px; top: 0px}
 					Profile namespace:
 					<span class="namespace"><xsl:value-of select="$baseURI" /></span>
 				</p>
+				<xsl:if test="count(/.//a:Root|/.//a:Message) > 0">
 				<h1>Concrete Classes</h1>
 				<xsl:apply-templates select="a:Root|a:Message">
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				</xsl:if>
+				<xsl:if test="count(/.//a:ComplexType) > 0">
 				<h1>Abstract Classes</h1>
-				<xsl:apply-templates select="a:ComplexType"  >
+				<xsl:apply-templates select="a:ComplexType">
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				</xsl:if>
+				<xsl:if test="count(/.//a:EnumeratedType) > 0">
 				<h1>Enumerations</h1>
-				<xsl:apply-templates select="a:EnumeratedType" >
+				<xsl:apply-templates select="a:EnumeratedType">
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				</xsl:if>
+				<xsl:if test="count(/.//a:CompoundType) > 0">
 				<h1>Compound Types</h1>
-				<xsl:apply-templates select="a:CompoundType"  >
+				<xsl:apply-templates select="a:CompoundType">
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				</xsl:if>
+				<xsl:if test="count(/.//a:SimpleType) > 0">
 				<h1>Datatypes</h1>
-				<xsl:apply-templates select="a:SimpleType" >
+				<xsl:apply-templates select="a:SimpleType">
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				</xsl:if>
+				<xsl:if test="count(/.//a:PrimitiveType) > 0">
 				<h1>Primitive Types</h1>
-				<xsl:apply-templates select="a:PrimitiveType" >
+				<xsl:apply-templates select="a:PrimitiveType">
 					<xsl:sort select="@name"/>
 				</xsl:apply-templates>
+				</xsl:if>
 			</body>
 		</html>
 	</xsl:template>

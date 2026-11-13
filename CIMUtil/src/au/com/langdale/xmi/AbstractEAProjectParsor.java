@@ -101,6 +101,10 @@ public abstract class AbstractEAProjectParsor extends XMIModel implements EAProj
 		if (stereotypeExtensions != null && !stereotypeExtensions.isEmpty())
 			this.stereotypeExtensions = stereotypeExtensions;
 	}
+	
+	public Map<String, OntResource> getNamedStereotypes() {
+		return namedStereotypes;
+	}
 
 	protected class TagValue {
 		@Override

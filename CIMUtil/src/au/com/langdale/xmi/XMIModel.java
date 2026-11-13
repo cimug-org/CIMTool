@@ -7,13 +7,18 @@ package au.com.langdale.xmi;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 import au.com.langdale.logging.SchemaImportLogger;
 import au.com.langdale.logging.SchemaImportLoggerFactory;
 import au.com.langdale.sax.XMLElement;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.xml.sax.Attributes;
 
 import com.hp.hpl.jena.graph.FrontsNode;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * A base for the XMI2OWL interpretor that wraps a Jena OWL model and provides
@@ -34,7 +39,19 @@ public class XMIModel {
 
 	public XMIModel() {
 	}
-
+	
+	public Map<String, OntResource> getNamedStereotypes() {
+		Map<String, OntResource> namedStereotypes = new HashMap<String, OntResource>();
+		ResIterator types = model.listSubjectsWithProperty(RDF.type, UML.Stereotype);
+		while (types.hasNext()) {
+			OntResource stereotype = types.nextResource();
+			if (stereotype.getLabel() != null && !"".equals(stereotype.getLabel()) && !namedStereotypes.containsKey(stereotype.getLabel())) {
+				namedStereotypes.put(stereotype.getLabel(), stereotype);
+			}
+		}
+		return namedStereotypes;
+	}
+	
 	/**
 	 * Return the underlying Jena OWL model.
 	 */

@@ -73,6 +73,7 @@ import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.Property;
+import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.ResourceFactory;
 import au.com.langdale.logging.SchemaImportLogger;
 import au.com.langdale.logging.SchemaImportLoggerFactory;
@@ -481,12 +482,45 @@ public class Task extends Info {
 
 	private static OntModel parseXMI(IFile file) throws CoreException {
 		XMIParser parser = new XMIParser();
+		StereotypedNamespaces stereotypedNamespaces = null;
 		try {
 			parser.parse(new BufferedInputStream(file.getContents()));
+			//
+			Set<String> stereotypeExtensions = new HashSet<>();
+			IFile stereotypeExtensionsFile = getRelated(file, "stereotype-extensions", false);
+			if (stereotypeExtensionsFile.getLocation().toFile().exists()) {
+				StereotypeExtensions.initStereotypeExtensions(file.getProject().getName(),
+						stereotypeExtensionsFile.getLocation().toFile());
+				stereotypeExtensions = StereotypeExtensions.getStereotypes(file.getProject().getName());
+			}
+			//
+			IFile namespacePrefixesFile = getRelated(file, "namespace-prefixes", false);
+			if (namespacePrefixesFile.exists()) {
+				try {
+					NamespacePrefixes.init(file.getProject().getName(), namespacePrefixesFile.getLocation().toFile());
+				} catch (Exception e) {
+					throw new CoreException(new Status(IStatus.ERROR, CIMToolPlugin.PLUGIN_ID,
+							String.format("Duplicate namespace prefix mapping found in file: %s",
+									namespacePrefixesFile.getLocation().toFile().getName()),
+							e));
+				}
+			}
+			//
+			IFile namespacesFile = getRelated(file, "namespaces", false);
+			File nsFile = (namespacesFile.getLocation().toFile().exists() ? namespacesFile.getLocation().toFile() : null);
+			if (nsFile != null) {
+				stereotypedNamespaces = new StereotypedNamespaces(nsFile, parser.getNamedStereotypes());
+			} else {
+				// A StereotypedNamespaces instance created via the default constructor
+				// represents an "empty" namespace to stereotype mapping...
+				stereotypedNamespaces = new StereotypedNamespaces();
+			}
+			//
 		} catch (Exception e) {
 			throw error("Can't parse model file " + file.getName(), e);
 		}
-		return interpretSchema(parser.getModel(), file);
+		CIMInterpreterResult result = interpretSchema(parser.getModel(), file, stereotypedNamespaces, false);
+		return result.getModel();
 	}
 
 	private static CIMInterpreterResult parseEAProject(IFile file, boolean validateModel) throws CoreException {
@@ -532,7 +566,7 @@ public class Task extends Info {
 		} catch (EAProjectParserException e) {
 			throw error("Can't access EA project", e);
 		}
-		//
+		
 		CIMInterpreterResult result = interpretSchema(parser.getModel(), file, parser.getStereotypedNamespaces(),
 				validateModel);
 		if (validateModel) {
