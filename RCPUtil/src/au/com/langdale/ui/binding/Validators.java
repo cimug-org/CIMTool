@@ -12,7 +12,14 @@ import java.util.regex.Pattern;
  */
 public class Validators {
 
-	public static final Pattern NAMESPACE_REGEX = Pattern.compile("[A-Za-z]+:.*#");
+	/**
+	 * A namespace accepted by CIMTool: an {@code http:} or {@code https:} URI
+	 * (scheme compared case-insensitively) with an authority, no whitespace, and
+	 * a final {@code #} or {@code /} (issue #377). This rule must remain identical
+	 * to {@code au.com.langdale.util.NamespaceUtils.NAMESPACE_PATTERN} in Kena,
+	 * on which RCPUtil does not depend.
+	 */
+	public static final Pattern NAMESPACE_REGEX = Pattern.compile("(?i:https?)://\\S+[#/]");
 	public static final Pattern NCNAME_REGEX = Pattern.compile("[A-Za-z_][A-Za-z0-9-_.]*");
 
 	public static final Validator NONE = new Validator() {
@@ -208,7 +215,7 @@ public class Validators {
 			if (value.length() == 0)
 				return "A symbolic namespace URI is required";
 			if (!NAMESPACE_REGEX.matcher(value).matches())
-				return "The namespace must begin with a scheme such as 'http:' and end with a '#'";
+				return "The namespace must begin with a scheme such as 'http:' or 'https:' and end with a '#' or '/'";
 			return null;
 		}
 	};

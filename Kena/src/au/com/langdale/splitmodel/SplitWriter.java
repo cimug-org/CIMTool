@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import au.com.langdale.kena.ConversionException;
 import au.com.langdale.kena.Injector;
+import au.com.langdale.util.NamespaceUtils;
 
 import com.hp.hpl.jena.rdf.model.impl.Util;
 
@@ -126,7 +127,9 @@ public class SplitWriter extends SplitBase implements Injector {
 	public void setBase(String base) {
 		if(freeze)
 			return;
-		if( ! base.endsWith("#"))
+		// A valid hash or slash namespace is kept as it is (issue #377). Any other
+		// base, such as the default file: URI, is given a trailing '#' as before.
+		if( ! base.endsWith("#") && ! NamespaceUtils.isValidNamespace(base))
 			base += "#";
 		this.base = base;
 	}
@@ -147,7 +150,8 @@ public class SplitWriter extends SplitBase implements Injector {
 	public void setPrefix(String prefix, String namespace) {
 		if( freeze )
 			return;
-		if( ! namespace.startsWith("http:") || ! namespace.endsWith("#"))
+		// Accept http: and https: namespaces ending in '#' or '/' (issue #377).
+		if( ! NamespaceUtils.isValidNamespace(namespace))
 			return;
 		if( prefixes.containsKey(prefix) || spaces.containsKey(namespace))
 			return;
@@ -234,12 +238,12 @@ public class SplitWriter extends SplitBase implements Injector {
 				return ":" + name;
 		}
 		else {
-			int ix = uri.lastIndexOf('#') + 1;
-			if( ix > 0 && ix < uri.length()) {
-				String namespace = uri.substring(0, ix);
+			// Split at the last '#', or the last '/' for slash namespaces (issue #377).
+			String namespace = NamespaceUtils.namespaceOf(uri);
+			String name = NamespaceUtils.localNameOf(uri);
+			if( namespace.length() > 0 && name.length() > 0) {
 				String prefix = (String) spaces.get(namespace);
 				if( prefix != null) {
-					String name = uri.substring(ix);
 					if( NCNAME_REGEX.matcher(name).matches())
 						return prefix + ":" + name;
 				}
