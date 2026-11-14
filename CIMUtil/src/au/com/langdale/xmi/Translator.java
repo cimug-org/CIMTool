@@ -9,6 +9,7 @@ import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 import au.com.langdale.kena.Resource;
+import au.com.langdale.util.NamespaceUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -207,7 +208,7 @@ public class Translator implements Runnable {
 					if (extraDecoration)
 						return p.getNameSpace();
 					else
-						return stripHash(p.getNameSpace()) + "/" + p.getLocalName() + "#";
+						return packageNamespace(p.getNameSpace(), "/" + p.getLocalName());
 			}
 
 			return defaultNamespace;
@@ -309,9 +310,9 @@ public class Translator implements Runnable {
 				if (uniqueNamespaces) {
 					if (extraDecoration)
 						return result.createResource(
-								stripHash(packageNamespace) + "/Global" + pathName(r) + "#Package_" + l);
+								packageNamespace(packageNamespace, "/Global" + pathName(r)) + "Package_" + l);
 					else
-						return result.createResource(stripHash(packageNamespace) + prefixPath(r) + "#" + l);
+						return result.createResource(packageNamespace(packageNamespace, prefixPath(r)) + l);
 				} else
 					return result.createResource(packageNamespace + "Package_" + l);
 			} else
@@ -324,6 +325,39 @@ public class Translator implements Runnable {
 		while (uri.endsWith("#") || uri.endsWith("/"))
 			uri = uri.substring(0, uri.length() - 1);
 		return uri;
+	}
+
+	/**
+	 * Returns the namespace for a package path such as "/Global/Base/Wires" under
+	 * a base namespace, following the base's convention (issue #377). A valid
+	 * http: or https: slash base gives http://x/y/Global/Base/Wires/ and any
+	 * other base keeps the historical form http://x/y/Global/Base/Wires# built
+	 * with {@link #stripHash(String)}.
+	 * 
+	 * @param base the base namespace
+	 * @param path the package path, empty or beginning with '/'
+	 * @return the package namespace
+	 */
+	public static String packageNamespace(String base, String path) {
+		if (NamespaceUtils.isValidNamespace(base) && NamespaceUtils.isSlashNamespace(base)) {
+			String segments = path.startsWith("/") ? path.substring(1) : path;
+			return segments.isEmpty() ? base : base + segments + "/";
+		}
+		return stripHash(base) + path + "#";
+	}
+
+	/**
+	 * Returns the IRI of the schema ontology for a schema namespace (issue #377).
+	 * A valid http: or https: slash namespace is its own ontology IRI. Any other
+	 * namespace keeps the historical {@link #stripHash(String)} form.
+	 * 
+	 * @param namespace the schema namespace
+	 * @return the ontology IRI
+	 */
+	public static String schemaOntologyUri(String namespace) {
+		if (NamespaceUtils.isValidNamespace(namespace) && NamespaceUtils.isSlashNamespace(namespace))
+			return namespace;
+		return stripHash(namespace);
 	}
 
 	public static boolean powercc = true;;

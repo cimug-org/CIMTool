@@ -111,7 +111,7 @@ class CIMInterpreterImpl extends UMLInterpreter implements CIMInterpreter {
 	}
 
 	private void createOntologyHeader(String baseURI) {
-		model.createIndividual(Translator.stripHash(baseURI), OWL.Ontology);
+		model.createIndividual(Translator.schemaOntologyUri(baseURI), OWL.Ontology);
 		model.setNsPrefix("", baseURI);
 	}
 

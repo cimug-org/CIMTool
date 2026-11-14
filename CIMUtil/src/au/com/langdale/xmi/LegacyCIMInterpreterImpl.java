@@ -83,7 +83,7 @@ public class LegacyCIMInterpreterImpl extends UMLInterpreter implements CIMInter
 	}
 
 	private void createOntologyHeader(String baseURI) {
-		model.createIndividual(Translator.stripHash(baseURI), OWL.Ontology);
+		model.createIndividual(Translator.schemaOntologyUri(baseURI), OWL.Ontology);
 		model.setNsPrefix("", baseURI);
 	}
 

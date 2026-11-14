@@ -181,9 +181,9 @@ public class LegacyTranslator implements Runnable {
 				if (uniqueNamespaces) {
 					if (extraDecoration)
 						return result.createResource(
-								stripHash(packageNamespace) + "/Global" + pathName(r) + "#Package_" + l);
+								Translator.packageNamespace(packageNamespace, "/Global" + pathName(r)) + "Package_" + l);
 					else
-						return result.createResource(stripHash(packageNamespace) + prefixPath(r) + "#" + l);
+						return result.createResource(Translator.packageNamespace(packageNamespace, prefixPath(r)) + l);
 				} else
 					return result.createResource(packageNamespace + "Package_" + l);
 			} else
@@ -453,7 +453,7 @@ public class LegacyTranslator implements Runnable {
 				if (extraDecoration)
 					return p.getNameSpace();
 				else
-					return stripHash(p.getNameSpace()) + "/" + p.getLocalName() + "#";
+					return Translator.packageNamespace(p.getNameSpace(), "/" + p.getLocalName());
 		}
 
 		return defaultNamespace;

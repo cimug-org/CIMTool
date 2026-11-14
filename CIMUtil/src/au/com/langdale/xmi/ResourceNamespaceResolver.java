@@ -117,16 +117,9 @@ public class ResourceNamespaceResolver implements NamespaceResolver {
 				if (extraDecoration)
 					return p.getNameSpace();
 				else
-					return stripHash(p.getNameSpace()) + "/" + p.getLocalName() + "#";
+					return Translator.packageNamespace(p.getNameSpace(), "/" + p.getLocalName());
 		}
 
 		return defaultNamespace;
 	}
-
-	private String stripHash(String uri) {
-		while (uri.endsWith("#") || uri.endsWith("/"))
-			uri = uri.substring(0, uri.length() - 1);
-		return uri;
-	}
-
 }
