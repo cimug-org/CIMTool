@@ -37,7 +37,7 @@ public class LegacyTranslator implements Runnable {
 	private OntModel result;
 	private String defaultNamespace;
 	private boolean extraDecoration;
-	private boolean uniqueNamespaces;
+	private boolean uniqueNamespaces; // carries the "Add package names to default schema namespace" preference
 
 	/**
 	 * Construct from input model and the namespace for renamed resources.

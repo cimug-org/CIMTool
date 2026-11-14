@@ -38,7 +38,7 @@ public class Translator implements Runnable {
 	private OntModel result;
 	private String defaultNamespace;
 	private boolean extraDecoration;
-	private boolean uniqueNamespaces;
+	private boolean uniqueNamespaces; // carries the "Add package names to default schema namespace" preference
 	private StereotypedNamespaces stereotypedNamespaces;
 
 	/**
@@ -186,7 +186,7 @@ public class Translator implements Runnable {
 				OntResource aPackage = p;
 				while (aPackage != null) {
 					if (stereotypedNamespaces.hasNamespaces()) {
-						b = stereotypedNamespaces.getNamespace(p);
+						b = stereotypedNamespaces.getNamespace(aPackage);
 					} else {
 						b = aPackage.getString(baseuri);
 					}
@@ -202,15 +202,30 @@ public class Translator implements Runnable {
 						}
 					}
 				}
-				// "Fall through" processing is to utilize the namespace of the immediate
-				// package containing the resource...
-				if (uniqueNamespaces)
-					if (extraDecoration)
-						return p.getNameSpace();
-					else
-						return packageNamespace(p.getNameSpace(), "/" + p.getLocalName());
+				// "Fall through" processing when no namespace is found on the resource
+				// or any of its ancestor packages...
+				return fallbackNamespace(p);
 			}
 
+			return defaultNamespace;
+		}
+
+		/**
+		 * Returns the namespace for a resource when no baseuri, stereotype namespace
+		 * or baseprefix is found on the resource or any of its ancestor packages.
+		 * With package names enabled it is the namespace of the package containing
+		 * the resource, which must already be translated. Otherwise, and for the
+		 * global package, it is the schema namespace.
+		 * 
+		 * @param p the package containing the resource
+		 * @return the namespace
+		 */
+		protected String fallbackNamespace(OntResource p) {
+			if (uniqueNamespaces && !p.equals(UML.global_package))
+				if (extraDecoration)
+					return p.getNameSpace();
+				else
+					return packageNamespace(p.getNameSpace(), "/" + p.getLocalName());
 			return defaultNamespace;
 		}
 
@@ -262,6 +277,17 @@ public class Translator implements Runnable {
 	 * These are then available in later passes.
 	 */
 	Runnable pass1 = new Pass() {
+
+		/**
+		 * Package URIs are built from the full package path (see pathName()), so a
+		 * package with no namespace of its own or from an ancestor is based on the
+		 * schema namespace, never on its parent's namespace. In this pass the parent
+		 * is still untranslated and its namespace is internal (issue #385).
+		 */
+		@Override
+		protected String fallbackNamespace(OntResource p) {
+			return defaultNamespace;
+		}
 
 		/**
 		 * During pass 1 we must preprocess baseuri, baseprefix, and hasBasePrefix
@@ -431,7 +457,7 @@ public class Translator implements Runnable {
 		}
 	}
 
-	private static String pathName(OntResource r) {
+	static String pathName(OntResource r) {
 		String prefix = prefixPath(r);
 		String ls = r.getString(RDFS.label);
 		if (ls == null)

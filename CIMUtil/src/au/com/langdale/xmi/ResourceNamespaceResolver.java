@@ -8,6 +8,7 @@ import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
 import au.com.langdale.kena.ResIterator;
 
+import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
@@ -21,7 +22,7 @@ public class ResourceNamespaceResolver implements NamespaceResolver {
 	private OntModel model;
 	private String defaultNamespace;
 	private boolean extraDecoration;
-	private boolean uniqueNamespaces;
+	private boolean uniqueNamespaces; // carries the "Add package names to default schema namespace" preference
 	private StereotypedNamespaces stereotypedNamespaces;
 
 	public ResourceNamespaceResolver(OntModel model, StereotypedNamespaces stereotypedNamespaces,
@@ -95,7 +96,7 @@ public class ResourceNamespaceResolver implements NamespaceResolver {
 			OntResource aPackage = p;
 			while (aPackage != null) {
 				if (stereotypedNamespaces.hasNamespaces()) {
-					b = stereotypedNamespaces.getNamespace(p);
+					b = stereotypedNamespaces.getNamespace(aPackage);
 				} else {
 					b = aPackage.getString(UML.baseuri);
 				}
@@ -111,13 +112,17 @@ public class ResourceNamespaceResolver implements NamespaceResolver {
 					}
 				}
 			}
-			// "Fall through" processing is to utilize the namespace of the immediate
-			// package containing the resource...
-			if (uniqueNamespaces)
+			// "Fall through" processing when no namespace is found on the resource or
+			// any of its ancestor packages. The model is untranslated here, so the
+			// namespace Translator assigns to the package containing the resource is
+			// computed from its package path rather than taken from its internal URI.
+			// A package itself, like the global package, is based on the schema
+			// namespace (issue #385).
+			if (uniqueNamespaces && !resource.hasProperty(RDF.type, UML.Package) && !p.equals(UML.global_package))
 				if (extraDecoration)
-					return p.getNameSpace();
+					return Translator.packageNamespace(defaultNamespace, "/Global" + Translator.pathName(p));
 				else
-					return Translator.packageNamespace(p.getNameSpace(), "/" + p.getLocalName());
+					return Translator.packageNamespace(defaultNamespace, Translator.pathName(p));
 		}
 
 		return defaultNamespace;
