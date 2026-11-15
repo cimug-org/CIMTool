@@ -36,6 +36,12 @@ public class ProfileClass {
 
 	protected OneToManyMap props;
 	protected OntResource baseClass;
+	/**
+	 * The schema class this profile class names as its base when the schema does
+	 * not declare it, or {@code null}. Set only while {@link #baseClass} is still
+	 * the {@code owl:Thing} sentinel (issue #387).
+	 */
+	private OntResource unresolvedBase;
 	protected Set classes;
 	private boolean compoundBase;
 	private boolean enumeratedBase;
@@ -111,6 +117,8 @@ public class ProfileClass {
 		props = new OneToManyMap();
 		classes = new HashSet();
 		baseClass = defaultBase;
+		unresolvedBase = null;
+		OntResource undeclaredBase = null;
 
 		ResIterator it = clss.listSuperClasses(true);
 		while (it.hasNext()) {
@@ -128,8 +136,14 @@ public class ProfileClass {
 						baseClass = node; // externally defined class (expect only one)
 					}
 				}
+			} else if (!node.isAnon() && !node.equals(MESSAGE.Reference) && node.getNameSpace() != null
+					&& !node.getNameSpace().equals(namespace)) {
+				// A named external base class that the schema does not declare.
+				undeclaredBase = node;
 			}
 		}
+		if (baseClass.equals(OWL.Thing))
+			unresolvedBase = undeclaredBase;
 		analyseBaseClass();
 	}
 
@@ -191,6 +205,7 @@ public class ProfileClass {
 		}
 		clss.addSuperClass(type);
 		baseClass = type;
+		unresolvedBase = null;
 		analyseBaseClass();
 	}
 
@@ -554,6 +569,19 @@ public class ProfileClass {
 
 	public OntResource getBaseClass() {
 		return baseClass;
+	}
+
+	/**
+	 * Returns the schema class this profile class names as its base when the
+	 * schema does not declare it. In that case {@link #getBaseClass()} returns the
+	 * {@code owl:Thing} sentinel. Returns {@code null} when the base class
+	 * resolves, and when the profile class names no schema base class at all
+	 * (issue #387).
+	 *
+	 * @return the unresolved base class, or {@code null}
+	 */
+	public OntResource getUnresolvedBase() {
+		return unresolvedBase;
 	}
 
 	public boolean isEnumerated() {
