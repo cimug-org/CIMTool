@@ -923,11 +923,31 @@
 		<xsl:variable name="total_count" select="$count + count(a:Complex|a:Enumerated|a:Compound|a:SimpleEnumerated|a:SimpleCompound|a:Simple|a:Domain|a:Instance|a:Reference|a:Choice)"/>
 		<xsl:choose>
 			<xsl:when test="a:SuperType[@baseClassIsShadowExtension = 'false']">
-				<xsl:variable name="baseClass" select="a:SuperType[@baseClassIsShadowExtension = 'false']/@baseClass"/>
-				<xsl:for-each select="/*/node()[@baseClass = $baseClass]">
-					<xsl:call-template name="count_fields">
-						<xsl:with-param name="count" select="$total_count"/>
-					</xsl:call-template>
+				<!--
+					Each normative supertype is looked up by its name AND its baseClass, one
+					SuperType at a time (issue #387). Neither key is safe on its own:
+
+					- baseClass alone: several profile classes can share a base class. When a
+					  class and its supertype share one, the lookup also matches the class
+					  itself, and this template recurses forever. That is how the owl:Thing
+					  sentinel once made the builder loop, and how a cyclic profile hierarchy
+					  can still produce it.
+					- name alone: the name is the profile class's rdfs:label, which need not
+					  be unique. An unmerged shadow class may carry the same label as the
+					  normative CIM class it extends (for example Equipment), while their
+					  base classes are in different namespaces and so differ.
+
+					A profile class is identified by its name and its baseClass together.
+					Iterating over the SuperType elements keeps each name paired with its
+					own baseClass when a class has more than one supertype.
+				-->
+				<xsl:for-each select="a:SuperType[@baseClassIsShadowExtension = 'false']">
+					<xsl:variable name="superType" select="."/>
+					<xsl:for-each select="/*/node()[@name = $superType/@name and @baseClass = $superType/@baseClass]">
+						<xsl:call-template name="count_fields">
+							<xsl:with-param name="count" select="$total_count"/>
+						</xsl:call-template>
+					</xsl:for-each>
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
