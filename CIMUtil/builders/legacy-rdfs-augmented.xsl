@@ -324,6 +324,27 @@
 	<!-- END SECTION:  (ComplexType, Root, and EnumeratedType attribute & association templates)                    -->
 	<!-- ============================================================================================================ -->
 	
+	<xsl:template name="stereotypes">
+		<xsl:for-each select="a:Stereotype">
+			<xsl:sort select="." order="ascending" />
+			<xsl:variable name="stereotype" select="substring-after(., '#')"/>
+			<!-- We filter out all stereotypes except those support (below) within the RDFS2020 variant -->
+			<xsl:choose>
+				<!-- this first condition tests for "standard" stereotypes 
+					 are be expressed as "http://iec.ch/TC57/NonStandard/UML#{$stereotype}" -->
+				<xsl:when test="($stereotype = 'enum' ) or ($stereotype = 'concrete') or ($stereotype = 'ofAggregate') or ($stereotype = 'aggregateOf') or ($stereotype = 'ofComposite') or ($stereotype = 'compositeOf')">
+					<cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#{$stereotype}"/>
+				</xsl:when>
+				<xsl:when test="($stereotype = 'compound') or ($stereotype = 'enumeration') or ($stereotype = 'enum') or ($stereotype = 'byreference') or ($stereotype = 'attribute') or ($stereotype = 'diagramshide') or ($stereotype = 'diagramshideallattributes')">
+					<!-- We don't want to do anything with these specific stereotypes.  Rather, we "pass through" and ignore them... -->
+				</xsl:when>
+				<xsl:otherwise>
+					<cims:stereotype><xsl:value-of select="@label"/></cims:stereotype>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:for-each>
+	</xsl:template>
+	
 	<xsl:template match="." mode="comments">
 		<xsl:for-each select="a:Comment|a:Note">
 			<xsl:value-of select="."/><xsl:if test="position()!=last()"><xsl:value-of select="$newline"/></xsl:if>
