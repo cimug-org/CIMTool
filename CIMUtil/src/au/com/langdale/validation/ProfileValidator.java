@@ -9,20 +9,30 @@ import au.com.langdale.inference.Extractor;
 import au.com.langdale.inference.GraphAdapter;
 import au.com.langdale.inference.LOG;
 import au.com.langdale.inference.RepairLibrary;
+import au.com.langdale.inference.Reporting;
 import au.com.langdale.inference.RuleParser;
 import au.com.langdale.inference.RuleParser.ParserException;
 import au.com.langdale.inference.StandardFunctorActions;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.kena.OntResource;
+import au.com.langdale.kena.ResIterator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hp.hpl.jena.graph.Graph;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.reasoner.InfGraph;
 import com.hp.hpl.jena.reasoner.transitiveReasoner.TransitiveReasoner;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * Check a profile for consistency with a base schema.
@@ -103,7 +113,62 @@ public class ProfileValidator {
 		InfGraph trans = new TransitiveReasoner().bind(ref);
 		Extractor extractor = new Extractor(new GraphAdapter(target.getGraph()), trans, rules, functors);
 		extractor.run();
+		checkSuperClassCycles(extractor.getResult(), trans);
 		log = ModelFactory.createMem(extractor.getResult());
+	}
+
+	private static final String CYCLE_PHRASE = "has a cyclic superclass chain through";
+
+	/**
+	 * Report each named profile class whose superclass chain, through other
+	 * named profile classes, leads back to itself (issue #387). Each superclass
+	 * statement on such a chain is reported, with a repair that removes it.
+	 * A class that names itself as its superclass is ignored, as it is by the
+	 * consistency rules.
+	 */
+	private void checkSuperClassCycles(Graph result, Graph axioms) {
+		ResIterator classes = target.listSubjectsWithProperty(RDF.type, OWL.Class);
+		while (classes.hasNext()) {
+			OntResource clss = classes.nextResource();
+			if (clss.isAnon())
+				continue;
+			for (OntResource superClass : profileSuperClasses(clss)) {
+				if (leadsTo(superClass, clss)) {
+					Node[] args = new Node[] { clss.asNode(), Node.createLiteral(CYCLE_PHRASE), superClass.asNode() };
+					Node report = Reporting.createReport(result, clss.asNode(), args[1], args, 0, args.length);
+					new RepairLibrary.Remove().apply(
+							new Node[] { report, clss.asNode(), RDFS.subClassOf.asNode(), superClass.asNode() },
+							result, axioms, null);
+				}
+			}
+		}
+	}
+
+	/** The named profile classes {@code clss} directly declares as superclasses. */
+	private List<OntResource> profileSuperClasses(OntResource clss) {
+		List<OntResource> result = new ArrayList<OntResource>();
+		ResIterator it = clss.listProperties(RDFS.subClassOf);
+		while (it.hasNext()) {
+			OntResource superClass = it.nextResource();
+			if (!superClass.isAnon() && !superClass.equals(clss) && target.contains(superClass, RDF.type, OWL.Class))
+				result.add(superClass);
+		}
+		return result;
+	}
+
+	/** Whether following profile superclasses from {@code start} reaches {@code goal}. */
+	private boolean leadsTo(OntResource start, OntResource goal) {
+		Set<OntResource> visited = new HashSet<OntResource>();
+		List<OntResource> pending = new ArrayList<OntResource>();
+		pending.add(start);
+		while (!pending.isEmpty()) {
+			OntResource current = pending.remove(pending.size() - 1);
+			if (current.equals(goal))
+				return true;
+			if (visited.add(current))
+				pending.addAll(profileSuperClasses(current));
+		}
+		return false;
 	}
 
 }

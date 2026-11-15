@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A CIMTool profile defined against MinimalSchema.owl whose superclass
+     hierarchy contains a cycle (issue #387): A's superclass is B, and B's
+     superclass is A. C's superclass is A, so C leads into the cycle without
+     being part of it. -->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xml:base="http://example.com/CyclicProfile">
+  <owl:Ontology rdf:about="">
+    <rdfs:label>CyclicProfile</rdfs:label>
+  </owl:Ontology>
+  <owl:Class rdf:about="#A">
+    <rdfs:label>A</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#IdentifiedObject"/>
+    <rdfs:subClassOf rdf:resource="#B"/>
+  </owl:Class>
+  <owl:Class rdf:about="#B">
+    <rdfs:label>B</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#IdentifiedObject"/>
+    <rdfs:subClassOf rdf:resource="#A"/>
+  </owl:Class>
+  <owl:Class rdf:about="#C">
+    <rdfs:label>C</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#IdentifiedObject"/>
+    <rdfs:subClassOf rdf:resource="#A"/>
+  </owl:Class>
+</rdf:RDF>

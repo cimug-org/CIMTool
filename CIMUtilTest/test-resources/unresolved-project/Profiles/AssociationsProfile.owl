@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A CIMTool profile defined against AssociationsSchema.owl (issue #387).
+     Equipment references itself through Equipment.Parent, and Terminal and
+     ConnectivityNode reference each other. Neither is a superclass cycle. -->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xml:base="http://example.com/AssociationsProfile">
+  <owl:Ontology rdf:about="">
+    <rdfs:label>AssociationsProfile</rdfs:label>
+  </owl:Ontology>
+  <owl:Class rdf:about="#Equipment">
+    <rdfs:label>Equipment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#Equipment"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/CIM100#Equipment.Parent"/>
+        <owl:allValuesFrom rdf:resource="#Equipment"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Terminal">
+    <rdfs:label>Terminal</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#Terminal"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/CIM100#Terminal.ConnectivityNode"/>
+        <owl:allValuesFrom rdf:resource="#ConnectivityNode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ConnectivityNode">
+    <rdfs:label>ConnectivityNode</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#ConnectivityNode"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/CIM100#ConnectivityNode.Terminals"/>
+        <owl:allValuesFrom rdf:resource="#Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+</rdf:RDF>

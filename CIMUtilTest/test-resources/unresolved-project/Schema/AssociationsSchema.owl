@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A minimal schema with a self-association (Equipment.Parent) and an
+     association with an inverse (Terminal.ConnectivityNode and
+     ConnectivityNode.Terminals), used by AssociationsProfile.owl (issue #387). -->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xml:base="http://iec.ch/TC57/CIM100">
+  <owl:Ontology rdf:about="">
+    <rdfs:label>AssociationsSchema</rdfs:label>
+  </owl:Ontology>
+  <owl:Class rdf:about="#Equipment">
+    <rdfs:label>Equipment</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#Terminal">
+    <rdfs:label>Terminal</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#ConnectivityNode">
+    <rdfs:label>ConnectivityNode</rdfs:label>
+  </owl:Class>
+  <owl:ObjectProperty rdf:about="#Equipment.Parent">
+    <rdfs:label>Parent</rdfs:label>
+    <rdfs:domain rdf:resource="#Equipment"/>
+    <rdfs:range rdf:resource="#Equipment"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#Terminal.ConnectivityNode">
+    <rdfs:label>ConnectivityNode</rdfs:label>
+    <rdfs:domain rdf:resource="#Terminal"/>
+    <rdfs:range rdf:resource="#ConnectivityNode"/>
+    <owl:inverseOf rdf:resource="#ConnectivityNode.Terminals"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#ConnectivityNode.Terminals">
+    <rdfs:label>Terminals</rdfs:label>
+    <rdfs:domain rdf:resource="#ConnectivityNode"/>
+    <rdfs:range rdf:resource="#Terminal"/>
+    <owl:inverseOf rdf:resource="#Terminal.ConnectivityNode"/>
+  </owl:ObjectProperty>
+</rdf:RDF>

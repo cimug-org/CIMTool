@@ -12,6 +12,7 @@ import au.com.langdale.profiles.ProfileClass.PropertyInfo;
 import au.com.langdale.profiles.ProfileModel.CatalogNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode;
 import au.com.langdale.profiles.ProfileModel.EnvelopeNode.MessageNode;
+import au.com.langdale.profiles.ProfileModel.NaturalNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
@@ -85,8 +86,8 @@ public class ProfileSerializer extends AbstractReader {
 	 * {@link TransformerFactory#newInstance()}, which locates an implementation
 	 * through the thread's context class loader. Under OSGi a thread can carry a
 	 * context class loader that cannot see the Saxon library bundled in CIMUtil,
-	 * and the JDK's own implementation would then be returned. Saxon is required
-	 * in every case, since its extension functions are registered on it.
+	 * and the JDK's own implementation would then be returned. Saxon is required in
+	 * every case, since its extension functions are registered on it.
 	 */
 	TransformerFactory factory = new net.sf.saxon.TransformerFactoryImpl();
 	private List<Templates> templates = new ArrayList();
@@ -709,6 +710,18 @@ public class ProfileSerializer extends AbstractReader {
 	}
 
 	private void emit(SuperTypeNode node) throws SAXException {
+		/** 
+		 * A supertype whose own superclass chain leads back to the class being
+		 * written closes a cycle. It is left out so that no builder receives a
+		 * cyclic hierarchy. ProfileValidator reports the cycle (issue #387).
+		 */ 
+		Node parent = node.getParent();
+		if (parent instanceof NaturalNode) {
+			OntResource subClass = ((NaturalNode) parent).getSubject();
+			if (subClass != null && ProfileClass.superClassesLeadTo(node.getSubject(), subClass,
+					node.getProfile().getNamespace()))
+				return;
+		}
 		Element elem = new Element("SuperType");
 		elem.set("name", node.getName());
 		setBaseClass(elem, node);

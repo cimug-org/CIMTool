@@ -567,6 +567,35 @@ public class ProfileClass {
 		return namespace;
 	}
 
+	/**
+	 * Determines whether following profile superclasses, as
+	 * {@link #getSuperClasses()} reports them, from {@code start} leads to
+	 * {@code target}. {@code ProfileSerializer} uses it to keep a cyclic profile
+	 * hierarchy out of the profile XML (issue #387).
+	 *
+	 * @param start     the profile class to start from
+	 * @param target    the profile class looked for
+	 * @param namespace the profile namespace
+	 * @return true if {@code target} is {@code start} or one of its profile
+	 *         superclasses, direct or indirect
+	 */
+	public static boolean superClassesLeadTo(OntResource start, OntResource target, String namespace) {
+		Set<OntResource> visited = new HashSet<OntResource>();
+		List<OntResource> pending = new ArrayList<OntResource>();
+		pending.add(start);
+		while (!pending.isEmpty()) {
+			OntResource current = pending.remove(pending.size() - 1);
+			if (current.equals(target))
+				return true;
+			if (!visited.add(current))
+				continue;
+			Iterator it = new ProfileClass(current, namespace).getSuperClasses();
+			while (it.hasNext())
+				pending.add((OntResource) it.next());
+		}
+		return false;
+	}
+
 	public OntResource getBaseClass() {
 		return baseClass;
 	}
