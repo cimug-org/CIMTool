@@ -16,6 +16,7 @@ import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode.SubTypeNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.EnumValueNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.SuperTypeNode;
+import au.com.langdale.profiles.ProfileModel.ProfileNode;
 import au.com.langdale.profiles.ProfileModel.TypeNode;
 import au.com.langdale.sax.AbstractReader;
 import au.com.langdale.saxon.functions.NewUUIDFunction;
@@ -670,10 +671,47 @@ public class ProfileSerializer extends AbstractReader {
 		elem.close();
 	}
 
+	/**
+	 * Sets the {@code baseClass} attribute of an element that references a profile
+	 * class, together with the {@code unresolved} attribute that accompanies every
+	 * {@code baseClass} (issue #387). When the schema does not declare the class
+	 * the profile names, {@code baseClass} is that class rather than the
+	 * {@code owl:Thing} sentinel, and {@code unresolved} is {@code true}.
+	 */
+	private void setBaseClass(Element elem, ProfileNode node) throws SAXException {
+		OntResource unresolved = node.getProfile() != null ? node.getProfile().getUnresolvedBase() : null;
+		elem.set("baseClass", (unresolved != null ? unresolved : node.getBaseClass()).getURI());
+		elem.set("unresolved", Boolean.toString(unresolved != null));
+	}
+
+	/**
+	 * Sets the {@code baseClass} attribute from a class taken directly from the
+	 * schema, such as the range of a schema property, which is always resolved
+	 * (issue #387).
+	 */
+	private void setSchemaBaseClass(Element elem, OntResource schemaClass) throws SAXException {
+		elem.set("baseClass", schemaClass.getURI());
+		elem.set("unresolved", Boolean.FALSE.toString());
+	}
+
+	/**
+	 * Sets the {@code baseClass} attribute from a class URI that the serializer
+	 * builds itself rather than takes from the profile or the schema, such as the
+	 * {@code UnitSymbol} and {@code UnitMultiplier} classes referenced by the
+	 * {@code unit} and {@code multiplier} elements of a flattened CIMDatatype
+	 * (issue #387). Nothing guarantees that the schema declares such a class, so
+	 * {@code unresolved} is {@code true} unless it does.
+	 */
+	private void setDeclaredBaseClass(Element elem, String classURI) throws SAXException {
+		OntResource schemaClass = model.getOntModel() != null ? model.getOntModel().createResource(classURI) : null;
+		elem.set("baseClass", classURI);
+		elem.set("unresolved", Boolean.toString(schemaClass == null || !schemaClass.isClass()));
+	}
+
 	private void emit(SuperTypeNode node) throws SAXException {
 		Element elem = new Element("SuperType");
 		elem.set("name", node.getName());
-		elem.set("baseClass", node.getBaseClass().getURI());
+		setBaseClass(elem, node);
 		boolean isShadowExtension = ShadowClassUtils.isShadowClass(ontologyURI + "#", node.getBaseClass());
 		elem.set("baseClassIsShadowExtension", Boolean.toString(isShadowExtension));
 		elem.close();
@@ -722,7 +760,7 @@ public class ProfileSerializer extends AbstractReader {
 			}
 		}
 
-		elem.set("baseClass", node.getBaseClass().getURI());
+		setBaseClass(elem, node);
 		if (!anon) {
 			elem.set("type", node.getName());
 		}
@@ -774,7 +812,7 @@ public class ProfileSerializer extends AbstractReader {
 				elem.set("name", node.getName());
 				if (range != null && range.isURIResource()) {
 					elem.set("type", range.getLocalName());
-					elem.set("baseClass", range.getURI());
+					setSchemaBaseClass(elem, range);
 				}
 				emit(node, elem);
 
@@ -834,7 +872,7 @@ public class ProfileSerializer extends AbstractReader {
 			elem.set("type", inverse.getRange().getLocalName());
 			if (inverse.hasProperty(UML.id))
 				elem.set("ea_guid", EAGuidUtils.fixEAGuid(inverse.getString(UML.id)));
-			elem.set("baseClass", inverse.getRange().getURI());
+			setSchemaBaseClass(elem, inverse.getRange());
 			if (inverse.getURI() != null)
 				elem.set("baseProperty", inverse.getURI());
 			if (inverse.getDomain() != null)
@@ -1124,7 +1162,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("name", node.getName());
 		if (node.getBaseClass().hasProperty(UML.id))
 			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBaseClass().getString(UML.id)));
-		elem.set("baseClass", node.getBaseClass().getURI());
+		setBaseClass(elem, node);
 		elem.set("package", node.getPackageName());
 		if (node.getPackage() != null) {
 			elem.set("packageURI", node.getPackage().getURI());
@@ -1147,7 +1185,7 @@ public class ProfileSerializer extends AbstractReader {
 		elem.set("name", node.getName());
 		if (node.getBaseClass().hasProperty(UML.id))
 			elem.set("ea_guid", EAGuidUtils.fixEAGuid(node.getBaseClass().getString(UML.id)));
-		elem.set("baseClass", node.getBaseClass().getURI());
+		setBaseClass(elem, node);
 
 		emitComment(node.getBaseClass().getComment(null));
 		emitNote(node);
@@ -1209,7 +1247,7 @@ public class ProfileSerializer extends AbstractReader {
 		unitElem.set("constant", unitConstant);
 		String unitEAGUID = type.hasProperty(UML.unitEAGUID) ? type.getString(UML.unitEAGUID) : "";
 		unitElem.set("ea_guid", unitEAGUID);
-		unitElem.set("baseClass", getOntologyURI() + "#UnitSymbol");
+		setDeclaredBaseClass(unitElem, getOntologyURI() + "#UnitSymbol");
 		unitElem.set("baseProperty", type.getURI() + ".unit");
 		unitElem.set("basePropertyClass", type.getURI());
 		unitElem.set("minOccurs", "0");
@@ -1234,7 +1272,7 @@ public class ProfileSerializer extends AbstractReader {
 		multiplierElem.set("constant", multiplierConstant);
 		String multiplierEAGUID = type.hasProperty(UML.multiplierEAGUID) ? type.getString(UML.multiplierEAGUID) : "";
 		multiplierElem.set("ea_guid", multiplierEAGUID);
-		multiplierElem.set("baseClass", getOntologyURI() + "#UnitMultiplier");
+		setDeclaredBaseClass(multiplierElem, getOntologyURI() + "#UnitMultiplier");
 		multiplierElem.set("baseProperty", type.getURI() + ".multiplier");
 		multiplierElem.set("basePropertyClass", type.getURI());
 		multiplierElem.set("minOccurs", "0");

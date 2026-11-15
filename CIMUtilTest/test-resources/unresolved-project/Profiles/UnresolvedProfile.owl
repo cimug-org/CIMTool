@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A CIMTool profile defined against MinimalSchema.owl in which two classes name
+     schema classes that the schema does not declare (issue #387). Conductor and
+     ACLineSegment are unresolved, ACLineSegment's supertype is Conductor, and
+     IdentifiedObject resolves. -->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:msg="http://langdale.com.au/2005/Message#"
+    xmlns:uml="http://langdale.com.au/2005/UML#"
+    xml:base="http://example.com/UnresolvedProfile">
+  <owl:Ontology rdf:about="">
+    <rdfs:label>UnresolvedProfile</rdfs:label>
+  </owl:Ontology>
+  <owl:Class rdf:about="#IdentifiedObject">
+    <rdfs:label>IdentifiedObject</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#IdentifiedObject"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Conductor">
+    <rdfs:label>Conductor</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#Conductor"/>
+    <rdfs:subClassOf rdf:resource="#IdentifiedObject"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ACLineSegment">
+    <rdfs:label>ACLineSegment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#ACLineSegment"/>
+    <rdfs:subClassOf rdf:resource="#Conductor"/>
+  </owl:Class>
+</rdf:RDF>

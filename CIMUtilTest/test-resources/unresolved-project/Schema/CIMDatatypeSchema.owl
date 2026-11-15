@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A minimal schema with one CIMDatatype, Length, used by an attribute of
+     IdentifiedObject (issue #387). It deliberately does not declare UnitSymbol
+     or UnitMultiplier, which the unit and multiplier elements of a CIMDatatype
+     in the profile XML refer to. CIMDatatypeProfile.owl is defined against it. -->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:uml="http://langdale.com.au/2005/UML#"
+    xml:base="http://iec.ch/TC57/CIM100">
+  <owl:Ontology rdf:about="">
+    <rdfs:label>CIMDatatypeSchema</rdfs:label>
+  </owl:Ontology>
+  <owl:Class rdf:about="#IdentifiedObject">
+    <rdfs:label>IdentifiedObject</rdfs:label>
+  </owl:Class>
+  <rdfs:Datatype rdf:about="#Length">
+    <rdfs:label>Length</rdfs:label>
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#cimdatatype"/>
+    <owl:equivalentClass rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    <uml:hasUnits>m</uml:hasUnits>
+  </rdfs:Datatype>
+  <owl:DatatypeProperty rdf:about="#IdentifiedObject.length">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:label>length</rdfs:label>
+    <rdfs:domain rdf:resource="#IdentifiedObject"/>
+    <rdfs:range rdf:resource="#Length"/>
+  </owl:DatatypeProperty>
+</rdf:RDF>
