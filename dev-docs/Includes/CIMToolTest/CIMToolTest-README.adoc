@@ -134,6 +134,8 @@ CIMToolTest/
         │   │   ├── TransformTasks.java      ← Tests for XSD and AsciiDoc generation
         │   │   ├── CreateProject.java       ← Tests for creating a CIMTool project
         │   │   ├── FullModelProfileModelTest.java ← Tests for the full schema profile pipeline
+        │   │   ├── GlobalPreferencesRefreshTests.java ← Tests for refreshing .cimtool-global-preferences
+        │   │   │                                   at startup
         │   │   ├── NamespaceValidatorTest.java ← Tests for the namespace validator in the user interface
         │   │   ├── ProfilesAsciiDoctorConfigTests.java ← Tests for the Profiles folder
         │   │   │                                   .asciidoctorconfig.adoc file
@@ -213,6 +215,9 @@ These tests run without a display and exercise the core CIMTool logic:
 
 | `FullModelProfileModelTest`
 | Importing the CGMES CIM17 `.qea` schema and serializing the resulting full schema profile with `FullModelProfileModel` and `ProfileSerializer`
+
+| `GlobalPreferencesRefreshTests`
+| The export that `GlobalPreferencesSynchronizer` runs for every open project when CIMTool starts: it refreshes an existing `.cimtool-global-preferences` file, creates a missing one, and leaves a file that already matches the workspace preferences untouched (https://github.com/cimug-org/CIMTool/issues/339[Issue #339])
 
 | `NamespaceValidatorTest`
 | `Validators.NAMESPACE` in RCPUtil, which checks every namespace entered in the CIMTool user interface, accepts `http:` and `https:` hash and slash namespaces and agrees with `NamespaceUtils` in Kena; needs no workspace (https://github.com/cimug-org/CIMTool/issues/377[Issue #377])

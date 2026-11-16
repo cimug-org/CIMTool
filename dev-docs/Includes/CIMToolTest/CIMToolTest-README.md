@@ -121,6 +121,8 @@ CIMToolTest/
         │   │   ├── TransformTasks.java      ← Tests for XSD and AsciiDoc generation
         │   │   ├── CreateProject.java       ← Tests for creating a CIMTool project
         │   │   ├── FullModelProfileModelTest.java ← Tests for the full schema profile pipeline
+        │   │   ├── GlobalPreferencesRefreshTests.java ← Tests for refreshing .cimtool-global-preferences
+        │   │   │                                   at startup
         │   │   ├── NamespaceValidatorTest.java ← Tests for the namespace validator in the user interface
         │   │   ├── ProfilesAsciiDoctorConfigTests.java ← Tests for the Profiles folder
         │   │   │                                   .asciidoctorconfig.adoc file
@@ -169,6 +171,7 @@ These tests run without a display and exercise the core CIMTool logic:
 | `TransformTasks` | XSD generation, XSD generation with custom rules, and AsciiDoc generation (which also creates the Profiles folder `.asciidoctorconfig.adoc`), using the `MeterReadings.owl` profile from `Part9/` on the CIM100 `.qea` schema |
 | `CreateProject` | Creating a CIMTool project |
 | `FullModelProfileModelTest` | Importing the CGMES CIM17 `.qea` schema and serializing the resulting full schema profile with `FullModelProfileModel` and `ProfileSerializer` |
+| `GlobalPreferencesRefreshTests` | The export that `GlobalPreferencesSynchronizer` runs for every open project when CIMTool starts: it refreshes an existing `.cimtool-global-preferences` file, creates a missing one, and leaves a file that already matches the workspace preferences untouched ([Issue #339](https://github.com/cimug-org/CIMTool/issues/339)) |
 | `NamespaceValidatorTest` | `Validators.NAMESPACE` in RCPUtil, which checks every namespace entered in the CIMTool user interface, accepts `http:` and `https:` hash and slash namespaces and agrees with `NamespaceUtils` in Kena; needs no workspace ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)) |
 | `ProfilesAsciiDoctorConfigTests` | Creating and updating the `:profilesdir:` definition in the Profiles folder `.asciidoctorconfig.adoc` file |
 | `UpgradeRegenerationTests` | The per-project version stamp, the rule that decides when a project needs regeneration, stamping by the builder, and regeneration of profile artifacts |
