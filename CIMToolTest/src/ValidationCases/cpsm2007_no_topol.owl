@@ -3,6 +3,7 @@
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:daml="http://www.daml.org/2001/03/daml+oil#"
+    xmlns:uml="http://langdale.com.au/2005/UML#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
   <owl:Class rdf:ID="SeasonDayTypeSchedule">
     <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonDayTypeSchedule"/>
@@ -3136,4 +3137,173 @@
     </rdfs:subClassOf>
     <rdfs:subClassOf rdf:resource="#MeasurementValue"/>
   </owl:Class>
+  <!-- Concrete classes (issue #395): the profile classes with no named profile
+       subclass, as the "Stereotype leaf classes as Concrete" operation marks them.
+       CIMTool validation treats a class without the concrete stereotype as abstract
+       (release 1.3.3), and these fixtures date from before that change. -->
+  <rdf:Description rdf:about="#ACLineSegment">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Accumulator">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#AccumulatorValue">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Analog">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#AnalogLimit">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#AnalogLimitSet">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#AnalogValue">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#BaseVoltage">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Bay">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Breaker">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#BusbarSection">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ConductorType">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ConformLoadGroup">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ConformLoadSchedule">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ConnectivityNode">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Control">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#CurveData">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#CustomerLoad">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#DayType">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Disconnector">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Discrete">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#DiscreteValue">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#GeographicalRegion">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#GrossToNetActivePowerCurve">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#HostControlArea">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#HydroGeneratingUnit">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#IEC61970CIMVersion">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#InductionMotorLoad">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Line">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Load">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#LoadArea">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#LoadBreakSwitch">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#MeasurementType">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#MeasurementValueSource">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#NonConformLoadGroup">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#NonConformLoadSchedule">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#PowerTransformer">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ReactiveCapabilityCurve">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#RegularTimePoint">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#RegulationSchedule">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Season">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#SeriesCompensator">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ShuntCompensator">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#StaticVarCompensator">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#StationSupply">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#SubControlArea">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#SubGeographicalRegion">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#SubLoadArea">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Substation">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#SynchronousMachine">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#TapChanger">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#ThermalGeneratingUnit">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#TransformerWinding">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#Unit">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="#VoltageLevel">
+    <uml:hasStereotype rdf:resource="http://langdale.com.au/2005/UML#concrete"/>
+  </rdf:Description>
 </rdf:RDF>

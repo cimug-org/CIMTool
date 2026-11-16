@@ -226,6 +226,14 @@ Two OWL profile files drive the validation:
 - `cpsm2007.owl`: the CPSM profile including topology constraints, used by `TopologyTests` and `IncrementalTests`
 - `cpsm2007_no_topol.owl`: the CPSM profile without topology, used by `SchemaTests`
 
+Since CIMTool 1.3.3, validation treats a class as abstract unless it carries
+the `concrete` stereotype. The fixtures were written before that change, so
+both profiles mark their leaf classes concrete (`uml:hasStereotype
+uml:concrete`) in a block at the end of the file, as the profile editor's
+"Stereotype leaf classes as Concrete" operation does
+([Issue #395](https://github.com/cimug-org/CIMTool/issues/395)). Without the markings every class validates as
+abstract, and most validation cases fail.
+
 The `build.sh` script regenerates each `.xml` file from its `.ttl` file by
 running `Convert` through `run.sh`. `run.sh` builds its classpath from a
 hard-coded workspace path (`/home/projects/CIMTool`) and must be edited
