@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kena
 Bundle-SymbolicName: au.com.langdale.kena
-Bundle-Version: 3.4.0
+Bundle-Version: 3.5.0
 Bundle-Vendor: UCA CIM Users Group (developed and maintained by Emerson | AspenTech)
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: kena.jar,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIMUtilTest Fragment
 Bundle-SymbolicName: CIMUtilTest
-Bundle-Version: 1.0.0
+Bundle-Version: 1.1.0
 Fragment-Host: au.com.langdale.cimutil;bundle-version="0.0.0"
 Bundle-ClassPath: .,
  test-resources/

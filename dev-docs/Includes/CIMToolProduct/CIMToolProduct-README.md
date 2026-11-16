@@ -240,10 +240,10 @@ The following projects maintain their own version lifecycle and should only be u
 
 | Project | Current Version | Notes |
 | --- | --- | --- |
-| Kena | `3.4.0` | RDF/OWL abstraction library; versioned on its own API contract independent of the CIMTool release cycle. **When Kena's version changes, the `kena` dependency version in `cimtool-cli/pom.xml` must also be updated to match before running `install-jars.bat`.** |
-| com.cimphony.cimtoole | `1.1.1` | Cimphony extensions; versioned independently of the core product |
-| CIMToolTest | `1.3.0` | Test suite; only increment when tests or test infrastructure are changed or added |
-| CIMUtilTest | `1.0.0` | Test suite for CIMUtil; only increment when tests or test infrastructure are changed or added |
+| Kena | `3.5.0` | RDF/OWL abstraction library; versioned on its own API contract independent of the CIMTool release cycle. **When Kena's version changes, the `kena` dependency version in `cimtool-cli/pom.xml` must also be updated to match before running `install-jars.bat`.** |
+| com.cimphony.cimtoole | `1.1.2` | Cimphony extensions; versioned independently of the core product |
+| CIMToolTest | `1.4.0` | Test suite; only increment when tests or test infrastructure are changed or added |
+| CIMUtilTest | `1.1.0` | Test suite for CIMUtil; only increment when tests or test infrastructure are changed or added |
 | KenaTest | `1.0.0` | Test suite for Kena; only increment when tests or test infrastructure are changed or added |
 | SLF4J Logback Binding | `1.0.0` | `io.ucaiug.slf4j.logback.binding` fragment; only increment when the fragment changes |
 
