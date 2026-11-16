@@ -29,6 +29,8 @@ public interface GlobalPreferences {
 	String PREF_MERGED_SCHEMA_PATH = "merged_schema_path";
 	//
 	String PREF_SCHEMA_NAMESPACE = "schema_namespace";
+	/** Per schema file: "true" if the file is the project's base CIM schema (issue #391). */
+	String PREF_CANONICAL_SCHEMA = "canonical_schema";
 	String PREF_MERGE_SHADOW_EXTENSIONS = "merge_shadow_extensions";
 	String PREF_SELF_HEAL_ON_IMPORT = "self_heal_on_import";
 	String PREF_INSTANCE_NAMESPACE = "instance_namespace";

@@ -4,11 +4,15 @@
  */
 package au.com.langdale.profiles.cl;
 
+import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.preferences.GlobalPreferences;
+import au.com.langdale.profiles.SchemaMerger;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -179,28 +183,77 @@ public class CIMToolCLI {
 
 		// Parse schema files
 		CLISchemaParser schemaParser = new CLISchemaParser(settings, options.getProjectDir());
-		OntModel mergedSchema = null;
+		List<SchemaMerger.SchemaFile> parsedSchemas = new ArrayList<>();
 
 		System.out.println("\nParsing schema(s)...");
 		for (File schemaFile : validSchemaFiles) {
 			System.out.println("  " + schemaFile.getName());
 			try {
 				OntModel schema = schemaParser.parse(schemaFile);
-				if (mergedSchema == null) {
-					mergedSchema = schema;
-				} else {
-					mergedSchema = au.com.langdale.kena.Composition.merge(mergedSchema, schema);
-				}
+				boolean flaggedAsBase = "true"
+						.equalsIgnoreCase(settings.getSetting(schemaFile, GlobalPreferences.PREF_CANONICAL_SCHEMA));
+				parsedSchemas.add(new SchemaMerger.SchemaFile(schemaFile.getName(), schema,
+						settings.getSchemaNamespace(schemaFile), flaggedAsBase));
 			} catch (CLISchemaParser.SchemaParseException e) {
 				System.err.println("Error parsing schema: " + e.getMessage());
 				return EXIT_TRANSFORM_ERROR;
 			}
 		}
 
+		// Merge the schemas into one whose ontology is the base CIM schema (issue #391).
+		// Without a base CIM schema the builders would write output with no ontology
+		// URI, so nothing is generated and the reason and the remedy are reported.
+		CLIGlobalPreferences globalPreferences = new CLIGlobalPreferences(options.getProjectDir());
+		SchemaMerger.Result merged = SchemaMerger.merge(parsedSchemas,
+				globalPreferences.getPreference(GlobalPreferences.PREF_SCHEMA_NAMESPACE));
+		for (SchemaMerger.Problem problem : merged.getProblems()) {
+			if (!problem.isError())
+				System.out.println("Warning: " + problem.getDescription() + ".");
+		}
+		if (merged.hasErrors()) {
+			for (SchemaMerger.Problem problem : merged.getProblems()) {
+				if (problem.isError()) {
+					System.err.println("Error: " + problem.getDescription() + ".");
+					System.err.println(baseSchemaRemedy(problem));
+				}
+			}
+			System.err.println("No output was generated.");
+			return EXIT_TRANSFORM_ERROR;
+		}
+		System.out.println("Base CIM schema: " + merged.getBase().getName());
+		OntModel mergedSchema = ModelFactory.createTransInf(merged.getGraph());
+
 		if (options.isProjectMode()) {
 			return executeProjectTransform(options, settings, builderPrefs, mergedSchema);
 		} else {
 			return executeSingleFileTransform(options, settings, builderPrefs, mergedSchema);
+		}
+	}
+
+	/**
+	 * Returns the remedy for a problem with the base CIM schema, to follow its
+	 * description in the CLI's output.
+	 */
+	static String baseSchemaRemedy(SchemaMerger.Problem problem) {
+		String file = problem.getFiles().isEmpty() ? "<schema file>" : problem.getFiles().get(0).getName();
+		String example = "    <" + GlobalPreferences.PROJECT_NS + "Schema/" + file.replace(" ", "%20") + ">\n"
+				+ "          tool:canonical_schema  \"true\" .";
+		switch (problem.getType()) {
+		case MULTIPLE_BASE_SCHEMAS:
+			return "  To fix: keep tool:canonical_schema \"true\" on one schema file only in .cimtool-settings,\n"
+					+ "  or in CIMTool check \"Base CIM schema\" on the properties of the file that is the base.";
+		case NO_BASE_SCHEMA:
+		case AMBIGUOUS_BASE_SCHEMA:
+			return "  To fix: in CIMTool, check \"Base CIM schema\" on the properties of the schema file that is the base,\n"
+					+ "  or mark that file in .cimtool-settings, for example:\n" + example;
+		case BASE_SCHEMA_HEADERS:
+			return "  To fix: edit " + file + " so that it declares one owl:Ontology header,\n"
+					+ "  or make another schema file the base CIM schema.";
+		case BASE_SCHEMA_INVALID_URI:
+			return "  To fix: correct the owl:Ontology header in " + file
+					+ " so that its URI is the schema namespace without the trailing '#'.";
+		default:
+			return "";
 		}
 	}
 

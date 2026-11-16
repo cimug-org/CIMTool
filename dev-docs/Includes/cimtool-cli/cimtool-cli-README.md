@@ -505,13 +505,35 @@ java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar --proj
 
 
 
+### Base CIM Schema
+
+`cimtool-cli` merges a project's schema files with `SchemaMerger` (see the
+CIMUtil documentation) and builds every profile against the base CIM schema
+([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). The base CIM schema is the schema file flagged with
+`tool:canonical_schema` in `.cimtool-settings`; otherwise the only schema file;
+otherwise the one schema file whose namespace equals the Schema Namespace
+preference in `.cimtool-global-preferences` (`http://iec.ch/TC57/CIM100#` when
+the file is absent). The CLI prints the base it uses after parsing the schemas.
+
+When a project has no base CIM schema, the builders would write output with no
+ontology URI, so the CLI generates nothing. It prints the problem and how to fix
+it, and exits with code `2`. A schema file is flagged in `.cimtool-settings` as
+follows:
+
+```turtle
+<http://cimtoole.langdale.com.au/2009/project/Schema/CIM17v40_BaseCIM.xmi>
+      tool:canonical_schema  "true" .
+```
+
+
+
 ### Exit Codes
 
 | Code  | Meaning               |
 | ----- | --------------------- |
 | `0`   | Success               |
 | `1`   | Invalid arguments     |
-| `2`   | Transformation error  |
+| `2`   | Transformation error, including a project with no base CIM schema (see [Base CIM Schema](#base-cim-schema)) |
 | `3`   | I/O error             |
 
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A minimal base CIM schema for the multi-schema project (issue #391). Its
+     namespace comes from tool:schema_namespace in .cimtool-settings. -->
+<XMI xmi.version="1.2" xmlns:UML="org.omg.xmi.namespace.UML">
+  <XMI.content>
+    <UML:Model name="Base" xmi.id="MX_BASE">
+      <UML:Namespace.ownedElement>
+        <UML:Package name="TC57CIM" xmi.id="PKG_BASE">
+          <UML:Namespace.ownedElement>
+            <UML:Class name="IdentifiedObject" xmi.id="CLS_IDENTIFIED_OBJECT"/>
+          </UML:Namespace.ownedElement>
+        </UML:Package>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>

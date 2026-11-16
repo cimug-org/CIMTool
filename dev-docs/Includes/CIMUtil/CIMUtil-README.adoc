@@ -109,6 +109,7 @@ CIMUtil/
         │   ├── OWLGenerator.java     ← OWL/RDF output generator
         │   ├── RDFSGenerator.java    ← RDFS output generator
         │   ├── SchemaGenerator.java  ← XSD schema generator base
+        │   ├── SchemaMerger.java     ← Chooses the base CIM schema and merges the schema files
         │   ├── ProfileSerializer.java ← Profile serialization
         │   ├── ProfileReorganizer.java / Reorganizer.java ← Profile structure operations
         │   ├── Refactory.java / Renamer.java / Remapper.java ← Profile refactoring operations
@@ -453,6 +454,30 @@ results are written as an AsciiDoc report named after the schema file
 (`<schema>.adoc`) beside the schema in the project's `Schema/` folder. The
 includes, styles, themes and images that the report uses are copied from
 `import-reports/` into `Schema/.import-reports/`.
+
+
+
+=== Merging Schema Files
+
+`SchemaMerger` in `profiles/` merges a project's schema files into the single
+schema that profiles are built against, and makes the project's base CIM schema
+its ontology (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]). The `cimtool-cli` merge uses it today.
+
+The base CIM schema is the one schema file flagged with `tool:canonical_schema`
+in `.cimtool-settings`; otherwise the only schema file; otherwise the one schema
+file whose `tool:schema_namespace` equals the Schema Namespace preference
+(`http://iec.ch/TC57/CIM100#` by default). When there is none, or the base's
+ontology header cannot be used, `SchemaMerger` reports the problem with the
+files involved, and the merged schema has no ontology.
+
+The merged schema combines every schema file's model with one additional graph,
+in which the base's ontology header imports the header of every other schema
+file. `OntModel.getValidOntology()`, which returns the one header that no other
+header imports, therefore returns the base. The schema files' own `owl:imports`
+statements are hidden from the merged schema: in OWL a dependent ontology
+imports the one it depends on, so an extension file that imports the base would
+otherwise point the opposite way to the imports added for the merge. Nothing is
+written to the schema files' models, which are cached and shared.
 
 
 

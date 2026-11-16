@@ -68,16 +68,19 @@ CIMUtilTest/
 │       │   ├── ProfileClassUnresolvedBaseTest.java
 │       │   ├── ProfileSerializerFactoryTest.java
 │       │   ├── ProfilesAsciiDoctorConfigTemplateTest.java
+│       │   ├── SchemaMergerTest.java
 │       │   └── cl/                          ← Builder and command-line tests
 │       │       ├── AllBuildersSmokeTest.java
 │       │       ├── AsciiDocBuildersProfilesDirTest.java
 │       │       ├── AsciiDocWhitespaceTest.java
+│       │       ├── BaseSchemaCLITest.java
 │       │       ├── CIMDatatypeUnresolvedSerializationTest.java
 │       │       ├── CIMToolCLIEndToEndTest.java
 │       │       ├── CLIOptionsTest.java
 │       │       ├── CopyrightBuildersTest.java
 │       │       ├── CustomStylesheetReferencesTest.java
 │       │       ├── CyclicProfileSerializationTest.java
+│       │       ├── MergedSchemaCIMDatatypeTest.java
 │       │       ├── StereotypeLabelTest.java
 │       │       ├── StylesheetsCompileTest.java
 │       │       ├── UnresolvedAndCyclicProfileBuildersTest.java
@@ -94,6 +97,11 @@ CIMUtilTest/
     ├── minimal-project/                     ← One profile class against a hand-written schema
     │   ├── Profiles/MinimalProfile.owl
     │   └── Schema/MinimalSchema.owl
+    ├── multi-schema-project/                ← A base CIM schema and an extension schema in XMI
+    │   ├── Profiles/MultiSchemaProfile.owl
+    │   └── Schema/
+    │       ├── Base.xmi
+    │       └── European.xmi
     ├── sample-project/                      ← Sample profile against the CGMES CIM17 schema
     │   └── Profiles/SampleProfile.owl
     ├── sample-project-unmerged/             ← The same profile with extensions left unmerged
@@ -156,6 +164,9 @@ The sample projects also read the CGMES CIM17 schema from
 | `AsciiDocWhitespaceTest`
 | Each `ASCIIDOC` builder keeps the leading whitespace of every line of a source listing in AsciiDoc documentation (https://github.com/cimug-org/CIMTool/issues/288[Issue #288]).
 
+| `BaseSchemaCLITest`
+| `cimtool-cli` on a project with two XMI schema files: the profile XML's `ontologyURI` is the base CIM ontology whether the base is flagged or found by the Schema Namespace, and with no base, or two flagged, nothing is generated, the CLI says why and how to fix it, and exits with code 2 (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]).
+
 | `CIMDatatypeUnresolvedSerializationTest`
 | The `unit` and `multiplier` elements that the profile XML holds for a CIMDatatype carry `unresolved` beside their `baseClass`, saying whether the schema declares `UnitSymbol` or `UnitMultiplier` (https://github.com/cimug-org/CIMTool/issues/387[Issue #387]).
 
@@ -173,6 +184,9 @@ The sample projects also read the CGMES CIM17 schema from
 
 | `CyclicProfileSerializationTest`
 | For a profile whose classes name each other as superclasses, the profile XML leaves out the `SuperType` elements that close the cycle, and a class leading into the cycle keeps its `SuperType` (https://github.com/cimug-org/CIMTool/issues/387[Issue #387]).
+
+| `MergedSchemaCIMDatatypeTest`
+| With two `.owl` schema files merged by `SchemaMerger`, one an extension that imports the base, the `unit` and `multiplier` elements of a CIMDatatype name the base's `UnitSymbol` and `UnitMultiplier` and are resolved (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]).
 
 | `StereotypeLabelTest`
 | The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference».
@@ -197,6 +211,9 @@ The sample projects also read the CGMES CIM17 schema from
 
 | `ProfilesAsciiDoctorConfigTemplateTest`
 | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` (https://github.com/cimug-org/CIMTool/issues/291[Issue #291]).
+
+| `SchemaMergerTest`
+| `SchemaMerger` chooses the base CIM schema (the file flagged as the base, the only file, or the one file with the Schema Namespace), reports each case in which there is none, has the base import every other schema file's ontology, hides the schema files' own `owl:imports`, and writes nothing to the files' models (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]).
 
 | `ReleaseVersionConsistencyTest`
 | The version declarations that must change together at each release agree (https://github.com/cimug-org/CIMTool/issues/310[Issue #310]).
@@ -282,6 +299,11 @@ https://github.com/cimug-org/CIMTool/issues/387[Issue #387]. `UnresolvedProfile.
 `CyclicProfile.owl` are defined against the minimal project's schema, and
 `CIMDatatypeProfile.owl` and `AssociationsProfile.owl` against the schemas
 beside them. Each test copies the files it needs into a temporary folder.
+
+`test-resources/multi-schema-project` holds two XMI schema files, `Base.xmi` and
+`European.xmi`, and a profile with one class from each, for the tests of
+https://github.com/cimug-org/CIMTool/issues/391[Issue #391]. The tests write the project's `.cimtool-settings`
+themselves, to set each file's namespace and which file is flagged as the base.
 
 Tests that need the repository, such as the sample projects and
 `ReleaseVersionConsistencyTest`, find it by walking up from the working folder,

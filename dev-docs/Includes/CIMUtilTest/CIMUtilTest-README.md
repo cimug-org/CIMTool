@@ -59,16 +59,19 @@ CIMUtilTest/
 │       │   ├── ProfileClassUnresolvedBaseTest.java
 │       │   ├── ProfileSerializerFactoryTest.java
 │       │   ├── ProfilesAsciiDoctorConfigTemplateTest.java
+│       │   ├── SchemaMergerTest.java
 │       │   └── cl/                          ← Builder and command-line tests
 │       │       ├── AllBuildersSmokeTest.java
 │       │       ├── AsciiDocBuildersProfilesDirTest.java
 │       │       ├── AsciiDocWhitespaceTest.java
+│       │       ├── BaseSchemaCLITest.java
 │       │       ├── CIMDatatypeUnresolvedSerializationTest.java
 │       │       ├── CIMToolCLIEndToEndTest.java
 │       │       ├── CLIOptionsTest.java
 │       │       ├── CopyrightBuildersTest.java
 │       │       ├── CustomStylesheetReferencesTest.java
 │       │       ├── CyclicProfileSerializationTest.java
+│       │       ├── MergedSchemaCIMDatatypeTest.java
 │       │       ├── StereotypeLabelTest.java
 │       │       ├── StylesheetsCompileTest.java
 │       │       ├── UnresolvedAndCyclicProfileBuildersTest.java
@@ -85,6 +88,11 @@ CIMUtilTest/
     ├── minimal-project/                     ← One profile class against a hand-written schema
     │   ├── Profiles/MinimalProfile.owl
     │   └── Schema/MinimalSchema.owl
+    ├── multi-schema-project/                ← A base CIM schema and an extension schema in XMI
+    │   ├── Profiles/MultiSchemaProfile.owl
+    │   └── Schema/
+    │       ├── Base.xmi
+    │       └── European.xmi
     ├── sample-project/                      ← Sample profile against the CGMES CIM17 schema
     │   └── Profiles/SampleProfile.owl
     ├── sample-project-unmerged/             ← The same profile with extensions left unmerged
@@ -131,12 +139,14 @@ The sample projects also read the CGMES CIM17 schema from
 | `AllBuildersSmokeTest` | Every registered builder runs against both sample projects without an exception, writes non-empty output and makes no network access, and XSD output is well-formed. The registry must hold exactly the builders named in `builders.json` and `java-builders.json`, each XSLT builder with its stylesheet. With extensions left unmerged, the LinkML output lists the shadow parent as a mixin ([Issue #318](https://github.com/cimug-org/CIMTool/issues/318)). |
 | `AsciiDocBuildersProfilesDirTest` | Each AsciiDoc builder references its PlantUML diagram through `{profilesdir}` and defines the `{docdir}/Profiles` fallback ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
 | `AsciiDocWhitespaceTest` | Each `ASCIIDOC` builder keeps the leading whitespace of every line of a source listing in AsciiDoc documentation ([Issue #288](https://github.com/cimug-org/CIMTool/issues/288)). |
+| `BaseSchemaCLITest` | `cimtool-cli` on a project with two XMI schema files: the profile XML's `ontologyURI` is the base CIM ontology whether the base is flagged or found by the Schema Namespace, and with no base, or two flagged, nothing is generated, the CLI says why and how to fix it, and exits with code 2 ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). |
 | `CIMDatatypeUnresolvedSerializationTest` | The `unit` and `multiplier` elements that the profile XML holds for a CIMDatatype carry `unresolved` beside their `baseClass`, saying whether the schema declares `UnitSymbol` or `UnitMultiplier` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `CIMToolCLIEndToEndTest` | `cimtool-cli` run in project mode on a copy of the sample project: project copyright templates in the `html` and `sql-rdfs-ansi92` output, `--xslt` with `--type TEXT` producing plain text, and the `.namespaces` file beside the schema being applied ([Issue #287](https://github.com/cimug-org/CIMTool/issues/287)). |
 | `CLIOptionsTest` | Each rule that `CLIOptions` enforces, with the exact error message for each rejected command line ([Issue #287](https://github.com/cimug-org/CIMTool/issues/287)). |
 | `CopyrightBuildersTest` | The copyright notices that `sql.xsl`, `sql-rdfs-ansi92.xsl` and `html.xsl` write, and their absence when the copyright templates are empty ([Issue #272](https://github.com/cimug-org/CIMTool/issues/272)). |
 | `CustomStylesheetReferencesTest` | Relative references in a custom `--xslt` stylesheet resolve against the stylesheet's own folder ([Issue #311](https://github.com/cimug-org/CIMTool/issues/311)). |
 | `CyclicProfileSerializationTest` | For a profile whose classes name each other as superclasses, the profile XML leaves out the `SuperType` elements that close the cycle, and a class leading into the cycle keeps its `SuperType` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
+| `MergedSchemaCIMDatatypeTest` | With two `.owl` schema files merged by `SchemaMerger`, one an extension that imports the base, the `unit` and `multiplier` elements of a CIMDatatype name the base's `UnitSymbol` and `UnitMultiplier` and are resolved ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). |
 | `StereotypeLabelTest` | The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference». |
 | `StylesheetsCompileTest` | Every stylesheet in `CIMUtil/builders` compiles, whether or not it is registered as a builder, apart from those still in development ([Issue #388](https://github.com/cimug-org/CIMTool/issues/388)). |
 | `UnresolvedAndCyclicProfileBuildersTest` | Every registered builder, and an unregistered stylesheet that follows the supertype chain, finishes within two minutes and writes non-empty output for a profile whose schema classes the schema does not declare and for a profile with a cyclic hierarchy ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
@@ -145,6 +155,7 @@ The sample projects also read the CGMES CIM17 schema from
 | `ProfileClassUnresolvedBaseTest` | `ProfileClass.getUnresolvedBase` reports the schema class a profile class names when the schema does not declare it, while `ProfileClass.getBaseClass` still returns `owl:Thing` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `ProfileSerializerFactoryTest` | `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it ([Issue #314](https://github.com/cimug-org/CIMTool/issues/314)). |
 | `ProfilesAsciiDoctorConfigTemplateTest` | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
+| `SchemaMergerTest` | `SchemaMerger` chooses the base CIM schema (the file flagged as the base, the only file, or the one file with the Schema Namespace), reports each case in which there is none, has the base import every other schema file's ontology, hides the schema files' own `owl:imports`, and writes nothing to the files' models ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). |
 | `ReleaseVersionConsistencyTest` | The version declarations that must change together at each release agree ([Issue #310](https://github.com/cimug-org/CIMTool/issues/310)). |
 | `ProfileValidatorCycleTest` | `ProfileValidator` reports each superclass statement on a cycle in the profile hierarchy, with a repair that removes it, and reports neither a class leading into the cycle nor self and mutual associations ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `PackageNamespaceTest` | `Translator.packageNamespace` and `Translator.schemaOntologyUri`, which build package namespaces and the schema ontology IRI during schema import ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)). |
@@ -209,6 +220,11 @@ profile XML, validation and builder tests of
 `CyclicProfile.owl` are defined against the minimal project's schema, and
 `CIMDatatypeProfile.owl` and `AssociationsProfile.owl` against the schemas
 beside them. Each test copies the files it needs into a temporary folder.
+
+`test-resources/multi-schema-project` holds two XMI schema files, `Base.xmi` and
+`European.xmi`, and a profile with one class from each, for the tests of
+[Issue #391](https://github.com/cimug-org/CIMTool/issues/391). The tests write the project's `.cimtool-settings`
+themselves, to set each file's namespace and which file is flagged as the base.
 
 Tests that need the repository, such as the sample projects and
 `ReleaseVersionConsistencyTest`, find it by walking up from the working folder,

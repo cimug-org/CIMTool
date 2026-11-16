@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A CIMTool profile defined against the two schema files of the
+     multi-schema project (issue #391): one class from the base CIM schema and
+     one from the European extension. -->
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xml:base="http://example.com/MultiSchemaProfile">
+  <owl:Ontology rdf:about="">
+    <rdfs:label>MultiSchemaProfile</rdfs:label>
+  </owl:Ontology>
+  <owl:Class rdf:about="#IdentifiedObject">
+    <rdfs:label>IdentifiedObject</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100#IdentifiedObject"/>
+  </owl:Class>
+  <owl:Class rdf:about="#BoundaryPoint">
+    <rdfs:label>BoundaryPoint</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/CIM100-European#BoundaryPoint"/>
+  </owl:Class>
+</rdf:RDF>

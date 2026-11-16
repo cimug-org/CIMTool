@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A minimal extension schema for the multi-schema project (issue #391),
+     imported after the base CIM schema. Its namespace comes from
+     tool:schema_namespace in .cimtool-settings. -->
+<XMI xmi.version="1.2" xmlns:UML="org.omg.xmi.namespace.UML">
+  <XMI.content>
+    <UML:Model name="European" xmi.id="MX_EUROPEAN">
+      <UML:Namespace.ownedElement>
+        <UML:Package name="EuropeanCIMExtensions" xmi.id="PKG_EUROPEAN">
+          <UML:Namespace.ownedElement>
+            <UML:Class name="BoundaryPoint" xmi.id="CLS_BOUNDARY_POINT"/>
+          </UML:Namespace.ownedElement>
+        </UML:Package>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>
