@@ -188,6 +188,62 @@ class SchemaMergerTest {
 	}
 
 	@Test
+	void anEAProjectFileIsTheBase() {
+		SchemaFile qea = file("cim.qea", EUROPEAN, false);
+		SchemaFile xmi = file("other.xmi", CIM, false);
+		Result result = SchemaMerger.merge(Arrays.asList(xmi, qea), null);
+		assertSame(qea, result.getBase(), "the EA project file outranks the Schema Namespace preference");
+		assertEquals(EUROPEAN, ontology(result));
+		assertTrue(result.getProblems().isEmpty());
+	}
+
+	@Test
+	void anEAProjectFileOutranksAFlagOnAnotherFile() {
+		SchemaFile qea = file("cim.qea", CIM, false);
+		SchemaFile owl = file("ext.owl", EXTENSIONS, true);
+		Result result = SchemaMerger.merge(Arrays.asList(qea, owl), null);
+		assertSame(qea, result.getBase());
+		assertEquals(ProblemType.IGNORED_BASE_FLAG, onlyProblem(result));
+		assertEquals(Collections.singletonList(owl), result.getProblems().get(0).getFiles());
+		assertFalse(result.hasErrors(), "an ignored flag is a warning");
+		assertEquals(CIM, ontology(result));
+	}
+
+	@Test
+	void anEAProjectFileFlaggedAsTheBaseHasNoProblem() {
+		SchemaFile qea = file("cim.QEA", CIM, true);
+		Result result = SchemaMerger.merge(Arrays.asList(qea, file("ext.owl", EXTENSIONS, false)), null);
+		assertSame(qea, result.getBase(), "extensions are matched without regard to case");
+		assertTrue(result.getProblems().isEmpty());
+	}
+
+	@Test
+	void twoEAProjectFilesHaveNoBase() {
+		Result result = SchemaMerger.merge(Arrays.asList(file("a.eap", CIM, false), file("b.qea", EUROPEAN, true)), null);
+		assertNull(result.getBase());
+		assertEquals(ProblemType.MULTIPLE_EA_SCHEMAS, onlyProblem(result));
+		assertTrue(result.hasErrors());
+		assertNull(ontology(result));
+	}
+
+	@Test
+	void selectBaseNeedsNoModels() {
+		SchemaFile eu = new SchemaFile("eu.xmi", null, EUROPEAN + "#", false);
+		SchemaFile cim = new SchemaFile("cim.xmi", null, CIM + "#", false);
+		SchemaMerger.Selection selection = SchemaMerger.selectBase(Arrays.asList(eu, cim), null);
+		assertSame(cim, selection.getBase());
+		assertTrue(selection.getProblems().isEmpty());
+	}
+
+	@Test
+	void eaProjectFilesAreRecognisedByExtension() {
+		for (String name : new String[] { "a.eap", "a.eapx", "a.qea", "a.qeax", "A.QEA" })
+			assertTrue(SchemaMerger.isEAProject(name), name);
+		for (String name : new String[] { "a.xmi", "a.owl", "a.qea.bak", "qea" })
+			assertFalse(SchemaMerger.isEAProject(name), name);
+	}
+
+	@Test
 	void problemsNameTheFilesInvolved() {
 		Result result = SchemaMerger.merge(Arrays.asList(file("cim.xmi", CIM, true), file("eu.xmi", EUROPEAN, true)), null);
 		String description = result.getProblems().get(0).getDescription();

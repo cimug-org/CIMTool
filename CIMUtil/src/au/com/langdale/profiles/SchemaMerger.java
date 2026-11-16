@@ -38,6 +38,8 @@ import au.com.langdale.xmi.Translator;
  * <p>
  * The base CIM schema is, in order:
  * <ol>
+ * <li>the project's Enterprise Architect project file, of which a project may
+ * have only one;</li>
  * <li>the one schema file flagged as the base ({@code tool:canonical_schema});</li>
  * <li>the only schema file, when there is just one;</li>
  * <li>the one schema file whose namespace equals the Schema Namespace
@@ -50,6 +52,9 @@ public class SchemaMerger {
 	/** The default of the Schema Namespace preference. */
 	public static final String DEFAULT_SCHEMA_NAMESPACE = "http://iec.ch/TC57/CIM100#";
 
+	/** The extensions of Enterprise Architect project files. */
+	private static final String[] EA_EXTENSIONS = { ".eap", ".eapx", ".qea", ".qeax" };
+
 	/** A schema file to merge. */
 	public static final class SchemaFile {
 		private final String name;
@@ -58,8 +63,10 @@ public class SchemaMerger {
 		private final boolean base;
 
 		/**
-		 * @param name      the file's name, used in problem descriptions
-		 * @param model     the model parsed from the file
+		 * @param name      the file's name, used in problem descriptions and to
+		 *                  recognise an Enterprise Architect project file
+		 * @param model     the model parsed from the file, or null when only the
+		 *                  base is being selected ({@link SchemaMerger#selectBase})
 		 * @param namespace the file's {@code tool:schema_namespace}, or null
 		 * @param base      true if the file is flagged as the base CIM schema
 		 */
@@ -94,6 +101,10 @@ public class SchemaMerger {
 
 	/** The kinds of problem found while choosing the base CIM schema. */
 	public enum ProblemType {
+		/** More than one schema file is an Enterprise Architect project file. */
+		MULTIPLE_EA_SCHEMAS(true),
+		/** A schema file other than the Enterprise Architect project file is flagged as the base. */
+		IGNORED_BASE_FLAG(false),
 		/** Several schema files, none flagged, and none has the Schema Namespace. */
 		NO_BASE_SCHEMA(true),
 		/** No schema file is flagged and several have the Schema Namespace. */
@@ -193,7 +204,62 @@ public class SchemaMerger {
 		}
 	}
 
+	/** The base CIM schema chosen from a project's schema files. */
+	public static final class Selection {
+		private final SchemaFile base;
+		private final List<Problem> problems;
+
+		Selection(SchemaFile base, List<Problem> problems) {
+			this.base = base;
+			this.problems = Collections.unmodifiableList(problems);
+		}
+
+		/** The base CIM schema file, or null if none was identified. */
+		public SchemaFile getBase() {
+			return base;
+		}
+
+		public List<Problem> getProblems() {
+			return problems;
+		}
+	}
+
 	private SchemaMerger() {
+	}
+
+	/**
+	 * Returns true if the file is an Enterprise Architect project file, judged by
+	 * its extension.
+	 */
+	public static boolean isEAProject(String fileName) {
+		String name = fileName.toLowerCase(java.util.Locale.ROOT);
+		for (String extension : EA_EXTENSIONS)
+			if (name.endsWith(extension))
+				return true;
+		return false;
+	}
+
+	/**
+	 * Chooses the base CIM schema from the schema files' names, namespaces and
+	 * flags alone, without their models. It applies the same rules as
+	 * {@link #merge}, apart from the checks on the base's ontology header, which
+	 * need the base's model.
+	 * 
+	 * @param files                     the schema files, in a stable order; their
+	 *                                  models may be null
+	 * @param schemaNamespacePreference the Schema Namespace preference, or null
+	 *                                  for its default
+	 * @return the base CIM schema, if any, and the problems found
+	 */
+	public static Selection selectBase(List<SchemaFile> files, String schemaNamespacePreference) {
+		List<Problem> problems = new ArrayList<Problem>();
+		SchemaFile base = chooseBase(files, preference(schemaNamespacePreference), problems);
+		return new Selection(base, problems);
+	}
+
+	private static String preference(String schemaNamespacePreference) {
+		return schemaNamespacePreference != null && !schemaNamespacePreference.isEmpty() ? schemaNamespacePreference
+				: DEFAULT_SCHEMA_NAMESPACE;
 	}
 
 	/**
@@ -205,12 +271,10 @@ public class SchemaMerger {
 	 * @return the merged schema, the base CIM schema and any problems
 	 */
 	public static Result merge(List<SchemaFile> files, String schemaNamespacePreference) {
-		String preference = schemaNamespacePreference != null && !schemaNamespacePreference.isEmpty()
-				? schemaNamespacePreference
-				: DEFAULT_SCHEMA_NAMESPACE;
-		List<Problem> problems = new ArrayList<Problem>();
+		Selection selection = selectBase(files, schemaNamespacePreference);
+		List<Problem> problems = new ArrayList<Problem>(selection.getProblems());
 
-		SchemaFile base = chooseBase(files, preference, problems);
+		SchemaFile base = selection.getBase();
 		OntModel imports = ModelFactory.createMem();
 		if (base != null && !addImports(base, files, imports, problems))
 			base = null;
@@ -225,10 +289,30 @@ public class SchemaMerger {
 	}
 
 	private static SchemaFile chooseBase(List<SchemaFile> files, String preference, List<Problem> problems) {
+		List<SchemaFile> eaProjects = new ArrayList<SchemaFile>();
 		List<SchemaFile> flagged = new ArrayList<SchemaFile>();
-		for (SchemaFile file : files)
+		for (SchemaFile file : files) {
+			if (isEAProject(file.getName()))
+				eaProjects.add(file);
 			if (file.isFlaggedAsBase())
 				flagged.add(file);
+		}
+
+		if (eaProjects.size() > 1) {
+			problems.add(new Problem(ProblemType.MULTIPLE_EA_SCHEMAS, eaProjects, names(eaProjects)
+					+ " are all Enterprise Architect project files; a project can have only one, which is its base CIM schema"));
+			return null;
+		}
+		if (eaProjects.size() == 1) {
+			SchemaFile eaProject = eaProjects.get(0);
+			flagged.remove(eaProject);
+			if (!flagged.isEmpty())
+				problems.add(new Problem(ProblemType.IGNORED_BASE_FLAG, flagged, names(flagged)
+						+ (flagged.size() == 1 ? " is" : " are") + " marked as the base CIM schema, but "
+						+ eaProject.getName()
+						+ " is the project's Enterprise Architect project file and is always the base, so the flag is ignored"));
+			return eaProject;
+		}
 
 		if (flagged.size() == 1)
 			return flagged.get(0);

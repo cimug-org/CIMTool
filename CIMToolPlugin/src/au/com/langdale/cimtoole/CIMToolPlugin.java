@@ -89,6 +89,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 		builderPreferences = new BuilderPreferences();
 		globalPreferencesSynchronizer = GlobalPreferencesSynchronizer.register();
 		plugin = this;
+		cache.watchSchemaNamespacePreference(getPluginPreferences());
 	}
 
 	@Override

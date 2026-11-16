@@ -157,7 +157,7 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | --- | --- |
 | `org.eclipse.core.resources.builders` | Registers `CIMBuilder` as an incremental project builder that runs automatically on workspace resource changes to produce all configured CIM profile output artefacts |
 | `org.eclipse.core.resources.natures` | Registers `CIMNature` as the Eclipse project nature that marks a project as a CIMTool project and associates it with `CIMBuilder` |
-| `org.eclipse.core.resources.markers` | Defines CIMTool-specific problem markers used to display build errors and validation warnings in the Eclipse Problems view and editor gutter |
+| `org.eclipse.core.resources.markers` | Defines CIMTool-specific problem markers used to display build errors and validation warnings in the Eclipse Problems view and editor gutter, including the base CIM schema problems on schema files (see The Base CIM Schema below) |
 | `org.eclipse.core.contenttype.contentTypes` | Defines the "CIMTool Profile" content type (XML-based, for `.owl` files) to which the Profile Editor is bound, and associates `.xml-log` files with plain text and `.rdfs` files with XML |
 | `org.eclipse.ui.perspectives` | Registers the CIMTool Perspective, CIMTool Browsing Perspective, and Validation Perspective, defining the initial layout of views, editors, and toolbars for each |
 | `org.eclipse.ui.editors` | Registers the Model Browser (`.xmi`, `.simple-owl`, `.merged-owl`, and the EA project files `.eap`, `.eapx`, `.qea`, `.qeax`, `.feap`), Profile Editor (`.owl`), Diagnostic Browser (`.diagnostic`), Profile Repair Editor (`.repair`) and Mapping Editor (`.mapping-ttl`, `.mapping-owl`) |
@@ -256,6 +256,31 @@ integrates with the Eclipse workspace build mechanism:
 
 The build is triggered automatically by Eclipse whenever a relevant workspace
 resource changes. It can also be triggered manually via **Project > Build Project**.
+
+### The Base CIM Schema
+
+`Cache` merges each project's schema files with `SchemaMerger` (see the
+CIMUtil documentation), so that profiles are built against the project's base
+CIM schema (([Issue #391](https://github.com/cimug-org/CIMTool/issues/391))). The base is the project's Enterprise Architect project
+file, otherwise the schema file checked as the base CIM schema, otherwise the
+only schema file, otherwise the one schema file whose namespace is the Schema
+Namespace preference. `Info.getSchemaNamespace(IProject)` returns the base's
+namespace, or the preference when there is no base. The files are merged again
+when one is added or removed, when `.cimtool-settings` changes, and when the
+Schema Namespace preference changes; they are parsed again only when their
+content changes.
+
+`SchemaMergeMarkers` shows each problem found choosing the base as a marker of
+type `au.com.langdale.cimtoole.schemaproblem` (a kind of CIMTool problem) on
+the schema files involved. The marker states what is wrong and how to resolve
+it. The markers are written in a background job after each merge, and are
+replaced each time, so they disappear once the problem is resolved.
+
+When the problem is an error, there is no usable base, and output built now
+would have no ontology URI. `ProfileBuildlet.run()` therefore builds none of the
+project's profile outputs, and leaves the existing outputs as they are. Cleaning
+a profile's outputs is not affected. A project with no schema files builds as
+before.
 
 ### Regeneration After an Upgrade
 

@@ -509,11 +509,16 @@ java -Dlogback.configurationFile=.\logback-debug.xml -jar cimtool-cli.jar --proj
 
 `cimtool-cli` merges a project's schema files with `SchemaMerger` (see the
 CIMUtil documentation) and builds every profile against the base CIM schema
-([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). The base CIM schema is the schema file flagged with
+([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). The base CIM schema is the project's Enterprise Architect
+project file (`.eap`, `.eapx`, `.qea` or `.qeax`), since a project can have only
+one and it is always the base; otherwise the schema file flagged with
 `tool:canonical_schema` in `.cimtool-settings`; otherwise the only schema file;
 otherwise the one schema file whose namespace equals the Schema Namespace
 preference in `.cimtool-global-preferences` (`http://iec.ch/TC57/CIM100#` when
 the file is absent). The CLI prints the base it uses after parsing the schemas.
+A project with two Enterprise Architect project files has no base. A flag on
+another file beside an Enterprise Architect project file is ignored, and the CLI
+prints a warning.
 
 When a project has no base CIM schema, the builders would write output with no
 ontology URI, so the CLI generates nothing. It prints the problem and how to fix

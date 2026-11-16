@@ -219,14 +219,23 @@ The compliance check runs when an EA project schema is imported through the New 
 
 `SchemaMerger` in `profiles/` merges a project's schema files into the single
 schema that profiles are built against, and makes the project's base CIM schema
-its ontology ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). The `cimtool-cli` merge uses it today.
+its ontology ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). Both the `cimtool-cli` merge and the CIMTool
+plug-in's schema cache use it.
 
-The base CIM schema is the one schema file flagged with `tool:canonical_schema`
-in `.cimtool-settings`; otherwise the only schema file; otherwise the one schema
+The base CIM schema is the project's Enterprise Architect project file (`.eap`,
+`.eapx`, `.qea` or `.qeax`), since a project can have only one and it is always
+the base; otherwise the one schema file flagged with `tool:canonical_schema` in
+`.cimtool-settings`; otherwise the only schema file; otherwise the one schema
 file whose `tool:schema_namespace` equals the Schema Namespace preference
-(`http://iec.ch/TC57/CIM100#` by default). When there is none, or the base's
-ontology header cannot be used, `SchemaMerger` reports the problem with the
-files involved, and the merged schema has no ontology.
+(`http://iec.ch/TC57/CIM100#` by default). Two Enterprise Architect project files
+are an error. A flag on another file beside an Enterprise Architect project file
+is ignored with a warning. When there is no base, or the base's ontology header
+cannot be used, `SchemaMerger` reports the problem with the files involved, and
+the merged schema has no ontology.
+
+`SchemaMerger.selectBase()` makes the same choice from the files' names and
+settings alone, without their models, for callers that need only the base's
+namespace.
 
 The merged schema combines every schema file's model with one additional graph,
 in which the base's ontology header imports the header of every other schema

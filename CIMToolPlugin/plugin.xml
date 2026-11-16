@@ -57,6 +57,17 @@
       </persistent>
    </extension>
    <extension
+         id="schemaproblem"
+         name="CIMTool Base CIM Schema Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="au.com.langdale.cimtoole.problem">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
          point="org.eclipse.ui.importWizards">
       <category
             name="CIMTool"

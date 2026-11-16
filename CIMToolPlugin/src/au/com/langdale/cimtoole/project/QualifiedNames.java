@@ -19,6 +19,8 @@ public interface QualifiedNames extends GlobalPreferences {
 	 * The preferences that follow
 	 */
 	QualifiedName SCHEMA_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_SCHEMA_NAMESPACE);
+	/** Per schema file: "true" if the file is the project's base CIM schema (issue #391). */
+	QualifiedName CANONICAL_SCHEMA = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_CANONICAL_SCHEMA);
 	QualifiedName MERGE_SHADOW_EXTENSIONS = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_MERGE_SHADOW_EXTENSIONS);
 	QualifiedName SELF_HEAL_ON_IMPORT = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_SELF_HEAL_ON_IMPORT);
 	QualifiedName INSTANCE_NAMESPACE = new QualifiedName(CIMToolPlugin.PLUGIN_ID, PREF_INSTANCE_NAMESPACE);

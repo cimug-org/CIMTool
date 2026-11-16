@@ -26,7 +26,8 @@ The test suite is divided into two main categories:
 - **UI tests**: exercise the Eclipse wizard and workbench UI components using the Eclipse workbench testing infrastructure
 
 The tests read their input data from ZIP archives in `CIMToolTestFiles/`,
-which `ProjectTest` extracts at the start of each test.
+which `ProjectTest` extracts at the start of each test, and from the small files
+in `CIMToolTestFiles/BaseSchema/`.
 
 The tests of Kena's own code, including the split model reader and the
 rule-based extractor, are in KenaTest, which runs as plain JUnit 5 tests
@@ -49,6 +50,11 @@ CIMToolTest/
 │   └── junit-test2.xsl                      ← Identical copy of junit-test.xsl, used as a second
 │                                               custom builder
 ├── CIMToolTestFiles/                        ← Test data ZIPs loaded at runtime by the test framework
+│   ├── BaseSchema/                          ← Two small XMI schemas and a profile, read by
+│   │   │                                       BaseSchemaTests
+│   │   ├── Base.xmi                         ← Base CIM schema (http://iec.ch/TC57/CIM100#)
+│   │   ├── European.xmi                     ← Extension schema (http://iec.ch/TC57/CIM100-European#)
+│   │   └── MultiSchemaProfile.owl           ← Profile with one class from each schema
 │   ├── CIMToolTestFiles.zip                 ← Primary test fixture archive: extracted on setUp()
 │   │                                           by ProjectTest.setUpTestData() via the OSGi
 │   │                                           classloader; contains the SmallCases/ validation
@@ -121,6 +127,8 @@ CIMToolTest/
         │   │   ├── TransformTasks.java      ← Tests for XSD and AsciiDoc generation
         │   │   ├── CreateProject.java       ← Tests for creating a CIMTool project
         │   │   ├── FullModelProfileModelTest.java ← Tests for the full schema profile pipeline
+        │   │   ├── BaseSchemaTests.java     ← Tests for the base CIM schema of a project with
+        │   │   │                               several schema files
         │   │   ├── GlobalPreferencesRefreshTests.java ← Tests for refreshing .cimtool-global-preferences
         │   │   │                                   at startup
         │   │   ├── NamespaceValidatorTest.java ← Tests for the namespace validator in the user interface
@@ -170,6 +178,7 @@ These tests run without a display and exercise the core CIMTool logic:
 | `ProfileTasks` | Creating a new profile and importing `cpsm2007.owl` |
 | `TransformTasks` | XSD generation, XSD generation with custom rules, and AsciiDoc generation (which also creates the Profiles folder `.asciidoctorconfig.adoc`), using the `MeterReadings.owl` profile from `Part9/` on the CIM100 `.qea` schema |
 | `CreateProject` | Creating a CIMTool project |
+| `BaseSchemaTests` | Choosing the base CIM schema of a project with two XMI schema files: the Schema Namespace preference or the base CIM schema flag chooses the base, and `Info.getSchemaNamespace(IProject)` returns its namespace; two flagged files are marked as errors, and the markers disappear when one flag is cleared; a profile is not built while there is no base, and is built once the problem is resolved ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)) |
 | `FullModelProfileModelTest` | Importing the CGMES CIM17 `.qea` schema and serializing the resulting full schema profile with `FullModelProfileModel` and `ProfileSerializer` |
 | `GlobalPreferencesRefreshTests` | The export that `GlobalPreferencesSynchronizer` runs for every open project when CIMTool starts: it refreshes an existing `.cimtool-global-preferences` file, creates a missing one, and leaves a file that already matches the workspace preferences untouched ([Issue #339](https://github.com/cimug-org/CIMTool/issues/339)) |
 | `NamespaceValidatorTest` | `Validators.NAMESPACE` in RCPUtil, which checks every namespace entered in the CIMTool user interface, accepts `http:` and `https:` hash and slash namespaces and agrees with `NamespaceUtils` in Kena; needs no workspace ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)) |
@@ -226,8 +235,8 @@ before use.
 
 ## Test Data
 
-The `CIMToolTest` project holds its test data in three ZIP archives in the
-`CIMToolTestFiles/` folder.
+The `CIMToolTest` project holds its test data in three ZIP archives and the
+`BaseSchema/` folder in the `CIMToolTestFiles/` folder.
 
 ### CIMToolTestFiles.zip and CIMToolTestFiles-CGMES.zip
 
@@ -270,6 +279,15 @@ interoperability test (`ABB40BusIOP10_rev7.xml`,
 `.mdl`) and the `CPSM2007-CIMTool-Profile.owl` profile. As of CIMTool 2.3.1, no
 test reads it. The `ABB40BusIOP10_rev7` split model in KenaTest holds the
 first of these models in split model form.
+
+### BaseSchema
+
+`BaseSchema/` holds the files that `BaseSchemaTests` imports into its project:
+`Base.xmi`, a base CIM schema whose namespace is the Schema Namespace
+preference; `European.xmi`, an extension schema; and `MultiSchemaProfile.owl`,
+a profile with one class from each. They are copies of the multi-schema project
+in CIMUtilTest, and are read directly through the classloader rather than from
+a ZIP.
 
 
 

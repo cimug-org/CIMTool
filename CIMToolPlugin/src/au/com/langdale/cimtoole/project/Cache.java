@@ -4,9 +4,13 @@
  */
 package au.com.langdale.cimtoole.project;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,13 +28,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 
-import com.hp.hpl.jena.graph.compose.MultiUnion;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
+import au.com.langdale.profiles.SchemaMerger;
 import au.com.langdale.util.Jobs;
 /**
  * A cache of ontology models. 
@@ -118,6 +123,62 @@ public class Cache extends Info {
 		if( merger == null )
 			return null;
 		return merger.getBaseModel();
+	}
+	/**
+	 * Return the result of merging a schema folder's files: the base CIM schema
+	 * and any problems found choosing it (issue #391). Parse and merge the files
+	 * first if necessary.
+	 * @param folder: the folder containing the schema files
+	 * @return: the result of the merge, or null if the folder does not exist
+	 * @throws CoreException
+	 */
+	public SchemaMerger.Result getSchemaMergeWait( IFolder folder ) throws CoreException {
+		DynamicMergedModel merger = (DynamicMergedModel) getCachedWait(new MergeWorker(folder, false));
+		if( merger == null )
+			return null;
+		return merger.getResult();
+	}
+	/**
+	 * Merge every open project's schema files again when the Schema Namespace
+	 * preference changes, since it can decide which file is the base CIM schema.
+	 * The files are not parsed again.
+	 * @param preferences: the plugin's preferences
+	 */
+	public void watchSchemaNamespacePreference(Preferences preferences) {
+		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			public void propertyChange(Preferences.PropertyChangeEvent event) {
+				if( SCHEMA_NAMESPACE.getLocalName().equals(event.getProperty()))
+					remergeAll();
+			}
+		});
+	}
+
+	private void remergeAll() {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int ix = 0; ix < projects.length; ix++)
+			remerge(projects[ix]);
+	}
+
+	/**
+	 * Merge a project's schema files again if they are merged already. Otherwise
+	 * check the choice of the base CIM schema without parsing the files, so that
+	 * its markers are current (issue #391); the files are parsed and merged when
+	 * the merged schema is first needed.
+	 */
+	private void remerge(IProject project) {
+		if( ! project.isAccessible())
+			return;
+		IFolder schema = getSchemaFolder(project);
+		if( ! schema.exists())
+			return;
+		try {
+			if( schema.getSessionProperty(ONTMODEL) != null)
+				runJob(new MergeWorker(schema, true));
+			else
+				SchemaMergeMarkers.update(schema, selectBaseSchema(project).getProblems());
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	/**
 	 * Register to receive cache change notifications.
@@ -256,6 +317,7 @@ public class Cache extends Info {
 	
 	private class DynamicMergedModel implements CacheListener, IResourceVisitor {
 		private OntModel model;
+		private SchemaMerger.Result result;
 		private Map inputs = new HashMap();
 		private IFolder folder;
 		
@@ -282,15 +344,39 @@ public class Cache extends Info {
 			return model;
 		}
 
+		public SchemaMerger.Result getResult() {
+			return result;
+		}
+
+		/**
+		 * Merge the schema files around the project's base CIM schema, and show
+		 * any problem found choosing it as markers on the files (issue #391).
+		 */
 		public OntModel createMergedModel() {
-			MultiUnion union = new MultiUnion();
-			Iterator it = inputs.values().iterator();
-			while(it.hasNext()) {
-				OntModel input = (OntModel) it.next();
-				union.addGraph(input.getGraph());
+			if( ! folder.isAccessible()) {
+				// The project is closed or deleted: there is nothing to merge
+				result = SchemaMerger.merge(new ArrayList<SchemaMerger.SchemaFile>(), null);
+				return ModelFactory.createMem(result.getGraph());
 			}
-			
-			return ModelFactory.createMem(union);
+			List files = new ArrayList(inputs.keySet());
+			Collections.sort(files, new Comparator() {
+				public int compare(Object a, Object b) {
+					return ((IFile) a).getName().compareTo(((IFile) b).getName());
+				}
+			});
+
+			Settings settings = CIMToolPlugin.getSettings();
+			List<SchemaMerger.SchemaFile> schemaFiles = new ArrayList<SchemaMerger.SchemaFile>();
+			for (Iterator it = files.iterator(); it.hasNext();) {
+				IFile file = (IFile) it.next();
+				boolean flaggedAsBase = "true".equalsIgnoreCase(settings.getSetting(file, CANONICAL_SCHEMA));
+				schemaFiles.add(new SchemaMerger.SchemaFile(file.getName(), (OntModel) inputs.get(file),
+						settings.getSetting(file, SCHEMA_NAMESPACE), flaggedAsBase));
+			}
+
+			result = SchemaMerger.merge(schemaFiles, getPreference(SCHEMA_NAMESPACE));
+			SchemaMergeMarkers.update(folder, result);
+			return ModelFactory.createMem(result.getGraph());
 		}
 
 		public void modelCached(IResource raw) {
@@ -342,12 +428,8 @@ public class Cache extends Info {
 
 				event.getDelta().accept(visitor);
 
-				for (Iterator it = visitor.listProjects(); it.hasNext();) {
-					IProject project = (IProject) it.next();
-					IFolder schema = getSchemaFolder(project);
-					if( schema.exists())
-						runJob(new MergeWorker(schema, true));
-				}
+				for (Iterator it = visitor.listProjects(); it.hasNext();)
+					remerge((IProject) it.next());
 
 			} catch (CoreException e) {
 				throw new RuntimeException(e);
@@ -362,6 +444,12 @@ public class Cache extends Info {
 			IResource raw = delta.getResource();
 			if( raw instanceof IFile ) {
 				IFile file = (IFile) raw;
+				if( SETTINGS_EXTENSION.equals(file.getFileExtension()) && delta.getKind() == IResourceDelta.CHANGED ) {
+					// A schema file's settings, such as its base CIM schema flag, decide
+					// how the schema files are merged (issue #391). Merge them again.
+					projects.add(file.getProject());
+					return false;
+				}
 				if( isParseable(file)) {
 					IProject project = file.getProject();
 					int kind = delta.getKind();

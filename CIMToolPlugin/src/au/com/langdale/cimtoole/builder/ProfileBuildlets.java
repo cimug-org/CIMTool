@@ -16,6 +16,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,6 +45,7 @@ import au.com.langdale.profiles.ProfileModel;
 import au.com.langdale.profiles.ProfileSerializer;
 import au.com.langdale.profiles.RDFSBasedGenerator;
 import au.com.langdale.profiles.RDFSGenerator;
+import au.com.langdale.profiles.SchemaMerger;
 import au.com.langdale.ui.binding.BooleanModel;
 import au.com.langdale.workspace.ResourceOutputStream;
 
@@ -142,8 +144,22 @@ public class ProfileBuildlets extends Task {
 			IFile file = getRelated(result, "owl");
 			if (cleanup || !file.exists() || !isFlagged(file))
 				clean(result, monitor);
+			else if (hasBaseSchemaErrors(file))
+				// Without a valid base CIM schema the output would have no ontology URI,
+				// so nothing is built and the existing output is left as it is. The
+				// problem is shown as markers on the schema files (issue #391).
+				return;
 			else
 				build(result, monitor);
+		}
+
+		/**
+		 * Returns true if the project's schema files have no usable base CIM schema.
+		 */
+		protected static boolean hasBaseSchemaErrors(IFile profile) throws CoreException {
+			IFolder schema = getSchemaFolder(profile.getProject());
+			SchemaMerger.Result merge = CIMToolPlugin.getCache().getSchemaMergeWait(schema);
+			return merge != null && merge.hasErrors();
 		}
 
 	}

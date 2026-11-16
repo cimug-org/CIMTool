@@ -12,6 +12,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,6 +44,7 @@ import au.com.langdale.cimtoole.CIMNature;
 import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 import au.com.langdale.colors.util.ColorUtils;
+import au.com.langdale.profiles.SchemaMerger;
 import au.com.langdale.util.Jobs;
 
 /**
@@ -842,18 +846,49 @@ public class Info implements QualifiedNames {
 		}
 	}
 
+	/**
+	 * Returns the namespace of the project's base CIM schema (issue #391), or the
+	 * Schema Namespace preference when the project has no base CIM schema. The base
+	 * is chosen from the schema files' names and settings alone, without parsing
+	 * them.
+	 */
 	public static String getSchemaNamespace(IProject project) throws CoreException {
+		SchemaMerger.SchemaFile base = selectBaseSchema(project).getBase();
+		if (base != null && base.getNamespace() != null)
+			return base.getNamespace();
+		return getPreference(SCHEMA_NAMESPACE);
+	}
+
+	/**
+	 * Chooses the project's base CIM schema from its schema files' names and
+	 * settings alone, without parsing them (issue #391). The selection's problems
+	 * are those of the choice itself; problems with the base's ontology header are
+	 * found only when the files are merged.
+	 */
+	public static SchemaMerger.Selection selectBaseSchema(IProject project) throws CoreException {
 		IResource[] schemas = getSchemaFolder(project.getProject()).members();
+		Arrays.sort(schemas, new Comparator<IResource>() {
+			public int compare(IResource a, IResource b) {
+				return a.getName().compareTo(b.getName());
+			}
+		});
+		Settings settings = CIMToolPlugin.getSettings();
+		List<SchemaMerger.SchemaFile> files = new ArrayList<SchemaMerger.SchemaFile>();
 		for (int ix = 0; ix < schemas.length; ix++) {
 			IResource schema = schemas[ix];
-			if (isSchema(schema)) {
-				Settings settings = CIMToolPlugin.getSettings();
-				String ns = settings.getSetting(schema, SCHEMA_NAMESPACE);
-				if (ns != null)
-					return ns;
-			}
+			if (isSchema(schema))
+				files.add(new SchemaMerger.SchemaFile(schema.getName(), null,
+						settings.getSetting(schema, SCHEMA_NAMESPACE), isFlaggedAsBaseSchema(schema)));
 		}
-		return getPreference(SCHEMA_NAMESPACE);
+		return SchemaMerger.selectBase(files, getPreference(SCHEMA_NAMESPACE));
+	}
+
+	/**
+	 * Returns true if the schema file is flagged as the project's base CIM schema
+	 * ({@code tool:canonical_schema}).
+	 */
+	public static boolean isFlaggedAsBaseSchema(IResource schema) {
+		return "true".equalsIgnoreCase(CIMToolPlugin.getSettings().getSetting(schema, CANONICAL_SCHEMA));
 	}
 
 	public static String getSchemaNamespace(IResource schemaFile) throws CoreException {

@@ -213,7 +213,7 @@ The sample projects also read the CGMES CIM17 schema from
 | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` (https://github.com/cimug-org/CIMTool/issues/291[Issue #291]).
 
 | `SchemaMergerTest`
-| `SchemaMerger` chooses the base CIM schema (the file flagged as the base, the only file, or the one file with the Schema Namespace), reports each case in which there is none, has the base import every other schema file's ontology, hides the schema files' own `owl:imports`, and writes nothing to the files' models (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]).
+| `SchemaMerger` chooses the base CIM schema (the Enterprise Architect project file, the file flagged as the base, the only file, or the one file with the Schema Namespace), reports each case in which there is none, including two Enterprise Architect project files, warns of a flag that an Enterprise Architect project file overrides, chooses the base from names and settings alone with `selectBase()`, has the base import every other schema file's ontology, hides the schema files' own `owl:imports`, and writes nothing to the files' models (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]).
 
 | `ReleaseVersionConsistencyTest`
 | The version declarations that must change together at each release agree (https://github.com/cimug-org/CIMTool/issues/310[Issue #310]).

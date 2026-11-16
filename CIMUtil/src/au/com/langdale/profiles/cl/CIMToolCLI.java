@@ -239,6 +239,9 @@ public class CIMToolCLI {
 		String example = "    <" + GlobalPreferences.PROJECT_NS + "Schema/" + file.replace(" ", "%20") + ">\n"
 				+ "          tool:canonical_schema  \"true\" .";
 		switch (problem.getType()) {
+		case MULTIPLE_EA_SCHEMAS:
+			return "  To fix: keep one Enterprise Architect project file in the project's Schema folder,\n"
+					+ "  and remove the others from the folder and from .cimtool-settings.";
 		case MULTIPLE_BASE_SCHEMAS:
 			return "  To fix: keep tool:canonical_schema \"true\" on one schema file only in .cimtool-settings,\n"
 					+ "  or in CIMTool check \"Base CIM schema\" on the properties of the file that is the base.";
