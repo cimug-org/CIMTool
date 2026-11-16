@@ -30,8 +30,8 @@ Beyond the API facade, Kena also provides:
 ```
 Kena/
 ├── META-INF/
-│   └── MANIFEST.MF               ← OSGi bundle manifest — exports all packages, lib classpath
-├── build.properties              ← PDE build configuration — source JAR and lib includes
+│   └── MANIFEST.MF               ← OSGi bundle manifest that exports all packages and sets the lib classpath
+├── build.properties              ← PDE build configuration for the source JAR and lib includes
 ├── lib/                          ← Vendored Apache Jena 2.6.3 and its dependencies
 │   ├── jena-2.6.3.jar            ← Apache Jena core
 │   ├── arq-2.8.4.jar             ← ARQ SPARQL processor
@@ -48,7 +48,7 @@ Kena/
 │   └── junit-4.5.jar             ← Test framework; not on the bundle class path
 └── src/
     ├── au/com/langdale/kena/      ← Kena RDF/OWL API (the primary public API)
-    │   ├── OntModel.java          ← Central graph model — resource lookup, traversal,
+    │   ├── OntModel.java          ← Central graph model for resource lookup, traversal,
     │   │                             subclass/property queries, composition
     │   ├── ModelFactory.java      ← Factory methods for creating OntModel instances
     │   ├── Resource.java          ← RDF resource wrapper
@@ -125,10 +125,11 @@ but it depends on none of them.
 
 ### Vendored Third-Party Libraries
 
-> **Note: Keeping vendored libraries in sync:** Adding, removing, or upgrading any library listed in this section must be mirrored in the same change across this project's `META-INF/MANIFEST.MF` (`Bundle-ClassPath`), `build.properties`, and `.classpath`, as well as the repository-wide reference chain. See the [Vendored Library Change Checklist](../CIMToolProduct/CIMToolProduct-README.md#maintaining-vendored-third-party-libraries) in the CIMToolProduct documentation.
+> **Note: Keeping vendored libraries in sync:** Adding, removing, or upgrading any library listed in this section must be mirrored in the same change across this project's `META-INF/MANIFEST.MF` (`Bundle-ClassPath`), `build.properties`, and `.classpath`, as well as the repository-wide reference chain. See [Maintaining Vendored Third-Party Libraries](../CIMToolProduct/CIMToolProduct-README.md#maintaining-vendored-third-party-libraries) in the CIMToolProduct documentation.
 
-Kena bundles Apache Jena 2.6.3 and all of its required dependencies, declared
-in `Bundle-ClassPath` in `MANIFEST.MF` and included via `build.properties`:
+Kena bundles Apache Jena 2.6.3 and all of its required dependencies. These
+are declared in `Bundle-ClassPath` in `MANIFEST.MF` and included in the plugin
+bundle via `build.properties`:
 
 | Library | Version | Purpose |
 | --- | --- | --- |
@@ -153,12 +154,12 @@ The Kena API (`au.com.langdale.kena`) is a deliberate simplification of the
 Apache Jena API, designed specifically for CIMTool's use cases. Key design
 decisions:
 
-- `OntModel` is **not** a subclass of `com.hp.hpl.jena.ontology.OntModel` but wraps a Jena `Graph` directly, exposing only the operations CIMTool needs
+- `OntModel` is **not** a subclass of `com.hp.hpl.jena.ontology.OntModel`; it wraps a Jena `Graph` directly and exposes only the operations CIMTool needs
 - All iterators (`ResIterator`, `NodeIterator`) are typed Java iterators rather than Jena's `ExtendedIterator`, simpler to use and chain with the `filters/` package
 - `Resource`, `Property`, and `OntResource` are thin, typed wrappers over Jena's `Node` and `FrontsNode`, providing a stable API that does not change if Jena is upgraded
 - `ModelFactory` provides named factory methods (`createMem()`, `createMem(Graph)`, `createTransitive()`) rather than Jena's reflection-based factory pattern
 
-This design means that if Apache Jena is ever upgraded to a newer version, the rest of the CIMTool codebase is insulated from the API changes, with only Kena's internal implementation needing to change.
+This design means that if Apache Jena is ever upgraded to a newer version, the rest of the CIMTool codebase is insulated from the API changes; only Kena's internal implementation would need to change.
 
 ### Jena Patches
 
@@ -176,10 +177,13 @@ Jena version.
 
 The `au.com.langdale.inference` package implements CIMTool's custom rule-based
 inference engine, used to validate CIM/XML and Turtle instance documents against
-a CIM profile. Key components:
+a CIM profile. It is built directly on top of Jena's `Graph` and `Reasoner`
+interfaces rather than using Jena's built-in OWL or RDFS reasoners.
 
-- **`RuleParser` / `RuleLexer`**: parse CIMTool's validation rule language into rule objects
-- **`SimpleReasoner` / `SimpleInfGraph`**: a custom Jena `Reasoner` that applies rules to a CIM/XML graph and produces an inferred graph of validation violations
+Key components:
+
+- **`RuleParser` / `RuleLexer`**: parse CIMTool's validation rule language into rule objects. The rule language is a triple-pattern language similar to Jena's rule syntax but tailored for CIM validation.
+- **`SimpleReasoner` / `SimpleInfGraph`**: a custom Jena `Reasoner` implementation that applies the parsed rules to a CIM/XML graph and produces an inferred graph of validation violations
 - **`Extractor`**: applies rules to extract a result graph from an input graph, used by the CLI and test framework
 - **`AsyncModel` / `AsyncResult`**: asynchronous callback interfaces for streaming rule results from the `SplitReader`
 
@@ -187,12 +191,12 @@ a CIM profile. Key components:
 
 ## Split Model
 
-The `au.com.langdale.splitmodel` package handles CIM/XML datasets partitioned
-across multiple files, a common practice in large power system models.
+The `au.com.langdale.splitmodel` package handles CIM/XML datasets that are
+partitioned across multiple files, a common practice in large power system models.
 `SplitReader` locates and reads the parts via a hash-based directory structure,
 and `SplitWriter` writes a model in the same partitioned format. The
-`SplitReaderTest` and `ExtractorTest` in `CIMToolTest` exercise this package
-directly.
+`SplitReaderTest` and `SplitWriterNamespaceTest` in `KenaTest` exercise this
+package directly, and `ExtractorTest` runs rules over a split model.
 
 
 
@@ -202,4 +206,5 @@ directly.
 - **CIMToolPlugin**: uses Kena for the project model cache, editors, views, and the incremental build system.
 - **RCPUtil**: no dependency on Kena.
 - **com.cimphony.cimtoole**: uses Kena `OntModel` and related types via `Import-Package` declarations for Ecore extraction and generation.
-- **cimtool-cli**: packages `kena.jar` alongside `cimutil.jar` in the CLI uber JAR. At CLI runtime, all RDF operations go through the Kena API.
+- **cimtool-cli**: packages `kena.jar` (extracted from the PDE product export) alongside `cimutil.jar` in the CLI uber JAR. At CLI runtime, all RDF operations go through the Kena API.
+- **KenaTest**: a fragment of Kena that tests its model API, split model reader and writer, rule-based extractor and namespace utilities headlessly, as plain JUnit 5 tests.

@@ -1,7 +1,7 @@
 # CIMToolTest
 
 An Eclipse plugin fragment that provides the JUnit test suite for the CIMTool
-application. It tests the core build system, validation engine, Kena RDF layer,
+application. It tests the core build system, validation engine,
 profile transforms, topology processing, upgrade regeneration, and UI wizards.
 
 > **Note:** The unit tests in this project are currently in the process of being
@@ -22,12 +22,15 @@ test, giving them access to package-private and internal APIs.
 
 The test suite is divided into two main categories:
 
-- **Headless tests**: run without a UI, exercising the core model, validation, schema processing, Kena RDF layer, profile transforms, and incremental build and upgrade regeneration logic
+- **Headless tests**: run without a UI, exercising the core model, validation, schema processing, profile transforms, and incremental build and upgrade regeneration logic
 - **UI tests**: exercise the Eclipse wizard and workbench UI components using the Eclipse workbench testing infrastructure
 
 The tests read their input data from ZIP archives in `CIMToolTestFiles/`,
-which `ProjectTest` extracts at the start of each test, and from the
-`ABB40BusIOP10_rev7/` split model folder at the project root.
+which `ProjectTest` extracts at the start of each test.
+
+The tests of Kena's own code, including the split model reader and the
+rule-based extractor, are in KenaTest, which runs as plain JUnit 5 tests
+without the Eclipse platform.
 
 
 
@@ -38,8 +41,6 @@ CIMToolTest/
 ├── META-INF/
 │   └── MANIFEST.MF                          ← Fragment manifest: declares Fragment-Host
 ├── build.properties                         ← Source and bin.includes configuration
-├── ABB40BusIOP10_rev7/                      ← Split model (128 Part*.ttl files) read by
-│                                               SplitReaderTest and ExtractorTest
 ├── builders/
 │   ├── builders.json                        ← Registers the junit-test builder (type TRANSFORM,
 │   │                                           extension junit-ext)
@@ -111,20 +112,16 @@ CIMToolTest/
         │   │                                   builds the project and checks the diagnostics file
         │   ├── WorkbenchTest.java           ← Base class for UI tests: opens and drives wizard
         │   │                                   dialogs
-        │   ├── SplitModelTest.java          ← Base class holding the split model location and
-        │   │                                   namespaces
         │   ├── headless/                    ← Headless test classes (no UI required)
-        │   │   ├── KenaTests.java           ← Tests for the Kena RDF/OWL layer
         │   │   ├── SchemaTests.java         ← Validation tests using CPSM profile (no topology)
         │   │   ├── TopologyTests.java       ← Validation tests using CPSM profile (with topology)
         │   │   ├── IncrementalTests.java    ← Tests for incremental model change handling
-        │   │   ├── SplitReaderTest.java     ← Tests for the split model reader
-        │   │   ├── ExtractorTest.java       ← Tests for the rule-based Extractor
         │   │   ├── ProfileBuildletConfigUtilsTest.java ← Tests for the custom builder registry
         │   │   ├── ProfileTasks.java        ← Tests for creating and importing profiles
         │   │   ├── TransformTasks.java      ← Tests for XSD and AsciiDoc generation
         │   │   ├── CreateProject.java       ← Tests for creating a CIMTool project
         │   │   ├── FullModelProfileModelTest.java ← Tests for the full schema profile pipeline
+        │   │   ├── NamespaceValidatorTest.java ← Tests for the namespace validator in the user interface
         │   │   ├── ProfilesAsciiDoctorConfigTests.java ← Tests for the Profiles folder
         │   │   │                                   .asciidoctorconfig.adoc file
         │   │   ├── UpgradeRegenerationTests.java ← Tests for regeneration after an upgrade
@@ -147,8 +144,8 @@ dependencies on:
 
 | Bundle | Role in tests |
 | --- | --- |
-| `org.junit` (4.x) | Provides the JUnit 3 API the tests are written in: every test class extends `junit.framework.TestCase` (through `TestUtility`, apart from `UpgradeRegenerationVersionTests`, which extends it directly) and names its test methods `test*` |
-| `au.com.langdale.kena` | Used directly in `KenaTests` to test the RDF/OWL graph API independently |
+| `org.junit` (4.x) | Provides the JUnit 3 API the tests are written in: every test class extends `junit.framework.TestCase` (through `TestUtility`, apart from `NamespaceValidatorTest` and `UpgradeRegenerationVersionTests`, which extend it directly) and names its test methods `test*` |
+| `au.com.langdale.kena` | Kena's model, inference and split model APIs, used directly by the base classes `TestUtility`, `ProjectTest` and `ValidationTest` and by several tests, such as `FullModelProfileModelTest` and `NamespaceValidatorTest` |
 | `au.com.langdale.rcputil` | Eclipse UI utilities: `WorkbenchTest` and the UI tests fill in wizard pages through its `Assembly` and `FurnishedWizardPage` classes |
 | `org.eclipse.core.resources` | Workspace and project resource APIs used to set up test projects and assert the presence or absence of problem markers |
 | `org.eclipse.core.runtime` | OSGi runtime utilities: `IProgressMonitor`, `CoreException`, `IPath` |
@@ -164,17 +161,15 @@ These tests run without a display and exercise the core CIMTool logic:
 
 | Test Class | What it tests |
 | --- | --- |
-| `KenaTests` | Kena RDF/OWL model creation, reading and writing RDF/XML, resource lookup, and inference |
 | `SchemaTests` | CIM/XML validation against the CPSM profile without topology constraints: exercises cardinality, type, range, and domain checks across the validation fixture cases |
 | `TopologyTests` | CIM/XML validation against the CPSM profile with topology constraints: exercises terminal connectivity, isolated node, and loop detection cases |
 | `IncrementalTests` | Incremental model validation: add, remove, duplicate property, missing property, failed precondition, undefined property and undefined class cases applied to `topology_case.xml` |
-| `SplitReaderTest` | Reading the `ABB40BusIOP10_rev7` split model: the number of parts and triple lookups |
-| `ExtractorTest` | `au.com.langdale.inference.Extractor` rules (queries, axioms, same-as and any) run over the `ABB40BusIOP10_rev7` split model |
 | `ProfileBuildletConfigUtilsTest` | Listing, adding and removing custom builders through `ProfileBuildletConfigUtils` |
 | `ProfileTasks` | Creating a new profile and importing `cpsm2007.owl` |
 | `TransformTasks` | XSD generation, XSD generation with custom rules, and AsciiDoc generation (which also creates the Profiles folder `.asciidoctorconfig.adoc`), using the `MeterReadings.owl` profile from `Part9/` on the CIM100 `.qea` schema |
 | `CreateProject` | Creating a CIMTool project |
 | `FullModelProfileModelTest` | Importing the CGMES CIM17 `.qea` schema and serializing the resulting full schema profile with `FullModelProfileModel` and `ProfileSerializer` |
+| `NamespaceValidatorTest` | `Validators.NAMESPACE` in RCPUtil, which checks every namespace entered in the CIMTool user interface, accepts `http:` and `https:` hash and slash namespaces and agrees with `NamespaceUtils` in Kena; needs no workspace ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)) |
 | `ProfilesAsciiDoctorConfigTests` | Creating and updating the `:profilesdir:` definition in the Profiles folder `.asciidoctorconfig.adoc` file |
 | `UpgradeRegenerationTests` | The per-project version stamp, the rule that decides when a project needs regeneration, stamping by the builder, and regeneration of profile artifacts |
 | `UpgradeRegenerationVersionTests` | The version comparison that decides whether regeneration is needed; needs no workspace |
@@ -229,8 +224,7 @@ before use.
 ## Test Data
 
 The `CIMToolTest` project holds its test data in three ZIP archives in the
-`CIMToolTestFiles/` folder and in the `ABB40BusIOP10_rev7/` folder at the
-project root.
+`CIMToolTestFiles/` folder.
 
 ### CIMToolTestFiles.zip and CIMToolTestFiles-CGMES.zip
 
@@ -264,19 +258,6 @@ root. `CIMToolTestFiles.zip` contains:
 All tests that extend `ProjectTest` (the majority of the test suite) depend on
 both ZIPs being present and correctly bundled.
 
-### The ABB40BusIOP10_rev7 Split Model
-
-`SplitReaderTest` and `ExtractorTest` read the `ABB40BusIOP10_rev7/` folder of
-128 split `Part*.ttl` files, which is committed at the root of the
-`CIMToolTest` project. They open it through a path relative to the working
-directory of the test launch:
-
-```java
-reader = new SplitReader(SAMPLE_FILES + SPLIT_MODEL);  // SAMPLE_FILES = "./"
-```
-
-so the working directory must be the `CIMToolTest` project folder.
-
 ### IOP10Kit.zip
 
 `IOP10Kit.zip` holds an `IOP10Kit/` folder with four CIM/XML models from an
@@ -284,7 +265,8 @@ interoperability test (`ABB40BusIOP10_rev7.xml`,
 `areva60_cpsm4_20070913_rev6.xml`, `SNC-IEEE-RTS96-CPSM4-v4.xml` and
 `GE_wapa262_IOP10.xml`), the CIM 11 schema (`cim11v09combined.xmi` and
 `.mdl`) and the `CPSM2007-CIMTool-Profile.owl` profile. As of CIMTool 2.3.1, no
-test reads it.
+test reads it. The `ABB40BusIOP10_rev7` split model in KenaTest holds the
+first of these models in split model form.
 
 
 

@@ -19,8 +19,8 @@ import com.hp.hpl.jena.graph.Node;
  * Tests for {@link NamespaceUtils}, which handles both hash and slash namespaces
  * (issue #377).
  * <p>
- * The tests live in their own package so that this fragment of CIMUtil does not
- * share the {@code au.com.langdale.util} package exported by Kena.
+ * The tests live in a {@code test} package beside {@code au.com.langdale.util},
+ * the package of Kena they test.
  */
 public class NamespaceUtilsTest {
 

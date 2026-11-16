@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import au.com.langdale.cimutil.test.NoNetwork;
 import au.com.langdale.cimutil.test.TestProjects;
 
 /**
@@ -33,7 +34,13 @@ import au.com.langdale.cimutil.test.TestProjects;
  * it did not define (issue #388). Stylesheets still in development are listed
  * in {@link #IN_DEVELOPMENT} and skipped until they are complete.
  * </p>
+ *
+ * <p>
+ * The class runs offline, since compiling a stylesheet resolves its
+ * {@code xsl:include} and {@code xsl:import} references.
+ * </p>
  */
+@NoNetwork
 class StylesheetsCompileTest {
 
 	/** Stylesheets still in development, which are not yet expected to compile. */

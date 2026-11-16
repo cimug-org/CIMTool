@@ -32,7 +32,7 @@ This project is responsible for:
 
 ```
 CIMToolProduct/
-├── CIMTool.product              ← Master product descriptor — the PDE export entry point
+├── CIMTool.product              ← Master product descriptor and the PDE export entry point
 ├── META-INF/
 │   └── MANIFEST.MF             ← OSGi bundle manifest (au.com.langdale.cimtool.product)
 ├── build.properties            ← Declares files included in the bundle and export
@@ -40,9 +40,9 @@ CIMToolProduct/
 ├── plugin.properties           ← Externalised strings for plugin.xml
 ├── plugin_customization.ini    ← Default workspace preferences (perspective, UI settings)
 ├── helpData.xml                ← Ordering of help table-of-contents entries
-├── logging.properties          ← JUL pre-bridge config — handlers= empty, .level=ALL; Logback is the sole output target
-├── logback.xml                 ← Logback config — SLF4J → Logback pipeline; extracted to install root at startup
-├── logback-dev.xml             ← Development-only Logback config — intentionally excluded from bin.includes and not bundled in the product export
+├── logging.properties          ← JUL pre-bridge config with handlers= empty and .level=ALL, so Logback is the sole output target
+├── logback.xml                 ← Logback config for the SLF4J → Logback pipeline, extracted to the install root at startup
+├── logback-dev.xml             ← Development-only Logback config, intentionally excluded from bin.includes and not bundled in the product export
 ├── release-cimtool.bat         ← Post-export signing and packaging pipeline for the Windows release
 ├── release-cimtool.sh          ← Packaging pipeline for a Linux export (no code signing), held ahead of Linux support
 ├── cimtool-about.png           ← Image shown in the Help > About dialog
@@ -244,6 +244,7 @@ The following projects maintain their own version lifecycle and should only be u
 | com.cimphony.cimtoole | `1.1.1` | Cimphony extensions; versioned independently of the core product |
 | CIMToolTest | `1.3.0` | Test suite; only increment when tests or test infrastructure are changed or added |
 | CIMUtilTest | `1.0.0` | Test suite for CIMUtil; only increment when tests or test infrastructure are changed or added |
+| KenaTest | `1.0.0` | Test suite for Kena; only increment when tests or test infrastructure are changed or added |
 | SLF4J Logback Binding | `1.0.0` | `io.ucaiug.slf4j.logback.binding` fragment; only increment when the fragment changes |
 
 #### Dormant Projects

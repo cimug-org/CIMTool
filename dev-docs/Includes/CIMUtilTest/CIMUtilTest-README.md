@@ -31,8 +31,10 @@ The suite covers two kinds of behavior:
   SQL and HTML, the indentation of source listings in AsciiDoc documentation,
   stereotype labels in the documentation builders, the `cimtool-cli` option
   rules, `cimtool-cli` run end to end on a project, stylesheet references that
-  resolve without network access, and the release version declarations that
-  must change together.
+  resolve without network access, the release version declarations that must
+  change together, profiles whose schema classes are undeclared or whose
+  hierarchy is cyclic, the namespaces given to packages on schema import, and
+  every stylesheet compiling.
 
 Tests that cover a specific behavior are written to fail against the code as it
 was before that behavior was introduced or fixed.
@@ -54,19 +56,30 @@ CIMUtilTest/
 │       │   └── TestProjects.java            ← The minimal and sample projects the tests run against
 │       ├── profiles/
 │       │   ├── ProfileClassPropertyInfoTest.java
+│       │   ├── ProfileClassUnresolvedBaseTest.java
 │       │   ├── ProfileSerializerFactoryTest.java
 │       │   ├── ProfilesAsciiDoctorConfigTemplateTest.java
 │       │   └── cl/                          ← Builder and command-line tests
 │       │       ├── AllBuildersSmokeTest.java
 │       │       ├── AsciiDocBuildersProfilesDirTest.java
 │       │       ├── AsciiDocWhitespaceTest.java
+│       │       ├── CIMDatatypeUnresolvedSerializationTest.java
 │       │       ├── CIMToolCLIEndToEndTest.java
 │       │       ├── CLIOptionsTest.java
 │       │       ├── CopyrightBuildersTest.java
 │       │       ├── CustomStylesheetReferencesTest.java
-│       │       └── StereotypeLabelTest.java
-│       └── release/
-│           └── ReleaseVersionConsistencyTest.java
+│       │       ├── CyclicProfileSerializationTest.java
+│       │       ├── StereotypeLabelTest.java
+│       │       ├── StylesheetsCompileTest.java
+│       │       ├── UnresolvedAndCyclicProfileBuildersTest.java
+│       │       └── UnresolvedProfileSerializationTest.java
+│       ├── release/
+│       │   └── ReleaseVersionConsistencyTest.java
+│       ├── validation/
+│       │   └── ProfileValidatorCycleTest.java
+│       └── xmi/test/
+│           ├── PackageNamespaceTest.java
+│           └── PackageNamespaceTranslationTest.java
 └── test-resources/                          ← On the bundle class path
     ├── custom-xslt/                         ← Custom stylesheets with relative xsl:include and xsl:import
     ├── minimal-project/                     ← One profile class against a hand-written schema
@@ -74,8 +87,17 @@ CIMUtilTest/
     │   └── Schema/MinimalSchema.owl
     ├── sample-project/                      ← Sample profile against the CGMES CIM17 schema
     │   └── Profiles/SampleProfile.owl
-    └── sample-project-unmerged/             ← The same profile with extensions left unmerged
-        └── Profiles/SampleProfile.owl
+    ├── sample-project-unmerged/             ← The same profile with extensions left unmerged
+    │   └── Profiles/SampleProfile.owl
+    └── unresolved-project/                  ← Profiles with undeclared schema classes, cycles
+        ├── Profiles/                           and associations, and the schemas they need
+        │   ├── AssociationsProfile.owl
+        │   ├── CIMDatatypeProfile.owl
+        │   ├── CyclicProfile.owl
+        │   └── UnresolvedProfile.owl
+        └── Schema/
+            ├── AssociationsSchema.owl
+            └── CIMDatatypeSchema.owl
 ```
 
 
@@ -109,20 +131,31 @@ The sample projects also read the CGMES CIM17 schema from
 | `AllBuildersSmokeTest` | Every registered builder runs against both sample projects without an exception, writes non-empty output and makes no network access, and XSD output is well-formed. The registry must hold exactly the builders named in `builders.json` and `java-builders.json`, each XSLT builder with its stylesheet. With extensions left unmerged, the LinkML output lists the shadow parent as a mixin ([Issue #318](https://github.com/cimug-org/CIMTool/issues/318)). |
 | `AsciiDocBuildersProfilesDirTest` | Each AsciiDoc builder references its PlantUML diagram through `{profilesdir}` and defines the `{docdir}/Profiles` fallback ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
 | `AsciiDocWhitespaceTest` | Each `ASCIIDOC` builder keeps the leading whitespace of every line of a source listing in AsciiDoc documentation ([Issue #288](https://github.com/cimug-org/CIMTool/issues/288)). |
+| `CIMDatatypeUnresolvedSerializationTest` | The `unit` and `multiplier` elements that the profile XML holds for a CIMDatatype carry `unresolved` beside their `baseClass`, saying whether the schema declares `UnitSymbol` or `UnitMultiplier` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `CIMToolCLIEndToEndTest` | `cimtool-cli` run in project mode on a copy of the sample project: project copyright templates in the `html` and `sql-rdfs-ansi92` output, `--xslt` with `--type TEXT` producing plain text, and the `.namespaces` file beside the schema being applied ([Issue #287](https://github.com/cimug-org/CIMTool/issues/287)). |
 | `CLIOptionsTest` | Each rule that `CLIOptions` enforces, with the exact error message for each rejected command line ([Issue #287](https://github.com/cimug-org/CIMTool/issues/287)). |
 | `CopyrightBuildersTest` | The copyright notices that `sql.xsl`, `sql-rdfs-ansi92.xsl` and `html.xsl` write, and their absence when the copyright templates are empty ([Issue #272](https://github.com/cimug-org/CIMTool/issues/272)). |
 | `CustomStylesheetReferencesTest` | Relative references in a custom `--xslt` stylesheet resolve against the stylesheet's own folder ([Issue #311](https://github.com/cimug-org/CIMTool/issues/311)). |
+| `CyclicProfileSerializationTest` | For a profile whose classes name each other as superclasses, the profile XML leaves out the `SuperType` elements that close the cycle, and a class leading into the cycle keeps its `SuperType` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `StereotypeLabelTest` | The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference». |
+| `StylesheetsCompileTest` | Every stylesheet in `CIMUtil/builders` compiles, whether or not it is registered as a builder, apart from those still in development ([Issue #388](https://github.com/cimug-org/CIMTool/issues/388)). |
+| `UnresolvedAndCyclicProfileBuildersTest` | Every registered builder, and an unregistered stylesheet that follows the supertype chain, finishes within two minutes and writes non-empty output for a profile whose schema classes the schema does not declare and for a profile with a cyclic hierarchy ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
+| `UnresolvedProfileSerializationTest` | For a profile class whose schema class the schema does not declare, the profile XML gives as `baseClass` the schema class the profile names rather than `owl:Thing`, and writes `unresolved` beside every `baseClass` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `ProfileClassPropertyInfoTest` | `ProfileClass.getPropertyInfo` reports no range, rather than failing, for a property the profile class does not restrict, such as the inverse of an association whose inverse end is not profiled ([Issue #342](https://github.com/cimug-org/CIMTool/issues/342)) |
+| `ProfileClassUnresolvedBaseTest` | `ProfileClass.getUnresolvedBase` reports the schema class a profile class names when the schema does not declare it, while `ProfileClass.getBaseClass` still returns `owl:Thing` ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
 | `ProfileSerializerFactoryTest` | `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it ([Issue #314](https://github.com/cimug-org/CIMTool/issues/314)). |
 | `ProfilesAsciiDoctorConfigTemplateTest` | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
 | `ReleaseVersionConsistencyTest` | The version declarations that must change together at each release agree ([Issue #310](https://github.com/cimug-org/CIMTool/issues/310)). |
+| `ProfileValidatorCycleTest` | `ProfileValidator` reports each superclass statement on a cycle in the profile hierarchy, with a repair that removes it, and reports neither a class leading into the cycle nor self and mutual associations ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
+| `PackageNamespaceTest` | `Translator.packageNamespace` and `Translator.schemaOntologyUri`, which build package namespaces and the schema ontology IRI during schema import ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)). |
+| `PackageNamespaceTranslationTest` | The namespaces `Translator` gives packages and classes that have no baseuri or stereotype namespace of their own ([Issue #385](https://github.com/cimug-org/CIMTool/issues/385)), the search of ancestor packages for a stereotype namespace ([Issue #381](https://github.com/cimug-org/CIMTool/issues/381)), and that `ResourceNamespaceResolver` agrees with `Translator`. |
 
 Tests that run every builder, or every builder of a type, take the builders
 from the registry, so a newly registered builder is covered without a change to
 the tests. Stylesheets in `CIMUtil/builders` that are not registered are works
-in progress and are intentionally not tested.
+in progress, so they are not run against the test projects. `StylesheetsCompileTest`
+still compiles each of them, apart from those listed as in development, so that
+one cannot stop compiling unnoticed.
 
 
 
@@ -170,6 +203,13 @@ stereotypes of the schema property it restricts. In the unmerged profile, the
 NC shadow class `ExtEquipment` is a second parent of `Equipment` and holds the
 association, and the European attribute is not merged.
 
+The profiles in `test-resources/unresolved-project` are built for the
+profile XML, validation and builder tests of
+[Issue #387](https://github.com/cimug-org/CIMTool/issues/387). `UnresolvedProfile.owl` and
+`CyclicProfile.owl` are defined against the minimal project's schema, and
+`CIMDatatypeProfile.owl` and `AssociationsProfile.owl` against the schemas
+beside them. Each test copies the files it needs into a temporary folder.
+
 Tests that need the repository, such as the sample projects and
 `ReleaseVersionConsistencyTest`, find it by walking up from the working folder,
 and are skipped when run outside a repository checkout.
@@ -186,7 +226,8 @@ stylesheet tries to fetch an include or import over the network therefore fails
 the test with a connection error rather than reaching the internet.
 
 Every test class that runs builders or the command-line interface carries
-`@NoNetwork`. In particular, no stylesheet may be loaded with
+`@NoNetwork`, as does `StylesheetsCompileTest`, since compiling a stylesheet
+resolves its `xsl:include` and `xsl:import` references. In particular, no stylesheet may be loaded with
 `http://langdale.com.au/2005/xsdgen` as its base URI, since relative references
 would then be fetched from that host.
 
@@ -211,12 +252,16 @@ schema. The tests pass with Java assertions enabled (`-ea`), which Eclipse JUnit
 
 - **CIMUtil**: the host bundle. The tests cover its builder stylesheets in
   `builders/`, its builder registries `builders.json` and `java-builders.json`,
-  and the classes in `au.com.langdale.profiles` and
-  `au.com.langdale.profiles.cl`.
+  and the classes in `au.com.langdale.profiles`,
+  `au.com.langdale.profiles.cl`, `au.com.langdale.validation` and
+  `au.com.langdale.xmi`.
 - **cimtool-cli**: packages CIMUtil's `CIMToolCLI` as the command-line tool
   that `CIMToolCLIEndToEndTest` and `CLIOptionsTest` exercise.
 - **CIMToolTest**: holds `CIMToolTestFiles-CGMES.zip`, from which the sample
   projects take the CGMES schema. CIMToolTest covers the CIMToolPlugin side of
   CIMTool and runs as a JUnit Plug-in Test.
+- **KenaTest**: the test suite for Kena, which CIMUtil's profile model, schema
+  import and validation are built on. CIMUtilTest tests Kena only through
+  CIMUtil.
 - **CIMToolProduct** and **cimtool-cli**: `ReleaseVersionConsistencyTest`
   checks the version declarations listed in their developer documentation.

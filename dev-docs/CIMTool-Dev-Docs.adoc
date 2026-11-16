@@ -56,6 +56,8 @@ include::{includedir}/CIMToolTest/CIMToolTest-README.adoc[]
 
 include::{includedir}/CIMUtilTest/CIMUtilTest-README.adoc[]
 
+include::{includedir}/KenaTest/KenaTest-README.adoc[]
+
 include::{includedir}/CSharpEFTestProject/CSharpEFTestProject-README.adoc[]
 
 include::{includedir}/CIMToolUpdate/CIMToolUpdate-README.adoc[]

@@ -1,0 +1,3194 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:daml="http://www.daml.org/2001/03/daml+oil#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <owl:Class rdf:ID="SeasonDayTypeSchedule">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="RegularIntervalSchedule"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonDayTypeSchedule.Season"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Season</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="Season"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonDayTypeSchedule.Season"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonDayTypeSchedule.DayType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>DayType</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="DayType"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonDayTypeSchedule.DayType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>SeasonDayTypeSchedule</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonDayTypeSchedule"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Disconnector">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Switch"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Disconnector specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Disconnector</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Disconnector"/>
+  </owl:Class>
+  <owl:Class rdf:about="#RegularIntervalSchedule">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="BasicIntervalSchedule"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>endTime</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularIntervalSchedule.endTime"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>timeStep</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularIntervalSchedule.timeStep"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>RegularIntervalSchedule</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularIntervalSchedule"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ACLineSegment">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Conductor"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.bch"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>bch</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.bch"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.x"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>x</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.x"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for ACLineSegment specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>ACLineSegment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ACLineSegment"/>
+  </owl:Class>
+  <owl:Class rdf:ID="TapChanger">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>stepPhaseShiftIncrement</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.stepPhaseShiftIncrement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.RegulationSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.TransformerWinding"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>stepVoltageIncrement</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.stepVoltageIncrement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>RegulationSchedule</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="RegulationSchedule"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.RegulationSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>TransformerWinding</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="TransformerWinding"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.TransformerWinding"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>tculControlMode</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="TransformerControlMode"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.tculControlMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>neutralStep</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.neutralStep"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.TransformerWinding"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>neutralU</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.neutralU"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.tculControlMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>highStep</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.highStep"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger"/>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>normalStep</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.normalStep"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>TapChanger</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Terminal</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="Terminal"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>lowStep</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.lowStep"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="PowerSystemResource"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TapChanger.tculControlMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="GeographicalRegion">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class GeographicalRegion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>GeographicalRegion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeographicalRegion"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SeasonName">
+    <rdfs:label>SeasonName</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeasonName"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ConnectivityNodeContainer">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#PowerSystemResource"/>
+    </rdfs:subClassOf>
+    <rdfs:label>ConnectivityNodeContainer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNodeContainer"/>
+  </owl:Class>
+  <owl:Class rdf:ID="NonConformLoadGroup">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="LoadGroup"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class NonConformLoadGroup specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>NonConformLoadGroup</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoadGroup"/>
+  </owl:Class>
+  <owl:Class rdf:ID="IEC61970CIMVersion">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IEC61970CIMVersion.version"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>version</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IEC61970CIMVersion.version"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IEC61970CIMVersion.date"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>date</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IEC61970CIMVersion.date"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>IEC61970CIMVersion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IEC61970CIMVersion"/>
+  </owl:Class>
+  <owl:Class rdf:ID="CustomerLoad">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="ConformLoad"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class CustomerMeter specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>CustomerLoad</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CustomerLoad"/>
+  </owl:Class>
+  <owl:Class rdf:about="#RegulationSchedule">
+    <rdfs:subClassOf rdf:resource="#RegularIntervalSchedule"/>
+    <rdfs:comment>Required attributes and roles for class RegulationSchedule specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>RegulationSchedule</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegulationSchedule"/>
+  </owl:Class>
+  <owl:Class rdf:ID="LimitSet">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>isPercentageLimits</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LimitSet.isPercentageLimits"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>LimitSet</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LimitSet"/>
+  </owl:Class>
+  <owl:Class rdf:ID="UnitMultiplier">
+    <rdfs:label>UnitMultiplier</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#UnitMultiplier"/>
+  </owl:Class>
+  <owl:Class rdf:about="#BasicIntervalSchedule">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value1Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>value2Multiplier</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#UnitMultiplier"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value2Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>BasicIntervalSchedule</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value1Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value2Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>value1Unit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="UnitSymbol"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value1Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value1Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>value1Multiplier</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#UnitMultiplier"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value1Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>startTime</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.startTime"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="MeasurementValue">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#MeasurementValue.MeasurementValueSource"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MeasurementValueSource</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="MeasurementValueSource"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#MeasurementValue.MeasurementValueSource"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>MeasurementValue</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#MeasurementValue"/>
+  </owl:Class>
+  <owl:Class rdf:ID="CurveData">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>CurveSchedule</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="Curve"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.CurveSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>y2value</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.y2value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>CurveData</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>xvalue</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.xvalue"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.CurveSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>y1value</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.y1value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.CurveSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveData.y1value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="HydroGeneratingUnit">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="GeneratingUnit"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class HydroGeneratingUnit specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>HydroGeneratingUnit</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#HydroGeneratingUnit"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Control">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:label>Control</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Control"/>
+  </owl:Class>
+  <owl:Class rdf:about="#LoadGroup">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadGroup.SubLoadArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadGroup.SubLoadArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>SubLoadArea</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="SubLoadArea"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadGroup.SubLoadArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>LoadGroup</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadGroup"/>
+  </owl:Class>
+  <owl:Class rdf:ID="PowerTransformer">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="Equipment"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#PowerTransformer.transformerType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#PowerTransformer.transformerType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>transformerType</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="TransformerType"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#PowerTransformer.transformerType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class PowerTransformer specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>PowerTransformer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#PowerTransformer"/>
+  </owl:Class>
+  <owl:Class rdf:ID="GrossToNetActivePowerCurve">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Curve"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GrossToNetActivePowerCurve.GeneratingUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GrossToNetActivePowerCurve.GeneratingUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>GeneratingUnit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#GeneratingUnit"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GrossToNetActivePowerCurve.GeneratingUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class GrossToNetActivePowerCurve specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>GrossToNetActivePowerCurve</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GrossToNetActivePowerCurve"/>
+  </owl:Class>
+  <owl:Class rdf:ID="AnalogLimit">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimit"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>LimitSet</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="AnalogLimitSet"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimit.LimitSet"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimit.value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimit.LimitSet"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>value</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimit.value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimit.LimitSet"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>AnalogLimit</rdfs:label>
+    <rdfs:comment>Required attributes and roles for class AnalogLimit specified in CPSM 4.0 requirement</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Measurement">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.MeasurementType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.MemberOf_PSR"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Unit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="Unit"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>Measurement</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_PSR</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#PowerSystemResource"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.MemberOf_PSR"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Terminal</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#Terminal"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.MeasurementType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.MemberOf_PSR"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MeasurementType</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="MeasurementType"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.MeasurementType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Measurement.Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ConformLoadSchedule">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value2Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>ConformLoadSchedule</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>ConformLoadGroup</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="ConformLoadGroup"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoadSchedule.ConformLoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="#SeasonDayTypeSchedule"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoadSchedule.ConformLoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>value2Unit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#UnitSymbol"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value2Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoadSchedule.ConformLoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BasicIntervalSchedule.value2Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class AreaLoadCurve specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoadSchedule"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Analog">
+    <rdfs:subClassOf rdf:resource="#Measurement"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>positiveFlowIn</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Analog.positiveFlowIn"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>normalValue</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Analog.normalValue"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Analog specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Analog</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Analog"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Line">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="EquipmentContainer"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Line.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Region</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="SubGeographicalRegion"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Line.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Line specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Line</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Line"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Bay">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#EquipmentContainer"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Bay.MemberOf_VoltageLevel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Bay.MemberOf_VoltageLevel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_VoltageLevel</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="VoltageLevel"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Bay.MemberOf_VoltageLevel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Bay specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Bay</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Bay"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Substation">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#EquipmentContainer"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Substation.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Substation.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Region</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#SubGeographicalRegion"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Substation.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Substation specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Substation</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Substation"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SubControlArea">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#PowerSystemResource"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubControlArea.HostControlArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubControlArea.HostControlArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>HostControlArea</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="HostControlArea"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubControlArea.HostControlArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class SubControlArea specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>SubControlArea</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubControlArea"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ConnectivityNode">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNode.MemberOf_EquipmentContainer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNode.MemberOf_EquipmentContainer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_EquipmentContainer</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#ConnectivityNodeContainer"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNode.MemberOf_EquipmentContainer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class ConnectivityNode specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>ConnectivityNode</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConnectivityNode"/>
+  </owl:Class>
+  <owl:Class rdf:ID="BusbarSection">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="ConductingEquipment"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class BusbarSection specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>BusbarSection</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BusbarSection"/>
+  </owl:Class>
+  <owl:Class rdf:ID="LoadArea">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class LoadArea specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>LoadArea</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadArea"/>
+  </owl:Class>
+  <owl:Class rdf:ID="CurveStyle">
+    <rdfs:label>CurveStyle</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#CurveStyle"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SeriesCompensator">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#ConductingEquipment"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeriesCompensator.x"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>x</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeriesCompensator.x"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeriesCompensator.r"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>r</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeriesCompensator.r"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class SeriesCompensator specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>SeriesCompensator</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SeriesCompensator"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StationSupply">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="EnergyConsumer"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class StationSupply specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>StationSupply</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StationSupply"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ConformLoadGroup">
+    <rdfs:subClassOf rdf:resource="#LoadGroup"/>
+    <rdfs:comment>Required attributes and roles for class ConformLoadGroup specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>ConformLoadGroup</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoadGroup"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StaticVarCompensator">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>voltageSetPoint</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.voltageSetPoint"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="RegulatingCondEq"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.sVCControlMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.voltageSetPoint"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.sVCControlMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class PowerTransformer specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>StaticVarCompensator</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>slope</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.slope"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>inductiveRating</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.inductiveRating"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>capacitiveRating</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.capacitiveRating"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.slope"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>sVCControlMode</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="SVCControlMode"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.sVCControlMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.inductiveRating"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#StaticVarCompensator.capacitiveRating"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#AnalogLimitSet">
+    <rdfs:subClassOf rdf:resource="#LimitSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimitSet.Measurements"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimitSet.Measurements"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Measurements</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#Analog"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimitSet.Measurements"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class LimitSet specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>AnalogLimitSet</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogLimitSet"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DiscreteValue">
+    <rdfs:subClassOf rdf:resource="#MeasurementValue"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>value</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#DiscreteValue.value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#DiscreteValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#DiscreteValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_Measurement</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="Discrete"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#DiscreteValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class DiscreteValue specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>DiscreteValue</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#DiscreteValue"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Unit">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Controls</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#Control"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Unit.Controls"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Unit specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Unit</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Unit"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Breaker">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Switch"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedCurrent</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Breaker.ratedCurrent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Breaker</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Breaker"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MeasurementValueSource">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class MeasurementValueSource specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>MeasurementValueSource</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#MeasurementValueSource"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SynchronousMachineType">
+    <rdfs:label>SynchronousMachineType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineType"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Switch">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#ConductingEquipment"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Switch.normalOpen"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>normalOpen</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Switch.normalOpen"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Switch specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Switch</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Switch"/>
+  </owl:Class>
+  <owl:Class rdf:ID="WindingConnection">
+    <rdfs:label>WindingConnection</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#WindingConnection"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ConformLoad">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#EnergyConsumer"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoad.LoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoad.LoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>LoadGroup</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#ConformLoadGroup"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoad.LoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class ConformLoad specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>ConformLoad</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConformLoad"/>
+  </owl:Class>
+  <owl:Class rdf:ID="WindingType">
+    <rdfs:label>WindingType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#WindingType"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Season">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season"/>
+    <rdfs:comment>Required attributes and roles for class Season specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>name</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#SeasonName"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.name"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>endDate</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.endDate"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.name"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>Season</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.endDate"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.startDate"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.name"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>startDate</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Season.startDate"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SynchronousMachineOperatingMode">
+    <rdfs:label>SynchronousMachineOperatingMode</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachineOperatingMode"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SynchronousMachine">
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>minQ</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.minQ"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>SynchronousMachine</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>InitialReactiveCapabilityCurve</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="ReactiveCapabilityCurve"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.InitialReactiveCapabilityCurve"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>type</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#SynchronousMachineType"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.type"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>maxQ</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.maxQ"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedS</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.ratedS"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.type"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_GeneratingUnit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#GeneratingUnit"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.MemberOf_GeneratingUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.MemberOf_GeneratingUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.operatingMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.type"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>operatingMode</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#SynchronousMachineOperatingMode"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.operatingMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.InitialReactiveCapabilityCurve"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#RegulatingCondEq"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>referencePriority</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.referencePriority"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SynchronousMachine.operatingMode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#EquipmentContainer">
+    <rdfs:subClassOf rdf:resource="#ConnectivityNodeContainer"/>
+    <rdfs:label>EquipmentContainer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EquipmentContainer"/>
+  </owl:Class>
+  <owl:Class rdf:ID="LoadBreakSwitch">
+    <rdfs:subClassOf rdf:resource="#Switch"/>
+    <rdfs:comment>Required attributes and roles for class LoadBreakSwitch specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>LoadBreakSwitch</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#LoadBreakSwitch"/>
+  </owl:Class>
+  <owl:Class rdf:about="#EnergyConsumer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>pfixedPct</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.pfixedPct"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>qFexp</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.qFexp"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>qfixedPct</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.qfixedPct"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>qVexp</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.qVexp"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#ConductingEquipment"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>pFexp</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.pFexp"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>EnergyConsumer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>pVexp</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.pVexp"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>pfixed</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.pfixed"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>qfixed</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#EnergyConsumer.qfixed"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class EnergyConsumer specified in CPSM 4.0 requirement</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#PowerSystemResource">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:label>PowerSystemResource</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#PowerSystemResource"/>
+  </owl:Class>
+  <owl:Class rdf:ID="RegularTimePoint">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>value1</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.value1"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.value1"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>value2</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.value2"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>IntervalSchedule</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#RegularIntervalSchedule"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.IntervalSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.IntervalSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>sequenceNumber</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.sequenceNumber"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegularTimePoint.IntervalSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>RegularTimePoint</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#GeneratingUnit">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedGrossMinP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.ratedGrossMinP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.genControlSource"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>maxEconomicP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.maxEconomicP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>startupTime</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.startupTime"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>minOperatingP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.minOperatingP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>initialP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.initialP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>SubControlArea</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#SubControlArea"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.SubControlArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedNetMaxP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.ratedNetMaxP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>genControlSource</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="GeneratorControlSource"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.genControlSource"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Equipment"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>shortPF</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.shortPF"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>normalPF</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.normalPF"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.SubControlArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>minEconomicP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.minEconomicP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedGrossMaxP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.ratedGrossMaxP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>maxOperatingP</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.maxOperatingP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>GeneratingUnit</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.initialP"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>longPF</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratingUnit.longPF"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ConductingEquipment">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Equipment"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConductingEquipment.BaseVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConductingEquipment.BaseVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>BaseVoltage</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="BaseVoltage"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConductingEquipment.BaseVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>ConductingEquipment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConductingEquipment"/>
+  </owl:Class>
+  <owl:Class rdf:about="#TransformerWinding">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>windingType</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#WindingType"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.windingType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.connectionType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.windingType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.windingType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="#ConductingEquipment"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedU</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.ratedU"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_PowerTransformer</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#PowerTransformer"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.MemberOf_PowerTransformer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.ratedU"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>b</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.b"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.x"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.MemberOf_PowerTransformer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>g</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.g"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class TransformerWinding specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.b"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.MemberOf_PowerTransformer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>ratedS</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.ratedS"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>TransformerWinding</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>x</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.x"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>connectionType</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#WindingConnection"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.connectionType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>r</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.r"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerWinding.r"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ShuntCompensator">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>normalSections</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.normalSections"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator"/>
+    <rdfs:label>ShuntCompensator</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>nomU</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.nomU"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class ShuntCompensator specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>reactivePerSection</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.reactivePerSection"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.nomU"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>maximumSections</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.maximumSections"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.reactivePerSection"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.maximumSections"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#RegulatingCondEq"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ShuntCompensator.normalSections"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="InductionMotorLoad">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="NonConformLoad"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class InductionMotorLoad specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>InductionMotorLoad</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#InductionMotorLoad"/>
+  </owl:Class>
+  <owl:Class rdf:about="#TransformerControlMode">
+    <rdfs:label>TransformerControlMode</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerControlMode"/>
+  </owl:Class>
+  <owl:Class rdf:ID="AnalogValue">
+    <rdfs:subClassOf rdf:resource="#MeasurementValue"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_Measurement</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#Analog"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>value</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogValue.value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>AnalogValue</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AnalogValue"/>
+  </owl:Class>
+  <owl:Class rdf:about="#HostControlArea">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class HostControlArea specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>HostControlArea</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#HostControlArea"/>
+  </owl:Class>
+  <owl:Class rdf:about="#VoltageLevel">
+    <rdfs:subClassOf rdf:resource="#EquipmentContainer"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel.MemberOf_Substation"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>BaseVoltage</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#BaseVoltage"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel.BaseVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>VoltageLevel</rdfs:label>
+    <rdfs:comment>Required attributes and roles for class VoltageLevel specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel.BaseVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel.BaseVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_Substation</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#Substation"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel.MemberOf_Substation"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#VoltageLevel.MemberOf_Substation"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#BaseVoltage">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BaseVoltage.nominalVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>nominalVoltage</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BaseVoltage.nominalVoltage"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for BaseVoltage specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>BaseVoltage</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#BaseVoltage"/>
+  </owl:Class>
+  <owl:Class rdf:about="#GeneratorControlSource">
+    <rdfs:label>GeneratorControlSource</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#GeneratorControlSource"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ReactiveCapabilityCurve">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Curve"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y2Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y2Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>y2Unit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#UnitSymbol"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y2Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class ReactiveCapabilityCurve specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>ReactiveCapabilityCurve</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ReactiveCapabilityCurve"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Curve">
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y1Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.curveStyle"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>xMultiplier</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#UnitMultiplier"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.xMultiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>Curve</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.xUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>y1Multiplier</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#UnitMultiplier"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y1Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>curveStyle</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#CurveStyle"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.curveStyle"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y2Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y1Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.curveStyle"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.xMultiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.xUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>y1Unit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#UnitSymbol"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y1Unit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>y2Multiplier</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#UnitMultiplier"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y2Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>xUnit</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:about="#UnitSymbol"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.xUnit"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Curve.y1Multiplier"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Load">
+    <rdfs:subClassOf rdf:resource="#ConformLoad"/>
+    <rdfs:comment>Required attributes and roles for class EquivalentLoad specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Load</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Load"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Equipment">
+    <rdfs:subClassOf rdf:resource="#PowerSystemResource"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Equipment.MemberOf_EquipmentContainer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_EquipmentContainer</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#EquipmentContainer"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Equipment.MemberOf_EquipmentContainer"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>Equipment</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Equipment"/>
+  </owl:Class>
+  <owl:Class rdf:about="#UnitSymbol">
+    <rdfs:label>UnitSymbol</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#UnitSymbol"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SubGeographicalRegion">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubGeographicalRegion.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubGeographicalRegion.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Region</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#GeographicalRegion"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubGeographicalRegion.Region"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class SubGeographicalRegion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>SubGeographicalRegion</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubGeographicalRegion"/>
+  </owl:Class>
+  <owl:Class rdf:about="#TransformerType">
+    <rdfs:label>TransformerType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#TransformerType"/>
+  </owl:Class>
+  <owl:Class rdf:about="#NonConformLoad">
+    <rdfs:subClassOf rdf:resource="#EnergyConsumer"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoad.LoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoad.LoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>LoadGroup</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#NonConformLoadGroup"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoad.LoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class NonConformLoad specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>NonConformLoad</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoad"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SubLoadArea">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IdentifiedObject"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubLoadArea.LoadArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubLoadArea.LoadArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>LoadArea</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#LoadArea"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubLoadArea.LoadArea"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class SubLoadArea specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>SubLoadArea</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SubLoadArea"/>
+  </owl:Class>
+  <owl:Class rdf:about="#IdentifiedObject">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject.name"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>description</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject.description"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>localName</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject.localName"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>aliasName</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject.aliasName"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>IdentifiedObject</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>pathName</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject.pathName"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>name</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#IdentifiedObject.name"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Terminal">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>ConnectivityNode</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#ConnectivityNode"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal.ConnectivityNode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal.ConductingEquipment"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="#IdentifiedObject"/>
+    <rdfs:label>Terminal</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal.ConnectivityNode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal.ConductingEquipment"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class Terminal specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>ConductingEquipment</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#ConductingEquipment"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal.ConductingEquipment"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal.ConnectivityNode"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Terminal"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Conductor">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.ConductorType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label>Conductor</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.r"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>length</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.length"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="#ConductingEquipment"/>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>b0ch</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.b0ch"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>gch</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.gch"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>r</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.r"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>g0ch</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.g0ch"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>ConductorType</rdfs:label>
+            <rdfs:subClassOf>
+              <owl:Class rdf:ID="ConductorType"/>
+            </rdfs:subClassOf>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.ConductorType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>r0</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.r0"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <rdfs:Datatype>
+            <rdfs:label>x0</rdfs:label>
+          </rdfs:Datatype>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Conductor.x0"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#RegulatingCondEq">
+    <rdfs:subClassOf rdf:resource="#ConductingEquipment"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegulatingCondEq.Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>Terminal</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#Terminal"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegulatingCondEq.Terminal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegulatingCondEq.RegulationSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>RegulationSchedule</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#RegulationSchedule"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegulatingCondEq.RegulationSchedule"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for iec61970CIMVersion specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>RegulatingCondEq</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#RegulatingCondEq"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MeasurementType">
+    <rdfs:subClassOf rdf:resource="#IdentifiedObject"/>
+    <rdfs:comment>Required attributes and roles for class MeasurementType specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>MeasurementType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#MeasurementType"/>
+  </owl:Class>
+  <owl:Class rdf:ID="NonConformLoadSchedule">
+    <rdfs:subClassOf rdf:resource="#SeasonDayTypeSchedule"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoadSchedule.NonConformLoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoadSchedule.NonConformLoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>NonConformLoadGroup</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#NonConformLoadGroup"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoadSchedule.NonConformLoadGroup"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class NonConformLoadSchedule specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>NonConformLoadSchedule</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#NonConformLoadSchedule"/>
+  </owl:Class>
+  <owl:Class rdf:about="#DayType">
+    <rdfs:subClassOf rdf:resource="#IdentifiedObject"/>
+    <rdfs:comment>Required attributes and roles for class Season specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>DayType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#DayType"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Discrete">
+    <rdfs:subClassOf rdf:resource="#Measurement"/>
+    <rdfs:comment>Required attributes and roles for class Discrete specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Discrete</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Discrete"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ConductorType">
+    <rdfs:subClassOf rdf:resource="#IdentifiedObject"/>
+    <rdfs:label>ConductorType</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ConductorType"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ThermalGeneratingUnit">
+    <rdfs:subClassOf rdf:resource="#GeneratingUnit"/>
+    <rdfs:comment>Required attributes and roles for class ThermalGeneratingUnit specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>ThermalGeneratingUnit</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#ThermalGeneratingUnit"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SVCControlMode">
+    <rdfs:label>SVCControlMode</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#SVCControlMode"/>
+  </owl:Class>
+  <owl:Class rdf:ID="Accumulator">
+    <rdfs:subClassOf rdf:resource="#Measurement"/>
+    <rdfs:comment>Required attributes and roles for class Accumulator specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>Accumulator</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#Accumulator"/>
+  </owl:Class>
+  <owl:Class rdf:ID="AccumulatorValue">
+    <rdfs:subClassOf rdf:resource="#MeasurementValue"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AccumulatorValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:maxCardinality>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AccumulatorValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class>
+            <rdfs:label>MemberOf_Measurement</rdfs:label>
+            <rdfs:subClassOf rdf:resource="#Accumulator"/>
+            <rdfs:subClassOf rdf:resource="http://langdale.com.au/2005/Message#Reference"/>
+          </owl:Class>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AccumulatorValue.MemberOf_Measurement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment>Required attributes and roles for class AccumulatorValue specified in CPSM 4.0 requirement</rdfs:comment>
+    <rdfs:label>AccumulatorValue</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://iec.ch/TC57/2007/CIM-schema-cim12#AccumulatorValue"/>
+  </owl:Class>
+</rdf:RDF>

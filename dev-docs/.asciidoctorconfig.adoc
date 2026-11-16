@@ -22,6 +22,7 @@
 :devenvsetup-imagesdir: {asciidoctorconfigdir}/Includes/DevEnvSetup/readme-images/
 :io.ucaiug.slf4j.logback.binding-imagesdir: {asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
 :kena-imagesdir: {asciidoctorconfigdir}/Includes/Kena/readme-images/
+:kenatest-imagesdir: {asciidoctorconfigdir}/Includes/KenaTest/readme-images/
 :rcputil-imagesdir: {asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
 :maintainernotes-imagesdir: {asciidoctorconfigdir}/Includes/MaintainerNotes/readme-images/
 //
@@ -46,6 +47,7 @@
 //:debug-devenvsetup-imagesdir:{asciidoctorconfigdir}/Includes/DevEnvSetup/readme-images/
 //:debug-io.ucaiug.slf4j.logback.binding-imagesdir:{asciidoctorconfigdir}/Includes/io.ucaiug.slf4j.logback.binding/readme-images/
 //:debug-kena-imagesdir:{asciidoctorconfigdir}/Includes/Kena/readme-images/
+//:debug-kenatest-imagesdir:{asciidoctorconfigdir}/Includes/KenaTest/readme-images/
 //:debug-rcputil-imagesdir:{asciidoctorconfigdir}/Includes/RCPUtil/readme-images/
 //:debug-maintainernotes-imagesdir: {asciidoctorconfigdir}/Includes/MaintainerNotes/readme-images/
 // 

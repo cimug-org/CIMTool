@@ -22,8 +22,8 @@ import au.com.langdale.splitmodel.SplitWriter;
  * data as a split model, with support for hash and slash namespaces and the
  * {@code https:} scheme (issue #377).
  * <p>
- * The tests live in their own package so that this fragment of CIMUtil does not
- * share the {@code au.com.langdale.splitmodel} package exported by Kena.
+ * The tests live in a {@code test} package beside
+ * {@code au.com.langdale.splitmodel}, the package of Kena they test.
  */
 public class SplitWriterNamespaceTest {
 

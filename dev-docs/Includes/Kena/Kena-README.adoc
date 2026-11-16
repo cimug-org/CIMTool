@@ -41,8 +41,8 @@ Beyond the API facade, Kena also provides:
 ----
 Kena/
 ├── META-INF/
-│   └── MANIFEST.MF               ← OSGi bundle manifest — exports all packages, lib classpath
-├── build.properties              ← PDE build configuration — source JAR and lib includes
+│   └── MANIFEST.MF               ← OSGi bundle manifest that exports all packages and sets the lib classpath
+├── build.properties              ← PDE build configuration for the source JAR and lib includes
 ├── lib/                          ← Vendored Apache Jena 2.6.3 and its dependencies
 │   ├── jena-2.6.3.jar            ← Apache Jena core
 │   ├── arq-2.8.4.jar             ← ARQ SPARQL processor
@@ -59,7 +59,7 @@ Kena/
 │   └── junit-4.5.jar             ← Test framework; not on the bundle class path
 └── src/
     ├── au/com/langdale/kena/      ← Kena RDF/OWL API (the primary public API)
-    │   ├── OntModel.java          ← Central graph model — resource lookup, traversal,
+    │   ├── OntModel.java          ← Central graph model for resource lookup, traversal,
     │   │                             subclass/property queries, composition
     │   ├── ModelFactory.java      ← Factory methods for creating OntModel instances
     │   ├── Resource.java          ← RDF resource wrapper
@@ -270,8 +270,8 @@ The `au.com.langdale.splitmodel` package handles CIM/XML datasets that are
 partitioned across multiple files, a common practice in large power system
 models. `SplitReader` locates and reads the parts via a hash-based directory
 structure, and `SplitWriter` writes a model in the same partitioned format.
-The `SplitReaderTest` and `ExtractorTest` in `CIMToolTest` exercise this
-package directly.
+The `SplitReaderTest` and `SplitWriterNamespaceTest` in `KenaTest` exercise
+this package directly, and `ExtractorTest` runs rules over a split model.
 
 
 
@@ -281,8 +281,7 @@ package directly.
   validation logic in CIMUtil uses the Kena `OntModel` API.
 
 * *CIMToolPlugin*: uses Kena for the project model cache, editors, views,
-  and the incremental build system. The `KenaTests` in `CIMToolTest` test Kena
-  directly.
+  and the incremental build system.
 
 * *RCPUtil*: no dependency on Kena.
 
@@ -292,3 +291,7 @@ package directly.
 * *cimtool-cli*: packages `kena.jar` (extracted from the PDE product export)
   alongside `cimutil.jar` in the CLI uber JAR. At CLI runtime, all RDF
   operations go through the Kena API.
+
+* *KenaTest*: a fragment of Kena that tests its model API, split model
+  reader and writer, rule-based extractor and namespace utilities headlessly,
+  as plain JUnit 5 tests.

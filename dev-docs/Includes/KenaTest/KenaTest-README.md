@@ -1,0 +1,129 @@
+
+== **KenaTest**
+
+// Settings:
+:doctype: inline
+:sectnums:
+:sectnumlevels: 4
+:reproducible:
+:icons: font
+:xrefstyle: short
+
+An Eclipse plugin fragment that provides the JUnit 5 test suite for Kena. It
+tests the Kena RDF/OWL model API, the split model reader and writer, the
+rule-based extractor and the namespace utilities headlessly, as plain JUnit
+tests, without an Eclipse workbench.
+
+
+
+## Overview
+
+KenaTest is an Eclipse **plugin fragment** whose `MANIFEST.MF` declares
+`Fragment-Host: au.com.langdale.kena`, so it attaches to the `Kena` bundle and
+sees all of its packages and the Jena libraries Kena bundles. Kena has no
+dependency on the Eclipse platform, so the tests run as plain JUnit tests, in
+the same way as CIMUtilTest.
+
+Each test class lives in a `test` package beside the Kena package it tests, so
+`au.com.langdale.splitmodel` is tested from `au.com.langdale.splitmodel.test`.
+
+KenaTest holds every test of Kena's own code. Tests of code that uses Kena
+belong with that code: CIMUtil's in CIMUtilTest, and CIMToolPlugin's in
+CIMToolTest.
+
+
+
+## Project Structure
+
+```
+KenaTest/
+├── META-INF/
+│   └── MANIFEST.MF                          ← Fragment of au.com.langdale.kena; imports JUnit 5
+├── build.properties                         ← Source and bin.includes configuration
+├── src/
+│   └── au/com/langdale/
+│       ├── inference/test/
+│       │   └── ExtractorTest.java
+│       ├── kena/test/
+│       │   ├── KenaTests.java
+│       │   └── TestResources.java           ← Sample data locations and triple helpers
+│       ├── splitmodel/test/
+│       │   ├── SplitReaderTest.java
+│       │   └── SplitWriterNamespaceTest.java
+│       └── util/test/
+│           └── NamespaceUtilsTest.java
+└── test-resources/                          ← On the bundle class path
+    ├── ABB40BusIOP10_rev7/                  ← A network model in split model form, 128 parts
+    └── cpsm2007.owl                         ← A CIM 2007 CPSM profile in RDF/XML
+```
+
+
+
+## Dependencies on Other Projects
+
+KenaTest is an OSGi fragment of `Kena` and inherits all of its dependencies,
+including the Jena libraries in `Kena/lib`. It declares no `Require-Bundle` of
+its own, and imports only JUnit 5:
+
+| Import | Role in tests |
+| --- | --- |
+| `org.junit.jupiter.api`, `org.junit.jupiter.api.function`, `org.junit.jupiter.api.io` | JUnit 5 test framework: `@Test`, assertions, `@TempDir` |
+| `org.junit.jupiter.params`, `org.junit.jupiter.params.provider` | Parameterized tests, used to run a test once per namespace |
+
+Each import is restricted to `[5.9.0,6.0.0)`, the JUnit 5 release line shipped
+with the Eclipse 2023-06 target platform.
+
+
+
+## Test Classes
+
+| Class | Covers |
+| --- | --- |
+| `KenaTests` | The Kena model API: adding and finding statements, reading and writing RDF/XML, listing named classes, and the direct and indirect superclasses the transitive inference model reports. |
+| `SplitReaderTest` | `SplitReader` finds the triples matching a pattern in a split model, and stops when the result handler asks it to. |
+| `SplitWriterNamespaceTest` | `SplitWriter` writes instance data with hash and slash namespaces and the `https:` scheme ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)). |
+| `ExtractorTest` | `Extractor` runs rules parsed by `RuleParser` against a split model, with and without the standard functors such as `axiom`, `same`, `any` and `notAny`. |
+| `NamespaceUtilsTest` | `NamespaceUtils` validates and classifies hash and slash namespaces, splits a URI into namespace and local name, maps between a namespace and its ontology URI, checks declared namespaces against ontology URIs, and derives child namespaces from a base ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)). |
+
+`KenaTests`, `SplitReaderTest` and `ExtractorTest` were JUnit 3 tests in
+CIMToolTest, where they ran as part of a JUnit Plug-in Test. They were
+converted to JUnit 5 when they moved to KenaTest, and their test methods kept
+their names.
+
+
+
+## Test Resources
+
+`TestResources` locates the sample data through the class path, since
+`test-resources` is on the bundle class path, so the tests do not depend on
+the folder they are run from.
+
+| Resource | Contents and use |
+| --- | --- |
+| `ABB40BusIOP10_rev7/` | The `ABB40BusIOP10_rev7` network model, which `CIMToolTest/CIMToolTestFiles/IOP10Kit.zip` also holds as CIM/XML, written as a split model with a modulus of 128. `SplitReaderTest` and `ExtractorTest` query it. |
+| `cpsm2007.owl` | A CIM 2007 CPSM profile, the same file as the one in `CIMToolTest/CIMToolTestFiles/CIMToolTestFiles.zip`. `KenaTests` reads it as RDF/XML. |
+
+
+
+## Running the Tests
+
+KenaTest runs as plain JUnit tests:
+
+1. In Eclipse, right-click a test class or the `KenaTest` project
+2. Select **Run As > JUnit Test**
+
+The tests need no Eclipse runtime, so a JUnit Plug-in Test launch is not
+needed, and they run in a few seconds.
+
+
+
+## Relationship to Other Projects
+
+- **Kena**: the host bundle. The tests cover the packages `au.com.langdale.kena`,
+  `au.com.langdale.inference`, `au.com.langdale.splitmodel` and
+  `au.com.langdale.util`.
+- **CIMUtilTest**: the test suite for CIMUtil, which also exercises Kena
+  indirectly through the profile model, schema import and builders.
+- **CIMToolTest**: holds `IOP10Kit.zip`, with the same network model as
+  CIM/XML, and `CIMToolTestFiles.zip`, with `cpsm2007.owl`. Its `KenaTests`,
+  `SplitReaderTest` and `ExtractorTest` moved to KenaTest.
