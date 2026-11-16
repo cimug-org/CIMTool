@@ -2,6 +2,7 @@ package au.com.langdale.kena;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import au.com.langdale.kena.filters.Buffer;
 import au.com.langdale.kena.filters.LiteralObjects;
@@ -68,14 +69,55 @@ public class OntModel {
 		return graph.size();
 	}
 	
+	/**
+	 * Returns the ontology header that represents this model: the one
+	 * {@code owl:Ontology} that no other header in the model imports
+	 * (issue #391).
+	 * <p>
+	 * A model built from a single file has one header, which is returned as
+	 * before. A merged schema has one header per schema file, and the base CIM
+	 * schema's header imports the others, so the base is the header that no
+	 * other header imports. Only imports between headers in this model count:
+	 * an import of an ontology that is not in the model is ignored, and a
+	 * header that imports itself still counts as not imported.
+	 * <p>
+	 * The result is {@code null} when the model has no header, when more than
+	 * one header or none is left unimported (headers that are not connected by
+	 * imports, or headers that all import one another in a cycle), or when the
+	 * header found is not a URI resource or its URI contains a '#', since
+	 * callers build the namespace by appending '#' to it.
+	 * 
+	 * @return the header, or {@code null} if there is no single valid header
+	 */
 	public OntResource getValidOntology() {
-		ResIterator it = listSubjectsWithProperty(RDF.type, OWL2.Ontology);
-		if( it.hasNext()) {
-			OntResource ont = it.nextResource();
-			if( ! it.hasNext() && ont.isURIResource() && ! ont.getURI().contains("#"))
-				return ont;
+		Set headers = listSubjectsWithProperty(RDF.type, OWL2.Ontology).toSet();
+		OntResource root = null;
+		for (Iterator it = headers.iterator(); it.hasNext();) {
+			OntResource header = (OntResource) it.next();
+			if (!isImportedByAnother(header, headers)) {
+				if (root != null)
+					return null;
+				root = header;
+			}
 		}
+		if (root != null && root.isURIResource() && !root.getURI().contains("#"))
+			return root;
 		return null;
+	}
+
+	/**
+	 * Returns true if a header other than this one imports it.
+	 * 
+	 * @param header  the header to test
+	 * @param headers every header in the model
+	 */
+	private static boolean isImportedByAnother(OntResource header, Set headers) {
+		for (Iterator it = headers.iterator(); it.hasNext();) {
+			OntResource other = (OntResource) it.next();
+			if (!other.equals(header) && other.hasProperty(OWL2.imports, header))
+				return true;
+		}
+		return false;
 	}
 	
 	public ResIterator listSubjectsWithNoProperty(FrontsNode prop) {

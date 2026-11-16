@@ -46,6 +46,7 @@ KenaTest/
 │       │   └── ExtractorTest.java
 │       ├── kena/test/
 │       │   ├── KenaTests.java
+│       │   ├── OntModelValidOntologyTest.java
 │       │   └── TestResources.java           ← Sample data locations and triple helpers
 │       ├── splitmodel/test/
 │       │   ├── SplitReaderTest.java
@@ -80,6 +81,7 @@ with the Eclipse 2023-06 target platform.
 | Class | Covers |
 | --- | --- |
 | `KenaTests` | The Kena model API: adding and finding statements, reading and writing RDF/XML, listing named classes, and the direct and indirect superclasses the transitive inference model reports. |
+| `OntModelValidOntologyTest` | `OntModel.getValidOntology()` returns the one ontology header that no other header imports, as in a merged schema whose base imports the other schema files, and returns `null` when there is no single such header or its URI contains `#` ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). |
 | `SplitReaderTest` | `SplitReader` finds the triples matching a pattern in a split model, and stops when the result handler asks it to. |
 | `SplitWriterNamespaceTest` | `SplitWriter` writes instance data with hash and slash namespaces and the `https:` scheme ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)). |
 | `ExtractorTest` | `Extractor` runs rules parsed by `RuleParser` against a split model, with and without the standard functors such as `axiom`, `same`, `any` and `notAny`. |
