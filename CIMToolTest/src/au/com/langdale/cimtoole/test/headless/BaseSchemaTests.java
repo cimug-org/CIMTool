@@ -66,6 +66,7 @@ public class BaseSchemaTests extends WorkspaceTest {
 	}
 
 	public final void testPreferenceChoosesTheBase() throws Exception {
+		// Base.xmi has the Schema Namespace preference and is not flagged
 		SchemaMerger.Result result = merge();
 		assertEquals("base CIM schema", base.getName(), result.getBase().getName());
 		assertFalse(result.hasErrors());
@@ -119,6 +120,55 @@ public class BaseSchemaTests extends WorkspaceTest {
 		waitFor("the merge to succeed", () -> !hasErrors());
 		workspace.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 		assertTrue("profile built once the base CIM schema is resolved", xsd.exists());
+	}
+
+	public final void testSetBaseSchemaMovesTheFlag() throws Exception {
+		flag(base, true);
+		workspace.run(Task.setBaseSchema(european), monitor);
+		assertTrue("new base flagged", isFlagged(european));
+		assertFalse("previous base unflagged", isFlagged(base));
+		waitFor("the new base to be chosen", () -> european.getName().equals(baseName()));
+	}
+
+	public final void testSetBaseSchemaClearsStrayFlags() throws Exception {
+		flag(base, true);
+		flag(european, true);
+		workspace.run(Task.setBaseSchema(base), monitor);
+		assertTrue(isFlagged(base));
+		assertFalse("the second flag is removed", isFlagged(european));
+		waitFor("the markers to clear", () -> !isMarked(base) && !isMarked(european));
+	}
+
+	public final void testImportAndSetBaseInOneOperation() throws Exception {
+		IFile extension = schemaFolder.getFile("Extension.xmi");
+		workspace.run(Task.chain(
+				Task.importSchema(extension, copy("European.xmi").getAbsolutePath(), "http://example.com/ext#",
+						ProjectTest.MERGE_SHADOW_EXTENSIONS, ProjectTest.SELF_HEAL_ON_IMPORT),
+				Task.setBaseSchema(extension)), monitor);
+		assertTrue("imported file flagged", isFlagged(extension));
+		waitFor("the imported file to be the base", () -> extension.getName().equals(baseName()));
+	}
+
+	public final void testRemoveSchemaRemovesCompanionFiles() throws Exception {
+		IFile namespaces = schemaFolder.getFile("Base.namespaces");
+		IFile annotation = schemaFolder.getFile("Base.annotation");
+		namespaces.create(new java.io.ByteArrayInputStream(new byte[0]), true, monitor);
+		annotation.create(new java.io.ByteArrayInputStream(new byte[0]), true, monitor);
+		IFile otherNamespaces = schemaFolder.getFile("European.namespaces");
+		otherNamespaces.create(new java.io.ByteArrayInputStream(new byte[0]), true, monitor);
+
+		workspace.run(Task.removeSchema(base), monitor);
+		assertFalse("schema removed", base.exists());
+		assertFalse("companion removed", namespaces.exists());
+		assertFalse("companion removed", annotation.exists());
+		assertTrue("another file's companion kept", otherNamespaces.exists());
+		assertNull("settings removed with the file",
+				CIMToolPlugin.getSettings().getSetting(base, Info.SCHEMA_NAMESPACE));
+		waitFor("the remaining file to be the base", () -> european.getName().equals(baseName()));
+	}
+
+	private boolean isFlagged(IFile file) {
+		return Info.isFlaggedAsBaseSchema(file);
 	}
 
 	private IFile importSchema(String name, String namespace) throws Exception {

@@ -142,6 +142,10 @@ CIMToolTest/
         │       ├── SchemaWizards.java       ← Tests for the Import Schema wizard
         │       ├── RuleWizards.java         ← Tests for the rules wizards
         │       └── CustomBuildersWizards.java ← Opens the Import Transform Builder wizard
+        └── wizards/
+            └── BaseSchemaChoiceTest.java    ← Tests for the import wizard's base CIM schema
+                                                checkbox; in the wizard's package because the
+                                                class is private to it
 ```
 
 
@@ -178,7 +182,8 @@ These tests run without a display and exercise the core CIMTool logic:
 | `ProfileTasks` | Creating a new profile and importing `cpsm2007.owl` |
 | `TransformTasks` | XSD generation, XSD generation with custom rules, and AsciiDoc generation (which also creates the Profiles folder `.asciidoctorconfig.adoc`), using the `MeterReadings.owl` profile from `Part9/` on the CIM100 `.qea` schema |
 | `CreateProject` | Creating a CIMTool project |
-| `BaseSchemaTests` | Choosing the base CIM schema of a project with two XMI schema files: the Schema Namespace preference or the base CIM schema flag chooses the base, and `Info.getSchemaNamespace(IProject)` returns its namespace; two flagged files are marked as errors, and the markers disappear when one flag is cleared; a profile is not built while there is no base, and is built once the problem is resolved ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)) |
+| `BaseSchemaTests` | Choosing the base CIM schema of a project with two XMI schema files: the Schema Namespace preference or the base CIM schema flag chooses the base, and `Info.getSchemaNamespace(IProject)` returns its namespace; two flagged files are marked as errors, and the markers disappear when one flag is cleared; a profile is not built while there is no base, and is built once the problem is resolved; `Task.setBaseSchema()` moves the flag and clears stray flags, also in the same operation as an import, and `Task.removeSchema()` removes a schema file with its companion files and settings ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)) |
+| `BaseSchemaChoiceTest` | The import wizard's "base CIM schema" checkbox (`BaseSchemaChoice`) for each row of the design, W1 to W9 (first file, new file, re-import of the base or of another file, with and without a base), two flagged files, a base chosen by the Schema Namespace preference, the Enterprise Architect project file rules, the hint shown under the checkbox in each case, and the replacement of the project's Enterprise Architect project file by a differently named one. It is in the `au.com.langdale.cimtoole.wizards` package because the class is private to that package, and it needs no workspace ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)) |
 | `FullModelProfileModelTest` | Importing the CGMES CIM17 `.qea` schema and serializing the resulting full schema profile with `FullModelProfileModel` and `ProfileSerializer` |
 | `GlobalPreferencesRefreshTests` | The export that `GlobalPreferencesSynchronizer` runs for every open project when CIMTool starts: it refreshes an existing `.cimtool-global-preferences` file, creates a missing one, and leaves a file that already matches the workspace preferences untouched ([Issue #339](https://github.com/cimug-org/CIMTool/issues/339)) |
 | `NamespaceValidatorTest` | `Validators.NAMESPACE` in RCPUtil, which checks every namespace entered in the CIMTool user interface, accepts `http:` and `https:` hash and slash namespaces and agrees with `NamespaceUtils` in Kena; needs no workspace ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)) |

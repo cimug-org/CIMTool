@@ -97,6 +97,10 @@ public class NewProject extends Wizard implements INewWizard {
 			if (reportGenerationSettings.shouldGenerateReport()) {
 				job = Task.chain(job, Task.generateImportSchemaReport(schemaFile, reportGenerationSettings));
 			}
+			// The project's first schema file is its base CIM schema (issue #391)
+			job = BaseSchemaFinish.chain(job, schema, getShell());
+			if (job == null)
+				return false;
 		}
 
 		return Jobs.runInteractive(job, ResourcesPlugin.getWorkspace().getRoot(), getContainer(), getShell());

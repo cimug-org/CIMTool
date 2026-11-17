@@ -164,6 +164,43 @@ public class Settings extends Task {
 
 	}
 
+	/**
+	 * Sets one setting on several resources of a project in a single change to
+	 * the project's settings, which is saved once. A null value removes the
+	 * resource's setting. Used to move the base CIM schema flag from one schema
+	 * file to another, so that the project never has two bases or none
+	 * (issue #391).
+	 *
+	 * @param project the project whose resources are changed
+	 * @param symbol  the setting
+	 * @param values  each resource and its new value, or null to remove it
+	 */
+	public void putSettings(IProject project, QualifiedName symbol, Map<IResource, String> values) {
+		try {
+			OntModel store = getSettingsStore(project);
+			Property prop = createSettingsProperty(symbol);
+			OntModel revised = null;
+			for (Map.Entry<IResource, String> entry : values.entrySet()) {
+				IPath path = entry.getKey().getProjectRelativePath();
+				String value = entry.getValue();
+				String extant = createSubject(path, store).getString(prop);
+				if (value == null ? extant == null : value.equals(extant))
+					continue;
+				if (revised == null)
+					revised = Composition.copy(store);
+				OntResource subject = createSubject(path, revised);
+				if (value == null)
+					subject.removeAll(prop);
+				else
+					subject.setProperty(prop, value, null);
+			}
+			if (revised != null)
+				replaceSettingsStore(project, revised);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private class ResourceListener implements IResourceChangeListener {
 
 		public void resourceChanged(IResourceChangeEvent event) {

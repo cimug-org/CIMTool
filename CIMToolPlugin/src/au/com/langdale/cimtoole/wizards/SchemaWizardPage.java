@@ -14,6 +14,8 @@ import static au.com.langdale.ui.builder.Templates.HRule;
 import static au.com.langdale.ui.builder.Templates.Label;
 import static au.com.langdale.ui.builder.Templates.RadioButton;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,11 +25,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Label;
 
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 import au.com.langdale.cimtoole.reporting.ReportGenerationSettings;
+import au.com.langdale.profiles.SchemaMerger;
 import au.com.langdale.ui.binding.CheckBoxBinding;
 import au.com.langdale.ui.binding.TextBinding;
 import au.com.langdale.ui.binding.Validator;
@@ -234,6 +238,37 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 		this.newProject = newProject;
 	}
 
+	/** The base CIM schema decision for the current target file (issue #391). */
+	private BaseSchemaChoice baseChoice;
+	/** The project and target file the checkbox state was last loaded for. */
+	private String baseChoiceTarget;
+
+	/**
+	 * The base CIM schema decision for the file being imported, or null before a
+	 * target file is chosen (issue #391).
+	 */
+	BaseSchemaChoice getBaseSchemaChoice() {
+		return baseChoice;
+	}
+
+	/** Whether the "base CIM schema" checkbox is ticked. */
+	public boolean isBaseSchemaTicked() {
+		return baseButton != null && !baseButton.isDisposed() && baseButton.getSelection();
+	}
+
+	private Button baseButton;
+
+	/**
+	 * The file as it is stored in the Schema folder: the import replaces spaces in
+	 * its name with underscores.
+	 */
+	public IFile getStoredFile() {
+		IFile file = getFile();
+		if (file == null || !file.getName().contains(" "))
+			return file;
+		return file.getParent().getFile(new org.eclipse.core.runtime.Path(file.getName().replace(" ", "_")));
+	}
+
 	public IFile getFile() {
 		return file;
 	}
@@ -299,6 +334,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 						Group(Label(expectNewProject ? "" : "Project")), expectNewProject ? null : Group(CheckboxTableViewer("projects")),
 						Group(Label("Schema name:"), Field("filename")),
 						Group(CheckBox("replace", "Replace existing schema.")),
+						Group(CheckBox("base", "Make this schema the project's base CIM schema (canonical CIM)")),
+						Group(Label("base-hint", "")),
 						Group(Label("* Set this under Windows > Preferences > CIMTool")), Group(Label("")),
 						Group(HRule()),
 						Group(Grid(Group(Label("CIMTool Model Integrity Reporting:")),
@@ -419,6 +456,8 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 
 				boolean exists = file.exists();
 				getButton("replace").setEnabled(exists);
+
+				refreshBaseSchemaCheckbox(project);
 				
 				if (exists) 
 					populateCurrentSchemaNS(file);
@@ -438,6 +477,41 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 				if (check != null)
 					return check;
 				return null;
+			}
+
+			/**
+			 * Loads the "base CIM schema" checkbox from the project's schema files when
+			 * the project or target file changes, and otherwise keeps the user's choice
+			 * (issue #391).
+			 */
+			private void refreshBaseSchemaCheckbox(IProject project) {
+				IFile stored = getStoredFile();
+				List<SchemaMerger.SchemaFile> existing = new ArrayList<SchemaMerger.SchemaFile>();
+				if (!expectNewProject && project != null && project.exists()) {
+					try {
+						existing = Info.getSchemaFiles(project);
+					} catch (CoreException e) {
+						existing = new ArrayList<SchemaMerger.SchemaFile>();
+					}
+				}
+				baseChoice = BaseSchemaChoice.decide(existing, stored.getName(),
+						Info.getPreference(Info.SCHEMA_NAMESPACE));
+				Button base = getButton("base");
+				String target = stored.getFullPath().toString();
+				if (!target.equals(baseChoiceTarget)) {
+					base.setSelection(baseChoice.isChecked());
+					baseChoiceTarget = target;
+				}
+				base.setEnabled(baseChoice.isEnabled());
+				Label hint = getLabel("base-hint");
+				String hintText = baseChoice.getHint() == null ? "" : baseChoice.getHint();
+				if (!hintText.equals(hint.getText())) {
+					hint.setText(hintText);
+					hint.requestLayout();
+				}
+				if (!baseChoice.isEnabled())
+					base.setSelection(baseChoice.isChecked());
+				baseButton = base;
 			}
 
 			private void populateCurrentSchemaNS(IProject project) {

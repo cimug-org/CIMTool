@@ -80,6 +80,7 @@ import au.com.langdale.logging.SchemaImportLogger;
 import au.com.langdale.logging.SchemaImportLoggerFactory;
 import au.com.langdale.profiles.MESSAGE;
 import au.com.langdale.profiles.ProfileModel;
+import au.com.langdale.profiles.SchemaMerger;
 import au.com.langdale.util.Jobs;
 import au.com.langdale.validation.RepairMan;
 import au.com.langdale.validation.ValidatorUtil;
@@ -219,6 +220,56 @@ public class Task extends Info {
 				monitor.worked(1);
 
 				writeFile(file, source, monitor);
+			}
+		};
+	}
+
+	/**
+	 * The companion files the schema import brings in beside a schema file, which
+	 * are removed with it (issue #391).
+	 */
+	public static final String[] SCHEMA_COMPANION_EXTENSIONS = { "namespaces", "namespace-prefixes",
+			"stereotype-extensions", "annotation" };
+
+	/**
+	 * Makes a schema file the project's base CIM schema (issue #391): its flag is
+	 * set and every other schema file's flag is removed, in one change to the
+	 * project's settings, so the project never has two bases or none.
+	 *
+	 * @param base the schema file that becomes the base
+	 */
+	public static IWorkspaceRunnable setBaseSchema(final IFile base) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IProject project = base.getProject();
+				IFolder folder = getSchemaFolder(project);
+				Map<IResource, String> flags = new HashMap<IResource, String>();
+				flags.put(base, "true");
+				for (SchemaMerger.SchemaFile other : getSchemaFiles(project))
+					if (other.isFlaggedAsBase() && !other.getName().equals(base.getName()))
+						flags.put(folder.getFile(other.getName()), null);
+				CIMToolPlugin.getSettings().putSettings(project, CANONICAL_SCHEMA, flags);
+			}
+		};
+	}
+
+	/**
+	 * Removes a schema file from its project, with the companion files imported
+	 * beside it ({@link #SCHEMA_COMPANION_EXTENSIONS}). Its settings are removed
+	 * when the file is deleted (issue #391).
+	 *
+	 * @param schema the schema file to remove
+	 */
+	public static IWorkspaceRunnable removeSchema(final IFile schema) {
+		return new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (String ext : SCHEMA_COMPANION_EXTENSIONS) {
+					IFile companion = getRelated(schema, ext, false);
+					if (companion.exists())
+						companion.delete(true, monitor);
+				}
+				if (schema.exists())
+					schema.delete(true, monitor);
 			}
 		};
 	}

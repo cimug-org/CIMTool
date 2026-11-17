@@ -867,7 +867,18 @@ public class Info implements QualifiedNames {
 	 * found only when the files are merged.
 	 */
 	public static SchemaMerger.Selection selectBaseSchema(IProject project) throws CoreException {
-		IResource[] schemas = getSchemaFolder(project.getProject()).members();
+		return SchemaMerger.selectBase(getSchemaFiles(project), getPreference(SCHEMA_NAMESPACE));
+	}
+
+	/**
+	 * Lists the project's schema files, sorted by name, with their namespaces and
+	 * base CIM schema flags but without their models (issue #391).
+	 */
+	public static List<SchemaMerger.SchemaFile> getSchemaFiles(IProject project) throws CoreException {
+		IFolder folder = getSchemaFolder(project.getProject());
+		if (!folder.exists())
+			return new ArrayList<SchemaMerger.SchemaFile>();
+		IResource[] schemas = folder.members();
 		Arrays.sort(schemas, new Comparator<IResource>() {
 			public int compare(IResource a, IResource b) {
 				return a.getName().compareTo(b.getName());
@@ -881,7 +892,7 @@ public class Info implements QualifiedNames {
 				files.add(new SchemaMerger.SchemaFile(schema.getName(), null,
 						settings.getSetting(schema, SCHEMA_NAMESPACE), isFlaggedAsBaseSchema(schema)));
 		}
-		return SchemaMerger.selectBase(files, getPreference(SCHEMA_NAMESPACE));
+		return files;
 	}
 
 	/**

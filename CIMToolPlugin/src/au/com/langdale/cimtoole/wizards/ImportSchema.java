@@ -62,6 +62,9 @@ public class ImportSchema extends Wizard implements IImportWizard {
 				}
 				job = Task.chain(job, Task.generateImportSchemaReport(main.getFile(), reportGenerationSettings));
 			}
+			job = BaseSchemaFinish.chain(job, main, getShell());
+			if (job == null)
+				return false; // the change of base CIM schema was cancelled
 			return Jobs.runInteractive(job, ResourcesPlugin.getWorkspace().getRoot(), getContainer(), getShell());
 		}
 		return true;

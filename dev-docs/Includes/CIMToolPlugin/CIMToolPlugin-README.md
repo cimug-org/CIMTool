@@ -282,6 +282,26 @@ project's profile outputs, and leaves the existing outputs as they are. Cleaning
 a profile's outputs is not affected. A project with no schema files builds as
 before.
 
+The `Import Schema` and `New Project` wizards (`SchemaWizardPage`) have a
+"Make this schema the project's base CIM schema (canonical CIM)" checkbox. Its
+state comes from `BaseSchemaChoice`, which is private to the `wizards` package
+since the wizard is its only user, and is loaded only when the target project
+or file changes, so the user's choice survives re-validation. A line under the
+checkbox explains its state: why it cannot be changed (the first schema file,
+a re-import of the base, an Enterprise Architect project file), or what
+ticking it does. When finishing would make the imported file the base in place
+of another, `BaseSchemaFinish` asks the user to confirm, with the option to
+remove the previous base and its companion files. A project can have only one
+Enterprise Architect project file, so importing a differently named one, such
+as a later CIM release, replaces it: after the user confirms, the old file and
+its companion files are always removed. The import, `Task.setBaseSchema()` and, if chosen, `Task.removeSchema()`
+then run as one workspace operation. `Task.setBaseSchema()` sets the flag on
+the new base and removes it from every other file through
+`Settings.putSettings()`, a single change to the project's settings, so the
+project never has two bases or none. Every import leaves the project with an
+explicit base. Since the import changes a schema file, `CIMBuilder` rebuilds the
+project's profiles, including any skipped while there was no base.
+
 ### Regeneration After an Upgrade
 
 `CIMBuilder` rebuilds only the outputs of resources that change, so a newer
