@@ -46,6 +46,7 @@ import au.com.langdale.cimtoole.registries.ModelParserRegistry;
 import au.com.langdale.colors.util.ColorUtils;
 import au.com.langdale.profiles.SchemaMerger;
 import au.com.langdale.util.Jobs;
+import au.com.langdale.xmi.EAProjectParserFactory;
 
 /**
  * A set of utilities that define the file locations, file types, properties and
@@ -148,21 +149,21 @@ public class Info implements QualifiedNames {
 				|| isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
 	}
 
+	/**
+	 * Returns true if the resource is an Enterprise Architect project file in the
+	 * project's Schema folder. The extensions are those of
+	 * {@link EAProjectParserFactory#EXTENSIONS}.
+	 */
 	public static boolean isEAProject(IResource resource) {
-		return isFile(resource, "Schema", "eap", "eapx", "qea", "qeax");
+		return isFile(resource, "Schema", EAProjectParserFactory.EXTENSIONS.toArray(new String[0]));
 	}
 
+	/**
+	 * Returns true if the file is an Enterprise Architect project file, judged by
+	 * its extension ({@link EAProjectParserFactory#isEAProject(String)}).
+	 */
 	public static boolean isEAProject(IFile file) {
-		String[] eaExts = new String[] { "eap", "eapx", "qea", "qeax" };
-		String ext = file.getFileExtension();
-		if (ext == null)
-			return false;
-		ext = ext.toLowerCase();
-		for (String anExt : eaExts) {
-			if (ext.equals(anExt))
-				return true;
-		}
-		return false;
+		return EAProjectParserFactory.isEAProject(file.getName());
 	}
 
 	public static boolean isSettings(IResource resource) {

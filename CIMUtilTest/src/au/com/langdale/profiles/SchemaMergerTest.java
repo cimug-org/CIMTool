@@ -236,14 +236,6 @@ class SchemaMergerTest {
 	}
 
 	@Test
-	void eaProjectFilesAreRecognisedByExtension() {
-		for (String name : new String[] { "a.eap", "a.eapx", "a.qea", "a.qeax", "A.QEA" })
-			assertTrue(SchemaMerger.isEAProject(name), name);
-		for (String name : new String[] { "a.xmi", "a.owl", "a.qea.bak", "qea" })
-			assertFalse(SchemaMerger.isEAProject(name), name);
-	}
-
-	@Test
 	void problemsNameTheFilesInvolved() {
 		Result result = SchemaMerger.merge(Arrays.asList(file("cim.xmi", CIM, true), file("eu.xmi", EUROPEAN, true)), null);
 		String description = result.getProblems().get(0).getDescription();

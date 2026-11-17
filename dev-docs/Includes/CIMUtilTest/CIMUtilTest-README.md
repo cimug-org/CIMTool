@@ -81,6 +81,7 @@ CIMUtilTest/
 │       ├── validation/
 │       │   └── ProfileValidatorCycleTest.java
 │       └── xmi/test/
+│           ├── EAProjectParserFactoryTest.java
 │           ├── PackageNamespaceTest.java
 │           └── PackageNamespaceTranslationTest.java
 └── test-resources/                          ← On the bundle class path
@@ -158,6 +159,7 @@ The sample projects also read the CGMES CIM17 schema from
 | `SchemaMergerTest` | `SchemaMerger` chooses the base CIM schema (the Enterprise Architect project file, the file flagged as the base, the only file, or the one file with the Schema Namespace), reports each case in which there is none, including two Enterprise Architect project files, warns of a flag that an Enterprise Architect project file overrides, chooses the base from names and settings alone with `selectBase()`, has the base import every other schema file's ontology, hides the schema files' own `owl:imports`, and writes nothing to the files' models ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). |
 | `ReleaseVersionConsistencyTest` | The version declarations that must change together at each release agree ([Issue #310](https://github.com/cimug-org/CIMTool/issues/310)). |
 | `ProfileValidatorCycleTest` | `ProfileValidator` reports each superclass statement on a cycle in the profile hierarchy, with a repair that removes it, and reports neither a class leading into the cycle nor self and mutual associations ([Issue #387](https://github.com/cimug-org/CIMTool/issues/387)). |
+| `EAProjectParserFactoryTest` | `EAProjectParserFactory.isEAProject` recognises the Enterprise Architect project file extensions in `EXTENSIONS`, ignoring case, and every listed extension has a parser in `createParser`. The plug-in, the command line and `SchemaMerger` all use this one definition ([Issue #391](https://github.com/cimug-org/CIMTool/issues/391)). |
 | `PackageNamespaceTest` | `Translator.packageNamespace` and `Translator.schemaOntologyUri`, which build package namespaces and the schema ontology IRI during schema import ([Issue #377](https://github.com/cimug-org/CIMTool/issues/377)). |
 | `PackageNamespaceTranslationTest` | The namespaces `Translator` gives packages and classes that have no baseuri or stereotype namespace of their own ([Issue #385](https://github.com/cimug-org/CIMTool/issues/385)), the search of ancestor packages for a stereotype namespace ([Issue #381](https://github.com/cimug-org/CIMTool/issues/381)), and that `ResourceNamespaceResolver` agrees with `Translator`. |
 

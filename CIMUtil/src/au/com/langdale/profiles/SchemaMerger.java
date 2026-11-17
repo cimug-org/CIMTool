@@ -21,6 +21,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import au.com.langdale.kena.ModelFactory;
 import au.com.langdale.kena.OntModel;
 import au.com.langdale.kena.OntResource;
+import au.com.langdale.xmi.EAProjectParserFactory;
 import au.com.langdale.xmi.Translator;
 
 /**
@@ -51,9 +52,6 @@ public class SchemaMerger {
 
 	/** The default of the Schema Namespace preference. */
 	public static final String DEFAULT_SCHEMA_NAMESPACE = "http://iec.ch/TC57/CIM100#";
-
-	/** The extensions of Enterprise Architect project files. */
-	private static final String[] EA_EXTENSIONS = { ".eap", ".eapx", ".qea", ".qeax" };
 
 	/** A schema file to merge. */
 	public static final class SchemaFile {
@@ -228,18 +226,6 @@ public class SchemaMerger {
 	}
 
 	/**
-	 * Returns true if the file is an Enterprise Architect project file, judged by
-	 * its extension.
-	 */
-	public static boolean isEAProject(String fileName) {
-		String name = fileName.toLowerCase(java.util.Locale.ROOT);
-		for (String extension : EA_EXTENSIONS)
-			if (name.endsWith(extension))
-				return true;
-		return false;
-	}
-
-	/**
 	 * Chooses the base CIM schema from the schema files' names, namespaces and
 	 * flags alone, without their models. It applies the same rules as
 	 * {@link #merge}, apart from the checks on the base's ontology header, which
@@ -292,7 +278,7 @@ public class SchemaMerger {
 		List<SchemaFile> eaProjects = new ArrayList<SchemaFile>();
 		List<SchemaFile> flagged = new ArrayList<SchemaFile>();
 		for (SchemaFile file : files) {
-			if (isEAProject(file.getName()))
+			if (EAProjectParserFactory.isEAProject(file.getName()))
 				eaProjects.add(file);
 			if (file.isFlaggedAsBase())
 				flagged.add(file);

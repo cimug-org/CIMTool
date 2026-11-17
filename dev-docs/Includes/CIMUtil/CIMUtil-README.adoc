@@ -136,7 +136,8 @@ CIMUtil/
         └── xmi/                      ← XMI and EA project import
             ├── EAPParser.java        ← Sparx EA .eap / .eapx file parser (via UCanAccess JDBC)
             ├── QEAParser.java        ← Sparx EA .qea / .qeax (SQLite) file parser
-            ├── EAProjectParser.java / EAProjectParserFactory.java ← EA project parser facade
+            ├── EAProjectParser.java / EAProjectParserFactory.java ← EA project parser facade; the one list of
+            │                         EA project file extensions (EXTENSIONS, isEAProject)
             ├── XMIParser.java / XMIModel.java ← XMI file parser
             ├── CIMInterpreter*.java  ← CIM-specific XMI interpretation
             ├── UMLInterpreter.java   ← Generic UML XMI interpretation

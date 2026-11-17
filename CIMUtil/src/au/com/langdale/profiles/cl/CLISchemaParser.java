@@ -8,7 +8,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import au.com.langdale.cim.CIM;
@@ -57,9 +59,6 @@ import au.com.langdale.xmi.XMIParser;
  */
 public class CLISchemaParser {
 	
-	/** Supported EA project extensions */
-	private static final String[] EA_EXTENSIONS = { "eap", "eapx", "qea", "qeax" };
-	
 	/** XMI extension */
 	private static final String XMI_EXTENSION = "xmi";
 	
@@ -99,17 +98,7 @@ public class CLISchemaParser {
 			return false;
 		}
 		
-		if (ext.equals(XMI_EXTENSION)) {
-			return true;
-		}
-		
-		for (String eaExt : EA_EXTENSIONS) {
-			if (ext.equals(eaExt)) {
-				return true;
-			}
-		}
-		
-		return false;
+		return ext.equals(XMI_EXTENSION) || EAProjectParserFactory.isEAProject(file.getName());
 	}
 	
 	/**
@@ -119,18 +108,7 @@ public class CLISchemaParser {
 	 * @return true if the file is an EA project
 	 */
 	public static boolean isEAProject(File file) {
-		String ext = getExtension(file);
-		if (ext == null) {
-			return false;
-		}
-		
-		for (String eaExt : EA_EXTENSIONS) {
-			if (ext.equals(eaExt)) {
-				return true;
-			}
-		}
-		
-		return false;
+		return EAProjectParserFactory.isEAProject(file.getName());
 	}
 	
 	/**
@@ -150,10 +128,9 @@ public class CLISchemaParser {
 	 * @return array of supported extensions (without dots)
 	 */
 	public static String[] getSupportedExtensions() {
-		String[] result = new String[EA_EXTENSIONS.length + 1];
-		System.arraycopy(EA_EXTENSIONS, 0, result, 0, EA_EXTENSIONS.length);
-		result[EA_EXTENSIONS.length] = XMI_EXTENSION;
-		return result;
+		List<String> result = new ArrayList<String>(EAProjectParserFactory.EXTENSIONS);
+		result.add(XMI_EXTENSION);
+		return result.toArray(new String[0]);
 	}
 	
 	/**

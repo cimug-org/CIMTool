@@ -90,6 +90,7 @@ CIMUtilTest/
 │       ├── validation/
 │       │   └── ProfileValidatorCycleTest.java
 │       └── xmi/test/
+│           ├── EAProjectParserFactoryTest.java
 │           ├── PackageNamespaceTest.java
 │           └── PackageNamespaceTranslationTest.java
 └── test-resources/                          ← On the bundle class path
@@ -220,6 +221,9 @@ The sample projects also read the CGMES CIM17 schema from
 
 | `ProfileValidatorCycleTest`
 | `ProfileValidator` reports each superclass statement on a cycle in the profile hierarchy, with a repair that removes it, and reports neither a class leading into the cycle nor self and mutual associations (https://github.com/cimug-org/CIMTool/issues/387[Issue #387]).
+
+| `EAProjectParserFactoryTest`
+| `EAProjectParserFactory.isEAProject` recognises the Enterprise Architect project file extensions in `EXTENSIONS`, ignoring case, and every listed extension has a parser in `createParser`. The plug-in, the command line and `SchemaMerger` all use this one definition (https://github.com/cimug-org/CIMTool/issues/391[Issue #391]).
 
 | `PackageNamespaceTest`
 | `Translator.packageNamespace` and `Translator.schemaOntologyUri`, which build package namespaces and the schema ontology IRI during schema import (https://github.com/cimug-org/CIMTool/issues/377[Issue #377]).
