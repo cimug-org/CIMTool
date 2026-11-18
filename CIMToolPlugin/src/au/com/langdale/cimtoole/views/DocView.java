@@ -5,7 +5,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.jena.TreeModelBase;
 import au.com.langdale.kena.OntModel;
@@ -41,6 +43,7 @@ public class DocView extends ProjectModelFollower {
 		text.setBackground(JFaceResources.getResources(text.getDisplay()).createColor(new RGB(0xeb, 0xd4, 0x8a)));
 		text.setEditable(false);
 		listenToSelection(getSite().getPage());
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, HelpContextIds.DOCUMENTATION_VIEW);
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorPart;
 
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.profile.Detail;
 import au.com.langdale.cimtoole.editors.profile.Documentation;
 import au.com.langdale.cimtoole.editors.profile.Hierarchy;
@@ -101,6 +102,7 @@ public class ProfileEditor extends ModelEditor {
 		addPage(new Detail("Description", this));
 		addPage(new Stereotype("Stereotypes", this));
 		addPage(new Summary("Profile Summary", this));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getContainer(), HelpContextIds.PROFILE_EDITOR);
 	}
 
 	@Override

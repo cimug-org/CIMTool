@@ -17,6 +17,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.profiles.ProfileModel.NaturalNode.ElementNode;
@@ -33,6 +34,11 @@ public class Detail extends FurnishedEditor {
 	public Detail(String name, ProfileEditor master) {
 		super(name);
 		this.master = master;
+	}
+
+	@Override
+	protected String getHelpContextId() {
+		return HelpContextIds.PROFILE_EDITOR_DESCRIPTION;
 	}
 
 	@Override

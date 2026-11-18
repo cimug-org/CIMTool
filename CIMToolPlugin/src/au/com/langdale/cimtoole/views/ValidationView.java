@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.workspace.ResourceUI;
 
 public class ValidationView extends ViewPart {
@@ -39,7 +40,7 @@ public class ValidationView extends ViewPart {
 		getSite().setSelectionProvider(viewer);
 		registry = PlatformUI.getWorkbench().getEditorRegistry();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
-
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, HelpContextIds.VALIDATION_PROJECTS_VIEW);
 	}
 
 //	private IOpenListener listenerAlt = new IOpenListener() {
@@ -98,7 +99,8 @@ public class ValidationView extends ViewPart {
 	
 	@Override
 	public void setFocus() {
-
+		if (viewer != null && !viewer.getControl().isDisposed())
+			viewer.getControl().setFocus();
 	}
 
 }

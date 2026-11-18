@@ -40,6 +40,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.builder.PlantUMLRealTimePreviewBuildlet;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.project.Info;
@@ -165,6 +166,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 
 		registerResourceListener();
 		registerPartListener();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, HelpContextIds.PROFILE_PREVIEW_VIEW);
 
 		// Seed from whatever profile editor is already active.
 		IWorkbenchPage page = getSite().getPage();

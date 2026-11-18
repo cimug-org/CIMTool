@@ -16,6 +16,7 @@ import static au.com.langdale.ui.builder.Templates.Row;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.builder.ProfileBuildlets;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.registries.ProfileBuildletRegistryManager;
@@ -78,6 +79,11 @@ public final class Summary extends FurnishedEditor implements ManageBuildersList
 			wizard.dispose();
 		}
 	};
+
+	@Override
+	protected String getHelpContextId() {
+		return HelpContextIds.PROFILE_EDITOR_SUMMARY;
+	}
 
 	@Override
 	protected Content createContent() {

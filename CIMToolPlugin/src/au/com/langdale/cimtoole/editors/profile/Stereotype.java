@@ -10,6 +10,7 @@ import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
 import static au.com.langdale.ui.builder.Templates.Label;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.OntModelAdapters;
 import au.com.langdale.jena.TreeModelBase.Node;
@@ -35,6 +36,11 @@ public class Stereotype extends FurnishedEditor {
 		protected BooleanModel[] getFlags() {
 			return OntModelAdapters.findAnnotations(UML.Stereotype, UML.hasStereotype, master);
 		}
+	}
+
+	@Override
+	protected String getHelpContextId() {
+		return HelpContextIds.PROFILE_EDITOR_STEREOTYPES;
 	}
 
 	@Override

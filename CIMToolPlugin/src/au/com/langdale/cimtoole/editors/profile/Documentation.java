@@ -19,6 +19,7 @@ import org.eclipse.swt.events.KeyEvent;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.JenaTreeModelBase.ModelNode;
 import au.com.langdale.kena.OntResource;
@@ -38,6 +39,11 @@ public class Documentation extends FurnishedEditor {
 	public Documentation(String name, ProfileEditor master) {
 		super(name);
 		this.master = master;
+	}
+
+	@Override
+	protected String getHelpContextId() {
+		return HelpContextIds.PROFILE_EDITOR_DOCUMENTATION;
 	}
 
 	@Override

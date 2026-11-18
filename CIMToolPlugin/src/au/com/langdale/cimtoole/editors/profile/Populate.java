@@ -33,6 +33,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.LeftBinding;
 import au.com.langdale.cimtoole.editors.profile.PopulateBinding.RightBinding;
@@ -70,6 +71,11 @@ public class Populate extends FurnishedEditor {
 		Shell shell = new Shell();
 		return MessageDialog.openConfirm(shell, "CIMTool",
 				name + " will add " + many + " elements to the profile. Continue?");
+	}
+
+	@Override
+	protected String getHelpContextId() {
+		return HelpContextIds.PROFILE_EDITOR_ADD_REMOVE;
 	}
 
 	@Override

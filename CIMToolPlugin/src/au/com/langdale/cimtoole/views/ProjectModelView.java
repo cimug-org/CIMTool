@@ -13,9 +13,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.actions.JumpAction.Jumpable;
 import au.com.langdale.cimtoole.wizards.SearchWizard.Searchable;
 import au.com.langdale.jena.JenaTreeModelBase;
@@ -45,6 +47,7 @@ public class ProjectModelView extends ProjectModelFollower implements Searchable
 		treeViewer.addDoubleClickListener(jump);
 		IWorkbenchPage page = getSite().getPage();
 		listenToSelection(page);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, HelpContextIds.PROJECT_MODEL_VIEW);
 	}
 
 	private IDoubleClickListener jump = new IDoubleClickListener() {

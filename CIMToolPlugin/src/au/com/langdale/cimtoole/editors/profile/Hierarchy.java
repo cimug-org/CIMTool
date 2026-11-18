@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 import au.com.langdale.jena.JenaCheckTreeBinding;
 import au.com.langdale.jena.TreeModelBase;
@@ -208,6 +209,11 @@ public class Hierarchy extends FurnishedEditor {
 		}
 	}
 	
+	@Override
+	protected String getHelpContextId() {
+		return HelpContextIds.PROFILE_EDITOR_RESTRICTION;
+	}
+
 	@Override
 	protected Content createContent() {
 		return new Content(master.getToolkit()) {
