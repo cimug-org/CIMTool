@@ -10,6 +10,25 @@
 	<topic label="Getting Started - How to create a project."
 		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/GettingStarted.html"></topic>
 	<topic
+		label="Workbench Basics - The parts of the workbench used in everyday CIMTool work."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Workbench_Basics.html"></topic>
+	<topic
+		label="The Profile Editor - Editing a profile, and profile targets."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor.html">
+		<topic label="Add/Remove Tab - Choosing what goes into a profile."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor_Add_Remove.html"></topic>
+		<topic label="Restriction Tab - Concrete and descriptor classes, cardinality, By Reference and associated classes."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor_Restriction.html"></topic>
+		<topic label="Documentation Tab - Writing AsciiDoc documentation for profile elements."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor_Documentation.html"></topic>
+		<topic label="Description Tab - Names and descriptions of profile elements."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor_Description.html"></topic>
+		<topic label="Stereotypes Tab - Applying stereotypes to profile elements."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor_Stereotypes.html"></topic>
+		<topic label="Profile Summary Tab - Namespace, builders, and reorganizing and repairing a profile."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Profile_Editor_Summary.html"></topic>
+	</topic>
+	<topic
 		label="Using CIMTool with Enterprise Architect - How to transfer a model from EA to CIMTool."
 		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/Using_CIMTool_with_Enterprise_Architect.html"></topic>
 	<topic

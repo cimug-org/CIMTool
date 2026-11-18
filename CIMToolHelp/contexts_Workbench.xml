@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<!--
+  Fallback shown when a part of the workbench has no context help of its own.
+  Registered in plugin.xml with plugin="org.eclipse.ui", supplying the
+  org.eclipse.ui.missing context that org.eclipse.platform.doc.user would
+  otherwise provide; that bundle is not part of the CIMTool product.
+-->
+<contexts>
+
+   <context id="missing" title="No Context Help Available">
+      <description>There is no help specific to this part of CIMTool yet. The topics below cover the CIMTool workbench and getting started; the full table of contents is under Help &gt; Help Contents.</description>
+      <topic href="html/Workbench_Basics.html" label="Workbench Basics"/>
+      <topic href="html/GettingStarted.html" label="Getting Started"/>
+   </context>
+
+</contexts>

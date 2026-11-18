@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<!--
+  Context help for the Project Explorer. Registered in plugin.xml with
+  plugin="org.eclipse.ui.navigator". The Eclipse user guide that normally supplies
+  this context (org.eclipse.platform.doc.user) is not part of the CIMTool product.
+-->
+<contexts>
+
+   <context id="common_navigator" title="Project Explorer">
+      <description>Shows your CIMTool projects and their files: schemas, profiles, generated artifacts and validation data. Double-click a file to open it, or right-click it for CIMTool actions such as Properties.</description>
+      <topic href="html/Workbench_Basics.html#views" label="Workbench Basics: Views"/>
+      <topic href="html/GettingStarted.html" label="Getting Started"/>
+   </context>
+
+</contexts>

@@ -10,4 +10,20 @@
       </toc>
    </extension>
 
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CIMTool.xml"
+            plugin="au.com.langdale.cimtoole">
+      </contexts>
+      <contexts
+            file="contexts_Navigator.xml"
+            plugin="org.eclipse.ui.navigator">
+      </contexts>
+      <contexts
+            file="contexts_Workbench.xml"
+            plugin="org.eclipse.ui">
+      </contexts>
+   </extension>
+
 </plugin>

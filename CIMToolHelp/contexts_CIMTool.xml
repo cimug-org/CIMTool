@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<!--
+  Context help for CIMTool's own views and the Profile Editor.
+  Registered in plugin.xml with plugin="au.com.langdale.cimtoole", so each id below
+  matches the constants in au.com.langdale.cimtoole.HelpContextIds without the
+  "au.com.langdale.cimtoole." prefix. Topic paths are relative to this help plug-in.
+-->
+<contexts>
+
+   <!-- Views -->
+
+   <context id="project_model_view" title="Project Model View">
+      <description>Shows the project's schema (the CIM and any extensions) as a tree of packages, classes and members. It follows your selection in the Project Explorer and the Profile Editor.</description>
+      <topic href="html/Workbench_Basics.html#views" label="Workbench Basics: Views"/>
+   </context>
+
+   <context id="documentation_view" title="Documentation View">
+      <description>Shows the schema documentation for the class or property selected in the Project Model, the Project Explorer or the Profile Editor.</description>
+      <topic href="html/Workbench_Basics.html#views" label="Workbench Basics: Views"/>
+   </context>
+
+   <context id="profile_preview_view" title="Profile Preview View">
+      <description>Shows a live PlantUML diagram of the profile in the active Profile Editor, redrawn each time the profile is saved. The diagram style should match the profile's target.</description>
+      <topic href="html/Profile_Editor.html#preview-target" label="The Profile Preview and Your Target"/>
+      <topic href="html/Workbench_Basics.html#views" label="Workbench Basics: Views"/>
+   </context>
+
+   <context id="validation_projects_view" title="Validation Projects View">
+      <description>Lists the CIM/XML files imported for validation and the results of validating them against a profile.</description>
+      <topic href="html/Workbench_Basics.html#views" label="Workbench Basics: Views"/>
+   </context>
+
+   <!-- Profile Editor -->
+
+   <context id="profile_editor" title="Profile Editor">
+      <description>Edits a profile. Select an element in the Outline view, then use the tabs along the bottom of the editor to work on it. Saving the profile runs the builders selected on the Profile Summary tab.</description>
+      <topic href="html/Profile_Editor.html" label="The Profile Editor"/>
+      <topic href="html/Profile_Editor.html#targets" label="Profile Targets"/>
+   </context>
+
+   <context id="profile_editor_add_remove" title="Add/Remove Tab">
+      <description>Chooses which classes, attributes and associations from the schema are in the profile. What the tab offers depends on the element selected in the Outline view.</description>
+      <topic href="html/Profile_Editor_Add_Remove.html" label="Add/Remove Tab"/>
+      <topic href="html/Profile_Editor.html" label="The Profile Editor"/>
+   </context>
+
+   <context id="profile_editor_restriction" title="Restriction Tab">
+      <description>Restricts the selected class or property: cardinality, concrete and descriptor classes, By Reference, the parent class and the property's type.</description>
+      <topic href="html/Profile_Editor_Restriction.html" label="Restriction Tab"/>
+      <topic href="html/Profile_Editor.html" label="The Profile Editor"/>
+   </context>
+
+   <context id="profile_editor_documentation" title="Documentation Tab">
+      <description>Writes full documentation for the selected profile element in AsciiDoc.</description>
+      <topic href="html/Profile_Editor_Documentation.html" label="Documentation Tab"/>
+      <topic href="html/Profile_Editor.html" label="The Profile Editor"/>
+   </context>
+
+   <context id="profile_editor_description" title="Description Tab">
+      <description>Shows the schema's description of the selected element and holds the profile's own description of it.</description>
+      <topic href="html/Profile_Editor_Description.html" label="Description Tab"/>
+      <topic href="html/Profile_Editor.html" label="The Profile Editor"/>
+   </context>
+
+   <context id="profile_editor_stereotypes" title="Stereotypes Tab">
+      <description>Applies stereotypes to the selected profile element.</description>
+      <topic href="html/Profile_Editor_Stereotypes.html" label="Stereotypes Tab"/>
+      <topic href="html/Profile_Editor.html" label="The Profile Editor"/>
+   </context>
+
+   <context id="profile_editor_summary" title="Profile Summary Tab">
+      <description>Sets the profile's namespace and chooses which builders generate artifacts from the profile when it is saved.</description>
+      <topic href="html/Profile_Editor_Summary.html" label="Profile Summary Tab"/>
+      <topic href="html/Profile_Editor.html#target-builders" label="How the Builders Reflect the Target"/>
+   </context>
+
+</contexts>
