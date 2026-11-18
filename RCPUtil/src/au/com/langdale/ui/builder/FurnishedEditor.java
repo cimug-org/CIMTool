@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.EditorPart;
@@ -69,11 +70,32 @@ public abstract class FurnishedEditor extends EditorPart implements Observer, IC
 		ScrolledForm form = content.getForm();
 		if( form != null && form.getText().length() == 0)
 			form.setText(getTitle());
+
+		String helpContextId = getHelpContextId();
+		if( helpContextId != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpContextId);
 	}
 
+	/**
+	 * Returns the help context id for this editor's page, or <code>null</code>
+	 * for none. When an id is returned, it is attached to the page's container
+	 * so that F1 and the Help view find it from any control on the page.
+	 */
+	protected String getHelpContextId() {
+		return null;
+	}
+
+	/**
+	 * Moves keyboard focus into the page's form, so that keyboard input and
+	 * context-sensitive help apply to the page as soon as it is selected.
+	 */
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
+		if( content != null) {
+			ScrolledForm form = content.getForm();
+			if( form != null && ! form.isDisposed())
+				form.setFocus();
+		}
 	}
 	
 	public void markDirty() {
