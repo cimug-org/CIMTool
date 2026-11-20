@@ -9,8 +9,8 @@
 
    <context id="common_navigator" title="Project Explorer">
       <description>Shows your CIMTool projects and their files: schemas, profiles, generated artifacts and validation data. Double-click a file to open it, or right-click it for CIMTool actions such as Properties.</description>
-      <topic href="html/Workbench_Basics.html#views" label="Workbench Basics: Views"/>
-      <topic href="html/GettingStarted.html" label="Getting Started"/>
+      <topic href="html/workbench_basics.html#views" label="Workbench Basics: Views"/>
+      <topic href="html/getting_started.html" label="Getting Started"/>
    </context>
 
 </contexts>

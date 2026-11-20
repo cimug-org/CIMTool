@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Documentation Tab</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+</head>
+<body>
+<div id="main">
+<div id="content">
+
+<h1>Documentation Tab</h1>
+
+<p>The <b>Documentation</b> tab holds full documentation, written in AsciiDoc, for the element selected in the <b>Outline</b> view. The AsciiDoctor builders include it in the documentation they generate from the profile, so this is where you write the explanations, examples and notes that a reader of the published profile needs.</p>
+
+<p><i>[Screenshot: the Documentation tab with a class selected, showing the heading and AsciiDoc text.]</i></p>
+
+<h2 id="writing">Writing Documentation</h2>
+
+<p>Select an element in the Outline and type in the text area. The heading above the text area tells you what kind of element you are documenting:</p>
+
+<table class="wiki">
+<tr><th>Heading</th><th>Selected element</th></tr>
+<tr><td>Profile Level Documentation</td><td>The profile itself</td></tr>
+<tr><td>Class Documentation</td><td>A concrete class</td></tr>
+<tr><td>Abstract Class Documentation</td><td>A class that is not concrete</td></tr>
+<tr><td>Enumeration Documentation</td><td>An enumeration</td></tr>
+<tr><td>Compound Documentation</td><td>A compound</td></tr>
+<tr><td>Attribute Documentation</td><td>An attribute</td></tr>
+<tr><td>Association Documentation</td><td>An association</td></tr>
+<tr><td>Enum Literal Documentation</td><td>A value of an enumeration</td></tr>
+</table>
+
+<p>The text is stored in the profile when you leave the text area, and saved to disk when you save the profile (<b>Ctrl+S</b>). Use ordinary AsciiDoc markup: paragraphs, lists, tables, source blocks and links.</p>
+
+<h2 id="vs-description">Documentation and Description</h2>
+
+<p>The Documentation tab and the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html">Description</a> tab hold different text. The <b>Profile Description</b> on the Description tab is a short plain-text description that most builders carry into the schemas they generate. The Documentation tab holds longer AsciiDoc text for the generated documentation. Use the description for what a schema reader needs, and the documentation for everything a reader of the published profile needs.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html">The Profile Editor</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html">Description Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#target-builders">How the Builders Reflect the Target</a></li>
+</ul>
+
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Restriction Tab</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+</head>
+<body>
+<div id="main">
+<div id="content">
+
+<h1>Restriction Tab</h1>
+
+<p>The <b>Restriction</b> tab narrows what the schema allows for the element selected in the <b>Outline</b> view. For a class, it decides whether the class is concrete and which profiled classes it inherits from. For an attribute or association, it sets the cardinality and, for an association, whether it is By Reference and which classes it may refer to. Together these restrictions shape the schema that the builders generate from the profile.</p>
+
+<p><img src="images/multiple_profiles_screen4.png" alt="The Restriction tab with a class selected" /><br />
+<i>Placeholder from the legacy help, to be replaced: the Restriction tab with a class selected, showing the Select Super Class tree. In this older release the tab was labelled Hierarchy, and the Concrete and descriptor checkboxes above the tree are not shown.</i></p>
+
+<h2 id="outline">Working from the Outline View</h2>
+
+<p>What the tab shows depends on the element selected in the Outline:</p>
+
+<table class="wiki">
+<tr><th>Selected in the Outline</th><th>The tab shows</th></tr>
+<tr><td>A class</td><td>"Restrict this class." with <b>Make this class concrete</b>, <b>Set concrete class as descriptor</b>, the class cardinality and the <b>Select Super Class</b> tree.</td></tr>
+<tr><td>An association</td><td>"Restrict this property." with <b>By Reference</b>, the cardinality, the inverse cardinality when the profile includes the inverse role, and the <b>Select Associated Class or Classes</b> tree.</td></tr>
+<tr><td>An attribute</td><td>"Restrict this property." with the cardinality and the attribute's datatype.</td></tr>
+<tr><td>The profile itself, an enumeration, a compound or anything else</td><td>"Select a class or property to restrict or" with a <b>Goto Add/Remove Page</b> button.</td></tr>
+</table>
+
+<h2 id="classes">Restricting a Class</h2>
+
+<p><b>Make this class concrete</b> marks the class as concrete, so that the generated schema allows instance data to declare objects of that class. A class that is not concrete is abstract: it can still be used as a parent class or as the type of an association, but instance data cannot declare objects of it directly. The checkbox is not available for anonymous classes, which are never concrete.</p>
+
+<p>Clearing <b>Make this class concrete</b> also resets the class cardinality to 0..* and clears the descriptor setting described below.</p>
+
+<p><b>Select Super Class</b> lists the classes in the profile that the selected class can inherit from, following the schema's inheritance. Check a class to make it the parent of the selected class in the profile. This is how a profile keeps or flattens the schema's inheritance.</p>
+
+<h2 id="descriptor">Descriptor Classes</h2>
+
+<p><b>Set concrete class as descriptor</b> gives the class the <b>Description</b> stereotype. This is an IEC convention with a special meaning in RDFS target profiles: the profile describes objects that are defined in another profile, adding information to them rather than defining them. In instance data, such an object refers to an object that already exists in another data set, rather than declaring a new one.</p>
+
+<p>For example, in the CGMES Topology profile, <code>ConnectivityNode</code> and <code>DCNode</code> are descriptor classes. Both classes are defined in the Equipment profile, and the Topology profile adds only the association that assigns each node to its <code>TopologicalNode</code> or <code>DCTopologicalNode</code>. The AsciiDoctor builders show such a class with "(Description)" after its name.</p>
+
+<p>The checkbox is enabled only while <b>Make this class concrete</b> is checked, and unchecking Concrete also clears it, because an abstract class cannot be a descriptor. In the Outline view, a descriptor class has its own icon.</p>
+
+<h2 id="cardinality">Cardinality</h2>
+
+<p>The <b>Min</b> and <b>Max</b> fields set the cardinality of the selected property, or of a concrete class. The checkboxes beside them are shortcuts that stay in step with the fields:</p>
+
+<table class="wiki">
+<tr><th>Checkbox</th><th>Equivalent to</th></tr>
+<tr><td><b>At least one</b></td><td>Min of 1 or more. Clearing it sets Min to 0.</td></tr>
+<tr><td><b>At most one</b></td><td>Max of 1.</td></tr>
+<tr><td><b>Unbounded</b></td><td>Max of <code>*</code> (no upper limit).</td></tr>
+</table>
+
+<p>For a concrete class, what the cardinality means depends on the profile's target. In an XSD and JSON Schema profile, it constrains how many objects of the class are permitted in the instance data. In an RDFS profile, class cardinality has no effect. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#targets">Profile Targets</a>.</p>
+
+<p>A profile can only narrow the cardinality the schema defines, never widen it. Where the schema leaves no room to narrow a bound further, its field and checkbox are disabled.</p>
+
+<p>When the profile includes both roles of an association, the tab also shows <b>Inverse cardinality on the <i>class</i> side role end</b>, with its own Min, Max and checkboxes, so that both ends can be set from either role.</p>
+
+<h2 id="by-reference">By Reference</h2>
+
+<p><b>By Reference</b> marks an association so that the generated schema defines it as a reference: instance data identifies the associated object instead of containing it. What that means for the instance data depends on the profile's target; see the By Reference option on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html#options">Add/Remove</a> tab and <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#targets">Profile Targets</a>. The checkbox is not available for attributes.</p>
+
+<p><img src="images/enumerations_support_enums1.png" alt="Cardinality and By Reference for a property" /><br />
+<i>Placeholder from the legacy help, to be replaced: the cardinality fields and the By Reference checkbox for a selected property. The layout and tab labels are from an older release.</i></p>
+
+<h2 id="associated-classes">Associated Classes</h2>
+
+<p>For an association, <b>Select Associated Class or Classes</b> lists the classes the association can refer to: its type in the schema and that type's subclasses that are in the profile. Check the classes that instance data may use at this end of the association. Checking more than one allows any of them.</p>
+
+<h2 id="datatypes">Attributes and Datatypes</h2>
+
+<p>For an attribute, the tab shows <b>Datatype is</b> followed by the attribute's type. When the type is a CIM datatype (a class with the <code>CIMDatatype</code> stereotype), the tab also shows its <b>Initial</b> value, <b>Unit</b> and multiplier (<b>Mult</b>) from the schema. For other types it shows the attribute's <b>Initial Value</b> when the schema defines one. These values are for information; they are set in the schema, not in the profile.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html">The Profile Editor</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html">Add/Remove Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/associations_and_anonymous_classes.html">Associations and Anonymous Classes</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/multiple_profiles.html">Multiple Profiles</a></li>
+</ul>
+
+</div>
+</div>
+</body>
+</html>
