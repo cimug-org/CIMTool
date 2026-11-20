@@ -17,9 +17,15 @@ body {
 a { color: #0058A9; }
 a:hover { color: #0A2E57; }
 
-/* Header: light-blue band, CIMTool logo, product title, faded CIMug mark */
+/* Header: light-blue band, CIMTool logo, product title, faded CIMug mark.
+   It stays pinned to the top while the page scrolls, and in-page links stop below it. */
+html { scroll-padding-top: 90px; }
 #header {
   position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 10;
   overflow: hidden;
   background: #EEF4F8;
   border-bottom: 1px solid #C8D2DA;
@@ -154,6 +160,7 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
 
 /* Narrow: the Help view beside the editor */
 @media (max-width: 600px) {
+  html { scroll-padding-top: 70px; }
   #header { padding: 10px 14px; }
   #header .watermark { right: -34px; top: -30px; width: 118px; height: 118px; }
   #header .logo { width: 36px; height: 36px; }
@@ -167,4 +174,20 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   #footer { -ms-flex-direction: column; flex-direction: column; text-align: center; padding: 14px; }
   #footer .sponsor { -ms-flex-direction: column; flex-direction: column; margin-top: 8px; }
   #footer .sponsor span { margin: 0 0 6px; }
+}
+
+/* Internet Explorer 10 and 11 (the embedded browser on some Windows systems) have no
+   sticky positioning, so the header is fixed there and the page starts below it. */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  #header { position: fixed; left: 0; right: 0; }
+  body { padding-top: 75px; }
+}
+@media all and (-ms-high-contrast: none) and (max-width: 600px), (-ms-high-contrast: active) and (max-width: 600px) {
+  body { padding-top: 57px; }
+}
+
+/* Printing: the header prints once, at the top. */
+@media print {
+  #header { position: static; }
+  body { padding-top: 0; }
 }

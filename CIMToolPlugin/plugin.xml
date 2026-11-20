@@ -346,6 +346,14 @@
             id="au.com.langdale.cimtoole.views.CurrentProfilePlantUmlSvgView"
             allowMultiple="false">
       </view>
+      <view
+            name="CIMTool Context Help"
+            icon="icons/cimtool-icon.bmp"
+            category="au.com.langdale.cimtoole"
+            class="au.com.langdale.cimtoole.views.CIMToolHelpView"
+            id="au.com.langdale.cimtoole.views.CIMToolHelpView"
+            allowMultiple="false">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -539,6 +547,13 @@
          point="org.eclipse.ui.startup">
       <startup
             class="au.com.langdale.cimtoole.builder.UpgradeRegenerationStartup">
+      </startup>
+   </extension>
+   <!-- Opens the CIMTool Context Help panel beside Eclipse's Help view in the CIMTool perspective. -->
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="au.com.langdale.cimtoole.views.CIMToolHelpCompanion">
       </startup>
    </extension>
    <!-- TEMPORARY FIX: Addresses known Eclipse SWT #1848 probe issues) - remove this block why the next platform upgrade is performed -->

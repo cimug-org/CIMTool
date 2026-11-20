@@ -105,6 +105,25 @@ public class ProfileEditor extends ModelEditor {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getContainer(), HelpContextIds.PROFILE_EDITOR);
 	}
 
+	/** Help context of each tab, in the order the tabs are added in {@link #createPages()}. */
+	private static final String[] PAGE_HELP_CONTEXT_IDS = {
+		HelpContextIds.PROFILE_EDITOR_ADD_REMOVE,
+		HelpContextIds.PROFILE_EDITOR_RESTRICTION,
+		HelpContextIds.PROFILE_EDITOR_DOCUMENTATION,
+		HelpContextIds.PROFILE_EDITOR_DESCRIPTION,
+		HelpContextIds.PROFILE_EDITOR_STEREOTYPES,
+		HelpContextIds.PROFILE_EDITOR_SUMMARY
+	};
+
+	/**
+	 * The help context of the active tab, used by the CIMTool Context Help panel to follow
+	 * the user between tabs. Falls back to the editor's own context.
+	 */
+	public String getActivePageHelpContextId() {
+		int ix = getActivePage();
+		return ix >= 0 && ix < PAGE_HELP_CONTEXT_IDS.length ? PAGE_HELP_CONTEXT_IDS[ix] : HelpContextIds.PROFILE_EDITOR;
+	}
+
 	@Override
 	public void init(IEditorSite site, IEditorInput editorInput)throws PartInitException {
 		super.init(site, editorInput);
