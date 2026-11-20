@@ -7,6 +7,9 @@
 
 /* Page */
 html, body { margin: 0; padding: 0; }
+/* Pages never scroll sideways: content wraps or stacks to the column width. Set on the
+   root element, this applies to the window itself, so the pinned header still works. */
+html { overflow-x: hidden; }
 body {
   background: #FFFFFF;
   color: #231F20;
