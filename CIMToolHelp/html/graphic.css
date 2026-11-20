@@ -190,11 +190,24 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   #header .title { font-size: 19px; white-space: nowrap; }
   #content { padding: 14px 12px 18px; }
   #content ul, #content ol { padding-left: 14px; }
+  h1 { font-size: 19px; }
+  h2 { font-size: 16px; }
+  h3 { font-size: 15px; }
+  /* Tables: each row becomes a block, its cells stacked, so no column is hidden */
+  #content table.wiki { display: block; overflow-x: visible; border: 0; }
+  table.wiki tbody, table.wiki tr, table.wiki th, table.wiki td { display: block; }
+  table.wiki tr { border: 1px solid #D5DEE5; border-radius: 4px; margin-bottom: 8px; }
+  table.wiki th { padding: 4px 10px; }
+  table.wiki th + th:before { content: "\2192\00a0"; }
+  table.wiki td { border-top: 0; padding: 3px 10px; }
+  table.wiki td:first-child { font-weight: bold; padding-top: 8px; }
+  table.wiki td:last-child { padding-bottom: 8px; }
 }
 @media (max-width: 240px) {
   html { scroll-padding-top: 52px; }
   #header .logo { width: 24px; height: 24px; margin-right: 6px; }
   #header .title { font-size: 16px; }
+  h1 { font-size: 17px; }
 }
 
 /* Internet Explorer 10 and 11 (the embedded browser on some Windows systems) have no
