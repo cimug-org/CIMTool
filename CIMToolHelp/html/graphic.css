@@ -41,7 +41,7 @@ html { scroll-padding-top: 90px; }
   filter: alpha(opacity=6);
 }
 #header .brand { position: relative; display: -ms-flexbox; display: flex; -ms-flex-align: center; align-items: center; }
-#header .logo { width: 46px; height: 46px; display: block; }
+#header .logo { width: 46px; height: 46px; display: block; -ms-flex-negative: 0; flex-shrink: 0; }
 #header .divider { width: 1px; height: 42px; background: #C8D2DA; margin: 0 16px; }
 #header .title {
   font-family: Arial, "Liberation Sans", Helvetica, sans-serif;
@@ -209,6 +209,19 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   #header .title { font-size: 16px; }
   h1 { font-size: 17px; }
 }
+@media (max-width: 200px) {
+  html { scroll-padding-top: 44px; }
+  #header { padding: 6px 8px; }
+  #header .watermark { display: none; }
+  #header .logo { width: 20px; height: 20px; margin-right: 5px; }
+  #header .title { font-size: 14px; }
+  #content { padding: 10px 8px 14px; font-size: 13px; }
+  h1 { font-size: 15px; }
+  h2 { font-size: 14px; }
+  h3 { font-size: 13.5px; }
+  #content ul, #content ol { padding-left: 12px; }
+  table.wiki th, table.wiki td { padding-left: 7px; padding-right: 7px; }
+}
 
 /* Internet Explorer 10 and 11 (the embedded browser on some Windows systems) have no
    sticky positioning, so the header is fixed there and the page starts below it. */
@@ -225,6 +238,9 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 240px), (-ms-high-contrast: active) and (max-width: 240px) {
   body { padding-top: 41px; }
+}
+@media all and (-ms-high-contrast: none) and (max-width: 200px), (-ms-high-contrast: active) and (max-width: 200px) {
+  body { padding-top: 33px; }
 }
 
 /* Printing: the header prints once, at the top. */
