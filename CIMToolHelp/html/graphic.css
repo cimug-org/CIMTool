@@ -177,7 +177,8 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   #content { padding: 18px 16px 22px; font-size: 13.5px; }
   h1 { font-size: 22px; }
   h2 { font-size: 17px; }
-  #content table { display: block; overflow-x: auto; }
+  #content table { width: 100%; }
+  #content td, #content th { word-break: break-word; overflow-wrap: anywhere; }
   #content ul, #content ol { padding-left: 22px; }
   #footer { -ms-flex-direction: column; flex-direction: column; text-align: center; padding: 14px; }
   #footer .sponsor { -ms-flex-direction: column; flex-direction: column; margin-top: 8px; }
@@ -234,6 +235,7 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 600px), (-ms-high-contrast: active) and (max-width: 600px) {
   body { padding-top: 57px; }
+  #content td, #content th { word-break: break-all; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 360px), (-ms-high-contrast: active) and (max-width: 360px) {
   body { padding-top: 45px; }
