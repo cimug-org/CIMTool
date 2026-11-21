@@ -1,6 +1,6 @@
 # Using CIMTool in CI/CD Pipelines with cimtool-cli
 
-**CIMTool** has a companion standalone command-line tool, `cimtool-cli.jar`, that exposes **CIMTool**'s full artifact generation capabilities outside of the Eclipse desktop application. Beginning with the **CIMTool** 2.3.0 release, it is distributed as a separate optional download alongside each **CIMTool** release and runs headless on any platform where Java 11 or later is available, with no Eclipse installation, OSGi runtime, or workspace required.
+**CIMTool** has a companion standalone command-line tool, `cimtool-cli.jar`, that exposes **CIMTool**'s full artifact generation capabilities outside of the Eclipse desktop application. Beginning with the **CIMTool** 2.3.0 release, it is distributed as a separate optional download alongside each **CIMTool** release and runs headless on any platform where Java 17 or later is available, with no Eclipse installation, OSGi runtime, or workspace required.
 
 This opens up a *SchemaOps* workflow: the practice of treating your CIM schema and profile set as versioned source artifacts that can be checked into a repository and processed automatically as part of a CI/CD pipeline, in the same way DevOps treats application source code.
 
@@ -48,6 +48,16 @@ Download `cimtool-cli.jar` and, optionally, `logback-debug.xml` and place them i
     ```
 
     Look for **"jar verified"** at the top of the output, which confirms the JAR has not been tampered with since signing. The JVM does not require a JAR to be signed in order to execute it via `java -jar`.
+
+## Use the Matching Release
+
+!!! warning
+
+    Use the `cimtool-cli.jar` from the same **CIMTool** release that your project was last opened with.
+
+`cimtool-cli.jar` relies on the settings that the **CIMTool** desktop application writes into your project, such as the `.cimtool-settings` and `.builder-preferences` files. A newer `cimtool-cli.jar` may need settings that an older **CIMTool** release never wrote, and an older one may not understand settings or builders added by a newer **CIMTool** release. A different release may still work, depending on what changed between the two releases, but if it does not, generation can fail or, worse, produce artifacts that differ from the desktop application's without any error. Using the same release is always the safest choice, and is the recommended practice.
+
+When you upgrade **CIMTool**, open each project in the new release and commit the project's files, then upgrade the `cimtool-cli.jar` used by your pipelines at the same time.
 
 ## Basic Usage
 
