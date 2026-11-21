@@ -119,6 +119,7 @@ pre code { background: transparent; padding: 0; }
 
 /* Tables */
 table.wiki {
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid #D5DEE5;
@@ -177,7 +178,6 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   #content { padding: 18px 16px 22px; font-size: 13.5px; }
   h1 { font-size: 22px; }
   h2 { font-size: 17px; }
-  #content table { width: 100%; }
   #content td, #content th { word-break: break-word; overflow-wrap: anywhere; }
   #content ul, #content ol { padding-left: 22px; }
   #footer { -ms-flex-direction: column; flex-direction: column; text-align: center; padding: 14px; }
