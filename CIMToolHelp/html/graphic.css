@@ -200,6 +200,10 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   vertical-align: 1px;
 }
 
+/* A callout referred to in running text, after the name of what it labels: no right
+   margin, so that punctuation follows it directly. */
+.callout.ref { margin: 0 0 0 1px; }
+
 /* In-page link targets that are not headings, such as a table row, are marked with an
    empty span.anchor that carries the id. It takes no space. */
 span.anchor { display: block; }
