@@ -80,6 +80,7 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		configureEdgeDataFolder();
 		configureLogging();
 		extractLoggingProperties();
 		loadEmbeddedPandocLibraries();
@@ -97,6 +98,35 @@ public class CIMToolPlugin extends AbstractUIPlugin {
 		globalPreferencesSynchronizer = null;
 		plugin = null;
 		super.stop(context);
+	}
+
+	/**
+	 * Gives this workspace its own Microsoft Edge (WebView2) data folder.
+	 *
+	 * <p>
+	 * By default SWT keeps WebView2's data in {@code %LOCALAPPDATA%\CIMTool}, shared
+	 * by every CIMTool running on the computer. WebView2 refuses a shared folder that
+	 * another process opened with different settings (another CIMTool release, a
+	 * development launch, or one run as administrator), and the browser then fails
+	 * with "No more handles [0x8007139f]". A workspace is open in only one CIMTool at
+	 * a time, so a folder inside it is never shared.
+	 *
+	 * <p>
+	 * The property is read only when an Edge browser is created, so it has no effect
+	 * with the Internet Explorer engine. A value set by the user, for example in
+	 * CIMTool.ini, is kept. SWT creates the WebView2 environment once per process, so
+	 * this runs first in {@link #start(BundleContext)}, before any browser exists.
+	 */
+	private void configureEdgeDataFolder() {
+		final String key = "org.eclipse.swt.browser.EdgeDataDir";
+		if (System.getProperty(key) != null)
+			return;
+		try {
+			File folder = getStateLocation().append("webview2").toFile();
+			System.setProperty(key, folder.getAbsolutePath());
+		} catch (IllegalStateException e) {
+			// No workspace is open: keep SWT's default folder.
+		}
 	}
 
 	/**

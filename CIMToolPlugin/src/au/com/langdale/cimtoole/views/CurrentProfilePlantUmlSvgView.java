@@ -120,6 +120,12 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 	 */
 	private String pendingSvg = null;
 
+	/**
+	 * Temporary file holding the interactive page when the browser is Microsoft
+	 * Edge (WebView2). See {@link #showInteractivePage(String)}.
+	 */
+	private Path edgePageFile;
+
 	private IResourceChangeListener resourceListener;
 	private IPartListener2 partListener;
 
@@ -186,6 +192,14 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 
 	@Override
 	public void dispose() {
+		if (edgePageFile != null) {
+			try {
+				Files.deleteIfExists(edgePageFile);
+			} catch (IOException e) {
+				// A leftover file in the temporary folder is harmless.
+			}
+			edgePageFile = null;
+		}
 		if (resourceListener != null) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
 			resourceListener = null;
@@ -352,11 +366,9 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 
 		String svg = result.svg;
 		if (pageLoaded) {
-			// Page is already loaded — capture current state then update the SVG
-			// in-place via JavaScript. This avoids any page reload and eliminates
-			// the flash entirely.
-			browser.execute("if(window.zoomPlantuml){" + "saveViewState(window.zoomPlantuml.getZoom(),"
-					+ "window.zoomPlantuml.getPan().x," + "window.zoomPlantuml.getPan().y);}");
+			// Page is already loaded — update the SVG in-place via JavaScript, which
+			// keeps the current zoom and pan. This avoids any page reload and
+			// eliminates the flash entirely.
 			updateSvgInPlace(svg);
 			// Keep currentHtml in sync so the external browser always
 			// opens the latest rendered version, not the stale first load.
@@ -364,7 +376,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 		} else {
 			// First load — set the full page.
 			currentHtml = buildInteractiveHtml(svg);
-			browser.setText(currentHtml);
+			showInteractivePage(currentHtml);
 			pageLoaded = true;
 		}
 	}
@@ -397,8 +409,15 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 
 		StringBuilder js = new StringBuilder();
 		js.append("(function(){");
-		// Destroy existing svgPanZoom instance
-		js.append("if(window.zoomPlantuml){window.zoomPlantuml.destroy();window.zoomPlantuml=null;}");
+		// Capture the current zoom and pan in the page itself, then destroy the existing
+		// svgPanZoom instance. The state is restored below in the same script rather than
+		// through the Java fields, because Browser.execute() runs asynchronously with
+		// Microsoft Edge (WebView2): a value sent back to Java by one script would arrive
+		// after the next script had already been built. The state is also sent to Java
+		// (saveViewState) so that a full page reload can restore it.
+		js.append("var z=null,p=null;");
+		js.append("if(window.zoomPlantuml){z=window.zoomPlantuml.getZoom();p=window.zoomPlantuml.getPan();");
+		js.append("saveViewState(z,p.x,p.y);window.zoomPlantuml.destroy();window.zoomPlantuml=null;}");
 		// Fetch SVG from Java via BrowserFunction — no escaping needed
 		js.append("var svgStr=getSvgContent();");
 		// Parse the SVG string safely using DOMParser
@@ -408,17 +427,46 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 		js.append("var el=document.getElementById('plantuml');");
 		js.append("if(el&&newSvg){el.parentNode.replaceChild(newSvg,el);}");
 		// Re-initialise svgPanZoom
-		js.append("window.zoomPlantuml=svgPanZoom('#plantuml',{");
-		js.append("zoomEnabled:true,controlIconsEnabled:true,");
 		if (savedZoom > 0) {
-			js.append("fit:false,center:false});");
-			js.append("window.zoomPlantuml.zoom(" + savedZoom + ");");
-			js.append("window.zoomPlantuml.pan({x:" + savedPanX + ",y:" + savedPanY + "});");
-		} else {
-			js.append("fit:true,center:true});");
+			// Fall back to the state last saved in Java when the page had no instance.
+			js.append("if(z===null){z=" + savedZoom + ";p={x:" + savedPanX + ",y:" + savedPanY + "};}");
 		}
+		js.append("var keep=(z!==null);");
+		js.append("window.zoomPlantuml=svgPanZoom('#plantuml',{");
+		js.append("zoomEnabled:true,controlIconsEnabled:true,fit:!keep,center:!keep});");
+		js.append("if(keep){window.zoomPlantuml.zoom(z);window.zoomPlantuml.pan(p);}");
 		js.append("})()");
 		browser.execute(js.toString());
+	}
+
+	/**
+	 * Shows the interactive diagram page.
+	 *
+	 * <p>
+	 * With the Internet Explorer engine the page is passed to the browser as text,
+	 * and it loads the bundled {@code svg-pan-zoom.js} through its {@code file:}
+	 * URL. Microsoft Edge (WebView2) gives a page passed as text no origin, so it
+	 * refuses to load that local script, and the page, which stays hidden until the
+	 * script has run, would remain blank; Edge also limits the size of a page
+	 * passed as text, which a large profile's diagram can exceed. With Edge the
+	 * page is therefore written to a temporary file and loaded from there, so that
+	 * it can load the local script and has no size limit.
+	 */
+	private void showInteractivePage(String html) {
+		if ("edge".equalsIgnoreCase(browser.getBrowserType())) {
+			try {
+				if (edgePageFile == null) {
+					edgePageFile = Files.createTempFile("cimtool-profile-preview-", ".html");
+					edgePageFile.toFile().deleteOnExit();
+				}
+				Files.write(edgePageFile, html.getBytes(StandardCharsets.UTF_8));
+				browser.setUrl(edgePageFile.toUri().toString());
+				return;
+			} catch (IOException e) {
+				CIMToolPlugin.getDefault().getLog().error("Could not write the Profile Preview page to a temporary file", e);
+			}
+		}
+		browser.setText(html);
 	}
 
 	private String buildInteractiveHtml(String svg) {
@@ -426,12 +474,16 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 		StringBuilder sb = new StringBuilder(svg.length() + 4096);
 		sb.append("<html>\n");
 		sb.append("  <head>\n");
+		sb.append("    <meta charset=\"utf-8\">\n");
 		sb.append("    <script src=\"").append(scriptUrl).append("\"></script>\n");
 		sb.append("    <style type=\"text/css\" media=\"screen\">\n");
 		sb.append("      svg {\n");
 		sb.append("        display:block; position:absolute;\n");
 		sb.append("        width:100% !important; height:100% !important;\n");
 		sb.append("      }\n");
+		// No margin and no scrolling: the diagram fills the view, and moving around it is done
+		// by panning and zooming. Without this, Microsoft Edge shows scrollbars for the margin.
+		sb.append("      html, body { margin:0; padding:0; height:100%; overflow:hidden; }\n");
 		sb.append("      body { opacity:0; }\n");
 		sb.append("    </style>\n");
 		sb.append("  </head>\n");
