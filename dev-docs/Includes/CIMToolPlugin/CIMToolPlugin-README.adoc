@@ -342,12 +342,15 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
   nodes to `IPropertySource`, so the Properties view can show them
 
 | `org.eclipse.ui.startup`
-| Registers three startup classes, each in its own extension.
+| Registers four startup classes, each in its own extension.
   `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were
   produced by an earlier CIMTool release for regeneration (see
   <<regeneration-after-an-upgrade,Regeneration After an Upgrade>> below).
   `CIMToolHelpCompanion` opens the CIMTool Context Help panel beside Eclipse's
   Help view in the CIMTool perspective.
+  `PlantUmlEditorDefaultStartup` makes the Text Editor the default editor for
+  generated PlantUML (`*.puml`) files at every startup, in place of the
+  Asciidoctor Editor's PlantUML editor (issue #405).
   `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse
   SWT issue #1848, restoring double-click and Enter in the Project Explorer while
   the PlantUML preview holds focus, and is removed at the platform upgrade that
