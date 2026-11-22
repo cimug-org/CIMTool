@@ -163,6 +163,8 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
 #content img { max-width: 100%; height: auto; }
 
 /* Icon-only buttons pictured in the text: the button's own icon in a button-like frame */
+#content td.nowrap { white-space: nowrap; }
+
 #content img.icon {
   width: 16px;
   height: 16px;
