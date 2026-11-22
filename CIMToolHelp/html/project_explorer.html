@@ -24,7 +24,7 @@
 <p>The <b>Project Explorer</b> view lists your CIMTool projects and the files in them. It is where you create, import and open everything you work on: schemas, profiles, the artifacts the builders generate, validation data and documentation. Every CIMTool project has the same five folders, and <b>CIMTool</b> decides what a file is, and which editor and builders apply to it, by the folder it is in.</p>
 
 <p><img class="zoomable" src="images/project_explorer_view.png" alt="The Project Explorer with the CGMES-CIM17 project expanded to its five folders, numbered 1 to 3" /><br />
-<i>The Project Explorer with the project <b>CGMES-CIM17</b> (1) expanded to its five folders (2). The view's toolbar (3) is at its top right.</i></p>
+<i>The Project Explorer with the project <b>CGMES-CIM17</b> <span class="callout ref">1</span> expanded to its five folders <span class="callout ref">2</span>. The view's toolbar <span class="callout ref">3</span> is at its top right.</i></p>
 
 <div class="wiki-toc">
 <ol>
@@ -49,7 +49,7 @@
 <tr><td><span class="callout">3</span> Toolbar</td><td>The view's own buttons, described below.</td></tr>
 </table>
 
-<p>The toolbar (3) has four buttons:</p>
+<p>The toolbar has four buttons:</p>
 
 <table class="wiki">
 <tr><th>Button</th><th>What it does</th></tr>
@@ -128,17 +128,17 @@
 
 <h2 id="hidden">Hidden Files</h2>
 
-<p><b>CIMTool</b> keeps some files of its own in the project, with names that start with a dot. The Project Explorer hides them by default. They include the project's settings and builder preferences, a copy of your <b>CIMTool</b> preferences for the command-line tool (see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_cli.html">cimtool-cli</a>), the copyright templates that the builders put at the top of generated files, the hidden diagram file the Profile Real-Time Preview draws for each profile (for example <code>Profiles/.EndDeviceConfig.puml</code>), and the reports written when a schema is imported. Leave them in place: they travel with the project when you exchange it. To see them, click <img class="control" src="images/control_filters.png" alt="" /> <b>Filters and Customization</b> on the Project Explorer's toolbar (or choose it from the <img class="control" src="images/control_view_menu.png" alt="" /> <b>View Menu</b>). On the <b>Pre-set filters</b> tab, clear <b>.* resources</b> (1) and choose <b>OK</b>. Check it again to hide them.</p>
+<p><b>CIMTool</b> keeps some files of its own in the project, with names that start with a dot. The Project Explorer hides them by default. They include the project's settings and builder preferences, a copy of your <b>CIMTool</b> preferences for the command-line tool (see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_cli.html">cimtool-cli</a>), the copyright templates that the builders put at the top of generated files, the hidden diagram file the Profile Real-Time Preview draws for each profile (for example <code>Profiles/.EndDeviceConfig.puml</code>), and the reports written when a schema is imported. Leave them in place: they travel with the project when you exchange it. To see them, click <img class="control" src="images/control_filters.png" alt="" /> <b>Filters and Customization</b> on the Project Explorer's toolbar (or choose it from the <img class="control" src="images/control_view_menu.png" alt="" /> <b>View Menu</b>). On the <b>Pre-set filters</b> tab, clear <b>.* resources</b> <span class="callout ref">1</span> and choose <b>OK</b>. Check it again to hide them.</p>
 
 <p><img class="zoomable" src="images/project_explorer_filters.png" alt="The Filters and Customization dialog on its Pre-set filters tab, with .* resources checked and numbered 1" /><br />
-<i>The <b>Filters and Customization</b> dialog. Items whose filter is checked are hidden; <b>.* resources</b> (1) hides files whose names start with a dot.</i></p>
+<i>The <b>Filters and Customization</b> dialog. Items whose filter is checked are hidden; <b>.* resources</b> <span class="callout ref">1</span> hides files whose names start with a dot.</i></p>
 
 <h2 id="actions">What You Can Do from the Project Explorer</h2>
 
 <p>Most of these start from the right-click menu on a project or file:</p>
 
 <p><img class="zoomable" src="images/project_explorer_project_menu.png" alt="The right-click menu on the project CGMES-CIM17, with Add/Remove CIM Nature numbered 1 and Properties numbered 2" /><br />
-<i>The right-click menu on a project. <b>Add/Remove CIM Nature</b> (1) is <b>CIMTool</b>'s own entry; <b>Properties</b> (2) opens the project's settings, including its <b>CIMTool</b> pages.</i></p>
+<i>The right-click menu on a project. <b>Add/Remove CIM Nature</b> <span class="callout ref">1</span> is <b>CIMTool</b>'s own entry; <b>Properties</b> <span class="callout ref">2</span> opens the project's settings, including its <b>CIMTool</b> pages.</i></p>
 
 
 <table class="wiki">
@@ -146,8 +146,8 @@
 <tr><td>Open a file</td><td>Double-click it. The editor depends on the file type; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#editors">Workbench Basics: Editors</a>. To choose another editor, right-click and choose <b>Open With</b>.</td></tr>
 <tr><td>Create a project, profile, rules file or mappings file</td><td><b>File &gt; New</b>, then the <b>CIMTool</b> wizard: <b>CIMTool Project</b>, <b>CIMTool Profile</b>, <b>CIMTool Validation Rules</b>, <b>CIMTool Incremental Validation Rules</b>, <b>CIMTool HTML Rules</b>, <b>CIMTool XML Schema Rules</b> or <b>CIMTool Mappings</b>.</td></tr>
 <tr><td>Import into a project</td><td><b>File &gt; Import &gt; CIMTool</b>, then the wizard for what you are importing: a schema, profile, spreadsheet, CIM/XML model or incremental, rules, copyright templates, an XSLT transform builder, or whole CIMTool projects.</td></tr>
-<tr><td>Change a project's or profile's CIMTool settings</td><td>Right-click it, choose <b>Properties</b> (2), then <b>CIMTool</b>. For a project this includes the Profile Real-Time Preview's <b>Diagram Style</b> and the schema import options; for a profile, its own <b>Diagram Style</b>.</td></tr>
-<tr><td>Repair a CIMTool project that no longer builds, or turn <b>CIMTool</b>'s build off for a project</td><td>Right-click the project and choose <b>Add/Remove CIM Nature</b> (1). This switches the project's <i>CIM Project</i> nature, which is what makes <b>CIMTool</b> generate artifacts for it. Projects created with <b>File &gt; New &gt; CIMTool Project</b> already have it, so you rarely need this. Adding it to an ordinary Eclipse project does not create the five folders.</td></tr>
+<tr><td>Change a project's or profile's CIMTool settings</td><td>Right-click it, choose <b>Properties</b> <span class="callout ref">2</span>, then <b>CIMTool</b>. For a project this includes the Profile Real-Time Preview's <b>Diagram Style</b> and the schema import options; for a profile, its own <b>Diagram Style</b>.</td></tr>
+<tr><td>Repair a CIMTool project that no longer builds, or turn <b>CIMTool</b>'s build off for a project</td><td>Right-click the project and choose <b>Add/Remove CIM Nature</b> <span class="callout ref">1</span>. This switches the project's <i>CIM Project</i> nature, which is what makes <b>CIMTool</b> generate artifacts for it. Projects created with <b>File &gt; New &gt; CIMTool Project</b> already have it, so you rarely need this. Adding it to an ordinary Eclipse project does not create the five folders.</td></tr>
 <tr><td>See which file you are editing</td><td>Press <img class="control" src="images/control_link_with_editor.png" alt="" /> <b>Link with Editor</b> on the toolbar; see <a href="#view">The Project Explorer View</a>.</td></tr>
 <tr><td>Rebuild every artifact in a project</td><td><b>Project &gt; Clean...</b>; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#builds">Workbench Basics: Builds</a>.</td></tr>
 <tr><td>Share a project</td><td>See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a>.</td></tr>
