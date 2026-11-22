@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Project and Profile Documentation</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
+</head>
+<body>
+<div id="header">
+  <img class="watermark" src="images/brand_cimug_mark.svg" alt="" />
+  <div class="brand">
+    <img class="logo" src="images/brand_cimtool_logo.svg" alt="CIMTool" />
+    <div class="divider"></div>
+    <div class="title"><span class="cim">CIM</span>Tool Help</div>
+  </div>
+</div>
+<div id="main">
+<div id="content">
+
+<h1>Project and Profile Documentation</h1>
+
+<p>CIMTool generates documentation from your profiles: readable descriptions of every class, attribute, association and enumeration, produced by builders from the profile itself. Because the documentation is generated, it stays in step with the profiles. Change a profile, save it, and its documentation is rebuilt.</p>
+
+<p>Since CIMTool 2.3.0, documentation is more than a description of one profile. A project can hold a complete, published document, such as a specification covering several profiles, assembled from generated documentation and your own chapters, and rendered to HTML or PDF. This topic covers both: documentation for a single profile, and documentation for a whole project.</p>
+
+<div class="wiki-toc">
+<ol>
+<li><a href="#before-2-3-0">Profile Documents Before CIMTool 2.3.0</a></li>
+<li><a href="#scope">Choosing the Scope: One Profile or the Whole Project</a></li>
+<li><a href="#text-sources">Where the Text Comes From: the Description and Documentation Tabs</a></li>
+<li><a href="#asciidoc">AsciiDoc Documentation</a></li>
+<li><a href="#project-documentation">Project Documentation</a></li>
+<li><a href="#editor">Editing AsciiDoc in CIMTool</a></li>
+<li><a href="#related">Related Topics</a></li>
+</ol>
+</div>
+
+<h2 id="before-2-3-0">Profile Documents Before CIMTool 2.3.0</h2>
+
+<p>Before CIMTool 2.3.0, documentation was defined one profile at a time, by two builders that each produce a single file describing a profile:</p>
+
+<table class="wiki">
+<tr><th>Builder</th><th>Output</th><th>Contents</th></tr>
+<tr><td><code>html</code></td><td><code>MyProfile.html</code>: one web page</td><td>The profile's own description, then sections for concrete classes, abstract classes, enumerations, compound types, datatypes and primitive types. Each class lists its native and inherited members with their cardinality, type and descriptions.</td></tr>
+<tr><td><code>profile-doc-rtf</code></td><td><code>MyProfile.rtf</code>: a Rich Text Format document</td><td>The profile namespace, then sections for concrete classes, abstract classes, compound types and enumerations, with member tables and descriptions.</td></tr>
+</table>
+
+<p>Both builders are still available and are designed to document a profile whatever its target: RDFS, XSD or JSON Schema. They use the Schema Description and Profile Description of each element (see <a href="#text-sources">Where the Text Comes From</a>), but not the Documentation tab, and they include no diagrams.</p>
+
+<p>To produce them, check <b>html</b>, <b>profile-doc-rtf</b> or both on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_summary.html#builders">Profile Summary</a> tab and save the profile. The files appear in the <b>Profiles</b> folder, next to the profile. Open the <code>.html</code> file in a web browser, or the <code>.rtf</code> file in Microsoft Word, where you can edit it further and save it as a Word document (<code>.docx</code>) or a PDF.</p>
+
+<h2 id="scope">Choosing the Scope: One Profile or the Whole Project</h2>
+
+<p>CIMTool 2.3.0 added builders that generate documentation in AsciiDoc, a project <b>Documentation</b> folder, and master documents that assemble a complete publication. You do not have to use all of these. Choose by what you need to publish:</p>
+
+<table class="wiki">
+<tr><th>You need</th><th>Use</th><th>You get</th></tr>
+<tr><td><b>Documentation for one profile</b></td><td>Any of these standalone builders:
+<ul>
+<li><code>html</code> or <code>profile-doc-rtf</code>, for a profile of any target</li>
+<li>the AsciiDoc <b>article</b> builder for the profile's target: <code>adoc-article-rdfs</code>, <code>adoc-article-rdfs-mappings</code>, <code>adoc-article-xsd</code> or <code>adoc-article-json</code></li>
+</ul></td><td>One self-contained document per profile, in the <b>Profiles</b> folder. An article includes the profile diagram and the Documentation tab text, and renders to HTML or PDF.</td></tr>
+<tr><td><b>Documentation for the project</b></td><td>The AsciiDoc <b>inline</b> builders for each profile, and a master document in the <b>Documentation</b> folder</td><td>One publication that combines several profiles with your own chapters, rendered to HTML or PDF (see <a href="#project-documentation">Project Documentation</a>).</td></tr>
+</table>
+
+<p>Whichever you choose, the text in the documentation comes from the same place: the Description and Documentation tabs of the Profile Editor.</p>
+
+<h2 id="text-sources">Where the Text Comes From: the Description and Documentation Tabs</h2>
+
+<p>Every element of a profile, and the profile itself, can carry three pieces of text. Two of them are on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html">Description</a> tab and one is on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_documentation.html">Documentation</a> tab. The two tabs work together: what you write on each, and where it ends up, only makes sense when they are considered side by side.</p>
+
+<table class="wiki">
+<tr><th>Text</th><th>Where you see it</th><th>What it is</th></tr>
+<tr><td><b>Schema Description</b></td><td>Description tab (read-only)</td><td>The normative description from the UML model. It reflects the CIM as published and cannot be changed in CIMTool.</td></tr>
+<tr><td><b>Profile Description</b></td><td>Description tab</td><td>A short description you write for this profile: how the element is used in this profile, or what it adds to the schema's definition.</td></tr>
+<tr><td><b>Documentation</b></td><td>Documentation tab</td><td>Longer documentation you write in AsciiDoc, with a full-page editing area. New in CIMTool 2.3.0.</td></tr>
+</table>
+
+<p>Select an element in the <b>Outline</b> view to see or edit its text. Select the profile itself, at the top of the Outline, to write text about the profile as a whole.</p>
+
+<h3 id="where-text-goes">Where Each Piece of Text Goes</h3>
+
+<p>The three pieces of text reach different outputs. This is the main thing to understand when deciding where to write something.</p>
+
+<table class="wiki">
+<tr><th>Text</th><th>Generated schemas (RDFS, XSD, JSON Schema)</th><th>HTML and RTF documents</th><th>AsciiDoc builders</th><th>AsciiDoc mappings builders</th></tr>
+<tr><td><b>Schema Description</b></td><td>Yes</td><td>Yes</td><td>Yes, in the description</td><td>Yes, in the description column</td></tr>
+<tr><td><b>Profile Description</b></td><td>Yes</td><td>Yes</td><td>Yes, in the description</td><td>Yes, in the description column</td></tr>
+<tr><td><b>Documentation</b></td><td>No</td><td>No</td><td>Yes, in the description</td><td>Yes: for attributes and associations in a separate <b>mapping</b> column, otherwise in the description</td></tr>
+</table>
+
+<p>This is by design. The Profile Description is part of the profile's definition, so it is written into every schema generated from the profile. The Documentation tab text is stored in the profile's OWL file with the rest of the profile, but it is documentation for human readers, so it is used only by the AsciiDoc builders and never written into a schema.</p>
+
+<p>Where two or more pieces of text appear together, they appear in the order of the table: the Schema Description first, then the Profile Description, then the Documentation.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_description_tab.png" alt="The Description tab for the negativeR12 attribute, with the generated AsciiDoc and its rendered preview" /><br />
+<i>The Description tab for the <code>negativeR12</code> attribute (left) and the documentation generated by <code>adoc-inline-rdfs</code> (right). In the rendered description cell, the Schema Description (blue) comes first, then the Profile Description (green), then the text from the Documentation tab (yellow).</i></p>
+
+<h3 id="choosing">Choosing Where to Write</h3>
+
+<ul>
+<li><b>Use the Profile Description for what every reader needs.</b> It is the only text of your own that reaches the generated schemas, so it is what a developer reading the XSD, JSON Schema or RDFS sees. Keep it short and write it as plain text.</li>
+<li><b>Use the Documentation tab for everything else.</b> Explanations, usage rules, examples, tables, sub-headings and code samples belong here. It has a much larger editing area and accepts any AsciiDoc.</li>
+<li><b>With a mappings builder, use the Documentation tab for mappings.</b> The mappings builders put the Documentation tab text of attributes and associations in its own <b>mapping</b> column, which makes it the natural place to record how an element maps to another information model or a third-party system.</li>
+</ul>
+
+<p><b>Formatting in the Profile Description.</b> Treat the Profile Description as plain text. The generated schemas carry it exactly as typed, so AsciiDoc markup would appear there as literal characters. The AsciiDoc builders honor simple formatting in it only inside member tables (as in the <code>[red]#...#</code> example above). In a class or profile description they print characters such as <code>*</code>, <code>`</code> and <code>[</code> literally. For formatted text, use the Documentation tab.</p>
+
+<h2 id="asciidoc">AsciiDoc Documentation</h2>
+
+<p>CIMTool 2.3.0 added builders that generate documentation in <a href="https://asciidoc.org/">AsciiDoc</a>, a plain-text format designed for technical documentation. AsciiDoc is easy to write, works well with version control, and renders to HTML and PDF. The documentation CIMTool generates is AsciiDoc, the text you write on the Documentation tab is AsciiDoc, and CIMTool includes an AsciiDoc editor with a live preview (see <a href="#editor">Editing AsciiDoc in CIMTool</a>).</p>
+
+<h3 id="article-inline">Article and Inline Builders</h3>
+
+<p>There are eight AsciiDoc builders, in two families of four:</p>
+<ul>
+<li><b>Article</b> builders produce a complete, standalone document for one profile, with its own title, table of contents and section numbering. Use them when you need documentation for a single profile.</li>
+<li><b>Inline</b> builders produce a fragment with no document title, starting at a section heading. Use them for project documentation: a master document includes the fragment and controls the overall structure (see <a href="#project-documentation">Project Documentation</a>).</li>
+</ul>
+
+<table class="wiki">
+<tr><th>Builder</th><th>Output file</th><th>For profiles targeting</th><th>Diagram it embeds</th></tr>
+<tr><td><code>adoc-article-rdfs</code></td><td><code>.article-rdfs.adoc</code></td><td>RDFS</td><td><code>.rdfs-t2b.puml</code></td></tr>
+<tr><td><code>adoc-article-rdfs-mappings</code></td><td><code>.article-rdfs-mappings.adoc</code></td><td>RDFS</td><td><code>.rdfs-t2b.puml</code></td></tr>
+<tr><td><code>adoc-article-xsd</code></td><td><code>.article-xsd.adoc</code></td><td>XSD</td><td><code>.xsd-l2r.puml</code></td></tr>
+<tr><td><code>adoc-article-json</code></td><td><code>.article-json.adoc</code></td><td>JSON Schema</td><td><code>.json-l2r.puml</code></td></tr>
+<tr><td><code>adoc-inline-rdfs</code></td><td><code>.inline-rdfs.adoc</code></td><td>RDFS</td><td><code>.rdfs-t2b.puml</code></td></tr>
+<tr><td><code>adoc-inline-rdfs-mappings</code></td><td><code>.inline-rdfs-mappings.adoc</code></td><td>RDFS</td><td><code>.rdfs-t2b.puml</code></td></tr>
+<tr><td><code>adoc-inline-xsd</code></td><td><code>.inline-xsd.adoc</code></td><td>XSD</td><td><code>.xsd-l2r.puml</code></td></tr>
+<tr><td><code>adoc-inline-json</code></td><td><code>.inline-json.adoc</code></td><td>JSON Schema</td><td><code>.json-l2r.puml</code></td></tr>
+</table>
+
+<p><b>Check the diagram builder too.</b> Each AsciiDoc builder embeds the profile's PlantUML diagram, but does not create it. On the Profile Summary tab, also check the PlantUML builder named in the last column (<b>puml-rdfs-t2b</b>, <b>puml-xsd-l2r</b> or <b>puml-json-l2r</b>), or the documentation shows a missing diagram.</p>
+
+<h3 id="asciidoc-layout">What the Generated Documentation Contains</h3>
+
+<p>An article starts with an overview giving the profile namespace and the profile diagram, followed by the profile specification. The text you wrote for the profile itself (its Profile Description and Documentation) opens the profile specification. Then come sections for concrete classes, abstract classes, enumerations, compound types and datatypes. Each class has a heading, its inheritance path, its descriptions and documentation, and tables of native and inherited members. In the member tables, the <b>description</b> column holds each member's text, in the order described in <a href="#where-text-goes">Where Each Piece of Text Goes</a>.</p>
+
+<p>The mappings builders produce the same documentation with one addition: the member tables of classes have a <b>mapping</b> column, filled from the Documentation tab of each attribute and association. The Documentation tab text of the profile, classes and enumeration values still appears in their descriptions. Mappings builders are currently available for RDFS profiles only.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_attribute_level.png" alt="Documentation tab text for the negativeR12 attribute in the mapping column of the adoc-inline-rdfs-mappings output" /><br />
+<i>With <code>adoc-inline-rdfs-mappings</code>, the Documentation tab text for <code>negativeR12</code> (blue, left) appears in the <b>mapping</b> column (blue, right), while the Profile Description (green) stays in the <b>description</b> column with the Schema Description.</i></p>
+
+<h3 id="documentation-structure">Headings, Tables and Code in the Documentation Tab</h3>
+
+<p>Because the Documentation tab accepts any AsciiDoc, you can add your own structure to an element's documentation: sub-headings, lists, tables, admonitions and source code. The builders fold it into the generated document, so a sub-heading becomes a numbered subsection of the class and appears in the table of contents. Since CIMTool 2.3.1, the whitespace you type is kept, so indentation in code samples is preserved exactly.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_class_level.png" alt="A custom sub-section and table written on the Documentation tab for ACDCTerminal, shown as a numbered subsection and formatted table in the generated documentation" /><br />
+<i>Class documentation for <code>ACDCTerminal</code>: a sub-section heading (<code>=====</code>) and a table written on the Documentation tab (left) become subsection 2.1.1 and a titled table in the generated documentation (right).</i></p>
+
+<p>Start sub-headings in the Documentation tab at level 5 (<code>=====</code>) for a class, so they fall beneath the class's own heading.</p>
+
+<h3 id="namespace-prefixes">Marking Extension Members with Namespace Prefixes</h3>
+
+<p>When a profile uses attributes and associations from extension namespaces, such as the European (ENTSO-E) extensions to the CIM, the AsciiDoc builders can mark those members with a short namespace prefix, such as <code>eu:</code>, so readers can tell extension members from normative CIM members.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_namespace_prefixes.png" alt="The BusNameMarker class with the eu: prefix on the European extension members energyIdentCodeEic and shortName" /><br />
+<i>The European extension members <code>energyIdentCodeEic</code> and <code>shortName</code> carry the <code>eu:</code> prefix; the normative CIM members <code>mRID</code>, <code>description</code> and <code>name</code> have none.</i></p>
+
+<p>The prefixes come from a <code>.namespace-prefixes</code> file in the <b>Schema</b> folder. It has the same name as the project's Enterprise Architect project file, with a <code>.namespace-prefixes</code> extension, and is imported with the schema. Each line maps a prefix to a namespace URI; lines starting with <code>#</code> are comments:</p>
+
+<pre>nc=http://entsoe.eu/ns/nc#
+eu=http://iec.ch/TC57/CIM100-European#
+eumd=http://entsoe.eu/ns/Metadata-European#</pre>
+
+<ul>
+<li>The file is optional and affects only the AsciiDoc documentation, not the profile.</li>
+<li>It works only when the schema is an Enterprise Architect project file (<code>.eap</code>, <code>.eapx</code>, <code>.qea</code> or <code>.qeax</code>), not an XMI or OWL schema.</li>
+<li>It is separate from the <code>.namespaces</code> file used when importing a schema (see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_namespace_support.html">CIMTool Namespace Support</a>), and does not need one.</li>
+<li>Namespace URIs must match the model exactly, including letter case.</li>
+</ul>
+
+<h2 id="project-documentation">Project Documentation</h2>
+
+<p>Project documentation is a single publication for the whole project: for example, a specification covering a set of related profiles, with your own introduction, overview and other chapters. You write it as a <b>master document</b>, an AsciiDoc file in the project's <b>Documentation</b> folder that pulls in your own text and the generated inline fragments with AsciiDoc's <code>include::</code> directive.</p>
+
+<h3 id="folders">The Documentation and Profiles Folders</h3>
+
+<p>Every CIMTool project has five folders: <b>Documentation</b>, <b>Incremental</b>, <b>Instances</b>, <b>Profiles</b> and <b>Schema</b>. Two of them matter for documentation. The builders write their generated documentation into <b>Profiles</b>, next to each profile. The <b>Documentation</b> folder, added in CIMTool 2.3.0, is where you assemble generated documentation with your own text.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_project_folders.png" alt="A new CIMTool project in the Project Explorer with its five folders" /><br />
+<i>A new project in the Project Explorer, with its five folders.</i></p>
+
+<p>The Documentation folder is created with four subfolders. The master document itself goes at the root of the Documentation folder.</p>
+
+<table class="wiki">
+<tr><th>Subfolder</th><th>For</th></tr>
+<tr><td><b>Images</b></td><td>Images used in your documents: diagrams, screenshots and logos.</td></tr>
+<tr><td><b>Includes</b></td><td>Your own AsciiDoc text (<code>.adoc</code>), in pieces that the master document includes. You can organize it in subfolders.</td></tr>
+<tr><td><b>Styles</b></td><td>CSS stylesheets (<code>.css</code>) for HTML output.</td></tr>
+<tr><td><b>Themes</b></td><td>Theme files (<code>.yml</code>) for PDF output.</td></tr>
+</table>
+
+<h3 id="master-header">The Master Document</h3>
+
+<p>The master document starts with a header that sets document-wide options and defines where to find each kind of content. This example is from the master document of the public <a href="https://github.com/cimug-org/CGMES-CIM17">CGMES-CIM17</a> sample project, a complete worked example:</p>
+
+<pre>= CGMES Profiles Guide
+:profilesdir: {docdir}/Profiles
+:includedir: {docdir}/Documentation/Includes
+:pdf-themesdir: {docdir}/Documentation/Themes
+:pdf-theme: cgmes-adoc
+:stylesdir: {docdir}/Documentation/Styles
+:stylesheet: cgmes-adoc.css
+:doctype: book
+
+include::{includedir}/introduction.adoc[]
+
+include::{includedir}/cgmes-overview.adoc[]
+
+include::{profilesdir}/CGMES-CoreEquipment.inline-rdfs.adoc[]
+
+include::{profilesdir}/CGMES-Operation.inline-rdfs.adoc[]
+
+include::{includedir}/conclusion.adoc[]</pre>
+
+<ul>
+<li><b>Paths start at the project root.</b> In CIMTool, <code>{docdir}</code> is always the project root, even though the master document is in the Documentation folder, so write every path from there.</li>
+<li><code>:doctype: book</code> gives the multi-chapter structure a large specification needs.</li>
+<li><code>:stylesheet:</code> and <code>:pdf-theme:</code> apply your own look to HTML and PDF output, from the Styles and Themes subfolders.</li>
+<li>Each inline fragment starts at its own section heading, so it falls into place beneath the master document's structure.</li>
+</ul>
+
+<p><b>The profilesdir attribute.</b> The generated documentation finds its PlantUML diagrams through <code>{profilesdir}</code>. Since CIMTool 2.3.1, CIMTool keeps a <code>.asciidoctorconfig.adoc</code> file in the Profiles folder that defines it, so a generated article or fragment also renders on its own. Leave that file in place. Defining <code>:profilesdir:</code> in the master document, as above, makes the location explicit. Outside CIMTool, for example with the Asciidoctor command line, pass it with <code>-a profilesdir=...</code>.</p>
+
+<h3 id="rendered">The Result</h3>
+
+<p>Render the master document to HTML or PDF from the AsciiDoc editor (see <a href="#editor">Editing AsciiDoc in CIMTool</a>). Both outputs apply your styling and have a generated table of contents, with page numbering across the whole PDF.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_master_document_html.png" alt="The CGMES Profiles Guide rendered to HTML, with its table of contents, a profile section and a PlantUML diagram" /><br />
+<i>The CGMES Profiles Guide rendered to HTML.</i></p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_master_document_pdf.png" alt="The CGMES Profiles Guide rendered to PDF, in a book-style chapter layout" /><br />
+<i>The same guide rendered to PDF, as a book-style specification.</i></p>
+
+<h2 id="editor">Editing AsciiDoc in CIMTool</h2>
+
+<p>CIMTool includes the Asciidoctor editor, which opens when you open any <code>.adoc</code> file: a master document, an Includes file, or a generated article or fragment. It shows the AsciiDoc source and a live rendered preview side by side.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_asciidoctor_editor.png" alt="The Asciidoctor editor with AsciiDoc source on the left and the rendered preview on the right" /><br />
+<i>The Asciidoctor editor: source on the left, rendered preview with table of contents and section numbers on the right.</i></p>
+
+<ul>
+<li><b>Toolbar.</b> Buttons arrange the source and preview, insert headings, formatting, admonitions, links, anchors, tables and code blocks, and show or hide the table of contents. Others preview the document in an external browser, create a temporary PDF, rebuild the preview (<b>F5</b>) after included files change, and clear the editor's cache.</li>
+<li><b>Rendering preferences.</b> The rendering preferences button defines AsciiDoc attributes for the preview. These override attributes of the same name in your documents, so if a document ignores an attribute set in its own header, check here.</li>
+<li><b>Configuration file.</b> The editor creates a <code>.asciidoctorconfig.adoc</code> file the first time you open an <code>.adoc</code> file in a folder. Leave it in place.</li>
+</ul>
+
+<p>The Documentation tab itself is a plain text area without a preview. To check how an element's documentation looks, save the profile and open the generated <code>.adoc</code> file in the Asciidoctor editor.</p>
+
+<p>For the full editor toolbar and an AsciiDoc syntax quick reference, see <a href="https://cimtool.ucaiug.io/how-to/using-cimtool-documentation-features/">Using CIMTool Documentation Features</a> on the CIMTool website, and the <a href="https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/">AsciiDoc Syntax Quick Reference</a>.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html">Description Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_documentation.html">Documentation Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_summary.html">Profile Summary Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#target-builders">How the Builders Reflect the Target</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_namespace_support.html">CIMTool Namespace Support</a></li>
+</ul>
+
+</div>
+</div>
+<div id="footer">
+  <a href="https://cimtool.ucaiug.io">cimtool.ucaiug.io</a>
+  <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
+</div>
+</body>
+</html>

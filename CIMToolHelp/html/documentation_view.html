@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Documentation View</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
+</head>
+<body>
+<div id="header">
+  <img class="watermark" src="images/brand_cimug_mark.svg" alt="" />
+  <div class="brand">
+    <img class="logo" src="images/brand_cimtool_logo.svg" alt="CIMTool" />
+    <div class="divider"></div>
+    <div class="title"><span class="cim">CIM</span>Tool Help</div>
+  </div>
+</div>
+<div id="main">
+<div id="content">
+
+<h1>Documentation View</h1>
+
+<p>The <b>Documentation</b> view shows the schema's description of whatever you select in the CIM: a class, attribute, association, enumeration or package. It saves you opening the Profile Editor's Description tab just to read what the CIM says about an element.</p>
+
+<p><i>[Screenshot: the Documentation view, in the CIMTool perspective's bottom view stack, showing the description of a class selected in the Project Model.]</i></p>
+
+<h2 id="what-it-shows">What the View Shows</h2>
+
+<p>The view shows two things, one after the other:</p>
+<ol>
+<li>The name of the selected element.</li>
+<li>Its description from the schema: the documentation written for it in the UML model (for example in Enterprise Architect) and carried into the project's schema on import. If the schema has no description for the element, only the name is shown.</li>
+</ol>
+
+<p>The description always comes from the <b>schema</b>, even when you select an element of a profile. It is the same text as the read-only <b>Schema Description</b> on the Profile Editor's Description tab. The view never shows a profile's own text: the <b>Profile Description</b> and the Documentation tab's AsciiDoc are only on those tabs. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html#text-sources">Project and Profile Documentation</a> for where each kind of text is used.</p>
+
+<p>The view is read-only, with a pale yellow background. You can select its text and copy it with <b>Ctrl+C</b>.</p>
+
+<h2 id="following">How It Follows Your Selection</h2>
+
+<p>The view follows the selection anywhere in the workbench that shows schema or profile elements, including:</p>
+<ul>
+<li>the <b>Project Model</b> view;</li>
+<li>the <b>Outline</b> view of the Profile Editor;</li>
+<li>the profile pane and schema pane of the Profile Editor's <b>Add/Remove</b> tab;</li>
+<li>the Model Browser, which opens a schema file.</li>
+</ul>
+
+<p>Selecting a file or folder in the Project Explorer does not change the text, but it does switch the view to that file's project, so that the next element you select is looked up in the right schema. The view reads the project's <i>merged schema</i>: every schema file in the project's <b>Schema</b> folder combined, so an element from an extension schema is found as well as one from the base CIM.</p>
+
+<h2 id="opening">Opening the View</h2>
+
+<p>In the CIMTool perspective the Documentation view is a tab in the stack below the editor, next to the Profile Real-Time Preview, PlantUML Svg and Properties views. If it has been closed, choose <b>Window &gt; Show View &gt; Documentation</b>, or <b>Window &gt; Show View &gt; Other...</b> and then <b>CIMTool &gt; Documentation</b>. The Browsing perspective also shows it, on the right.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html">Description Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html">Project and Profile Documentation</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/browsing_the_cim.html">Project Model: Browsing the CIM</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#views">Workbench Basics: Views</a></li>
+</ul>
+
+</div>
+</div>
+<div id="footer">
+  <a href="https://cimtool.ucaiug.io">cimtool.ucaiug.io</a>
+  <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
+</div>
+</body>
+</html>

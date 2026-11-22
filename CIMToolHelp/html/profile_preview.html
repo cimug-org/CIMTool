@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Profile Real-Time Preview</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
+</head>
+<body>
+<div id="header">
+  <img class="watermark" src="images/brand_cimug_mark.svg" alt="" />
+  <div class="brand">
+    <img class="logo" src="images/brand_cimtool_logo.svg" alt="CIMTool" />
+    <div class="divider"></div>
+    <div class="title"><span class="cim">CIM</span>Tool Help</div>
+  </div>
+</div>
+<div id="main">
+<div id="content">
+
+<h1>Profile Real-Time Preview</h1>
+
+<p>The <b>Profile Real-Time Preview</b> view draws the profile you are editing as a UML class diagram, and redraws it each time you save. As well as showing the profile's structure, it marks definitions that are incomplete or invalid, so you can see and fix problems while you build the profile rather than when a schema is generated. It always follows the profile in the active Profile Editor.</p>
+
+<p><i>[Screenshot: the Profile Real-Time Preview view in the CIMTool perspective, showing a profile's diagram with its zoom buttons, and the tab title naming the profile.]</i></p>
+
+<div class="wiki-toc">
+<ol>
+<li><a href="#controls">The Controls in the View</a></li>
+<li><a href="#updates">When the Diagram Is Redrawn</a></li>
+<li><a href="#style">Diagram Style and Your Profile's Target</a></li>
+<li><a href="#appearance">Colors and What the Diagram Includes</a></li>
+<li><a href="#problems">How Problems Are Shown</a></li>
+<li><a href="#messages">Messages in Place of the Diagram</a></li>
+<li><a href="#plantuml-svg">Profile Real-Time Preview and PlantUML Svg</a></li>
+<li><a href="#second-monitor">Using a Second Monitor</a></li>
+<li><a href="#related">Related Topics</a></li>
+</ol>
+</div>
+
+<h2 id="controls">The Controls in the View</h2>
+
+<table class="wiki">
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td>Tab title</td><td>Names the profile being drawn, for example <b>EndDeviceConfig.owl Preview</b>. It changes when you switch to another profile's editor.</td></tr>
+<tr><td>Diagram</td><td>Scroll the mouse wheel over the diagram to zoom in or out around the pointer. Drag to move the diagram.</td></tr>
+<tr><td>Zoom buttons (lower right of the diagram)</td><td>Zoom in (<b>+</b>), return to the original size and position (<b>reset</b>), and zoom out (<b>&#8722;</b>).</td></tr>
+<tr><td><b>Open in external browser</b> (toolbar button)</td><td>Opens the current diagram in your system's web browser, as a page with the same zoom and pan controls. Useful for a large diagram, or to print it.</td></tr>
+</table>
+
+<h2 id="updates">When the Diagram Is Redrawn</h2>
+
+<ul>
+<li><b>When you save the profile.</b> Your zoom level and position are kept, so you can watch one part of a large diagram while you work on it.</li>
+<li><b>When you switch to another profile's editor.</b> The new profile is drawn fitted to the view, with the current diagram style for that profile.</li>
+<li><b>When you change the diagram preferences</b> (see <a href="#appearance">Colors and What the Diagram Includes</a>) and click <b>Apply</b> or <b>Apply and Close</b>.</li>
+</ul>
+
+<p>The preview does not depend on the builders selected on the Profile Summary tab: it is drawn for every profile, whether or not the profile generates any PlantUML artifact.</p>
+
+<h2 id="style">Diagram Style and Your Profile's Target</h2>
+
+<p>The preview is drawn by one of the PlantUML builders, chosen by the <b>Diagram Style</b> setting. Use a style that matches your profile's target, because the builders for each target lay out the profile differently and check different rules (see <a href="#problems">How Problems Are Shown</a>). Top-to-bottom or left-to-right is a matter of taste and changes only the layout.</p>
+
+<table class="wiki">
+<tr><th>Diagram Style</th><th>Profile target</th><th>Layout</th></tr>
+<tr><td><code>puml-rdfs-t2b</code></td><td>RDFS</td><td>Top to bottom (the default)</td></tr>
+<tr><td><code>puml-rdfs-l2r</code></td><td>RDFS</td><td>Left to right</td></tr>
+<tr><td><code>puml-xsd-t2b</code></td><td>XSD</td><td>Top to bottom</td></tr>
+<tr><td><code>puml-xsd-l2r</code></td><td>XSD</td><td>Left to right</td></tr>
+<tr><td><code>puml-json-t2b</code></td><td>JSON Schema</td><td>Top to bottom</td></tr>
+<tr><td><code>puml-json-l2r</code></td><td>JSON Schema</td><td>Left to right</td></tr>
+</table>
+
+<p>The <b>Diagram Style</b> list shows every PlantUML builder available in <b>CIMTool</b>, including any you have imported, so it can contain more than these six.</p>
+
+<p>The style can be set at three levels, and <b>CIMTool</b> uses the most specific one that is set:</p>
+
+<table class="wiki">
+<tr><th>Level</th><th>Where to set it</th><th>Applies to</th></tr>
+<tr><td>Profile</td><td>Right-click the profile (<code>.owl</code>) in the Project Explorer, choose <b>Properties</b>, then <b>CIMTool</b>, and set <b>Diagram Style</b>.</td><td>That profile only.</td></tr>
+<tr><td>Project</td><td>Right-click the project, choose <b>Properties</b>, then <b>CIMTool</b>, and set <b>Diagram Style</b> under <b>Profile Real-Time Preview PlantUML Diagram Preferences</b>.</td><td>Every profile in the project that does not set its own style.</td></tr>
+<tr><td>Global</td><td><b>Window &gt; Preferences &gt; CIMTool &gt; PlantUML Builder Preferences</b>, <b>Diagram Style</b> under <b>Profile Real-Time Preview PlantUML Diagram Preferences</b>.</td><td>Every profile whose project and profile settings are empty.</td></tr>
+</table>
+
+<p>Leave the profile or project setting empty to use the next level up. A project's profiles usually share one target, so set the style once for the project, and set a profile's own style only when it targets something different. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#preview-target">The Profile Real-Time Preview and Your Target</a>.</p>
+
+<p><i>[Screenshot: the project Properties dialog, CIMTool page, with the Diagram Style setting.]</i></p>
+
+<h2 id="appearance">Colors and What the Diagram Includes</h2>
+
+<p>The preview uses the same diagram preferences as the PlantUML builders: <b>Window &gt; Preferences &gt; CIMTool &gt; PlantUML Builder Preferences</b>. They set the PlantUML theme, the color for each kind of class (document root, concrete and abstract classes, enumerations, CIMDatatypes, compounds, primitives, choices, references and shadow classes), dark mode and shadowing, and whether enumerations, CIMDatatypes, compounds and primitives are drawn at all.</p>
+
+<p>Hiding a kind of class does not hide a problem with it: a hidden enumeration or compound that a definition refers to incorrectly is still drawn in the preview, so that the problem stays visible.</p>
+
+<p>A class can have more than one parent class, for example when the schema was imported with <b>During import merge shadow/mixin extensions into the CIM classes that inherit from them</b> cleared, so that a shadow class stays a second parent of the class it extends. The diagram then draws an inheritance arrow to each parent, for every target.</p>
+
+<h2 id="problems">How Problems Are Shown</h2>
+
+<p>The preview marks a problem by drawing the class concerned in pink, by drawing an association line in red, or by attaching a pink note. Which problems are reported depends on the diagram style, so the style must match your profile's target. Each problem below names the profile targets it applies to.</p>
+
+<table class="wiki">
+<tr><th>What you see</th><th>What it means</th><th>Targets</th><th>How to fix it</th></tr>
+<tr><td>A pink class or enumeration with no members, at the end of an association or attribute</td><td>A definition in the profile refers to a class or type that is not in the profile.</td><td>RDFS, XSD and JSON Schema</td><td>Add the class or type to the profile on the <b>Add/Remove</b> tab, or remove the definition that refers to it.</td></tr>
+<tr><td>A red line from a class to an enumeration, compound or datatype</td><td>An attribute of that type is in the profile, but its type was not selected in the attribute's definition. Attributes are drawn as members of the class, never as lines, once their type is selected.</td><td>RDFS, XSD and JSON Schema</td><td>On the <b>Add/Remove</b> tab, select the class, then the attribute in the profile pane, and move its type from the schema pane to the profile pane. Save.</td></tr>
+<tr><td>A red association line to a class that is in the profile</td><td>The association is in the profile, but its target end was not selected in the association's definition.</td><td>RDFS, XSD and JSON Schema</td><td>On the <b>Add/Remove</b> tab, select the class, then the association, and move the target class to the profile pane. Save.</td></tr>
+<tr><td>A pink note on an attribute: <i>The declared type for this attribute is currently undefined. This should be fixed within either the model and/or profile where required.</i></td><td>The attribute has no type, usually because its type is missing in the UML model.</td><td>RDFS, XSD and JSON Schema</td><td>Correct the attribute's type in the UML model and re-import the schema, or remove the attribute from the profile.</td></tr>
+<tr><td>A pink class with the note <i>Class X is 'concrete' but has no fields or associations declared&#8230;</i></td><td>A concrete class with no attributes, no associations and no parent class: it carries nothing.</td><td>RDFS only</td><td>On the <b>Restriction</b> tab, either clear <b>Make this class concrete</b> (if it only refers to an object defined elsewhere) or choose a parent class; or add attributes or associations on the <b>Add/Remove</b> tab.</td></tr>
+<tr><td>A pink class with the note <i>Class X is 'abstract' and has no parent class, child class, or association references to it&#8230;</i></td><td>An abstract class that nothing connects to the rest of the profile, so it can never be used.</td><td>RDFS only</td><td>Make it concrete on the <b>Restriction</b> tab, or remove it on the <b>Add/Remove</b> tab.</td></tr>
+<tr><td>A pink class with the note <i>Class X is 'abstract' and has no child classes&#8230;</i></td><td>An abstract class with a parent but no concrete class below it, so no object of it can exist.</td><td>RDFS only</td><td>Make it concrete, add a concrete child class, or remove it.</td></tr>
+<tr><td>A pink class with the note <i>Class X is 'abstract'. If it is serving as a reference to an external object then no fields should be defined in it&#8230;</i></td><td>An abstract class that associations refer to and that has attributes. An abstract class referred to in this way stands for an object defined elsewhere and should carry no attributes.</td><td>RDFS only</td><td>Remove its attributes on the <b>Add/Remove</b> tab, or make it concrete on the <b>Restriction</b> tab if it is meant to carry data.</td></tr>
+</table>
+
+<p>The four class notes apply only to RDFS profiles because they follow the RDFS rules for concrete and abstract classes (IEC 61970-501). XSD and JSON Schema profiles are not checked for them.</p>
+
+<p><i>[Screenshot: a profile in the preview with several of these problems marked, then the same profile after they are fixed.]</i></p>
+
+<h2 id="messages">Messages in Place of the Diagram</h2>
+
+<table class="wiki">
+<tr><th>Message</th><th>What it means</th></tr>
+<tr><td><i>No profile is currently active. Open a profile to view its diagram.</i></td><td>No Profile Editor is open, or the profile has not been drawn yet. Open a profile, or save it once.</td></tr>
+<tr><td><b>Profile Real-Time Preview Unavailable</b></td><td>The diagram could not be drawn. Most often the <b>Diagram Style</b> does not match the profile's target, for example an XSD style for an RDFS profile. Check the style at the profile and project levels (see <a href="#style">Diagram Style and Your Profile's Target</a>). If the style is right, the profile may contain a construct the builder cannot draw.</td></tr>
+<tr><td><i>PlantUML library is not available&#8230;</i></td><td>The PlantUML component that draws the diagram is missing or failed. It is part of the <b>CIMTool</b> product, so this points to a damaged installation.</td></tr>
+</table>
+
+<h2 id="plantuml-svg">Profile Real-Time Preview and PlantUML Svg</h2>
+
+<p>The CIMTool perspective has a second diagram view beside the preview, <b>PlantUML Svg</b>, which comes from the PlantUML plug-in included with <b>CIMTool</b>. It draws any PlantUML (<code>.puml</code>) file you open or select, such as the diagram a PlantUML builder generates for a profile. It does not follow the active profile and does not mark problems. Use the Profile Real-Time Preview while you design a profile, and PlantUML Svg to look at generated diagrams. To see both at once, drag one view's tab to another part of the window.</p>
+
+<h2 id="second-monitor">Using a Second Monitor</h2>
+
+<p>A large profile is easier to read with more space. Drag the <b>Profile Real-Time Preview</b> tab outside the workbench window to detach it into a window of its own, then move it to a second monitor and maximize it. To put it back, either:</p>
+<ul>
+<li>drag the tab back onto the workbench, or</li>
+<li>in the <b>CIMTool</b> perspective, choose <b>Window &gt; Perspective &gt; Reset Perspective...</b>. This puts the view back in its default place, but also returns every other view in the perspective to its default layout. In other perspectives, where the view is not part of the default layout, Reset closes it instead.</li>
+</ul>
+
+<div class="note">
+<p class="note-title">Putting a detached view back: drag the tab, not the window</p>
+<p>To re-attach a detached view, drag its <b>tab</b>, not the title bar of its window. Dragging the title bar only moves the window and never docks it. Hold the tab and drag it over the <b>CIMTool</b> window. Before you let go, Eclipse shows where the view will go: an outline over a group of tabs, or a thin double vertical line running the height of the window for a column of its own. The detached window closes when its last tab leaves it.</p>
+<p>If you detached several views, put them back one at a time; each tab is dragged on its own.</p>
+</div>
+
+<p>Double-clicking the tab, or <b>Ctrl+M</b>, maximizes it inside the workbench instead.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#targets">The Profile Editor: Profile Targets</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html">Add/Remove Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html">Restriction Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#views">Workbench Basics: Views</a></li>
+<li><a href="https://cimtool.ucaiug.io/how-to/profile-real-time-preview/">CIMTool Profile Real-Time Preview</a> (cimtool.ucaiug.io)</li>
+</ul>
+
+</div>
+</div>
+<div id="footer">
+  <a href="https://cimtool.ucaiug.io">cimtool.ucaiug.io</a>
+  <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
+</div>
+</body>
+</html>

@@ -1,12 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-      <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>CIMTool Change Log </title>
-        <link type="text/css" rel="stylesheet" href="graphic.css" />
-            
-      </head>
-      <body>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>CIMTool Change Log</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
+</head>
+<body>
 <div id="header">
   <img class="watermark" src="images/brand_cimug_mark.svg" alt="" />
   <div class="brand">
@@ -15,58 +16,196 @@
     <div class="title"><span class="cim">CIM</span>Tool Help</div>
   </div>
 </div>
-        
-        <div id="main">
-          <div id="content">
+<div id="main">
+<div id="content">
+
 <h1>CIMTool Change Log</h1>
-<h2>Release 1.9.7 </h2><p>(In progress)</p><ul><li><p>correction: .eap files are closed after parsing and can now be deleted from a project.</p></li></ul><h2>Release 1.9.6 </h2><ul><li><p>enhancement: platform updated to eclipse Indigo.</p></li><li><p>enhancement: direct import of EA project files. This is now the default
+
+<p>What is new and changed in each <b>CIMTool</b> release, newest first. Each entry names its GitHub issue, which has the full discussion. The <a href="https://cimtool.ucaiug.io/release-notes/">release notes on cimtool.ucaiug.io</a> describe each change in more detail, with screenshots for many of them.</p>
+
+<div class="wiki-toc">
+<ol>
+<li><a href="#release-2-3-1">Release 2.3.1 (09-Nov-2026)</a></li>
+<li><a href="#release-2-3-0">Release 2.3.0 (08-Jun-2026)</a></li>
+<li><a href="#release-2-2-0">Release 2.2.0 (01-Oct-2024)</a></li>
+<li><a href="#release-2-1-0">Release 2.1.0 (09-Aug-2024)</a></li>
+<li><a href="#release-2-0-1">Release 2.0.1 (12-May-2024)</a></li>
+<li><a href="#release-2-0-0">Release 2.0.0 (06-Mar-2024)</a></li>
+<li><a href="#release-1-12-0">Release 1.12.0 (21-Feb-2024)</a></li>
+<li><a href="#release-1-11">Releases 1.11.0 and 1.11.1 (2022 and 2023)</a></li>
+<li><a href="#release-1-10">Releases 1.10.0 and 1.10.1 (2020 to 2022)</a></li>
+<li><a href="#earlier">Releases 1.9.7 and Earlier</a></li>
+</ol>
+</div>
+
+<h2 id="release-2-3-1">Release 2.3.1 (09-Nov-2026)</h2>
+<p>A patch release with defect fixes, a security fix, copyright notices in more builders, improvements to AsciiDoc documentation generation, and automatic regeneration of profile artifacts after an upgrade.</p>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/272">#272</a>: The SQL builders (<code>sql</code>, <code>sql-rdfs-ansi92</code>) and the <code>html</code> builder include the project's copyright notice.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/291">#291</a>: The AsciiDoc builders reference their PlantUML diagrams through the <code>{profilesdir}</code> attribute, so generated documents can be included from anywhere in a project and also render on their own. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html">Project and Profile Documentation</a>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/310">#310</a>: When a new release opens a workspace last built by an earlier release, <b>CIMTool</b> regenerates each project's profile artifacts once, in the background, so existing projects get the new builder improvements without a manual rebuild.</li>
+<li><b>Security</b> <a href="https://github.com/cimug-org/CIMTool/issues/311">#311</a>: <code>cimtool-cli</code> resolves relative references in a custom XSLT stylesheet against the stylesheet's own folder, with no network access.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/287">#287</a>: <code>cimtool-cli</code> produces valid SQL output and uses the project's copyright templates. Its option rules are stricter, and a new <code>--copyright-none</code> option generates artifacts without a copyright.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/288">#288</a>: Indentation written on the Documentation tab, such as in source listings, is kept in generated AsciiDoc.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/292">#292</a>: <b>CIMTool</b> starts in a fresh environment: builder stylesheets load without network access, and installation or workspace paths containing spaces are supported.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/297">#297</a>: With <b>CIMTool</b> installed in a path containing spaces, the Profile Real-Time Preview and the builders work again.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/314">#314</a>: A build no longer fails with a <code>ClassCastException</code> in <code>ProfileSerializer</code> when <b>CIMTool</b> runs inside a larger Eclipse installation.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/318">#318</a>: The <code>linkml</code> and <code>apache-avro-schema-beta</code> builders handle a class with more than one parent.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/334">#334</a>: The six PlantUML builders, and so the Profile Real-Time Preview, handle a class with more than one parent; the XSD and JSON diagrams draw an inheritance arrow to each parent.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/335">#335</a>: The documentation builders no longer show <b>CIMTool</b>'s internal stereotypes, such as <code>compositeOf</code>, beside attributes and associations.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/339">#339</a>: Each open project's <code>.cimtool-global-preferences</code> file, used by <code>cimtool-cli</code>, is refreshed when <b>CIMTool</b> starts, and written only when its content changes.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/354">#354</a>: On Windows, removing an imported builder deletes its <code>.xsl</code> file.</li>
+<li><b>Cleanup</b> <a href="https://github.com/cimug-org/CIMTool/issues/319">#319</a>: The <code>rdfs-501ed2-beta</code> builder, for a draft of IEC 61970-501 Ed 2.0, is removed.</li>
+</ul>
+
+<h2 id="release-2-3-0">Release 2.3.0 (08-Jun-2026)</h2>
+<p>A release focused on documentation generation, the Profile Real-Time Preview, diagram customization, profiling capabilities and usability.</p>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/24">#24</a>: Eight AsciiDoc builders generate standalone articles and inline fragments for RDFS, XSD and JSON Schema profiles, with an RDFS variant that adds a mappings column. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html">Project and Profile Documentation</a>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/172">#172</a>: Preferences for PlantUML diagrams: layout direction, label positions and visual styling.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/173">#173</a>: Dark mode chooses black or white text to suit each background color.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/176">#176</a>: New <code>puml-xsd-l2r</code> and <code>puml-xsd-t2b</code> diagram builders; the RDFS diagram builders are renamed <code>puml-rdfs-l2r</code> and <code>puml-rdfs-t2b</code>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/184">#184</a>: The Asciidoctor editor is included, with live preview, for editing AsciiDoc in <b>CIMTool</b>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/185">#185</a>: Pandoc is embedded, in preparation for generating Word documents from AsciiDoc.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/188">#188</a>: The CIMantic Graphs builders support <code>Identity.identifier</code>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/195">#195</a>: <code>cimtool-cli</code>, a standalone JAR that runs the builders without the workbench, for automated and continuous-integration pipelines.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/202">#202</a>: A C# Entity Framework Core builder, <code>csharp-ef-rdfs</code>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/203">#203</a>: Per-diagram PlantUML settings in <code>.pumlconfig</code> files.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/204">#204</a>: Shadow class (mix-in) extensions are recognized when profiling from Enterprise Architect project files.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/207">#207</a>: The XML that builders read includes <code>PrimitiveType</code> and <code>CompoundType</code> elements, so builders can tell primitives from compounds.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/217">#217</a>: The SQL builder creates tables and foreign keys for compound types, with foreign key indexes.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/220">#220</a>: <code>*.namespaces</code> files in the Schema folder map UML stereotypes to namespaces, in line with CimConteXtor and CimSyntaxGen.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/221">#221</a>: Self-healing on schema import corrects common modeling issues and logs each correction.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/223">#223</a>: Add/Remove tab options to add only source-side associations and to set associations to By Reference when adding them. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html#options">Add/Remove Tab</a>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/225">#225</a>: The Easy Rules engine is integrated, to enforce the rules of the CIM Modeling Guide.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/243">#243</a>: Property cardinalities such as 0..n and 1..n can be set.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/246">#246</a>: Compounds can be profiled as anonymous inner types and, with <b>Allow multiple profiles per class</b>, profiled more than once.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/247">#247</a>: The <code>XSDattribute</code> and <code>XSDattributeGroup</code> stereotypes generate XSD attributes and attribute groups.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/250">#250</a>: The <code>CodeList</code> stereotype generates code lists in the XSD and JSON Schema builders.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/252">#252</a>: The Profile Real-Time Preview, which works without network access. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_preview.html">Profile Real-Time Preview</a>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/253">#253</a>: Windows release binaries are signed with an Extended Validation (EV) code-signing certificate.</li>
+<li><b>Security</b> <a href="https://github.com/cimug-org/CIMTool/issues/200">#200</a>: Log4j 1.2.13 is removed from the Kena plug-in and replaced by <code>log4j-over-slf4j</code>, so the known Log4j 1.x vulnerabilities no longer apply.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/170">#170</a>: Profiles built from Enterprise Architect project files use the native EA GUIDs, so they are portable between projects.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/171">#171</a>: The RDFS2020 builder generates unflattened CIMDatatypes.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/214">#214</a>: AsciiDoc formatting no longer leaks into the output of builders that are not documentation builders.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/240">#240</a>: The Import Schema namespace choices for CIM16, CIM17 and CIM18 use <code>ucaiug.org</code> namespaces.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/241">#241</a>: The SQL builder quotes identifiers consistently in CHECK constraints.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/244">#244</a>: The <code>profile-doc-rtf</code> builder keeps paragraph breaks and handles non-ASCII characters.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/249">#249</a>: Extension attributes and associations carry the extension namespace, not the CIM namespace.</li>
+</ul>
+
+<h2 id="release-2-2-0">Release 2.2.0 (01-Oct-2024)</h2>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/116">#116</a>: Support for the UUID and URI domain types introduced in CIM18.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/141">#141</a>: Enterprise Architect IDs in the XML that builders read; the LinkML builder includes them.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/142">#142</a>: An experimental builder for draft IEC 61970-501 Ed 2.0 RDFS (removed in 2.3.1).</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/143">#143</a>: PlantUML class diagrams of profiles.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/155">#155</a>: An Import Schema option to reuse the existing namespace when re-importing a schema.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/154">#154</a>: The RDFS2020 builder is aligned with CimConteXtor.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/156">#156</a>: Extensions can be profiled from a single 64-bit Enterprise Architect project file, using <code>baseuri</code>.</li>
+</ul>
+
+<h2 id="release-2-1-0">Release 2.1.0 (09-Aug-2024)</h2>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/108">#108</a>: Import of 64-bit Enterprise Architect 16 project files (<code>.qea</code>, <code>.qeax</code>).</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/114">#114</a>: Import of <code>.eapx</code> and <code>.feap</code> Enterprise Architect project files.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/118">#118</a>: A LinkML builder.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/133">#133</a>: The two CIMantic Graphs builders contributed by PNNL are included.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/131">#131</a>: Aggregations appear in the Project Model view and on the Add/Remove tab.</li>
+</ul>
+
+<h2 id="release-2-0-1">Release 2.0.1 (12-May-2024)</h2>
+<ul>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/115">#115</a>: The original RDFS builders are restored, replacing those in 2.0.0 whose output had problems.</li>
+</ul>
+
+<h2 id="release-2-0-0">Release 2.0.0 (06-Mar-2024)</h2>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/91">#91</a>: <b>CIMTool</b> moves to the Eclipse 4 platform, with support for current Java versions, a faster user interface, a 4 GB default heap and new branding.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/75">#75</a>: Large <code>.xmi</code> files import and display without a Java memory error.</li>
+</ul>
+
+<h2 id="release-1-12-0">Release 1.12.0 (21-Feb-2024)</h2>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/78">#78</a>: An RDFS2020 builder.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/80">#80</a>: A <code>legacy-cimcontextor</code> RDFS builder.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/81">#81</a>: The <code>Description</code> stereotype marks a concrete class as a descriptor (<code>rdf:about</code> rather than <code>rdf:ID</code> identifiers). See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html#descriptor">Restriction Tab</a>.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/82">#82</a>: Add/Remove tab options to make added classes concrete and added properties required.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/26">#26</a>: The <code>legacy-rdfs-augmented</code> builder gives inverse associations the correct multiplicity.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/77">#77</a>: With multiple profiles per class, the XSD builder again generates a separate complex type for each.</li>
+<li><b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/79">#79</a>: The Stereotypes tab shows every stereotype imported from the schema.</li>
+</ul>
+
+<h2 id="release-1-11">Releases 1.11.0 and 1.11.1 (2022 and 2023)</h2>
+<ul>
+<li><b>1.11.1</b>, <b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/57">#57</a>: The Import Copyright Templates wizard can apply the default UCAIug copyright headers.</li>
+<li><b>1.11.1</b>, <b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/58">#58</a>: Generated RDF/XML artifacts list their elements in a consistent order, so they compare cleanly in Git.</li>
+<li><b>1.11.0</b>, <b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/49">#49</a>: The Import and New CIMTool Project wizards are redesigned.</li>
+<li><b>1.11.0</b>, <b>Defect</b> <a href="https://github.com/cimug-org/CIMTool/issues/47">#47</a> and <a href="https://github.com/cimug-org/CIMTool/issues/48">#48</a>: Custom copyright templates are imported correctly, and profile headers update when new templates are imported.</li>
+</ul>
+
+<h2 id="release-1-10">Releases 1.10.0 and 1.10.1 (2020 to 2022)</h2>
+<ul>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/3">#3</a>: Custom XSLT builders can be imported, and the XSLT engine is Saxon, supporting XSLT 3.0.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/27">#27</a>: The <code>profile-doc-rtf</code> builder generates profile documentation as a Word-compatible RTF document.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/20">#20</a>, <a href="https://github.com/cimug-org/CIMTool/issues/22">#22</a> and <a href="https://github.com/cimug-org/CIMTool/issues/30">#30</a>: Custom copyright templates, applied by the builders and to profile headers.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/28">#28</a>: Additional steps in the New CIMTool Project wizard.</li>
+<li><b>Enhancement</b> <a href="https://github.com/cimug-org/CIMTool/issues/23">#23</a>: Choice elements give builders the topmost class of a union's type hierarchy.</li>
+<li><b>Feature</b> <a href="https://github.com/cimug-org/CIMTool/issues/7">#7</a>, <a href="https://github.com/cimug-org/CIMTool/issues/15">#15</a> and <a href="https://github.com/cimug-org/CIMTool/issues/16">#16</a>: An XSD builder for IEC 61968-100 Ed 2, a JSON Schema builder for the IEC 62361-104 draft, and the UCAIug copyright header in XSD and JSON output.</li>
+<li><b>Fix</b> <a href="https://github.com/cimug-org/CIMTool/issues/6">#6</a>, <a href="https://github.com/cimug-org/CIMTool/issues/14">#14</a>, <a href="https://github.com/cimug-org/CIMTool/issues/21">#21</a>, <a href="https://github.com/cimug-org/CIMTool/issues/39">#39</a> and <a href="https://github.com/cimug-org/CIMTool/issues/40">#40</a>: Fixes to the XSD builders, to startup on recent Java 8 releases, to the <code>profile-doc-rtf</code> builder entry, and to the CIMCheck classpath.</li>
+</ul>
+
+<h2 id="earlier">Releases 1.9.7 and Earlier</h2>
+<p>The change history before <b>CIMTool</b> moved to GitHub, as recorded at the time.</p>
+
+<h3 id="release-1-9-7">Release 1.9.7</h3><ul><li><p>correction: .eap files are closed after parsing and can now be deleted from a project.</p></li></ul><h3 id="release-1-9-6">Release 1.9.6</h3><ul><li><p>enhancement: platform updated to eclipse Indigo.</p></li><li><p>enhancement: direct import of EA project files. This is now the default
 option on the import file selector.  The capability is provided by a new
-release of the jackcess library with MS Jet3 compatitbility.</p></li><li><p>enhancement: convenience button for the CIM 16 namespace.</p></li><li><p>correction: help facility restored.</p></li></ul><h2>Release 1.9.5 </h2><p>This is one of a series of beta testing releases.  
+release of the jackcess library with MS Jet3 compatitbility.</p></li><li><p>enhancement: convenience button for the CIM 16 namespace.</p></li><li><p>correction: help facility restored.</p></li></ul><h3 id="release-1-9-5">Release 1.9.5</h3><p>This is one of a series of beta testing releases.  
 See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>Map primitive 'duration' to xs:duration.  (Note: we already map decimal, date,
 time, dateTime to XSD types of the same name.)</p></li><li><p>Mappings of AbsoluteDate and AbsoluteTime removed. (Can't remove
 other oddball mappings such as AbsoluteDateTime because that would affect 
-legacy schema generation.)</p></li></ul><h2>Release 1.9.4 </h2><p>This release was not generally made available pending resolution of CIM data and time
+legacy schema generation.)</p></li></ul><h3 id="release-1-9-4">Release 1.9.4</h3><p>This release was not generally made available pending resolution of CIM data and time
 type issues.  </p><p>This is one of a series of beta testing releases.  
-See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>Hard coded translation of CIM datatypes AbsoluteDate and AbsoluteTime to xs:date and xs:time.  This is to get around a (hopefully temporary) problem in the CIM where these identifiers were used instead of the XSD ones.</p></li></ul><h2>Release 1.9.3 </h2><p>This is one of a series of beta testing releases.  
+See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>Hard coded translation of CIM datatypes AbsoluteDate and AbsoluteTime to xs:date and xs:time.  This is to get around a (hopefully temporary) problem in the CIM where these identifiers were used instead of the XSD ones.</p></li></ul><h3 id="release-1-9-3">Release 1.9.3</h3><p>This is one of a series of beta testing releases.  
 See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>enhancement: profile repair and remapping to the CIM will ignore
 case when searching for a CIM term if an exact match can't be found.</p></li><li><p>Java SE 1.6 is now the minimum requirement for the JVM</p></li><li><p>correction: a bug interpreting .eap files caused namespaces to
 be incorrectly assigned in some cases.</p></li><li><p>enhancement: recognise ontology headers in annotations files. 
 The given namespace overrides the default namespace for their
 schema (or CIM).  This also triggers an improved package URI 
 generation scheme.</p></li><li><p>correction: change the heap memory maximum to 1GB (from 2GB) 
-allowing the product version of CIMTool to run on more systems.</p></li><li><p>enhancement: cosmetic changes to startup.</p></li><li><p>enhancement: added schema mapping wizard to 'new' menu.</p></li></ul><h2>Release 1.9.2 </h2><p>This is one of a series of beta testing releases.  
+allowing the product version of CIMTool to run on more systems.</p></li><li><p>enhancement: cosmetic changes to startup.</p></li><li><p>enhancement: added schema mapping wizard to 'new' menu.</p></li></ul><h3 id="release-1-9-2">Release 1.9.2</h3><p>This is one of a series of beta testing releases.  
 See the blurb, New and Notable for 1.9. This release adds:</p><ul><li><p>enhancement: tree views in the user interface retain their state
 accross refreshes including save profile and navigation away from
 a node and back again.  This makes it easier to keep your place in 
 the model during profile building.</p></li><li><p>Updated Ecore functionality to enable registered EPackages to be used for the base schema.  
 Updates to the Ecore generation to ensure profiled Ecore matches the package hierarchy 
-of the base if the base is also Ecore.  Removed unused legacy merged schema generation</p></li></ul><h2>Release 1.9.1 </h2><p>This is a beta testing release to trial a number of major changes.  
-See the blurb,  New and Notable for 1.9. In summary:</p><ul><li><p>Generalised profile editing.</p></li><li><p>Schema mapping and extension editor.</p></li><li><p>Ecore model support.</p></li><li><p>Recognise new CIMDatatype stereotype.</p></li></ul><h2>Release 1.8.3 </h2><ul><li><p>correction: improved backwards compatibility with version 1.7 for profile (.owl) files.  
+of the base if the base is also Ecore.  Removed unused legacy merged schema generation</p></li></ul><h3 id="release-1-9-1">Release 1.9.1</h3><p>This is a beta testing release to trial a number of major changes.  
+See the blurb,  New and Notable for 1.9. In summary:</p><ul><li><p>Generalised profile editing.</p></li><li><p>Schema mapping and extension editor.</p></li><li><p>Ecore model support.</p></li><li><p>Recognise new CIMDatatype stereotype.</p></li></ul><h3 id="release-1-8-3">Release 1.8.3</h3><ul><li><p>correction: improved backwards compatibility with version 1.7 for profile (.owl) files.  
 A profile can be round-tripped from 1.7 to 1.8.2 and back repeatedly.  In 1.8.2
 this caused errors in the profile editor.</p></li><li><p>enhancement: basic validation for the new standard headers in CIM/XML documents. 
-This reduces the number of spurious validation errors.</p></li></ul><h2>Release 1.8.2 </h2><p>The release corrects the following defect in 1.8.1:</p><ul><li><p>correction: a defect in handling of attributes (datatype properties) caused 
-spurious validation errors and incorrectly generated XML schema.  </p></li></ul><h2>Release 1.8.1 </h2><p>This release incorporates changes to make CIMTool compatible with commonly used ontology editors.
+This reduces the number of spurious validation errors.</p></li></ul><h3 id="release-1-8-2">Release 1.8.2</h3><p>The release corrects the following defect in 1.8.1:</p><ul><li><p>correction: a defect in handling of attributes (datatype properties) caused 
+spurious validation errors and incorrectly generated XML schema.  </p></li></ul><h3 id="release-1-8-1">Release 1.8.1</h3><p>This release incorporates changes to make CIMTool compatible with commonly used ontology editors.
 It has been tested with Protege 4 and Top Braid 3.2.</p><ul><li><p>enhancement: namespaces for OWL files are not longer stored as properties in the CIMTool project
 they are embedded in the files as part of the ontology header.  This change affects the user 
 interface for profile properties as well as several wizards and the Detail tab of the profile
 editor for the root element of the profile.  </p></li><li><p>enhancement: the ontology header is now compliant and includes the profile description, label, 
 and (implicitly) namespace. the .owl header includes an import for the merged information schema.</p></li><li><p>enchancement: CIM datatypes are now modeled using equivalentClass axioms.  Anonymous classes in their
-profile are linked by equivalentClass or subClass to their respective information model classes.</p></li></ul><h2>Release 1.7.3 </h2><ul><li><p>correction: profile validation rules for the case where a member of a child class is lifted into a parent 
-caused spurious diagnostics. This affected the EndDeviceAssett profile in the IEC 61968 part 9 profiles.</p></li></ul><h2>Release 1.7.2 </h2><ul><li><p>correction: Older Rose based CIM versions sometimes have invalid, top level datatype definitions.
+profile are linked by equivalentClass or subClass to their respective information model classes.</p></li></ul><h3 id="release-1-7-3">Release 1.7.3</h3><ul><li><p>correction: profile validation rules for the case where a member of a child class is lifted into a parent 
+caused spurious diagnostics. This affected the EndDeviceAssett profile in the IEC 61968 part 9 profiles.</p></li></ul><h3 id="release-1-7-2">Release 1.7.2</h3><ul><li><p>correction: Older Rose based CIM versions sometimes have invalid, top level datatype definitions.
 Attempts in release 1.4.1 to deal with these in some older EDF CIM versions broke compatibility 
 with some older Siemens models. They are now interpreted even more flexibly in the light of other 
-definitions to obtain a valid overall model.  </p></li></ul><h2>Release 1.7.1 </h2><ul><li><p>correction: the inverse properties that are added the profile for the &quot;augmented&quot; OWL and RDFS
-artifacts are incorrect when the range and domain are related by inheritance.</p></li></ul><h2>Release 1.6.9 </h2><ul><li><p>enhancement: new .simple-flat-owl format which corresponds to the simple-owl format 
-in version 1.6.3 </p></li></ul><h2>Release 1.6.8 </h2><ul><li><p>enhancement: new options on the profile add/remove page control whether super or sub class members are available. 
-It is now possible to redefine or separately define a member in subclasses.</p></li></ul><h2>Release 1.6.7 </h2><ul><li><p>correction: ensure artifact generation runs to completion even when a profile contains severe errors.</p></li></ul><h2>Release 1.6.6 </h2><ul><li><p>correction: a problem introduced in 1.6.5 that prevented importing Enterprise Architect Jet4 projects</p></li></ul><h2>Release 1.6.5 </h2><ul><li><p>enhancement: additional help</p></li><li><p>correction: corrected problem introduced in 1.6.4 with the new simple-owl format that also affected validation</p></li><li><p>note: deployment now contains separate plugins for the main supporting libraries</p></li></ul><h2>Release 1.6.4 </h2><ul><li><p>new feature: profile searching and enhanced CIM searches.  The search wizard is now available
+definitions to obtain a valid overall model.  </p></li></ul><h3 id="release-1-7-1">Release 1.7.1</h3><ul><li><p>correction: the inverse properties that are added the profile for the &quot;augmented&quot; OWL and RDFS
+artifacts are incorrect when the range and domain are related by inheritance.</p></li></ul><h3 id="release-1-6-9">Release 1.6.9</h3><ul><li><p>enhancement: new .simple-flat-owl format which corresponds to the simple-owl format 
+in version 1.6.3 </p></li></ul><h3 id="release-1-6-8">Release 1.6.8</h3><ul><li><p>enhancement: new options on the profile add/remove page control whether super or sub class members are available. 
+It is now possible to redefine or separately define a member in subclasses.</p></li></ul><h3 id="release-1-6-7">Release 1.6.7</h3><ul><li><p>correction: ensure artifact generation runs to completion even when a profile contains severe errors.</p></li></ul><h3 id="release-1-6-6">Release 1.6.6</h3><ul><li><p>correction: a problem introduced in 1.6.5 that prevented importing Enterprise Architect Jet4 projects</p></li></ul><h3 id="release-1-6-5">Release 1.6.5</h3><ul><li><p>enhancement: additional help</p></li><li><p>correction: corrected problem introduced in 1.6.4 with the new simple-owl format that also affected validation</p></li><li><p>note: deployment now contains separate plugins for the main supporting libraries</p></li></ul><h3 id="release-1-6-4">Release 1.6.4</h3><ul><li><p>new feature: profile searching and enhanced CIM searches.  The search wizard is now available
 on the profile outline as well as the add/remove page and the project model view.  The wizard
 now shows all matching classes, properties or other items in a list with context and allows 
 the user to navigate to a specific hit.</p></li><li><p>enhancement: the Project Model View and the Documentation view now track selections made in the
 profile editor add/remove page and profile outline.  This makes it much easier to choose items
 to add to a profile.  It also works well with the new profile search wizard to explore a profile.</p></li><li><p>enhancement: the format of the simple-owl and simple-owl-augmented files has been changed to 
 eliminate all nodeID attributes.   Restriction elements are nested directly in Class elements
-to which they apply.  Some URI's have been shortened due better choice of the base namespace.</p></li></ul><h2>Release 1.6.3 </h2><ul><li><p>enhancement: more robust import of Enterprise Architect project databases, 
-ignoring errors such as disconnected attributes.</p></li></ul><h2>Release 1.6.2 </h2><ul><li><p>new feature: the Documentation View continuously shows documentation from the CIM 
+to which they apply.  Some URI's have been shortened due better choice of the base namespace.</p></li></ul><h3 id="release-1-6-3">Release 1.6.3</h3><ul><li><p>enhancement: more robust import of Enterprise Architect project databases, 
+ignoring errors such as disconnected attributes.</p></li></ul><h3 id="release-1-6-2">Release 1.6.2</h3><ul><li><p>new feature: the Documentation View continuously shows documentation from the CIM 
 for the current selection.  To see this view, enter the CIMTool perspective using 
 Window &gt; Open Perspective and reset it using Window &gt; Reset Perspective.</p></li><li><p>new feature: the Browsing Perspective is designed for browsing the CIM.  To use it,
 choose Window &gt; Open Perspective &gt; CIMTool &gt; Browsing and select a project in the Project
@@ -76,7 +215,7 @@ especially if the UML diagrams are not complete.</p></li><li><p>enhancement: add
 detect and repair several profile problems discovered in the wild.  A rule that caused a
 false alarm in the 61968-9 profiles has been rectified.</p></li><li><p>enhancement: the Project Model View now has a Jump button (next to Search) that 
 moves the selection to the opposite end of an association or subclass-superclass
-relationship.</p></li><li><p>correction: Resource names containing spaces caused processing of the project to stall.</p></li></ul><h2>Release 1.6.1 </h2><ul><li><p>new feature: Profile Repair Assistant.</p><p>The Profile Repair Assistant helps correct errors in profiles, especially those which
+relationship.</p></li><li><p>correction: Resource names containing spaces caused processing of the project to stall.</p></li></ul><h3 id="release-1-6-1">Release 1.6.1</h3><ul><li><p>new feature: Profile Repair Assistant.</p><p>The Profile Repair Assistant helps correct errors in profiles, especially those which
 arise when the profile is paired with an updated CIM.</p><p>Each time a profile is saved or a the CIM schema is changed, the profile is checked against
 a set of rules.  If any errors are detected, a repair file appears as a red icon adjacent to
 the profile in the project explorer.</p><p>Opening the repair file causes the repair assistant to run, which displays the errors and 
@@ -91,25 +230,25 @@ differently to normal classes.</p></li><li><p>enhancement: namespaces and other 
 to be exported and imported between projects without loss of information or functionality.</p></li><li><p>enhancement: commonly used namespaces are offered by the schema import and project creation wizards.</p></li><li><p>enhancement: profile namespace checked against schema namespaces in the import profile and
 new profile wizards.  conflicts between the profile namespaces and a schema namespace are prevented.</p></li><li><p>enhancement: improved software update system (better support of the P2 provisioning system)</p></li><li><p>enhancement: now based on eclipse 3.5 (Galileo)</p></li><li><p>correction: the namespace field in the import schema wizard was ignored.</p></li><li><p>correction: cases where the build system failed to trigger a build or triggered
 the same build twice corrected.</p></li><li><p>correction: the bases of an anonymous profile class could not be changed on the
-hierarchy page of the profile editor.</p></li></ul><h2>Release 1.5.5 </h2><ul><li><p>new feature: CIMTool can now generate java class definitions with JPA annotations.
+hierarchy page of the profile editor.</p></li></ul><h3 id="release-1-5-5">Release 1.5.5</h3><ul><li><p>new feature: CIMTool can now generate java class definitions with JPA annotations.
 These classes can be used in a java program to implement the objects of a CIM profile. </p><p>The JPA (Java Persistance API) annotations map the classes to relational database tables.  
 Thus the CIM profile objects can be loaded from and saved to a database with a minimum of effort. 
 The JPA feature has been tested with a Hibernate and Oracle combination. See <a class="external" href="http://hibernate.org">http://hibernate.org</a> </p><p>The database can be created using the DDL feature released in version 1.4.4.</p><p>To use these features, check the SQL and java builder options on the summary page of your
 CIM profile.  SQL and java artifacts will be created.  The database structure is 
-described in the CIMTool help.</p></li><li><p>correction: a regression in version 1.5.4 affecting mRID fields in SQL artifacts was fixed.</p></li></ul><h2>Release 1.5.4 </h2><ul><li><p>enhancement: A description can be added to a profile
+described in the CIMTool help.</p></li><li><p>correction: a regression in version 1.5.4 affecting mRID fields in SQL artifacts was fixed.</p></li></ul><h3 id="release-1-5-4">Release 1.5.4</h3><ul><li><p>enhancement: A description can be added to a profile
 and edited on the profile editor detail tab. It will appear
 in the HTML documentation and as an annotation to any XML schema.</p></li><li><p>enhancement: The profile envelope name is now preserved when
 profiles or projects containing profiles are exported and imported.
 It, and the description, are stored within the profile OWL file and
-it is edited on the detail tab instead of the property dialog box. </p></li></ul><h2>Release 1.5.3 </h2><ul><li><p>enhancement: HTML profile documentation changed to more closely
+it is edited on the detail tab instead of the property dialog box. </p></li></ul><h3 id="release-1-5-3">Release 1.5.3</h3><ul><li><p>enhancement: HTML profile documentation changed to more closely
 follow the part 301 format.  Inherited members are shown for each
-class, grouped by superclass.</p></li></ul><h2>Release 1.5.2 </h2><ul><li><p>enhancement: accept comments encoded in as 'description' tags 
+class, grouped by superclass.</p></li></ul><h3 id="release-1-5-2">Release 1.5.2</h3><ul><li><p>enhancement: accept comments encoded in as 'description' tags 
 from some XMI documents generated by EA</p></li><li><p>correction: the outline and add/remove display was not updating following the 
-assignment of a type to an element (ie a profile property).</p></li></ul><h2>Release 1.5.1 </h2><ul><li><p>enhancement: updated CIMTool help</p></li><li><p>correction: the remap profile to schema function failed for some profiles</p></li><li><p>package with eclipse 3.4 platform for windows (no JDT hence lighter download)</p></li></ul><h2>Development Releases 1.4.* </h2><p>Caveat: Releases 1.4.* are development releases.  They contain internal changes in 
+assignment of a type to an element (ie a profile property).</p></li></ul><h3 id="release-1-5-1">Release 1.5.1</h3><ul><li><p>enhancement: updated CIMTool help</p></li><li><p>correction: the remap profile to schema function failed for some profiles</p></li><li><p>package with eclipse 3.4 platform for windows (no JDT hence lighter download)</p></li></ul><h3 id="development-releases-1-4">Development Releases 1.4.*</h3><p>Caveat: Releases 1.4.* are development releases.  They contain internal changes in 
 preparation for the a new guided profile update feature. While they pass the CIMTool 
 test suite and unstructured testing, there could nevertheless be regressions. </p><p>The 1.4.* releases can be only obtained from an eclipse update site at:
 <a class="external" href="http://files.cimtool.org/development">http://files.cimtool.org/development</a> </p><p>Stable releases are preferred and these are available in a number of forms 
-detailed here: <a class="internal" href="http://wiki.cimtool.org/Download.html">http://wiki.cimtool.org/Download.html</a></p><h2>Development Release 1.4.4 </h2><ul><li><p>new feature: CIMTool can now generate a database schema from a CIM profile. 
+detailed here: <a class="internal" href="http://wiki.cimtool.org/Download.html">http://wiki.cimtool.org/Download.html</a></p><h3 id="development-release-1-4-4">Development Release 1.4.4</h3><ul><li><p>new feature: CIMTool can now generate a database schema from a CIM profile. 
 This is done by selecting the &quot;SQL&quot; option in the profile editor. An SQL92
 DDL artifact is generated. This has been tested for compatibility with 
 Oracle 10g.</p><p>The generated code includes tables and fields for classes and properties
@@ -120,11 +259,11 @@ previous release and would yield no results.</p></li><li><p>correction: a regres
 extracted from xmi to be incorrect.</p></li><li><p>correction: a regression in the &quot;make leaf classes concrete&quot; function caused
 all classes to be marked as not concrete.</p></li><li><p>correction: an infinite loop when generating artifacts from some profiles
 containing a circular association.</p></li><li><p>correction: the eclipse platform sometimes reported errors when a profile
-was deleted.</p></li></ul><h2>Development Release 1.4.3 </h2><ul><li><p>enhancement: comparisons of profiles to profiles or schema to schema are now much faster and 
+was deleted.</p></li></ul><h3 id="development-release-1-4-3">Development Release 1.4.3</h3><ul><li><p>enhancement: comparisons of profiles to profiles or schema to schema are now much faster and 
 require much less memory.  These operations now use CIMTool's cache for the inputs. </p></li><li><p>enhancement: Repair and remap profile function now corrects the namespace of 
 enumeration values</p></li><li><p>enhancement: enumerations can now be added directly to the profile 
 (previsously they were added only as a side effect of property definition)</p></li><li><p>correction: a regression prevented restriction of the range of a property to a subclass.</p></li><li><p>correction: enumeration restrictions were not carried into the generated OWL and RDFS
-artifacts and were not validated in instance documents.</p></li></ul><h2>Development Release 1.4.2 </h2><ul><li><p>new feature: profile consistency checking and problem display. CIMTool will
+artifacts and were not validated in instance documents.</p></li></ul><h3 id="development-release-1-4-2">Development Release 1.4.2</h3><ul><li><p>new feature: profile consistency checking and problem display. CIMTool will
 check each profile against the project schema during the build phase.  
 Inconsistencies are recorded in a diagnostic file which can be viewed with
 CIMTool's diagnostic editor (also used for instance validation).</p><p>When consistency errors exist error markers appear on the profile resource
@@ -142,7 +281,7 @@ associate a namespace prefix such as 'ext' with each individual class,
 association or attribute.   To use this information you must declare
 each prefix in the annotation file with a statement like this:  </p><p>&lt;http://www.ercot.com/CIM11R0/2008/2.0/extension#&gt; uml:uriHasPrefix &quot;etx&quot; .</p></li><li><p>enhancements to support some older versions of CIM and EDF models: </p><ul><li><p>do not accept top level datatype definitions in an XMI file as written.
 Flexibly assign a type to these identifiers based on related definitions
-found elsewhere in the model.</p></li><li><p>accept 'units' as well as 'unit' for the units attribute of a datatype</p></li></ul></li><li><p>correction: the baseuri tag was not recognised in some XMI files.</p></li><li><p>corrections: various regressions introduced in the 1.4.1 development release.</p></li></ul><h2>Development Release 1.4.1 </h2><ul><li><p>First release with internal changes to the ontology API needed for future
+found elsewhere in the model.</p></li><li><p>accept 'units' as well as 'unit' for the units attribute of a datatype</p></li></ul></li><li><p>correction: the baseuri tag was not recognised in some XMI files.</p></li><li><p>corrections: various regressions introduced in the 1.4.1 development release.</p></li></ul><h3 id="development-release-1-4-1">Development Release 1.4.1</h3><ul><li><p>First release with internal changes to the ontology API needed for future
 features.</p></li><li><p>new feature: Schema comparison using the eclipse compare functionality.
 Each project has at least one schema file (generally a .xmi file) in the Schema folder.
 To compare two schemas, select them in the Navigator, right click and
@@ -150,7 +289,7 @@ choose Compare With &gt; Each Other.  To compare a schema with a recent
 version select it, right click and choose Compare With &gt; Local History.</p></li><li><p>new feature: Integrated help.  To access CIMTool help and documentation within
 eclipse, choose Help &gt; Help Contents from the main menu.  Look for the topic
 &quot;Common CIMTool Tasks&quot; in the table of contents. In the release, the included
-help consists of the most useful material from the <a class="internal" href="http://wiki.cimtool.org/index.html">http://cimtool.org</a> web site.</p></li></ul><h2>Release 1.3.3 </h2><ul><li><p>new feature: &quot;Add package name to default schema namespaces&quot; preference causes 
+help consists of the most useful material from the <a class="internal" href="http://wiki.cimtool.org/index.html">http://cimtool.org</a> web site.</p></li></ul><h3 id="release-1-3-3">Release 1.3.3</h3><ul><li><p>new feature: &quot;Add package name to default schema namespaces&quot; preference causes 
 unique RDF namespaces to be generated from the UML package hierarchy.</p></li><li><p>new feature: CIM/XML profiles can now have more than one restriction, in different
 contexts, on the same property. This was previously only supported for XSD profiles.</p><p>The simple-owl format now preserves all property restrictions and the validation 
 rules have been reworked to enforce them. </p><p>The standard CIM/XML RDFS format cannot support this and CIMTool rolls up the 
@@ -160,10 +299,10 @@ classes.  </p></li><li><p>correction: use the concrete stereotype in validation 
 treating the leaf classes as concrete.  The &quot;Stereotype leaf classes
 as concrete&quot; operation can be used to obtain the previous behaviour. </p></li><li><p>enhancement: stereotypes assigned in the profile editor are copied into the
 generated RDFS and simple-OWL.</p></li><li><p>enhancement: build target flags and stereotypes defined in a profile are 
-preserved in the &quot;Reorganize per RDFS Rules&quot; operation.</p></li><li><p>enhancement: the property sheet view for diagnostic nodes has been improved.</p></li><li><p>enhancement: tested with eclipse 3.4 (Ganymede) </p></li></ul><h2>Release 1.3.2 </h2><ul><li><p>correction: allow unnamed schema properties to be profiled</p></li><li><p>new feature: sawsdl semantic annotations in generated XML Schema 
+preserved in the &quot;Reorganize per RDFS Rules&quot; operation.</p></li><li><p>enhancement: the property sheet view for diagnostic nodes has been improved.</p></li><li><p>enhancement: tested with eclipse 3.4 (Ganymede) </p></li></ul><h3 id="release-1-3-2">Release 1.3.2</h3><ul><li><p>correction: allow unnamed schema properties to be profiled</p></li><li><p>new feature: sawsdl semantic annotations in generated XML Schema 
 see: <a class="external" href="http://www.w3.org/TR/sawsdl/">http://www.w3.org/TR/sawsdl/</a></p></li><li><p>enhancement: generated HTML profile documentation reworked with 
 better ordering and formating of information. </p></li><li><p>enhancement: package names added to properties sheet
-and generated profile documentation. </p></li></ul><h2>Release 1.3.1 </h2><ul><li><p>new feature: Property sheet view shows details of the selected 
+and generated profile documentation. </p></li></ul><h3 id="release-1-3-1">Release 1.3.1</h3><ul><li><p>new feature: Property sheet view shows details of the selected 
 profile or schema definition. This view has been added to the
 CIMTool perspective.  From the menu choose Window &gt; Reset Perspective 
 to update your perspective. The property sheet replaces some of the
@@ -176,10 +315,10 @@ EA models with CIMTool using those XMI export settings.</p></li><li><p>new featu
 can be built from a profile.  The new targets provide both a 
 forward and inverse property for each property defined in the profile.  
 They replace the old nested-simple-owl and nested-legacy-rdfs build targets.  
-Build new build targets can be selected on the profile editor summary page.   </p></li></ul><h2>Release 1.2.5 </h2><ul><li><p>new feature: add a class hierarchy page to the profile editor</p></li><li><p>new feature: allow more than one named profile per information model class</p></li><li><p>correction to search feature: failed to display matches in some cases</p></li></ul><h2>Release 1.2.4 </h2><ul><li><p>change schema tree icons to reflect UML aggregation and composition</p></li><li><p>the 'make leaf classes concrete' option in the profile editor now does exactly that and ignores other</p></li><li><p>capture aggregation annotations from Unisys XMI input</p></li><li><p>support for non-standard primitive to XSD part II mappings</p></li></ul><h2>Release 1.2.3 </h2><ul><li><p>Fix regression: ProjectModelView not responding to selection or double click</p></li></ul><h2>Release 1.2.2 </h2><ul><li><p>Fix a jena ConversionException when remapping profile to new CIM namespace.</p></li><li><p>Add missing wizard for new incremental validation rules.</p></li><li><p>Correct title in import schema wizard.</p></li></ul><h2>Release 1.2.1 </h2><ul><li><p>Released under <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/lgpl.html">LGPL</a>.</p></li><li><p>Remove a Java 6 dependency.</p></li></ul><h2>Release 1.1.7 </h2><ul><li><p>Added AbsoluteDateTime to the built-in list of fundamental types. It is 
+Build new build targets can be selected on the profile editor summary page.   </p></li></ul><h3 id="release-1-2-5">Release 1.2.5</h3><ul><li><p>new feature: add a class hierarchy page to the profile editor</p></li><li><p>new feature: allow more than one named profile per information model class</p></li><li><p>correction to search feature: failed to display matches in some cases</p></li></ul><h3 id="release-1-2-4">Release 1.2.4</h3><ul><li><p>change schema tree icons to reflect UML aggregation and composition</p></li><li><p>the 'make leaf classes concrete' option in the profile editor now does exactly that and ignores other</p></li><li><p>capture aggregation annotations from Unisys XMI input</p></li><li><p>support for non-standard primitive to XSD part II mappings</p></li></ul><h3 id="release-1-2-3">Release 1.2.3</h3><ul><li><p>Fix regression: ProjectModelView not responding to selection or double click</p></li></ul><h3 id="release-1-2-2">Release 1.2.2</h3><ul><li><p>Fix a jena ConversionException when remapping profile to new CIM namespace.</p></li><li><p>Add missing wizard for new incremental validation rules.</p></li><li><p>Correct title in import schema wizard.</p></li></ul><h3 id="release-1-2-1">Release 1.2.1</h3><ul><li><p>Released under <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/lgpl.html">LGPL</a>.</p></li><li><p>Remove a Java 6 dependency.</p></li></ul><h3 id="release-1-1-7">Release 1.1.7</h3><ul><li><p>Added AbsoluteDateTime to the built-in list of fundamental types. It is 
 mapped to an xsd:datetime</p></li><li><p>Fixed a regression that prevented the Import Incremental Model wizard from 
 being completed.</p></li><li><p>Fixed a regression in the Validation View in the Validation Perspective. The 
-view action buttons were missing.</p></li></ul><h2>Release 1.1.6 </h2><ul><li><p>Fixed a bug in the backwards compatibility code for the 1.1.5 profile format 
+view action buttons were missing.</p></li></ul><h3 id="release-1-1-6">Release 1.1.6</h3><ul><li><p>Fixed a bug in the backwards compatibility code for the 1.1.5 profile format 
 change. The symptom was a failure to generate XML schemas from profile 
 created in earlier versions.</p></li><li><p>A bug in the handling of the unit attribute of datatype definitions has been 
 corrected.Unit and multiplier values should now be captured in the 
@@ -188,21 +327,21 @@ seem to be many multiplier values defined in the CIM so far.) To see this
 output choose File|Export|CIMTool|Export Merged Schema from the menus. </p></li><li><p>The schema search wizard has been added to the profile editor.Look for a 
 search button on the top right of the Add/Remove page. Classes can found by 
 typing in a few characters of their name or the name of one of their 
-properties and selecting the desired match. </p></li></ul><h2>Release 1.1.5 </h2><ul><li><p>The form of the generated XML schema has been changed in the case where a 
+properties and selecting the desired match. </p></li></ul><h3 id="release-1-1-5">Release 1.1.5</h3><ul><li><p>The form of the generated XML schema has been changed in the case where a 
 property is defined with more than one range type. In this case no element 
 is generated for the property and an xsd:choice of element representing the 
 types appears.</p></li><li><p>A new stereotype &quot;Preserve&quot; has been defined. When assigned to a property 
 it causes the property element to be generated wrapping the type elements. 
 This can be used to avoid ambiguities that the above schema generation rule 
 might cause.</p></li><li><p>A schema search wizard has been added for testing. It is accessed from the 
-project model view toolbar.</p></li></ul><h2>Release 1.1.4 </h2><ul><li><p>Numerical cardinality values other than 0, 1 and unbounded are now 
+project model view toolbar.</p></li></ul><h3 id="release-1-1-4">Release 1.1.4</h3><ul><li><p>Numerical cardinality values other than 0, 1 and unbounded are now 
 supported.</p></li><li><p>The Add/Remove tab now has fields for entering the min and max 
 cardinality of a property as well as check boxes for the common options. As 
 before, cardinality values that would exceed those defined in the CIM for the 
 given property are not allowed.</p></li><li><p>Cardinality values are carried through the generated XML schema. In the 
 generated RDFS or simple-owl any cardinality greater than one is treated as 
-unbounded because those formats do not allow for arbitrary values.</p></li></ul><h2>Release 1.1.3 </h2><ul><li><p>Completed performance enhancements, improving the display refresh behavior 
-in the profile editor.</p></li></ul><h2>Release 1.1.2 </h2><ul><li><p>Numerous regressions that crept into 1.1.1 have been corrected.</p></li><li><p>Performance of the profile editor has been improved. There may be some 
+unbounded because those formats do not allow for arbitrary values.</p></li></ul><h3 id="release-1-1-3">Release 1.1.3</h3><ul><li><p>Completed performance enhancements, improving the display refresh behavior 
+in the profile editor.</p></li></ul><h3 id="release-1-1-2">Release 1.1.2</h3><ul><li><p>Numerous regressions that crept into 1.1.1 have been corrected.</p></li><li><p>Performance of the profile editor has been improved. There may be some 
 minor display refresh problems introduced by this work, but the editor is 
 much more pleasant to use.</p></li><li><p>A merged schema export wizard has been added. This allows you to export OWL 
 for the schema (as opposed to a profile) to a file in the workspace, which 
@@ -225,8 +364,8 @@ transformations and will apply the selected ones in the appropriate order.</p></
 It updates the profile to reference a new schema finding the best match for 
 each class and property. It performs a number of other repairs as well.</p><p>The reorganise operation we present before. Warning: RDFS rules are 
 incompatible with the new property range profiles and these will be lost if 
-this operation is performed.</p><h2>Changes 2008-02-15 </h2><ul><li><p>CIM/XML validator passes the full test suite, available at 
-<a class="external" href="http://files.cimtool.org/Validation-Cases-2008-02-15.zip">http://files.cimtool.org/Validation-Cases-2008-02-15.zip</a></p></li><li><p>Includes incremental CIM/XML validation.  </p></li><li><p>User interface improvements.</p></li></ul><h2>Changes 2008-01-31 </h2><ul><li><p>CIMTool has expanded namespace support described here:
+this operation is performed.</p><h3 id="changes-2008-02-15">Changes 2008-02-15</h3><ul><li><p>CIM/XML validator passes the full test suite, available at 
+<a class="external" href="http://files.cimtool.org/Validation-Cases-2008-02-15.zip">http://files.cimtool.org/Validation-Cases-2008-02-15.zip</a></p></li><li><p>Includes incremental CIM/XML validation.  </p></li><li><p>User interface improvements.</p></li></ul><h3 id="changes-2008-01-31">Changes 2008-01-31</h3><ul><li><p>CIMTool has expanded namespace support described here:
 <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_namespace_support.html">http://wiki.cimtool.org/CIMToolNamespaceSupport.html</a></p><ul><li><p>There is support for multiple extension model namespaces.</p></li><li><p>Optionally, those namespaces can be carried through to 
 profile artifacts (legacy-rdfs and simple-owl).  This corresponds
 to the current practice on the ERCOT project. </p></li><li><p>The pros and cons of the latter practice are discussed here: 
@@ -258,13 +397,13 @@ now has an option to convert all associations to ''by reference''.
 This is mainly useful for CIM/XML profiles where that as the
 correct way to model associations.</p></li><li><p>The ''Remap Profile'' has been temporarily withdrawn.  A more 
 reliable way to adjust a profile when the information model
-namespace(s) change is being developed.</p></li></ul></li></ul></div>
-          
-        </div>  
-          
+namespace(s) change is being developed.</p></li></ul></li></ul>
+
+</div>
+</div>
 <div id="footer">
   <a href="https://cimtool.ucaiug.io">cimtool.ucaiug.io</a>
   <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
 </div>
-      </body>
-    </html>
+</body>
+</html>

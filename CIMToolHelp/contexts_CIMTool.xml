@@ -12,23 +12,27 @@
 
    <context id="project_model_view" title="Project Model View">
       <description>Shows the project's schema (the CIM and any extensions) as a tree of packages, classes and members. It follows your selection in the Project Explorer and the Profile Editor.</description>
-      <topic href="html/workbench_basics.html#views" label="Workbench Basics: Views"/>
+      <topic href="html/browsing_the_cim.html" label="Project Model: Browsing the CIM"/>
+      <topic href="html/workbench_basics.html#project-model" label="Workbench Basics: Project Model"/>
    </context>
 
    <context id="documentation_view" title="Documentation View">
       <description>Shows the schema documentation for the class or property selected in the Project Model, the Project Explorer or the Profile Editor.</description>
-      <topic href="html/workbench_basics.html#views" label="Workbench Basics: Views"/>
+      <topic href="html/documentation_view.html" label="Documentation View"/>
+      <topic href="html/workbench_basics.html#documentation" label="Workbench Basics: Documentation"/>
    </context>
 
-   <context id="profile_preview_view" title="Profile Preview View">
+   <context id="profile_preview_view" title="Profile Real-Time Preview View">
       <description>Shows a live PlantUML diagram of the profile in the active Profile Editor, redrawn each time the profile is saved. The diagram style should match the profile's target.</description>
-      <topic href="html/profile_editor.html#preview-target" label="The Profile Preview and Your Target"/>
-      <topic href="html/workbench_basics.html#views" label="Workbench Basics: Views"/>
+      <topic href="html/profile_preview.html" label="Profile Real-Time Preview"/>
+      <topic href="html/profile_editor.html#preview-target" label="The Profile Real-Time Preview and Your Target"/>
+      <topic href="html/workbench_basics.html#profile-preview" label="Workbench Basics: Profile Real-Time Preview"/>
    </context>
 
    <context id="validation_projects_view" title="Validation Projects View">
       <description>Lists the CIM/XML files imported for validation and the results of validating them against a profile.</description>
-      <topic href="html/workbench_basics.html#views" label="Workbench Basics: Views"/>
+      <topic href="html/how_to_validate_cpsm.html" label="How To Validate CPSM"/>
+      <topic href="html/workbench_basics.html#validation-projects" label="Workbench Basics: Validation Projects"/>
    </context>
 
    <!-- Profile Editor -->
@@ -73,6 +77,19 @@
       <description>Sets the profile's namespace and chooses which builders generate artifacts from the profile when it is saved.</description>
       <topic href="html/profile_editor_summary.html" label="Profile Summary Tab"/>
       <topic href="html/profile_editor.html#target-builders" label="How the Builders Reflect the Target"/>
+   </context>
+
+   <!-- CIMTool Search wizard: the context depends on where the wizard was opened from -->
+
+   <context id="search_wizard_add_remove" title="CIMTool Search">
+      <description>Finds a package or class in the schema by its name, or by the name of one of its attributes or associations, and selects it in the schema pane of the Add/Remove tab so you can add it to the profile.</description>
+      <topic href="html/profile_editor_add_remove.html#search" label="Add/Remove Tab: Search Schema"/>
+      <topic href="html/searching_schemas_and_profiles.html" label="Searching Schemas and Profiles"/>
+   </context>
+
+   <context id="search_wizard" title="CIMTool Search">
+      <description>Finds a definition in the schema or the profile by name. Choose Finish to show the selected item in its view or editor.</description>
+      <topic href="html/searching_schemas_and_profiles.html" label="Searching Schemas and Profiles"/>
    </context>
 
 </contexts>

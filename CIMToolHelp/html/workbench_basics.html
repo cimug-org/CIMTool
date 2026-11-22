@@ -4,6 +4,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Workbench Basics</title>
   <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
 </head>
 <body>
 <div id="header">
@@ -21,8 +23,8 @@
 
 <p><b>CIMTool</b> is built on the Eclipse platform. Its main window, the <i>workbench</i>, is where you manage projects, browse the CIM, edit profiles and review generated artifacts. This topic explains the parts of the workbench you use in everyday CIMTool work. Eclipse features that CIMTool does not include, or that CIMTool work does not need, are listed at the end so you know what to ignore.</p>
 
-<p><img src="images/workbench_basics_window.png" alt="The CIMTool workbench with a profile open" /><br />
-<i>Interim screenshot, to be replaced: the CIMTool workbench with a profile open in the Profile Editor, the Project Explorer and Project Model on the left, the Outline and Help views on the right, and the Profile Preview below the editor. The final screenshot will show the standard CIMTool perspective with callouts for the menu bar, toolbar, perspective bar, views and editor area.</i></p>
+<p><img class="zoomable" src="images/workbench_basics_window.png" alt="The CIMTool workbench with a profile open" /><br />
+<i>Interim screenshot, to be replaced: the CIMTool workbench with a profile open in the Profile Editor, the Project Explorer and Project Model on the left, the Outline and Help views on the right, and the Profile Real-Time Preview below the editor. The final screenshot will show the standard CIMTool perspective with callouts for the menu bar, toolbar, perspective bar, views and editor area.</i></p>
 
 <h2 id="workspace">The Workspace</h2>
 
@@ -34,7 +36,7 @@
 <li>To share work with someone else, exchange projects rather than whole workspaces, because a workspace's internal settings are not portable between users or computers. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a>.</li>
 </ul>
 
-<p>Each CIMTool project contains five folders, listed in the Project Explorer as <b>Documentation</b>, <b>Incremental</b>, <b>Instances</b>, <b>Profiles</b> and <b>Schema</b>. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/getting_started.html">Getting Started</a> for what each holds.</p>
+<p>Each CIMTool project contains five folders, listed in the Project Explorer as <b>Documentation</b>, <b>Incremental</b>, <b>Instances</b>, <b>Profiles</b> and <b>Schema</b>. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_explorer.html">Project Explorer and Project Folders</a> for what each holds.</p>
 
 <h2 id="window">The Workbench Window</h2>
 
@@ -58,7 +60,7 @@
 
 <table class="wiki">
 <tr><th>Perspective</th><th>Use it for</th><th>Views it shows</th></tr>
-<tr><td><b>CIMTool</b> (default)</td><td>Creating projects, editing profiles and reviewing generated artifacts</td><td>Project Explorer and Project Model on the left; Outline on the right; Profile Preview, CIMTool PlantUML Svg, Documentation and Properties below the editor area</td></tr>
+<tr><td><b>CIMTool</b> (default)</td><td>Creating projects, editing profiles and reviewing generated artifacts</td><td>Project Explorer and Project Model on the left; Outline on the right; Profile Real-Time Preview, PlantUML Svg, Documentation and Properties below the editor area</td></tr>
 <tr><td><b>Browsing</b></td><td>Exploring the CIM without editing a profile</td><td>Project Explorer and Properties on the left; Project Model and Documentation on the right</td></tr>
 <tr><td><b>Validation</b></td><td>Validating CIM/XML instance files against a profile</td><td>Validation Projects and Problems on the left; Project Model and Outline on the right; Progress below the editor area</td></tr>
 </table>
@@ -67,10 +69,13 @@
 
 <ul>
 <li><b>Switch perspective:</b> click its button on the perspective bar.</li>
-<li><b>Open a perspective that is not on the bar:</b> choose <b>Window &gt; Perspective &gt; Open Perspective &gt; Other...</b> and select it.</li>
+<li><b>Open a perspective that is not on the bar:</b> choose <b>Window &gt; Perspective &gt; Open Perspective</b>. <b>Browsing</b> and <b>Validation</b> are listed there directly; any other perspective is under <b>Other...</b>.</li>
 <li><b>Restore a perspective's original layout:</b> choose <b>Window &gt; Perspective &gt; Reset Perspective...</b>. Use this whenever views have been closed or moved and you want the standard CIMTool layout back.</li>
 <li><b>Keep a customized layout:</b> choose <b>Window &gt; Perspective &gt; Save Perspective As...</b>.</li>
 </ul>
+
+<p><img class="zoomable" src="images/workbench_basics_open_perspective.png" alt="The Window menu open at Perspective, Open Perspective, listing Browsing, Validation and Other" /><br />
+<i>Opening the Browsing or Validation perspective from the <b>Window</b> menu.</i></p>
 
 <p>The <i>Open Perspective</i> list also includes perspectives such as Java and Debug. They come from Eclipse components that CIMTool includes, and they are not used for CIMTool work.</p>
 
@@ -80,29 +85,48 @@
 
 <table class="wiki">
 <tr><th>View</th><th>What it shows</th></tr>
-<tr><td id="project-explorer">Project Explorer</td><td>Your projects and their files. Double-click a file to open it.</td></tr>
-<tr><td id="project-model">Project Model</td><td>The CIM (the project's merged schema) as a tree of packages, classes and members. It follows your selection in the Project Explorer and the Profile Editor.</td></tr>
-<tr><td id="outline">Outline</td><td>The structure of the active editor. In the Profile Editor, the Outline is where you select the profile element to work on.</td></tr>
-<tr><td id="properties">Properties</td><td>Details of the selected item.</td></tr>
-<tr><td id="documentation">Documentation</td><td>The CIM documentation for the selected class or property.</td></tr>
-<tr><td id="profile-preview">Profile Preview</td><td>A live diagram of the profile in the active Profile Editor, redrawn each time you save. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#preview-target">The Profile Preview and Your Target</a>.</td></tr>
-<tr><td id="plantuml-svg">CIMTool PlantUML Svg</td><td>Diagrams for PlantUML (<code>.puml</code>) files.</td></tr>
-<tr><td id="problems">Problems</td><td>Errors and warnings found by the CIMTool build, such as schema problems and profile inconsistencies. Double-click an entry to go to the resource concerned.</td></tr>
-<tr><td id="progress">Progress</td><td>Background tasks, such as schema import and artifact generation.</td></tr>
-<tr><td id="validation-projects">Validation Projects</td><td>CIM/XML files imported for validation, and their results (Validation perspective).</td></tr>
+<tr><td><span class="anchor" id="project-explorer"></span>Project Explorer</td><td>Your projects and their files. Double-click a file to open it. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_explorer.html">Project Explorer and Project Folders</a>.</td></tr>
+<tr><td><span class="anchor" id="project-model"></span>Project Model</td><td>The CIM (the project's merged schema) as a tree of packages, classes and members. It follows your selection in the Project Explorer and the Profile Editor. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/browsing_the_cim.html">Project Model: Browsing the CIM</a>.</td></tr>
+<tr><td><span class="anchor" id="outline"></span>Outline</td><td>The structure of the active editor. In the Profile Editor, the Outline is where you select the profile element to work on.</td></tr>
+<tr><td><span class="anchor" id="properties"></span>Properties</td><td>Details of the selected item.</td></tr>
+<tr><td><span class="anchor" id="documentation"></span>Documentation</td><td>The CIM documentation for the selected class or property. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/documentation_view.html">Documentation View</a>.</td></tr>
+<tr><td><span class="anchor" id="profile-preview"></span>Profile Real-Time Preview</td><td>A live diagram of the profile in the active Profile Editor, redrawn each time you save, with any problems in the profile marked. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_preview.html">Profile Real-Time Preview</a>.</td></tr>
+<tr><td><span class="anchor" id="plantuml-svg"></span>PlantUML Svg</td><td>Diagrams for PlantUML (<code>.puml</code>) files.</td></tr>
+<tr><td><span class="anchor" id="problems"></span>Problems</td><td>Errors and warnings found by the CIMTool build, such as schema problems and profile inconsistencies. Double-click an entry to go to the resource concerned.</td></tr>
+<tr><td><span class="anchor" id="progress"></span>Progress</td><td>Background tasks, such as schema import and artifact generation.</td></tr>
+<tr><td><span class="anchor" id="validation-projects"></span>Validation Projects</td><td>CIM/XML files imported for validation, and their results (Validation perspective). See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/how_to_validate_cpsm.html">How To Validate CPSM</a>.</td></tr>
 </table>
 
 <p><i>[Screenshot: the CIMTool perspective with each view labelled. Until then, see the workbench screenshot at the top of this page.]</i></p>
 
-<p><b>Opening a view:</b> choose <b>Window &gt; Show View</b> and pick the view; if it is not listed, choose <b>Window &gt; Show View &gt; Other...</b>, where the CIMTool views are grouped under <b>CIMTool</b>.</p>
+<p><b>Opening a view:</b> choose <b>Window &gt; Show View</b> and pick the view. In the CIMTool perspective the menu lists the views used in CIMTool work directly. For any other view, choose <b>Other...</b> at the bottom of the menu, where the CIMTool views are grouped under <b>CIMTool</b>.</p>
+
+<p><img class="zoomable" src="images/workbench_basics_show_view.png" alt="The Window menu open at Show View, listing the views of the CIMTool perspective" /><br />
+<i>The <b>Window &gt; Show View</b> menu in the CIMTool perspective.</i></p>
+
+<p><img class="zoomable" src="images/workbench_basics_show_view_other.png" alt="The Show View dialog with the CIMTool folder expanded" /><br />
+<i>The <b>Show View</b> dialog opened by <b>Other...</b>, with the <b>CIMTool</b> folder expanded. Views already open in the current perspective are greyed out; choosing one brings it to the front.</i></p>
 
 <p><b>Arranging views:</b></p>
 <ul>
 <li>Drag a view by its tab to move it. An outline shows where it will dock before you release the mouse.</li>
-<li>Double-click a view's tab, or press <b>Ctrl+M</b>, to maximize it; do the same again to restore it. This is useful for the Profile Preview diagram.</li>
+<li>Double-click a view's tab, or press <b>Ctrl+M</b>, to maximize it; do the same again to restore it. This is useful for the Profile Real-Time Preview diagram.</li>
 <li>Use the minimize button on a view stack to shrink it to a strip at the window edge; click the strip's icons to bring the views back.</li>
-<li>Drag a view outside the window to <i>detach</i> it into its own window, for example to put the Profile Preview on a second monitor. Drag it back to re-attach it.</li>
+<li>Drag a view outside the window to <i>detach</i> it into its own window, for example to put the Profile Real-Time Preview on a second monitor. Drag it back by its tab to re-attach it, as the note below explains.</li>
 </ul>
+
+<div class="note">
+<p class="note-title">Putting a detached view back: drag the tab, not the window</p>
+<p>To re-attach a detached view, drag its <b>tab</b>, not the title bar of its window. Dragging the title bar only moves the window and never docks it. Hold the tab and drag it over the <b>CIMTool</b> window. Before you let go, Eclipse shows where the view will go: an outline over a group of tabs, or a thin double vertical line running the height of the window for a column of its own. The detached window closes when its last tab leaves it.</p>
+<p>To put the help views back where they started, move them one at a time, because each tab is dragged on its own:</p>
+<ol>
+<li>Drag the first tab, for example <b>CIMTool Context Help</b>, and release when the thin double vertical line appears. This restores the full-height help column on the right-hand side.</li>
+<li>Drag the other tab, <b>Help</b>, onto the first one's tab row, and release when the outline appears over it. The two views then share the column again, as tabs side by side.</li>
+</ol>
+<p><img class="zoomable" src="images/workbench_basics_dock_help_column.png" alt="The thin double vertical line shown while dragging a help view back to the right-hand side" /><br />
+<i>The thin double vertical line shown while dragging a help view back. Releasing here restores the full-height help column on the right-hand side.</i></p>
+<p><b>Help Contents</b> opens in a separate help window, not a view, so it can't be docked. If a view won't dock, <b>Window &gt; Perspective &gt; Reset Perspective...</b> puts every view back in its default layout.</p>
+</div>
 
 <h2 id="editors">Editors</h2>
 
@@ -129,6 +153,8 @@
 <ul>
 <li>Keep <b>Project &gt; Build Automatically</b> switched on (it is on by default). If it is off, saving a profile does not update its artifacts.</li>
 <li>To regenerate every artifact in a project from scratch, choose <b>Project &gt; Clean...</b>, select the project and confirm.</li>
+<li>To generate artifacts without the workbench, for example in a CI/CD pipeline, use the command-line tool; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_cli.html">cimtool-cli: Generating Artifacts Outside the Workbench</a>.</li>
+<li>After you upgrade <b>CIMTool</b>, the first time the new release opens a workspace it regenerates each project's profile artifacts once, in the background, so that existing projects pick up the new release's builder improvements without a manual rebuild. It runs only the builders enabled on each profile. A project opened, added or imported later is regenerated when it first appears. Because this is recorded in the workspace, a project shared through Git is regenerated once in each workspace that opens it.</li>
 <li>Problems found during a build appear in the <b>Problems</b> view and as markers on the files concerned. For example, if CIMTool cannot determine a project's base CIM schema, a problem marker on the schema files explains why and how to fix it, and profile outputs are not generated until it is resolved.</li>
 </ul>
 
@@ -179,7 +205,7 @@
 <ul>
 <li><b>Help &gt; Help Contents</b> opens this help.</li>
 <li><b>Help &gt; Search</b> searches all help topics.</li>
-<li><b>F1</b>, or <b>Help &gt; Show Contextual Help</b>, opens the <b>Help</b> view with help for the part you are working in. Context help is available for the Project Explorer, the Project Model, Documentation, Profile Preview and Validation Projects views, and each tab of the Profile Editor. Where a part has no help of its own, the Help view links to this topic and to Getting Started.</li>
+<li><b>F1</b>, or <b>Help &gt; Show Contextual Help</b>, opens the <b>Help</b> view with help for the part you are working in. Context help is available for the Project Explorer, the Project Model, Documentation, Profile Real-Time Preview and Validation Projects views, and each tab of the Profile Editor. Where a part has no help of its own, the Help view links to this topic and to Getting Started.</li>
 <li>The Help view stays open beside your work and updates as you move between parts, so you can keep it docked while you edit a profile.</li>
 </ul>
 

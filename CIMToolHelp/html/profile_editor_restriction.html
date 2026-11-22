@@ -4,6 +4,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Restriction Tab</title>
   <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
 </head>
 <body>
 <div id="header">
@@ -21,7 +23,7 @@
 
 <p>The <b>Restriction</b> tab narrows what the schema allows for the element selected in the <b>Outline</b> view. For a class, it decides whether the class is concrete and which profiled classes it inherits from. For an attribute or association, it sets the cardinality and, for an association, whether it is By Reference and which classes it may refer to. Together these restrictions shape the schema that the builders generate from the profile.</p>
 
-<p><img src="images/multiple_profiles_screen4.png" alt="The Restriction tab with a class selected" /><br />
+<p><img class="zoomable" src="images/multiple_profiles_screen4.png" alt="The Restriction tab with a class selected" /><br />
 <i>Placeholder from the legacy help, to be replaced: the Restriction tab with a class selected, showing the Select Super Class tree. In this older release the tab was labelled Hierarchy, and the Concrete and descriptor checkboxes above the tree are not shown.</i></p>
 
 <h2 id="outline">Working from the Outline View</h2>
@@ -73,7 +75,7 @@
 
 <p><b>By Reference</b> marks an association so that the generated schema defines it as a reference: instance data identifies the associated object instead of containing it. What that means for the instance data depends on the profile's target; see the By Reference option on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html#options">Add/Remove</a> tab and <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#targets">Profile Targets</a>. The checkbox is not available for attributes.</p>
 
-<p><img src="images/enumerations_support_enums1.png" alt="Cardinality and By Reference for a property" /><br />
+<p><img class="zoomable" src="images/enumerations_support_enums1.png" alt="Cardinality and By Reference for a property" /><br />
 <i>Placeholder from the legacy help, to be replaced: the cardinality fields and the By Reference checkbox for a selected property. The layout and tab labels are from an older release.</i></p>
 
 <h2 id="associated-classes">Associated Classes</h2>

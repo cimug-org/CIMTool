@@ -1,80 +1,93 @@
 <toc label="CIMTool Topics"
 	topic="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html">
-	<topic label="Download - How obtain and install CIMTool."></topic>
-	<topic
-		label="Exchanging CIMTool Projects - How to export and import whole projects with all settings intact."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html"></topic>
-	<topic
-		label="Browsing the CIM - Explore the CIM in CIMTool's browsing perspective."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/browsing_the_cim.html"></topic>
-	<topic label="Getting Started - How to create a project."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/getting_started.html"></topic>
-	<topic
-		label="Workbench Basics - The parts of the workbench used in everyday CIMTool work."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html"></topic>
-	<topic
-		label="The Profile Editor - Editing a profile, and profile targets."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html">
-		<topic label="Add/Remove Tab - Choosing what goes into a profile."
-			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html"></topic>
-		<topic label="Restriction Tab - Concrete and descriptor classes, cardinality, By Reference and associated classes."
-			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html"></topic>
-		<topic label="Documentation Tab - Writing AsciiDoc documentation for profile elements."
-			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_documentation.html"></topic>
-		<topic label="Description Tab - Names and descriptions of profile elements."
-			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html"></topic>
-		<topic label="Stereotypes Tab - Applying stereotypes to profile elements."
-			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_stereotypes.html"></topic>
-		<topic label="Profile Summary Tab - Namespace, builders, and reorganizing and repairing a profile."
-			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_summary.html"></topic>
+	<topic label="Getting Started - Installing CIMTool, creating a project and finding your way around the workbench."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#getting-started">
+		<topic label="Download - Where to download the latest CIMTool release and earlier releases."
+			href="html/download.html"></topic>
+		<topic label="Getting Started - How to create a project."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/getting_started.html"></topic>
+		<topic label="Workbench Basics - The parts of the workbench used in everyday CIMTool work."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html"></topic>
+		<topic label="Project Explorer and Project Folders - The five folders of a CIMTool project and what each holds."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_explorer.html"></topic>
+		<topic label="Exchanging CIMTool Projects - How to export and import whole projects with all settings intact."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html"></topic>
 	</topic>
-	<topic
-		label="Using CIMTool with Enterprise Architect - How to transfer a model from EA to CIMTool."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/using_cimtool_with_enterprise_architect.html"></topic>
-	<topic
-		label="Using CIMTool with Protege and Top Braid - How to examine a profile in the popular ontology editors."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/using_cimtool_with_protege_and_top_braid.html"></topic>
-	<topic label="Searching Schemas and Profiles - CIMTool's search wizard."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html"></topic>
-	<topic
-		label="Profile Maintenance - Repairing profiles when the CIM changes."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_maintenance.html"></topic>
-	<topic
-		label="Comparing Profiles and Schemas - finding out what changed in the CIM or in a profile."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/comparing_profiles_and_schemas.html"></topic>
-	<topic
-		label="UMLOWL - How CIMTool interprets UML models as OWL ontologies and the conventions used for displaying them."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/uml_owl.html"></topic>
-	<topic
-		label="Associations and Anonymous Classes - the full story on profiling an association."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/associations_and_anonymous_classes.html"></topic>
-	<topic
-		label="Multiple Profiles - How to create several different restricted classes for a given CIM class."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/multiple_profiles.html"></topic>
-	<topic
-		label="Enumerations Support - How to include enumerated classes in a profile."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/enumerations_support.html"></topic>
-	<topic
-		label="CIMTool Namespace Support - How to use namespaces to manage multiple CIM extensions and profiles."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_namespace_support.html"></topic>
-	<topic label="Namespaces - An explanation and discussion of namespaces."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/namespaces.html"></topic>
-	<topic
-		label="How To Validate CPSM - How to validate CIM/XML documents and Incremental CIM/XML documents against a profile with special reference to the CPSM profile."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/how_to_validate_cpsm.html"></topic>
-	<topic
-		label="Validation Cases - A full suite of CIM/XML validation test cases and how to use them."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/validation_cases.html"></topic>
-	<topic
-		label="Validation Rules - An overview of the rule language used used for validation of CIM/XML and how to customise the standard rules."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/validation_rules.html"></topic>
-	<topic
-		label="OWL as a Profile Language - A description of CIMTool's representation of a profile in OWL."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/owl_as_a_profile_language.html"></topic>
-	<topic
-		label="Generating a Database Schema - Using a profiles as a template for a database."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/generating_a_database_schema.html"></topic>
-	<topic
-		label="Change Log - A summary of changes and new features in this version."
-		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/change_log.html"></topic>
+	<topic label="Schemas and the CIM - Bringing the CIM into a project and exploring it."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#schemas">
+		<topic label="Using CIMTool with Enterprise Architect - How to transfer a model from EA to CIMTool."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/using_cimtool_with_enterprise_architect.html"></topic>
+		<topic label="Project Model: Browsing the CIM - The Project Model view, and the Browsing perspective for exploring the CIM."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/browsing_the_cim.html"></topic>
+		<topic label="Documentation View - The schema's description of the selected element."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/documentation_view.html"></topic>
+		<topic label="Searching Schemas and Profiles - The CIMTool Search wizard."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html"></topic>
+		<topic label="UMLOWL - How CIMTool interprets UML models as OWL ontologies, and the conventions used for displaying them."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/uml_owl.html"></topic>
+		<topic label="CIMTool Namespace Support - How to use namespaces to manage multiple CIM extensions and profiles."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_namespace_support.html"></topic>
+		<topic label="Namespaces - An explanation and discussion of namespaces."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/namespaces.html"></topic>
+	</topic>
+	<topic label="Building Profiles - Defining profiles in the Profile Editor and checking them as you go."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#profiles">
+		<topic label="The Profile Editor - Editing a profile, and profile targets."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html">
+			<topic label="Add/Remove Tab - Choosing what goes into a profile."
+				href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html"></topic>
+			<topic label="Restriction Tab - Concrete and descriptor classes, cardinality, By Reference and associated classes."
+				href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html"></topic>
+			<topic label="Documentation Tab - Writing AsciiDoc documentation for profile elements."
+				href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_documentation.html"></topic>
+			<topic label="Description Tab - Names and descriptions of profile elements."
+				href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html"></topic>
+			<topic label="Stereotypes Tab - Applying stereotypes to profile elements."
+				href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_stereotypes.html"></topic>
+			<topic label="Profile Summary Tab - Namespace, builders, and reorganizing and repairing a profile."
+				href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_summary.html"></topic>
+		</topic>
+		<topic label="Profile Real-Time Preview - The live diagram of the profile being edited, and the problems it marks."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_preview.html"></topic>
+		<topic label="Associations and Anonymous Classes - The full story on profiling an association."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/associations_and_anonymous_classes.html"></topic>
+		<topic label="Multiple Profiles - How to create several different restricted classes for a given CIM class."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/multiple_profiles.html"></topic>
+		<topic label="Enumerations Support - How to include enumerated classes in a profile."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/enumerations_support.html"></topic>
+	</topic>
+	<topic label="Documentation and Generated Artifacts - What CIMTool generates from a profile."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#artifacts">
+		<topic label="Project and Profile Documentation - Generating documentation for a profile or a whole project, and where its text comes from."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html"></topic>
+		<topic label="Generating a Database Schema - Using a profile as a template for a database."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/generating_a_database_schema.html"></topic>
+		<topic label="OWL as a Profile Language - A description of CIMTool's representation of a profile in OWL."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/owl_as_a_profile_language.html"></topic>
+		<topic label="Using CIMTool with Protege and Top Braid - How to examine a profile in the popular ontology editors."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/using_cimtool_with_protege_and_top_braid.html"></topic>
+		<topic label="cimtool-cli: Generating Artifacts Outside the Workbench - The command-line tool that runs the CIMTool builders in scripts and CI/CD pipelines."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_cli.html"></topic>
+	</topic>
+	<topic label="Maintaining Profiles - Keeping profiles in step with a changing CIM."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#maintenance">
+		<topic label="Profile Maintenance - Repairing profiles when the CIM changes."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_maintenance.html"></topic>
+		<topic label="Comparing Profiles and Schemas - Finding out what changed in the CIM or in a profile."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/comparing_profiles_and_schemas.html"></topic>
+	</topic>
+	<topic label="Validating CIM/XML - Checking CIM/XML instance data against a profile."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#validation">
+		<topic label="How To Validate CPSM - How to validate CIM/XML documents and incremental CIM/XML documents against a profile, with special reference to the CPSM profile."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/how_to_validate_cpsm.html"></topic>
+		<topic label="Validation Cases - A full suite of CIM/XML validation test cases and how to use them."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/validation_cases.html"></topic>
+		<topic label="Validation Rules - An overview of the rule language used for validation of CIM/XML, and how to customize the standard rules."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/validation_rules.html"></topic>
+	</topic>
+	<topic label="Release History - What is new and changed in each CIMTool release."
+		href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_topics.html#history">
+		<topic label="Change Log - What is new and changed in each CIMTool release, from 2.3.1 back to the earliest releases."
+			href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/change_log.html"></topic>
+	</topic>
 </toc>

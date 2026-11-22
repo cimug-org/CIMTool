@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Project Explorer and Project Folders</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
+</head>
+<body>
+<div id="header">
+  <img class="watermark" src="images/brand_cimug_mark.svg" alt="" />
+  <div class="brand">
+    <img class="logo" src="images/brand_cimtool_logo.svg" alt="CIMTool" />
+    <div class="divider"></div>
+    <div class="title"><span class="cim">CIM</span>Tool Help</div>
+  </div>
+</div>
+<div id="main">
+<div id="content">
+
+<h1>Project Explorer and Project Folders</h1>
+
+<p>The <b>Project Explorer</b> view lists your CIMTool projects and the files in them. It is where you create, import and open everything you work on: schemas, profiles, the artifacts the builders generate, validation data and documentation. Every CIMTool project has the same five folders, and <b>CIMTool</b> decides what a file is, and which editor and builders apply to it, by the folder it is in.</p>
+
+<p><img class="zoomable" src="images/project_and_profile_documentation_project_folders.png" alt="A new CIMTool project in the Project Explorer with its five folders" /><br />
+<i>Interim screenshot, to be replaced: a new project in the Project Explorer, with its five folders.</i></p>
+
+<div class="wiki-toc">
+<ol>
+<li><a href="#folders">The Five Project Folders</a></li>
+<li><a href="#schema">Schema</a></li>
+<li><a href="#profiles">Profiles</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#instances">Instances and Incremental</a></li>
+<li><a href="#hidden">Hidden Files</a></li>
+<li><a href="#actions">What You Can Do from the Project Explorer</a></li>
+<li><a href="#related">Related Topics</a></li>
+</ol>
+</div>
+
+<h2 id="folders">The Five Project Folders</h2>
+
+<p>A new project, created with <b>File &gt; New &gt; CIMTool Project</b>, contains these folders. The Project Explorer lists them alphabetically.</p>
+
+<table class="wiki">
+<tr><th>Folder</th><th>What it holds</th></tr>
+<tr><td><b>Documentation</b></td><td>Your AsciiDoc documentation for the project: a master document and the images, text, stylesheets and themes it uses. See <a href="#documentation">Documentation</a>.</td></tr>
+<tr><td><b>Incremental</b></td><td>Incremental CIM/XML files imported for validation. See <a href="#instances">Instances and Incremental</a>.</td></tr>
+<tr><td><b>Instances</b></td><td>CIM/XML files imported for validation, and the results of validating them. See <a href="#instances">Instances and Incremental</a>.</td></tr>
+<tr><td><b>Profiles</b></td><td>Your profiles (<code>.owl</code>) and every artifact generated from them. See <a href="#profiles">Profiles</a>.</td></tr>
+<tr><td><b>Schema</b></td><td>The schema your profiles are built from: the CIM and any extensions. See <a href="#schema">Schema</a>.</td></tr>
+</table>
+
+<p>Keep files directly in these folders, not in subfolders of your own: <b>CIMTool</b> recognizes a schema, profile or instance file only when it is directly inside its folder. The Documentation folder is the exception, since it is organized however your documentation needs.</p>
+
+<h2 id="schema">Schema</h2>
+
+<p>The <b>Schema</b> folder holds the schema that the project's profiles are built from. <b>CIMTool</b> reads every schema file in it and combines them into the project's <i>merged schema</i>, which is what the Project Model view, the Documentation view and the Profile Editor's schema pane show.</p>
+
+<table class="wiki">
+<tr><th>File</th><th>What it is</th></tr>
+<tr><td>Enterprise Architect project (<code>.eap</code>, <code>.eapx</code>, <code>.qea</code>, <code>.qeax</code>)</td><td>A Sparx Enterprise Architect project file, read by <b>CIMTool</b> directly. <code>.eap</code> and <code>.eapx</code> are EA 15 (32-bit) files; <code>.qea</code> and <code>.qeax</code> are EA 16 and EA 17 (64-bit) files.</td></tr>
+<tr><td>XMI (<code>.xmi</code>)</td><td>A UML model exported from Enterprise Architect as XMI.</td></tr>
+<tr><td>OWL (<code>.owl</code>)</td><td>A schema in OWL.</td></tr>
+</table>
+
+<p>Schema files are added with <b>File &gt; Import &gt; CIMTool &gt; Import Schema</b>. Double-click one to browse it in the Model Browser. To export the merged schema as one file, use <b>File &gt; Export &gt; CIMTool &gt; Export merged schema</b>.</p>
+
+<h2 id="profiles">Profiles</h2>
+
+<p>The <b>Profiles</b> folder holds two kinds of file:</p>
+<ul>
+<li><b>Profiles</b> (<code>.owl</code>). The <code>.owl</code> file <i>is</i> the profile definition. Double-click it to open it in the Profile Editor.</li>
+<li><b>Generated artifacts.</b> Each time you save a profile, the builders selected on its Profile Summary tab write their output here, named after the profile with the builder's own extension: XSD, JSON Schema, RDFS, AsciiDoc, PlantUML and so on. These files are outputs: edit the profile, not them, because the next build replaces them.</li>
+</ul>
+
+<p>Profiles are created with <b>File &gt; New &gt; CIMTool Profile</b> or imported with <b>File &gt; Import &gt; CIMTool &gt; Import Profile</b>. The folder can also hold validation rules files and <code>.repair</code> files created when a profile is repaired after a schema change; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_maintenance.html">Profile Maintenance</a>. Builder logs (<code>.log</code>) appear here when a builder reports a problem.</p>
+
+<h2 id="documentation">Documentation</h2>
+
+<p>The <b>Documentation</b> folder, added in <b>CIMTool</b> 2.3.0, is where you assemble a document for the project: your own AsciiDoc text combined with the documentation the builders generate in the Profiles folder. It is created with four subfolders, <b>Images</b>, <b>Includes</b>, <b>Styles</b> and <b>Themes</b>, and the master document goes at its root. <code>.adoc</code> files open in the Asciidoctor editor. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html#folders">Project and Profile Documentation</a> for what each subfolder is for.</p>
+
+<h2 id="instances">Instances and Incremental</h2>
+
+<p>These folders hold CIM/XML data imported for validation against a profile.</p>
+<ul>
+<li><b>Instances:</b> a CIM/XML file imported with <b>File &gt; Import &gt; CIMTool &gt; Import Model (CIM/XML file)</b> is stored here as a folder named after the model, linked to the profile it is validated against. Validation results (<code>.diagnostic</code>) are written here too and open in the Diagnostic Browser.</li>
+<li><b>Incremental:</b> an incremental (difference) CIM/XML file imported with <b>File &gt; Import &gt; CIMTool &gt; Import Incremental CIM/XML file</b> is stored here as a folder, linked to the base model in Instances that it changes.</li>
+</ul>
+
+<p>See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/how_to_validate_cpsm.html">How To Validate CPSM</a> for the full procedure.</p>
+
+<h2 id="hidden">Hidden Files</h2>
+
+<p><b>CIMTool</b> keeps some files of its own in the project, with names that start with a dot. The Project Explorer hides them by default. They include the project's settings and builder preferences, a copy of your <b>CIMTool</b> preferences for the command-line tool (see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/cimtool_cli.html">cimtool-cli</a>), the copyright templates that the builders put at the top of generated files, the hidden diagram file the Profile Real-Time Preview draws for each profile (for example <code>Profiles/.EndDeviceConfig.puml</code>), and the reports written when a schema is imported. Leave them in place: they travel with the project when you exchange it. To see them, open the Project Explorer's view menu, choose <b>Filters and Customization...</b> and clear <b>.* resources</b>.</p>
+
+<h2 id="actions">What You Can Do from the Project Explorer</h2>
+
+<table class="wiki">
+<tr><th>To</th><th>Do this</th></tr>
+<tr><td>Open a file</td><td>Double-click it. The editor depends on the file type; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#editors">Workbench Basics: Editors</a>. To choose another editor, right-click and choose <b>Open With</b>.</td></tr>
+<tr><td>Create a project, profile, rules file or mappings file</td><td><b>File &gt; New</b>, then the <b>CIMTool</b> wizard: <b>CIMTool Project</b>, <b>CIMTool Profile</b>, <b>CIMTool Validation Rules</b>, <b>CIMTool Incremental Validation Rules</b>, <b>CIMTool HTML Rules</b>, <b>CIMTool XML Schema Rules</b> or <b>CIMTool Mappings</b>.</td></tr>
+<tr><td>Import into a project</td><td><b>File &gt; Import &gt; CIMTool</b>, then the wizard for what you are importing: a schema, profile, spreadsheet, CIM/XML model or incremental, rules, copyright templates, an XSLT transform builder, or whole CIMTool projects.</td></tr>
+<tr><td>Change a project's or profile's CIMTool settings</td><td>Right-click it, choose <b>Properties</b>, then <b>CIMTool</b>. For a project this includes the Profile Real-Time Preview's <b>Diagram Style</b> and the schema import options; for a profile, its own <b>Diagram Style</b>.</td></tr>
+<tr><td>Make an existing Eclipse project a CIMTool project, or the reverse</td><td>Right-click the project and choose <b>Add/Remove CIM Nature</b>.</td></tr>
+<tr><td>Rebuild every artifact in a project</td><td><b>Project &gt; Clean...</b>; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#builds">Workbench Basics: Builds</a>.</td></tr>
+<tr><td>Share a project</td><td>See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a>.</td></tr>
+</table>
+
+<p>Selecting a file in the Project Explorer also tells the Project Model and Documentation views which project to show.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html">Workbench Basics</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/getting_started.html">Getting Started</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html">Project and Profile Documentation</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a></li>
+</ul>
+
+</div>
+</div>
+<div id="footer">
+  <a href="https://cimtool.ucaiug.io">cimtool.ucaiug.io</a>
+  <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
+</div>
+</body>
+</html>

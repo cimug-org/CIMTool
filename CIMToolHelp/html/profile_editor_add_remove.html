@@ -4,6 +4,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Add/Remove Tab</title>
   <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
 </head>
 <body>
 <div id="header">
@@ -19,64 +21,111 @@
 
 <h1>Add/Remove Tab</h1>
 
-<p>The <b>Add/Remove</b> tab is the first tab of the Profile Editor and the place where you choose what goes into a profile. It shows the profile on the left and the schema (the CIM and any extensions) on the right. You add schema classes, attributes and associations to the profile by moving them from right to left, and remove them by moving them back.</p>
+<p>The <b>Add/Remove</b> tab is where you choose what goes into a profile: which classes, and which attributes and associations of each class. It always works on the element selected in the <b>Outline</b> view. The <b>profile pane</b>, on the left of the tab, shows what the profile already contains at that point, and the <b>schema pane</b>, on the right, shows what you can still add from the schema (the CIM and any extensions). You add items by moving them from the schema pane to the profile pane, and remove them by moving them back.</p>
 
-<p><img src="images/profile_editor_add_remove_root.png" alt="The Add/Remove tab with the profile itself selected" /><br />
-<i>Interim screenshot, to be replaced: the Add/Remove tab with the profile itself selected. The left pane lists the profile's classes, the right pane lists the schema's packages, and the option checkboxes sit below both panes. The final screenshot will use a wider editor so the right-hand column is not cut off.</i></p>
+<p><img class="zoomable" src="images/profile_editor_add_remove_root.png" alt="The Add/Remove tab for the EquipmentBoundary profile with the profile itself selected" /><br />
+<i>The Add/Remove tab for the CGMES EquipmentBoundary profile, with the profile itself selected in the Outline view (7). The profile pane (3) lists the classes in the profile; the schema pane (4) lists the schema's packages, here opened to IEC61970 &gt; Base &gt; AuxiliaryEquipment. The numbers match the table below.</i></p>
 
-<h2 id="outline">Working from the Outline View</h2>
+<div class="wiki-toc">
+<ol>
+<li><a href="#controls">The Controls on the Tab</a></li>
+<li><a href="#selection">What the Tab Shows for Each Selection</a></li>
+<li><a href="#adding">Adding and Removing</a></li>
+<li><a href="#options">Options Applied When Adding</a></li>
+<li><a href="#multiple">Allow Multiple Profiles per Class</a></li>
+<li><a href="#search">Search Schema</a></li>
+<li><a href="#related">Related Topics</a></li>
+</ol>
+</div>
 
-<p>The Add/Remove tab always works on the element selected in the <b>Outline</b> view. What the tab offers depends on that selection:</p>
+<h2 id="controls">The Controls on the Tab</h2>
+
+<p>With the profile itself selected in the Outline view, as in the screenshot, the tab has these controls. The numbers match the screenshot. Buttons that show only an icon are pictured here with their name, which CIMTool shows when you hover over them.</p>
 
 <table class="wiki">
-<tr><th>Selected in the Outline</th><th>The tab shows</th><th>Extra controls</th></tr>
-<tr><td>The profile itself (the top element)</td><td>"Select classes or packages to profile." The right pane lists the schema's packages and classes.</td><td><b>Allow multiple profiles per class</b>; <b>Search Schema</b></td></tr>
-<tr><td>A class in the profile</td><td>"Select members of this class." The right pane lists the class's attributes and associations.</td><td><b>Show superclass members</b>; <b>Show subclass members</b></td></tr>
-<tr><td>An association in the profile</td><td>"Add associated classes to the profile or" go to the Restriction tab. The right pane lists the classes the association can refer to.</td><td><b>Goto Restriction Page</b>; <b>Create a local, anonymous profile class</b></td></tr>
-<tr><td>An attribute in the profile</td><td>"The datatype <i>name</i> will be added to the profile."</td><td><b>Goto Restriction Page</b></td></tr>
-<tr><td>Anything else</td><td>"Select another item in the profile outline".</td><td></td></tr>
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td><span class="callout">1</span><b>Allow multiple profiles per class</b> checkbox</td><td>Shows schema classes in the schema pane (4) even if they are already in the profile, so you can add a class a second time as a separate profile class. Leave it cleared for normal work. See <a href="#multiple">Allow Multiple Profiles per Class</a>. <i>Used mainly in XSD and JSON Schema profiles; RDFS profiles rarely need it.</i></td></tr>
+<tr><td><span class="callout">2</span><img class="control" src="images/control_search.png" alt="" /> <b>Search Schema</b> button</td><td>Opens the CIMTool Search wizard to find a package or class by name, or by the name of one of its members, and selects it in the schema pane (4). See <a href="#search">Search Schema</a>.</td></tr>
+<tr><td><span class="callout">3</span><b>Profile pane</b></td><td>What the profile contains at the item selected in the Outline view (7): here, the classes in the profile. Select items here to remove them. Double-click an item to select it in the Outline view, which moves the tab down to that item.</td></tr>
+<tr><td><span class="callout">4</span><b>Schema pane</b></td><td>What you can add from the schema at the item selected in the Outline view (7): here, the schema's packages and classes. Items already in the profile are left out. Select items here to add them.</td></tr>
+<tr><td><span class="callout">5</span><b>Option checkboxes</b></td><td>Settings applied to the items you add next, such as making classes concrete or attributes required. They are cleared after each addition. See <a href="#options">Options Applied When Adding</a>.</td></tr>
+<tr><td><span class="callout">6</span><img class="control" src="images/control_add_with_members.png" alt="" /> <b>Add the selected classes to the profile including members</b> button</td><td>Adds the classes selected in the schema pane together with their own single-valued attributes and associations. See <a href="#adding">Adding and Removing</a>.</td></tr>
+<tr><td><span class="callout">6</span><img class="control" src="images/control_add.png" alt="" /> <b>Add the selected items to the profile</b> button</td><td>Adds just the items selected in the schema pane.</td></tr>
+<tr><td><span class="callout">6</span><img class="control" src="images/control_remove.png" alt="" /> <b>Remove the selected items from the profile</b> button</td><td>Removes the items selected in the profile pane. Removing an association does not remove the class it refers to; see <a href="#removing-association">Removing an Association</a>.</td></tr>
+<tr><td><span class="callout">7</span><b>Outline view</b>, beside the editor</td><td>Not part of the tab, but it decides what the tab works on: the profile itself, a class, an association or an attribute. See <a href="#selection">What the Tab Shows for Each Selection</a>.</td></tr>
 </table>
 
-<p>Double-clicking an element in the left pane selects it in the Outline, so you can work down from the profile to a class and then to its members without leaving the tab.</p>
+<p>The buttons are enabled only while something is selected in the pane they act on.</p>
 
-<p><img src="images/associations_and_anonymous_classes_association2.png" alt="The Add/Remove tab with a class selected" /><br />
-<i>Placeholder from the legacy help, to be replaced: the Add/Remove tab with a class selected. The right pane lists the class's members that are not yet in the profile, above the <b>Show superclass members</b> and <b>Show subclass members</b> checkboxes and the add and remove buttons.</i></p>
+<h2 id="selection">What the Tab Shows for Each Selection</h2>
 
-<p><img src="images/associations_and_anonymous_classes_association5.png" alt="The Add/Remove tab with an association selected" /><br />
-<i>Placeholder from the legacy help, to be replaced: the Add/Remove tab with an association selected. The right pane lists the classes the association can refer to, including subclasses, beside the <b>Goto Restriction Page</b> button.</i></p>
+<p>Select an element in the Outline to choose what you are working on. You usually start at the profile itself to add classes, then select a class to choose its members, then select an association to choose the classes it can refer to.</p>
+
+<table class="wiki">
+<tr><th>Selected in the Outline</th><th>Profile pane</th><th>Schema pane</th><th>Extra controls</th></tr>
+<tr><td><b>The profile itself</b> (the top element). The tab reads "Select classes or packages to profile."</td><td>The classes in the profile.</td><td>The schema's packages and classes, apart from those already in the profile.</td><td><b>Allow multiple profiles per class</b>; <b>Search Schema</b></td></tr>
+<tr><td><b>A class</b>. The tab reads "Select members of this class."</td><td>The attributes and associations already in this profile class.</td><td>The class's attributes and associations that are not yet in it.</td><td><span class="callout">8</span><b>Show superclass members</b>: also lists the members the class inherits, grouped under each superclass. <i>Used mainly in XSD and JSON Schema profiles; RDFS profiles rarely need it.</i><br /><span class="callout">9</span><b>Show subclass members</b>: also lists the members of its subclasses, grouped under each subclass. <i>Used mainly in XSD and JSON Schema profiles; RDFS profiles rarely need it.</i></td></tr>
+<tr><td><b>An association</b>. The tab reads "Add associated classes to the profile or" next to <b>Goto Restriction Page</b>.</td><td>The classes the association can refer to in this profile.</td><td>The class at the other end of the association and its subclasses.</td><td><span class="callout">10</span><b>Goto Restriction Page</b>: switches to the Restriction tab to set the association's cardinality and other details.<br /><span class="callout">11</span><img class="control" src="images/control_anonymous_class.png" alt="" /> <b>Create a local, anonymous profile class</b> button: see <a href="#adding">Adding and Removing</a>. <i>Used mainly in XSD and JSON Schema profiles; RDFS profiles rarely need it.</i></td></tr>
+<tr><td><b>An attribute</b>. The tab reads "The datatype <i>name</i> will be added to the profile."</td><td colspan="2">Nothing to choose: the tab only confirms the attribute's datatype, which is set by the schema.</td><td><span class="callout">10</span><b>Goto Restriction Page</b></td></tr>
+<tr><td>Anything else, such as a heading in the Outline</td><td colspan="2">The tab reads "Select another item in the profile outline".</td><td></td></tr>
+</table>
+
+<p><img class="zoomable" src="images/profile_editor_add_remove_class.png" alt="The Add/Remove tab with the class Bay selected" /><br />
+<i>The Add/Remove tab with the class <code>Bay</code> selected in the Outline view (7). The profile pane (3) shows the one member already in this profile class, the association <code>VoltageLevel</code> with cardinality 1..1. The schema pane (4) lists the members of <code>Bay</code> not yet added: two Boolean attributes, two attributes typed by enumerations, and the associations <code>Circuit</code> and <code>Substation</code>. <b>Show superclass members</b> (8) and <b>Show subclass members</b> (9) are cleared, so only the members of <code>Bay</code> itself are listed.</i></p>
+
+<p><img class="zoomable" src="images/profile_editor_add_remove_association.png" alt="The Add/Remove tab with the association VoltageLevel of Bay selected" /><br />
+<i>The Add/Remove tab with the association <code>VoltageLevel</code> of <code>Bay</code> selected in the Outline view (7). The profile pane (3) is empty because no class has been chosen yet for this association. The schema pane (4) offers <code>VoltageLevel</code>, the class at the other end, which is selected, so the add buttons (6) are enabled. Next to the label at the top are <b>Goto Restriction Page</b> (10) and, at the right, <b>Create a local, anonymous profile class</b> (11).</i></p>
 
 <h2 id="adding">Adding and Removing</h2>
 
-<p>Select one or more items in the right pane, then use the buttons between the panes:</p>
+<p>Select one or more items in the schema pane, set any <a href="#options">options</a> you want, then choose an add button. To remove items, select them in the profile pane and choose the remove button.</p>
 
 <table class="wiki">
-<tr><th>Button</th><th>Effect</th></tr>
-<tr><td><b>Add the selected items to the profile</b></td><td>Adds the selected classes, attributes or associations. A selected package adds every class in it.</td></tr>
-<tr><td><b>Add the selected classes to the profile including members</b></td><td>As above, but also adds the attributes and associations of each class added.</td></tr>
-<tr><td><b>Remove the selected items from the profile</b></td><td>Removes the items selected in the left pane.</td></tr>
-<tr><td><b>Create a local, anonymous profile class</b></td><td>When an association is selected in the Outline, adds the selected class as an anonymous class used only by that association, instead of a named class. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/associations_and_anonymous_classes.html">Associations and Anonymous Classes</a>.</td></tr>
+<tr><th>Button</th><th>What it adds or removes</th></tr>
+<tr><td><img class="control" src="images/control_add.png" alt="" /> <b>Add the selected items to the profile</b></td><td>
+<ul>
+<li><b>Profile selected:</b> adds each selected class as a profile class, without members. Selecting a package adds every class in it, including the classes in its sub-packages.</li>
+<li><b>Class selected:</b> adds the selected attributes and associations to the class.</li>
+<li><b>Association selected:</b> adds the selected class as a type the association can refer to. CIMTool uses the profile's existing class for it if there is one, and otherwise adds it to the profile.</li>
+</ul></td></tr>
+<tr><td><img class="control" src="images/control_add_with_members.png" alt="" /> <b>Add the selected classes to the profile including members</b></td><td>
+<ul>
+<li><b>Profile selected:</b> adds each selected class together with its own attributes and associations that are single-valued (at most one value). Inherited members are not included; add those from the superclass, or with <b>Show superclass members</b>. For each association it adds, CIMTool also adds the class at the other end to the profile, if it is not there already. Multi-valued associations are added only when <b>Add only source-side associations</b> is checked.</li>
+<li><b>Class selected:</b> adds the selected attributes and associations and, for each association, the class it refers to.</li>
+</ul></td></tr>
+<tr><td><img class="control" src="images/control_remove.png" alt="" /> <b>Remove the selected items from the profile</b></td><td>Removes the items selected in the profile pane: classes from the profile, members from a class, or permitted classes from an association. Removing an association does not remove the class it refers to; see <a href="#removing-association">Removing an Association</a>.</td></tr>
+<tr><td><img class="control" src="images/control_anonymous_class.png" alt="" /> <b>Create a local, anonymous profile class</b> (association selected only)</td><td>Adds the selected class as an anonymous class that belongs to this association alone, instead of a named profile class shared across the profile. Use it when the association needs its own restricted view of the class. Anonymous classes are never concrete. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/associations_and_anonymous_classes.html">Associations and Anonymous Classes</a>. <i>Used mainly in XSD and JSON Schema profiles; RDFS profiles rarely need it.</i></td></tr>
 </table>
 
-<p>If one addition would add 100 or more elements, CIMTool asks you to confirm before going ahead.</p>
+<p>If one addition would add 100 or more elements, for example a large package, CIMTool asks you to confirm before going ahead.</p>
 
-<p>Normally a schema class can be added to a profile only once. Selecting <b>Allow multiple profiles per class</b> lets you add it again as a separate profile class. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/multiple_profiles.html">Multiple Profiles</a>.</p>
+<h3 id="removing-association">Removing an Association</h3>
+
+<p>When you remove an association, CIMTool removes only the association. The class it referred to stays in the profile, because other parts of the profile may still use it. After removing an association, check whether that class is still needed, for example whether another association still refers to it, and remove it too if it is not:</p>
+<ol>
+<li>Select the profile itself in the Outline view (7).</li>
+<li>Select the class in the profile pane (3).</li>
+<li>Choose <img class="control" src="images/control_remove.png" alt="" /> <b>Remove the selected items from the profile</b>.</li>
+</ol>
+
+<p>What CIMTool reports about a class that is no longer used depends on the profile's target. Check the notes on the Profile Real-Time Preview diagram, which differ for RDFS, XSD and JSON Schema profiles; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#preview-target">The Profile Real-Time Preview and Your Target</a>.</p>
 
 <h2 id="options">Options Applied When Adding</h2>
 
-<p>The checkboxes below the panes apply to the next addition only. They are cleared again after each addition. Some of them mean slightly different things depending on what the profile is designed to generate; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#targets">Profile Targets</a>.</p>
+<p>The six checkboxes below the panes set how the items you add are defined. They apply to the next addition only and are cleared after it, so set them each time. Every setting can be changed later on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html">Restriction</a> tab. Some of them mean slightly different things depending on what the profile is designed to generate; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html#targets">Profile Targets</a>.</p>
 
 <table class="wiki">
-<tr><th>Option</th><th>Effect on the items added</th></tr>
-<tr><td><b>Set selected classes to 'Concrete' when added to the profile</b></td><td>Marks added classes as concrete, so that the generated schema allows instance data to declare objects of that class.</td></tr>
-<tr><td><b>Set concrete classes as descriptors when added to the profile</b></td><td>Also gives those concrete classes the <b>Description</b> stereotype, an IEC convention for RDFS target profiles described on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html#descriptor">Restriction</a> tab. Available only when the Concrete option is selected.</td></tr>
-<tr><td><b>Set selected attributes/associations to required when added to the profile</b></td><td>Makes added attributes and associations required (a minimum cardinality of 1).</td></tr>
-<tr><td><b>Set cardinality of selected attributes/associations to that defined in the schema</b></td><td>Copies the schema's cardinality to the added attributes and associations.</td></tr>
-<tr><td><b>Set selected associations to 'By Reference' when added to the profile</b></td><td>Marks added associations as By Reference. The schema generated from the profile then defines each such association as a reference, so that instance data conforming to that schema identifies the associated object instead of containing it. What that means for the instance data depends on the profile's target:
+<tr><th>Option</th><th>Applies to</th><th>Effect</th></tr>
+<tr><td><b>Set selected classes to 'Concrete' when added to the profile</b></td><td>Classes added by either add button</td><td>Marks the added classes as concrete, so that instance data can contain objects of that class. Enumerations, compounds, CIM datatypes and primitives cannot be concrete and are left as they are. Ignored for anonymous classes.</td></tr>
+<tr><td><b>Set concrete classes as descriptors when added to the profile</b></td><td>Classes added with Concrete checked</td><td>Has no effect in this release. To make a class a descriptor, select it and use the Restriction tab (see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html#descriptor">Descriptor Classes</a>). Available only when Concrete is checked: unchecking Concrete clears this option and grays it out.</td></tr>
+<tr><td><b>Set selected attributes/associations to required when added to the profile</b></td><td>Attributes and associations added</td><td>Makes each added member required: a minimum cardinality of 1. Applies to a class's own and inherited members; members shown from subclasses are left optional.</td></tr>
+<tr><td><b>Set cardinality of selected attributes/associations to that defined in the schema</b></td><td>Attributes and associations added</td><td>Copies the minimum and maximum cardinality from the schema instead of leaving the member optional and unbounded. With <b>required</b> also checked, the minimum is 1 and the maximum comes from the schema.</td></tr>
+<tr><td><b>Set selected associations to 'By Reference' when added to the profile</b></td><td>Associations added</td><td>Marks the added associations as By Reference. The schema generated from the profile then defines each such association as a reference, so that instance data identifies the associated object instead of containing it. What that means depends on the profile's target:
 <ul>
 <li><b>XSD and JSON Schema:</b> instance documents do not nest the associated object wherever it is referenced. The object is defined once, typically at the top level of the instance data or outside the instance document altogether, and each reference identifies it, for example by its mRID.</li>
 <li><b>RDFS (CIM/XML):</b> the referenced object is normally held in a different instance data set altogether, such as the network model in a CGMES EQ (CoreEquipment) CIM/XML file defined by its own RDFS profile.</li>
 </ul></td></tr>
-<tr><td><b>Add only source-side associations when added to the profile</b></td><td>Adds only associations for which the class is the source side, leaving out the opposite role of each association. See <a href="#source-target">Source and Target Sides of an Association</a>.</td></tr>
+<tr><td><b>Add only source-side associations when added to the profile</b></td><td>The <b>including members</b> button only</td><td>Also adds the class's multi-valued associations, but only those for which the class is the source side, leaving out the opposite role of each association. Without it, the including-members button adds no multi-valued associations at all. See <a href="#source-target">Source and Target Sides of an Association</a>.</td></tr>
 </table>
 
 <h3 id="source-target">Source and Target Sides of an Association</h3>
@@ -85,16 +134,39 @@
 
 <p>When profiling for RDFS, the usual convention for an association whose role ends are 0..* and 0..1 is to make the class at the 0..* end the source side, and add the association there, so that it points to the class at the end with the narrower cardinality. Each instance of the source class then refers to at most one target.</p>
 
-<p>Anonymous classes are never concrete, so the Concrete option is ignored when you create one. Each setting can be changed afterwards on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html">Restriction</a> tab.</p>
+<h2 id="multiple">Allow Multiple Profiles per Class</h2>
 
-<h2 id="search">Finding a Class</h2>
+<p>Normally each schema class appears in a profile once, and the schema pane hides classes that are already in the profile. Check <b>Allow multiple profiles per class</b> (with the profile itself selected in the Outline) to show them again, so that you can add a class a second time. The second profile class gets the same name with a number added, such as <code>Terminal1</code>, and can have its own members and restrictions.</p>
 
-<p>When the profile itself is selected in the Outline, <b>Search Schema</b> opens the search wizard. Choosing a result highlights it in the right pane, ready to add. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html">Searching Schemas and Profiles</a>.</p>
+<p>This option is used mainly in XSD and JSON Schema profiles; RDFS profiles rarely need it.</p>
+
+<p>Use it when one schema class needs to appear in different roles in the same profile, each with different members or cardinalities. Rename each profile class on the <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_description.html">Description</a> tab so that the roles are clear. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/multiple_profiles.html">Multiple Profiles</a>.</p>
+
+<h2 id="search">Search Schema</h2>
+
+<p>The CIM has hundreds of classes, so browsing the schema pane for one can be slow. With the profile itself selected in the Outline, choose <img class="control" src="images/control_search.png" alt="" /> <b>Search Schema</b> to open the CIMTool Search wizard. It finds packages and classes by their own name, or by the name of one of their attributes or associations.</p>
+
+<p><img class="zoomable" src="images/profile_editor_add_remove_search.png" alt="The CIMTool Search wizard with IdentifiedObje typed as the search string" /><br />
+<i>The CIMTool Search wizard. Typing <code>IdentifiedObje</code> finds the term <code>IdentifiedObject</code>, which matches the class <code>IdentifiedObject</code> in the Core package and associations named <code>IdentifiedObject</code> in other classes.</i></p>
+
+<table class="wiki">
+<tr><th>Control</th><th>What it does</th></tr>
+<tr><td><b>Search string</b></td><td>Type the start of a name. Matching starts as you type. The first search after the wizard opens indexes the schema, which can take a moment.</td></tr>
+<tr><td><b>Select a matching term</b></td><td>The names in the schema that start with what you typed, up to 100. Choose the one you mean. If only one name matches, it is chosen for you.</td></tr>
+<tr><td><b>Select a matching item</b></td><td>Everything in the schema with the chosen name. The icon shows what each item is, such as a class or an association, and the name in brackets shows where it sits: the package of a class, or the class that has an attribute or association. Choose the one you want.</td></tr>
+<tr><td><b>Finish</b></td><td>Enabled once an item is chosen. Closes the wizard and selects the item in the schema pane, opened to where it sits in the schema. If you chose an attribute or association, the class that has it is selected, so that you can add the class.</td></tr>
+<tr><td><b>Cancel</b></td><td>Closes the wizard without changing the selection.</td></tr>
+<tr><td><b>?</b> (help)</td><td>Opens help for the wizard in a panel beside it, with links to this section and to Searching Schemas and Profiles. F1 does the same.</td></tr>
+</table>
+
+<p>See also <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html">Searching Schemas and Profiles</a>.</p>
 
 <h2 id="related">Related Topics</h2>
 <ul>
 <li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor.html">The Profile Editor</a></li>
 <li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_restriction.html">Restriction Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/multiple_profiles.html">Multiple Profiles</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/associations_and_anonymous_classes.html">Associations and Anonymous Classes</a></li>
 <li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/enumerations_support.html">Enumerations Support</a></li>
 <li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#editors">Workbench Basics: Editors</a></li>
 </ul>

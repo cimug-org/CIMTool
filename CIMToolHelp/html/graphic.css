@@ -19,6 +19,8 @@ body {
 }
 a { color: #0058A9; }
 a:hover { color: #0A2E57; }
+/* Links to web sites outside the help (marked by viewer.js) open in the web browser. */
+a.external:after { content: "\2197"; display: inline-block; margin-left: 2px; font-size: 0.8em; text-decoration: none; }
 
 /* Header: light-blue band, CIMTool logo, product title, faded CIMug mark.
    It stays pinned to the top while the page scrolls, and in-page links stop below it. */
@@ -56,7 +58,20 @@ html { scroll-padding-top: 90px; }
 #header .title .cim { color: #0097A5; }
 
 /* Content */
-#main { margin: 0; }
+/* The page is a column of header, content and footer. The content grows to fill the
+   window, so the footer sits at the bottom of a short page instead of under its text. */
+body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+#header, #footer { -ms-flex-negative: 0; flex-shrink: 0; }
+#main { margin: 0; -webkit-box-flex: 1; -ms-flex: 1 0 auto; flex: 1 0 auto; }
 #content { padding: 26px 32px 30px; max-width: 900px; }
 h1, h2, h3, h4 { font-family: Arial, "Liberation Sans", Helvetica, sans-serif; font-weight: bold; color: #0A2E57; }
 h1 { font-size: 26px; margin: 0 0 12px; }
@@ -146,6 +161,39 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
 /* Images: never wider than the page, so screenshots fit the narrow Help view */
 #content img { max-width: 100%; height: auto; }
 
+/* Icon-only buttons pictured in the text: the button's own icon in a button-like frame */
+#content img.control {
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  border: 1px solid #C8D2DA;
+  border-radius: 3px;
+  background: #FFFFFF;
+  vertical-align: middle;
+}
+
+/* Numbered callouts: the same number as the circle on the screenshot. 16 px, close to the text
+   height, so they sit on the line; screenshot circles are sized to match at column width. */
+.callout {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 8px;
+  margin-right: 5px;
+  background: #0097A5;
+  color: #FFFFFF;
+  font-family: Arial, "Liberation Sans", Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: 1px;
+}
+
+/* In-page link targets that are not headings, such as a table row, are marked with an
+   empty span.anchor that carries the id. It takes no space. */
+span.anchor { display: block; }
+
 /* Footer: site link and sponsor credit */
 #footer {
   display: -ms-flexbox;
@@ -227,29 +275,90 @@ table.wiki tr:nth-child(odd) td { background: #EEF4F8; }
   table.wiki th, table.wiki td { padding-left: 7px; padding-right: 7px; }
 }
 
+/* Image viewer (viewer.js): images with class "zoomable" open over the page when clicked */
+#content img.zoomable { cursor: pointer; cursor: zoom-in; }
+.viewer-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  background: #000000;
+  background: rgba(10, 46, 87, 0.92);
+  cursor: pointer;
+  cursor: zoom-out;
+}
+.viewer-image {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  max-width: 96%;
+  max-height: 86%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  background: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+.viewer-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #C9D6E3;
+  font-family: Arial, "Liberation Sans", Helvetica, sans-serif;
+  font-size: 12px;
+}
+
 /* Internet Explorer 10 and 11 (the embedded browser on some Windows systems) have no
-   sticky positioning, so the header is fixed there and the page starts below it. */
+   sticky positioning, so the header is fixed there and the page starts below it.
+   IE also ignores scroll-padding-top, so a heading opened by an in-page link would sit
+   under the fixed header. An invisible block above each heading with an id, cancelled
+   by an equal negative margin, moves the heading's link target up by the header's
+   height without changing the layout. The heading then overlaps the text above it, so
+   it lets clicks pass through to any links there. */
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   #header { position: fixed; left: 0; right: 0; }
   body { padding-top: 75px; }
+  #content h1[id]:before, #content h2[id]:before, #content h3[id]:before, #content h4[id]:before { content: ""; display: block; height: 90px; margin-top: -90px; visibility: hidden; }
+  #content h1[id], #content h2[id], #content h3[id], #content h4[id] { pointer-events: none; }
+  span.anchor:before { content: ""; display: block; height: 90px; margin-top: -90px; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 600px), (-ms-high-contrast: active) and (max-width: 600px) {
   body { padding-top: 57px; }
-  #content td, #content th { word-break: break-all; }
+  span.anchor:before { height: 70px; margin-top: -70px; }
+  #content h1[id]:before, #content h2[id]:before, #content h3[id]:before, #content h4[id]:before { height: 70px; margin-top: -70px; }
+  #content td, #content th { word-wrap: break-word; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 360px), (-ms-high-contrast: active) and (max-width: 360px) {
   body { padding-top: 45px; }
+  span.anchor:before { height: 58px; margin-top: -58px; }
+  #content h1[id]:before, #content h2[id]:before, #content h3[id]:before, #content h4[id]:before { height: 58px; margin-top: -58px; }
   #content a, #content code { word-break: break-all; }
+  #content td, #content th { word-break: break-all; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 240px), (-ms-high-contrast: active) and (max-width: 240px) {
   body { padding-top: 41px; }
+  span.anchor:before { height: 52px; margin-top: -52px; }
+  #content h1[id]:before, #content h2[id]:before, #content h3[id]:before, #content h4[id]:before { height: 52px; margin-top: -52px; }
 }
 @media all and (-ms-high-contrast: none) and (max-width: 200px), (-ms-high-contrast: active) and (max-width: 200px) {
   body { padding-top: 33px; }
+  span.anchor:before { height: 44px; margin-top: -44px; }
+  #content h1[id]:before, #content h2[id]:before, #content h3[id]:before, #content h4[id]:before { height: 44px; margin-top: -44px; }
 }
 
 /* Printing: the header prints once, at the top. */
+/* Admonitions: a note (teal edge) or a warning (amber edge). */
+div.note { margin: 12px 0; padding: 8px 12px; background: #F6F9FB;
+           border: 1px solid #D5DEE5; border-left: 4px solid #0097A5; }
+div.note.warning { border-left-color: #E8A317; }
+div.note p { margin: 4px 0; }
+div.note p.note-title { font-weight: bold; color: #0A2E57; }
+
 @media print {
+  .viewer-overlay { display: none; }
   #header { position: static; }
-  body { padding-top: 0; }
+  body { padding-top: 0; display: block; min-height: 0; height: auto; }
 }

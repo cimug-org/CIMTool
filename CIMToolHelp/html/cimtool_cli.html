@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>cimtool-cli: Generating Artifacts Outside the Workbench</title>
+  <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
+</head>
+<body>
+<div id="header">
+  <img class="watermark" src="images/brand_cimug_mark.svg" alt="" />
+  <div class="brand">
+    <img class="logo" src="images/brand_cimtool_logo.svg" alt="CIMTool" />
+    <div class="divider"></div>
+    <div class="title"><span class="cim">CIM</span>Tool Help</div>
+  </div>
+</div>
+<div id="main">
+<div id="content">
+
+<h1>cimtool-cli: Generating Artifacts Outside the Workbench</h1>
+
+<p><b>cimtool-cli</b> (<code>cimtool-cli.jar</code>) is a companion command-line tool that generates a project's artifacts outside the <b>CIMTool</b> workbench. It runs the same builders that <b>CIMTool</b> runs when you save a profile, so a profile built on the command line produces the same XSD, JSON Schema, RDFS, OWL, AsciiDoc, PlantUML and other artifacts as one saved in the Profile Editor. It needs no workbench and no display, so it can run in a script, on a server or in a continuous-integration pipeline.</p>
+
+<p>This page describes what the tool is for and how it fits with your <b>CIMTool</b> projects. For its command-line options, usage examples, exit codes and logging, see <a href="https://cimtool.ucaiug.io/schemaops/cimtool-cli/">Using CIMTool in CI/CD Pipelines with cimtool-cli</a> on cimtool.ucaiug.io.</p>
+
+<div class="wiki-toc">
+<ol>
+<li><a href="#schemaops">What It Is For: SchemaOps</a></li>
+<li><a href="#projects">How It Works with Your Projects</a></li>
+<li><a href="#generates">What It Generates</a></li>
+<li><a href="#getting">Getting and Running It</a></li>
+<li><a href="#more">Options, Examples and Troubleshooting</a></li>
+<li><a href="#related">Related Topics</a></li>
+</ol>
+</div>
+
+<h2 id="schemaops">What It Is For: SchemaOps</h2>
+
+<p><b>cimtool-cli</b> supports a <i>SchemaOps</i> way of working: treating your CIM schema and profiles as versioned source, kept in a repository such as Git, and regenerating everything derived from them automatically, in the way DevOps treats application source code. For example, a pipeline can:</p>
+<ul>
+<li>regenerate every profile's artifacts each time a change to a <b>CIMTool</b> project is committed or proposed in a pull request;</li>
+<li>pass the generated AsciiDoc documentation to the Asciidoctor command-line tools to build a finished HTML or PDF document, and publish it;</li>
+<li>generate LinkML from the profiles and pass it on to LinkML's own tools to produce code, documentation or further artifacts.</li>
+</ul>
+
+<p>It runs on Windows, Linux and macOS, so it can be used with any continuous-integration system, such as GitHub Actions, GitLab CI, Jenkins or Azure Pipelines, and in containers. The <b>CIMTool</b> workbench itself is released for Windows only.</p>
+
+<h2 id="projects">How It Works with Your Projects</h2>
+
+<p><b>cimtool-cli</b> works on a <b>CIMTool</b> project folder: the folder that holds the project's <b>Schema</b>, <b>Profiles</b> and other folders (see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_explorer.html">Project Explorer and Project Folders</a>). You create and edit the project in the workbench as usual; the command-line tool then reads it as the workbench left it.</p>
+
+<ul>
+<li><b>Settings come from the project.</b> It reads the schema files and settings from the project's hidden settings files, and the builders enabled on each profile's Profile Summary tab from the profile itself. <b>CIMTool</b> creates these files when a project is created, opened or imported.</li>
+<li><b>Your preferences travel with the project.</b> The project also keeps a copy of your <b>CIMTool</b> preferences, including the <b>PlantUML Builder Preferences</b>, in a hidden <code>.cimtool-global-preferences</code> file. <b>CIMTool</b> keeps it up to date when it starts, when a project is opened or imported, and when you apply changes on those preference pages. With it, the command line produces the same output as the workbench, even on a computer where <b>CIMTool</b> has never been installed.</li>
+<li><b>Copyright templates are used automatically.</b> If the project has copyright templates, the generated artifacts carry them, as they do in the workbench.</li>
+</ul>
+
+<p>Keep these hidden files with the project when you commit it to a repository; see <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_explorer.html#hidden">Hidden Files</a>.</p>
+
+<h2 id="generates">What It Generates</h2>
+
+<ul>
+<li>By default it processes every profile in the project's <b>Profiles</b> folder, running the builders enabled on each profile, and writes the artifacts to the <b>Profiles</b> folder beside the profiles, exactly as the workbench does.</li>
+<li>It can process a single profile, run one named builder instead of the ones enabled on the profiles, or write the artifacts to another folder.</li>
+<li>It includes every builder bundled with <b>CIMTool</b>, including the Java-based builders for OWL, RDFS, Turtle and XML that used to run only in the workbench. It can also run your own XSLT stylesheet as a custom builder.</li>
+<li>It reports success or the kind of failure through its exit code, so a pipeline can stop when generation fails.</li>
+</ul>
+
+<h2 id="getting">Getting and Running It</h2>
+
+<p><code>cimtool-cli.jar</code> is an optional download, published with each <b>CIMTool</b> release since 2.3.0 on the <a href="https://github.com/cimug-org/CIMTool/releases">CIMTool GitHub Releases page</a>, separately from the <b>CIMTool</b> application. It needs Java 17 or later and nothing else. For example, to generate all of a project's artifacts:</p>
+
+<pre>java -jar cimtool-cli.jar --project-dir MyProject</pre>
+
+<p><b>Use the cimtool-cli release that matches the CIMTool release the project was last opened with.</b> The command-line tool relies on the settings that <b>CIMTool</b> writes into the project, such as the hidden <code>.cimtool-settings</code> and <code>.builder-preferences</code> files. A newer <b>cimtool-cli</b> may need settings that an older <b>CIMTool</b> never wrote, and an older one may not understand settings or builders added by a newer <b>CIMTool</b>. A different release may still work, depending on what changed between the two releases, but if it does not, generation can fail or, worse, produce artifacts that differ from the workbench's without any error. Using the same release is always the safest choice, and is the recommended practice. When you upgrade <b>CIMTool</b>, open each project in the new release and commit the project's files, and upgrade the <code>cimtool-cli.jar</code> your pipelines use at the same time.</p>
+
+<h2 id="more">Options, Examples and Troubleshooting</h2>
+
+<p>The full guide is on cimtool.ucaiug.io: <a href="https://cimtool.ucaiug.io/schemaops/cimtool-cli/">Using CIMTool in CI/CD Pipelines with cimtool-cli</a>. It covers:</p>
+<ul>
+<li>every command-line option, including the copyright options and how a custom XSLT stylesheet is run;</li>
+<li>listing the available builders and their types;</li>
+<li>usage examples, and complete pipeline examples for AsciiDoc publishing and LinkML generation;</li>
+<li>exit codes, diagnostic logging and platform notes;</li>
+<li>the changes to <b>cimtool-cli</b> in each release, which matter when you upgrade a pipeline.</li>
+</ul>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#builds">Workbench Basics: Builds</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_summary.html">Profile Summary Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/project_and_profile_documentation.html">Project and Profile Documentation</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a></li>
+</ul>
+
+</div>
+</div>
+<div id="footer">
+  <a href="https://cimtool.ucaiug.io">cimtool.ucaiug.io</a>
+  <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
+</div>
+</body>
+</html>

@@ -4,6 +4,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>The Profile Editor</title>
   <link type="text/css" rel="stylesheet" href="graphic.css" />
+  <script type="text/javascript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+  <script type="text/javascript" src="viewer.js"></script>
 </head>
 <body>
 <div id="header">
@@ -21,7 +23,7 @@
 
 <p>The Profile Editor is where you design a profile: the selection and restriction of CIM classes, attributes and associations from which <b>CIMTool</b> generates schemas. It opens when you double-click a profile (an <code>.owl</code> file in a project's <b>Profiles</b> folder) in the Project Explorer.</p>
 
-<p><img src="images/profile_editor_overview.png" alt="The Profile Editor beside the Outline view" /><br />
+<p><img class="zoomable" src="images/profile_editor_overview.png" alt="The Profile Editor beside the Outline view" /><br />
 <i>Interim screenshot, to be replaced: the Profile Editor on the Add/Remove tab, with the Outline view beside it and the six tabs along the bottom of the editor.</i></p>
 
 <h2 id="outline">Working from the Outline View</h2>
@@ -79,15 +81,15 @@
 
 <p>Where a Profile Editor option behaves differently for each target, its help describes each case.</p>
 
-<h3 id="preview-target">The Profile Preview and Your Target</h3>
+<h3 id="preview-target">The Profile Real-Time Preview and Your Target</h3>
 
-<p>The <b>Profile Preview</b> view draws the profile you are editing with one of the PlantUML builders, so its diagram style should also match the profile's target: <code>puml-rdfs-t2b</code> or <code>puml-rdfs-l2r</code> for an RDFS profile, and an XSD or JSON variant for an XSD and JSON Schema profile.</p>
+<p>The <b>Profile Real-Time Preview</b> view draws the profile you are editing with one of the PlantUML builders, so its diagram style should also match the profile's target: <code>puml-rdfs-t2b</code> or <code>puml-rdfs-l2r</code> for an RDFS profile, and an XSD or JSON variant for an XSD and JSON Schema profile. See <a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_preview.html">Profile Real-Time Preview</a> for the view itself and the problems it marks for each target.</p>
 
 <p>The style can be set at three levels. <b>CIMTool</b> uses the most specific one that is set:</p>
 
 <ol>
 <li><b>Profile:</b> right-click the profile in the Project Explorer, choose <b>Properties</b>, then <b>CIMTool</b>, and set <b>Diagram Style</b>.</li>
-<li><b>Project:</b> right-click the project, choose <b>Properties</b>, then <b>CIMTool</b>, and set <b>Diagram Style</b> under <i>Real-Time Profile Preview PlantUML Diagram Preferences</i>. This applies to every profile in the project that does not set its own style.</li>
+<li><b>Project:</b> right-click the project, choose <b>Properties</b>, then <b>CIMTool</b>, and set <b>Diagram Style</b> under <i>Profile Real-Time Preview PlantUML Diagram Preferences</i>. This applies to every profile in the project that does not set its own style.</li>
 <li><b>Global:</b> <b>Window &gt; Preferences &gt; CIMTool &gt; PlantUML Builder Preferences</b>, used when neither of the others is set.</li>
 </ol>
 
