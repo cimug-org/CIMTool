@@ -53,6 +53,7 @@ public class CIMNature implements IProjectNature {
 				System.arraycopy(commands, i + 1, newCommands, i,
 						commands.length - i - 1);
 				description.setBuildSpec(newCommands);
+				getProject().setDescription(description, null);
 				return;
 			}
 		}
