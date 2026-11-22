@@ -31,6 +31,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -102,6 +104,9 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 	/** The hidden .puml file currently being tracked and displayed. */
 	private IFile currentPreviewFile;
 
+	/** The profile (.owl) file whose diagram is currently shown. */
+	private IFile currentProfileFile;
+
 	/** The last fully-rendered HTML — used by the external browser action. */
 	private String currentHtml;
 
@@ -129,8 +134,15 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 	private IResourceChangeListener resourceListener;
 	private IPartListener2 partListener;
 
+	/**
+	 * The view's registered name ("Profile Real-Time Preview" in plugin.xml), shown
+	 * on the tab while no profile is being drawn.
+	 */
+	private String defaultPartName;
+
 	@Override
 	public void createPartControl(Composite parent) {
+		defaultPartName = getPartName();
 		parent.setLayout(new FillLayout());
 		browser = new Browser(parent, SWT.NONE);
 		browser.setText(NO_PROFILE_HTML);
@@ -255,6 +267,9 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 
 			@Override
 			public void partClosed(IWorkbenchPartReference r) {
+				IWorkbenchPart part = r.getPart(false);
+				if (part instanceof ProfileEditor)
+					handleProfileEditorClosed((ProfileEditor) part);
 			}
 
 			@Override
@@ -280,6 +295,39 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 		getSite().getPage().addPartListener(partListener);
 	}
 
+	/**
+	 * Clears the view when the editor of the profile it shows is closed, unless
+	 * another editor on the same profile is still open. If another profile's
+	 * editor becomes active instead, {@link #handleProfileEditorActivated} draws
+	 * that profile, and this does nothing because the closed editor's file is no
+	 * longer the one shown.
+	 */
+	private void handleProfileEditorClosed(ProfileEditor closed) {
+		IFile closedFile = closed.getFile();
+		if (closedFile == null || !closedFile.equals(currentProfileFile))
+			return;
+		IWorkbenchPage page = getSite().getPage();
+		if (page != null) {
+			for (IEditorReference ref : page.getEditorReferences()) {
+				IEditorPart other = ref.getEditor(false);
+				if (other != closed && other instanceof ProfileEditor
+						&& closedFile.equals(((ProfileEditor) other).getFile()))
+					return;
+			}
+		}
+		currentProfileFile = null;
+		currentPreviewFile = null;
+		currentHtml = null;
+		pageLoaded = false;
+		savedZoom = -1;
+		savedPanX = 0;
+		savedPanY = 0;
+		if (browser != null && !browser.isDisposed()) {
+			browser.setText(NO_PROFILE_HTML);
+			setPartName(defaultPartName);
+		}
+	}
+
 	private void handleProfileEditorActivated(ProfileEditor editor) {
 		IFile owlFile = editor.getFile();
 		if (owlFile == null)
@@ -302,11 +350,12 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 			pageLoaded = false;
 		}
 		currentPreviewFile = previewFile;
+		currentProfileFile = owlFile;
 
 		Display display = getSite().getShell().getDisplay();
 		display.asyncExec(() -> {
 			if (browser != null && !browser.isDisposed())
-				setPartName(owlFile.getName() + " Preview");
+				setPartName(baseName + " Real-Time Preview");
 		});
 
 		if (previewFileChanged) {
@@ -336,6 +385,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 			currentHtml = null;
 			pageLoaded = false;
 			browser.setText(NO_PROFILE_HTML);
+			setPartName(defaultPartName);
 			return;
 		}
 
@@ -344,6 +394,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 			currentHtml = null;
 			pageLoaded = false;
 			browser.setText(NO_PROFILE_HTML);
+			setPartName(defaultPartName);
 			return;
 		}
 
