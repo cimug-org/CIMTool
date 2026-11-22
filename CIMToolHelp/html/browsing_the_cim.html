@@ -21,7 +21,68 @@
         <div id="main">
           <div id="content">
 <h1>Project Model: Browsing the CIM</h1>
-<p>CIMTool provides a special perspective (ie window layout) for browsing the CIM.  This is sometimes more convenient than a standard UML editor for browsing, especially if the UML diagrams are not complete.</p><p>In particular, CIMTool provides efficient ways to search the CIM and to follow associations through the CIM.</p><p>If this is the first time you have used CIMTool you will need to create a project or load an existing project.  The easiest way is to follow the instructions here: <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a>. </p><p>With a project loaded, open the browsing perspective. From the main menu choose <b>Window &gt; Perspective &gt; Open Perspective &gt; Browsing</b>:</p><p><img class="zoomable" src="images/workbench_basics_open_perspective.png" alt="The Window menu open at Perspective, Open Perspective, listing Browsing, Validation and Other" /></p><p>The browsing perspective then opens and looks like this:</p><p><img class="zoomable" src="images/browsing_the_cim_browsing.png" /></p><p>The <strong>Project Explorer</strong> (top left) shows the available projects and their contents.  For CIM browsing it is only necessary to select the project (as each project has one copy of the CIM).  The first time a project is selected its copy of the CIM is analysed in the background.  This takes around 10 seconds in typical cases. </p><p>The <strong>Project Model View</strong> (top right) displays the CIM structure and is the centre of activity for browsing.  Packages, classes and their members can be explored by expanding the tree view.   </p><p>For an explanation of CIMTool's interpretation of the CIM and the icons used in this view see: <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/uml_owl.html">UMLOWL</a></p><p>Selecting an item causes its details to be displayed in the <strong>Property View</strong> (bottom left) and the <strong>Documentation View</strong> (bottom right). </p><p>The <strong>Jump and Search</strong> buttons provide addition navigation options.  They are located above the project model view:</p><p><img class="zoomable" src="images/browsing_the_cim_browsing1.png" /></p><p>The <strong>Jump</strong> button <img src="images/browsing_the_cim_functional.png" />  moves the focus to the opposite end of whatever property or inheritance relationship is currently selected.  This is useful for following chains of a associations in the CIM.  </p><p>As a shortcut, double-clicking an item in the project model view executes the jump function.</p><p>The <strong>Search</strong> button  <img src="images/searching_schemas_and_profiles_search.png" /> opens the search wizard which finds items in the CIM by name, displays them, and allows you to navigate to their definition.</p><p><img class="zoomable" src="images/searching_schemas_and_profiles_search1.png" /></p><p>See <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html">Searching Schemas and Profiles</a> for more details about search.</p></div>
+<p>CIMTool provides a perspective (a window layout) for browsing the CIM. It is sometimes more convenient than a UML editor for browsing, especially if the UML diagrams are not complete, and it gives quick ways to search the CIM and to follow associations through it.</p>
+<p>If this is the first time you have used CIMTool, you need to create a project or load an existing one first. The easiest way is to follow the instructions in <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/exchanging_cimtool_projects.html">Exchanging CIMTool Projects</a>.</p>
+
+<div class="wiki-toc">
+<ol>
+<li><a href="#opening">Opening the Browsing Perspective</a></li>
+<li><a href="#jump-search">Jump and Search</a></li>
+<li><a href="#following">Following the Selection</a></li>
+<li><a href="#opening-a-profile">Opening a Profile From the Browsing Perspective</a></li>
+<li><a href="#related">Related Topics</a></li>
+</ol>
+</div>
+
+<h2 id="opening">Opening the Browsing Perspective</h2>
+<p>With a project loaded, choose <b>Window &gt; Perspective &gt; Open Perspective &gt; Browsing</b>:</p>
+<p><img class="zoomable" src="images/workbench_basics_open_perspective.png" alt="The Window menu open at Perspective, Open Perspective, listing Browsing, Validation and Other" /></p>
+<p>Choosing <b>Browsing</b> switches the perspective to:</p>
+<p><img class="zoomable" src="images/browsing_the_cim_perspective.png" alt="The Browsing perspective: Project Explorer and Properties on the left, Project Model and Documentation on the right, with the class ACLineSegment selected" /><br />
+<i>The Browsing perspective with the class <b>ACLineSegment</b> selected in the Project Model.</i></p>
+<ul>
+<li>The <b>Project Explorer</b> (top left) shows your projects and their contents. To browse a project's CIM, select the project or any file in it. The first time a project is selected, its CIM is analyzed in the background, which typically takes around 10 seconds.</li>
+<li>The <b>Project Model</b> view (top right) is the center of browsing. It shows the project's schema as a tree of packages, classes and their members. If the project's <b>Schema</b> folder holds extension schemas as well as the CIM, they are merged into the one tree. The tree is rebuilt when a schema is imported again. For CIMTool's interpretation of the CIM and the icons used in this view, see <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/uml_owl.html">UMLOWL</a>.</li>
+<li>The <b>Properties</b> view (bottom left) and the <b>Documentation</b> view (bottom right) show the details and the CIM description of the selected item.</li>
+</ul>
+<p>If the perspective doesn't look like this, choose <b>Window &gt; Perspective &gt; Reset Perspective...</b> to restore its layout.</p>
+
+<h2 id="jump-search">Jump and Search</h2>
+<p>The <img class="control" src="images/control_jump.png" alt="" /> <b>Jump</b> and <img class="control" src="images/control_search.png" alt="" /> <b>Search</b> buttons are at the top right of the Project Model view:</p>
+<p><img class="zoomable" src="images/browsing_the_cim_jump_search.png" alt="The Project Model view's tab and, at its top right, the Jump and Search buttons" /></p>
+<p>The <img class="control" src="images/control_jump.png" alt="" /> <b>Jump</b> button moves the selection along whatever is selected, which is useful for following chains of associations through the CIM:</p>
+<ul>
+<li>On an association end, it moves to the other end of the association.</li>
+<li>On an attribute, it moves to the attribute's type. For example, jumping from <b>r: Resistance (ohm)</b> selects the <b>Resistance</b> datatype.</li>
+<li>On a <b>SuperClass:</b> entry, it moves to the parent class.</li>
+</ul>
+<p>As a shortcut, double-click an item in the Project Model view to jump from it.</p>
+<p>The <img class="control" src="images/control_search.png" alt="" /> <b>Search</b> button opens the search wizard, which finds packages, classes and their members in the CIM by name, lists the matches, and selects the one you choose in the Project Model view:</p>
+<p><img class="zoomable" src="images/browsing_the_cim_search.png" alt="The CIMTool Search dialog opened from the Project Model view, with IdentifiedObj typed and the class IdentifiedObject selected among the matching items" /><br />
+<i>The search wizard opened from the Project Model view. Choosing <b>Finish</b> selects the chosen item in the Project Model.</i></p>
+<p>See <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html">Searching Schemas and Profiles</a> for more about search.</p>
+
+<h2 id="following">Following the Selection</h2>
+<p>The Project Model and Documentation views follow what you select anywhere in the workbench, not only in the Browsing perspective:</p>
+<ul>
+<li>Selecting a project, or a file in it, in the Project Explorer switches both views to that project's schema.</li>
+<li>Selecting a class or property in a profile editor, on its <b>Add/Remove</b> tab or in the <b>Outline</b> view, expands the Project Model to that item's definition in the CIM, and the Documentation view shows its description.</li>
+</ul>
+<p>This makes the two views a handy companion while you build a profile: keep them open beside the profile editor, and every class you consider on the <a class="internal" href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html">Add/Remove tab</a> is shown in the context of the CIM.</p>
+
+<h2 id="opening-a-profile">Opening a Profile From the Browsing Perspective</h2>
+<p>Double-clicking a profile in the Project Explorer opens its editor in the middle of the window, between the two columns. The Project Model and Documentation views narrow to make room and follow your selections in the editor. When you close the last editor, the window returns to its two-column layout.</p>
+
+<h2 id="related">Related Topics</h2>
+<ul>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/searching_schemas_and_profiles.html">Searching Schemas and Profiles</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/documentation_view.html">Documentation View</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/uml_owl.html">UMLOWL</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/profile_editor_add_remove.html">Add/Remove Tab</a></li>
+<li><a href="PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/workbench_basics.html#perspectives">Workbench Basics: Perspectives</a></li>
+</ul>
+
+</div>
           
         </div>  
           
@@ -30,4 +91,4 @@
   <div class="sponsor"><span>Developed and sponsored by</span><a href="https://www.aspentech.com/en/products/suites/digital-grid-management"><img src="images/brand_emerson_aspentech.svg" alt="Emerson | AspenTech" /></a></div>
 </div>
       </body>
-    </html>
+    </html>
