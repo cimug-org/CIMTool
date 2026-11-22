@@ -439,6 +439,39 @@ placed there by the PDE export directly. Both are extracted from the
 `au.com.langdale.cimtool.product` plugin bundle at first startup by
 `CIMToolPlugin.extractLoggingProperties()`.
 
+[NOTE]
+====
+*The bundled JRE.* The export includes a `jre/` folder only when the product's
+execution environment, `JavaSE-20` (set under *Launching* in `CIMTool.product`),
+can be matched to an installed JRE. Before exporting:
+
+. In *Window > Preferences > Java > Installed JREs*, check whether the Java 20 JRE
+  to bundle is listed (Zulu 20 for 2.3.x and 2.4.0). If it isn't, add it.
+. In *Installed JREs > Execution Environments*, select *JavaSE-20* and check that
+  this JRE is ticked. If it isn't, tick it.
+
+If no JRE is ticked for *JavaSE-20*, the export completes without errors but
+leaves out `jre/`. The product then starts only on a computer with a suitable Java
+installed. After each export, check that `CIMTool-<version>/jre/` exists.
+====
+
+[NOTE]
+====
+*Exporting into an existing folder.* Each plug-in keeps its classes in an inner
+JAR (`cimtoole.jar` in `au.com.langdale.cimtoole`). On first start, the OSGi
+framework extracts that JAR to `configuration/org.eclipse.osgi/<id>/0/.cp/` and
+loads classes from the extracted copy. The bundle versions carry no build
+qualifier (for example `2.3.1`), so a later export into the same folder looks to
+the framework like the same bundle, and it keeps running the old extracted
+classes. Non-Java resources such as help pages are unaffected. After exporting
+into a folder that already holds a product, either:
+
+* start the product once with `CIMTool.exe -clean`, or
+* delete the `configuration/org.eclipse.osgi/` folder before starting.
+
+A release build exported into a new `CIMTool-<version>` folder is not affected.
+====
+
 Once the export completes, proceed immediately to Phase 3, Code Signing and
 Packaging, before creating the distribution ZIP.
 
