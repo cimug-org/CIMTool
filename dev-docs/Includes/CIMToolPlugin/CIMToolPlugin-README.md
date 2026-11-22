@@ -117,7 +117,7 @@ It also depends on the following standard Eclipse platform bundles:
 | `org.eclipse.ui.themes` | Eclipse theming bundle. It is listed in `Require-Bundle`, but no CIMToolPlugin code uses it. |
 | `org.eclipse.core.filesystem` | Abstraction over file system access: `IFileStore`, `EFS`, used for file operations that span local and remote file systems |
 | `net.sourceforge.plantuml.library` | PlantUML rendering library: generates SVG diagrams from `.puml` source in the Real-Time Preview pipeline. Declared as a hard `Require-Bundle` dependency. |
-| `net.sourceforge.plantuml.eclipse` | PlantUML Eclipse integration bundle. Declared as a hard `Require-Bundle` dependency: `plugin.xml` registers its `PlantUmlSvgView` as the "CIMTool PlantUML Svg" view. |
+| `net.sourceforge.plantuml.eclipse` | PlantUML Eclipse integration bundle. Declared as a hard `Require-Bundle` dependency. It provides the PlantUML Svg view (`net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView`) that the CIMTool perspective places beside the Profile Real-Time Preview. |
 
 ### Vendored Third-Party Libraries
 
@@ -161,7 +161,7 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | `org.eclipse.core.contenttype.contentTypes` | Defines the "CIMTool Profile" content type (XML-based, for `.owl` files) to which the Profile Editor is bound, and associates `.xml-log` files with plain text and `.rdfs` files with XML |
 | `org.eclipse.ui.perspectives` | Registers the CIMTool Perspective, CIMTool Browsing Perspective, and Validation Perspective, defining the initial layout of views, editors, and toolbars for each |
 | `org.eclipse.ui.editors` | Registers the Model Browser (`.xmi`, `.simple-owl`, `.merged-owl`, and the EA project files `.eap`, `.eapx`, `.qea`, `.qeax`, `.feap`), Profile Editor (`.owl`), Diagnostic Browser (`.diagnostic`), Profile Repair Editor (`.repair`) and Mapping Editor (`.mapping-ttl`, `.mapping-owl`) |
-| `org.eclipse.ui.views` | Registers five views: Project Model, Validation, Documentation, Profile Preview (`CurrentProfilePlantUmlSvgView`), and "CIMTool PlantUML Svg" (`PlantUmlSvgView` from `net.sourceforge.plantuml.eclipse`) |
+| `org.eclipse.ui.views` | Registers five views: Project Model, Validation, Documentation, Profile Real-Time Preview (`CurrentProfilePlantUmlSvgView`), and CIMTool Context Help (`CIMToolHelpView`). The PlantUML Svg view that the CIMTool perspective also shows is registered by `net.sourceforge.plantuml.eclipse` itself. |
 | `org.eclipse.ui.importWizards` | Registers twelve import wizards under the CIMTool category: Schema, Profile, Spreadsheet as Profile, Validation Rules, Incremental Validation Rules, HTML Rules, XML Schema Rules, Copyright Templates, XSLT Transform Builder, Model (CIM/XML file), Incremental CIM/XML file, and CIMTool Projects |
 | `org.eclipse.ui.newWizards` | Registers seven new-resource wizards: Project, Profile, Ruleset, HTML Rules, XML Schema Rules, Incremental Ruleset, and Mappings |
 | `org.eclipse.ui.exportWizards` | Registers the schema export wizard under the CIMTool category |
@@ -172,7 +172,7 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | `org.eclipse.ui.propertyPages` | Registers the "CIMTool" property page shown when the user opens Properties on a CIMTool project or resource |
 | `org.eclipse.core.runtime.preferences` | Registers `PreferenceInitializer` to set default values for all CIMTool preferences when a new workspace is created |
 | `org.eclipse.core.runtime.adapters` | Registers `PropertySupport` as the adapter factory that adapts model tree nodes to `IPropertySource`, so the Properties view can show them |
-| `org.eclipse.ui.startup` | Registers two startup classes, each in its own extension. `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were produced by an earlier CIMTool release for regeneration (see Regeneration After an Upgrade below). `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse SWT issue #1848, restoring double-click and Enter in the Project Explorer while the PlantUML preview holds focus, and is removed at the platform upgrade that resolves that issue |
+| `org.eclipse.ui.startup` | Registers three startup classes, each in its own extension. `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were produced by an earlier CIMTool release for regeneration (see Regeneration After an Upgrade below). `CIMToolHelpCompanion` opens the CIMTool Context Help panel beside Eclipse's Help view in the CIMTool perspective. `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse SWT issue #1848, restoring double-click and Enter in the Project Explorer while the PlantUML preview holds focus, and is removed at the platform upgrade that resolves that issue |
 | `org.eclipse.compare.structureCreators` | Registers the CIMTool model structure creator so that the Eclipse Compare framework can parse CIM model files into a comparable tree structure |
 | `org.eclipse.compare.structureMergeViewers` | Registers the model structure merge viewer used in side-by-side diff operations on CIM model files |
 | `org.eclipse.compare.contentMergeViewers` | Registers the model content merge viewer used for inline content comparison within the Eclipse Compare editor |
@@ -356,8 +356,8 @@ defaults are set in `PlantUMLBuildersPreferencesPage`.
 
 `net.sourceforge.plantuml.library` is a hard `Require-Bundle` dependency, since
 the preview pipeline calls the PlantUML API directly. `net.sourceforge.plantuml.eclipse`
-is also a hard `Require-Bundle` dependency, because `plugin.xml` registers its
-`PlantUmlSvgView`, but the preview pipeline does not use it.
+is also a hard `Require-Bundle` dependency, because the CIMTool perspective places
+its PlantUML Svg view, but the preview pipeline does not use it.
 
 
 

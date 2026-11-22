@@ -11,24 +11,38 @@
 
 An Eclipse help plugin that provides the integrated HTML documentation for the
 CIMTool application, accessible via *Help > Help Contents* within the running
-Eclipse workbench.
+Eclipse workbench, and the context help shown by *F1* and by the CIMTool
+Context Help panel.
 
 This project contains no Java source. Its sole purpose is to package and register
-the CIMTool user documentation as an Eclipse help contribution.
+the CIMTool user documentation and context help as an Eclipse help contribution.
 
 
 
 === Overview
 
 CIMToolHelp (`au.com.langdale.cimtoole.help`) is a lightweight Eclipse plugin
-that contributes to the `org.eclipse.help.toc` extension point, registering
-`toc.xml` as the table of contents for the CIMTool help system. All content is
-static HTML stored in the `html/` directory.
+that contributes to two extension points:
+
+* `org.eclipse.help.toc`, registering `toc.xml` as the table of contents for the
+  CIMTool help system.
+* `org.eclipse.help.contexts`, registering three context files that map each
+  CIMTool view, editor and Profile Editor tab to a short description and links
+  into the help pages. These are what *F1* shows, and the first link of each
+  context is the page the CIMTool Context Help panel opens.
+
+All content is static XHTML 1.1 stored in the `html/` directory, styled by
+`graphic.css`, with every screenshot opening in a full-window image viewer
+provided by `viewer.js`. Pages are written to work both in the Help window and
+in a narrow help panel beside the editor: the header stays pinned while the page
+scrolls, tables fill the column and stack below 360 pixels, and pages never
+scroll sideways. The styles include fallbacks for the Internet Explorer engine
+that the embedded browser uses on some Windows systems.
 
 The documentation covers the full range of CIMTool user topics, from getting
-started and importing EA models through to profiling, validation, namespace
-management, and OWL/RDF concepts, and is displayed directly within the Eclipse
-Help viewer.
+started and the workbench through the Profile Editor and each of its tabs, the
+Profile Real-Time Preview, project and profile documentation, importing EA models,
+validation, namespace management, and OWL/RDF concepts.
 
 
 
@@ -37,42 +51,62 @@ Help viewer.
 ----
 CIMToolHelp/
 ├── META-INF/
-│   └── MANIFEST.MF         ← OSGi bundle manifest (au.com.langdale.cimtoole.help)
-├── build.properties        ← Declares html/ and toc.xml for inclusion in the bundle
-├── plugin.xml              ← Registers toc.xml via org.eclipse.help.toc extension point
-├── toc.xml                 ← Table of contents — defines the help topic tree and entry order
-└── html/                   ← Static HTML documentation pages and supporting assets
-    ├── CIMTool_Topics.html                        ← Help landing page
-    ├── GettingStarted.html
-    ├── ChangeLog.html
-    ├── Browsing_the_CIM.html
-    ├── Using_CIMTool_with_Enterprise_Architect.html
-    ├── Using_CIMTool_with_Protege_and_Top_Braid.html
-    ├── Searching_Schemas_and_Profiles.html
-    ├── Profile_Maintenance.html
-    ├── Comparing_Profiles_and_Schemas.html
-    ├── Exchanging_CIMTool_Projects.html
-    ├── Associations_and_Anonymous_Classes.html
-    ├── MultipleProfiles.html
-    ├── Enumerations_Support.html
-    ├── CIMToolNamespaceSupport.html
-    ├── Namespaces.html
-    ├── OWL_as_a_Profile_Language.html
-    ├── UMLOWL.html
-    ├── HowToValidateCPSM.html
-    ├── ValidationCases.html
-    ├── ValidationRules.html
-    ├── Generating_a_Database_Schema.html
-    ├── ExportFromEnterpriseArchitect.html
-    ├── Profile_Structure_Diagram.html
-    ├── CIMCheck.html
-    ├── CIMCheck_API.html
-    ├── New_and_Notable_for_1_9.html
-    ├── LGPL.html
-    ├── graphic.css                                ← Stylesheet for all help pages
-    ├── EclipseUpdate/, MultipleProfiles/,
-    │   Repair/, Search/                           ← PNG images for the topics of the same name
-    └── ...                                        ← Supporting PNG images per topic
+│   └── MANIFEST.MF              ← OSGi bundle manifest (au.com.langdale.cimtoole.help)
+├── build.properties             ← Declares html/ and the XML files for inclusion in the bundle
+├── plugin.xml                   ← Registers toc.xml and the three context files
+├── toc.xml                      ← Table of contents: the help topic tree and entry order
+├── contexts_CIMTool.xml         ← Context help for CIMTool's views, the Profile Editor and its tabs,
+│                                  and the CIMTool Search wizard
+├── contexts_Navigator.xml       ← Context help for the Project Explorer
+├── contexts_Workbench.xml       ← Fallback context help for parts with no help of their own
+└── html/                        ← Help pages and supporting assets
+    ├── cimtool_topics.html                       ← Help landing page
+    ├── download.html
+    ├── getting_started.html
+    ├── workbench_basics.html
+    ├── project_explorer.html
+    ├── documentation_view.html
+    ├── profile_editor.html                       ← The Profile Editor and profile targets
+    ├── profile_editor_add_remove.html            ← One page per Profile Editor tab
+    ├── profile_editor_restriction.html
+    ├── profile_editor_documentation.html
+    ├── profile_editor_description.html
+    ├── profile_editor_stereotypes.html
+    ├── profile_editor_summary.html
+    ├── profile_preview.html
+    ├── project_and_profile_documentation.html
+    ├── cimtool_cli.html
+    ├── exchanging_cimtool_projects.html
+    ├── browsing_the_cim.html
+    ├── using_cimtool_with_enterprise_architect.html
+    ├── using_cimtool_with_protege_and_top_braid.html
+    ├── searching_schemas_and_profiles.html
+    ├── profile_maintenance.html
+    ├── comparing_profiles_and_schemas.html
+    ├── uml_owl.html
+    ├── associations_and_anonymous_classes.html
+    ├── multiple_profiles.html
+    ├── enumerations_support.html
+    ├── cimtool_namespace_support.html
+    ├── namespaces.html
+    ├── how_to_validate_cpsm.html
+    ├── validation_cases.html
+    ├── validation_rules.html
+    ├── owl_as_a_profile_language.html
+    ├── generating_a_database_schema.html
+    ├── change_log.html
+    ├── export_from_enterprise_architect.html     ← Pages linked from other pages, not from toc.xml
+    ├── profile_structure_diagram.html
+    ├── cimcheck.html
+    ├── cimcheck_api.html
+    ├── new_and_notable_for_1_9.html
+    ├── lgpl.html
+    ├── graphic.css                               ← Stylesheet for all help pages
+    ├── viewer.js                                 ← Full-window image viewer for screenshots
+    ├── images/                                   ← All images, named after the page that uses them
+    └── EclipseUpdate/, MultipleProfiles/,
+        Repair/, Search/                          ← Legacy images used by no page, kept until the
+                                                    help rewrite confirms they can be removed
 ----
 
 
@@ -82,16 +116,37 @@ CIMToolHelp/
 CIMToolHelp has no compile-time or runtime OSGi dependencies on other in-repository
 plugins. It declares no `Require-Bundle` entries in its MANIFEST and contains no
 Java source. It relies solely on the Eclipse help framework
-(`org.eclipse.help.toc` extension point) which is provided by the Eclipse
-platform itself.
+(`org.eclipse.help.toc` and `org.eclipse.help.contexts` extension points), which
+is provided by the Eclipse platform itself.
 
-The only integration point with the rest of the CIMTool project is that
+The context files are registered against the plugins whose parts they describe,
+using the `plugin` attribute in `plugin.xml`:
+
+[cols="2,2,4", options="header"]
+|===
+| File | Registered against | Covers
+
+| `contexts_CIMTool.xml`
+| `au.com.langdale.cimtoole`
+| CIMTool's own views, the Profile Editor and its tabs, and the CIMTool Search wizard
+
+| `contexts_Navigator.xml`
+| `org.eclipse.ui.navigator`
+| `common_navigator`, the Project Explorer
+
+| `contexts_Workbench.xml`
+| `org.eclipse.ui`
+| `missing`, the fallback for parts with no help of their own
+|===
+
+The last two replace contexts that `org.eclipse.platform.doc.user` would
+otherwise supply. That bundle is not part of the CIMTool product.
+
 `CIMToolProduct` lists this plugin (`au.com.langdale.cimtoole.help`) in
 `CIMTool.product` so it is included in the PDE product export and shipped as
-part of the CIMTool distribution.
-
-Additionally, `CIMToolProduct/helpData.xml` references this plugin's `toc.xml`
-to control the ordering of help books in the Eclipse help table of contents:
+part of the CIMTool distribution. `CIMToolProduct/helpData.xml` references this
+plugin's `toc.xml` to control the ordering of help books in the Eclipse help
+table of contents:
 
 ----
 <toc id="/au.com.langdale.cimtoole.help/toc.xml"/>
@@ -101,87 +156,162 @@ to control the ordering of help books in the Eclipse help table of contents:
 
 === Help Content
 
-The `toc.xml` table of contents defines 21 top-level help topics covering:
+The `toc.xml` table of contents organizes the help into seven top-level groups, in the order a user meets the work. Each group links to its section of the landing page and holds the topics below: 28 in all, or 34 counting the six Profile Editor tab pages. The CIMTool Topics landing page (`cimtool_topics.html`) lists the same topics in the same groups and order.
 
-[cols="2,3", options="header"]
+[cols="2,3,4", options="header"]
 |===
-| Topic | Description
-
-| Download
-| How to obtain and install CIMTool
+| Group | Topic | Description
 
 | Getting Started
-| How to create a CIMTool project
+| Download
+| Where to download the latest CIMTool release and earlier releases
 
-| Browsing the CIM
-| Explore the CIM in CIMTool's browsing perspective
+| Getting Started
+| Getting Started
+| How to create a project
 
-| Using CIMTool with Enterprise Architect
-| How to transfer a model from EA to CIMTool
+| Getting Started
+| Workbench Basics
+| The parts of the workbench used in everyday CIMTool work
 
-| Using CIMTool with Protege and Top Braid
-| How to examine a profile in popular ontology editors
+| Getting Started
+| Project Explorer and Project Folders
+| The five folders of a CIMTool project and what each holds
 
-| Searching Schemas and Profiles
-| CIMTool's search wizard
-
-| Profile Maintenance
-| Repairing profiles when the CIM changes
-
-| Comparing Profiles and Schemas
-| Finding out what changed in the CIM or in a profile
-
+| Getting Started
 | Exchanging CIMTool Projects
 | How to export and import whole projects with all settings intact
 
-| Associations and Anonymous Classes
-| The full story on profiling an association
+| Schemas and the CIM
+| Using CIMTool with Enterprise Architect
+| How to transfer a model from EA to CIMTool
 
-| Multiple Profiles
-| How to create several different restricted classes for a given CIM class
+| Schemas and the CIM
+| Project Model: Browsing the CIM
+| The Project Model view, and the Browsing perspective for exploring the CIM
 
-| Enumerations Support
-| How to include enumerated classes in a profile
+| Schemas and the CIM
+| Documentation View
+| The schema's description of the selected element
 
+| Schemas and the CIM
+| Searching Schemas and Profiles
+| The CIMTool Search wizard
+
+| Schemas and the CIM
+| UMLOWL
+| How CIMTool interprets UML models as OWL ontologies, and the conventions used for displaying them
+
+| Schemas and the CIM
 | CIMTool Namespace Support
 | How to use namespaces to manage multiple CIM extensions and profiles
 
+| Schemas and the CIM
 | Namespaces
 | An explanation and discussion of namespaces
 
-| OWL as a Profile Language
-| CIMTool's representation of a profile in OWL
+| Building Profiles
+| The Profile Editor
+| Editing a profile, and profile targets; with one subtopic per tab: Add/Remove, Restriction, Documentation, Description, Stereotypes and Profile Summary
 
-| UMLOWL
-| How CIMTool interprets UML models as OWL ontologies
+| Building Profiles
+| Profile Real-Time Preview
+| The live diagram of the profile being edited, and the problems it marks
 
-| How To Validate CPSM
-| How to validate CIM/XML documents against a profile
+| Building Profiles
+| Associations and Anonymous Classes
+| The full story on profiling an association
 
-| Validation Cases
-| A full suite of CIM/XML validation test cases
+| Building Profiles
+| Multiple Profiles
+| How to create several different restricted classes for a given CIM class
 
-| Validation Rules
-| The rule language used for CIM/XML validation and how to customise it
+| Building Profiles
+| Enumerations Support
+| How to include enumerated classes in a profile
 
+| Documentation and Generated Artifacts
+| Project and Profile Documentation
+| Generating documentation for a profile or a whole project, and where its text comes from
+
+| Documentation and Generated Artifacts
 | Generating a Database Schema
-| Using profiles as a template for a database
+| Using a profile as a template for a database
 
+| Documentation and Generated Artifacts
+| OWL as a Profile Language
+| A description of CIMTool's representation of a profile in OWL
+
+| Documentation and Generated Artifacts
+| Using CIMTool with Protege and Top Braid
+| How to examine a profile in the popular ontology editors
+
+| Documentation and Generated Artifacts
+| cimtool-cli: Generating Artifacts Outside the Workbench
+| The command-line tool that runs the CIMTool builders in scripts and CI/CD pipelines
+
+| Maintaining Profiles
+| Profile Maintenance
+| Repairing profiles when the CIM changes
+
+| Maintaining Profiles
+| Comparing Profiles and Schemas
+| Finding out what changed in the CIM or in a profile
+
+| Validating CIM/XML
+| How To Validate CPSM
+| How to validate CIM/XML documents and incremental CIM/XML documents against a profile, with special reference to the CPSM profile
+
+| Validating CIM/XML
+| Validation Cases
+| A full suite of CIM/XML validation test cases and how to use them
+
+| Validating CIM/XML
+| Validation Rules
+| An overview of the rule language used for validation of CIM/XML, and how to customize the standard rules
+
+| Release History
 | Change Log
-| A summary of changes and new features
+| What is new and changed in each CIMTool release, from 2.3.1 back to the earliest releases
 |===
 
 
 
 === Updating the Documentation
 
-All documentation is hand-authored HTML. To add or update a topic:
+All documentation is hand-authored XHTML. To add or update a topic:
 
-. Add or edit the HTML file in `html/`
+. Add or edit the page in `html/`. Name new pages in lowercase words joined by
+  underscores, and keep images in `html/images/`, named after the page that
+  uses them. Lowercase names matter: Windows matches names regardless of case,
+  but the packaged plugin JAR, Linux and macOS do not.
+. Keep each page well-formed XHTML 1.1, starting from the template the existing
+  pages use, because the Eclipse help system's dynamic content works only with
+  XHTML. Give every `<h2>` and `<h3>` an `id` so that context help and other
+  pages can link to it.
 . If adding a new topic, add a `<topic>` entry to `toc.xml` referencing it via
-  the `PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/<filename>.html` path
-. Rebuild and re-export the product, with no Java compilation required
+  the `PLUGINS_ROOT/au.com.langdale.cimtoole.help/html/<filename>.html` path,
+  under the group it belongs to, and list it in the same place on the CIMTool
+  Topics landing page.
+. If the page documents a view, editor, tab or dialog, add or update its entry
+  in the matching context file. The first link of each entry is the page the
+  CIMTool Context Help panel opens for that part. A new part also needs a help
+  context id in `CIMToolPlugin`'s `HelpContextIds`, attached to the part.
+. Rebuild and re-export the product. No Java compilation is required for
+  changes to this plugin alone.
 
-NOTE: The `PLUGINS_ROOT/` prefix in `toc.xml` href values is an Eclipse help
-framework convention that resolves to the installed plugins directory at runtime.
-Do not use relative paths or absolute file paths in `toc.xml` entries.
+NOTE: The `PLUGINS_ROOT/` prefix in `toc.xml` href values is an Eclipse
+help framework convention that resolves to the installed plugins directory at
+runtime. Do not use relative paths or absolute file paths in `toc.xml` entries.
+The context files use paths relative to this plugin, such as
+`html/profile_preview.html`.
+
+
+
+=== Relationship to Other Projects
+
+* *CIMToolPlugin* attaches the help context ids to its views and editors
+  (`HelpContextIds`), and contains the CIMTool Context Help panel
+  (`CIMToolHelpView`), which shows this plugin's pages for the active part.
+* *CIMToolProduct* ships this plugin in the CIMTool distribution and orders
+  its table of contents through `helpData.xml`.

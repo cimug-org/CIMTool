@@ -189,8 +189,9 @@ It also depends on the following standard Eclipse platform bundles:
 
 | `net.sourceforge.plantuml.eclipse`
 | PlantUML Eclipse integration bundle. Declared as a hard `Require-Bundle`
-  dependency: `plugin.xml` registers its `PlantUmlSvgView` as the "CIMTool
-  PlantUML Svg" view.
+  dependency. It provides the PlantUML Svg view
+  (`net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView`) that the CIMTool
+  perspective places beside the Profile Real-Time Preview.
 |===
 
 ==== Vendored Third-Party Libraries
@@ -295,8 +296,9 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 
 | `org.eclipse.ui.views`
 | Registers five views: Project Model, Validation, Documentation, Profile
-  Preview (`CurrentProfilePlantUmlSvgView`), and "CIMTool PlantUML Svg"
-  (`PlantUmlSvgView` from `net.sourceforge.plantuml.eclipse`)
+  Preview (`CurrentProfilePlantUmlSvgView`), and CIMTool Context Help
+  (`CIMToolHelpView`). The PlantUML Svg view that the CIMTool perspective also
+  shows is registered by `net.sourceforge.plantuml.eclipse` itself.
 
 | `org.eclipse.ui.importWizards`
 | Registers twelve import wizards under the CIMTool category: Schema, Profile,
@@ -340,10 +342,12 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
   nodes to `IPropertySource`, so the Properties view can show them
 
 | `org.eclipse.ui.startup`
-| Registers two startup classes, each in its own extension.
+| Registers three startup classes, each in its own extension.
   `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were
   produced by an earlier CIMTool release for regeneration (see
   <<regeneration-after-an-upgrade,Regeneration After an Upgrade>> below).
+  `CIMToolHelpCompanion` opens the CIMTool Context Help panel beside Eclipse's
+  Help view in the CIMTool perspective.
   `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse
   SWT issue #1848, restoring double-click and Enter in the Project Explorer while
   the PlantUML preview holds focus, and is removed at the platform upgrade that
@@ -616,8 +620,8 @@ defaults are set in `PlantUMLBuildersPreferencesPage`.
 
 `net.sourceforge.plantuml.library` is a hard `Require-Bundle` dependency, since
 the preview pipeline calls the PlantUML API directly. `net.sourceforge.plantuml.eclipse`
-is also a hard `Require-Bundle` dependency, because `plugin.xml` registers its
-`PlantUmlSvgView`, but the preview pipeline does not use it.
+is also a hard `Require-Bundle` dependency, because the CIMTool perspective places
+its PlantUML Svg view, but the preview pipeline does not use it.
 
 
 
