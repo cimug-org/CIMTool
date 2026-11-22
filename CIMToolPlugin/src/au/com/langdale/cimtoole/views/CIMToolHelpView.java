@@ -11,6 +11,7 @@ import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.swt.SWT;
@@ -20,11 +21,14 @@ import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -44,6 +48,13 @@ import au.com.langdale.cimtoole.editors.ProfileEditor;
  * always agree. Parts with no CIMTool help leave the current page in place.
  * The panel listens only while it is open.
  * <p>
+ * The Link with Active View or Editor button on the panel's toolbar turns this
+ * following on and off. It is on by default. Turned off, the panel keeps its page
+ * until the user navigates it, and F1 does not change it either. The panel still
+ * notes the last part the user was in, and shows that part's page when linking is
+ * turned back on. The setting, and the page shown while unlinked, are kept with
+ * the panel's state across restarts.
+ * <p>
  * Links to web sites outside the help, such as GitHub issues or cimtool.ucaiug.io,
  * open in the system's web browser rather than in the panel, which is too narrow
  * for them and, on some Windows systems, uses an engine that cannot display them.
@@ -55,6 +66,13 @@ public class CIMToolHelpView extends ViewPart {
 	private static final String HELP_HTML = "/au.com.langdale.cimtoole.help/html/";
 	private static final String HOME = HELP_HTML + "cimtool_topics.html";
 	private static final String EDITORS_SECTION = HELP_HTML + "workbench_basics.html#editors";
+
+	/** Memento keys for the panel's state. */
+	private static final String MEMENTO_LINKED = "linked";
+	private static final String MEMENTO_PAGE = "page";
+
+	/** The help server's path prefix; one more segment (topic, ntopic or nftopic) precedes a page's href. */
+	private static final String HELP_PATH = "/help/";
 
 	/** Parts whose page is the first topic of their CIMTool help context. */
 	private static final Map<String, String> PART_CONTEXTS = new HashMap<>();
@@ -81,18 +99,33 @@ public class CIMToolHelpView extends ViewPart {
 	private String currentHref;
 	private ProfileEditor trackedEditor;
 
-	private final IPageChangedListener pageListener = event -> showForProfileEditor(trackedEditor);
+	/** Whether the panel follows the active part (Link with Active View or Editor). */
+	private boolean linked = true;
+
+	/** The page to restore while unlinked, from the panel's saved state. */
+	private String savedHref;
+
+	/** The last part other than this panel that was active, shown when linking is turned back on. */
+	private IWorkbenchPart lastActivePart;
+
+	private final IPageChangedListener pageListener = event -> {
+		if (linked)
+			showForProfileEditor(trackedEditor);
+	};
 
 	private final IPartListener2 partListener = new IPartListener2() {
 		@Override
 		public void partActivated(IWorkbenchPartReference ref) {
-			showForPart(ref.getPart(false));
+			noteActivePart(ref.getPart(false));
 		}
 
 		@Override
 		public void partClosed(IWorkbenchPartReference ref) {
-			if (trackedEditor != null && ref.getPart(false) == trackedEditor)
+			IWorkbenchPart part = ref.getPart(false);
+			if (trackedEditor != null && part == trackedEditor)
 				trackEditor(null);
+			if (part == lastActivePart)
+				lastActivePart = null;
 		}
 
 		@Override
@@ -119,6 +152,25 @@ public class CIMToolHelpView extends ViewPart {
 		public void partInputChanged(IWorkbenchPartReference ref) {
 		}
 	};
+
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		if (memento != null) {
+			Boolean saved = memento.getBoolean(MEMENTO_LINKED);
+			if (saved != null)
+				linked = saved.booleanValue();
+			savedHref = memento.getString(MEMENTO_PAGE);
+		}
+	}
+
+	@Override
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		memento.putBoolean(MEMENTO_LINKED, linked);
+		if (currentHref != null)
+			memento.putString(MEMENTO_PAGE, currentHref);
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -148,6 +200,13 @@ public class CIMToolHelpView extends ViewPart {
 					openExternally(event.location);
 				}
 			}
+
+			@Override
+			public void changed(LocationEvent event) {
+				// Keep currentHref in step with pages reached through links, Back and Forward.
+				if (event.top)
+					currentHref = helpHref(event.location);
+			}
 		});
 		createActions();
 		IWorkbenchPage page = getSite().getPage();
@@ -155,7 +214,9 @@ public class CIMToolHelpView extends ViewPart {
 		IWorkbenchPart active = page.getActivePart();
 		if (active == null || active == this)
 			active = page.getActiveEditor();
-		showForPart(active);
+		if (!linked)
+			showHref(savedHref);
+		noteActivePart(active);
 		if (currentHref == null)
 			showHref(HOME);
 	}
@@ -188,9 +249,36 @@ public class CIMToolHelpView extends ViewPart {
 		};
 		home.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_ETOOL_HOME_NAV));
 
+		Action link = new Action("Link with Active View or Editor", IAction.AS_CHECK_BOX) {
+			@Override
+			public void run() {
+				linked = isChecked();
+				if (linked)
+					showForPart(lastActivePart != null ? lastActivePart : getSite().getPage().getActiveEditor());
+			}
+		};
+		link.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED));
+		link.setChecked(linked);
+
 		toolBar.add(back);
 		toolBar.add(forward);
 		toolBar.add(home);
+		toolBar.add(link);
+	}
+
+	/**
+	 * Notes a part the user has moved to and, while the panel is linked, shows its
+	 * page. The part is noted even while unlinked, so that turning linking back on
+	 * shows the page for where the user is.
+	 */
+	private void noteActivePart(IWorkbenchPart part) {
+		if (part == null || part == this)
+			return;
+		lastActivePart = part;
+		if (part instanceof ProfileEditor)
+			trackEditor((ProfileEditor) part);
+		if (linked)
+			showForPart(part);
 	}
 
 	private void showForPart(IWorkbenchPart part) {
@@ -248,6 +336,31 @@ public class CIMToolHelpView extends ViewPart {
 			return;
 		currentHref = href;
 		browser.setUrl(url.toString());
+	}
+
+	/**
+	 * The help href of a help server address, such as
+	 * {@code /au.com.langdale.cimtoole.help/html/project_explorer.html}, or null if
+	 * the address is not a help page. The href leaves out the server's host and port,
+	 * which change from session to session.
+	 */
+	private static String helpHref(String location) {
+		if (location == null)
+			return null;
+		int at = location.indexOf(HELP_PATH);
+		if (at < 0)
+			return null;
+		String rest = location.substring(at + HELP_PATH.length());
+		int slash = rest.indexOf('/');
+		if (slash < 0)
+			return null;
+		String href = rest.substring(slash);
+		int query = href.indexOf('?');
+		if (query >= 0) {
+			int fragment = href.indexOf('#', query);
+			href = href.substring(0, query) + (fragment >= 0 ? href.substring(fragment) : "");
+		}
+		return href;
 	}
 
 	/**
