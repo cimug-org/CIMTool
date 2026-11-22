@@ -25,9 +25,12 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 
+import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.jena.TreeModelBase.Node;
 import au.com.langdale.kena.LocalNameIndex;
 import au.com.langdale.kena.ModelFactory;
@@ -48,11 +51,20 @@ import au.com.langdale.util.Jobs;
 public class SearchWizard extends Wizard implements IWorkbenchWizard {
 	
 	public SearchWizard(Searchable searchArea) {
-		this(searchArea, searchArea.getCriterion());
+		this(searchArea, HelpContextIds.SEARCH_WIZARD);
 	}
 	
-	private SearchWizard(Searchable searchArea, Property prop) {
+	/**
+	 * Creates the wizard with the help context to show from its ? button, so
+	 * that the help matches the place the wizard was opened from.
+	 */
+	public SearchWizard(Searchable searchArea, String helpContextId) {
+		this(searchArea, searchArea.getCriterion(), helpContextId);
+	}
+	
+	private SearchWizard(Searchable searchArea, Property prop, String helpContextId) {
 		this.searchArea = searchArea;
+		this.helpContextId = helpContextId;
 		model = searchArea.getOntModel();
 		indexer = prop == null? new LocalNameIndex(): new PropertyIndex(prop);
 	}
@@ -154,6 +166,7 @@ public class SearchWizard extends Wizard implements IWorkbenchWizard {
 	}
 
 	private Searchable searchArea;
+	private String helpContextId;
 	private SearchIndex indexer;
 	private TextBinding search = new TextBinding(Validators.NONE);
 	private Matches matches = new Matches();
@@ -186,6 +199,13 @@ public class SearchWizard extends Wizard implements IWorkbenchWizard {
 	@Override
 	public void addPages() {
 		addPage(page);
+	}
+	
+	@Override
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		if (helpContextId != null && page.getControl() != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(page.getControl(), helpContextId);
 	}
 	
 	IWizardPage page = new FurnishedWizardPage("search") {

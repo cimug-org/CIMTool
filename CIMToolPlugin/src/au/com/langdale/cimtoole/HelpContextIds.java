@@ -26,6 +26,9 @@ public final class HelpContextIds {
 	public static final String PROFILE_EDITOR_STEREOTYPES = PREFIX + "profile_editor_stereotypes";
 	public static final String PROFILE_EDITOR_SUMMARY = PREFIX + "profile_editor_summary";
 
+	public static final String SEARCH_WIZARD = PREFIX + "search_wizard";
+	public static final String SEARCH_WIZARD_ADD_REMOVE = PREFIX + "search_wizard_add_remove";
+
 	private HelpContextIds() {
 	}
 }

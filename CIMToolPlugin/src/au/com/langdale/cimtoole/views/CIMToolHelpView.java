@@ -1,9 +1,12 @@
 package au.com.langdale.cimtoole.views;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
@@ -13,6 +16,8 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationAdapter;
+import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IPartListener2;
@@ -22,7 +27,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import au.com.langdale.cimtoole.CIMToolPlugin;
 import au.com.langdale.cimtoole.HelpContextIds;
 import au.com.langdale.cimtoole.editors.ProfileEditor;
 
@@ -36,6 +43,10 @@ import au.com.langdale.cimtoole.editors.ProfileEditor;
  * topic of its help context in contexts_CIMTool.xml, so F1 and this panel
  * always agree. Parts with no CIMTool help leave the current page in place.
  * The panel listens only while it is open.
+ * <p>
+ * Links to web sites outside the help, such as GitHub issues or cimtool.ucaiug.io,
+ * open in the system's web browser rather than in the panel, which is too narrow
+ * for them and, on some Windows systems, uses an engine that cannot display them.
  */
 public class CIMToolHelpView extends ViewPart {
 
@@ -57,7 +68,7 @@ public class CIMToolHelpView extends ViewPart {
 		PART_CONTEXTS.put("au.com.langdale.cimtoole.views.CurrentProfilePlantUmlSvgView", HelpContextIds.PROFILE_PREVIEW_VIEW);
 		PART_CONTEXTS.put("au.com.langdale.cimtoole.views.ValidationView", HelpContextIds.VALIDATION_PROJECTS_VIEW);
 
-		PART_PAGES.put("org.eclipse.ui.navigator.ProjectExplorer", HELP_HTML + "workbench_basics.html#project-explorer");
+		PART_PAGES.put("org.eclipse.ui.navigator.ProjectExplorer", HELP_HTML + "project_explorer.html");
 		PART_PAGES.put("net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView", HELP_HTML + "workbench_basics.html#plantuml-svg");
 		PART_PAGES.put("au.com.langdale.cimtoole.editors.InfoModelEditor", EDITORS_SECTION);
 		PART_PAGES.put("au.com.langdale.cimtoole.editors.EAInfoModelEditor", EDITORS_SECTION);
@@ -118,6 +129,26 @@ public class CIMToolHelpView extends ViewPart {
 			label.setText("The CIMTool Context Help panel needs an embedded browser, which is not available here. Use Help > Help Contents instead.");
 			return;
 		}
+		browser.addLocationListener(new LocationAdapter() {
+			@Override
+			public void changing(LocationEvent event) {
+				if (!event.top)
+					return;
+				String liveTarget = liveHelpTarget(event.location);
+				if (liveTarget != null) {
+					// A help page asked for OpenInSystemBrowserAction through liveAction().
+					// Help pages shown in this panel are not in a help frameset, so the
+					// request arrives as a navigation; run it here rather than through the
+					// help server.
+					event.doit = false;
+					if (OpenInSystemBrowserAction.isWebAddress(liveTarget))
+						OpenInSystemBrowserAction.open(liveTarget);
+				} else if (isExternal(event.location)) {
+					event.doit = false;
+					openExternally(event.location);
+				}
+			}
+		});
 		createActions();
 		IWorkbenchPage page = getSite().getPage();
 		page.addPartListener(partListener);
@@ -217,6 +248,66 @@ public class CIMToolHelpView extends ViewPart {
 			return;
 		currentHref = href;
 		browser.setUrl(url.toString());
+	}
+
+	/**
+	 * Whether a location is a web page outside the help system: an http or https
+	 * address on a different host or port from the local help server.
+	 */
+	private boolean isExternal(String location) {
+		if (location == null)
+			return false;
+		try {
+			URI target = new URI(location);
+			String scheme = target.getScheme();
+			if (scheme == null || !(scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")))
+				return false;
+			URL help = PlatformUI.getWorkbench().getHelpSystem().resolve(HOME, true);
+			if (help == null)
+				return true;
+			return !(target.getHost() != null && target.getHost().equalsIgnoreCase(help.getHost())
+					&& target.getPort() == help.getPort());
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * The web address carried by a live help request for
+	 * {@link OpenInSystemBrowserAction}, or null if the location is not one.
+	 */
+	private static String liveHelpTarget(String location) {
+		if (location == null || !location.contains("/livehelp/?"))
+			return null;
+		String query = location.substring(location.indexOf("/livehelp/?") + "/livehelp/?".length());
+		String className = null;
+		String arg = null;
+		for (String pair : query.split("&")) {
+			int eq = pair.indexOf('=');
+			if (eq < 0)
+				continue;
+			String name = pair.substring(0, eq);
+			String value;
+			try {
+				value = java.net.URLDecoder.decode(pair.substring(eq + 1), "UTF-8");
+			} catch (Exception e) {
+				return null;
+			}
+			if (name.equals("class"))
+				className = value;
+			else if (name.equals("arg"))
+				arg = value;
+		}
+		return OpenInSystemBrowserAction.class.getName().equals(className) ? arg : null;
+	}
+
+	private void openExternally(String location) {
+		try {
+			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new URL(location));
+		} catch (Exception e) {
+			StatusManager.getManager().handle(new Status(IStatus.WARNING, CIMToolPlugin.PLUGIN_ID,
+					"Could not open " + location + " in the system web browser", e), StatusManager.LOG);
+		}
 	}
 
 	@Override

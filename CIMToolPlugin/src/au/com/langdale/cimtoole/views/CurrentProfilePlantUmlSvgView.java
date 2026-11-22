@@ -90,7 +90,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 			+ "Eclipse plugin to enable diagram rendering.</p>" + "</body></html>";
 
 	private static final String PREVIEW_UNAVAILABLE_HTML = "<html><body style='font-family:sans-serif;color:#555;padding:16px'>"
-			+ "<p><b>Profile Preview Unavailable</b></p>"
+			+ "<p><b>Profile Real-Time Preview Unavailable</b></p>"
 			+ "<p>The profile could not be rendered. This most commonly indicates that the real-time 'Display Style' setting set at either the project-level or at "
 			+ "the profile-level is set to a style that does not match the type of profile being defined. Please verify that the setting in the project and/or "
 			+ "OWL profile preferences page is correctly configured. If set to empty at the profile-level then the project-level setting will be honored.</p>"
@@ -463,7 +463,7 @@ public class CurrentProfilePlantUmlSvgView extends ViewPart {
 				browser.setUrl(edgePageFile.toUri().toString());
 				return;
 			} catch (IOException e) {
-				CIMToolPlugin.getDefault().getLog().error("Could not write the Profile Preview page to a temporary file", e);
+				CIMToolPlugin.getDefault().getLog().error("Could not write the Profile Real-Time Preview page to a temporary file", e);
 			}
 		}
 		browser.setText(html);

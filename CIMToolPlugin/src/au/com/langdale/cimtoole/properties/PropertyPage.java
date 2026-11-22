@@ -118,7 +118,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 								new Property(Info.MERGED_SCHEMA_PATH, Validators.OptionalFileWithExt("merged-owl"))),
 						Group(Label("")), //
 						Group(HRule()), //
-						Group(Label("Real-Time Profile Preview PlantUML Diagram Preferences:")), //
+						Group(Label("Profile Real-Time Preview PlantUML Diagram Preferences:")), //
 						Group(Label("Diagram Style: "),
 								new DisplayStyleReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE, Validators.NONE,
 										getPlantUMLBuildetStyles(), displayStyleInitialSetting)),
@@ -164,7 +164,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 						.getCurrentProfileRealTimePreviewDisplayStyleByLevel(getResource());
 				Template plantUMLTemplate = null;
 				if (isProfileLevel) {
-					plantUMLTemplate = Grid(Group(Label("Real-Time Profile Preview PlantUML Diagram Preferences:")), //
+					plantUMLTemplate = Grid(Group(Label("Profile Real-Time Preview PlantUML Diagram Preferences:")), //
 							Group(Label("Diagram Style: "),
 									new DisplayStyleReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE, Validators.NONE,
 											getPlantUMLBuildetStyles(), displayStyleInitialSetting)),

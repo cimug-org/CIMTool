@@ -331,15 +331,7 @@
             restorable="true">
       </view>
       <view
-            name="CIMTool PlantUML Svg"
-            icon="platform:/plugin/net.sourceforge.plantuml.eclipse/icons/p5.gif"
-            category="au.com.langdale.cimtoole"
-            class="net.sourceforge.plantuml.eclipse.svg.PlantUmlSvgView"
-            id="net.sourceforge.plantuml.eclipse.views.PlantUmlSvgView"
-            allowMultiple="true">
-      </view>
-      <view
-            name="Profile Preview"
+            name="Profile Real-Time Preview"
             icon="icons/cimtool-icon.bmp"
             category="au.com.langdale.cimtoole"
             class="au.com.langdale.cimtoole.views.CurrentProfilePlantUmlSvgView"

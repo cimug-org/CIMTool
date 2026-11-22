@@ -249,7 +249,7 @@ public class Populate extends FurnishedEditor {
 				public void widgetSelected(SelectionEvent e) {
 					Node node = master.getNode();
 					if (node instanceof CatalogNode || node instanceof EnvelopeNode) {
-						SearchWizard wizard = new SearchWizard(rightBinding);
+						SearchWizard wizard = new SearchWizard(rightBinding, HelpContextIds.SEARCH_WIZARD_ADD_REMOVE);
 						WizardLauncher.run(wizard, getSite().getWorkbenchWindow(), StructuredSelection.EMPTY);
 					}
 				}

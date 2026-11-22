@@ -80,7 +80,7 @@ public class PlantUMLBuildersPreferencesPage extends FurnishedPropertyPage {
 						Group(new PreferenceOption(Info.ENABLE_DARK_MODE,
 								"Enable 'Dark Mode' (overrides colors above)")),
 						Group(new PreferenceOption(Info.ENABLE_SHADOWING, "Enable shadowing on classes")),
-						Group(HRule()), Group(Label("Real-Time Profile Preview PlantUML Diagram Preferences:")), //
+						Group(HRule()), Group(Label("Profile Real-Time Preview PlantUML Diagram Preferences:")), //
 						Group(Label("Diagram Style: "),
 								new PreferenceReadOnlyCombo(Info.CURRENT_PROFILE_PREVIEW_STYLE, Validators.NONE,
 										ProfileBuildletConfigUtils.getPlantUMLBuildletStyles())),
