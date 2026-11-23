@@ -189,11 +189,18 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 	}
 
+	/**
+	 * A color button with a label beside it showing the color's hexadecimal value.
+	 * The label is the assembly's label named {@code <localName>-label}. It is
+	 * updated whenever the color changes, whether the user picks a color or the
+	 * page sets one, as Restore Defaults does.
+	 */
 	public static abstract class ColorDisplayBinding implements Template, Binding {
 		public final QualifiedName symbol;
 		private String text;
 		private String initialColor;
 		private CustomColorFieldEditor editor;
+		private Assembly assembly;
 
 		public ColorDisplayBinding(QualifiedName symbol, String text, String initialColor) {
 			this.symbol = symbol;
@@ -210,7 +217,20 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 			if (color != null) {
 				int[] rgb = ColorUtils.parseHexColor(color);
 				editor.getColorSelector().setColorValue(new RGB(rgb[0], rgb[1], rgb[2]));
+				showValue();
 			}
+		}
+
+		/**
+		 * Writes the selected color's hexadecimal value to the label beside the
+		 * color button.
+		 */
+		private void showValue() {
+			if (assembly == null)
+				return;
+			Label label = assembly.getLabel(symbol.getLocalName() + "-label");
+			if (label != null)
+				label.setText(getValue());
 		}
 
 		public String validate() {
@@ -218,6 +238,7 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 
 		public Control realise(Composite parent, Assembly assembly) {
+			this.assembly = assembly;
 			assembly.addBinding(this);
 
 			Composite area = new Composite(parent, SWT.NONE);
@@ -228,20 +249,7 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 			Button button = editor.getChangeControl(area);
 			assembly.putControl(symbol.getLocalName() + "-button", button); // register button with the assembly
 
-			button.addListener(SWT.Selection, event -> {
-				String selectedColor = initialColor;
-
-				if (editor.getColorSelector().getColorValue() != null) {
-					RGB color = editor.getColorSelector().getColorValue();
-					selectedColor = ColorUtils.parseRGBColor(new int[] { color.red, color.green, color.blue });
-				}
-
-				if (selectedColor != null) {
-					Label label = assembly.getLabel(symbol.getLocalName() + "-label");
-					if (label != null)
-						label.setText(selectedColor);
-				}
-			});
+			button.addListener(SWT.Selection, event -> showValue());
 
 			return area;
 		}

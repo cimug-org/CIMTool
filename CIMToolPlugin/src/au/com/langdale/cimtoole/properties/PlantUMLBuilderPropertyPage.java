@@ -128,9 +128,9 @@ public class PlantUMLBuilderPropertyPage extends FurnishedPropertyPage {
 						Group(new BuilderPreferenceOption(Info.HIDE_PRIMITIVES, "Hide Primitive classes in diagrams")));
 				groups.add(Group(new BuilderPreferenceOption(Info.HIDE_CARDINALITY_FOR_REQUIRED_ATTRIBUTES,
 						"Hide cardinality for required attributes")));
-				groups.add(Group(Label(Info.HORIZONTAL_SPACING.getLocalName() + "-label", "Horizontal spacing:"),
+				groups.add(Group(Label(Info.HORIZONTAL_SPACING.getLocalName() + "-caption", "Horizontal spacing:"),
 						new BuilderPreference(Info.HORIZONTAL_SPACING, Validators.OPTIONAL_NON_NEGATIVE_INTEGER)));
-				groups.add(Group(Label(Info.VERTICAL_SPACING.getLocalName() + "-label", "Vertical spacing:"),
+				groups.add(Group(Label(Info.VERTICAL_SPACING.getLocalName() + "-caption", "Vertical spacing:"),
 						new BuilderPreference(Info.VERTICAL_SPACING, Validators.OPTIONAL_NON_NEGATIVE_INTEGER)));
 				groups.add(Group(HRule()));
 				groups.add(Group(Label("PlantUML Theme:"),
