@@ -203,7 +203,7 @@ The primary artefact generation pipeline works as follows:
 
 1. `ProfileBuildlets` loads the `.owl` profile file and the background schema into `OntModel` instances.
 2. A `ProfileModel` is constructed and given both models (`Task.getMessageModel()`). Once both are set it builds a `Refactory` over the profile model and the merge of the two (`Composition.merge`).
-3. A `ProfileSerializer` is configured with base URI, copyright text, builder parameters, namespace prefixes, and the compiled XSLT stylesheet, loaded with no base URI (#292). For `TEXT` builders the `indent` stylesheet is chained after it, and for `ASCIIDOC` builders `indent-asciidoc` (#288).
+3. A `ProfileSerializer` is configured with base URI, copyright text, builder parameters, namespace prefixes, and the compiled XSLT stylesheet, loaded with no base URI. For `TEXT` builders the `indent` stylesheet is chained after it, and for `ASCIIDOC` builders `indent-asciidoc`.
 4. `ProfileSerializer.write(outputStream)` is called. It runs the chained stylesheets in turn; Saxon drives the first by calling `parse()` on the serializer as its SAX source.
 5. `ProfileSerializer.emit()` walks the `ProfileModel` node tree, reading `ProfileClass` properties and cardinalities, firing SAX events that the XSLT processes to produce the output file.
 
@@ -238,7 +238,9 @@ interface expected by the profile model. Loads `.cimtool-settings` (Turtle forma
 and extracts schema file paths from their URI representations.
 
 **`CLIBuilderPreferences`**: Loads `.builder-preferences` (Turtle format) and
-exposes builder-specific XSLT parameter maps used by `ProfileSerializer`.
+exposes builder-specific XSLT parameter maps used by `ProfileSerializer`. A preference
+that a profile does not set resolves from the project's own value, then from
+`.cimtool-global-preferences`, then from the built-in default.
 
 **`CLISchemaParser`**: Headless schema parser wrapping `EAPParser` / `QEAParser` for
 use outside the Eclipse workspace. Returns a parsed `OntModel` that is merged into

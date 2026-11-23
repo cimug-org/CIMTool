@@ -21,7 +21,7 @@ to provide:
 - Wizards to create CIMTool projects, profiles, rulesets and mappings, and to import schemas (Sparx EA `.eap`, `.eapx`, `.qea`, `.qeax` project files and `.xmi` files), profiles, spreadsheets, rules, copyright templates, XSLT transform builders, CIM/XML models and existing CIMTool projects
 - An incremental **CIMBuilder** that runs automatically on workspace resource changes and produces all configured output artefacts from a CIM profile
 - Views for project models, documentation, validation results, and the PlantUML Real-Time Preview of the active profile
-- Preference pages for general settings and PlantUML builder configuration
+- Preference and property pages for general settings and PlantUML builder configuration, at workspace, project and file level
 - Extension point registries for pluggable model parsers and profile buildlets
 - An embedded Pandoc distribution, extracted at startup and held for possible future use; no CIMTool feature currently invokes it
 - A unified logging pipeline that installs the JUL-to-SLF4J bridge at startup and extracts `logging.properties` and `logback.xml` so all three logging subsystems (JUL, SLF4J, Log4j 1.x) converge into a single Logback-controlled output in `logs/cimtool.log`
@@ -77,7 +77,7 @@ CIMToolPlugin/
         │   ├── pandoc/           ← Pandoc path resolution and conversion (not currently invoked)
         │   ├── preferences/      ← Preference pages and initializer
         │   ├── project/          ← Core project model — Cache, Settings, Task, importers
-        │   ├── properties/       ← Eclipse property page contributions
+        │   ├── properties/       ← CIMTool and PlantUML Builder Preferences property pages, and their property tester
         │   ├── registries/       ← Model parser and profile buildlet registry infrastructure
         │   │   └── config/       ← JSON serialization for buildlet configuration
         │   ├── reporting/        ← CIM modelling guide violation report generation
@@ -113,6 +113,9 @@ It also depends on the following standard Eclipse platform bundles:
 | `org.eclipse.ui.editors` | Standard editor contributions: base classes for text editors, editor registry, `FileDocumentProvider` |
 | `org.eclipse.ui.views` | Standard Eclipse view contributions: `IViewPart`, content outline view, properties view infrastructure |
 | `org.eclipse.ui.forms` | Eclipse Forms UI toolkit: `FormToolkit`, `ScrolledForm`, `Section`, used to build the multi-page profile and model editors |
+| `org.eclipse.help` | Eclipse help system API: `HelpSystem` and `IContext`, used by the CIMTool Context Help view (`CIMToolHelpView`) to look up context help, and `ILiveHelpAction`, implemented by `OpenInSystemBrowserAction` to open help links in the system browser |
+| `org.eclipse.core.commands` | Command framework: `IExecutionListener`, used by `CIMToolHelpCompanion` to show the CIMTool Context Help panel whenever the workbench's Context Help command (`org.eclipse.ui.help.dynamicHelp`) runs |
+| `org.eclipse.core.expressions` | Expression framework: `PropertyTester`, which `CIMToolPropertyTester` extends to decide which resources show the PlantUML Builder Preferences property page |
 | `org.eclipse.compare` | Eclipse Compare framework: `CompareEditorInput`, structure and content merge viewer APIs used by the model diff/compare feature |
 | `org.eclipse.ui.themes` | Eclipse theming bundle. It is listed in `Require-Bundle`, but no CIMToolPlugin code uses it. |
 | `org.eclipse.core.filesystem` | Abstraction over file system access: `IFileStore`, `EFS`, used for file operations that span local and remote file systems |
@@ -169,10 +172,12 @@ CIMToolPlugin contributes to the following Eclipse platform extension points via
 | `org.eclipse.ui.actionSets` | Contributes toolbar and menu actions to the Eclipse workbench window when a CIMTool perspective is active |
 | `org.eclipse.ui.viewActions` | Contributes actions to the toolbar and drop-down menus of specific CIMTool views |
 | `org.eclipse.ui.preferencePages` | Registers the "CIMTool" page (`GeneralPreferencesPage`) and, under it, the "PlantUML Builder Preferences" page (`PlantUMLBuildersPreferencesPage`) in the Eclipse Preferences dialog |
-| `org.eclipse.ui.propertyPages` | Registers the "CIMTool" property page shown when the user opens Properties on a CIMTool project or resource |
+| `org.eclipse.ui.propertyPages` | Registers the "CIMTool" property page (`PropertyPage`), shown when the user opens Properties on a CIMTool project or resource, and, under it, the "PlantUML Builder Preferences" property page (`PlantUMLBuilderPropertyPage`), shown only for the resources that `CIMToolPropertyTester` selects |
+| `org.eclipse.core.expressions.propertyTesters` | Registers `CIMToolPropertyTester`, whose `hasPlantUMLPreferences` test selects CIMTool projects, profiles (`.owl`) and generated PlantUML (`.puml`) files for the PlantUML Builder Preferences property page |
+| `org.eclipse.ui.keywords` | Defines the keywords that the CIMTool preference and property pages declare, so that the filter in the Preferences and Properties dialogs finds them by the settings they hold |
 | `org.eclipse.core.runtime.preferences` | Registers `PreferenceInitializer` to set default values for all CIMTool preferences when a new workspace is created |
 | `org.eclipse.core.runtime.adapters` | Registers `PropertySupport` as the adapter factory that adapts model tree nodes to `IPropertySource`, so the Properties view can show them |
-| `org.eclipse.ui.startup` | Registers four startup classes, each in its own extension. `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were produced by an earlier CIMTool release for regeneration (see Regeneration After an Upgrade below). `CIMToolHelpCompanion` opens the CIMTool Context Help panel beside Eclipse's Help view in the CIMTool perspective. `PlantUmlEditorDefaultStartup` makes the Text Editor the default editor for generated PlantUML (`*.puml`) files at every startup, in place of the Asciidoctor Editor's PlantUML editor (issue #405). `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse SWT issue #1848, restoring double-click and Enter in the Project Explorer while the PlantUML preview holds focus, and is removed at the platform upgrade that resolves that issue |
+| `org.eclipse.ui.startup` | Registers four startup classes, each in its own extension. `UpgradeRegenerationStartup` queues CIMTool projects whose artifacts were produced by an earlier CIMTool release for regeneration (see Regeneration After an Upgrade below). `CIMToolHelpCompanion` opens the CIMTool Context Help panel beside Eclipse's Help view in the CIMTool perspective. `PlantUmlEditorDefaultStartup` makes the Text Editor the default editor for generated PlantUML (`*.puml`) files at every startup, in place of the Asciidoctor Editor's PlantUML editor. `ProjectExplorerDoubleClickInterceptor` is a temporary workaround for Eclipse SWT [issue #1848](https://github.com/eclipse-platform/eclipse.platform.swt/issues/1848), restoring double-click and Enter in the Project Explorer while the PlantUML preview holds focus, and is removed at the platform upgrade that resolves that issue |
 | `org.eclipse.compare.structureCreators` | Registers the CIMTool model structure creator so that the Eclipse Compare framework can parse CIM model files into a comparable tree structure |
 | `org.eclipse.compare.structureMergeViewers` | Registers the model structure merge viewer used in side-by-side diff operations on CIM model files |
 | `org.eclipse.compare.contentMergeViewers` | Registers the model content merge viewer used for inline content comparison within the Eclipse Compare editor |
@@ -235,6 +240,59 @@ its contents only when they differ, so an up-to-date file is left untouched:
 Project-level and profile-level settings made on a project's **Properties** pages
 are stored in `.builder-preferences` and take precedence over the file, in the
 desktop builders and in `cimtool-cli` alike.
+
+
+
+## Preferences and Properties
+
+CIMTool settings are made at three levels:
+
+| Level | Where it is set | Where it is stored |
+| --- | --- | --- |
+| Workspace | **Window > Preferences > CIMTool** (`GeneralPreferencesPage`) and its **PlantUML Builder Preferences** child page (`PlantUMLBuildersPreferencesPage`) | The Eclipse preference store, with defaults set by `PreferenceInitializer`. It is exported to each project's `.cimtool-global-preferences` for `cimtool-cli`, as described above. |
+| Project | **Properties > CIMTool** on the project (`PropertyPage`) and its **PlantUML Builder Preferences** child page (`PlantUMLBuilderPropertyPage`) | Project settings, such as the merged schema file name, self-healing and the merging of shadow and mix-in extensions, in `.cimtool-settings` (`Settings`). PlantUML builder preferences, including the Profile Real-Time Preview Diagram Style, in `.builder-preferences` (`BuilderPreferences`). |
+| File | **Properties > CIMTool** on a schema, instance or incremental file, and **Properties > PlantUML Builder Preferences** on a profile (`.owl`) or a generated PlantUML file (`.puml`) | Namespaces and the other file settings in `.cimtool-settings`; PlantUML builder preferences in `.builder-preferences` |
+
+The **CIMTool** property page of a profile or `.puml` file is read-only. It shows
+the file's location and points to where its settings are made.
+`CIMToolPropertyTester` decides which resources show the **PlantUML Builder
+Preferences** property page: CIMTool projects, profiles and generated `.puml`
+files. The pages declare keywords, so the filter in the Preferences and
+Properties dialogs finds them by the settings they hold, such as spacing, theme,
+preview or mapping.
+
+**Resolution.** A PlantUML builder preference resolves from the most specific
+level that has a value of its own: the file's value, then its project's value,
+then the workspace value (`Info.getBuilderPreference`). `cimtool-cli` resolves it
+the same way from the project's files: `.builder-preferences` for the file and
+project levels, then `.cimtool-global-preferences`, then the built-in default from
+`CLIGlobalPreferenceDefaults` (`CLIBuilderPreferences`).
+
+**Only genuine overrides are stored.** A project or file stores a builder
+preference only when it differs from the value the resource would otherwise
+inherit. Choosing the inherited value, or leaving the value empty, removes the
+entry, so the resource keeps following later changes at a higher level
+(`Info.setBuilderOverride`). Colors are compared without regard to case.
+
+**Restore Defaults.** On a project or file page, Restore Defaults sets each
+control to the value the resource inherits, so the following Apply removes that
+page's overrides. On the workspace pages it restores the shipped defaults, as on
+any Eclipse preference page.
+
+**One save per Apply.** All the changes made by one Apply on a PlantUML Builder
+Preferences property page are written to `.builder-preferences` in a single save
+(`BuilderPreferences.runBatch`).
+
+**Reading never writes.** Reading a setting that a resource does not hold
+returns the inherited value without copying it into `.cimtool-settings`
+(`Info.getProperty`). Values that must stay fixed for a resource, such as a
+schema's namespace, are written when the resource is created or imported.
+
+**Diagram Style from earlier releases.** Releases before 2.4.0 stored a
+project's Diagram Style in `.cimtool-settings`. When a project's builder
+preferences are loaded, `BuilderPreferences` moves such a value into
+`.builder-preferences`, keeping any value already there and dropping an empty
+one, and removes it from `.cimtool-settings`.
 
 
 
@@ -352,7 +410,9 @@ components:
 
 Diagram style (the XSLT builder used to generate the `.puml`) is configurable via
 a three-tier preference hierarchy: profile-level → project-level → global. Global
-defaults are set in `PlantUMLBuildersPreferencesPage`.
+defaults are set in `PlantUMLBuildersPreferencesPage`. The profile and project
+levels are stored in `.builder-preferences`, as described in
+[Preferences and Properties](#preferences-and-properties).
 
 `net.sourceforge.plantuml.library` is a hard `Require-Bundle` dependency, since
 the preview pipeline calls the PlantUML API directly. `net.sourceforge.plantuml.eclipse`

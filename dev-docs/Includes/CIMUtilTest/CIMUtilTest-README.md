@@ -30,7 +30,8 @@ The suite covers two kinds of behavior:
 - **Specific behaviors that users depend on**: copyright notices in generated
   SQL and HTML, the indentation of source listings in AsciiDoc documentation,
   stereotype labels in the documentation builders, the `cimtool-cli` option
-  rules, `cimtool-cli` run end to end on a project, stylesheet references that
+  rules, `cimtool-cli` run end to end on a project, how `cimtool-cli` reads the builder
+  and global preference files, stylesheet references that
   resolve without network access, and the release version declarations that
   must change together.
 
@@ -61,6 +62,8 @@ CIMUtilTest/
 │       │       ├── AsciiDocBuildersProfilesDirTest.java
 │       │       ├── AsciiDocWhitespaceTest.java
 │       │       ├── CIMToolCLIEndToEndTest.java
+│       │       ├── CLIBuilderPreferencesTest.java
+│       │       ├── CLIGlobalPreferencesTest.java
 │       │       ├── CLIOptionsTest.java
 │       │       ├── CopyrightBuildersTest.java
 │       │       ├── CustomStylesheetReferencesTest.java
@@ -106,18 +109,20 @@ The sample projects also read the CGMES CIM17 schema from
 
 | Class | Covers |
 | --- | --- |
-| `AllBuildersSmokeTest` | Every registered builder runs against both sample projects without an exception, writes non-empty output and makes no network access, and XSD output is well-formed. The registry must hold exactly the builders named in `builders.json` and `java-builders.json`, each XSLT builder with its stylesheet. With extensions left unmerged, the LinkML output lists the shadow parent as a mixin ([Issue #318](https://github.com/cimug-org/CIMTool/issues/318)). |
-| `AsciiDocBuildersProfilesDirTest` | Each AsciiDoc builder references its PlantUML diagram through `{profilesdir}` and defines the `{docdir}/Profiles` fallback ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
-| `AsciiDocWhitespaceTest` | Each `ASCIIDOC` builder keeps the leading whitespace of every line of a source listing in AsciiDoc documentation ([Issue #288](https://github.com/cimug-org/CIMTool/issues/288)). |
-| `CIMToolCLIEndToEndTest` | `cimtool-cli` run in project mode on a copy of the sample project: project copyright templates in the `html` and `sql-rdfs-ansi92` output, `--xslt` with `--type TEXT` producing plain text, and the `.namespaces` file beside the schema being applied ([Issue #287](https://github.com/cimug-org/CIMTool/issues/287)). |
-| `CLIOptionsTest` | Each rule that `CLIOptions` enforces, with the exact error message for each rejected command line ([Issue #287](https://github.com/cimug-org/CIMTool/issues/287)). |
-| `CopyrightBuildersTest` | The copyright notices that `sql.xsl`, `sql-rdfs-ansi92.xsl` and `html.xsl` write, and their absence when the copyright templates are empty ([Issue #272](https://github.com/cimug-org/CIMTool/issues/272)). |
-| `CustomStylesheetReferencesTest` | Relative references in a custom `--xslt` stylesheet resolve against the stylesheet's own folder ([Issue #311](https://github.com/cimug-org/CIMTool/issues/311)). |
+| `AllBuildersSmokeTest` | Every registered builder runs against both sample projects without an exception, writes non-empty output and makes no network access, and XSD output is well-formed. The registry must hold exactly the builders named in `builders.json` and `java-builders.json`, each XSLT builder with its stylesheet. With extensions left unmerged, the LinkML output lists the shadow parent as a mixin. |
+| `AsciiDocBuildersProfilesDirTest` | Each AsciiDoc builder references its PlantUML diagram through `{profilesdir}` and defines the `{docdir}/Profiles` fallback. |
+| `AsciiDocWhitespaceTest` | Each `ASCIIDOC` builder keeps the leading whitespace of every line of a source listing in AsciiDoc documentation. |
+| `CIMToolCLIEndToEndTest` | `cimtool-cli` run in project mode on a copy of the sample project: project copyright templates in the `html` and `sql-rdfs-ansi92` output, `--xslt` with `--type TEXT` producing plain text, and the `.namespaces` file beside the schema being applied. |
+| `CLIBuilderPreferencesTest` | The order in which `cimtool-cli` resolves a builder preference: a file's own value, then its project's value, both from `.builder-preferences`, then `.cimtool-global-preferences`, then the shipped default. |
+| `CLIGlobalPreferencesTest` | `cimtool-cli` reading `.cimtool-global-preferences` in the form the workbench writes it. |
+| `CLIOptionsTest` | Each rule that `CLIOptions` enforces, with the exact error message for each rejected command line. |
+| `CopyrightBuildersTest` | The copyright notices that `sql.xsl`, `sql-rdfs-ansi92.xsl` and `html.xsl` write, and their absence when the copyright templates are empty. |
+| `CustomStylesheetReferencesTest` | Relative references in a custom `--xslt` stylesheet resolve against the stylesheet's own folder. |
 | `StereotypeLabelTest` | The documentation builders label a property row with user stereotypes such as «European», and with none of the structural stereotypes such as «attribute» or «byreference». |
-| `ProfileClassPropertyInfoTest` | `ProfileClass.getPropertyInfo` reports no range, rather than failing, for a property the profile class does not restrict, such as the inverse of an association whose inverse end is not profiled ([Issue #342](https://github.com/cimug-org/CIMTool/issues/342)) |
-| `ProfileSerializerFactoryTest` | `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it ([Issue #314](https://github.com/cimug-org/CIMTool/issues/314)). |
-| `ProfilesAsciiDoctorConfigTemplateTest` | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc` ([Issue #291](https://github.com/cimug-org/CIMTool/issues/291)). |
-| `ReleaseVersionConsistencyTest` | The version declarations that must change together at each release agree ([Issue #310](https://github.com/cimug-org/CIMTool/issues/310)). |
+| `ProfileClassPropertyInfoTest` | `ProfileClass.getPropertyInfo` reports no range, rather than failing, for a property the profile class does not restrict, such as the inverse of an association whose inverse end is not profiled. |
+| `ProfileSerializerFactoryTest` | `ProfileSerializer` uses Saxon whatever the context class loader of the thread that creates it. |
+| `ProfilesAsciiDoctorConfigTemplateTest` | The template CIMTool copies to a project's `Profiles/.asciidoctorconfig.adoc`. |
+| `ReleaseVersionConsistencyTest` | The version declarations that must change together at each release agree. |
 
 Tests that run every builder, or every builder of a type, take the builders
 from the registry, so a newly registered builder is covered without a change to

@@ -97,7 +97,7 @@ CIMUtil/
         │       ├── CLIProfileTransformer.java ← Headless profile transform orchestration
         │       ├── CLISchemaParser.java ← Headless XMI/EA schema parsing
         │       ├── CLISettings.java  ← CLI project settings adapter
-        │       ├── CLIBuilderPreferences.java ← Per-profile builder preferences read from .builder-preferences
+        │       ├── CLIBuilderPreferences.java ← Builder preferences read from .builder-preferences, with project and global fallback
         │       ├── CLIGlobalPreferences.java / CLIGlobalPreferenceDefaults.java ← Global preferences and their defaults
         │       └── builders/         ← CLI builder registry and configuration serialization
         ├── saxon/functions/          ← Saxon extension functions (NewUUIDFunction, UUIDFromKeyFunction)
@@ -225,7 +225,7 @@ The `profiles/cl/` package provides the standalone command-line interface used b
 | `CLIProfileTransformer` | Orchestrates the headless transform pipeline: loads schema, loads profile, runs the selected builder stylesheet via Saxon |
 | `CLISchemaParser` | Headless schema parser for `.xmi` files and Sparx EA project files (wrapping `EAPParser` and `QEAParser`), which also loads the `.namespaces`, `.namespace-prefixes`, `.annotation` and `.stereotype-extensions` files beside the schema |
 | `CLISettings` | Adapts the CLI project directory structure to the `Settings` interface expected by the profile model |
-| `CLIBuilderPreferences` | Reads a project's per-profile builder preferences from `.builder-preferences` |
+| `CLIBuilderPreferences` | Resolves a profile's builder preferences: its own value in `.builder-preferences`, then the project's value there, then `.cimtool-global-preferences`, then the built-in default from `CLIGlobalPreferenceDefaults` |
 | `CLIGlobalPreferences` | Reads a project's `.cimtool-global-preferences`, the global builder preferences that the desktop application writes into the project, with defaults from `CLIGlobalPreferenceDefaults` |
 
 The following sequence diagram documents the full CLI transform pipeline architecture.

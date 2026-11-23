@@ -121,7 +121,7 @@ CIMUtil/
         │       ├── CLIProfileTransformer.java ← Headless profile transform orchestration
         │       ├── CLISchemaParser.java ← Headless XMI/EA schema parsing
         │       ├── CLISettings.java  ← CLI project settings adapter
-        │       ├── CLIBuilderPreferences.java ← Per-profile builder preferences read from .builder-preferences
+        │       ├── CLIBuilderPreferences.java ← Builder preferences read from .builder-preferences, with project and global fallback
         │       ├── CLIGlobalPreferences.java / CLIGlobalPreferenceDefaults.java ← Global preferences and their defaults
         │       └── builders/         ← CLI builder registry and configuration serialization
         ├── saxon/functions/          ← Saxon extension functions (NewUUIDFunction, UUIDFromKeyFunction)
@@ -491,7 +491,10 @@ by `cimtool-cli`. Key classes:
   by the profile model
 
 | `CLIBuilderPreferences`
-| Reads a project's per-profile builder preferences from `.builder-preferences`
+| Resolves a profile's builder preferences: its own value in
+  `.builder-preferences`, then the project's value there, then
+  `.cimtool-global-preferences`, then the built-in default from
+  `CLIGlobalPreferenceDefaults`
 
 | `CLIGlobalPreferences`
 | Reads a project's `.cimtool-global-preferences`, the global builder

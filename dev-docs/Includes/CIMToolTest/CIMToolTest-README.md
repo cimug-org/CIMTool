@@ -2,7 +2,8 @@
 
 An Eclipse plugin fragment that provides the JUnit test suite for the CIMTool
 application. It tests the core build system, validation engine, Kena RDF layer,
-profile transforms, topology processing, upgrade regeneration, and UI wizards.
+profile transforms, topology processing, upgrade regeneration, preference
+handling, and UI wizards.
 
 > **Note:** The unit tests in this project are currently in the process of being
 > brought up to date. Some tests may not pass or may require additional setup
@@ -127,6 +128,12 @@ CIMToolTest/
         │   │   ├── FullModelProfileModelTest.java ← Tests for the full schema profile pipeline
         │   │   ├── ProfilesAsciiDoctorConfigTests.java ← Tests for the Profiles folder
         │   │   │                                   .asciidoctorconfig.adoc file
+        │   │   ├── GlobalPreferencesRefreshTests.java ← Tests for the .cimtool-global-preferences export
+        │   │   ├── BuilderPreferenceResolutionTests.java ← Tests for builder preference resolution
+        │   │   ├── BuilderPreferenceOverrideTests.java ← Tests for storing only genuine overrides
+        │   │   ├── BuilderPreferencesBatchTests.java ← Tests for one save per Apply
+        │   │   ├── SettingsReadTests.java   ← Tests that reading a setting never writes it
+        │   │   ├── DiagramStyleTests.java   ← Tests for the Diagram Style levels and migration
         │   │   ├── UpgradeRegenerationTests.java ← Tests for regeneration after an upgrade
         │   │   └── UpgradeRegenerationVersionTests.java ← Tests for the version comparison
         │   └── ui/                          ← UI test classes (require Eclipse workbench)
@@ -134,6 +141,7 @@ CIMToolTest/
         │       ├── ProfileWizards.java      ← Tests for the Import Profile and New Profile wizards
         │       ├── SchemaWizards.java       ← Tests for the Import Schema wizard
         │       ├── RuleWizards.java         ← Tests for the rules wizards
+        │       ├── ColorPreferenceLabelTests.java ← Tests for the color value labels
         │       └── CustomBuildersWizards.java ← Opens the Import Transform Builder wizard
 ```
 
@@ -147,7 +155,7 @@ dependencies on:
 
 | Bundle | Role in tests |
 | --- | --- |
-| `org.junit` (4.x) | Provides the JUnit 3 API the tests are written in: every test class extends `junit.framework.TestCase` (through `TestUtility`, apart from `UpgradeRegenerationVersionTests`, which extends it directly) and names its test methods `test*` |
+| `org.junit` (4.x) | Provides the JUnit 3 API the tests are written in: every test class extends `junit.framework.TestCase` (through `TestUtility`, apart from `UpgradeRegenerationVersionTests` and `ColorPreferenceLabelTests`, which extend it directly) and names its test methods `test*` |
 | `au.com.langdale.kena` | Used directly in `KenaTests` to test the RDF/OWL graph API independently |
 | `au.com.langdale.rcputil` | Eclipse UI utilities: `WorkbenchTest` and the UI tests fill in wizard pages through its `Assembly` and `FurnishedWizardPage` classes |
 | `org.eclipse.core.resources` | Workspace and project resource APIs used to set up test projects and assert the presence or absence of problem markers |
@@ -178,17 +186,24 @@ These tests run without a display and exercise the core CIMTool logic:
 | `ProfilesAsciiDoctorConfigTests` | Creating and updating the `:profilesdir:` definition in the Profiles folder `.asciidoctorconfig.adoc` file |
 | `UpgradeRegenerationTests` | The per-project version stamp, the rule that decides when a project needs regeneration, stamping by the builder, and regeneration of profile artifacts |
 | `UpgradeRegenerationVersionTests` | The version comparison that decides whether regeneration is needed; needs no workspace |
+| `GlobalPreferencesRefreshTests` | Exporting the workspace preferences to each project's `.cimtool-global-preferences`: creating a missing file, refreshing an outdated one, leaving a current one untouched, and `cimtool-cli` reading back what the workbench writes |
+| `BuilderPreferenceResolutionTests` | The order in which a builder preference resolves: a file's own value, then its project's value, then the workspace value |
+| `BuilderPreferenceOverrideTests` | Storing a project or file builder preference only when it differs from the inherited value, including Restore Defaults followed by Apply |
+| `BuilderPreferencesBatchTests` | Saving all the builder preference changes of one Apply to `.builder-preferences` once, and only when something changed |
+| `SettingsReadTests` | Reading a setting without writing it to `.cimtool-settings` |
+| `DiagramStyleTests` | The Profile Real-Time Preview Diagram Style at each level, and moving a project's style from `.cimtool-settings` to `.builder-preferences` |
 
 ### UI Tests
 
-These tests require a running Eclipse workbench and exercise the wizard UI:
+These tests require a running Eclipse workbench and exercise the wizard and preference page UI:
 
 | Test Class | What it tests |
 | --- | --- |
 | `ModelWizards` | Importing the `base_case.xml` CIM/XML model with the Import Model wizard, and checking the diagnostics file and the imported instance |
-| `ProfileWizards` | Importing `cpsm2007.owl` with the Import Profile wizard, and creating an empty profile with the New Profile wizard |
+| `ProfileWizards` | Importing `cpsm2007.owl` with the Import Profile wizard, and creating an empty profile with the New Profile wizard, each pressing Finish with the schema not yet loaded, so that the wizard loads it while it runs |
 | `SchemaWizards` | Importing the `cim11v09combined.xmi` schema with the Import Schema wizard |
 | `RuleWizards` | Importing, and creating empty and default, rules, incremental rules, XSD rules and HTML rules |
+| `ColorPreferenceLabelTests` | The hexadecimal value shown beside each color button on the PlantUML Builder Preferences page, including after Restore Defaults, and the spacing captions beside the spacing fields |
 | `CustomBuildersWizards` | Opens the Import Transform Builder wizard, but fills it in with the `cim11v09combined.xmi` schema and checks the imported schema, as `SchemaWizards` does |
 
 `WorkbenchTest` pauses between wizard steps for the number of milliseconds
@@ -297,10 +312,6 @@ some tests from passing. They are tracked in
 - *Missing rules files:* `ProjectTest` names `profile.rules` (`SAMPLE_RULES`), `profile.html-xslt` (`SAMPLE_HTML_RULES`), `profile.xsd-xslt` (`SAMPLE_XSD_RULES`) and `alternative.xsd-xslt` (`ALT_XSD_RULES`), which are in neither ZIP. The import tests in `RuleWizards` and `TransformTasks.testCustomXSDGeneration` read them.
 - *Test data is not deleted:* `ProjectTest.tearDownTestData()` calls `File.delete()` on the extracted `CIMToolTestFiles` folder, which has no effect on a folder that is not empty. The folder stays beside the test workspace and is overwritten on the next `setUp()`.
 - *`CustomBuildersWizards`:* its only test fills in the Import Transform Builder wizard with a schema file, so it does not test importing a transform builder.
-
-`ProfileWizards` can also stop the test run with a modal error dialog. That
-is a defect in CIMTool itself, tracked in
-[Issue #322](https://github.com/cimug-org/CIMTool/issues/322).
 
 
 
