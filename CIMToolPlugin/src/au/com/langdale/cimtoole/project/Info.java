@@ -748,12 +748,42 @@ public class Info implements QualifiedNames {
 		return value;
 	}
 
+	/**
+	 * Returns the value of a builder preference for a resource: the resource's own
+	 * value when it has one, otherwise the value it inherits (see
+	 * {@link #getInheritedBuilderPreference(IResource, QualifiedName)}). A file
+	 * therefore resolves to its own value, then its project's, then the
+	 * workspace's.
+	 * 
+	 * @param resource the file or project the preference applies to
+	 * @param symbol   the preference
+	 * @return the resolved value
+	 */
 	public static String getBuilderPreference(IResource resource, QualifiedName symbol) {
 		String value = CIMToolPlugin.getBuilderPreferences().getPreference(resource, symbol);
 		if (value == null) {
-			value = getPreference(symbol);
+			value = getInheritedBuilderPreference(resource, symbol);
 		}
 		return value;
+	}
+
+	/**
+	 * Returns the value of a builder preference that a resource inherits when it
+	 * has no value of its own: for a file, its project's value when the project
+	 * has one, otherwise the workspace value; for a project, the workspace value.
+	 * The resource's own value, if any, is ignored.
+	 * 
+	 * @param resource the file or project the preference applies to
+	 * @param symbol   the preference
+	 * @return the inherited value
+	 */
+	public static String getInheritedBuilderPreference(IResource resource, QualifiedName symbol) {
+		if (!(resource instanceof IProject)) {
+			String value = CIMToolPlugin.getBuilderPreferences().getPreference(resource.getProject(), symbol);
+			if (value != null)
+				return value;
+		}
+		return getPreference(symbol);
 	}
 
 	public static void putBuilderPreference(IResource resource, QualifiedName symbol, String value) {

@@ -27,13 +27,16 @@ import java.net.URISyntaxException;
  * 
  * <p>
  * This class provides read-only access to builder preferences with a
- * three-level fallback chain that mirrors the Eclipse behavior:
+ * four-level fallback chain that mirrors the Eclipse behavior:
  * </p>
  * 
  * <ol>
  * <li><b>Per-resource preferences</b> from {@code .builder-preferences} -
  * overrides for specific profile files set via resource-specific dialogs in
  * Eclipse</li>
+ * <li><b>Project preferences</b> from {@code .builder-preferences} - values set
+ * for the whole project on the project's PlantUML Builder Preferences page,
+ * stored under the project's own subject</li>
  * <li><b>Global preferences</b> from {@code .cimtool-global-preferences} -
  * user's customized defaults exported from the Eclipse PreferenceStore (set via
  * PlantUML Builders preference page)</li>
@@ -113,6 +116,8 @@ public class CLIBuilderPreferences implements GlobalPreferences {
 	 * </p>
 	 * <ol>
 	 * <li>Per-resource preferences from {@code .builder-preferences}</li>
+	 * <li>Project preferences from {@code .builder-preferences}, stored under the
+	 * project's own subject</li>
 	 * <li>Global preferences from {@code .cimtool-global-preferences} (exported
 	 * from Eclipse)</li>
 	 * <li>Hardcoded defaults from {@link CLIGlobalPreferenceDefaults}</li>
@@ -129,12 +134,17 @@ public class CLIBuilderPreferences implements GlobalPreferences {
 		Property property = createProperty(preferenceName);
 		String value = subject.getString(property);
 
-		// 2. Fall back to global preferences from .cimtool-global-preferences
+		// 2. Fall back to the project's own preference from .builder-preferences
+		if (value == null && !resourcePath.isEmpty()) {
+			value = createSubject("").getString(property);
+		}
+
+		// 3. Fall back to global preferences from .cimtool-global-preferences
 		if (value == null && globalPreferences != null) {
 			value = globalPreferences.getPreference(preferenceName);
 		}
 
-		// 3. Fall back to hardcoded defaults
+		// 4. Fall back to hardcoded defaults
 		if (value == null) {
 			value = CLIGlobalPreferenceDefaults.getDefault(preferenceName);
 		}
