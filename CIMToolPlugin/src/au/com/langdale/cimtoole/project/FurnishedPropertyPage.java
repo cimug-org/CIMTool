@@ -5,7 +5,6 @@
 package au.com.langdale.cimtoole.project;
 
 import static au.com.langdale.ui.builder.Templates.CheckBox;
-import static au.com.langdale.ui.builder.Templates.DisplayField;
 import static au.com.langdale.ui.builder.Templates.Field;
 
 import org.eclipse.core.resources.IResource;
@@ -255,33 +254,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 	}
 
-	public static abstract class DisplayTextBinding implements Template, Binding {
-		public final QualifiedName symbol;
-		private Assembly assembly;
-
-		public DisplayTextBinding(QualifiedName symbol) {
-			this.symbol = symbol;
-		}
-
-		protected String getValue() {
-			return assembly.getText(symbol.getLocalName()).getText().trim();
-		}
-
-		protected void setValue(String value) {
-			assembly.setTextValue(symbol.getLocalName(), value);
-		}
-
-		public String validate() {
-			return null;
-		}
-
-		public Control realise(Composite parent, Assembly assembly) {
-			this.assembly = assembly;
-			assembly.addBinding(this);
-			return DisplayField(symbol.getLocalName()).realise(parent, assembly);
-		}
-	}
-
 	public static abstract class OptionBinding implements Template, Binding {
 		public final QualifiedName symbol;
 		public final String label;
@@ -330,24 +302,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 	}
 
-	public class HierarchicalBuilderPreferenceOption extends OptionBinding {
-		public HierarchicalBuilderPreferenceOption(QualifiedName symbol, String label) {
-			super(symbol, label);
-		}
-
-		public void refresh() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(getResource(), symbol)));
-		}
-
-		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, Boolean.valueOf(getValue()).toString());
-		}
-
-		public void reset() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(symbol)));
-		}
-	}
-
 	public class BuilderPreferenceOption extends OptionBinding {
 		public BuilderPreferenceOption(QualifiedName symbol, String label) {
 			super(symbol, label);
@@ -366,26 +320,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 	}
 
-	public class ColorProperty extends ColorDisplayBinding {
-
-		public ColorProperty(String text, QualifiedName symbol) {
-			super(symbol, text, Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putProperty(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getPreference(symbol));
-		}
-
-	}
-
 	public class BuilderColorPreference extends ColorDisplayBinding {
 
 		public BuilderColorPreference(String text, QualifiedName symbol) {
@@ -402,30 +336,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 		public void reset() {
 			setValue(Info.getInheritedBuilderPreference(getResource(), symbol));
-		}
-
-	}
-
-	public class PropertyReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public PropertyReadOnlyCombo(QualifiedName symbol, Validator validator) {
-			super(symbol, validator, null, Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public PropertyReadOnlyCombo(QualifiedName symbol, Validator validator, Object data) {
-			super(symbol, validator, data, Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void refresh() {
-			setValue(Info.getPropertyNoException(getResource(), symbol));
-		}
-
-		public void update() {
-			Info.putProperty(getResource(), symbol, getValue());
-		}
-
-		public void reset() {
-			setValue(Info.getPreference(symbol));
 		}
 
 	}
@@ -512,26 +422,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 	}
 
-	public class ProjectPreferenceReadOnlyCombo extends ReadOnlyComboBinding {
-
-		public ProjectPreferenceReadOnlyCombo(QualifiedName symbol, Validator validator, Object data,
-				Object projectLevelInitialSelection) {
-			super(symbol, validator, data, projectLevelInitialSelection);
-		}
-
-		public void refresh() {
-			setValue(getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void reset() {
-			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
-		}
-
-		public void update() {
-			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
-		}
-	}
-
 	public class PreferenceReadOnlyCombo extends ReadOnlyComboBinding {
 
 		public PreferenceReadOnlyCombo(QualifiedName symbol, Validator validator) {
@@ -564,24 +454,6 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 
 		public ColorPreference(String text, QualifiedName symbol) {
 			super(symbol, text, getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void refresh() {
-			setValue(getPreferenceStore().getString(symbol.getLocalName()));
-		}
-
-		public void reset() {
-			setValue(getPreferenceStore().getDefaultString(symbol.getLocalName()));
-		}
-
-		public void update() {
-			getPreferenceStore().setValue(symbol.getLocalName(), getValue());
-		}
-	}
-
-	public class DisplayPreference extends DisplayTextBinding {
-		public DisplayPreference(QualifiedName symbol) {
-			super(symbol);
 		}
 
 		public void refresh() {

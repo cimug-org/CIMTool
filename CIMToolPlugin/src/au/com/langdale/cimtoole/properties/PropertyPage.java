@@ -128,7 +128,7 @@ public class PropertyPage extends FurnishedPropertyPage {
 						Group(Label("This project was created with the \"merge shadow/mixin extensions setting\" "
 								+ (enabled ? "enabled" : "disabled") + ".")),
 						Group(Label(
-								"If you change the above setting you should immediatly reimport the project's schema file. ")),
+								"If you change the above setting you should immediately reimport the project's schema file. ")),
 						Group(Label("")),
 						Group(Label(
 								"The above setting should almost always be enabled when the schema format you are using ")),

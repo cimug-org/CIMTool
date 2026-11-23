@@ -276,6 +276,7 @@
             name="CIMTool"
             class="au.com.langdale.cimtoole.preferences.GeneralPreferencesPage"
             id="au.com.langdale.cimtoole.preferences.GeneralPreferencesPage">
+         <keywordReference id="au.com.langdale.cimtoole.keywords.general"/>
       </page>
 	  <!-- Child Page under the top-level parent node. The "category" attribute references the "id" attribute of the parent. -->
 	  <page
@@ -283,8 +284,25 @@
 	        id="au.com.langdale.cimtoole.preferences.PlantUMLBuildersPreferencesPage"
 	        class="au.com.langdale.cimtoole.preferences.PlantUMLBuildersPreferencesPage"
 	        category="au.com.langdale.cimtoole.preferences.GeneralPreferencesPage">
+	     <keywordReference id="au.com.langdale.cimtoole.keywords.plantuml"/>
 	  </page>
 	</extension>
+   <!-- Keywords that let the Preferences and Properties dialog filters find the CIMTool pages. -->
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="au.com.langdale.cimtoole.keywords.general"
+            label="CIMTool namespace schema instance profile envelope mapping label self-healing shadow mixin validation">
+      </keyword>
+      <keyword
+            id="au.com.langdale.cimtoole.keywords.properties"
+            label="CIMTool namespace merged schema self-healing shadow mixin location">
+      </keyword>
+      <keyword
+            id="au.com.langdale.cimtoole.keywords.plantuml"
+            label="PlantUML diagram style theme color class classes spacing horizontal vertical hide dark mode shadowing preview real-time real time">
+      </keyword>
+   </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
@@ -300,6 +318,7 @@
             id="au.com.langdale.cimtoole.properties.CIMToolPropertyPage"
             name="CIMTool"
             objectClass="org.eclipse.core.resources.IResource">
+         <keywordReference id="au.com.langdale.cimtoole.keywords.properties"/>
       </page>
       <!-- Child page under the parent node. The "category" attribute references the "id" attribute of the parent.
            Shown only for CIMTool projects, profiles and generated .puml files (see CIMToolPropertyTester). -->
@@ -308,6 +327,7 @@
             id="au.com.langdale.cimtoole.properties.PlantUMLBuilderPropertyPage"
             name="PlantUML Builder Preferences"
             category="au.com.langdale.cimtoole.properties.CIMToolPropertyPage">
+         <keywordReference id="au.com.langdale.cimtoole.keywords.plantuml"/>
          <enabledWhen>
             <adapt
                   type="org.eclipse.core.resources.IResource">

@@ -81,7 +81,7 @@ public class PlantUMLBuildersPreferencesPage extends FurnishedPropertyPage {
 						Group(new PreferenceOption(Info.ANONYMOUS_CLASSES_COLOR_WHITE,
 								"Set the color of anonymous classes to white")),
 						Group(new PreferenceOption(Info.ENABLE_DARK_MODE,
-								"Enable 'Dark Mode' (overrides colors above)")),
+								"Enable 'Dark Mode' (overrides themes and colors above)")),
 						Group(new PreferenceOption(Info.ENABLE_SHADOWING, "Enable shadowing on classes")),
 						Group(HRule()), Group(Label("Profile Real-Time Preview PlantUML Diagram Preferences:")), //
 						Group(Label("Diagram Style: "),
