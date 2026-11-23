@@ -717,25 +717,23 @@ public class Info implements QualifiedNames {
 	}
 
 	/**
-	 * Method that retrieve a project level property.
+	 * Returns a setting of a resource from the project's {@code .cimtool-settings}
+	 * file, or the workspace value when the resource has no value of its own.
+	 * Reading never writes: a missing value is not copied into the file (issue
+	 * #411). Values that must stay fixed for a resource, such as a schema's
+	 * namespace, are written explicitly when the resource is created or imported.
 	 * 
-	 * @param resource
-	 * @param symbol
-	 * @return
-	 * @throws CoreException
+	 * @param resource the resource the setting applies to
+	 * @param symbol   the setting
+	 * @return the resource's value, or the workspace value
+	 * @throws CoreException if the settings cannot be read
 	 */
 	public static String getProperty(IResource resource, QualifiedName symbol) throws CoreException {
-		String value;
-		if (resource.exists()) {
-			Settings settings = CIMToolPlugin.getSettings();
-			value = settings.getSetting(resource, symbol);
-			if (value == null) {
-				value = getPreference(symbol);
-				settings.putSetting(resource, symbol, value);
-			}
-		} else {
+		String value = null;
+		if (resource.exists())
+			value = CIMToolPlugin.getSettings().getSetting(resource, symbol);
+		if (value == null)
 			value = getPreference(symbol);
-		}
 		return value;
 	}
 
