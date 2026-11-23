@@ -3,6 +3,12 @@ This section contains CIMTool release notes and can be used for quick reference 
 as those available on GitHub [here](https://github.com/cimug-org/CIMTool/releases), but contain more versions since this log pre-dates 
 GitHub being the version control system for CIMTool.
 
+### Release 2.4.0 [TBD]
+
+Enhancement [Issue #411](https://github.com/cimug-org/CIMTool/issues/411):
+The **CIMTool** preference and property pages now follow one hierarchy of three levels: workspace, project and file. A project's **Properties > CIMTool** page holds the project's settings, and a new **PlantUML Builder Preferences** page beneath it holds the project's **PlantUML** builder preferences. Profiles (`.owl`) and generated **PlantUML** (`.puml`) files have the same **PlantUML Builder Preferences** page for settings of their own, and their **CIMTool** page now shows the file's location. A builder preference that a file does not set now takes the project's value before the workspace value, in the desktop builders and in `cimtool-cli` alike. A project or file stores only the values that differ from what it would inherit, so it keeps following later changes at a higher level, and **Restore Defaults** on a project or file page returns each value to the inherited one. The workspace **CIMTool** page adds the default mapping namespace and label, and the **PlantUML Builder Preferences** pages add an **Errors Color**. Reading a setting no longer writes it into `.cimtool-settings`, and a project's **Diagram Style** moves from `.cimtool-settings` into `.builder-preferences` when the project is first used with this release. The filter in the Preferences and Properties dialogs now finds the **CIMTool** pages by the settings they hold, such as spacing, theme or mapping. `cimtool-cli` now reads the workspace preferences that **CIMTool** exports into `.cimtool-global-preferences`; it previously ignored them and used the built-in defaults.
+
+
 ### Release 2.3.1 [09-Nov-2026]
 
 **CIMTool 2.3.1** is a patch release with defect fixes, a security fix, enhancements to copyright notices and AsciiDoc documentation generation, and the automatic regeneration of profile artifacts after an upgrade.
