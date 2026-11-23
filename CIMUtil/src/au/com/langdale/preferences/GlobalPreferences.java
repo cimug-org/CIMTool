@@ -18,11 +18,12 @@ public interface GlobalPreferences {
 	/** Namespace for builder preference properties */
 	public static final String BUILDER_PREFS_NS = "http://cimtoole.langdale.com.au/2009/builder-prefs#";
 	
-	/** The RDF namespace for global preferences */
+	/**
+	 * Subject URI of the workspace preferences recorded in a project's
+	 * {@code .cimtool-global-preferences} file. The workbench writes the file
+	 * under this subject and cimtool-cli reads it under the same subject.
+	 */
 	public static final String GLOBAL_PREFS_NS = "http://cimtoole.langdale.com.au/2009/global-prefs#";
-	
-	/** Subject URI for global preferences */
-	public static final String GLOBAL_SUBJECT_URI = PROJECT_NS + "global";
 	
 	String PREF_PROFILE_PATH = "profile_path";
 	String PREF_BASE_MODEL_PATH = "base_model_path";

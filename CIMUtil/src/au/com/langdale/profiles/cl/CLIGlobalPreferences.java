@@ -34,7 +34,7 @@ import java.io.InputStream;
  * </p>
  * 
  * <pre>
- * &lt;http://cimtoole.langdale.com.au/2009/project/global&gt;
+ * &lt;http://cimtoole.langdale.com.au/2009/global-prefs#&gt;
  *     &lt;http://cimtoole.langdale.com.au/2009/builder-prefs#plantuml_theme&gt;
  *     "cerulean" ;
  *     &lt;http://cimtoole.langdale.com.au/2009/builder-prefs#plantuml_docroot_classes_color&gt;
@@ -114,7 +114,7 @@ public class CLIGlobalPreferences implements GlobalPreferences {
 			return null;
 		}
 
-		OntResource subject = preferencesModel.createResource(GLOBAL_SUBJECT_URI);
+		OntResource subject = preferencesModel.createResource(GLOBAL_PREFS_NS);
 		Property property = ResourceFactory.createProperty(BUILDER_PREFS_NS + preferenceName);
 		return subject.getString(property);
 	}

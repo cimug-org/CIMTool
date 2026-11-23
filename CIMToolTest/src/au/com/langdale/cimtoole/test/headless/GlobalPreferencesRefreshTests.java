@@ -15,13 +15,15 @@ import au.com.langdale.cimtoole.project.GlobalPreferencesSynchronizer;
 import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.WorkspaceTest;
+import au.com.langdale.profiles.cl.CLIGlobalPreferences;
 
 /**
  * Tests for the export that {@link GlobalPreferencesSynchronizer} runs for every
  * open CIMTool project when CIMTool starts (issue #339). A project's
  * {@code .cimtool-global-preferences} file mirrors the workspace preferences,
  * so the export must refresh an existing file as well as create a missing one,
- * and must leave a file that already matches the workspace untouched.
+ * and must leave a file that already matches the workspace untouched. The file
+ * it writes must also be readable by cimtool-cli (issue #411).
  */
 public class GlobalPreferencesRefreshTests extends WorkspaceTest {
 
@@ -67,6 +69,19 @@ public class GlobalPreferencesRefreshTests extends WorkspaceTest {
 		GlobalPreferencesExporter.exportGlobalPreferencesToAllOpenProjects();
 		assertTrue("file created", prefsFile.exists());
 		assertTrue("workspace value written", read().contains("\"42\""));
+	}
+
+	/**
+	 * The workbench wrote the file under one subject while cimtool-cli read it
+	 * under another, so the command line silently ignored every customized
+	 * preference (issue #411). cimtool-cli must read back the value the
+	 * workbench exports.
+	 */
+	public final void testCommandLineReadsExportedFile() throws Exception {
+		GlobalPreferencesExporter.exportGlobalPreferencesToAllOpenProjects();
+		CLIGlobalPreferences commandLine = new CLIGlobalPreferences(project.getLocation().toFile());
+		assertTrue("file found by the command line", commandLine.isLoaded());
+		assertEquals("workspace value read by the command line", "42", commandLine.getPreference(SPACING));
 	}
 
 	private void write(String content) throws CoreException {

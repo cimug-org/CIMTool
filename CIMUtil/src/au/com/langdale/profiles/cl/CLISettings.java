@@ -119,9 +119,8 @@ public class CLISettings implements GlobalPreferences {
 	 * Project-level settings (such as {@code merge_shadow_extensions} and
 	 * {@code self_heal_on_import}) are written by CIMToolPlugin against the project
 	 * root resource, not against individual file resources. This method looks them
-	 * up using {@link GlobalPreferences#GLOBAL_SUBJECT_URI} as the subject,
-	 * consistent with how {@link CLIGlobalPreferences} reads its project-root
-	 * preferences.
+	 * up using {@link GlobalPreferences#PROJECT_NS}, the subject CIMToolPlugin
+	 * writes for the project itself.
 	 * </p>
 	 *
 	 * @param settingName the setting name
