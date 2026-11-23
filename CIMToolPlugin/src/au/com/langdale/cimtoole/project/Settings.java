@@ -164,6 +164,31 @@ public class Settings extends Task {
 
 	}
 
+	/**
+	 * Removes a resource's setting from the project's {@code .cimtool-settings}
+	 * file. Does nothing, and saves nothing, if the resource has no such setting.
+	 * 
+	 * @param resource the resource the setting applies to
+	 * @param symbol   the setting
+	 */
+	public void removeSetting(IResource resource, QualifiedName symbol) {
+		try {
+			IProject project = resource.getProject();
+			OntModel store = getSettingsStore(project);
+			Property prop = createSettingsProperty(symbol);
+			IPath path = resource.getProjectRelativePath();
+
+			if (createSubject(path, store).getString(prop) == null)
+				return;
+
+			OntModel revised = Composition.copy(store);
+			createSubject(path, revised).removeAll(prop);
+			replaceSettingsStore(project, revised);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private class ResourceListener implements IResourceChangeListener {
 
 		public void resourceChanged(IResourceChangeEvent event) {

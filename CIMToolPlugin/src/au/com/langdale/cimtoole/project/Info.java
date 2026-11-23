@@ -857,7 +857,7 @@ public class Info implements QualifiedNames {
 				// Step 2: When not, we next check to see if the preference is specified at the
 				// project-level...
 				IProject project = resource.getProject();
-				style = CIMToolPlugin.getSettings().getSetting(project, CURRENT_PROFILE_PREVIEW_STYLE);
+				style = CIMToolPlugin.getBuilderPreferences().getPreference(project, CURRENT_PROFILE_PREVIEW_STYLE);
 				if (style == null || style.isEmpty()) {
 					// Step 3: If not, then the preference's global default is used...
 					style = getPreference(CURRENT_PROFILE_PREVIEW_STYLE);
@@ -868,34 +868,17 @@ public class Info implements QualifiedNames {
 	}
 
 	/**
-	 * Method that determines the default display style that corresponds to the type
-	 * of the specified resource (i.e. the "level").
+	 * Returns the Diagram Style set at the level of the given project or profile
+	 * itself, from {@code .builder-preferences}, without falling back to a higher
+	 * level. A {@code null} or empty result means the level sets no style of its
+	 * own and inherits one. Used by the property pages, which must show only what
+	 * their own level sets.
 	 * 
-	 * If it is a project then the value configured at the project-level is returned
-	 * and if it is a profile then the value configured at the profile-level is
-	 * returned. If the type is neither then it is understood to be the default
-	 * global preference setting that is to be returned.
-	 * 
-	 * @param resource The resource to retrieve the value for.
-	 * @param symbol   The QualifedName for the preference to retrieve.
-	 * @return The preference value.
+	 * @param resource the project or profile
+	 * @return the style set at that level, or {@code null} if none
 	 */
 	public static String getCurrentProfileRealTimePreviewDisplayStyleByLevel(IResource resource) {
-		if (!(resource instanceof IProject)) {
-			// Resource is a profile so we get the profile-level preference and return it.
-			// Note for this method we do not resort to a "fallback" default hierarchically
-			// as we intentionally want to know if a value is explicitly set or not.
-			return CIMToolPlugin.getBuilderPreferences().getPreference(resource, CURRENT_PROFILE_PREVIEW_STYLE);
-		} else if (resource instanceof IProject) {
-			// Resource is a project so we get the project-level preference and return it.
-			try {
-				return getProperty(resource.getProject(), CURRENT_PROFILE_PREVIEW_STYLE);
-			} catch (CoreException e) {
-				return null;
-			}
-		} else {
-			return getPreference(CURRENT_PROFILE_PREVIEW_STYLE);
-		}
+		return CIMToolPlugin.getBuilderPreferences().getPreference(resource, CURRENT_PROFILE_PREVIEW_STYLE);
 	}
 
 	public static String getSchemaNamespace(IProject project) throws CoreException {

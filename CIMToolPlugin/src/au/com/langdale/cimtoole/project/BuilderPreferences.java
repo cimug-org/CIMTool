@@ -209,8 +209,42 @@ public class BuilderPreferences extends Task {
 			} else {
 				preferencesStore = migrateBuilderPreferences(project);
 			}
+			preferencesStore = migrateProjectDiagramStyle(project, preferencesStore);
 		}
 		return preferencesStore;
+	}
+
+	/**
+	 * Moves a project-level Diagram Style out of the project's
+	 * {@code .cimtool-settings} file, where releases before 2.4.0 stored it, into
+	 * {@code .builder-preferences} with every other PlantUML setting (issue #411).
+	 * Runs when the project's builder preferences are loaded. A value already
+	 * present in {@code .builder-preferences} is kept, and an empty value is
+	 * dropped, since empty means inherit. Each file is saved at most once, and once
+	 * the setting is gone from {@code .cimtool-settings} there is nothing left to
+	 * move.
+	 * 
+	 * @param project the project being loaded
+	 * @param store   the project's builder preferences as loaded
+	 * @return the builder preferences, including any value moved in
+	 */
+	private OntModel migrateProjectDiagramStyle(IProject project, OntModel store) throws CoreException {
+		Settings settings = CIMToolPlugin.getSettings();
+		String style = settings.getSetting(project, CURRENT_PROFILE_PREVIEW_STYLE);
+		if (style == null)
+			return store;
+
+		Property prop = createProperty(CURRENT_PROFILE_PREVIEW_STYLE);
+		IPath path = project.getProjectRelativePath();
+		OntModel result = store;
+		if (!style.isEmpty() && createSubject(path, store).getString(prop) == null) {
+			log.info("Moving the project Diagram Style of {} to its builder preferences", project.getName());
+			result = Composition.copy(store);
+			createSubject(path, result).setProperty(prop, style, null);
+			replaceBuilderPreferencesStore(project, result);
+		}
+		settings.removeSetting(project, CURRENT_PROFILE_PREVIEW_STYLE);
+		return result;
 	}
 
 	private void replaceBuilderPreferencesStore(IProject project, OntModel preferencesStore) throws CoreException {

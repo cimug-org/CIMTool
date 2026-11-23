@@ -61,10 +61,8 @@ public class PlantUMLBuilderPropertyPage extends FurnishedPropertyPage {
 		public void update() {
 			IResource resource = getResource();
 			String value = (getValue() == null ? "" : getValue());
-			if (resource instanceof IProject) {
-				Info.putProperty(getResource(), symbol, value);
-			} else if (Info.isProfile(resource) || Info.isPlantUML(resource)) {
-				// An empty Diagram Style means the profile inherits it.
+			if (resource instanceof IProject || Info.isProfile(resource) || Info.isPlantUML(resource)) {
+				// An empty Diagram Style means the level inherits it.
 				if (value.isEmpty())
 					CIMToolPlugin.getBuilderPreferences().removePreference(resource, symbol);
 				else
