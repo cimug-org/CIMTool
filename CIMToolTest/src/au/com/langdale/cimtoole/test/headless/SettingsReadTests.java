@@ -20,7 +20,7 @@ import au.com.langdale.cimtoole.test.WorkspaceTest;
 
 /**
  * Reading a setting with {@link Info#getProperty} never writes to the project's
- * {@code .cimtool-settings} file (issue #411). A resource with no value of its
+ * {@code .cimtool-settings} file. A resource with no value of its
  * own reads the workspace value, and keeps following it, instead of having the
  * value copied into the file on first read.
  */

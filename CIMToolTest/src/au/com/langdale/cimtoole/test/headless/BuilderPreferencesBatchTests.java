@@ -24,8 +24,8 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.WorkspaceTest;
 
 /**
- * Tests for {@link BuilderPreferences#runBatch(org.eclipse.core.resources.IProject, Runnable)}
- * (issue #411). Every change made to a project's builder preferences inside a
+ * Tests for {@link BuilderPreferences#runBatch(org.eclipse.core.resources.IProject, Runnable)}.
+ * Every change made to a project's builder preferences inside a
  * batch is applied to one working copy of the store, which is saved to the
  * project's {@code .builder-preferences} file once, and only if something
  * changed. Reads made during the batch see the working copy.

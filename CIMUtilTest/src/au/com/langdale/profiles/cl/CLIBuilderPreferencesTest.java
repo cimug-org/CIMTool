@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * The order in which cimtool-cli resolves a builder preference (issue #411),
+ * The order in which cimtool-cli resolves a builder preference,
  * matching the workbench: a file's own value, then its project's value, both
  * from {@code .builder-preferences}, then the workspace value exported to
  * {@code .cimtool-global-preferences}, then the shipped default.

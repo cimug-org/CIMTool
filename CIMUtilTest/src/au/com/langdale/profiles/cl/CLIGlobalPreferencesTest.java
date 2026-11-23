@@ -18,7 +18,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * cimtool-cli reads the {@code .cimtool-global-preferences} file that the
- * workbench writes into each CIMTool project (issue #411).
+ * workbench writes into each CIMTool project.
  *
  * <p>
  * The workbench records the workspace preferences under the subject

@@ -23,7 +23,7 @@ import au.com.langdale.profiles.cl.CLIGlobalPreferences;
  * {@code .cimtool-global-preferences} file mirrors the workspace preferences,
  * so the export must refresh an existing file as well as create a missing one,
  * and must leave a file that already matches the workspace untouched. The file
- * it writes must also be readable by cimtool-cli (issue #411).
+ * it writes must also be readable by cimtool-cli.
  */
 public class GlobalPreferencesRefreshTests extends WorkspaceTest {
 
@@ -72,10 +72,8 @@ public class GlobalPreferencesRefreshTests extends WorkspaceTest {
 	}
 
 	/**
-	 * The workbench wrote the file under one subject while cimtool-cli read it
-	 * under another, so the command line silently ignored every customized
-	 * preference (issue #411). cimtool-cli must read back the value the
-	 * workbench exports.
+	 * cimtool-cli reads back the value the workbench exports, under the same
+	 * subject the workbench writes it with.
 	 */
 	public final void testCommandLineReadsExportedFile() throws Exception {
 		GlobalPreferencesExporter.exportGlobalPreferencesToAllOpenProjects();

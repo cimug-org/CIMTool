@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 /**
  * The label beside each color button on the PlantUML Builder Preferences page
  * shows the color's hexadecimal value, and keeps showing it when the page itself
- * changes the color, as Restore Defaults does (issue #411). The spacing captions
+ * changes the color, as Restore Defaults does. The spacing captions
  * are separate labels and are never replaced by a value.
  */
 public class ColorPreferenceLabelTests extends TestCase {

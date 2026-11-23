@@ -27,7 +27,7 @@ import au.com.langdale.cimtoole.test.WorkspaceTest;
 
 /**
  * The Profile Real-Time Preview Diagram Style lives in
- * {@code .builder-preferences} at every level (issue #411). A project-level
+ * {@code .builder-preferences} at every level. A project-level
  * value stored in {@code .cimtool-settings} by an earlier release moves there
  * when the project's builder preferences are loaded, and a profile resolves its
  * style from its own value, then its project's, then the workspace's.

@@ -217,7 +217,7 @@ public class BuilderPreferences extends Task {
 	/**
 	 * Moves a project-level Diagram Style out of the project's
 	 * {@code .cimtool-settings} file, where releases before 2.4.0 stored it, into
-	 * {@code .builder-preferences} with every other PlantUML setting (issue #411).
+	 * {@code .builder-preferences} with every other PlantUML setting.
 	 * Runs when the project's builder preferences are loaded. A value already
 	 * present in {@code .builder-preferences} is kept, and an empty value is
 	 * dropped, since empty means inherit. Each file is saved at most once, and once

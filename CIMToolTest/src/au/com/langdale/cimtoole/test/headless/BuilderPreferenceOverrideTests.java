@@ -20,8 +20,8 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.WorkspaceTest;
 
 /**
- * A project or file stores a builder preference only as a genuine override
- * (issue #411). A value equal to the one the resource inherits is not stored,
+ * A project or file stores a builder preference only as a genuine override.
+ * A value equal to the one the resource inherits is not stored,
  * and choosing it removes any override already stored, so the resource keeps
  * inheriting and later changes at a higher level reach it. Restore Defaults on a
  * property page sets every control to the inherited value, so the following
