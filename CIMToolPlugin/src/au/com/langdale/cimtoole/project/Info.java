@@ -719,8 +719,8 @@ public class Info implements QualifiedNames {
 	/**
 	 * Returns a setting of a resource from the project's {@code .cimtool-settings}
 	 * file, or the workspace value when the resource has no value of its own.
-	 * Reading never writes: a missing value is not copied into the file (issue
-	 * #411). Values that must stay fixed for a resource, such as a schema's
+	 * Reading never writes: a missing value is not copied into the file.
+	 * Values that must stay fixed for a resource, such as a schema's
 	 * namespace, are written explicitly when the resource is created or imported.
 	 * 
 	 * @param resource the resource the setting applies to

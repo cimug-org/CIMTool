@@ -20,8 +20,8 @@ import au.com.langdale.cimtoole.project.Task;
 import au.com.langdale.cimtoole.test.WorkspaceTest;
 
 /**
- * The order in which a builder preference resolves in the workbench (issue
- * #411): a file's own value, then its project's value, then the workspace
+ * The order in which a builder preference resolves in the workbench:
+ * a file's own value, then its project's value, then the workspace
  * value. A project resolves to its own value, then the workspace value.
  */
 public class BuilderPreferenceResolutionTests extends WorkspaceTest {
