@@ -63,7 +63,7 @@ public class ProfileWizards extends WorkbenchTest {
 	/**
 	 * Empties the cached merged schema model, so that the wizard has to load the
 	 * schema while it runs, as it does when a user runs it before anything else
-	 * has loaded the schema (issue #413). The old model is disposed first so that
+	 * has loaded the schema. The old model is disposed first so that
 	 * it stops listening for cache changes.
 	 */
 	private void clearSchemaCache() throws Exception {
