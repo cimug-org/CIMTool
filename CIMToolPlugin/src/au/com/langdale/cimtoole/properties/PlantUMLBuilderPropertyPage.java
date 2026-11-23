@@ -172,37 +172,46 @@ public class PlantUMLBuilderPropertyPage extends FurnishedPropertyPage {
 				for (String line : hint)
 					groups.add(Group(Label(line)));
 			}
-
-			@Override
-			public void update() {
-				refreshPlantUMLViewParts(getResource());
-			}
-
-			private void refreshPlantUMLViewParts(IResource resource) {
-				if (resource instanceof IProject) {
-					// Project-level preference change: refresh the focused profile editor's
-					// preview, but only if that profile lives in this project.
-					ProfileEditor.refreshActiveProfilePreview((IProject) resource);
-					return;
-				}
-				IFolder profileFolder = Info.getProfilesFolder(resource.getProject());
-				if (profileFolder == null || !profileFolder.exists())
-					return;
-				if (Info.isProfile(resource)) {
-					IFile owlFile = (IFile) resource;
-					String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
-					IFile previewFile = profileFolder
-							.getFile("." + baseName + "." + PlantUMLRealTimePreviewBuildlet.PREVIEW_EXT);
-					IWorkspaceRunnable runnable = new PlantUMLRealTimePreviewBuildlet().asRunnable(previewFile, false);
-					Jobs.runJob(runnable, previewFile.getProject(), "Regenerating real-time preview diagram");
-				} else if (Info.isPlantUML(resource)) {
-					IFile file = profileFolder.getFile(resource.getName());
-					String extension = file.getName().substring(file.getName().indexOf(".") + 1);
-					TransformBuildlet buildlet = ProfileBuildletConfigUtils.getTransformBuildletForExtension(extension);
-					IWorkspaceRunnable runnable = buildlet.asRunnable(file, false);
-					Jobs.runJob(runnable, resource.getProject(), "Regenerating PlantUML diagram");
-				}
-			}
 		};
+	}
+
+	/**
+	 * Applies every setting on the page as one batch, so the project's
+	 * .builder-preferences file is saved once, and only then regenerates the
+	 * affected preview or diagram so that it reads the saved values.
+	 */
+	@Override
+	public boolean performOk() {
+		IResource resource = getResource();
+		CIMToolPlugin.getBuilderPreferences().runBatch(resource.getProject(),
+				() -> PlantUMLBuilderPropertyPage.super.performOk());
+		refreshPlantUMLViewParts(resource);
+		return true;
+	}
+
+	private void refreshPlantUMLViewParts(IResource resource) {
+		if (resource instanceof IProject) {
+			// Project-level preference change: refresh the focused profile editor's
+			// preview, but only if that profile lives in this project.
+			ProfileEditor.refreshActiveProfilePreview((IProject) resource);
+			return;
+		}
+		IFolder profileFolder = Info.getProfilesFolder(resource.getProject());
+		if (profileFolder == null || !profileFolder.exists())
+			return;
+		if (Info.isProfile(resource)) {
+			IFile owlFile = (IFile) resource;
+			String baseName = owlFile.getName().replaceFirst("\\.[^.]+$", "");
+			IFile previewFile = profileFolder
+					.getFile("." + baseName + "." + PlantUMLRealTimePreviewBuildlet.PREVIEW_EXT);
+			IWorkspaceRunnable runnable = new PlantUMLRealTimePreviewBuildlet().asRunnable(previewFile, false);
+			Jobs.runJob(runnable, previewFile.getProject(), "Regenerating real-time preview diagram");
+		} else if (Info.isPlantUML(resource)) {
+			IFile file = profileFolder.getFile(resource.getName());
+			String extension = file.getName().substring(file.getName().indexOf(".") + 1);
+			TransformBuildlet buildlet = ProfileBuildletConfigUtils.getTransformBuildletForExtension(extension);
+			IWorkspaceRunnable runnable = buildlet.asRunnable(file, false);
+			Jobs.runJob(runnable, resource.getProject(), "Regenerating PlantUML diagram");
+		}
 	}
 }

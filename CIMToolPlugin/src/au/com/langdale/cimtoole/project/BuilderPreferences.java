@@ -51,6 +51,22 @@ public class BuilderPreferences extends Task {
 	// This flag tracks whether the *next* POST_CHANGE is coming from a clean.
 	private volatile boolean cleanInProgress = false;
 
+	/**
+	 * The batches in progress on the current thread, keyed by project. While a
+	 * project has a batch here, its preferences are read from and written to the
+	 * batch's working copy of the store rather than the session store.
+	 */
+	private final ThreadLocal<Map<IProject, Batch>> batches = ThreadLocal.withInitial(HashMap::new);
+
+	private static class Batch {
+		private final OntModel store;
+		private boolean changed;
+
+		private Batch(OntModel store) {
+			this.store = store;
+		}
+	}
+
 	public BuilderPreferences() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(new ResourceListener(),
 				IResourceChangeEvent.PRE_BUILD | IResourceChangeEvent.POST_CHANGE);
@@ -122,9 +138,51 @@ public class BuilderPreferences extends Task {
 		}
 	}
 
+	/**
+	 * Runs the given updates as a single batch for the project. Every
+	 * {@link #putPreference(IResource, QualifiedName, String)} for the project made
+	 * on this thread while the updates run is applied to one working copy of the
+	 * store, and every read sees that copy. When the updates finish, the copy
+	 * replaces the session store and is saved once, and only if something changed.
+	 * If the updates throw, nothing is saved. A nested batch for the same project
+	 * joins the outer one.
+	 * 
+	 * @param project the project whose builder preferences are being changed
+	 * @param updates the changes to make
+	 */
+	public void runBatch(IProject project, Runnable updates) {
+		Map<IProject, Batch> active = batches.get();
+		if (active.containsKey(project)) {
+			updates.run();
+			return;
+		}
+		try {
+			Batch batch = new Batch(Composition.copy(getBuilderPreferencesStore(project)));
+			active.put(project, batch);
+			try {
+				updates.run();
+			} finally {
+				active.remove(project);
+			}
+			if (batch.changed)
+				replaceBuilderPreferencesStore(project, batch.store);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * The store to read from: the batch's working copy while the project has a
+	 * batch in progress on this thread, otherwise the session store.
+	 */
+	private OntModel getCurrentStore(IProject project) throws CoreException {
+		Batch batch = batches.get().get(project);
+		return batch != null ? batch.store : getBuilderPreferencesStore(project);
+	}
+
 	public String getPreference(IResource resource, QualifiedName symbol) {
 		try {
-			return createSubject(resource.getProjectRelativePath(), getBuilderPreferencesStore(resource.getProject()))
+			return createSubject(resource.getProjectRelativePath(), getCurrentStore(resource.getProject()))
 					.getString(createProperty(symbol));
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
@@ -167,12 +225,19 @@ public class BuilderPreferences extends Task {
 
 		try {
 			IProject project = resource.getProject();
-			OntModel preferencesStore = getBuilderPreferencesStore(project);
+			Batch batch = batches.get().get(project);
+			OntModel preferencesStore = batch != null ? batch.store : getBuilderPreferencesStore(project);
 			Property prop = createProperty(symbol);
 			IPath path = resource.getProjectRelativePath();
 			String extant = createSubject(path, preferencesStore).getString(prop);
 
-			if (extant == null || !extant.equals(value)) {
+			if (extant != null && extant.equals(value))
+				return;
+
+			if (batch != null) {
+				createSubject(path, batch.store).setProperty(prop, value, null);
+				batch.changed = true;
+			} else {
 				OntModel revised = Composition.copy(preferencesStore);
 				createSubject(path, revised).setProperty(prop, value, null);
 				replaceBuilderPreferencesStore(project, revised);
