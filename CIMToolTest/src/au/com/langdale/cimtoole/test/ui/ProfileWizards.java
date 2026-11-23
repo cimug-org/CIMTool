@@ -1,9 +1,13 @@
 package au.com.langdale.cimtoole.test.ui;
 
-import org.eclipse.core.runtime.CoreException;
+import java.lang.reflect.Method;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.IWorkbenchWizard;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
+import au.com.langdale.cimtoole.project.Cache;
+import au.com.langdale.cimtoole.project.Info;
 import au.com.langdale.cimtoole.test.WorkbenchTest;
 import au.com.langdale.cimtoole.wizards.ImportProfile;
 import au.com.langdale.cimtoole.wizards.NewProfile;
@@ -17,7 +21,7 @@ public class ProfileWizards extends WorkbenchTest {
 		setupSchema();
 	}
 	
-	public final void testImportProfile() throws CoreException {
+	public final void testImportProfile() throws Exception {
 		IWorkbenchWizard wizard = new ImportProfile();
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
@@ -29,6 +33,7 @@ public class ProfileWizards extends WorkbenchTest {
 		content.fireWidgetEvent();
 		pause();
 		assertTrue(wizard.canFinish());
+		clearSchemaCache();
 		dialog.finishPressed();
 		
 		long size = CIMToolPlugin.getCache().getOntologyWait(profile).size();
@@ -36,7 +41,7 @@ public class ProfileWizards extends WorkbenchTest {
 		
 	}
 	
-	public final void testNewProfile() throws CoreException {
+	public final void testNewProfile() throws Exception {
 		IWorkbenchWizard wizard = new NewProfile();
 		TestWizardDialog dialog = runWizard(wizard);
 		pause();
@@ -47,10 +52,29 @@ public class ProfileWizards extends WorkbenchTest {
 		content.fireWidgetEvent();
 		pause();
 		assertTrue(wizard.canFinish());
+		clearSchemaCache();
 		dialog.finishPressed();
 		
 		long size = CIMToolPlugin.getCache().getOntologyWait(profile).size();
 		assertTrue("expected profile size", size < 10);
 		
+	}
+
+	/**
+	 * Empties the cached merged schema model, so that the wizard has to load the
+	 * schema while it runs, as it does when a user runs it before anything else
+	 * has loaded the schema (issue #413). The old model is disposed first so that
+	 * it stops listening for cache changes.
+	 */
+	private void clearSchemaCache() throws Exception {
+		IFolder folder = Info.getSchemaFolder(project);
+		Object merged = folder.getSessionProperty(Cache.ONTMODEL);
+		if (merged != null) {
+			Method dispose = merged.getClass().getMethod("dispose");
+			dispose.setAccessible(true);
+			dispose.invoke(merged);
+		}
+		folder.setSessionProperty(Cache.ONTMODEL, null);
+		assertNull("schema cache emptied", folder.getSessionProperty(Cache.ONTMODEL));
 	}
 }
