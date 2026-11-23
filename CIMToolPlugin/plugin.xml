@@ -293,13 +293,40 @@
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
+      <!-- Parent node "CIMTool", applicable to every resource. -->
       <page
             class="au.com.langdale.cimtoole.properties.PropertyPage"
             icon="icons/package.png"
-            id="au.com.langdale.cimtoole.properties.samplePropertyPage"
+            id="au.com.langdale.cimtoole.properties.CIMToolPropertyPage"
             name="CIMTool"
             objectClass="org.eclipse.core.resources.IResource">
       </page>
+      <!-- Child page under the parent node. The "category" attribute references the "id" attribute of the parent.
+           Shown only for CIMTool projects, profiles and generated .puml files (see CIMToolPropertyTester). -->
+      <page
+            class="au.com.langdale.cimtoole.properties.PlantUMLBuilderPropertyPage"
+            id="au.com.langdale.cimtoole.properties.PlantUMLBuilderPropertyPage"
+            name="PlantUML Builder Preferences"
+            category="au.com.langdale.cimtoole.properties.CIMToolPropertyPage">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IResource">
+               <test
+                     property="au.com.langdale.cimtoole.hasPlantUMLPreferences">
+               </test>
+            </adapt>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="au.com.langdale.cimtoole.properties.CIMToolPropertyTester"
+            id="au.com.langdale.cimtoole.properties.CIMToolPropertyTester"
+            namespace="au.com.langdale.cimtoole"
+            properties="hasPlantUMLPreferences"
+            type="org.eclipse.core.resources.IResource">
+      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.ui.views">
