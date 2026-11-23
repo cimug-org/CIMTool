@@ -6,6 +6,7 @@ package au.com.langdale.cimtoole.preferences;
 
 import static au.com.langdale.ui.builder.Templates.Grid;
 import static au.com.langdale.ui.builder.Templates.Group;
+import static au.com.langdale.ui.builder.Templates.HRule;
 import static au.com.langdale.ui.builder.Templates.Label;
 
 import au.com.langdale.cimtoole.CIMToolPlugin;
@@ -35,6 +36,13 @@ public class GeneralPreferencesPage extends FurnishedPropertyPage {
 								new Preference(Info.PROFILE_NAMESPACE, Validators.NAMESPACE)),
 						Group(Label("Default Envelope Element Name:"),
 								new Preference(Info.PROFILE_ENVELOPE, Validators.NCNAME)),
+						Group(HRule()),
+						Group(Label("CIMTool Mapping Preferences:")),
+						Group(Label("Default Mapping Namespace:"),
+								new Preference(Info.MAPPING_NAMESPACE, Validators.NAMESPACE)),
+						Group(Label("Default Mapping Label:"),
+								new Preference(Info.MAPPING_LABEL, Validators.NCNAME)),
+						Group(HRule()),
 						Group(new PreferenceOption(Info.PRESERVE_NAMESPACES, "Preserve schema namespaces in profiles")),
 						Group(new PreferenceOption(Info.USE_PACKAGE_NAMES,
 								"Add package names to default schema namespace")),

@@ -144,6 +144,7 @@ public class PlantUMLBuilderPropertyPage extends FurnishedPropertyPage {
 				groups.add(color("Choices Color:", Info.CHOICES_COLOR));
 				groups.add(color("Refs Color:", Info.REFS_COLOR));
 				groups.add(color("Shadow Classes Color:", Info.SHADOW_CLASSES_COLOR));
+				groups.add(color("Errors Color:", Info.ERRORS_COLOR));
 				groups.add(Group(new BuilderPreferenceOption(Info.ANONYMOUS_CLASSES_COLOR_WHITE,
 						"Set the color of anonymous classes to white")));
 				groups.add(Group(new BuilderPreferenceOption(Info.ENABLE_DARK_MODE,
