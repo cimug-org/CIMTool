@@ -350,11 +350,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 
 		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, Boolean.valueOf(getValue()).toString());
+			Info.setBuilderOverride(getResource(), symbol, Boolean.valueOf(getValue()).toString());
 		}
 
 		public void reset() {
-			setValue(Boolean.valueOf(Info.getBuilderPreference(symbol)));
+			setValue(Boolean.valueOf(Info.getInheritedBuilderPreference(getResource(), symbol)));
 		}
 	}
 
@@ -389,11 +389,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 
 		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
+			Info.setBuilderOverride(getResource(), symbol, getValue());
 		}
 
 		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
+			setValue(Info.getInheritedBuilderPreference(getResource(), symbol));
 		}
 
 	}
@@ -437,11 +437,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 
 		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
+			Info.setBuilderOverride(getResource(), symbol, getValue());
 		}
 
 		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
+			setValue(Info.getInheritedBuilderPreference(getResource(), symbol));
 		}
 
 	}
@@ -478,11 +478,11 @@ public abstract class FurnishedPropertyPage extends PreferencePage
 		}
 
 		public void update() {
-			Info.putBuilderPreference(getResource(), symbol, getValue());
+			Info.setBuilderOverride(getResource(), symbol, getValue());
 		}
 
 		public void reset() {
-			setValue(Info.getBuilderPreference(symbol));
+			setValue(Info.getInheritedBuilderPreference(getResource(), symbol));
 		}
 	}
 

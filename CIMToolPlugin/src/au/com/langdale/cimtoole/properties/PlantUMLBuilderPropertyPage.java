@@ -64,15 +64,20 @@ public class PlantUMLBuilderPropertyPage extends FurnishedPropertyPage {
 			if (resource instanceof IProject) {
 				Info.putProperty(getResource(), symbol, value);
 			} else if (Info.isProfile(resource) || Info.isPlantUML(resource)) {
-				Info.putBuilderPreference(getResource(), symbol, value);
+				// An empty Diagram Style means the profile inherits it.
+				if (value.isEmpty())
+					CIMToolPlugin.getBuilderPreferences().removePreference(resource, symbol);
+				else
+					Info.putBuilderPreference(resource, symbol, value);
 			} else {
 				throw new RuntimeException("Invalid entry...");
 			}
 		}
 
 		public void reset() {
-			Object value = Info.getCurrentProfileRealTimePreviewDisplayStyleByLevel(getResource());
-			setValue(value);
+			// Empty means inherit: the profile takes the project's style, and the
+			// project takes the workspace's.
+			setValue("");
 		}
 
 	}

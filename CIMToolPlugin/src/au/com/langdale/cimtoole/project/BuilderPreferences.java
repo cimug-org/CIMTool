@@ -248,6 +248,40 @@ public class BuilderPreferences extends Task {
 
 	}
 
+	/**
+	 * Removes a resource's own value for a builder preference, so that the
+	 * resource inherits the value again. Does nothing if the resource has no value
+	 * of its own. Inside a batch the removal is applied to the batch's working
+	 * copy; otherwise the store is saved at once, as for
+	 * {@link #putPreference(IResource, QualifiedName, String)}.
+	 * 
+	 * @param resource the file or project the preference applies to
+	 * @param symbol   the preference
+	 */
+	public void removePreference(IResource resource, QualifiedName symbol) {
+		try {
+			IProject project = resource.getProject();
+			Batch batch = batches.get().get(project);
+			OntModel preferencesStore = batch != null ? batch.store : getBuilderPreferencesStore(project);
+			Property prop = createProperty(symbol);
+			IPath path = resource.getProjectRelativePath();
+
+			if (createSubject(path, preferencesStore).getString(prop) == null)
+				return;
+
+			if (batch != null) {
+				createSubject(path, batch.store).removeAll(prop);
+				batch.changed = true;
+			} else {
+				OntModel revised = Composition.copy(preferencesStore);
+				createSubject(path, revised).removeAll(prop);
+				replaceBuilderPreferencesStore(project, revised);
+			}
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private class ResourceListener implements IResourceChangeListener {
 
 		public void resourceChanged(IResourceChangeEvent event) {

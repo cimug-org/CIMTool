@@ -786,6 +786,34 @@ public class Info implements QualifiedNames {
 		return getPreference(symbol);
 	}
 
+	/**
+	 * Records a builder preference value for a resource as an override only when it
+	 * differs from the value the resource would otherwise inherit (see
+	 * {@link #getInheritedBuilderPreference(IResource, QualifiedName)}). When the
+	 * value is empty, or equal to the inherited value, any existing override is
+	 * removed instead, so the resource keeps inheriting and later changes at a
+	 * higher level reach it. Colors compare without regard to case.
+	 * 
+	 * @param resource the file or project the preference applies to
+	 * @param symbol   the preference
+	 * @param value    the value chosen for the resource
+	 */
+	public static void setBuilderOverride(IResource resource, QualifiedName symbol, String value) {
+		String inherited = getInheritedBuilderPreference(resource, symbol);
+		if (value == null || value.isEmpty() || sameBuilderPreferenceValue(value, inherited))
+			CIMToolPlugin.getBuilderPreferences().removePreference(resource, symbol);
+		else
+			CIMToolPlugin.getBuilderPreferences().putPreference(resource, symbol, value);
+	}
+
+	private static boolean sameBuilderPreferenceValue(String value, String inherited) {
+		if (inherited == null)
+			return false;
+		if (value.equals(inherited))
+			return true;
+		return value.startsWith("#") && value.equalsIgnoreCase(inherited);
+	}
+
 	public static void putBuilderPreference(IResource resource, QualifiedName symbol, String value) {
 		CIMToolPlugin.getBuilderPreferences().putPreference(resource, symbol, value);
 	}
