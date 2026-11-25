@@ -7,10 +7,12 @@
 
 # 
 # Preamble
-# Note the underscore (_) after the #Package portion of the prefix...
+# Copy both lines below exactly. The package: prefix is relative (<#Package_>),
+# so CIMTool resolves it against the schema's default namespace and it matches
+# the packages whatever that namespace is. Note the underscore (_) after Package.
 #
 @prefix uml: <http://langdale.com.au/2005/UML#> .
-@prefix package: <http://cim.ucaiug.io/2020/CIM100#Package_> .
+@prefix package: <#Package_> .
 
 # 
 # Each line below is read:
@@ -20,6 +22,10 @@
 # where:
 #					'name' is a package name defined in the XMI file
 #					'uri'  is the namespace URI for classes and properties defined therein 
+#
+# A statement that names a package CIMTool cannot match is ignored without any
+# message. This file assumes the "Add package names to default schema namespace"
+# option is turned off.
 #
  
 package:Extensions     uml:baseuri "http://www.ucaiug.org/CIM100/extensions#" .
