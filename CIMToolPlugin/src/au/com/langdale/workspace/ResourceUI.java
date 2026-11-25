@@ -121,17 +121,24 @@ public class ResourceUI {
 			return (IProject) getValue();
 		}
 
+		/**
+		 * Selects the project of the resource selected when the wizard opened, if it
+		 * is an open CIMTool project. Otherwise no project is selected.
+		 */
 		public void setSelected(IStructuredSelection selection) {
 			Object item = selection.getFirstElement();
-			if (item instanceof IResource) {
-				IResource resource = (IResource) item;
-				setValue(resource.getProject());
-			} else
+			if (item instanceof IResource && allow(((IResource) item).getProject()))
+				setValue(((IResource) item).getProject());
+			else
 				setValue(null);
 		}
 
+		/**
+		 * Accepts open CIMTool projects only: projects with the CIMTool nature, or
+		 * older projects with a .cimtool-settings file.
+		 */
 		public boolean allow(Object value) {
-			return value instanceof IProject && ((IProject) value).isOpen();
+			return value instanceof IProject && Info.isCIMToolProject((IProject) value);
 		}
 
 		public boolean flatten(Object value) {
@@ -145,7 +152,7 @@ public class ResourceUI {
 		@Override
 		public String validate() {
 			if (!allow(getValue()))
-				return "A project must be selected.";
+				return "A CIMTool project must be selected.";
 			else
 				return null;
 		}
