@@ -11,6 +11,9 @@ The **CIMTool** preference and property pages now follow one hierarchy of three 
 Defect [Issue #322](https://github.com/cimug-org/CIMTool/issues/322):
 The **Import Profile** and **New Profile** wizards could fail with the error "Attempted to beginRule: ..., does not match outer scope rule: ..." when the project's schema had not yet been loaded, and the profile was not created. The wizards now complete whether or not the schema has been loaded.
 
+Enhancement [Issue #382](https://github.com/cimug-org/CIMTool/issues/382):
+When an XMI schema is imported with the **Import Schema** or **New Project** wizard, an annotation file (`.annotation`) with the same name beside it is now copied into the project's `Schema` folder along with it, and a re-import replaces the project's copy. If the XMI file name contains spaces, they are replaced with underscores in both file names, so the two still match. Annotation files are no longer read for Enterprise Architect project files (`.eap`, `.eapx`, `.qea`, `.qeax`), in **CIMTool** or in `cimtool-cli`; assign an EA project file's namespaces in the model, with `baseuri` tagged values or a `.namespaces` file. The example annotation file now uses the relative package prefix `@prefix package: <#Package_> .`, which works whatever the schema's default namespace is.
+
 
 ### Release 2.3.1 [09-Nov-2026]
 
