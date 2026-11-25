@@ -235,40 +235,11 @@ public class Task extends Info {
 				importFile(file, targetFile, pathname, monitor);
 				//
 				if (isEAProject(file)) {
-					File relatedFileToImport = getSchemaRelatedFile(pathname, "stereotype-extensions");
-					if (relatedFileToImport.exists()) {
-						IFile stereotypeExtensionsFile = Info.getSchemaFolder(file.getProject())
-								.getFile(relatedFileToImport.getName());
-						targetFile = stereotypeExtensionsFile;
-						if (stereotypeExtensionsFile.getLocation().lastSegment().contains(" ")) {
-							targetFile = replaceSpacesInFileName(stereotypeExtensionsFile);
-						}
-						importFile(stereotypeExtensionsFile, targetFile, relatedFileToImport.getAbsolutePath(),
-								monitor);
-					}
-					//
-					IFile namespacePrefixesFile = null;
-					relatedFileToImport = getSchemaRelatedFile(pathname, "namespace-prefixes");
-					if (relatedFileToImport.exists()) {
-						namespacePrefixesFile = Info.getSchemaFolder(file.getProject())
-								.getFile(relatedFileToImport.getName());
-						targetFile = namespacePrefixesFile;
-						if (namespacePrefixesFile.getLocation().lastSegment().contains(" ")) {
-							targetFile = replaceSpacesInFileName(namespacePrefixesFile);
-						}
-						importFile(namespacePrefixesFile, targetFile, relatedFileToImport.getAbsolutePath(), monitor);
-					}
-					//
-					IFile namespacesFile = null;
-					relatedFileToImport = getSchemaRelatedFile(pathname, "namespaces");
-					if (relatedFileToImport.exists()) {
-						namespacesFile = Info.getSchemaFolder(file.getProject()).getFile(relatedFileToImport.getName());
-						targetFile = namespacesFile;
-						if (namespacesFile.getLocation().lastSegment().contains(" ")) {
-							targetFile = replaceSpacesInFileName(namespacesFile);
-						}
-						importFile(namespacesFile, targetFile, relatedFileToImport.getAbsolutePath(), monitor);
-					}
+					importRelatedFile(file, pathname, "stereotype-extensions", monitor);
+					importRelatedFile(file, pathname, "namespace-prefixes", monitor);
+					importRelatedFile(file, pathname, "namespaces", monitor);
+				} else if ("xmi".equalsIgnoreCase(file.getFileExtension())) {
+					importRelatedFile(file, pathname, "annotation", monitor);
 				}
 				//
 				putProperty(file, SCHEMA_NAMESPACE, namespace);
@@ -349,6 +320,31 @@ public class Task extends Info {
 		String baseFileName = (lastDotIndex == -1) ? fileName : fileName.substring(0, lastDotIndex);
 		java.nio.file.Path ratedFile = parentDir.resolve(baseFileName + relatedFileExt);
 		return ratedFile.toFile();
+	}
+
+	/**
+	 * Copies a file related to a schema being imported, such as
+	 * {@code <schema>.namespaces}, from beside the source schema file into the
+	 * project's Schema folder, if such a file exists. The copy keeps the source
+	 * file's base name, with any spaces replaced by underscores in the same way as
+	 * the schema file, so the two names continue to match. A copy already in the
+	 * project is replaced.
+	 * 
+	 * @param schemaFile The schema file being imported into the project.
+	 * @param pathname   The full path of the source schema file.
+	 * @param extension  The extension of the related file, without a leading dot.
+	 * @param monitor    The progress monitor.
+	 */
+	private static void importRelatedFile(IFile schemaFile, String pathname, String extension,
+			IProgressMonitor monitor) throws CoreException {
+		File relatedFileToImport = getSchemaRelatedFile(pathname, extension);
+		if (relatedFileToImport.exists()) {
+			IFile relatedFile = Info.getSchemaFolder(schemaFile.getProject()).getFile(relatedFileToImport.getName());
+			IFile targetFile = relatedFile;
+			if (relatedFile.getLocation().lastSegment().contains(" "))
+				targetFile = replaceSpacesInFileName(relatedFile);
+			importFile(relatedFile, targetFile, relatedFileToImport.getAbsolutePath(), monitor);
+		}
 	}
 
 	public static IWorkspaceRunnable importTransformBuilder(final TransformBuildlet buildlet, final File xslFile,
@@ -581,14 +577,10 @@ public class Task extends Info {
 				base = file.getLocationURI().toString() + "#";
 		}
 		//
-		IFile auxfile = getRelated(file, "annotation", false);
-		OntModel annote;
-		if (auxfile.exists()) {
-			annote = ModelFactory.createMem();
-			IO.read(annote, auxfile.getContents(), base, Format.TURTLE.toFormat());
-		} else {
-			annote = null;
-		}
+		// Annotation files are supported for XMI schemas only. An EA project file's
+		// namespaces are assigned in the model itself, with baseuri tagged values or
+		// a .namespaces file, so no annotation file is read here.
+		OntModel annote = null;
 
 		CIMInterpreter interprepter = CIMInterpreterFactory.create(stereotypedNamespaces, file.getLocation().toFile());
 

@@ -47,10 +47,10 @@ import au.com.langdale.xmi.XMIParser;
  * <h2>Optional Related Files</h2>
  * <p>The parser looks for optional related files in the same directory as the schema:</p>
  * <ul>
- *   <li>{@code <schema>.annotation} - Additional annotations in Turtle format</li>
- *   <li>{@code <schema>.stereotype-extensions} - Stereotype extensions</li>
- *   <li>{@code <schema>.namespace-prefixes} - Namespace prefix mappings</li>
- *   <li>{@code <schema>.namespaces} - Namespace definitions</li>
+ *   <li>{@code <schema>.annotation} - Additional annotations in Turtle format (XMI schemas only)</li>
+ *   <li>{@code <schema>.stereotype-extensions} - Stereotype extensions (EA project files only)</li>
+ *   <li>{@code <schema>.namespace-prefixes} - Namespace prefix mappings (EA project files only)</li>
+ *   <li>{@code <schema>.namespaces} - Namespace definitions (EA project files only)</li>
  * </ul>
  * 
  * @see CLISettings
@@ -282,8 +282,10 @@ public class CLISchemaParser {
 		boolean mergeShadowExtensions = settings.isMergeShadowExtensions();
 		String base = getSchemaNamespace(file);
 		
-		// Load annotation file if available
-		OntModel annote = loadAnnotationModel(file, base);
+		// Annotation files are supported for XMI schemas only. An EA project file's
+		// namespaces are assigned in the model itself, with baseuri tagged values or
+		// a .namespaces file, so no annotation file is read here.
+		OntModel annote = null;
 		
 		// Create interpreter and interpret
 		CIMInterpreter interpreter = CIMInterpreterFactory.create(stereotypedNamespaces, file);

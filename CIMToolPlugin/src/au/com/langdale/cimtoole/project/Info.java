@@ -245,12 +245,11 @@ public class Info implements QualifiedNames {
 		if (ext != null && ext.equalsIgnoreCase("annotation")) {
 			IFile master = null;
 
-			String[] schemaExt = new String[] { "xmi", "eap", "eapx", "qea", "qeax" };
-			for (String s : schemaExt) {
-				master = getRelated(file, s);
-				if (master.exists())
-					return master;
-			}
+			// Annotation files are supported for XMI schemas, and for schemas read by a
+			// registered model parser, but not for EA project files.
+			master = getRelated(file, "xmi");
+			if (master.exists())
+				return master;
 
 			for (String s : ModelParserRegistry.INSTANCE.getExtensions()) {
 				master = getRelated(file, s);
