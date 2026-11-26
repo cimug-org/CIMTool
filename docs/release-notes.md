@@ -23,6 +23,9 @@ Selecting one of several **CIMTool** wizards in the "Import", "New" or "Export" 
 Defect [Issue #417](https://github.com/cimug-org/CIMTool/issues/417):
 In the "Import Schema" dialog, the namespace radio buttons could lose their circles after a change in the dialog, such as checking "Replace existing schema", until the mouse passed over them. They now stay drawn. The footnote in the "Import Schema" and "Import Schema from Registry" dialogs now names the correct menu, **Window > Preferences > CIMTool**.
 
+Defect [Issue #410](https://github.com/cimug-org/CIMTool/issues/410):
+Saving a schema mapping file (`.mapping-owl` or `.mapping-ttl`) updated the project's views but did not rebuild the profiles' generated artifacts or the merged schema output (`.merged-owl`), which stayed out of date until something else forced a rebuild. Changing, adding or removing a mapping file now rebuilds them, as a change to any other schema file does.
+
 
 ### Release 2.3.1 [09-Nov-2026]
 
