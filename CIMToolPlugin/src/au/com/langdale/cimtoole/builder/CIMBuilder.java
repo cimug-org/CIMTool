@@ -208,7 +208,7 @@ public class CIMBuilder extends IncrementalProjectBuilder {
 		}
 
 		private void collect(IResource resource) throws CoreException {
-			rebuild = rebuild || Info.isSchema(resource);
+			rebuild = rebuild || Info.contributesToSchema(resource);
 
 			for (int ix = 0; ix < buildlets.length; ix++) {
 				Buildlet buildlet = buildlets[ix];

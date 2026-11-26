@@ -34,7 +34,7 @@ public class SchemaBuildlet extends Buildlet {
 	
 	@Override
 	protected Collection getOutputs(IResource file) throws CoreException {
-		if( Info.isSchema(file)) {
+		if( Info.contributesToSchema(file)) {
 			IProject project = file.getProject();
 			String name = Info.getProperty(project, Info.MERGED_SCHEMA_PATH);
 			if( name != null && name.length() != 0)

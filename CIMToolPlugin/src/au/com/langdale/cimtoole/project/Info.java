@@ -144,6 +144,25 @@ public class Info implements QualifiedNames {
 				|| isFile(resource, "Schema", ModelParserRegistry.INSTANCE.getExtensions());
 	}
 
+	/**
+	 * Returns true for a file in the project's Schema folder, or in a folder
+	 * beneath it, that the project's merged schema includes, mapping definitions
+	 * among them. It applies the test the merge itself applies, whereas
+	 * {@link #isSchema(IResource)} is limited to the primary schema files that are
+	 * imported. A merged schema export ({@code .merged-owl}) is excluded: CIMTool
+	 * writes it during a build, so it must never cause another rebuild.
+	 * 
+	 * @param resource the resource to test
+	 * @return true if changing the resource changes the merged schema
+	 */
+	public static boolean contributesToSchema(IResource resource) {
+		if (!(resource instanceof IFile))
+			return false;
+		IPath path = resource.getProjectRelativePath();
+		return path.segmentCount() >= 2 && path.segment(0).equals("Schema")
+				&& !hasExt(resource, "merged-owl") && isParseable((IFile) resource);
+	}
+
 	public static boolean isEAProject(IResource resource) {
 		return isFile(resource, "Schema", "eap", "eapx", "qea", "qeax");
 	}
