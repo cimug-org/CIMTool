@@ -35,6 +35,9 @@
             icon="icons/package-ecore.png"
             id="com.cimphony.cimtoole.wizards.ExportEcore"
             name="Export merged schema as Ecore">
+         <description>
+            Export a project's merged schema as an Ecore model.
+         </description>
       </wizard>
    </extension>
       <extension
@@ -45,6 +48,9 @@
             icon="icons/package-ecore.png"
             id="com.cimphony.cimtoole.wizards.ImportRegistrySchema"
             name="Import Schema from Registry">
+         <description>
+            Import a schema from the Ecore (EMF) package registry into a project.
+         </description>
       </wizard>
    </extension>
    

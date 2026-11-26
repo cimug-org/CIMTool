@@ -68,6 +68,9 @@
             icon="icons/catalog.png"
             id="au.com.langdale.cimtoole.wizards.ImportProfile"
             name="Import Profile">
+         <description>
+            Import an OWL profile definition into a project.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -85,6 +88,9 @@
             icon="icons/rules.png"
             id="au.com.langdale.cimtoole.wizards.ImportRuleset"
             name="Import Validation Rules">
+         <description>
+            Import a set of rules for validating CIM/XML models against a profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -92,6 +98,9 @@
             icon="icons/html.png"
             id="au.com.langdale.cimtoole.wizards.ImportHTMLRules"
             name="Import HTML Rules">
+         <description>
+            Import an XSLT stylesheet that replaces the built-in HTML documentation rules for one profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -119,6 +128,9 @@
             icon="icons/xsd.png"
             id="au.com.langdale.cimtoole.wizards.ImportXSDRules"
             name="Import XML Schema Rules">
+         <description>
+            Import an XSLT stylesheet that replaces the built-in XML Schema (XSD) generation rules for one profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -146,6 +158,9 @@
             icon="icons/package.png"
             id="au.com.langdale.cimtoole.wizards.ImportSchema"
             name="Import Schema">
+         <description>
+            Import a schema (XMI, OWL or an EA project file) into a project, as an additional schema or in place of an existing one.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -153,6 +168,9 @@
             icon="icons/rules.png"
             id="au.com.langdale.cimtoole.wizards.IncImportRuleset"
             name="Import Incremental Validation Rules">
+         <description>
+            Import a set of rules for validating incremental CIM/XML models against a profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -226,6 +244,9 @@
             id="au.com.langdale.cimtoole.wizards.NewProject"
             name="CIMTool Project"
             project="true">
+         <description>
+            Create a new CIMTool project and import a copy of the CIM as its schema.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -233,6 +254,9 @@
             icon="icons/catalog.png"
             id="au.com.langdale.cimtoole.wizards.NewProfile"
             name="CIMTool Profile">
+         <description>
+            Create a new OWL profile definition in a project.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -240,6 +264,9 @@
             icon="icons/rules.png"
             id="au.com.langdale.cimtoole.wizards.NewRuleset"
             name="CIMTool Validation Rules">
+         <description>
+            Create a new set of rules for validating CIM/XML models against a profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -247,6 +274,9 @@
             icon="icons/html.png"
             id="au.com.langdale.cimtoole.wizards.NewHTMLRules"
             name="CIMTool HTML Rules">
+         <description>
+            Create an XSLT stylesheet that replaces the built-in HTML documentation rules for one profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -254,6 +284,9 @@
             icon="icons/xsd.png"
             id="au.com.langdale.cimtoole.wizards.NewXSDRules"
             name="CIMTool XML Schema Rules">
+         <description>
+            Create an XSLT stylesheet that replaces the built-in XML Schema (XSD) generation rules for one profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -261,6 +294,9 @@
             icon="icons/rules.png"
             id="au.com.langdale.cimtoole.wizards.NewIncRuleset"
             name="CIMTool Incremental Validation Rules">
+         <description>
+            Create a new set of rules for validating incremental CIM/XML models against a profile.
+         </description>
       </wizard>
       <wizard
             category="au.com.langdale.cimtoole"
@@ -268,6 +304,9 @@
             icon="icons/equiv.png"
             id="au.com.langdale.cimtoole.wizards.NewMappings"
             name="CIMTool Mappings">
+         <description>
+            Create a mappings file that relates classes and properties across a project's schemas.
+         </description>
       </wizard>
    </extension>
 	<extension point="org.eclipse.ui.preferencePages">
@@ -544,6 +583,9 @@
             icon="icons/package.png"
             id="au.com.langdale.cimtoole.wizards.ExportSchema"
             name="Export merged schema">
+         <description>
+            Export a project's merged schema as an OWL file.
+         </description>
       </wizard>
       <category
             id="au.com.langdale.cimtoole"
