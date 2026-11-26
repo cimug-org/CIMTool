@@ -4,7 +4,7 @@
 
 ## Information Model Namespaces
 
-The information model can be supplied to **CIMTool** either as an XMI file (`.xmi` or `.owl`) or directly as a Sparx EA project file (`.eap`, `.eapx`, `.qea`, or `.qeax`). The schema format chosen for import determines which mechanisms are available for defining extension namespaces in your project. What follows outlines those options based on which schema format is in use.
+The information model can be supplied to **CIMTool** either as an XMI file (`.xmi`) or directly as a Sparx EA project file (`.eap`, `.eapx`, `.qea`, or `.qeax`). The schema format chosen for import determines which mechanisms are available for defining extension namespaces in your project. What follows outlines those options based on which schema format is in use.
 
 ### Default Namespace (Common to Both Formats)
 
@@ -16,7 +16,7 @@ The default namespace is used as follows:
 
 ## Option 1: Using an XMI Schema
 
-When your project uses an XMI file (`.xmi` or `.owl`) as its schema, the `baseuri` tagged value is the mechanism for assigning URI namespaces to extension elements.
+When your project uses an XMI file (`.xmi`) as its schema, the `baseuri` tagged value is the mechanism for assigning URI namespaces to extension elements.
 
 ### UML Tag: `baseuri`
 
@@ -33,31 +33,34 @@ An example of a `baseuri` tag on a class in Sparx EA:
 
 #### Annotation File
 
-In the edge case where you are working with an XMI file provided by an external party that lacks `baseuri` tagged values, **CIMTool** provides a stopgap mechanism via an annotation file. There is no editor or other GUI for managing namespace information in the annotation file, which is intended solely for situations where you do not control the XMI file and cannot add `baseuri` tags to it directly.
+If you receive an XMI file from another party, and the model it was exported from has no `baseuri` tagged values, you can't add them yourself. In that case an annotation file can supply the namespaces. When you export XMI from your own model, put `baseuri` tagged values in the model instead.
 
-The annotation file should be placed in the project's `Schema` folder where the XMI file is located. It must have the same base name as the XMI file with a `.annotation` extension instead of `.xmi`.
+An annotation file has the same name as the XMI file, with the extension `.annotation`. For example, `European_Extensions.xmi` pairs with `European_Extensions.annotation`. Keep it in the same folder as the XMI file. When you import or re-import the XMI file with the "Import Schema" wizard or the "New Project" wizard, **CIMTool** copies the annotation file into the project's **Schema** folder along with it:
 
-The file can be edited with the Eclipse text editor. If an external text editor is used, the workspace must be manually refreshed afterwards.
+- If the XMI file name contains spaces, **CIMTool** replaces them with underscores in both file names, so the two names still match.
+- A re-import replaces the project's copy of the annotation file. Make your changes to the original beside the XMI file. Changes made only to the project's copy are lost on re-import.
 
-An example file that can be used as a template can be found here:
-
-[example.annotation](example.annotation)
-
-The file contains `baseuri` statements in the RDF TURTLE language. For example, the line:
+The file is written in RDF Turtle. Start it with these two lines, then add one statement for each package:
 
 ```
-package:Extensions     uml:baseuri "http://www.ucaiug.org/CIM100/2024/extension#"
+@prefix uml: <http://langdale.com.au/2005/UML#> .
+@prefix package: <#Package_> .
+
+package:ExtBase     uml:baseuri "https://www.ucaiug.io/CIM100/extensions#" .
 ```
 
-Has the same effect as attaching a `baseuri` tag to the Extensions package with the given URI as its value.
+Each statement has the same effect as a `baseuri` tagged value on that package. Write the `package:` prefix exactly as shown, as the relative `<#Package_>`. **CIMTool** reads the file against the schema's default namespace, so this form matches the packages whatever that namespace is. A statement that names a package **CIMTool** can't match is ignored without any message.
+
+Annotation files written with a full prefix, such as `@prefix package: <http://iec.ch/TC57/CIM100#Package_> .`, continue to work as long as the prefix is the schema's default namespace followed by `Package_`. The relative form is recommended because it keeps working if that namespace changes.
+
+An example file that can be used as a template can be found here: [example.annotation](example.annotation)
 
 !!! note
 
-    The `baseuri` statements are merged with any `baseuri` tags in the XMI file.
-
-    The effect of assigning two different `baseuri` values to the same package is undefined.
-
-    Only packages can be given `baseuri` values via the annotation file.
+    - Only packages can be given namespaces this way. The namespace applies to everything in the package and its sub-packages. A sub-package, class, attribute or association with its own `baseuri` tagged value keeps that value.
+    - These statements are combined with any `baseuri` tagged values already in the XMI file. The result of giving one package two different namespaces is undefined.
+    - The annotation file assumes the "Add package names to default schema namespace" option is turned off.
+    - Edit the file with the Eclipse text editor. If you edit it with another editor, refresh the project (F5) afterwards.
 
 ## Option 2: Using a Sparx EA Project File Schema
 
