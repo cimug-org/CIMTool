@@ -1,4 +1,4 @@
-# Modeling CIM Extensions: Shadow Extension Classes and Mix-Ins
+# Modeling Extensions to the CIM Based on Your Preferred Schema Format
 
 The CIM is routinely extended by standards bodies, transmission system operators, and individual organizations to address domain-specific requirements not covered by the normative model. A well-established pattern for modeling such extensions, particularly when attributes or associations need to be contributed to an existing normative CIM class under a distinct namespace, is the use of **shadow classes**.
 
@@ -8,8 +8,8 @@ For details on how extension namespaces are assigned in **CIMTool**, see [CIMToo
 
 **CIMTool** supports two approaches to modeling user defined extensions to the normative CIM, depending on the schema format a project uses:
 
-- **Sparx EA project file** (`.eap`, `.eapx`, `.qea` or `.qeax`): shadow extension classes and mix-ins, described in [Modeling Extensions in an EA Project File](#modeling-extensions-in-an-ea-project-file).
-- **XMI exported from Sparx EA**: shadow classes joined to the CIM by a shared namespace, described in [Modeling Extensions for XMI Schemas](#modeling-extensions-for-xmi-schemas).
+- **Sparx EA project file** (`.eap`, `.eapx`, `.qea` or `.qeax`): new extension classes generalize and associate with normative CIM classes directly, and additions to an existing CIM class are made on a shadow class, defined in any of three ways (a same-named class, the `«ShadowExtension»` stereotype, or the `«MixIn»` stereotype on the generalization), described in [Modeling Extensions in an EA Project File](#modeling-extensions-in-an-ea-project-file).
+- **XMI exported from Sparx EA**: new extension classes and additions to existing CIM classes both connect to the CIM through shadow classes that share its namespace, described in [Modeling Extensions for XMI Schemas](#modeling-extensions-for-xmi-schemas).
 
 Neither approach is right or wrong, but they are modeled differently, so choose one before you start (see [Choosing a Preferred Schema Format Up Front](#choosing-a-preferred-schema-format-up-front)).
 
