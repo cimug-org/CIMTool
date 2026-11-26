@@ -203,7 +203,12 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 		public void refresh() {
 			super.refresh();
 			for (int ix = 0; ix < radios.length; ix++) {
-				radios[ix].setSelection(values[ix].equals(getValue()));
+				boolean selected = values[ix].equals(getValue());
+				// Only touch a radio button whose state changes: setting the
+				// selection again on every refresh leaves Windows not painting
+				// the radio buttons until the mouse passes over them.
+				if (radios[ix].getSelection() != selected)
+					radios[ix].setSelection(selected);
 			}
 		}
 
@@ -299,7 +304,7 @@ public class SchemaWizardPage extends FurnishedWizardPage {
 						Group(Label(expectNewProject ? "" : "Project")), expectNewProject ? null : Group(CheckboxTableViewer("projects")),
 						Group(Label("Schema name:"), Field("filename")),
 						Group(CheckBox("replace", "Replace existing schema.")),
-						Group(Label("* Set this under Windows > Preferences > CIMTool")), Group(Label("")),
+						Group(Label("* Set this under Window > Preferences > CIMTool")), Group(Label("")),
 						Group(HRule()),
 						Group(Grid(Group(Label("CIMTool Model Integrity Reporting:")),
 								Group(CheckBox("generate-report",

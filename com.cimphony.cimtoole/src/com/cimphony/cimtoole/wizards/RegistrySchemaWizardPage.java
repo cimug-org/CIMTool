@@ -152,7 +152,7 @@ public class RegistrySchemaWizardPage extends FurnishedWizardPage {
 					Group(Label("Project")), 
 					expectNewProject? null :Group(CheckboxTableViewer("projects")),
 					Group(CheckBox("replace", "Replace existing schema.")),
-					Group(Label("* Set this under Windows > Preferences > CIMTool"))
+					Group(Label("* Set this under Window > Preferences > CIMTool"))
 				);
 			}
 
