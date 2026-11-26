@@ -72,14 +72,15 @@ When a new project is created, the diagram style defaults to `puml-rdfs-t2b`.
 If the project is primarily targeting a different schema type (for example,
 XSD), the default should be overridden by updating the project-level preference.
 Right-click the project in the **Project Explorer**, select **Properties**,
-navigate to **CIMTool**, and select the appropriate diagram style from the
-**Diagram Style** dropdown. For an XSD-oriented project, for instance,
+navigate to **CIMTool > PlantUML Builder Preferences**, and select the
+appropriate diagram style from the **Diagram Style** dropdown. For an
+XSD-oriented project, for instance,
 `puml-xsd-t2b` or `puml-xsd-l2r` would be the appropriate choice. Selecting
 the correct diagram style ensures that the errors visualized in the Real-Time
 Preview are relevant to the target schema type the profile is being designed for.
 
-Under **Real-Time Profile Preview PlantUML Diagram Preferences**, the
-**Diagram Style** dropdown presents the available options:
+Under **Profile Real-Time Preview PlantUML Diagram Preferences**, at the bottom
+of the page, the **Diagram Style** dropdown presents the available options:
 
 Click on the image to present a larger view.
 
@@ -95,8 +96,10 @@ Click on the image to present a larger view.
 | `puml-json-l2r` | JSON Schema | Left-to-right |
 
 This project-level setting applies as the default for all profiles in the
-project. It can be overridden on a per-profile basis from within the profile's
-own properties. The layout orientation, top-to-bottom or left-to-right, is a
+project. It can be overridden on a per-profile basis on the profile's own
+**PlantUML Builder Preferences** page (right-click the profile, select
+**Properties**, then **CIMTool > PlantUML Builder Preferences**). The layout
+orientation, top-to-bottom or left-to-right, is a
 presentational preference and has no effect on the content of the diagram or
 the errors it surfaces.
 
