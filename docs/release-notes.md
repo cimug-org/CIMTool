@@ -20,6 +20,9 @@ The project list in the **CIMTool** wizards offered every open project in the wo
 Defect [Issue #416](https://github.com/cimug-org/CIMTool/issues/416):
 Selecting one of several **CIMTool** wizards in the "Import", "New" or "Export" dialog left the dialog's header blank. Every **CIMTool** wizard now shows a one-line description of what it does.
 
+Defect [Issue #417](https://github.com/cimug-org/CIMTool/issues/417):
+In the "Import Schema" dialog, the namespace radio buttons could lose their circles after a change in the dialog, such as checking "Replace existing schema", until the mouse passed over them. They now stay drawn. The footnote in the "Import Schema" and "Import Schema from Registry" dialogs now names the correct menu, **Window > Preferences > CIMTool**.
+
 
 ### Release 2.3.1 [09-Nov-2026]
 
