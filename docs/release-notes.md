@@ -17,6 +17,9 @@ When an XMI schema is imported with the **Import Schema** or **New Project** wiz
 Defect [Issue #412](https://github.com/cimug-org/CIMTool/issues/412):
 The project list in the **CIMTool** wizards offered every open project in the workspace, including projects that are not **CIMTool** projects, such as a plain Java project. The list now offers only open **CIMTool** projects, and a wizard opened from a resource in another project starts with no project selected.
 
+Defect [Issue #416](https://github.com/cimug-org/CIMTool/issues/416):
+Selecting one of several **CIMTool** wizards in the "Import", "New" or "Export" dialog left the dialog's header blank. Every **CIMTool** wizard now shows a one-line description of what it does.
+
 
 ### Release 2.3.1 [09-Nov-2026]
 
